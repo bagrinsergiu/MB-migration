@@ -1,7 +1,5 @@
 <?php
 
-
-
      $dbLocal    = 'localhost';
      $dbName     = 'wp_project';
      $dbUser     = 'wp_user';
