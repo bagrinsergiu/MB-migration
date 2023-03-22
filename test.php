@@ -16,7 +16,7 @@ $jsonData = json_decode($jsonData->data, true);
 //$jsonData = $jsonData['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items']; //image
 //$jsonData = $jsonData['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items']; //menu
 
-//$jsonData = $jsonData['items'][1]; //Section welcome (image)
+// $jsonData = $jsonData['items'][1]; //Section welcome (image)
 
 //$jsonData['items'][2]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = "<p class='finaldraft_placeholder'>Section Title</p>"; //Section 2 (CREATED FOR HIM)
 
@@ -34,7 +34,6 @@ $jsonDataE = $jsonData['items'][1]['value']['items'][0]['value']['items'][0]['va
 
 
 //var_dump(json_encode($jsonData));
-
 var_dump($jsonDataE);
 
 
@@ -113,6 +112,9 @@ function addTextInTeg($in, $from)
 
 }
 
+
+
+
 $json= '{
     "type": "MenuItem",
     "value": {
@@ -135,43 +137,3 @@ $json= '{
         ]
     }
 }';
-
-//========================== index.php
-
-
-   
-    // while($sectionsSite = mysqli_fetch_array($requestSectionsSite))
-    // {
-       
-    //     if($sectionsSite['position'] >= 0 && $sectionsSite['parent_id'] == NULL)
-    //     { 
-    //         if($sectionsSite['slug'] == 'home')
-    //         {
-    //             $sectionsSite['slug'] = '';
-    //         }
-    //         $itemsArrayMainMenu = array(
-    //             $sectionsSite['name'],
-    //             '/'.$sectionsSite['slug']
-    //         );
-
-    //         $editBlocMenu = strReplace($_WorkClassTemplate::$menuBloc, $_WorkClassTemplate::$menuBlocArrayReplace, $itemsArrayMainMenu);
-
-    //         $itemsArray[] = json_decode($editBlocMenu,true);
-    //     }
-        
-    // }
-
-    // $editBlocMenu = strReplace($_WorkClassTemplate::$menuBloc, $_WorkClassTemplate::$menuBlocArrayReplace, $itemsArrayMainMenu);
-    
-    // $datajsonDecode['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] = $itemsArray;
-
-    // $sectionBlocArray[] = json_decode($_WorkClassTemplate::$sectionBloc,true);
-
-
-
-    // $datajsonDecode['items'][2]['value']['items'][0]['value']['items'][0]['value']['items'][0] = $sectionBlocArray;
-    // $datajsonollect .= 
-    // $datajsonDecode = array( "data" => json_encode($datajsonDecode));
-
-
-//==========================

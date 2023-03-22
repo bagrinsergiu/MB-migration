@@ -1,23 +1,15 @@
 <?php
+namespace Brizy;
+
+use Brizy\Config;
 
 class DBConnect
 {
-    private $dbLocal;
-    private $dbName;
-    private $dbUser;
-    private $dbPass;
-
     public static $mySqlConnect;
     
     function __construct()
-    {
-        $this->dbLocal    = 'localhost';
-        $this->dbName     = 'test';
-        $this->dbUser     = 'root';
-        $this->dbPass     = '';
-        
-        $this->connect();
-        
+    {   
+        $this->connect();   
     }
 
     public function request($query)
@@ -58,7 +50,7 @@ class DBConnect
 
     public function connect()
     {
-        self::$mySqlConnect = mysqli_connect($this->dbLocal, $this->dbUser, $this->dbPass, $this->dbName);
+        self::$mySqlConnect = mysqli_connect(Config::$dbLocal, Config::$dbUser, Config::$dbPass, Config::$dbName);
         if(!self::$mySqlConnect)
         {
             die();

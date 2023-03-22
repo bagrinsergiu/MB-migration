@@ -1,14 +1,22 @@
 <?php
 
-     $dbLocal    = 'localhost';
-     $dbName     = 'wp_project';
-     $dbUser     = 'wp_user';
-     $dbPass     = '123456';
+namespace Brizy;
 
-     $pathLayoutData     = __DIR__. '/layout/{theme}/{page}/data.json';
-     $pathLayoutResurce  = __DIR__. '/../layout/{theme}/file';
+class Config{
 
-     $themes = array(
+    public static $debugMode  = FALSE;
+    
+    public static $dbLocal  = 'localhost';
+    public static $dbName   = 'test';
+    public static $dbUser   = 'root';
+    public static $dbPass   = '';
+
+    public static $pathLayoutData    = __DIR__ . '/layout/{theme}/{page}/data.json';
+    public static $pathLayoutResurce = __DIR__ . '/../layout/{theme}/file';
+
+    public static $pathLogFile = __DIR__ . '/../LOG/1.log';
+
+    public static $themes = array(
         "Anthem"    => "Anthem",
         "August"    => "August",
         "Aurora"    => "Aurora",
@@ -25,7 +33,7 @@
         "Zion"      => "Zion"
     );
 
-     $idThemes = array(
+    public static $idThemes = array(
         "Anthem"    => 569,
         "August"    => 563,
         "Aurora"    => 570,
@@ -42,3 +50,4 @@
         "Zion"      => 571
     );
     
+}
