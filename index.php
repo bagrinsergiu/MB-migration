@@ -1,13 +1,37 @@
 <?php
 namespace Brizy;
 
-require_once(__DIR__. '/module/autoloader.php');
+require_once(__DIR__. '/module/core.php');
+
+
+$value['header'] = "client_id=3onlcdgeeh0k8s4s4wkccwo8kwwo4g0g&client_secret=4ock4cos8wsowskw4c8cs4wkcskwkow0&grant_type=user_client_credentials&scope=user";
+
+$url = Config::$graphQLurlToken;
+
+$resultquery = $helper->curlExec($url, $value);
+
+var_dump($resultquery);
+
+
+
+// if (isset($_GET['function'])) {
+//     $functionName = $_GET['function'];
+//     if (function_exists($functionName)) {
+//         $functionName();
+//     } else {
+//         echo 'Function not found.';
+//     }
+// }
+
+
+
+exit;
 
 $requestSiteId = $db->request("SELECT * from `sites` WHERE id = 299");
 while($siteId = mysqli_fetch_array($requestSiteId))
 {
-    $itemsArrSite   = array();
-    $pageArray      = array();
+    $itemsArrSite   = [];
+    $pageArray      = [];
 
     $designsName = $db->requestArray("SELECT `name` from `designs` WHERE `uuid` = '" . $siteId['design_uuid'] . "'");
 
@@ -21,13 +45,15 @@ while($siteId = mysqli_fetch_array($requestSiteId))
     $requestPageSite = $db->request("SELECT id, slug FROM pages WHERE site_id = " . $siteId['id'] . " AND parent_id IS NULL AND slug = 'about-us' ORDER BY parent_id ASC, `position`");
     while($pageSiteArray = mysqli_fetch_array($requestPageSite))
     {   
-        $itemsArray = array();
+        $itemsArray = [];
 
-        $tool->log('Get Slug: ' . $pageSiteArray['slug'], 0, 'main');
+        $helper->log('Get Slug: ' . $pageSiteArray['slug'], 0, 'main');
  
-        $cons = new Constructor($designsName[0], $pageSiteArray['slug']);
+        $itemsBuilder = new ItemsBuilder($designsName[0], $pageSiteArray['slug']);
 
-        $templatDataArray = $cons->getJsonObject();
+        $templatDataArray = $itemsBuilder->getJsonObject();
+
+        //var_dump($templatDataArray);
 
         if(!$templatDataArray)
         {
@@ -38,22 +64,22 @@ while($siteId = mysqli_fetch_array($requestSiteId))
         while($requestPageArray = mysqli_fetch_array($requestPage))
         {
 
-            $sectionArray = array();
+            $sectionArray = [];
 
-            $tool->log('Page Id: '.$requestPageArray['id'] ,0,'main');
+            $helper->log('Page Id: '.$requestPageArray['id'] ,0,'main');
 
             $requestSections = $db->request("SELECT id, section_layout_uuid, category FROM sections WHERE page_id  = " . $requestPageArray['id']);
             while($requestSectionsArray = mysqli_fetch_array($requestSections))
             {
-                $partArray              = array();
-                $itemsArray             = array();
-                $itemsConstructorArray  = array();
+                $partArray              = [];
+                $itemsArray             = [];
+                $itemsConstructorArray  = [];
 
-                $tool->log('Section Id: '.$requestSectionsArray['id'], 0, 'main');
+                $helper->log('Section Id: '.$requestSectionsArray['id'], 0, 'main');
 
                 if($requestSectionsArray['category']=='text')
                 {
-                    $tool->log('Category: ' . $requestSectionsArray['category'], 0, 'main');
+                    $helper->log('Category: ' . $requestSectionsArray['category'], 0, 'main');
 
                     $sectionLayouts = $db->requestArray("SELECT * FROM section_layouts WHERE uuid = '" . $requestSectionsArray['section_layout_uuid'] . "'");
                     
@@ -78,12 +104,12 @@ while($siteId = mysqli_fetch_array($requestSiteId))
                 }
                 elseif($requestSectionsArray['category']=='list')
                 {
-                    $tool->log('Category: ' . $requestSectionsArray['category'] . ' ID: ' . $requestSectionsArray['id'], 0, 'main');
+                    $helper->log('Category: ' . $requestSectionsArray['category'] . ' ID: ' . $requestSectionsArray['id'], 0, 'main');
                     
                     $parentItems = $db->request("SELECT * FROM items WHERE section_id  = " . $requestSectionsArray['id'] . " AND category = 'list' and parent_id is NULL ORDER BY order_by asc");
                     while($parentListItems = mysqli_fetch_array($parentItems))
                     {   
-                        $ConstructorArray = array();
+                        $ConstructorArray = [];
 
                         $requestListItems = $db->request("SELECT * FROM items WHERE parent_id  = " . $parentListItems['id'] . " ORDER BY order_by asc");
                         while($itemsListArray = mysqli_fetch_array($requestListItems))

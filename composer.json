@@ -1,0 +1,7 @@
+{
+    "name": "brizy/migration",
+    "type": "project",
+    "require": {
+        "webonyx/graphql-php": "^15.2"
+    }
+}

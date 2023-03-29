@@ -1,13 +1,12 @@
 <?php
 
-
 //$jsonFile = __DIR__. '/layout/Zion/data.json';
-$jsonFile = __DIR__. '/layout/Zion/about-us/data.json';
+// $jsonFile = __DIR__. '/layout/Zion/about-us/data.json';
 
-$jsonString = file_get_contents($jsonFile);
+// $jsonString = file_get_contents($jsonFile);
 
-$jsonData = json_decode($jsonString);
-$jsonData = json_decode($jsonData->data, true);
+// $jsonData = json_decode($jsonString);
+// $jsonData = json_decode($jsonData->data, true);
 
 
 
@@ -20,7 +19,7 @@ $jsonData = json_decode($jsonData->data, true);
 
 //$jsonData['items'][2]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = "<p class='finaldraft_placeholder'>Section Title</p>"; //Section 2 (CREATED FOR HIM)
 
-$jsonDataE = $jsonData['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text']; //Section 2 (CREATED FOR HIM)
+//$jsonDataE = $jsonData['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text']; //Section 2 (CREATED FOR HIM)
 
 
 //$add = "<p class='finaldraft_placeholder'>Section Title</p>"; 
@@ -34,7 +33,7 @@ $jsonDataE = $jsonData['items'][1]['value']['items'][0]['value']['items'][0]['va
 
 
 //var_dump(json_encode($jsonData));
-var_dump($jsonDataE);
+//var_dump($jsonDataE);
 
 
 function jsonClear($jsonStr)
