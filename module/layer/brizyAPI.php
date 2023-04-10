@@ -8,7 +8,7 @@ class brizyAPI{
 
     public function getToken(){
 
-        
+            return null;
 
     }
 
