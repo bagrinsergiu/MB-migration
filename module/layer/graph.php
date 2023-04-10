@@ -16,6 +16,10 @@ class layerGraphQL {
 
     public function __construct() {
         
+
+        // private $url;
+        // private $token;
+
     }
 
     public function sendRequest($query, $variables = null) {

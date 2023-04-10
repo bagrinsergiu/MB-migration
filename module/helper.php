@@ -66,26 +66,21 @@ class Helper{
         return $jsonDataE;
     }
 
-    public function curlExec($url, array $value)
+    public static function curlExec($url, array $value = [])
     {
         $ch = curl_init();
-        var_dump($url);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        //curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_URL, $url.$value['slug']);
+        curl_setopt($ch, CURLOPT_POST, 1);
         //curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-        //curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
-        if(array_key_exists('header', $value))
+        if(array_key_exists('getToken', $value))
         {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                'Content-Type: application/x-www-form-urlencoded',
-                'Content-Length: ' . $value['header']
-            ));
-
-            var_dump($value);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $value['getToken']);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
         }
 
-        if(array_key_exists('post_param', $value))
+        if(array_key_exists('postParam', $value))
         {
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $value['post_param']);
@@ -93,10 +88,15 @@ class Helper{
         }
         
         $response = curl_exec($ch);
-        var_dump($response);
+
+        if (curl_errno($ch)) {
+
+            print "Error: " . curl_error($ch);
+
+        }
         curl_close($ch);
     
-        return json_encode($response);
+        return $response;
     
     }
 

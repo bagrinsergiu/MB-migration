@@ -8,11 +8,22 @@ class Config{
     
     public static $dbLocal  = 'database';
     public static $dbName   = 'test';
-    public static $dbUser   = 'parser';
-    public static $dbPass   = '123456';
+    public static $dbUser   = 'root';
+    public static $dbPass   = 'tiger';
 
-    public static $graphQLurl = "http://brizy-api.local:8080/graphql";
-    public static $graphQLurlToken = "http://brizy-api.local:8080/token";
+    public static $brizyClientId      = '3onlcdgeeh0k8s4s4wkccwo8kwwo4g0g';
+    public static $brizyClientSecret  = '4ock4cos8wsowskw4c8cs4wkcskwkow0';
+
+
+
+
+    public static $urlAPI       = "http://192.168.0.8:80";
+    public static $graphQLAPI   = "/graphql";
+    public static $tokenAPI     = "/token";
+
+    public static $authenticateParametr = "client_id={client_id}&client_secret={client_secret}&grant_type=user_client_credentials&scope=user";
+
+
 
     public static $pathLayoutData    = __DIR__ . '/../layout/{theme}/{page}/data.json';
     public static $pathLayoutResurce = __DIR__ . '/../layout/{theme}/file';

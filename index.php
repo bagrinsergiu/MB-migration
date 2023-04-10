@@ -1,16 +1,26 @@
 <?php
 namespace Brizy;
 
+global $brizyAPI;
 require_once(__DIR__. '/module/core.php');
 
 
-$value['header'] = "client_id=3onlcdgeeh0k8s4s4wkccwo8kwwo4g0g&client_secret=4ock4cos8wsowskw4c8cs4wkcskwkow0&grant_type=user_client_credentials&scope=user";
+//$param = ['slug' => '/token', 'getToken' => 'client_id=3onlcdgeeh0k8s4s4wkccwo8kwwo4g0g&client_secret=4ock4cos8wsowskw4c8cs4wkcskwkow0&grant_type=user_client_credentials&scope=user'];
 
-$url = Config::$graphQLurlToken;
+//$url = "https://icanhazip.com/";
 
-$resultquery = $helper->curlExec($url, $value);
+//$url = Config::$urlAPI;
 
-var_dump($resultquery);
+//$resultquery = $helper->curlExec($url, $param);
+
+$token = $brizyAPI->getUserToken();
+
+
+//$graph = graphQlInit();
+
+
+
+var_dump($token['access_token']);
 
 
 
