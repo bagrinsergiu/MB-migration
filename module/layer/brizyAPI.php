@@ -33,6 +33,13 @@ class brizyAPI{
         return json_decode($resultquery, true);
     }
 
-    public function get
+    public function workspaces(){
+        
+    }
+
+    public function createUrlAPI($endPoint)
+    {
+        return \Brizy\Config::$urlAPI . Config::$endPointVersion . Config::$endPointApi[$endPoint];
+    }
 
 }

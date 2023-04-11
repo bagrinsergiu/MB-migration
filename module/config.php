@@ -21,6 +21,13 @@ class Config{
     public static $graphQLAPI   = "/graphql";
     public static $tokenAPI     = "/token";
 
+    public static $endPointVersion = '/2.0';
+    public static $endPointApi = [
+        'workspace' => '/workspaces',
+        'projects' => '/projects',
+        'team_members' => '/team_members'
+    ];
+
     public static $authenticateParametr = "client_id={client_id}&client_secret={client_secret}&grant_type=user_client_credentials&scope=user";
 
 
