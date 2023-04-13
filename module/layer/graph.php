@@ -9,19 +9,30 @@ use GraphQL\Http\Client as HttpClient;
 use GraphQL\Http\HeaderAuthorization;
 
 class layerGraphQL {
-
-
+    /**
+     * @var string
+     */
     private $url;
+    /**
+     * @var string
+     */
     private $token;
+    /**
+     * @var int
+     */
+    private $projectID;
 
-    public function __construct() {
-        
+    public function init(int $projectId,string $token) {
 
-        // private $url;
-        // private $token;
+        $this->projectID = $projectId;
+        $this->token = $token;
+        $this->url = Config::$urlGraphqlAPI;
 
     }
-
+    public function setProjectID(int $id)
+    {
+        $this->projectID = $id;
+    }
     public function sendRequest($query, $variables = null) {
         // создаем клиент GraphQL API
         $client = new Client($this->url, new HttpClient([

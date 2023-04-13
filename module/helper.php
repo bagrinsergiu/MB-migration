@@ -66,38 +66,67 @@ class Helper{
         return $jsonDataE;
     }
 
-    public static function curlExec($url, array $value = [])
+    public static function curlExec($url, $params, $method = 'GET')
     {
+
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url.$value['slug']);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
-        if(array_key_exists('getToken', $value))
-        {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $value['getToken']);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+
+        if ($method == 'GET') {
+            $url = $url . '?' . http_build_query($params);
+            curl_setopt($ch, CURLOPT_URL, $url);
+        } else {
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         }
 
-        if(array_key_exists('postParam', $value))
-        {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $value['post_param']);
-            var_dump($value);
-        }
-        
+        // Общие настройки
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+
+        // Выполнение запроса
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
 
-            print "Error: " . curl_error($ch);
-
+           print "Error: " . curl_error($ch);
         }
+
         curl_close($ch);
-    
+
         return $response;
-    
+
+
+//        $ch = curl_init();
+//        curl_setopt($ch, CURLOPT_URL, $url.$value['slug']);
+//        curl_setopt($ch, CURLOPT_POST, 1);
+//        //curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//
+//        if(array_key_exists('getToken', $value))
+//        {
+//            curl_setopt($ch, CURLOPT_POSTFIELDS, $value['getToken']);
+//            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+//        }
+//
+//        if(array_key_exists('postParam', $value))
+//        {
+//            curl_setopt($ch, CURLOPT_POST, true);
+//            curl_setopt($ch, CURLOPT_POSTFIELDS, $value['post_param']);
+//            var_dump($value);
+//        }
+//
+//        $response = curl_exec($ch);
+//
+//        if (curl_errno($ch)) {
+//
+//            print "Error: " . curl_error($ch);
+//
+//        }
+//        curl_close($ch);
+//
+//        return $response;
+
     }
 
 

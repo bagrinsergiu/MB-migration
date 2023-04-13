@@ -1,4 +1,13 @@
 <?php
+$token = null;
+
+
+$tresult = $token ? 'sett': 'default';
+
+echo $tresult;
+
+
+exit;
 
 //$jsonFile = __DIR__. '/layout/Zion/data.json';
 // $jsonFile = __DIR__. '/layout/Zion/about-us/data.json';
@@ -7,6 +16,7 @@
 
 // $jsonData = json_decode($jsonString);
 // $jsonData = json_decode($jsonData->data, true);
+
 
 $result = '{
     "data": [

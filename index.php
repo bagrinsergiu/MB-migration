@@ -2,25 +2,137 @@
 namespace Brizy;
 
 global $brizyAPI;
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
+
 require_once(__DIR__. '/module/core.php');
 
 
+
+$myWorksapces = $brizyAPI->getWorkspaces(); // JSON
+//
+var_dump($myWorksapces['body']);
+//foreach($myWorksapces['body'] as $value){
+//    $value
+//}
+$graphqlToken = $brizyAPI->getGraphToken('4303800');
+$idProject = 4303800;
+
+
+$graphLayer->init($idProject, $graphqlToken['access_token']);
+
+
+
+
+//$parametrs = ['page'=>1, 'count'=>100];
+$parametrs = ['name'=>'CreateScript'];
+
+$result = $brizyAPI->httpClient('POST', 'https://beta1.brizy.cloud/api/2.0/workspaces', $parametrs );
+var_dump($result);
+
+exit;
+$parametrs = ['name'=>'CreateScript'];
+
+$parametrs = ['page'=>1, 'count'=>100];
+
+$result = httpClient('GET', 'https://beta1.brizy.cloud/api/2.0/workspaces', $parametrs );
+var_dump($result);
+exit;
+    function httpClient($method, $url, $data = null, $token = null ): array
+    {
+        $client = new Client();
+
+        $token = $token ? $this->projectToken : Config::$devToken;
+
+        try {
+            $headers = [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'x-auth-user-token' => $token
+            ];
+            $options = [
+                'headers' => $headers,
+                'timeout' => 30,
+                'connect_timeout' => 5,
+                'form_params'=>[ 'name'=>'CreateScript' ]
+            ];
+            if ($method === 'POST' && isset($data))
+            {
+                $options['form_params'] = $data;
+            }
+
+            if($method === 'GET')
+            {
+                $data = http_build_query($data);
+                $url  = sprintf("%s?%s", $url, $data);
+            }
+
+            $response = $client->request($method, $url, $options);
+
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody()->getContents();
+
+            return ['status' => $statusCode, 'body' => $body];
+
+        } catch (RequestException $e) {
+            if ($e->hasResponse())
+            {
+                $response = $e->getResponse();
+                $statusCode = $response->getStatusCode();
+                $body = $response->getBody()->getContents();
+
+                return ['status' => $statusCode, 'body' => $body];
+            }
+            else
+            {
+                return ['status' => false, 'body' => 'Request timed out.'];
+            }
+        } catch (GuzzleException $e) {
+            return ['status' => false, 'body' => $e->getMessage()];
+        }
+    }
+
+
+
+
+
+//$params = array(
+//    'name' => 'CreateScript'
+//);
+//
+//var_dump(Helper::curlExec('https://beta1.brizy.cloud/api/2.0/workspaces',$params, 'POST'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+//curl -X 'POST' '' -H 'connection: close' -H 'content-length: 17' -H 'content-type: application/x-www-form-urlencoded' -H 'user-agent: GuzzleHttp/7' -H 'host: webhook.site' -d $'name=CreateScript'
+//curl -X "POST" /api/2.0/workspaces -H "Accept:\ application/json" -H "Content-type:\ application/x-www-form-urlencoded"  -d "name=create2"
 //$param = ['slug' => '/token', 'getToken' => 'client_id=3onlcdgeeh0k8s4s4wkccwo8kwwo4g0g&client_secret=4ock4cos8wsowskw4c8cs4wkcskwkow0&grant_type=user_client_credentials&scope=user'];
 
 //$url = "https://icanhazip.com/";
 
 //$url = Config::$urlAPI;
-
+//
 //$resultquery = $helper->curlExec($url, $param);
 
-$token = $brizyAPI->getUserToken();
+//$token = $brizyAPI->getUserToken();
 
 
 //$graph = graphQlInit();
 
 
 
-var_dump($token['access_token']);
+//var_dump($token['access_token']);
 
 
 

@@ -17,13 +17,17 @@ class Config{
 
 
 
-    public static $urlAPI       = "http://192.168.0.8:80";
+    public static $urlAPI       = "https://beta1.brizy.cloud/api";
+    public static $devToken = 'ZDRmZjIxMzc4M2Y0YmMzZjg5ZmE5YmE4OTUyOTVjMzNkZmFhNmRlZTMwNjliNzIwODhlM2I0MmEwNTlkNGIwMA';
+
+    public static $urlGetApiToken = 'https://beta1.brizy.cloud/api/projects/{project}/token';
+    public static $urlGraphqlAPI = 'https://beta1.brizy.cloud/graphql/{Project.id}/brizy-api';
     public static $graphQLAPI   = "/graphql";
     public static $tokenAPI     = "/token";
 
     public static $endPointVersion = '/2.0';
     public static $endPointApi = [
-        'workspace' => '/workspaces',
+        'workspaces' => '/workspaces',
         'projects' => '/projects',
         'team_members' => '/team_members'
     ];
