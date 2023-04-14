@@ -1,7 +1,9 @@
 <?php
 namespace Brizy;
 
-use ZipArchive, RecursiveIteratorIterator, RecursiveDirectoryIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ZipArchive;
 
 class ArchiveBuilder {
 

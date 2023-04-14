@@ -6,17 +6,17 @@ class Config{
 
     public static $debugMode  = FALSE;
     
-    public static $dbLocal  = 'database';
+    public static $dbLocal  = '127.0.0.1';
     public static $dbName   = 'test';
     public static $dbUser   = 'root';
-    public static $dbPass   = 'tiger';
+    public static $dbPass   = '';
 
     public static $brizyClientId      = '3onlcdgeeh0k8s4s4wkccwo8kwwo4g0g';
     public static $brizyClientSecret  = '4ock4cos8wsowskw4c8cs4wkcskwkow0';
 
 
 
-
+    public static $nameMigration = "Migration"; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
     public static $urlAPI       = "https://beta1.brizy.cloud/api";
     public static $devToken = 'ZDRmZjIxMzc4M2Y0YmMzZjg5ZmE5YmE4OTUyOTVjMzNkZmFhNmRlZTMwNjliNzIwODhlM2I0MmEwNTlkNGIwMA';
 

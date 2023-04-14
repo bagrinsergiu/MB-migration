@@ -1,31 +1,27 @@
 <?php
 namespace Brizy;
 
-global $brizyAPI;
+require_once(__DIR__ . '/module/core.php');
+$brizyAPI   = new BrizyAPI();
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
+//получаем полный список Workspaces  json
+var_dump($brizyAPI->getWorkspaces());
 
-require_once(__DIR__. '/module/core.php');
+// возвращает только id Workspaces по его имени или возвращет false если ничего не найдено
+var_dump($brizyAPI->getWorkspaces(Config::$nameMigration));
 
+var_dump($brizyAPI->createdWorkspaces());
 
-
-$myWorksapces = $brizyAPI->getWorkspaces(); // JSON
-//
-var_dump($myWorksapces['body']);
-//foreach($myWorksapces['body'] as $value){
-//    $value
-//}
 $graphqlToken = $brizyAPI->getGraphToken('4303800');
 $idProject = 4303800;
-
 
 $graphLayer->init($idProject, $graphqlToken['access_token']);
 
 
 
 
+
+exit;
 //$parametrs = ['page'=>1, 'count'=>100];
 $parametrs = ['name'=>'CreateScript'];
 
@@ -33,6 +29,7 @@ $result = $brizyAPI->httpClient('POST', 'https://beta1.brizy.cloud/api/2.0/works
 var_dump($result);
 
 exit;
+
 $parametrs = ['name'=>'CreateScript'];
 
 $parametrs = ['page'=>1, 'count'=>100];

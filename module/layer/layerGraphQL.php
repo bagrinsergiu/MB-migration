@@ -22,14 +22,20 @@ class layerGraphQL {
      */
     private $projectID;
 
-    public function init(int $projectId,string $token) {
+
+    /**
+     * @param int $projectId
+     * @param string $token
+     * @return void
+     */
+    public function init($projectId, $token) {
 
         $this->projectID = $projectId;
         $this->token = $token;
         $this->url = Config::$urlGraphqlAPI;
 
     }
-    public function setProjectID(int $id)
+    public function setProjectID($id)
     {
         $this->projectID = $id;
     }

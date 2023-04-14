@@ -3,6 +3,7 @@ namespace Brizy;
 
 use Brizy\Config;
 use Brizy\Helper;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
@@ -10,7 +11,7 @@ use GuzzleHttp\Exception\ServerException;
 use Psr\Http\Message\ResponseInterface;
 
 
-class brizyAPI{
+class BrizyAPI{
 
     /**
      * @var Client
@@ -23,10 +24,69 @@ class brizyAPI{
     {
         $this->projectToken = Config::$devToken;
     }
+    public function getWorkspaces($name = null)
+    {
+        $result = $this->httpClient('GET', $this->createUrlAPI('workspaces'),['page'=>1,'count'=>100]);
+
+        if (!isset($name)){
+            return  $result;
+        }
+
+        $result = json_decode($result['body'], true);
+
+        if(!is_array($result))
+        {
+            return false;
+        }
+
+        foreach($result as $value)
+        {
+            if($value['name'] === $name)
+            {
+                return $value['id'];
+            }
+        }
+        return false;
+    }
+    public function getProject($workspacesID)
+    {
+        $param = [
+            'page' => 1,
+            'count' => 100,
+            'workspace' => $workspacesID
+        ];
+        return $this->httpClient('GET', $this->createUrlAPI('projects'), $param);
+
+    }
+
+    public function getGraphToken($projectid){
+
+        return $this->httpClient('GET',  $this->createUrlApiProject($projectid));
+
+    }
+
+    public function getUserToken()
+    {
+        $brizyCreateClient = $this->createUser();
+
+        $authenticateParametr = Helper::strReplace(Config::$authenticateParametr, ['{client_id}','{client_secret}'], $brizyCreateClient);
+
+        $param = ['slug' => '/token', 'getToken' => $authenticateParametr];
+
+        $resultquery = Helper::curlExec(Config::$urlAPI, $param);
+
+        return json_decode($resultquery, true);
+    }
+
+    private function getApiProjectToken($projectID)
+    {
+        return $this->httpClient('GET', $this->createUrlApiProject($projectID) );
+    }
 
     private function setProjectToken($newToken){
         $this->projectToken = $newToken;
     }
+
 
     public function createUser()
     {
@@ -46,47 +106,16 @@ class brizyAPI{
         return [Config::$brizyClientId, Config::$brizyClientSecret];
     }
 
-    public function getWorkspaces($param= ['page'=>1,'count'=>100])
+
+    public function createdWorkspaces()
     {
-        return $this->httpClient('GET', $this->createUrlAPI('workspaces'),$param);
+        return $this->httpClient('POST', $this->createUrlAPI('projects'), ['name' => Config::$nameMigration]);
     }
-
-    public function createdWorkspaces($name)
-    {
-        $this->httpClient('POST', );
-
-        return $result;
-    }
-
-    public function getGraphToken($projectid){
-
-        return $this->httpClient('GET',  $this->createUrlApiProject($projectid));
-
-    }
-
-    public function getUserToken()
-    {
-        $brizyCreateClient = $this->createUser();
-
-        $authenticateParametr = Helper::strReplace(Config::$authenticateParametr, ['{client_id}','{client_secret}'], $brizyCreateClient);
-        
-        $param = ['slug' => '/token', 'getToken' => $authenticateParametr];
-
-        $resultquery = Helper::curlExec(Config::$urlAPI, $param);
-
-        return json_decode($resultquery, true);
-    }
-
 
     /**
      * @throws GuzzleException
      */
-    private function getApiProjectToken()
-    {
-        $this->httpClient('GET', $this->createUrlApiProject() );
 
-        return $token;
-    }
     private function createUrlApiProject($projectId)
     {
         return Helper::strReplace(Config::$urlGetApiToken, '{project}', $projectId);
@@ -110,7 +139,7 @@ class brizyAPI{
             ];
             $options = [
                 'headers' => $headers,
-                'timeout' => 30,
+                'timeout' => 10,
                 'connect_timeout' => 5
             ];
             if ($method === 'POST' && isset($data))

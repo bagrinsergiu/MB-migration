@@ -1,13 +1,11 @@
 <?php
-namespace Brizy;
+namespace Builder;
 
 use Brizy\Helper;
 
 class ItemsBuilder
-{   
-
+{
     public $datajsonDecodeClass;
-
     private $namePagesArray;
     private $pageName;
     private $designsName;
@@ -33,7 +31,6 @@ class ItemsBuilder
     {   
         return $this->arrayObject[$object];
     }
-
 
     public function getClass()
     {   
@@ -99,14 +96,14 @@ class ItemsBuilder
 
         if($templatDataArray != FALSE)
         {
-            $templatArray = array( 
-                                    "class"     => $templatDataArray->class,
-                                    "data"      => json_decode($templatDataArray->data, true),
-                                    "media"     => json_decode($templatDataArray->media, true),
-                                    "meta"      => json_decode($templatDataArray->meta, true),
-                                    "version"   => $templatDataArray->editorVersion,
-                                    "files"     => $templatDataArray->files,
-                                    "hasPro"    => $templatDataArray->hasPro,
+            $templatArray = array(
+                "class"     => $templatDataArray->class,
+                "data"      => json_decode($templatDataArray->data, true),
+                "media"     => json_decode($templatDataArray->media, true),
+                "meta"      => json_decode($templatDataArray->meta, true),
+                "version"   => $templatDataArray->editorVersion,
+                "files"     => $templatDataArray->files,
+                "hasPro"    => $templatDataArray->hasPro,
             );
             return $templatArray;
         }
