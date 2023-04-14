@@ -60,8 +60,16 @@ class BrizyAPI{
     }
 
     public function getGraphToken($projectid){
+        $result = $this->httpClient('GET',  $this->createUrlApiProject($projectid));
 
-        return $this->httpClient('GET',  $this->createUrlApiProject($projectid));
+        $result = json_decode($result['body'], true);
+
+        if(!is_array($result))
+        {
+            return false;
+        }
+
+        return $result['access_token'];
 
     }
 
@@ -97,13 +105,26 @@ class BrizyAPI{
         return [Config::$brizyClientId, Config::$brizyClientSecret];
     }
 
-    public function createProject()
+    public function createProject($projectName,$workspacesId, $filter = null)
     {
-        /**
-         * this is where the user creation magic happens Brizy
-         *
-         */
-        return [Config::$brizyClientId, Config::$brizyClientSecret];
+        $result = $this->httpClient('POST', $this->createUrlAPI('projects'), [
+            'name' => $projectName,
+            'workspace' => $workspacesId
+        ]);
+
+        if (!isset($filter)){
+            return  $result;
+        }
+
+        $result = json_decode($result['body'], true);
+
+        if(!is_array($result))
+        {
+            return false;
+        }
+
+        return $result[$filter];
+
     }
 
 
