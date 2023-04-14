@@ -48,6 +48,7 @@ class BrizyAPI{
         }
         return false;
     }
+
     public function getProject($workspacesID, $filtre)
     {
         $param = [
@@ -94,36 +95,38 @@ class BrizyAPI{
 
     }
 
-    public function getUserToken()
+    public function getUserToken($userId)
     {
-        $brizyCreateClient = $this->createUser();
+        $result = $this->httpClient('GET', $this->createUrlAPI('users'), ['id'=>$userId]);
 
-        $authenticateParametr = Helper::strReplace(Config::$authenticateParametr, ['{client_id}','{client_secret}'], $brizyCreateClient);
+        $result = json_decode($result['body'], true);
 
-        $param = ['slug' => '/token', 'getToken' => $authenticateParametr];
+        if(!is_array($result))
+        {
+            return false;
+        }
 
-        $resultquery = Helper::curlExec(Config::$urlAPI, $param);
-
-        return json_decode($resultquery, true);
+        return $result['token'];
     }
 
-    private function getApiProjectToken($projectID)
+    private function setProjectToken($newToken)
     {
-        return $this->httpClient('GET', $this->createUrlApiProject($projectID) );
-    }
-
-    private function setProjectToken($newToken){
         $this->projectToken = $newToken;
     }
 
-
-    public function createUser()
+    public function createUser(array $value)
     {
-        /**
-         * this is where the user creation magic happens Brizy
-         * 
-         */
-        return [Config::$brizyClientId, Config::$brizyClientSecret];
+        $result = $this->httpClient('POST', $this->createUrlAPI('users'), $value);
+
+        $result = json_decode($result['body'], true);
+
+        if(!is_array($result))
+        {
+            return false;
+        }
+
+        return $result['token'];
+
     }
 
     public function createProject($projectName,$workspacesId, $filter = null)
@@ -153,10 +156,6 @@ class BrizyAPI{
         return $this->httpClient('POST', $this->createUrlAPI('projects'), ['name' => Config::$nameMigration]);
     }
 
-    /**
-     * @throws GuzzleException
-     */
-
     private function createUrlApiProject($projectId)
     {
         return Helper::strReplace(Config::$urlGetApiToken, '{project}', $projectId);
@@ -178,11 +177,13 @@ class BrizyAPI{
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'x-auth-user-token' => $token
             ];
+
             $options = [
                 'headers' => $headers,
                 'timeout' => 10,
                 'connect_timeout' => 5
             ];
+
             if ($method === 'POST' && isset($data))
             {
                     $options['form_params'] = $data;

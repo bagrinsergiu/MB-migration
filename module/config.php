@@ -17,19 +17,18 @@ class Config{
 
 
     public static $nameMigration = "Migration"; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
-    public static $urlAPI       = "https://beta1.brizy.cloud/api";
-    public static $devToken = 'ZDRmZjIxMzc4M2Y0YmMzZjg5ZmE5YmE4OTUyOTVjMzNkZmFhNmRlZTMwNjliNzIwODhlM2I0MmEwNTlkNGIwMA';
+    public static $urlAPI        = "https://beta1.brizy.cloud/api";
+    public static $devToken      = 'ZDRmZjIxMzc4M2Y0YmMzZjg5ZmE5YmE4OTUyOTVjMzNkZmFhNmRlZTMwNjliNzIwODhlM2I0MmEwNTlkNGIwMA';
 
     public static $urlGetApiToken = 'https://beta1.brizy.cloud/api/projects/{project}/token';
     public static $urlGraphqlAPI = 'https://beta1.brizy.cloud/graphql/{Project.id}/brizy-api';
-    public static $graphQLAPI   = "/graphql";
-    public static $tokenAPI     = "/token";
 
     public static $endPointVersion = '/2.0';
     public static $endPointApi = [
-        'workspaces' => '/workspaces',
-        'projects' => '/projects',
-        'team_members' => '/team_members'
+        'workspaces'    => '/workspaces',
+        'projects'      => '/projects',
+        'team_members'  => '/team_members',
+        'users'         => '/users'
     ];
 
     public static $authenticateParametr = "client_id={client_id}&client_secret={client_secret}&grant_type=user_client_credentials&scope=user";
