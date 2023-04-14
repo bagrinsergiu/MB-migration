@@ -48,14 +48,35 @@ class BrizyAPI{
         }
         return false;
     }
-    public function getProject($workspacesID)
+    public function getProject($workspacesID, $filtre)
     {
         $param = [
             'page' => 1,
             'count' => 100,
             'workspace' => $workspacesID
         ];
-        return $this->httpClient('GET', $this->createUrlAPI('projects'), $param);
+
+        $result = $this->httpClient('GET', $this->createUrlAPI('projects'), $param);
+
+        if (!isset($filtre)){
+            return  $result;
+        }
+
+        $result = json_decode($result['body'], true);
+
+        if(!is_array($result))
+        {
+            return false;
+        }
+
+        foreach($result as $value)
+        {
+            if($value['name'] === $filtre)
+            {
+                return $value['id'];
+            }
+        }
+        return false;
 
     }
 
@@ -126,7 +147,6 @@ class BrizyAPI{
         return $result[$filter];
 
     }
-
 
     public function createdWorkspaces()
     {
