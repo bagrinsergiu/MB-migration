@@ -1,5 +1,5 @@
 <?php
-namespace Brizy;
+namespace Layer;
 
 use Brizy\Config;
 use Brizy\Helper;
