@@ -34,7 +34,7 @@ class Parser
     {
         $result = [];
 
-        $requestPageSite = $this->db->request("SELECT `id`, `slug`, `name` FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, `position`");
+        $requestPageSite = $this->db->request("SELECT `id`, `slug`, `name` FROM pages WHERE slug = 'about-us' and site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, `position`");
 
         while($pageSite = mysqli_fetch_array($requestPageSite))
         {
@@ -52,7 +52,6 @@ class Parser
         $result = [];
 
         $requestPageSite = $this->db->request("SELECT id, position FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY `position` asc");
-
         while($pageSite = mysqli_fetch_array($requestPageSite))
         {
             $result[] = [

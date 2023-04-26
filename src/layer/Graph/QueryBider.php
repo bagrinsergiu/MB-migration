@@ -316,7 +316,7 @@ class QueryBuilder
      * @return mixed
      * @throws \Exception
      */
-    public function createCollectionItem($collection_type_id, $slug, $title, array $fields = [], $status = Collection::STATUS_DRAFT, $pageData = null)
+    public function createCollectionItem($collection_type_id, $slug, $title, array $fields = [], $status = 'draft', $pageData = null)
     {
         if (!$this->client) {
             throw new \Exception('Client was not init.');

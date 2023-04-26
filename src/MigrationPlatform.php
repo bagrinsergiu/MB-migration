@@ -23,12 +23,12 @@ class MigrationPlatform
 
     public function __construct(int $projectID_MB, int $projectID_Brizy)
     {
-        Utils::log('Start', 1, 'MIGRATION');
+        Utils::log('Start Process!', 1, 'MIGRATION');
 
         $cache      = new VariableCache();
         $brizyApi   = new BrizyAPI();
-
         $errorDump  = new ErrorDump();
+
         $errorDump->setDate($cache);
 
         $GraphApi_Brizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
@@ -39,12 +39,21 @@ class MigrationPlatform
         $cache->set('graphToken', $brizyApi->getGraphToken($projectID_Brizy));
 
         $this->parser = new Parser($cache);
-        //$this->parsPage($cache);
-
         $this->QueryBuilder = new QueryBuilder($cache);
 
-        $this->getAllPage($cache);
+        $parentPages = $this->parser->getParentPages();
 
+        foreach ($parentPages as $pages)
+        {
+            var_dump($this->getItemsFromPage($pages['id']));
+        }
+
+
+        $this->getAllPage($cache); //получаем лист всех страниц
+        //var_dump($cache);
+        $crated = $this->creteNewPage($cache); // создаем новую страницу
+        var_dump($crated);
+        //$this->getAllPage($cache);
         var_dump($cache);
     }
 
@@ -53,9 +62,25 @@ class MigrationPlatform
         return $this->parser->getSite();
     }
 
+    private function getItemsFromPage($page)
+    {
+        Utils::log('Parent Page id:' . $page, 1, 'Foreach');
+        $child = $this->parser->getChildFromPages($page);
+        $items = [];
+        foreach ($child as $sectionID)
+        {
+            Utils::log('Section id:' . $sectionID['id'], 1, 'Foreach');
+            $section = $this->parser->getSectionsPage($sectionID['id']);
+            foreach ($section as $value)
+            {
+                $items[] = $this->parser->getSectionsItems($value['id'], true);
+            }
+        }
+        return $items;
+    }
+
     private function getAllPage(VariableCache $cache)
     {
-
         $collectionTypes = $this->QueryBuilder->getCollectionTypes();
 
         $foundCollectionTypes = [];
@@ -64,6 +89,7 @@ class MigrationPlatform
         foreach ($collectionTypes as $collectionType) {
             if ($collectionType['slug'] == 'page') {
                 $foundCollectionTypes[$collectionType['slug']] = $collectionType['id'];
+                $cache->set('mainCollectionType', $collectionType['id']);
             }
         }
 
@@ -74,8 +100,57 @@ class MigrationPlatform
                 $entities[$entity['slug']] = $entity['id'];
             }
         }
-
         $cache->set('ListPages', $entities);
+        return $entities;
+    }
+
+    private function creteNewPage(VariableCache $cache, $slug, $title)
+    {
+        if($this->pageCheck($cache, $slug))
+        {
+            $this->QueryBuilder->CreateCollectionItem($cache->get('mainCollectionType'), $slug, $title);
+        }
+        $updatedList = $this->getAllPage($cache);
+        foreach ($updatedList as $listSlug => $mainCollectionItem)
+        {
+            if($listSlug == $slug)
+            {
+                $cache->set('currentPageOnWork', $mainCollectionItem);
+                return $mainCollectionItem;
+            }
+        }
+        return false;
+    }
+
+    private function setCurrentPageOnWork($collectionItem,VariableCache $cache)
+    {
+        $cache->set('currentPageOnWork', $collectionItem);
+    }
+
+    private function pageCheck(VariableCache $cache, $slug): bool
+    {
+        $ListPages = $cache->get('ListPages');
+        foreach ($ListPages as $listSlug => $collectionItems)
+        {
+            if($listSlug == $slug)
+            {
+              return false;
+            }
+        }
+        return true;
+    }
+
+    private function getCollectionItem(VariableCache $cache, $slug)
+    {
+        $ListPages = $cache->get('ListPages');
+        foreach ($ListPages as $listSlug => $collectionItems)
+        {
+            if($listSlug == $slug)
+            {
+                return $collectionItems;
+            }
+        }
+        return false;
     }
 
     private function getPage()
