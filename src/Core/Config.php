@@ -4,7 +4,7 @@ namespace Brizy\core;
 
 class Config{
 
-    public static $debugMode  = FALSE;
+    public static $debugMode  = true;
     
     public static $dbLocal  = '127.0.0.1';
     public static $dbName   = 'test';
@@ -33,17 +33,19 @@ class Config{
         'team_members'  => '/team_members',
         'users'         => '/users',
         'pages'         => '/pages',
-        'menus/create'  => '/menus/create'
+        'menus/create'  => '/menus/create',
+        'media'         => '/media'
     ];
 
     public static $authenticateParametr = "client_id={client_id}&client_secret={client_secret}&grant_type=user_client_credentials&scope=user";
 
 
 
-    public static $pathLayoutData    = __DIR__ . '/../layout/{theme}/{page}/data.json';
-    public static $pathLayoutResurce = __DIR__ . '/../layout/{theme}/file';
+    public static $pathLayoutData    = __DIR__ . '/../../Layout/{theme}/{page}/data.json';
+    public static $pathLayoutResurce = __DIR__ . '/../Layout/{theme}/file';
 
     public static $pathLogFile = __DIR__ . "/../../log/{{PREFIX}}.log";
+    public static $pathMedia = __DIR__ . "/../../tmp/media/";
 
     public static $themes = array(
         "Anthem"    => "Anthem",
@@ -78,5 +80,6 @@ class Config{
         "Voyage"    => 560,
         "Zion"      => 571
     );
-    
+
+
 }

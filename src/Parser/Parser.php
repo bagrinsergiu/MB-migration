@@ -1,9 +1,10 @@
 <?php
 namespace Brizy\Parser;
 
-use Brizy\builder\VariableCache;
+use Brizy\Builder\Utils\ArrayManipulator;
+use Brizy\Builder\VariableCache;
+use Brizy\core\Utils;
 use Brizy\layer\MySql\DBConnect;
-use Builder\ArrayManipulator;
 
 class Parser
 {
@@ -27,26 +28,40 @@ class Parser
 
     public function getSite()
     {
-        return $this->db->requestArray("SELECT `id`, `name`, `title`, `settings`, `design_uuid`, `favicon` from `sites` WHERE id = " . $this->siteId);
+        $settingSite = $this->db->requestArray("SELECT `id`, `name`, `title`, `settings`, `design_uuid`, `favicon` from `sites` WHERE id = " . $this->siteId);
+        $designSite = $this->db->requestArray("SELECT * from `designs` WHERE uuid ='".$settingSite['design_uuid']."'");
+        return [
+            'name' => $settingSite['name'],
+            'title' => $settingSite['title'],
+            'design' => $designSite['name'],
+            'favicon' => $settingSite['favicon']
+        ];
     }
 
     public function getParentPages()
     {
         $result = [];
-
-        $requestPageSite = $this->db->request("SELECT `id`, `slug`, `name` FROM pages WHERE slug = 'about-us' and site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, `position`");
-
-        while($pageSite = mysqli_fetch_array($requestPageSite))
+        $requestPageSite = $this->db->request("SELECT `id`, `slug`, `name`, `position` FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, `position`");
+        if($requestPageSite->num_rows != 0)
         {
-            $result[] = [
-                'id'    => $pageSite['id'],
-                'slug'  => $pageSite['slug'],
-                'name'  => $pageSite['name']
-                ];
+            while($pageSite = mysqli_fetch_array($requestPageSite))
+            {
+                $result[] = [
+                    'id'    => $pageSite['id'],
+                    'slug'  => $pageSite['slug'],
+                    'name'  => $pageSite['name'],
+                    'position'  => $pageSite['position']
+                    ];
+            }
         }
-
+        else
+        {
+            Utils::log('MB project pages not found', 2, "getParentPages");
+            $result = false;
+        }
         return $result;
     }
+
     public function getChildFromPages($parenId)
     {
         $result = [];
@@ -62,15 +77,32 @@ class Parser
 
         return $result;
     }
+    public function getSectionFromParentPage($parenId)
+    {
+        $result = [];
+
+        $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position FROM sections WHERE page_id  = " . $parenId);
+        while($pageSections = mysqli_fetch_array($requestSections))
+        {
+            $result[] = [
+                'id'           => $pageSections['id'],
+                'type_section' => $pageSections['category'],
+                'position'     => $pageSections['position'],
+            ];
+        }
+        return $result;
+    }
     public function getSectionsPage($id)
     {
         $result = [];
         $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position FROM sections WHERE page_id  = " . $id);
         while($pageSections = mysqli_fetch_array($requestSections))
         {
+            $typeSectionLayoutUuid = $this->db->requestArray("SELECT name FROM section_layouts WHERE `uuid`  = '" . $pageSections['section_layout_uuid'] . "'");
             $result[] = [
               'id'           => $pageSections['id'],
-              'type_section' => $pageSections['category'],
+              'category' => $pageSections['category'],
+              'typeSection' => $typeSectionLayoutUuid['name'],
               'position'     => $pageSections['position'],
             ];
         }
@@ -80,14 +112,16 @@ class Parser
     {
         $result = [];
 
-        if($this->cache->exist($sectionId))
+        if($this->cache->exist($sectionId['id']))
         {
-            return $this->cache->get($sectionId);
+            Utils::log('Get item from cache | Section id: '. $sectionId['id'], 1, 'getSectionsItems');
+            return $this->cache->get($sectionId['id']);
         }
 
-        $requestItemsFromSection = $this->db->request("SELECT * FROM items WHERE section_id = " . $sectionId);
+        $requestItemsFromSection = $this->db->request("SELECT * FROM items WHERE `group` is not null and section_id = " . $sectionId['id']);
         while($sectionsItems = mysqli_fetch_array($requestItemsFromSection))
         {
+            Utils::log('Get item | id: ' .$sectionsItems['id'].' from section id: '. $sectionId['id'], 1, 'getSectionsItems');
             $result[] = [
                 'id'        => $sectionsItems['id'],
                 'category'  => $sectionsItems['category'],
@@ -97,11 +131,11 @@ class Parser
                 'content'   => $sectionsItems['content'],
             ];
         }
-        $this->cache->set($sectionId, $result);
+        $this->cache->set($sectionId['id'], $result);
 
         if($assembly)
         {
-            return $this->assemblySection($sectionId);
+            return $this->assemblySection($sectionId['id']);
         }
 
         return $result;

@@ -19,7 +19,8 @@ class ErrorDump
         set_error_handler([$this, 'errorHandler']);
         set_exception_handler([$this, 'exceptionHandler']);
     }
-    public function setDate(VariableCache $cache){
+    public function setDate(VariableCache $cache): void
+    {
         $this->cache = $cache;
     }
     public function errorHandler($errno, $errstr, $errfile, $errline)

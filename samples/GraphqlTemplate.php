@@ -4,7 +4,7 @@ use Brizy\core\Config;
 use Brizy\core\Helper;
 use Brizy\layer\Graph\GQLT;
 
-require_once(__DIR__ . '/../src/core.php');
+require_once(__DIR__ . '/../src/Core.php');
 
 $GT = new GQLT();
 

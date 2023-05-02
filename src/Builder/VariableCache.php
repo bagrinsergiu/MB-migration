@@ -1,6 +1,6 @@
 <?php
 
-namespace Brizy\builder;
+namespace Brizy\Builder;
 
 use Brizy\core\Utils;
 

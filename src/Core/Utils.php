@@ -27,14 +27,16 @@ class Utils{
 
         foreach ($files as $file) {
             if (is_file($file)) {
+                $file_info = pathinfo($file);
 
-                require_once $file;
+                if ($file_info['extension'] === 'php' && filetype($file) === 'file') {
+                    require_once $file;
+                }
 
             } elseif (is_dir($file)) {
                 self::resourcesInitialization($file);
             }
         }
-
     }
 
     public static function init(VariableCache $cache = null){
@@ -165,12 +167,21 @@ class Utils{
             $param['project_id'] = self::$projectID;
         }
 
-        self::writeLogToFile($param);
+        if(Config::$debugMode)
+        {
+            self::writeLogToFile($param);
+        }
+
+        if(Config::$debugMode == false && $type > 1)
+        {
+            self::writeLogToFile($param);
+        }
+
     }
 
     private static function writeLogToFile(array $param)
     {
-        $typeMessageArray = array("DEBUG","INFO","WARNING","CRITICAL");
+        $typeMessageArray = array("DEBUG","INFO","WARNING","CRITICAL","PROCESS","ERROR");
         $project_id = '';
 
         if(isset($param['project_id']))

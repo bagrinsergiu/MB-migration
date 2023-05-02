@@ -1,6 +1,6 @@
 <?php
 
-namespace Brizy;
+namespace Brizy\Builder\Layout\Zion;
 
 class Zion
 {

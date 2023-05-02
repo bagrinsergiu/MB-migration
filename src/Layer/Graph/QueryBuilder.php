@@ -3,7 +3,6 @@
 namespace Brizy\layer\Graph;
 
 use Brizy\builder\VariableCache;
-use Brizy\core\Config;
 use Brizy\core\Utils;
 use GraphQL\Client;
 use GraphQL\InlineFragment;
@@ -15,36 +14,19 @@ use GraphQL\Variable;
 class QueryBuilder
 {
 
-    /**
-     * @var Client
-     */
-    private $client;
-
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    private Client $client;
 
     /**
      * @var string
      */
-    private $brizy_cms_api_url;
+    private mixed $brizy_cms_api_url;
 
-    /**
-     * @var Session
-     */
-    private $session;
+    private mixed $session;
     /**
      * @var VariableCache
      */
-    private $cache;
+    private VariableCache $cache;
 
-    /**
-     * BrizyCMS constructor.
-     * @param $brizy_cms_api_url
-     * @param Logger $logger
-     * @param Session $session
-     */
     public function __construct(VariableCache $cache)
     {
         $this->cache = $cache;
@@ -56,11 +38,11 @@ class QueryBuilder
 
     }
 
-    public function setProject()
+    public function setProject(): void
     {
         $token = $this->session;
         if (!$token) {
-            throw new \Exception('Token was not found');
+            Utils::log('Token was not found', 1, 'QueryBuilder');
         }
 
         $this->client = $this->getClient([
@@ -69,7 +51,7 @@ class QueryBuilder
         ]);
     }
 
-    private function getClient(array $headers = [])
+    private function getClient(array $headers = []): Client
     {
         return new Client(
             $this->brizy_cms_api_url,
@@ -192,10 +174,8 @@ class QueryBuilder
      * @return array|mixed
      * @throws \Exception
      */
-    public function getCollectionTypes($withFieldsSet = true)
+    public function getCollectionTypes($withFieldsSet = true): mixed
     {
-        Utils::log('Get!', 1, 'getCollectionTypes');
-
         if (!$this->client) {
             Utils::log('Client was not init.', 2, 'getCollectionTypes');
         }
@@ -316,7 +296,7 @@ class QueryBuilder
      * @return mixed
      * @throws \Exception
      */
-    public function createCollectionItem($collection_type_id, $slug, $title, array $fields = [], $status = 'draft', $pageData = null)
+    public function createCollectionItem($collection_type_id, $slug, $title, array $fields = [], $status = 'published', $pageData = null): mixed
     {
         if (!$this->client) {
             throw new \Exception('Client was not init.');
@@ -369,10 +349,10 @@ class QueryBuilder
      * @return array|mixed
      * @throws \Exception
      */
-    public function getCollectionItems(array $collection_type_ids, $page = 1, $limit = 1000, $withFields = true)
+    public function getCollectionItems(array $collection_type_ids, $page = 1, $limit = 1000, $withFields = true): mixed
     {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            Utils::log('Client was not init.', 2, 'getCollectionItems');
         }
 
         $selectionSet = [];
@@ -533,7 +513,7 @@ class QueryBuilder
         return $results->getData();
     }
 
-    public function updateCollectionItem($collection_item_id, array $fields = [], $title = null, $status = null, $pageData = null)
+    public function updateCollectionItem($collection_item_id, $slug, $pageData = null, $status = null, array $fields = [], $title = null)
     {
         if (!$this->client) {
             throw new \Exception('Client was not init.');
@@ -577,6 +557,10 @@ class QueryBuilder
 
         if ($status) {
             $variables['input']['status'] = $status;
+        }
+
+        if ($slug) {
+            $variables['input']['slug'] = $slug;
         }
 
         if ($pageData) {
@@ -2024,8 +2008,7 @@ class QueryBuilder
         try {
             return $this->client->runQuery($query, $resultsAsArray, $variables);
         } catch (\Exception $e) {
-            var_dump('Failed query: ' . $query . ' variables: ' . json_encode($variables));
-
+            Utils::log('Failed query: ' . $query . ' variables: ' . json_encode($variables), 5, 'runQuery');
         }
     }
 

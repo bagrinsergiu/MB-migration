@@ -136,19 +136,18 @@ class BrizyAPI{
         $this->projectToken = $newToken;
     }
 
-    public function createMedia($mediaName, $pathToFileName)
+    public function createMedia($pathOrUrlToFileName): array
     {
+        $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
         $mime_type = mime_content_type($pathToFileName);
-
         $file_contents = file_get_contents($pathToFileName);
-
         $base64_content = base64_encode($file_contents);
 
-        // Формируем строку для вставки в HTML-код
-        $base64_image = "data:$mime_type;base64,$base64_content";
-
-        // Возвращаем строку
-        return $base64_image;
+        return $this->httpClient('POST', $this->createPrivatUrlAPI('media'), [
+            'filename' => $this->getFileName($pathToFileName),
+            'name' => $this->getNameHash($base64_content).'.'.$this->getFileExtension($mime_type),
+            'attachment' => $base64_content
+        ]);
     }
 
     public function createUser(array $value)
@@ -185,7 +184,6 @@ class BrizyAPI{
         }
 
         return $result[$filter];
-
     }
 
 
@@ -279,6 +277,73 @@ class BrizyAPI{
     private function createPrivatUrlAPI($endPoint): string
     {
         return Config::$urlAPI . Config::$endPointApi[$endPoint];
+    }
+
+    private function getNameHash($fileBase64): string
+    {
+        $to_hash = $this->generateUniqueID() . $fileBase64;
+        $newHash = hash('sha256', $to_hash);
+        return substr($newHash, 0, 32);
+    }
+    private function generateUniqueID(): string
+    {
+        $microtime = microtime();
+        $microtime = str_replace('.', '', $microtime);
+        $microtime = substr($microtime, 0, 10);
+        $random_number = rand(1000, 9999);
+        return $microtime . $random_number;
+    }
+
+    private function getFileExtension($mime_type) {
+        $extensions = array(
+            'image/x-icon'  => 'ico',
+            'image/jpeg'    => 'jpg',
+            'image/png'     => 'png',
+            'image/gif'     => 'gif',
+            'image/bmp'     => 'bmp'
+        );
+        return $extensions[$mime_type] ?? false;
+    }
+
+    private function getFileName($string) {
+        $parts = pathinfo($string);
+        if (isset($parts['extension']))
+        {
+            return $parts['basename'];
+        }
+        else
+        {
+            return $string;
+        }
+    }
+
+    private function downloadImage($url) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $image_data = curl_exec($ch);
+        curl_close($ch);
+
+        $file_name = basename($url);
+        $path = Config::$pathMedia . $file_name;
+        file_put_contents($path, $image_data);
+
+        return $path;
+    }
+
+    private function isUrlOrFile($urlOrPath) {
+        if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
+            return $this->downloadImage($urlOrPath);
+        }
+        else
+        {
+            if (file_exists($urlOrPath)) {
+                return $urlOrPath;
+            }
+            else
+            {
+                return "unknown";
+            }
+        }
     }
 
     private function httpClient($method, $url, $data = null, $token = null ): array

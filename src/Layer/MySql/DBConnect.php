@@ -5,7 +5,7 @@ use Brizy\core\Config;
 
 class DBConnect
 {
-    public $mySqlConnect;
+    private $mySqlConnect;
 
     function __construct()
     {   

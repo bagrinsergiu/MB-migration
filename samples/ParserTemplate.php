@@ -2,7 +2,7 @@
 
 use Brizy\Parser\Parser;
 
-require_once(__DIR__ . '/../src/core.php');
+require_once(__DIR__ . '/../src/Core.php');
 
 /**
  * Создаем класс и указываем id проекта с которым будем набоать

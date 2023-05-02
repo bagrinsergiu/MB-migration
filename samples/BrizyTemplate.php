@@ -2,7 +2,7 @@
 
 use Brizy\layer\Brizy\BrizyAPI;
 
-require_once(__DIR__ . '/../src/core.php');
+require_once(__DIR__ . '/../src/Core.php');
 
 $brizyAPI   = new BrizyAPI();
 

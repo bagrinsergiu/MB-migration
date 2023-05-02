@@ -9,8 +9,8 @@ echo $tresult;
 
 exit;
 
-//$jsonFile = __DIR__. '/layout/Zion/data.json';
-// $jsonFile = __DIR__. '/layout/Zion/about-us/data.json';
+//$jsonFile = __DIR__. '/Layout/Zion/data.json';
+// $jsonFile = __DIR__. '/Layout/Zion/about-us/data.json';
 
 // $jsonString = file_get_contents($jsonFile);
 
