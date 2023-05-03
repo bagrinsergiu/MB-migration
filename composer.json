@@ -2,8 +2,7 @@
     "name": "brizy/migration",
     "type": "project",
     "require": {
-        "webonyx/graphql-php": "^15.2",
-        "guzzlehttp/guzzle": "7.0",
-      "ext-curl": "*"
+        "gmostafa/php-graphql-client": "^1.13",
+        "cpliakas/git-wrapper": "^3.1"
     }
 }
