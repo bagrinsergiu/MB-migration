@@ -296,7 +296,7 @@ class QueryBuilder
      * @return mixed
      * @throws \Exception
      */
-    public function createCollectionItem($collection_type_id, $slug, $title, array $fields = [], $status = 'published', $pageData = null): mixed
+    public function createCollectionItem($collection_type_id, $slug,  $title = null, $status = 'published', array $fields = []): mixed
     {
         if (!$this->client) {
             throw new \Exception('Client was not init.');
@@ -331,12 +331,8 @@ class QueryBuilder
             'title' => $title,
             'slug' => $slug,
             'status' => $status,
-            'fields' => $fields,
+            'fields' => $fields
         ]];
-
-        if ($pageData) {
-            $variables['input']['pageData'] = $pageData;
-        }
 
         $results = $this->runQuery($mutation, true, $variables);
         return $results->getData()['createCollectionItem']['collectionItem'];
@@ -513,7 +509,7 @@ class QueryBuilder
         return $results->getData();
     }
 
-    public function updateCollectionItem($collection_item_id, $slug, $pageData = null, $status = null, array $fields = [], $title = null)
+    public function updateCollectionItem($collection_item_id, $slug, $pageData, $status = 'published', array $fields = [], $title = null)
     {
         if (!$this->client) {
             throw new \Exception('Client was not init.');

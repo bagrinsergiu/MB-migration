@@ -1,7 +1,7 @@
 <?php
 namespace Brizy;
 
-require_once(__DIR__ . '/src/core.php');
+require_once(__DIR__ . '/src/Core.php');
 $brizyAPI   = new BrizyAPI();
 
 
@@ -396,7 +396,7 @@ while($siteId = mysqli_fetch_array($requestSiteId))
 
 
 // use vendor\xlsx;
-// $jsonFile = '/opt/lampp/htdocs/parser/v1/layout/8026827f75b5aded9743733df21d436c/data.json';
+// $jsonFile = '/opt/lampp/htdocs/parser/v1/Layout/8026827f75b5aded9743733df21d436c/data.json';
 // $xlsxFile = '/opt/lampp/htdocs/parser/v1/xlsx/';
 
 // $jsonString = file_get_contents($jsonFile);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Builder;
+namespace Brizy\Builder\Utils;
 
 class ArrayManipulator
 {
@@ -51,6 +51,10 @@ class ArrayManipulator
                 $parents[$item["id"]] = $item;
                 $parents[$item["id"]]["children"] = [];
             } else if ($item["parent_id"] == null && $item["category"] == "text") {
+                $result[] = $item;
+            } else if ($item["parent_id"] == null && $item["category"] == "photo") {
+                $result[] = $item;
+            } else if ($item["parent_id"] == null && $item["category"] == "media") {
                 $result[] = $item;
             } else {
                 $parents[$item["parent_id"]]["children"][] = $item;

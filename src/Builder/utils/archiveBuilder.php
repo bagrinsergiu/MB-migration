@@ -1,5 +1,5 @@
 <?php
-namespace Brizy\builder;
+namespace Brizy\Builder\Utils;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
