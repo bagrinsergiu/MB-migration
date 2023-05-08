@@ -14,7 +14,7 @@ class ItemsBuilder
     private $designsName;
     private $arrayObject;
     private VariableCache $cache;
-    private $QueryBuilder;
+    private QueryBuilder $QueryBuilder;
 
     function __construct($preparedPage, VariableCache $cache, $defaultPage = false)
     {
@@ -48,7 +48,7 @@ class ItemsBuilder
                     Utils::log('null' . $slug, 2, 'ItemsBuilder');
                 }
             }
-            print_r($itemsData);
+            //print_r($itemsData);
             $pageData = json_encode($itemsData);
 
             Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
@@ -138,16 +138,7 @@ class ItemsBuilder
         return $array;
     }
 
-    public function verificationArray($array, $nameFunction)
-    {
-        if(!is_array($array))
-        {
-            Utils::log('Bad Array', 2, $nameFunction);
-            return FALSE;
-        }
-    }
-
-    private function objectData()
+    private function objectData(): bool|array
     {
         $nameFunction = __FUNCTION__;
 
