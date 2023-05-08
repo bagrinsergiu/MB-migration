@@ -56,6 +56,8 @@ class MigrationPlatform
 
                 $cache->set('tookPage', $pages);
 
+                $this->makeMenu($cache);
+
                 $preparedPage = $this->getItemsFromPage($pages);
 
                 if ($pages === array_key_first($parentPages)) {
@@ -91,6 +93,8 @@ class MigrationPlatform
                     }
                 }
             }
+            Utils::log('Project migration completed successfully!', 6, 'PROCESS');
+            Utils::log('END', 6, 'PROCESS');
         }
         else
         {
@@ -233,9 +237,13 @@ class MigrationPlatform
 
         if($PageBuilder)
         {
-            Utils::log('Successfully completed project migrations!', 1, 'PROCESS');
-            Utils::log('END', 1, 'PROCESS');
+            Utils::log('Page created successfully!', 1, 'PageBuilder');
         }
+    }
+
+    private function makeMenu(VariableCache $cache)
+    {
+        Utils::log('Start Builder | create default Page', 4, 'RunPageBuilder');
     }
 
 }

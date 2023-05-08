@@ -14,7 +14,7 @@ class ItemsBuilder
     private $designsName;
     private $arrayObject;
     private VariableCache $cache;
-    private $QueryBuilder;
+    private QueryBuilder $QueryBuilder;
 
     function __construct($preparedPage, VariableCache $cache, $defaultPage = false)
     {
@@ -22,12 +22,51 @@ class ItemsBuilder
         $this->cache = $cache;
         $this->QueryBuilder = new QueryBuilder($cache);
 
-        $curentpage = $this->cache->get('currentPageOnWork');
+        $itemsID = $this->cache->get('currentPageOnWork');
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
         $this->preparedPage = $preparedPage;
-        $_WorkClassTemplate = 'Brizy\\' . __NAMESPACE__ . '\\Layout\\' . $design . '\\' . $design;
 
+        $workClass = 'Brizy\\' . __NAMESPACE__ . '\\Layout\\' . $design . '\\' . $design;
+
+        $_WorkClassTemplate = new $workClass();
+
+        if(!$defaultPage)
+        {
+            $itemsData = [];
+            Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+            foreach ($preparedPage as $section)
+            {
+                $blockData = $_WorkClassTemplate->callMethod($section['typeSection'], $section['data']);
+                //var_dump($blockData);
+                if (!empty($blockData))
+                {
+                    $decodeBlock = json_decode($blockData, true);
+                    $itemsData['items'][] = $decodeBlock['items'][0];
+                }else
+                {
+                    Utils::log('null' . $slug, 2, 'ItemsBuilder');
+                }
+            }
+            //print_r($itemsData);
+            $pageData = json_encode($itemsData);
+
+            Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+            $result = $this->QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+            Utils::log('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+            //print_r($result);
+            return true;
+        }
+        else
+        {
+            Utils::log('Build default Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+            return true;
+        }
+        //var_dump($_WorkClassTemplate->callMethod('left-media-diamond'),$preparedPage);
+
+        //echo '============================';
+
+        //print_r($preparedPage);
         //$this->designsName = $name;
 
         //var_dump($_WorkClassTemplate::$namePages);
@@ -35,10 +74,10 @@ class ItemsBuilder
         //$this->arrayObject = $this->objectData();
         //$page[$slug] = $preparedPage;
 
-        $page = $this->load_json_file($design);
+        //$page = $this->load_json_file($design);
 
-        print_r(json_decode($page['blocks']['left-media-diamond']['data']));
-        return true;
+        //print_r(json_decode($page['blocks']['left-media-diamond']['data']));
+
     }
 
     public function getJsonObject($object = 'data') 
@@ -46,13 +85,10 @@ class ItemsBuilder
         return $this->arrayObject[$object];
     }
 
-    public function load_json_file($designProject, $assoc = true) {
-        // Открыть файл на чтение
+    public function load_json_file($designProject, $assoc = true)
+    {
         $file = file_get_contents(__DIR__ . '\\Layout\\' . $designProject . '\\blocksKit.json');
-        // Декодировать JSON-данные в массив или объект
-        $data = json_decode($file, $assoc);
-        // Вернуть данные
-        return $data;
+        return json_decode($file, $assoc);
     }
 
     public function getClass()
@@ -102,16 +138,7 @@ class ItemsBuilder
         return $array;
     }
 
-    public function verificationArray($array, $nameFunction)
-    {
-        if(!is_array($array))
-        {
-            Utils::log('Bad Array', 2, $nameFunction);
-            return FALSE;
-        }
-    }
-
-    private function objectData()
+    private function objectData(): bool|array
     {
         $nameFunction = __FUNCTION__;
 
