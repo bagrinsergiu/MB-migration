@@ -45,6 +45,8 @@ class MigrationPlatform
 
             $this->getAllPage($cache);
 
+            $this->createBlankPages($parentPages, $cache);
+
             foreach ($parentPages as $pages)
             {
                 if ($pages['slug'] != 'about-us')
@@ -56,11 +58,9 @@ class MigrationPlatform
 
                 $cache->set('tookPage', $pages);
 
-                $this->makeMenu($cache);
-
                 $preparedPage = $this->getItemsFromPage($pages);
-
-                if ($pages === array_key_first($parentPages)) {
+                $currentParent = $parentPages[array_key_first($parentPages)];
+                if ($pages['id'] === $currentParent['id']) {
                     $this->setCurrentPageOnWork($this->getCollectionItem("home", $cache), $cache);
 
                     if ($preparedPage) {
@@ -74,7 +74,6 @@ class MigrationPlatform
 
                     if (!$collectionItem) {
                         $newPage = $this->creteNewPage($pages['slug'], $pages['name'], $cache);
-                        //$newPage = true;
                         if (!$newPage) {
                             Utils::log('Failed created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 2, 'creteNewPage');
                         } else {
@@ -130,12 +129,18 @@ class MigrationPlatform
             $result = $items;
         } else if (is_array($child) && empty($child)) {
             $sectionFromParent = $this->parser->getSectionFromParentPage($page['id']);
-            foreach ($sectionFromParent as $value)
+            if(empty($sectionFromParent))
             {
-                Utils::log('Collection of item id: ' .$value['id'].' -> section id: '. $sectionFromParent['id'] .'-> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
-                $items[] = $this->parser->getSectionsItems($value['id'], true);
+                $result = false;
+            } else {
+                foreach ($sectionFromParent as $value)
+                {
+                    Utils::log('Collection of item id: ' .$value['id'].' -> section id: '. $sectionFromParent['id'] .'-> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
+                    $items[] = $this->parser->getSectionsItems($value['id'], true);
+                }
+                $result = $items;
             }
-            $result = $items;
+
         }
         else
         {
@@ -189,7 +194,7 @@ class MigrationPlatform
         $cache->set('currentPageOnWork', $collectionItem);
     }
 
-    private function creteNewPage($slug, $title, VariableCache $cache)
+    private function creteNewPage($slug, $title, VariableCache $cache, $setActivePage = true)
     {
         if($this->pageCheck($cache, $slug))
         {
@@ -199,10 +204,13 @@ class MigrationPlatform
         }
 
         $mainCollectionItem = $this->getCollectionItem($slug, $cache);
-
         if($mainCollectionItem)
         {
-            $cache->set('currentPageOnWork', $mainCollectionItem);
+            if($setActivePage)
+            {
+                $cache->set('currentPageOnWork', $mainCollectionItem);
+                return $mainCollectionItem;
+            }
             return $mainCollectionItem;
         }
         return false;
@@ -241,9 +249,21 @@ class MigrationPlatform
         }
     }
 
-    private function makeMenu(VariableCache $cache)
+    private function createBlankPages(array $parentPages, VariableCache $cache): void
     {
-        Utils::log('Start Builder | create default Page', 4, 'RunPageBuilder');
+        Utils::log('Start created pages', 1, 'createBlankPages');
+
+        foreach ($parentPages as &$pages)
+        {
+            $newPage = $this->creteNewPage($pages['slug'], $pages['name'], $cache, false);
+            if (!$newPage) {
+                Utils::log('Failed created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 2, 'createBlankPages');
+            } else {
+                Utils::log('Success created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'createBlankPages');
+                $pages['collection'] = $newPage;
+            }
+        }
+        $cache->set('menuList', ['create' => false , 'list' => $parentPages]);
     }
 
 }
