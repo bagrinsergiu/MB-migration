@@ -183,6 +183,7 @@ class Utils{
     {
         $typeMessageArray = array("DEBUG","INFO","WARNING","CRITICAL","PROCESS","ERROR", "SUCCESSFULLY");
         $project_id = '';
+        $line = '';
 
         if(isset($param['project_id']))
         {
@@ -195,7 +196,13 @@ class Utils{
         } else {
             $message = $param['message'];
         }
-        $strlog = "[" . date('Y-m-d H:i:s') . "] " . $project_id . "[" . $typeMessageArray[$param['type']] . "]: [" . $param['callFunction'] . "] " . $message . "\n";
+        if($param['type']== 2 or $param['type'] == 3 or $param['type'] == 5)
+        {
+            $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
+            $caller = $backtrace[1];
+            $line = ' ('.basename($caller['file']) .':'. $caller['line'].') ';
+        }
+        $strlog = "[" . date('Y-m-d H:i:s') . "] " . $project_id . "[" . $typeMessageArray[$param['type']] . "]" . $line . ": [" . $param['callFunction'] . "] " . $message . "\n";
 
         $prefix = date("Y-m-d");
 

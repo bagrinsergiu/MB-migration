@@ -29,55 +29,42 @@ class ItemsBuilder
 
         $workClass = 'Brizy\\' . __NAMESPACE__ . '\\Layout\\' . $design . '\\' . $design;
 
-        $_WorkClassTemplate = new $workClass();
+        $_WorkClassTemplate = new $workClass($cache);
 
         if(!$defaultPage)
         {
             $itemsData = [];
+            $menuBlock = json_decode($cache->get('menuBlock'),true);
+            $itemsData['items'][] = $menuBlock;
             Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
             foreach ($preparedPage as $section)
             {
                 $blockData = $_WorkClassTemplate->callMethod($section['typeSection'], $section['data']);
-                //var_dump($blockData);
-                if (!empty($blockData))
-                {
+                if (!empty($blockData)) {
                     $decodeBlock = json_decode($blockData, true);
                     $itemsData['items'][] = $decodeBlock['items'][0];
-                }else
-                {
+                } else {
                     Utils::log('null' . $slug, 2, 'ItemsBuilder');
                 }
             }
-            //print_r($itemsData);
-            $pageData = json_encode($itemsData);
 
+            $footerBlock = json_decode($cache->get('footerBlock'),true);
+
+            $itemsData['items'][] = $footerBlock;
+
+            $pageData = json_encode($itemsData);
+            print_r($pageData."\n");
             Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
-            $result = $this->QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+            $this->QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Utils::log('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
-            //print_r($result);
             return true;
         }
         else
         {
             Utils::log('Build default Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+            $_WorkClassTemplate->callMethod('createDefaultPage');
             return true;
         }
-        //var_dump($_WorkClassTemplate->callMethod('left-media-diamond'),$preparedPage);
-
-        //echo '============================';
-
-        //print_r($preparedPage);
-        //$this->designsName = $name;
-
-        //var_dump($_WorkClassTemplate::$namePages);
-
-        //$this->arrayObject = $this->objectData();
-        //$page[$slug] = $preparedPage;
-
-        //$page = $this->load_json_file($design);
-
-        //print_r(json_decode($page['blocks']['left-media-diamond']['data']));
-
     }
 
     public function getJsonObject($object = 'data') 

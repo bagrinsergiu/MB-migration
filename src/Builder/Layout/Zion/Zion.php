@@ -2,6 +2,7 @@
 
 namespace Brizy\Builder\Layout\Zion;
 
+use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use DOMDocument;
 
@@ -10,10 +11,12 @@ class Zion
 
     private mixed $jsonDecode;
     private DOMDocument $dom;
+    private VariableCache $cache;
 
-    public function __construct()
+    public function __construct(VariableCache $cache)
     {
         $this->dom = new DOMDocument();
+        $this->cache = $cache;
         Utils::log('Connected!', 4, 'ZION Builder');
         $file = __DIR__.'\blocksKit.json';
 
@@ -33,6 +36,19 @@ class Zion
             Utils::log('File does not exist', 2, "ZION] [__construct");
             exit;
         }
+
+        $menuList = $this->cache->get('menuList');
+
+        if($menuList['create'] == false) {
+            if ($this->createMenu($menuList)) {
+                Utils::log('Success create MENU', 1, "ZION] [__construct");
+                $menuList['create'] = true;
+                $this->cache->set('menuList', $menuList);
+            } else {
+                Utils::log("Failed create MENU", 2, "ZION] [__construct");
+            }
+        }
+        $this->createFooter($menuList);
     }
 
     private function left_media_diamond(array $encoded): bool|string
@@ -152,6 +168,57 @@ class Zion
 //        ToDo
     }
 
+    private function createMenu($menuList)
+    {
+        Utils::log('Create menu', 1, "ZION] [createMenu");
+        $decoded = $this->jsonDecode['blocks']['menu'];
+        $block = json_decode($decoded['data'], true);
+        $blockMenuItems = json_decode($decoded['menuItems'], true);
+        //$block['value']['items'][0]['value']['items'][0]['value']['items'][0] //logo
+        //$block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] //menu items
+        //$block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0] = $menuItems;
+
+        $itemMenu = $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0];
+        $itemsMenu = [];
+        foreach ($menuList['list'] as $item)
+        {
+            $itemMenu['value']['itemId'] = $item['collection'];
+            $itemMenu['value']['title'] = $item['name'];
+            if($item['slug'] == 'home') {
+                $itemMenu['value']['url'] = '/';
+            } else {
+                $itemMenu['value']['url'] = $item['slug'];
+            }
+            $encodeItem = json_encode($itemMenu);
+
+            $itemMenu['value']['id'] = $this->getNameHash($encodeItem);
+
+            $itemsMenu[] = $itemMenu;
+        }
+
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] = $itemsMenu;
+
+        $this->cache->set('menuBlock', json_encode($block));
+
+        return true;
+    }
+
+    private function createDefaultPage()
+    {
+        Utils::log('Create structure default page', 1, "ZION] [top_media_diamond");
+
+        $decoded = $this->jsonDecode['blocks']['defaultBlocks'];
+
+    }
+
+    private function createFooter(): void
+    {
+        Utils::log('Create Footer', 1, "ZION] [createFooter");
+        $decoded = $this->jsonDecode['blocks']['footer'];
+        $block = json_decode($decoded, true);
+
+        $this->cache->set('footerBlock', json_encode($block));
+    }
     private function removeItemsFromArray(array $array, $index): array
     {
         if ($index >= 0 && $index < count($array))
@@ -280,6 +347,22 @@ class Zion
     private function replaceInName($str): string
     {
         return str_replace("-", "_", $str);
+    }
+
+    private function getNameHash($data): string
+    {
+        $to_hash = $this->generateUniqueID() . $data;
+        $newHash = hash('sha256', $to_hash);
+        return substr($newHash, 0, 32);
+    }
+
+    private function generateUniqueID(): string
+    {
+        $microtime = microtime();
+        $microtime = str_replace('.', '', $microtime);
+        $microtime = substr($microtime, 0, 10);
+        $random_number = rand(1000, 9999);
+        return $microtime . $random_number;
     }
 
     public function callMethod($methodName, $params = null)
