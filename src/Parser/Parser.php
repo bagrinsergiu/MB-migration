@@ -92,6 +92,7 @@ class Parser
         }
         return $result;
     }
+
     public function getSectionsPage($id)
     {
         $result = [];
@@ -111,7 +112,6 @@ class Parser
     public function getSectionsItems($sectionId, $assembly = false)
     {
         $result = [];
-
         if($this->cache->exist($sectionId['id']))
         {
             Utils::log('Get item from cache | Section id: '. $sectionId['id'], 1, 'getSectionsItems');

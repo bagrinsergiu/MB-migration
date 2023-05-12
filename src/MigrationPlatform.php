@@ -49,10 +49,10 @@ class MigrationPlatform
 
             foreach ($parentPages as $pages)
             {
-                if ($pages['slug'] != 'about-us')
-                {
-                    continue;
-                }
+//                if ($pages['slug'] != 'about-us')
+//                {
+//                    continue;
+//                }
 
                 Utils::log('Take page | ID: ' . $pages['id'], 4, 'MAIN Foreach');
 
@@ -120,6 +120,7 @@ class MigrationPlatform
                 foreach ($section as $value)
                 {
                     Utils::log('Collection of item id: ' .$value['id'].' from section id: '. $sectionID['id'], 1, 'getItemsFromPage');
+
                     $items[] =[
                         "typeSection" => $value['typeSection'],
                         "data"=>$this->parser->getSectionsItems($value, true)
@@ -128,7 +129,7 @@ class MigrationPlatform
             }
             $result = $items;
         } else if (is_array($child) && empty($child)) {
-            $sectionFromParent = $this->parser->getSectionFromParentPage($page['id']);
+            $sectionFromParent = $this->parser->getSectionsPage($page['id']);
             if(empty($sectionFromParent))
             {
                 $result = false;
@@ -136,7 +137,11 @@ class MigrationPlatform
                 foreach ($sectionFromParent as $value)
                 {
                     Utils::log('Collection of item id: ' .$value['id'].' -> section id: '. $sectionFromParent['id'] .'-> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
-                    $items[] = $this->parser->getSectionsItems($value['id'], true);
+
+                    $items[] =[
+                        "typeSection" => $value['typeSection'],
+                        $items[] = $this->parser->getSectionsItems($value, true)
+                    ];
                 }
                 $result = $items;
             }

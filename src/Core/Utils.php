@@ -154,7 +154,17 @@ class Utils{
 //        return $response;
 
     }
-    public static function log($messageText, $type = 1, $nameFunction = '')
+
+    public static function debug($value): void
+    {
+        Utils::log('', 0, "Print data");
+        if(is_array($value)){
+            var_dump($value);
+        }
+        print_r($value."\n");
+    }
+
+    public static function log($messageText, $type = 1, $nameFunction = ''): void
     {
         $param = [
             "message" => $messageText,
@@ -179,7 +189,7 @@ class Utils{
 
     }
 
-    private static function writeLogToFile(array $param)
+    private static function writeLogToFile(array $param): void
     {
         $typeMessageArray = array("DEBUG","INFO","WARNING","CRITICAL","PROCESS","ERROR", "SUCCESSFULLY");
         $project_id = '';
@@ -196,7 +206,7 @@ class Utils{
         } else {
             $message = $param['message'];
         }
-        if($param['type']== 2 or $param['type'] == 3 or $param['type'] == 5)
+        if($param['type']== 0 or $param['type']== 2 or $param['type'] == 3 or $param['type'] == 5)
         {
             $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
             $caller = $backtrace[1];
@@ -209,6 +219,5 @@ class Utils{
         $dirToLog = Utils::strReplace( Config::$pathLogFile, '{{PREFIX}}', $prefix);
 
         file_put_contents($dirToLog, $strlog, FILE_APPEND);
-    } 
-
+    }
 }

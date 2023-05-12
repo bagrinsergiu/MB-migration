@@ -1,12 +1,12 @@
 <?php
 
-namespace Brizy\Builder\Layout\Zion;
+namespace Brizy\Builder\Layout\Voyage;
 
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use DOMDocument;
 
-class Zion
+class Voyage
 {
 
     private mixed $jsonDecode;
@@ -17,7 +17,7 @@ class Zion
     {
         $this->dom = new DOMDocument();
         $this->cache = $cache;
-        Utils::log('Connected!', 4, 'ZION Builder');
+        Utils::log('Connected!', 4, 'Voyage Builder');
         $file = __DIR__.'\blocksKit.json';
 
         if (file_exists($file))
@@ -26,14 +26,14 @@ class Zion
             $this->jsonDecode = json_decode($fileContent, true);
             if(empty($fileContent))
             {
-                Utils::log('File empty', 2, "ZION] [__construct");
+                Utils::log('File empty', 2, "Voyage] [__construct");
                 exit;
             }
-            Utils::log('File exist: ' .$file , 1, "ZION] [__construct");
+            Utils::log('File exist: ' .$file , 1, "Voyage] [__construct");
         }
         else
         {
-            Utils::log('File does not exist', 2, "ZION] [__construct");
+            Utils::log('File does not exist', 2, "Voyage] [__construct");
             exit;
         }
 
@@ -41,11 +41,11 @@ class Zion
 
         if($menuList['create'] == false) {
             if ($this->createMenu($menuList)) {
-                Utils::log('Success create MENU', 1, "ZION] [__construct");
+                Utils::log('Success create MENU', 1, "Voyage] [__construct");
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                Utils::log("Failed create MENU", 2, "ZION] [__construct");
+                Utils::log("Failed create MENU", 2, "Voyage] [__construct");
             }
         }
         $this->createFooter($menuList);
@@ -53,7 +53,7 @@ class Zion
 
     private function left_media_diamond(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "ZION] [left_media_diamond");
+        Utils::log('Create bloc', 1, "Voyage] [left_media_diamond");
         $decoded = $this->jsonDecode['blocks']['left-media-diamond'];
         $blockj = json_decode($decoded, true);
 
@@ -66,7 +66,7 @@ class Zion
         return json_encode($blockj);
     }
     private function right_media_diamond(array $encoded) { //
-        Utils::log('Create bloc', 1, "ZION] [right-media-diamond");
+        Utils::log('Create bloc', 1, "Voyage] [right-media-diamond");
 
         $decoded = $this->jsonDecode['blocks']['right-media-diamond'];
         $blockj = json_decode($decoded, true);
@@ -82,11 +82,14 @@ class Zion
 
     private function full_text(array $encoded)
     {
-        Utils::log('Create bloc', 1, "ZION] [full_text");
+        if(empty($encoded)){
+            Utils::log('Date empty', 1, "Voyage] [full_text");
+            exit();
+        }
+        Utils::log('Create bloc', 1, "Voyage] [full_text");
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
         $decode = json_decode($decoded, true);
-
         $replaceTitle = $this->replaceTitleTag($encoded[0]['content']);
         $replaceBody = $this->replaceParagraphs($encoded[1]['content']);
 
@@ -101,11 +104,11 @@ class Zion
 
     private function grid_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "ZION] [grid_layout");
+        Utils::log('Create bloc', 1, "Voyage] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $decodeBlock    = json_decode($decoded['main'], true);
-        $decodeRow      = json_decode($decoded['row'], true);
+        $decodeRow      = json_decode($decoded['item'], true);
 
         $resultRemove = $this->removeItemsFromArray($decodeBlock['items'][0]['value']['items'][0]['value']['items'], 2);
 
@@ -150,7 +153,7 @@ class Zion
     }
 
     private function top_media_diamond(array $encoded) {
-        Utils::log('Create bloc', 1, "ZION] [top_media_diamond");
+        Utils::log('Create bloc', 1, "Voyage] [top_media_diamond");
 
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
@@ -170,15 +173,18 @@ class Zion
 
     private function createMenu($menuList)
     {
-        Utils::log('Create menu', 1, "ZION] [createMenu");
+        Utils::log('Create menu', 1, "Voyage] [createMenu");
         $decoded = $this->jsonDecode['blocks']['menu'];
-        $block = json_decode($decoded['data'], true);
-        $blockMenuItems = json_decode($decoded['menuItems'], true);
+        $block = json_decode($decoded['main'], true);
+        $itemMenu = json_decode($decoded['item'], true);
         //$block['value']['items'][0]['value']['items'][0]['value']['items'][0] //logo
         //$block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] //menu items
         //$block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0] = $menuItems;
 
+        //$itemMenu = $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0];
         $itemMenu = $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0];
+        print_r($itemMenu);
+
         $itemsMenu = [];
         foreach ($menuList['list'] as $item)
         {
@@ -203,29 +209,17 @@ class Zion
         return true;
     }
 
-    private function full_media($encode)
+    private function createDefaultPage()
     {
-        Utils::log('Create full media', 1, "ZION] [full_media");
-        $decoded = $this->jsonDecode['blocks']['full-media'];
-        $block = json_decode($decoded, true);
+        Utils::log('Create structure default page', 1, "Voyage] [top_media_diamond");
 
-        Utils::debug($encode);
-
-        return json_encode($block);
-
-    }
-
-    private function create_Default_Page()
-    {
-        Utils::log('Create structure default page', 1, "ZION] [top_media_diamond");
-
-        //$decoded = $this->jsonDecode['blocks']['defaultBlocks'];
+        $decoded = $this->jsonDecode['blocks']['defaultBlocks'];
 
     }
 
     private function createFooter(): void
     {
-        Utils::log('Create Footer', 1, "ZION] [createFooter");
+        Utils::log('Create Footer', 1, "Voyage] [createFooter");
         $decoded = $this->jsonDecode['blocks']['footer'];
         $block = json_decode($decoded, true);
 
@@ -358,7 +352,12 @@ class Zion
 
     private function replaceInName($str): string
     {
-        return str_replace("-", "_", $str);
+        if (strpos($str, '-') !== false) {
+            $outputString = str_replace('-', '_', $str);
+        } else {
+            $outputString = $str;
+        }
+        return $outputString;
     }
 
     private function getNameHash($data): string
@@ -384,10 +383,10 @@ class Zion
             if(!isset($params)){
                 $params = $this->jsonDecode;
             }
-            Utils::log('Call method ' . $verifiedMethodName , 1, "ZION] [callDynamicMethod");
+            Utils::log('Call method ' . $verifiedMethodName , 1, "Voyage] [callDynamicMethod");
             return call_user_func_array(array($this, $verifiedMethodName), [$params]);
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "ZION] [callDynamicMethod");
+        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "Voyage] [callDynamicMethod");
         return false;
     }
 }
