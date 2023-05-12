@@ -509,7 +509,7 @@ class QueryBuilder
         return $results->getData();
     }
 
-    public function updateCollectionItem($collection_item_id, $slug, $pageData, $status = 'published', array $fields = [], $title = null)
+    public function updateCollectionItem($collection_item_id, $slug, $pageData, $status = 'published', array $fields = [], $title = null): object|array
     {
         if (!$this->client) {
             throw new \Exception('Client was not init.');

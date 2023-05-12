@@ -1,14 +1,14 @@
 <?php
 namespace Builder;
 
+use Brizy\Builder\Layout\Zion\Zion;
 use Brizy\Builder\VariableCache;
 use Brizy\core\Config;
 use Brizy\core\Utils;
 use Brizy\layer\Graph\QueryBuilder;
 
-class ItemsBuilder
+class ItemsBuilder extends Utils
 {
-    public $datajsonDecodeClass;
     private $namePagesArray;
     private $pageName;
     private $designsName;
@@ -18,14 +18,12 @@ class ItemsBuilder
 
     function __construct($preparedPage, VariableCache $cache, $defaultPage = false)
     {
-
         $this->cache = $cache;
         $this->QueryBuilder = new QueryBuilder($cache);
 
         $itemsID = $this->cache->get('currentPageOnWork');
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
-        $this->preparedPage = $preparedPage;
 
         $workClass = 'Brizy\\' . __NAMESPACE__ . '\\Layout\\' . $design . '\\' . $design;
 
@@ -53,8 +51,10 @@ class ItemsBuilder
             $itemsData['items'][] = $footerBlock;
 
             $pageData = json_encode($itemsData);
-            print_r($pageData."\n");
+
             Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+
+            print_r($pageData."\n============\n");
             $this->QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Utils::log('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
             return true;
@@ -62,7 +62,7 @@ class ItemsBuilder
         else
         {
             Utils::log('Build default Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
-            $_WorkClassTemplate->callMethod('createDefaultPage');
+            $_WorkClassTemplate->callMethod('create-Default-Page');
             return true;
         }
     }
