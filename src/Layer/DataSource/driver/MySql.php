@@ -1,18 +1,18 @@
 <?php
-namespace Brizy\layer\MySql;
+namespace Brizy\Layer\DataSource\driver;
 
 use Brizy\core\Config;
 
-class DBConnect
+class MySql
 {
     private $mySqlConnect;
 
     function __construct()
-    {   
-        $this->connect();  
+    {
+        $this->connect(Config::configMySQL());
     }
 
-    public function request($query)
+    public function request($query): \mysqli_result|bool
     {
         if($result = mysqli_query($this->mySqlConnect, $query))
         {
@@ -25,7 +25,7 @@ class DBConnect
         }
     }
 
-    public function requestArray($query)
+    public function requestArray($query): bool|array|null
     {
         if($resultArray = mysqli_query($this->mySqlConnect, $query))
         {
@@ -38,10 +38,9 @@ class DBConnect
         }
     }
 
-    private function connect()
+    private function connect($config): void
     {
-
-        $this->mySqlConnect = mysqli_connect(Config::$dbLocal, Config::$dbUser, Config::$dbPass, Config::$dbName);
+        $this->mySqlConnect = mysqli_connect($config['dbLocal'], $config['dbUser'], $config['dbPass'], $config['dbName']);
         if(!$this->mySqlConnect)
         {
             die();
