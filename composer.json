@@ -4,6 +4,10 @@
     "require": {
         "gmostafa/php-graphql-client": "^1.13",
         "cpliakas/git-wrapper": "^3.1",
-      "ext-dom": "*"
+      "ext-dom": "*",
+        "phpseclib/phpseclib": "^3.0",
+      "ext-pdo": "*",
+        "phpseclib/phpseclib2_compat": "~1.0",
+      "ext-mysqli": "*"
     }
 }

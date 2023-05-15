@@ -4,7 +4,7 @@ namespace Brizy\Parser;
 use Brizy\Builder\Utils\ArrayManipulator;
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
-use Brizy\layer\MySql\DBConnect;
+use Brizy\Layer\DataSource\DBConnector;
 
 class Parser
 {
@@ -19,7 +19,7 @@ class Parser
     {
         $this->cache       = $cache;
 
-        $this->db          = new DBConnect();
+        $this->db          = new DBConnector();
         $this->monipulator = new ArrayManipulator();
 
         $this->siteId      = $this->cache->get('projectId_MB');
