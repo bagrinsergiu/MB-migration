@@ -1,12 +1,12 @@
 <?php
 
-namespace Brizy\Builder\Layout\Solstice;
+namespace Brizy\Builder\Layout\Bloom;
 
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use DOMDocument;
 
-class Solstice
+class Bloom
 {
 
     private mixed $jsonDecode;
@@ -291,7 +291,7 @@ class Solstice
                     $newTag->setAttribute($nameAttribute, $value);
                 }
             }
-           // $paragraph->parentNode->replaceChild($newTag, $paragraph);
+            // $paragraph->parentNode->replaceChild($newTag, $paragraph);
             $changedTags[] = $this->dom->saveXML($newTag);
         }
 
@@ -396,4 +396,5 @@ class Solstice
         Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "Solstice] [callDynamicMethod");
         return false;
     }
+
 }
