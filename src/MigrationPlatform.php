@@ -108,7 +108,7 @@ class MigrationPlatform
         Utils::log('Parent Page id: ' . $page['id'] . ' | Name page: ' . $page['name'] . ' | Slug: ' . $page['slug'], 1, 'getItemsFromPage');
         $child = $this->parser->getChildFromPages($page['id']);
 
-        if(is_array($child) && !empty($child))
+        if(!empty($child))
         {
             $items = [];
 
@@ -128,7 +128,7 @@ class MigrationPlatform
                 }
             }
             $result = $items;
-        } else if (is_array($child) && empty($child)) {
+        } else if (empty($child)) {
             $sectionFromParent = $this->parser->getSectionsPage($page['id']);
             if(empty($sectionFromParent))
             {

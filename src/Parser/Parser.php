@@ -28,23 +28,26 @@ class Parser
 
     public function getSite()
     {
-        $settingSite = $this->db->requestArray("SELECT `id`, `name`, `title`, `settings`, `design_uuid`, `favicon` from `sites` WHERE id = " . $this->siteId);
-        $designSite = $this->db->requestArray("SELECT * from `designs` WHERE uuid ='".$settingSite['design_uuid']."'");
+        Utils::log('Get site', 1, 'getSite');
+        $settingSite = $this->db->requestArray("SELECT id, name, title, settings, design_uuid, favicon from sites WHERE id = " . $this->siteId);
+        $designSite = $this->db->requestArray("SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
         return [
-            'name' => $settingSite['name'],
-            'title' => $settingSite['title'],
-            'design' => $designSite['name'],
-            'favicon' => $settingSite['favicon']
+            'name' => $settingSite[0]['name'],
+            'title' => $settingSite[0]['title'],
+            'design' => $designSite[0]['name'],
+            'favicon' => $settingSite[0]['favicon']
         ];
     }
 
     public function getParentPages()
     {
+        Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
-        $requestPageSite = $this->db->request("SELECT `id`, `slug`, `name`, `position` FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, `position`");
-        if($requestPageSite->num_rows != 0)
+        $requestPageSite = $this->db->request("SELECT id, slug, name, position FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, position");
+
+        if(!empty($requestPageSite))
         {
-            while($pageSite = mysqli_fetch_array($requestPageSite))
+            foreach($requestPageSite as $pageSite)
             {
                 $result[] = [
                     'id'    => $pageSite['id'],
@@ -64,10 +67,14 @@ class Parser
 
     public function getChildFromPages($parenId)
     {
+
+        Utils::log('Get child from pages', 1, 'getChildFromPages');
         $result = [];
 
-        $requestPageSite = $this->db->request("SELECT id, position FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY `position` asc");
-        while($pageSite = mysqli_fetch_array($requestPageSite))
+        //$requestPageSite = $this->db->request("SELECT id, position FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY position asc");
+        $pagesSite = $this->db->request("SELECT id, position FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY position asc");
+
+        foreach($pagesSite as $pageSite)
         {
             $result[] = [
                 'id'    => $pageSite['id'],
@@ -77,38 +84,24 @@ class Parser
 
         return $result;
     }
-    public function getSectionFromParentPage($parenId)
-    {
-        $result = [];
-
-        $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position FROM sections WHERE page_id  = " . $parenId);
-        while($pageSections = mysqli_fetch_array($requestSections))
-        {
-            $result[] = [
-                'id'           => $pageSections['id'],
-                'type_section' => $pageSections['category'],
-                'position'     => $pageSections['position'],
-            ];
-        }
-        return $result;
-    }
 
     public function getSectionsPage($id)
     {
         $result = [];
         $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position FROM sections WHERE page_id  = " . $id);
-        while($pageSections = mysqli_fetch_array($requestSections))
+        foreach ($requestSections as $pageSections)
         {
-            $typeSectionLayoutUuid = $this->db->requestArray("SELECT name FROM section_layouts WHERE `uuid`  = '" . $pageSections['section_layout_uuid'] . "'");
+            $typeSectionLayoutUuid = $this->db->requestArray("SELECT name FROM section_layouts WHERE uuid  = '" . $pageSections['section_layout_uuid'] . "'");
             $result[] = [
               'id'           => $pageSections['id'],
               'category' => $pageSections['category'],
-              'typeSection' => $typeSectionLayoutUuid['name'],
+              'typeSection' => $typeSectionLayoutUuid[0]['name'],
               'position'     => $pageSections['position'],
             ];
         }
         return $result;
     }
+
     public function getSectionsItems($sectionId, $assembly = false)
     {
         $result = [];
@@ -118,8 +111,8 @@ class Parser
             return $this->cache->get($sectionId['id']);
         }
 
-        $requestItemsFromSection = $this->db->request("SELECT * FROM items WHERE `group` is not null and section_id = " . $sectionId['id']);
-        while($sectionsItems = mysqli_fetch_array($requestItemsFromSection))
+        $requestItemsFromSection = $this->db->request("SELECT * FROM items WHERE 'group' is not null and section_id = " . $sectionId['id']);
+        foreach($requestItemsFromSection as $sectionsItems)
         {
             Utils::log('Get item | id: ' .$sectionsItems['id'].' from section id: '. $sectionId['id'], 1, 'getSectionsItems');
             $result[] = [

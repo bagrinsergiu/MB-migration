@@ -37,6 +37,10 @@ class ItemsBuilder extends Utils
             Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
             foreach ($preparedPage as $section)
             {
+
+                if(isset($section['typeSection']) or empty($section[0])){continue;}
+
+                print_r('>>>'.$section['data']);
                 $blockData = $_WorkClassTemplate->callMethod($section['typeSection'], $section['data']);
                 if (!empty($blockData)) {
                     $decodeBlock = json_decode($blockData, true);
@@ -54,7 +58,7 @@ class ItemsBuilder extends Utils
 
             Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
 
-            print_r($pageData."\n============\n");
+            ///print_r($pageData."\n============\n");
             $this->QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Utils::log('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
             return true;

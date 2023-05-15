@@ -7,7 +7,7 @@ class Config
 
 
     public static bool $debugMode = true;
-    public static string $DBconnection = 'mysql';   //  mysql|postgresql
+    public static string $DBconnection = 'postgresql';   //  mysql|postgresql
 
     public static $brizyClientId = '3onlcdgeeh0k8s4s4wkccwo8kwwo4g0g';
     public static $brizyClientSecret = '4ock4cos8wsowskw4c8cs4wkcskwkow0';
@@ -80,14 +80,15 @@ class Config
     public static function configPostgreSQL(): array
     {
         return [
-            'sshHost' => 'ssh.example.com',
-            'sshUser' => 'ssh_username',
-            'sshPrivateKeyPath' => __DIR__ . '/ssh/private_key.pem',
-            'dbHost' => 'localhost',
-            'dbPort' => 5432,
-            'dbName' => 'your_database',
-            'dbUser' => 'your_username',
-            'dbPassword' => 'your_password'
+            'sshHost' => '54.149.121.133',
+            'sshPort' => '22',
+            'sshUser' => 'brizy_contractor',
+            'sshPrivateKeyPath' => __DIR__ . '\ssh\private_key.pem',
+            'dbHost' => "localhost",
+            'dbPort' => 57514,
+            'dbName' => 'api_production',
+            'dbUser' => 'brizy_contractor',
+            'dbPassword' => "Lg$8AON5^Dk9JLBR2023iUu"
         ];
     }
     public static function configMySQL(): array
