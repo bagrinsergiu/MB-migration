@@ -317,7 +317,8 @@ class BrizyAPI{
         }
     }
 
-    private function downloadImage($url) {
+    private function downloadImage($url): string
+    {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $image_data = curl_exec($ch);

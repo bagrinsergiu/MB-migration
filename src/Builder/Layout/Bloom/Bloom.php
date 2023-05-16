@@ -17,7 +17,7 @@ class Bloom
     {
         $this->dom = new DOMDocument();
         $this->cache = $cache;
-        Utils::log('Connected!', 4, 'Solstice Builder');
+        Utils::log('Connected!', 4, 'Bloom Builder');
         $file = __DIR__.'\blocksKit.json';
 
         if (file_exists($file))
@@ -26,83 +26,108 @@ class Bloom
             $this->jsonDecode = json_decode($fileContent, true);
             if(empty($fileContent))
             {
-                Utils::log('File empty', 2, "Solstice] [__construct");
+                Utils::log('File empty', 2, "Bloom] [__construct");
                 exit;
             }
-            Utils::log('File exist: ' .$file , 1, "Solstice] [__construct");
+            Utils::log('File exist: ' .$file , 1, "Bloom] [__construct");
         }
         else
         {
-            Utils::log('File does not exist', 2, "Solstice] [__construct");
+            Utils::log('File does not exist', 2, "Bloom] [__construct");
             exit;
         }
 
-        $menuList = $this->cache->get('menuList');
-
-        if($menuList['create'] == false) {
-            if ($this->createMenu($menuList)) {
-                Utils::log('Success create MENU', 1, "Solstice] [__construct");
-                $menuList['create'] = true;
-                $this->cache->set('menuList', $menuList);
-            } else {
-                Utils::log("Failed create MENU", 2, "Solstice] [__construct");
-            }
-        }
-        $this->createFooter($menuList);
+//        $menuList = $this->cache->get('menuList');
+//
+//        if($menuList['create'] == false) {
+//            if ($this->createMenu($menuList)) {
+//                Utils::log('Success create MENU', 1, "Bloom] [__construct");
+//                $menuList['create'] = true;
+//                $this->cache->set('menuList', $menuList);
+//            } else {
+//                Utils::log("Failed create MENU", 2, "Bloom] [__construct");
+//            }
+//        }
+//        $this->createFooter($menuList);
     }
 
-    private function left_media_diamond(array $encoded): bool|string
+    private function left_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Solstice] [left_media_diamond");
-        $decoded = $this->jsonDecode['blocks']['left-media-diamond'];
-        $blockj = json_decode($decoded, true);
+        Utils::log('Create bloc', 1, "Bloom] [left_media");
+        $decoded = $this->jsonDecode['blocks']['left-media'];
+        $block = json_decode($decoded, true);
 
-        $replaceTitle = $this->replaceTitleTag($encoded[0]['content']);
-        $replaceBody = $this->replaceParagraphs($encoded[1]['content']);
+        $replaceTitle = $this->replaceTitleTag($encoded['items'][1]['content']);
+        $replaceBody  = $this->replaceParagraphs($encoded['items'][2]['content']);
 
-        $blockj['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
-        $blockj['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][2]['value']['items'][0]['value']['text'] = $replaceBody;
+        $block['value']['items'][0]['value']['bgColorPalette'] = '';
+        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
 
-        return json_encode($blockj);
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $replaceBody;
+
+        return json_encode($block);
     }
-    private function right_media_diamond(array $encoded) { //
-        Utils::log('Create bloc', 1, "Solstice] [right-media-diamond");
+    private function right_media(array $encoded): bool|string
+    {
+        Utils::log('Create bloc', 1, "Bloom] [right_media");
 
-        $decoded = $this->jsonDecode['blocks']['right-media-diamond'];
-        $blockj = json_decode($decoded, true);
+        $decoded = $this->jsonDecode['blocks']['right-media'];
+        $block = json_decode($decoded, true);
 
-        $replaceTitle = $this->replaceTitleTag($encoded[0]['content']);
-        $replaceBody = $this->replaceParagraphs($encoded[1]['content']);
+        $replaceTitle = $this->replaceTitleTag($encoded['items'][1]['content']);
+        $replaceBody = $this->replaceParagraphs($encoded['items'][0]['content']);
 
-        $blockj['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
-        $blockj['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $replaceBody;
+        $block['value']['items'][0]['value']['bgColorPalette'] = '';
+        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
 
-        return json_encode($blockj);
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $replaceBody;
+
+        return json_encode($block);
     }
 
     private function full_text(array $encoded)
     {
-        Utils::log('Create bloc', 1, "Solstice] [full_text");
+        Utils::log('Create bloc', 1, "Bloom] [full_text");
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
-        $decode = json_decode($decoded['main'], true);
-        $item = json_decode($decoded['item'],true);
-        //print_r($encoded);
-//        $replaceTitle = $this->replaceTitleTag($encoded[0]['content']);
-//        $replaceBody = $this->replaceParagraphs($encoded[1]['content']);
-//
-//        $this->dom->loadHTML($encoded[1]['content']);
-//
-//        $decode['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
-//        $decode['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $replaceBody;
-//        //$decode['items'][0]['value']['items'][1]['value']['items'][0]['value']['imageSrc'] = $encoded[2]['content'];
+        $block = json_decode($decoded, true);
 
-        return json_encode($decode);
+        $replaceTitle = $this->replaceTitleTag($encoded['items'][0]['content']);
+        $replaceBody  = $this->replaceParagraphs($encoded['items'][1]['content']);
+
+        $block['value']['items'][0]['value']['bgColorPalette'] = '';
+        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
+
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
+        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $replaceBody;
+
+        return json_encode($block);
+    }
+
+    private function left_media_circle(array $encoded): bool|string
+    {
+        Utils::log('Create bloc', 1, "Bloom] [left_media_circle");
+        print_r($encoded);
+        $decoded = $this->jsonDecode['blocks']['left-media-circle'];
+        $block = json_decode($decoded, true);
+
+        $replaceTitle = $this->replaceTitleTag($encoded['items'][0]['content']);
+        $replaceBody = $this->replaceParagraphs($encoded['items'][1]['content']);
+
+        $block['value']['items'][0]['value']['bgColorPalette'] = '';
+        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
+
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $replaceBody;
+
+        return json_encode($block);
     }
 
     private function grid_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Solstice] [grid_layout");
+        Utils::log('Create bloc', 1, "Bloom] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $decodeBlock    = json_decode($decoded['main'], true);
@@ -151,7 +176,7 @@ class Bloom
     }
 
     private function top_media_diamond(array $encoded) {
-        Utils::log('Create bloc', 1, "Solstice] [top_media_diamond");
+        Utils::log('Create bloc', 1, "Bloom] [top_media_diamond");
 
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
@@ -160,70 +185,81 @@ class Bloom
         $decode['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($encoded[0]['content']);
         $decode['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($encoded[1]['content']);
 
-        $result = json_encode($decode);
-        return $result;
+        return json_encode($decode);
     }
 
-    private function createPopup()
-    {
-//        ToDo
+    private function gallery_layout(array $encoded) {
+        Utils::log('Create bloc', 1, "Bloom] [gallery_layout");
+
+        $encoded = $this->sortByOrderBy($encoded['items']);
+
+        $decoded = $this->jsonDecode['blocks']['gallery-layout'];
+        $block = json_decode($decoded, true);
+        $item = $block['value']['items'][0];
+        //$block['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($encoded[0]['content']);
+        //$block['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($encoded[1]['content']);
+        //"https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/gallery/slides/5c45f7bf-39c5-4cfc-af3c-e463f6cca210.jpg"
+        //"https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/gallery/slides/66dba0f3-af89-46de-8be5-70c833e327b1.jpg"
+        //"https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/site-images/888f273d-8d15-40cb-9f38-3a913061d717.png"
+        print_r($block['value']['items'][0]);
+
+        return json_encode($block);
     }
 
     private function createMenu($menuList)
     {
-        Utils::log('Create menu', 1, "Solstice] [createMenu");
+        Utils::log('Create menu', 1, "Bloom] [createMenu");
         $decoded = $this->jsonDecode['blocks']['menu'];
-        $block = json_decode($decoded['data'], true);
-        $blockMenuItems = json_decode($decoded['menuItems'], true);
+        $block = json_decode($decoded['main'], true);
+        $blockMenuItems = json_decode($decoded['item'], true);
         //$block['value']['items'][0]['value']['items'][0]['value']['items'][0] //logo
         //$block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] //menu items
         //$block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0] = $menuItems;
 
-        $itemMenu = $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0];
-        $itemsMenu = [];
-        foreach ($menuList['list'] as $item)
-        {
-            $itemMenu['value']['itemId'] = $item['collection'];
-            $itemMenu['value']['title'] = $item['name'];
-            if($item['slug'] == 'home') {
-                $itemMenu['value']['url'] = '/';
-            } else {
-                $itemMenu['value']['url'] = $item['slug'];
-            }
-            $encodeItem = json_encode($itemMenu);
-
-            $itemMenu['value']['id'] = $this->getNameHash($encodeItem);
-
-            $itemsMenu[] = $itemMenu;
-        }
-
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] = $itemsMenu;
-
-        $this->cache->set('menuBlock', json_encode($block));
+//        $itemMenu = $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0];
+//        $itemsMenu = [];
+//        foreach ($menuList['list'] as $item)
+//        {
+//            $itemMenu['value']['itemId'] = $item['collection'];
+//            $itemMenu['value']['title'] = $item['name'];
+//            if($item['slug'] == 'home') {
+//                $itemMenu['value']['url'] = '/';
+//            } else {
+//                $itemMenu['value']['url'] = $item['slug'];
+//            }
+//            $encodeItem = json_encode($itemMenu);
+//
+//            $itemMenu['value']['id'] = $this->getNameHash($encodeItem);
+//
+//            $itemsMenu[] = $itemMenu;
+//        }
+//
+//        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] = $itemsMenu;
+//
+       $this->cache->set('menuBlock', json_encode($block));
 
         return true;
     }
 
     private function full_media($encode)
     {
-        Utils::log('Create full media', 1, "Solstice] [full_media");
+        Utils::log('Create full media', 1, "Bloom] [full_media");
         $decoded = $this->jsonDecode['blocks']['full-media'];
         $block = json_decode($decoded, true);
 
-        Utils::debug($encode);
+        $block['value']['items'][0]['value']['bgColorPalette'] = '';
+        $block['value']['items'][0]['value']['bgColorHex'] = $encode['color'];
+
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($encode['items'][0]['content']);
+        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($encode['items'][1]['content']);
 
         return json_encode($block);
 
     }
 
-    private function gallery_layout()
-    {
-        Utils::log('Create gallery layout', 1, "Solstice] [gallery_layout");
-
-    }
     private function create_Default_Page()
     {
-        Utils::log('Create structure default page', 1, "Solstice] [top_media_diamond");
+        Utils::log('Create structure default page', 1, "Bloom] [top_media_diamond");
 
         //$decoded = $this->jsonDecode['blocks']['defaultBlocks'];
 
@@ -231,7 +267,7 @@ class Bloom
 
     private function createFooter(): void
     {
-        Utils::log('Create Footer', 1, "Solstice] [createFooter");
+        Utils::log('Create Footer', 1, "Bloom] [createFooter");
         $decoded = $this->jsonDecode['blocks']['footer'];
         $block = json_decode($decoded, true);
 
@@ -362,8 +398,19 @@ class Bloom
         return str_replace($replase, '', $str);
     }
 
+    private function sortByOrderBy($array) {
+        usort($array, function($a, $b) {
+            return $a['order_by'] - $b['order_by'];
+        });
+        return $array;
+    }
+
     private function replaceInName($str): string
     {
+        if(empty($str))
+        {
+            return false;
+        }
         return str_replace("-", "_", $str);
     }
 
@@ -390,10 +437,10 @@ class Bloom
             if(!isset($params)){
                 $params = $this->jsonDecode;
             }
-            Utils::log('Call method ' . $verifiedMethodName , 1, "Solstice] [callDynamicMethod");
+            Utils::log('Call method ' . $verifiedMethodName , 1, "Bloom] [callDynamicMethod");
             return call_user_func_array(array($this, $verifiedMethodName), [$params]);
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "Solstice] [callDynamicMethod");
+        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "Bloom] [callDynamicMethod");
         return false;
     }
 

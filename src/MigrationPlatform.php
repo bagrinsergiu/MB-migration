@@ -14,15 +14,16 @@ class MigrationPlatform
 {
     private Parser $parser;
     private QueryBuilder $QueryBuilder;
+    private BrizyAPI $brizyApi;
 
     public function __construct(int $projectID_MB, int $projectID_Brizy)
     {
         Utils::log('-------------------------------------------------------------------------------------- []', 4, '');
         Utils::log('Start Process!', 4, 'MIGRATION');
 
-        $cache     = new VariableCache();
-        $brizyApi  = new BrizyAPI();
-        $errorDump = new ErrorDump();
+        $cache           = new VariableCache();
+        $this->brizyApi  = new BrizyAPI();
+        $errorDump       = new ErrorDump();
 
         $errorDump->setDate($cache);
 
@@ -39,7 +40,7 @@ class MigrationPlatform
         {
             $cache->set('settings', $this->parser->getSite());
             $cache->set('GraphApi_Brizy', $GraphApi_Brizy);
-            $cache->set('graphToken', $brizyApi->getGraphToken($projectID_Brizy));
+            $cache->set('graphToken', $this->brizyApi->getGraphToken($projectID_Brizy));
 
             $this->QueryBuilder = new QueryBuilder($cache);
 
@@ -49,20 +50,23 @@ class MigrationPlatform
 
             foreach ($parentPages as $pages)
             {
-//                if ($pages['slug'] != 'about-us')
-//                {
-//                    continue;
-//                }
+                if ($pages['slug'] != 'fellowship')
+                {
+                    continue;
+                }
 
                 Utils::log('Take page | ID: ' . $pages['id'], 4, 'MAIN Foreach');
 
                 $cache->set('tookPage', $pages);
 
-                $preparedPage = $this->getItemsFromPage($pages);
+                $preparedPage = $this->getItemsFromPage($pages, $cache);
                 $currentParent = $parentPages[array_key_first($parentPages)];
+
+                $this->uploadPicturesFromSections($preparedPage);
+
                 if ($pages['id'] === $currentParent['id']) {
                     $this->setCurrentPageOnWork($this->getCollectionItem("home", $cache), $cache);
-
+                    $preparedPage = $this->sortArrayByPosition($preparedPage);
                     if ($preparedPage) {
                         $this->runPageBuilder($preparedPage, $cache);
                     } else {
@@ -100,10 +104,17 @@ class MigrationPlatform
             Utils::log('MB project not found, migration did not start, process completed without errors!', 1, "MAIN Foreach");
             Utils::log('END', 1, "PROCESS");
         }
-        //print_r($cache);
     }
 
-    private function getItemsFromPage(array $page)
+    private function sortArrayByPosition($array) {
+        usort($array, function($a, $b) {
+            return $a['position'] - $b['position'];
+        });
+
+        return $array;
+    }
+
+    private function getItemsFromPage(array $page, VariableCache $cache)
     {
         Utils::log('Parent Page id: ' . $page['id'] . ' | Name page: ' . $page['name'] . ' | Slug: ' . $page['slug'], 1, 'getItemsFromPage');
         $child = $this->parser->getChildFromPages($page['id']);
@@ -120,10 +131,18 @@ class MigrationPlatform
                 foreach ($section as $value)
                 {
                     Utils::log('Collection of item id: ' .$value['id'].' from section id: '. $sectionID['id'], 1, 'getItemsFromPage');
+                    $color = '';
+                    if(isset($value['settings']['color']['subpalette']))
+                    {
+                        $color = $this->getColorFromPalette($value['settings']['color']['subpalette'], $cache);
+                    }
 
                     $items[] =[
-                        "typeSection" => $value['typeSection'],
-                        "data"=>$this->parser->getSectionsItems($value, true)
+                        'typeSection'   => $value['typeSection'],
+                        'position'      => $value['position'],
+                        'settings'      => $value['settings'],
+                        'color'         => $color,
+                        'items'         => $this->parser->getSectionsItems($value, true)
                     ];
                 }
             }
@@ -136,16 +155,23 @@ class MigrationPlatform
             } else {
                 foreach ($sectionFromParent as $value)
                 {
-                    Utils::log('Collection of item id: ' .$value['id'].' -> section id: '. $sectionFromParent['id'] .'-> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
+                    Utils::log('Collection of item id: ' .$value['id'].' -> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
+                    $color = '';
+                    if(isset($value['settings']['color']['subpalette']))
+                    {
+                        $color = $this->getColorFromPalette($value['settings']['color']['subpalette'], $cache);
+                    }
 
                     $items[] =[
-                        "typeSection" => $value['typeSection'],
-                        $items[] = $this->parser->getSectionsItems($value, true)
+                        'typeSection'   => $value['typeSection'],
+                        'position'      => $value['position'],
+                        'settings'      => $value['settings'],
+                        'color'         => $color,
+                        'items'         => $sectionsItems = $this->parser->getSectionsItems($value, true)
                     ];
                 }
                 $result = $items;
             }
-
         }
         else
         {
@@ -155,6 +181,28 @@ class MigrationPlatform
 
         return $result;
     }
+
+    private function getColorFromPalette(string $color, VariableCache $cache)
+    {
+        $parameter = $cache->get('settings')['parameter'];
+        $map = [
+            'subpalette1' => 'color1',
+            'subpalette2' => 'color2',
+            'subpalette3' => 'color3',
+            'subpalette4' => 'color4',
+            'subpalette5' => 'color5',
+            'subpalette6' => 'color6'
+        ];
+        foreach ($parameter['palette'] as $palette)
+        {
+            if ($palette['tag'] == $map[$color])
+            {
+                return $palette['color'];
+            }
+        }
+        return false;
+    }
+
     private function getCollectionItem($slug, VariableCache $cache)
     {
         $ListPages = $cache->get('ListPages');
@@ -269,6 +317,27 @@ class MigrationPlatform
             }
         }
         $cache->set('menuList', ['create' => false , 'list' => $parentPages]);
+    }
+
+    private function uploadPicturesFromSections(array $sectionsItems)
+    {
+        $sectionItem = $sectionsItems;
+        foreach ($sectionsItems as &$item)
+        {
+            if(isset($item['settings']['background']['photo']))
+            {
+                $result = $this->brizyApi->createMedia($item['settings']['background']['photo']);
+                $result = json_decode($result['body'], true);
+                $item['settings']['background']['photo'] = $result['name'];
+                $item['settings']['background']['filename'] = $result['filename'];
+            }
+
+            // todo
+
+
+        }
+        $sectionsItem = $sectionsItems;
+        print_r($sectionsItem);
     }
 
 }

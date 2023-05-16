@@ -509,6 +509,9 @@ class QueryBuilder
         return $results->getData();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function updateCollectionItem($collection_item_id, $slug, $pageData, $status = 'published', array $fields = [], $title = null): object|array
     {
         if (!$this->client) {
