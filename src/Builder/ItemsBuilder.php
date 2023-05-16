@@ -1,7 +1,6 @@
 <?php
 namespace Builder;
 
-use Brizy\Builder\Layout\Zion\Zion;
 use Brizy\Builder\VariableCache;
 use Brizy\core\Config;
 use Brizy\core\Utils;
@@ -16,6 +15,9 @@ class ItemsBuilder extends Utils
     private VariableCache $cache;
     private QueryBuilder $QueryBuilder;
 
+    /**
+     * @throws \Exception
+     */
     function __construct($preparedPage, VariableCache $cache, $defaultPage = false)
     {
         $this->cache = $cache;
@@ -32,34 +34,30 @@ class ItemsBuilder extends Utils
         if(!$defaultPage)
         {
             $itemsData = [];
-            $menuBlock = json_decode($cache->get('menuBlock'),true);
-            $itemsData['items'][] = $menuBlock;
+//            $menuBlock = json_decode($cache->get('menuBlock'),true);
+//            $itemsData['items'][] = $menuBlock;
             Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
             foreach ($preparedPage as $section)
             {
-
-                if(isset($section['typeSection']) or empty($section[0])){continue;}
-
-                print_r('>>>'.$section['data']);
-                $blockData = $_WorkClassTemplate->callMethod($section['typeSection'], $section['data']);
-                if (!empty($blockData)) {
+                $sectionValue = [ 'color'=>$section['color'], 'items'=>$section['items']];
+                $blockData = $_WorkClassTemplate->callMethod($section['typeSection'], $sectionValue);
+                if (!empty($blockData) && $blockData !== "null") {
                     $decodeBlock = json_decode($blockData, true);
-                    $itemsData['items'][] = $decodeBlock['items'][0];
+                    $itemsData['items'][] = $decodeBlock;
                 } else {
                     Utils::log('null' . $slug, 2, 'ItemsBuilder');
                 }
             }
 
-            $footerBlock = json_decode($cache->get('footerBlock'),true);
-
-            $itemsData['items'][] = $footerBlock;
+//            $footerBlock = json_decode($cache->get('footerBlock'),true);
+//            $itemsData['items'][] = $footerBlock;
 
             $pageData = json_encode($itemsData);
 
             Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
 
-            ///print_r($pageData."\n============\n");
             $this->QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+
             Utils::log('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
             return true;
         }

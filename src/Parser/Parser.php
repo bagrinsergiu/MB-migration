@@ -8,11 +8,10 @@ use Brizy\Layer\DataSource\DBConnector;
 
 class Parser
 {
-    private $items;
-    private $db;
-    private $siteId;
-    private $cache;
-    private $monipulator;
+    private DBConnector $db;
+    private mixed $siteId;
+    private VariableCache $cache;
+    private ArrayManipulator $monipulator;
 
 
     public function __construct(VariableCache $cache)
@@ -23,7 +22,6 @@ class Parser
         $this->monipulator = new ArrayManipulator();
 
         $this->siteId      = $this->cache->get('projectId_MB');
-
     }
 
     public function getSite()
@@ -35,6 +33,7 @@ class Parser
             'name' => $settingSite[0]['name'],
             'title' => $settingSite[0]['title'],
             'design' => $designSite[0]['name'],
+            'parameter'=>json_decode($settingSite[0]['settings'], true),
             'favicon' => $settingSite[0]['favicon']
         ];
     }
@@ -71,7 +70,6 @@ class Parser
         Utils::log('Get child from pages', 1, 'getChildFromPages');
         $result = [];
 
-        //$requestPageSite = $this->db->request("SELECT id, position FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY position asc");
         $pagesSite = $this->db->request("SELECT id, position FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY position asc");
 
         foreach($pagesSite as $pageSite)
@@ -81,22 +79,22 @@ class Parser
                 'position'  => $pageSite['position']
             ];
         }
-
         return $result;
     }
 
     public function getSectionsPage($id)
     {
         $result = [];
-        $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position FROM sections WHERE page_id  = " . $id);
+        $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = " . $id);
         foreach ($requestSections as $pageSections)
         {
             $typeSectionLayoutUuid = $this->db->requestArray("SELECT name FROM section_layouts WHERE uuid  = '" . $pageSections['section_layout_uuid'] . "'");
             $result[] = [
-              'id'           => $pageSections['id'],
-              'category' => $pageSections['category'],
-              'typeSection' => $typeSectionLayoutUuid[0]['name'],
-              'position'     => $pageSections['position'],
+                'id'          => $pageSections['id'],
+                'category'    => $pageSections['category'],
+                'typeSection' => $typeSectionLayoutUuid[0]['name'],
+                'position'    => $pageSections['position'],
+                'settings'    => json_decode($pageSections['settings'], true)
             ];
         }
         return $result;
