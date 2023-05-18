@@ -136,18 +136,22 @@ class BrizyAPI{
         $this->projectToken = $newToken;
     }
 
-    public function createMedia($pathOrUrlToFileName): array
+    public function createMedia($pathOrUrlToFileName): bool|array
     {
+
         $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
         $mime_type = mime_content_type($pathToFileName);
-        $file_contents = file_get_contents($pathToFileName);
-        $base64_content = base64_encode($file_contents);
+        if($this->getFileExtension($mime_type)) {
+            $file_contents = file_get_contents($pathToFileName);
+            $base64_content = base64_encode($file_contents);
 
-        return $this->httpClient('POST', $this->createPrivatUrlAPI('media'), [
-            'filename' => $this->getFileName($pathToFileName),
-            'name' => $this->getNameHash($base64_content).'.'.$this->getFileExtension($mime_type),
-            'attachment' => $base64_content
-        ]);
+            return $this->httpClient('POST', $this->createPrivatUrlAPI('media'), [
+                'filename' => $this->getFileName($pathToFileName),
+                'name' => $this->getNameHash($base64_content) . '.' . $this->getFileExtension($mime_type),
+                'attachment' => $base64_content
+            ]);
+        }
+        return false;
     }
 
     public function createUser(array $value)
@@ -319,6 +323,7 @@ class BrizyAPI{
 
     private function downloadImage($url): string
     {
+        Utils::log('Loading a picture', 1, 'downloadImage');
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $image_data = curl_exec($ch);
@@ -326,12 +331,15 @@ class BrizyAPI{
 
         $file_name = basename($url);
         $path = Config::$pathMedia . $file_name;
-        file_put_contents($path, $image_data);
-
+        $status = file_put_contents($path, $image_data);
+        if(!$status){
+            Utils::log('Failed to load image', 2, 'downloadImage');
+        }
         return $path;
     }
 
     private function isUrlOrFile($urlOrPath) {
+        Utils::log('Check image address', 1, 'uploadPicturesFromSections');
         if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
             return $this->downloadImage($urlOrPath);
         }

@@ -27,14 +27,15 @@ class Parser
     public function getSite()
     {
         Utils::log('Get site', 1, 'getSite');
-        $settingSite = $this->db->requestArray("SELECT id, name, title, settings, design_uuid, favicon from sites WHERE id = " . $this->siteId);
+        $settingSite = $this->db->requestArray("SELECT id, name, title, settings, uuid, design_uuid, favicon from sites WHERE id = " . $this->siteId);
         $designSite = $this->db->requestArray("SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
         return [
-            'name' => $settingSite[0]['name'],
-            'title' => $settingSite[0]['title'],
-            'design' => $designSite[0]['name'],
-            'parameter'=>json_decode($settingSite[0]['settings'], true),
-            'favicon' => $settingSite[0]['favicon']
+            'name'      => $settingSite[0]['name'],
+            'title'     => $settingSite[0]['title'],
+            'design'    => $designSite[0]['name'],
+            'uuid'      => $settingSite[0]['uuid'],
+            'parameter' => json_decode($settingSite[0]['settings'], true),
+            'favicon'   => $settingSite[0]['favicon']
         ];
     }
 

@@ -57,14 +57,23 @@ class Bloom
         $decoded = $this->jsonDecode['blocks']['left-media'];
         $block = json_decode($decoded, true);
 
-        $replaceTitle = $this->replaceTitleTag($encoded['items'][1]['content']);
-        $replaceBody  = $this->replaceParagraphs($encoded['items'][2]['content']);
-
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
         $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
 
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $replaceBody;
+        foreach ($encoded['items'] as $item){
+            if($item['category'] == 'photo'){
+                $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $item['content'];
+                $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
+            }
+            if($item['category'] == 'text') {
+                if($item['item_type']=='title'){
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                }
+                if($item['item_type']=='body'){
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                }
+            }
+        }
 
         return json_encode($block);
     }
@@ -75,52 +84,91 @@ class Bloom
         $decoded = $this->jsonDecode['blocks']['right-media'];
         $block = json_decode($decoded, true);
 
-        $replaceTitle = $this->replaceTitleTag($encoded['items'][1]['content']);
-        $replaceBody = $this->replaceParagraphs($encoded['items'][0]['content']);
-
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
         $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
 
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $replaceBody;
-
+        foreach ($encoded['items'] as $item){
+            if($item['category'] == 'photo'){
+                $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $item['content'];
+                $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
+            }
+            if($item['category'] == 'text') {
+                if($item['item_type']=='title'){
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                }
+                if($item['item_type']=='body'){
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                }
+            }
+        }
         return json_encode($block);
     }
 
-    private function full_text(array $encoded)
+    private function full_text(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [full_text");
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
-        $block = json_decode($decoded, true);
+        if(empty($encoded['background'])) {
+            $block = json_decode($decoded['main'], true);
 
-        $replaceTitle = $this->replaceTitleTag($encoded['items'][0]['content']);
-        $replaceBody  = $this->replaceParagraphs($encoded['items'][1]['content']);
+            $block['value']['items'][0]['value']['bgColorPalette'] = '';
+            $block['value']['items'][0]['value']['bgColorHex']     = $encoded['color'];
 
-        $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
+            foreach ($encoded['items'] as $item){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                    }
+                    if($item['item_type']=='body'){
+                        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                    }
+                }
+            }
+        } else {
+            Utils::log('Set background', 1, "Bloom] [full_text");
+            $block = json_decode($decoded['background'], true);
 
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
-        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $replaceBody;
+            $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['background']['filename'];
+            $block['value']['items'][0]['value']['bgImageSrc']      = $encoded['background']['photo'];
 
+            foreach ($encoded['items'] as $item){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                    }
+                    if($item['item_type']=='body'){
+                        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                    }
+                }
+            }
+        }
         return json_encode($block);
     }
 
     private function left_media_circle(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [left_media_circle");
-        print_r($encoded);
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
-
-        $replaceTitle = $this->replaceTitleTag($encoded['items'][0]['content']);
-        $replaceBody = $this->replaceParagraphs($encoded['items'][1]['content']);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
         $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
 
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $replaceTitle;
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $replaceBody;
+        foreach ($encoded['items'] as $item){
+            if($item['category'] == 'photo'){
+                $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $item['content'];
+                $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
+            }
+            if($item['category'] == 'text') {
+                if($item['item_type']=='title'){
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                }
+                if($item['item_type']=='body'){
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                }
+            }
+        }
 
         return json_encode($block);
     }
@@ -191,17 +239,27 @@ class Bloom
     private function gallery_layout(array $encoded) {
         Utils::log('Create bloc', 1, "Bloom] [gallery_layout");
 
-        $encoded = $this->sortByOrderBy($encoded['items']);
+        $encoded['items'] = $this->sortByOrderBy($encoded['items']);
 
         $decoded = $this->jsonDecode['blocks']['gallery-layout'];
         $block = json_decode($decoded, true);
-        $item = $block['value']['items'][0];
+        $slide = $block['value']['items'][0];
+        $block['value']['items'] = [];
+
+
+        foreach ($encoded['items'] as $item){
+            $slide['value']['bgImageFileName'] = $item['imageFileName'];
+            $slide['value']['bgImageSrc']      = $item['content'];
+
+            $block['value']['items'][] = $slide;
+
+        }
         //$block['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($encoded[0]['content']);
         //$block['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($encoded[1]['content']);
         //"https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/gallery/slides/5c45f7bf-39c5-4cfc-af3c-e463f6cca210.jpg"
         //"https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/gallery/slides/66dba0f3-af89-46de-8be5-70c833e327b1.jpg"
         //"https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/site-images/888f273d-8d15-40cb-9f38-3a913061d717.png"
-        print_r($block['value']['items'][0]);
+        print_r($block);
 
         return json_encode($block);
     }
@@ -241,7 +299,7 @@ class Bloom
         return true;
     }
 
-    private function full_media($encode)
+    private function full_media($encode): bool|string
     {
         Utils::log('Create full media', 1, "Bloom] [full_media");
         $decoded = $this->jsonDecode['blocks']['full-media'];
@@ -250,11 +308,21 @@ class Bloom
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
         $block['value']['items'][0]['value']['bgColorHex'] = $encode['color'];
 
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($encode['items'][0]['content']);
-        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($encode['items'][1]['content']);
-
+        foreach ($encode['items'] as $item){
+            if($item['category'] == 'photo'){
+                $block['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['imageSrc'] = $item['content'];
+                $block['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
+            }
+            if($item['category'] == 'text') {
+                if($item['item_type']=='title'){
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                }
+                if($item['item_type']=='body'){
+                    $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                }
+            }
+        }
         return json_encode($block);
-
     }
 
     private function create_Default_Page()
@@ -359,7 +427,10 @@ class Bloom
     }
 
     private function replaceParagraphs($html): string {
-        if(empty($html)){return '';}
+        if(empty($html)){
+            return '';
+        }
+
         $doc = new DOMDocument();
         $doc->loadHTML($html);
         $paragraphs = $doc->getElementsByTagName('p');
@@ -414,7 +485,7 @@ class Bloom
         return str_replace("-", "_", $str);
     }
 
-    private function getNameHash($data): string
+    private function getNameHash($data = ''): string
     {
         $to_hash = $this->generateUniqueID() . $data;
         $newHash = hash('sha256', $to_hash);

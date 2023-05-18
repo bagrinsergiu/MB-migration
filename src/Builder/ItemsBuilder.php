@@ -39,8 +39,21 @@ class ItemsBuilder extends Utils
             Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
             foreach ($preparedPage as $section)
             {
-                $sectionValue = [ 'color'=>$section['color'], 'items'=>$section['items']];
+                $background = [];
+
+                if(array_key_exists('background', $section['settings']))
+                {
+                    $background = $section['settings']['background'];
+                }
+
+                $sectionValue = [
+                    'background' => $background,
+                    'color'      => $section['color'],
+                    'items'      => $section['items']
+                ];
+
                 $blockData = $_WorkClassTemplate->callMethod($section['typeSection'], $sectionValue);
+
                 if (!empty($blockData) && $blockData !== "null") {
                     $decodeBlock = json_decode($blockData, true);
                     $itemsData['items'][] = $decodeBlock;

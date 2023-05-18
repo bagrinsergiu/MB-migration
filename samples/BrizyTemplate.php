@@ -37,5 +37,5 @@ $brizyAPI   = new BrizyAPI();
 //var_dump($brizyAPI->getGraphToken(4303928));
 
 //скачиваем картинку по ссылки и загружаем в Brizy
-$urlImage = "https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/gallery/slides/5c45f7bf-39c5-4cfc-af3c-e463f6cca210.jpg";
-var_dump($brizyAPI->createMedia($urlImage));
+//$urlImage = "https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/gallery/slides/5c45f7bf-39c5-4cfc-af3c-e463f6cca210.jpg";
+//var_dump($brizyAPI->createMedia($urlImage));
