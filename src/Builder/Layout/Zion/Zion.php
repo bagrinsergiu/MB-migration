@@ -361,7 +361,7 @@ class Zion
         return str_replace("-", "_", $str);
     }
 
-    private function getNameHash($data): string
+    private function getNameHash($data = ''): string
     {
         $to_hash = $this->generateUniqueID() . $data;
         $newHash = hash('sha256', $to_hash);
