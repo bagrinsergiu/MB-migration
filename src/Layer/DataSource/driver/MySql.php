@@ -2,6 +2,7 @@
 namespace Brizy\Layer\DataSource\driver;
 
 use Brizy\core\Config;
+use Brizy\core\Utils;
 
 class MySql
 {
@@ -9,6 +10,7 @@ class MySql
 
     function __construct()
     {
+        Utils::log('Initialization', 4, 'MySql');
         $this->connect(Config::configMySQL());
     }
 

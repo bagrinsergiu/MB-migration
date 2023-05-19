@@ -34,13 +34,12 @@ class ItemsBuilder extends Utils
         if(!$defaultPage)
         {
             $itemsData = [];
-//            $menuBlock = json_decode($cache->get('menuBlock'),true);
-//            $itemsData['items'][] = $menuBlock;
+            $menuBlock = json_decode($cache->get('menuBlock'),true);
+            $itemsData['items'][] = $menuBlock;
             Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
             foreach ($preparedPage as $section)
             {
                 $background = [];
-
                 if(array_key_exists('background', $section['settings']))
                 {
                     $background = $section['settings']['background'];
@@ -80,6 +79,7 @@ class ItemsBuilder extends Utils
             $_WorkClassTemplate->callMethod('create-Default-Page');
             return true;
         }
+        return false;
     }
 
     public function getJsonObject($object = 'data') 

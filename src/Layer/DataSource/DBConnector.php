@@ -3,6 +3,7 @@
 namespace Brizy\Layer\DataSource;
 
 use Brizy\core\Config;
+use Brizy\core\Utils;
 use Brizy\Layer\DataSource\driver\MySql;
 use Brizy\Layer\DataSource\driver\PostgreSQL;
 use Exception;
@@ -15,7 +16,7 @@ class DBConnector
      * @throws Exception
      */
     public function __construct() {
-
+        Utils::log('Initialization', 4, 'DBConnector');
         $selectedDatabase = Config::$DBconnection;
 
         if ($selectedDatabase === 'mysql') {
@@ -25,6 +26,7 @@ class DBConnector
         } else {
             throw new Exception('Unsupported database');
         }
+        Utils::log('READY', 4, 'DBConnector Module');
     }
 
     private function connectToMySQL(): void

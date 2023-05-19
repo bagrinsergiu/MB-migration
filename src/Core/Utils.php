@@ -43,8 +43,6 @@ class Utils{
         self::$cache = $cache;
     }
 
-    
-
     function verificArray($array)
     {
         if(!is_array($array)){
@@ -74,7 +72,6 @@ class Utils{
         
         return $json;
     }
-      
 
     public static function strReplace($blok, $replace, $toteplace)
     {

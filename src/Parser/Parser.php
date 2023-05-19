@@ -16,12 +16,14 @@ class Parser
 
     public function __construct(VariableCache $cache)
     {
+        Utils::log('Initialization', 4, 'Parser Module');
         $this->cache       = $cache;
 
         $this->db          = new DBConnector();
         $this->monipulator = new ArrayManipulator();
 
         $this->siteId      = $this->cache->get('projectId_MB');
+        Utils::log('READY', 4, 'Parser Module');
     }
 
     public function getSite()
@@ -39,7 +41,36 @@ class Parser
         ];
     }
 
-    public function getParentPages()
+    public function getMainSection()
+    {
+        Utils::log('Get main Section', 1, 'getParentPages');
+        $result = [];
+        $requestMainSections = $this->db->request("SELECT * FROM sections WHERE site_id =  " . $this->siteId . " and (page_id isnull or page_id = 0) ORDER BY position");
+
+        foreach($requestMainSections as $mainSection)
+        {
+            $requestItemsFromMainSection = $this->db->request("SELECT * FROM items WHERE section_id =  " . $mainSection['id']);
+            $item = [];
+            foreach ($requestItemsFromMainSection as $itemsFromMainSections)
+            {
+                $item[] = [
+                    'id'=> $itemsFromMainSections['id'],
+                    'category'=> $itemsFromMainSections['category'],
+                    'position'=> $itemsFromMainSections['order_by'],
+                    'content'=> $itemsFromMainSections['content']
+                ];
+            }
+
+            $result[$mainSection['category']] = [
+                'id'=> $requestItemsFromMainSection['id'],
+                'category'=> $requestItemsFromMainSection['category'],
+                'items'=> $item,
+            ];
+        }
+        return $result;
+    }
+
+    public function getParentPages(): bool|array
     {
         Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
@@ -65,7 +96,7 @@ class Parser
         return $result;
     }
 
-    public function getChildFromPages($parenId)
+    public function getChildFromPages($parenId): array
     {
 
         Utils::log('Get child from pages', 1, 'getChildFromPages');
@@ -83,7 +114,7 @@ class Parser
         return $result;
     }
 
-    public function getSectionsPage($id)
+    public function getSectionsPage($id): array
     {
         $result = [];
         $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = " . $id);
@@ -133,7 +164,7 @@ class Parser
         return $result;
     }
 
-    private function assemblySection($id)
+    private function assemblySection($id): array
     {
         $result = $this->monipulator->groupArrayByParentId($this->cache->get($id));
 

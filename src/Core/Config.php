@@ -31,7 +31,8 @@ class Config
         'users' => '/users',
         'pages' => '/pages',
         'menus/create' => '/menus/create',
-        'media' => '/media'
+        'media' => '/media',
+        'menu' => '/menus'
     ];
 
     public static $authenticateParametr = "client_id={client_id}&client_secret={client_secret}&grant_type=user_client_credentials&scope=user";
@@ -42,6 +43,7 @@ class Config
 
     public static $pathLogFile = __DIR__ . "/../../log/{{PREFIX}}.log";
     public static $pathMedia = __DIR__ . "/../../tmp/media/";
+    public static $pathTmp = __DIR__ . "/../../tmp/";
 
     public static $themes = array(
         "Anthem" => "Anthem",

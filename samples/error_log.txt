@@ -1,1 +1,4 @@
 2023-05-04 09:45:44: Error occurred, dump created in file D:\SOFT\OSPanel\domains\MB-migration\src\Core/../../log/error/error_dump_2023-05-04_09-45-44.txt
+2023-05-16 19:29:42: Error occurred, dump created in file D:\SOFT\OSPanel\domains\MB-migration\src\Core/../../log/error/error_dump_2023-05-16_19-29-42.txt
+2023-05-16 19:29:47: Error occurred, dump created in file D:\SOFT\OSPanel\domains\MB-migration\src\Core/../../log/error/error_dump_2023-05-16_19-29-47.txt
+2023-05-16 19:29:50: Error occurred, dump created in file D:\SOFT\OSPanel\domains\MB-migration\src\Core/../../log/error/error_dump_2023-05-16_19-29-50.txt

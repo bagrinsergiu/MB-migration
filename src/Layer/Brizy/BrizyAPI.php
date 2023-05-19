@@ -10,17 +10,16 @@ use GuzzleHttp\Exception\RequestException;
 
 class BrizyAPI{
 
-    /**
-     * @var Client
-     */
-    private $httpClient;
     private $projectId;
     private $projectToken;
+    private $nameFolder;
 
     function __construct()
     {
+        Utils::log('Initialization', 4, 'BrizyAPI');
         $this->projectToken = Config::$devToken;
     }
+
     public function getWorkspaces($name = null)
     {
         $result = $this->httpClient('GET', $this->createUrlAPI('workspaces'),['page'=>1,'count'=>100]);
@@ -110,8 +109,11 @@ class BrizyAPI{
         if(!is_array($result))
         {
             Utils::log('Bad Response', 2, $nameFunction);
-
-            return false;
+        }
+        if($result['code'] == 500)
+        {
+            Utils::log('Error getting token', 5, $nameFunction);
+            exit('Error getting token');
         }
 
         return $result['access_token'];
@@ -136,13 +138,18 @@ class BrizyAPI{
         $this->projectToken = $newToken;
     }
 
-    public function createMedia($pathOrUrlToFileName): bool|array
+    public function createMedia($pathOrUrlToFileName, $nameFolder = ''): bool|array
     {
-
+        if($nameFolder != ''){
+            $this->nameFolder = $nameFolder;
+        }
         $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
         $mime_type = mime_content_type($pathToFileName);
         if($this->getFileExtension($mime_type)) {
             $file_contents = file_get_contents($pathToFileName);
+            if(!$file_contents){
+                Utils::log('Failed get contents image!!! path: ' . $pathToFileName, 2, 'createMedia');
+            }
             $base64_content = base64_encode($file_contents);
 
             return $this->httpClient('POST', $this->createPrivatUrlAPI('media'), [
@@ -254,13 +261,21 @@ class BrizyAPI{
         return $result[$filter];
     }
 
-    public function createMenu($projectID, $menuName): array
+    public function createMenu($data)
     {
-        return $this->httpClient('POST', $this->createUrlProject($projectID,'menus/create'), [
-            'name' => $menuName
+        Utils::log('Request to create menu', 1, 'createMenu');
+        $result = $this->httpClient('POST', $this->createPrivatUrlAPI('menu'), [
+            'project' => $data['project'],
+            'name'    => $data['name'],
+            'data'    => $data['data']
         ]);
+        if($result['status'] !== 201){
+            Utils::log('Failed menu', 2, 'createMenu');
+            return false;
+        }
+        Utils::log('Created menu', 1, 'createMenu');
+        return json_decode($result['body'], true);
     }
-
 
     private function createUrlApiProject($projectId)
     {
@@ -283,11 +298,11 @@ class BrizyAPI{
         return Config::$urlAPI . Config::$endPointApi[$endPoint];
     }
 
-    private function getNameHash($fileBase64): string
+    public function getNameHash($data, int $length = 32): string
     {
-        $to_hash = $this->generateUniqueID() . $fileBase64;
+        $to_hash = $this->generateUniqueID() . $data;
         $newHash = hash('sha256', $to_hash);
-        return substr($newHash, 0, 32);
+        return substr($newHash, 0, $length);
     }
     private function generateUniqueID(): string
     {
@@ -330,10 +345,10 @@ class BrizyAPI{
         curl_close($ch);
 
         $file_name = basename($url);
-        $path = Config::$pathMedia . $file_name;
+        $path = Config::$pathTmp . $this->nameFolder . '/media/' . $file_name;
         $status = file_put_contents($path, $image_data);
         if(!$status){
-            Utils::log('Failed to load image', 2, 'downloadImage');
+            Utils::log('Failed to load image!!! path: ' . $path, 2, 'downloadImage');
         }
         return $path;
     }
@@ -352,6 +367,13 @@ class BrizyAPI{
             {
                 return "unknown";
             }
+        }
+    }
+
+    public function createDirectory($directoryPath): void
+    {
+        if (!is_dir($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
         }
     }
 

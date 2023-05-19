@@ -12,12 +12,17 @@ class ErrorDump
     /**
      * @var VariableCache
      */
-    private $cache;
+    private VariableCache $cache;
+    /**
+     * @var mixed|null
+     */
+    private mixed $projectID;
 
-    public function __construct()
+    public function __construct($projectID = null)
     {
         set_error_handler([$this, 'errorHandler']);
         set_exception_handler([$this, 'exceptionHandler']);
+        $this->projectID = $projectID;
     }
     public function setDate(VariableCache $cache): void
     {
@@ -36,6 +41,14 @@ class ErrorDump
     private function createDump($error) {
 
         $dump_file = __DIR__ . '/../../log/error/error_dump_' . date('Y-m-d_H-i-s') . '.txt';
+        if($this->projectID !== null ){
+            $dump_file = __DIR__;
+            $dump_file .= '/../../tmp/';
+            $dump_file .= $this->projectID;
+            $dump_file .= '/log/dump/';
+            $dump_file .= date('Y-m-d_H-i-s');
+            $dump_file .= '.txt';
+        }
 
         $data = [
             'error_message' => $error->getMessage(),
