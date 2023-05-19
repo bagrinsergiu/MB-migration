@@ -17,7 +17,11 @@ class MigrationPlatform
     private BrizyAPI $brizyApi;
     private VariableCache $cache;
     private string $projectId;
+    private int $projectID_Brizy;
 
+    /**
+     * @throws Exception
+     */
     public function __construct(int $projectID_MB, int $projectID_Brizy)
     {
         Utils::log('-------------------------------------------------------------------------------------- []', 4, '');
@@ -30,6 +34,7 @@ class MigrationPlatform
         $this->projectId = $projectID_MB . '_' . $projectID_Brizy . '_';
         $migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $migrationID;
+        $this->projectID_Brizy = $projectID_Brizy;
 
         $this->cache->set('migrationID', $migrationID);
         Utils::log('Migration ID: ' . $migrationID, 4, 'MIGRATION');
@@ -48,7 +53,6 @@ class MigrationPlatform
         $this->createProjectFolders();
 
         $parentPages = $this->parser->getParentPages();
-        $parentMainSection = $this->parser->getMainSection();
 
         if ($parentPages)
         {
@@ -58,13 +62,18 @@ class MigrationPlatform
 
             $this->QueryBuilder = new QueryBuilder($this->cache);
 
-            $this->getAllPage();
+            $mainSection = $this->parser->getMainSection();
+            Utils::log('Upload Logo menu', 1, 'createMenu');
+            $mainSection = $this->uploadPicturesFromSections($mainSection);
+            $this->cache->set('mainSection', $mainSection);
 
+            $this->getAllPage();
             $this->createBlankPages($parentPages);
+            $this->createMenuStructure();
 
             foreach ($parentPages as $pages)
             {
-//                if ($pages['slug'] != 'serve')
+//                if ($pages['slug'] != 'home')
 //                {
 //                    continue;
 //                }
@@ -192,6 +201,33 @@ class MigrationPlatform
         }
 
         return $result;
+    }
+
+    private function createMenuStructure(): void
+    {
+        Utils::log('Create menu structure', 1, 'createMenuStructure');
+
+        $parentPages = $this->cache->get('menuList');
+        $mainMenu = [];
+
+        foreach ($parentPages['list'] as $page){
+            $mainMenu[] = [
+                "id" => $page['collection'],
+                "items" => [],
+                "isNewTab" => false,
+                "label" => $page['name'],
+                "uid"=> $this->getNameHash()
+            ];
+        }
+
+        $data = [
+            'project'=>$this->projectID_Brizy,
+            'name' => 'mainMenu',
+            'data' => json_encode($mainMenu)
+        ];
+
+        $result = $this->brizyApi->createMenu($data);
+        $this->cache->add('menuList', $result);
     }
 
     private function getColorFromPalette(string $color)
@@ -337,7 +373,11 @@ class MigrationPlatform
                 $pages['collection'] = $newPage;
             }
         }
-        $this->cache->set('menuList', ['create' => false , 'list' => $parentPages]);
+        $this->cache->set('menuList', [
+            'color' => $this->cache->get('settings')['parameter']['palette'][0]['color'],
+            'create' => false ,
+            'list' => $parentPages
+        ]);
     }
 
     private function getPisturesUrl($nameImage, $type)
@@ -362,16 +402,39 @@ class MigrationPlatform
         Utils::log('Start upload image', 1, 'uploadPicturesFromSections');
         foreach ($sectionsItems as &$section)
         {
-            if(array_key_exists('background', $section['settings']))
-            {
-                Utils::log('Found background image', 1, 'uploadPicturesFromSections');
-                $result = $this->brizyApi->createMedia($section['settings']['background']['photo'], $this->projectId);
-                if($result){
-                    $result = json_decode($result['body'], true);
-                    Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
-                    $section['settings']['background']['photo'] = $result['name'];
-                    $section['settings']['background']['filename'] = $result['filename'];
-                    Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
+            if(array_key_exists('settings', $section)) {
+                if(array_key_exists('background', $section['settings'])) {
+                    Utils::log('Found background image', 1, 'uploadPicturesFromSections');
+                    $result = $this->brizyApi->createMedia($section['settings']['background']['photo'], $this->projectId);
+                    if ($result) {
+                        $result = json_decode($result['body'], true);
+                        Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
+                        $section['settings']['background']['photo'] = $result['name'];
+                        $section['settings']['background']['filename'] = $result['filename'];
+                        Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
+                    }
+                } else {
+                    foreach($section['items'] as &$item)
+                    {
+                        if($item['category'] == 'photo' && $item['content'] != '')
+                        {
+                            Utils::log('Found new image', 1, 'uploadPicturesFromSections');
+                            $downloadImageURL = $this->getPisturesUrl($item['content'], $section['typeSection']);
+                            $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
+                            if($result){
+
+                                $result = json_decode($result['body'], true);
+                                Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
+                                $item['imageFileName'] = $result['filename'];
+                                $item['content'] = $result['name'];
+                                Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
+
+                            }
+                            else{
+                                Utils::log('The structure of the image is damaged', 3, 'uploadPicturesFromSections');
+                            }
+                        }
+                    }
                 }
             } else {
                 foreach($section['items'] as &$item)
@@ -398,6 +461,23 @@ class MigrationPlatform
             }
         }
         return $sectionsItems;
+    }
+
+    private function getNameHash($data = ''): string
+    {
+        $to_hash = $this->generateCharID() . $data;
+        $newHash = hash('sha256', $to_hash);
+        return substr($newHash, 0, 32);
+    }
+
+    private function generateCharID($length = 32): string
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyz';
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $randomString;
     }
 
     private function createProjectFolders(): void

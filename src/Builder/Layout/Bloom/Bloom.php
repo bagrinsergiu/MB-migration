@@ -36,18 +36,18 @@ class Bloom
             exit;
         }
 
-//        $menuList = $this->cache->get('menuList');
-//
-//        if($menuList['create'] == false) {
-//            if ($this->createMenu($menuList)) {
-//                Utils::log('Success create MENU', 1, "Bloom] [__construct");
-//                $menuList['create'] = true;
-//                $this->cache->set('menuList', $menuList);
-//            } else {
-//                Utils::log("Failed create MENU", 2, "Bloom] [__construct");
-//            }
-//        }
-//        $this->createFooter($menuList);
+        $menuList = $this->cache->get('menuList');
+
+        if($menuList['create'] == false) {
+            if ($this->createMenu($menuList)) {
+                Utils::log('Success create MENU', 1, "Bloom] [__construct");
+                $menuList['create'] = true;
+                $this->cache->set('menuList', $menuList);
+            } else {
+                Utils::log("Failed create MENU", 2, "Bloom] [__construct");
+            }
+        }
+        $this->createFooter($menuList);
     }
 
     private function createMenu($menuList)
@@ -55,31 +55,46 @@ class Bloom
         Utils::log('Create menu', 1, "Bloom] [createMenu");
         $decoded = $this->jsonDecode['blocks']['menu'];
         $block = json_decode($decoded['main'], true);
-        $blockMenuItems = json_decode($decoded['item'], true);
-        //$block['value']['items'][0]['value']['items'][0]['value']['items'][0] //logo
-        //$block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] //menu items
-        //$block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0] = $menuItems;
+        $lgoItem = $this->cache->get('mainSection')['header']['items'];
+        foreach ($lgoItem as $item)
+        {
+            if ($item['category'] = 'photo')
+            {
+                $logo = $item['content'];
+            }
+        }
+        $itemMenu = json_decode($decoded['item'], true);
 
-//        $itemMenu = $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0];
-//        $itemsMenu = [];
-//        foreach ($menuList['list'] as $item)
-//        {
-//            $itemMenu['value']['itemId'] = $item['collection'];
-//            $itemMenu['value']['title'] = $item['name'];
-//            if($item['slug'] == 'home') {
-//                $itemMenu['value']['url'] = '/';
-//            } else {
-//                $itemMenu['value']['url'] = $item['slug'];
-//            }
-//            $encodeItem = json_encode($itemMenu);
-//
-//            $itemMenu['value']['id'] = $this->getNameHash($encodeItem);
-//
-//            $itemsMenu[] = $itemMenu;
-//        }
-//
-//        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] = $itemsMenu;
-//
+
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $logo; //logo
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['menuSelected'] = $menuList['uid']; //menu items
+
+        $itemsMenu = [];
+
+        foreach ($menuList['list'] as $item)
+        {
+            $itemMenu['value']['itemId'] = $item['collection'];
+            $itemMenu['value']['title'] = $item['name'];
+            if($item['slug'] == 'home') {
+                $itemMenu['value']['url'] = '/';
+            } else {
+                $itemMenu['value']['url'] = $item['slug'];
+            }
+            $encodeItem = json_encode($itemMenu);
+
+            $itemMenu['value']['id'] = $this->getNameHash($encodeItem);
+
+            $itemsMenu[] = $itemMenu;
+        }
+        $block['value']['items'][0]['value']['bgColorHex'] = $menuList['color'];
+        $block['value']['items'][0]['value']['bgColorPalette'] = 'color7';
+        $block['value']['items'][0]['value']['bgColorType'] = 'solid';
+        $block['value']['items'][0]['value']['bgColorOpacity'] = 1;
+
+        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'] = $itemsMenu;
+
+
+        $block = $this->replaceIdWithRandom($block);
         $this->cache->set('menuBlock', json_encode($block));
 
         return true;

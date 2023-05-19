@@ -57,7 +57,7 @@ class Parser
                     'id'=> $itemsFromMainSections['id'],
                     'category'=> $itemsFromMainSections['category'],
                     'position'=> $itemsFromMainSections['order_by'],
-                    'contend'=> $itemsFromMainSections['content']
+                    'content'=> $itemsFromMainSections['content']
                 ];
             }
 

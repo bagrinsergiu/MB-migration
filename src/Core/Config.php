@@ -31,7 +31,8 @@ class Config
         'users' => '/users',
         'pages' => '/pages',
         'menus/create' => '/menus/create',
-        'media' => '/media'
+        'media' => '/media',
+        'menu' => '/menus'
     ];
 
     public static $authenticateParametr = "client_id={client_id}&client_secret={client_secret}&grant_type=user_client_credentials&scope=user";
