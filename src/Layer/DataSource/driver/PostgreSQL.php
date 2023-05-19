@@ -14,15 +14,15 @@ use phpseclib3\Net\SSH2;
 
 class PostgreSQL
 {
-    private SSH2 $ssh;
-    private PDO $pdo;
+    private PDO $connection;
 
     /**
      * @throws Exception
      */
     public function __construct()
     {
-        Utils::log('INIT', 1, 'PostgreSQL');
+        Utils::log('Initialization', 4, 'PostgreSQL');
+
         $config = Config::configPostgreSQL();
 
         $dbHost = $config['dbHost'];
@@ -35,10 +35,11 @@ class PostgreSQL
                 $config['dbPassword']
             );
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            Utils::log('Connection success', 1, 'PostgreSQL');
+            Utils::log('Connection success', 4, 'PostgreSQL');
         } catch (PDOException $e) {
             throw new Exception("Database connection failed: " . $e->getMessage());
         }
+        Utils::log('READY', 4, 'PostgreSQL Module');
     }
 
     /**

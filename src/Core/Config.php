@@ -42,6 +42,7 @@ class Config
 
     public static $pathLogFile = __DIR__ . "/../../log/{{PREFIX}}.log";
     public static $pathMedia = __DIR__ . "/../../tmp/media/";
+    public static $pathTmp = __DIR__ . "/../../tmp/";
 
     public static $themes = array(
         "Anthem" => "Anthem",

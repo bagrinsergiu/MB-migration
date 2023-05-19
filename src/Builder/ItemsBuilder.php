@@ -80,6 +80,7 @@ class ItemsBuilder extends Utils
             $_WorkClassTemplate->callMethod('create-Default-Page');
             return true;
         }
+        return false;
     }
 
     public function getJsonObject($object = 'data') 

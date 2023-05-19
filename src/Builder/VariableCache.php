@@ -13,7 +13,7 @@ class VariableCache {
 
     public function __construct() {
         $this->cache = array();
-        Utils::log('Init', 1, 'Class VariableCache');
+        Utils::log('Initialization', 4, 'Cache');
     }
 
     public function get($key) {

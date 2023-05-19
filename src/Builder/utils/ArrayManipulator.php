@@ -60,6 +60,39 @@ class ArrayManipulator
                 $parents[$item["parent_id"]]["children"][] = $item;
             }
         }
+        foreach ($parents as $key => $parent) {
+            $children = $parent["children"];
+            usort($children, function($a, $b) {
+                return $a["order_by"] <=> $b["order_by"];
+            });
+            foreach ($result as &$item){
+                if($key == $item['id']){
+                    $item['children'] = $children;
+                }
+            }
+            //$result[] = $parent;
+        }
+        return $result;
+    }
+
+    public function groupArrayByParentId_($list)
+    {
+        $result = [];
+        $parents = [];
+        foreach ($list as $item) {
+            if ($item["parent_id"] == null && $item["category"] == "list") {
+                $parents[$item["id"]] = $item;
+                $parents[$item["id"]]["children"] = [];
+            } else if ($item["parent_id"] == null && $item["category"] == "text") {
+                $result[] = $item;
+            } else if ($item["parent_id"] == null && $item["category"] == "photo") {
+                $result[] = $item;
+            } else if ($item["parent_id"] == null && $item["category"] == "media") {
+                $result[] = $item;
+            } else {
+                $parents[$item["parent_id"]]["children"][] = $item;
+            }
+        }
         foreach ($parents as $parent) {
             $children = $parent["children"];
             usort($children, function($a, $b) {
@@ -70,5 +103,6 @@ class ArrayManipulator
         }
         return $result;
     }
+
 
 }
