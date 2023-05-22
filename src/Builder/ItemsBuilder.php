@@ -18,7 +18,7 @@ class ItemsBuilder extends Utils
     /**
      * @throws \Exception
      */
-    function __construct($preparedPage, VariableCache $cache, $defaultPage = false)
+    function __construct($preparedSectionOfThePage, VariableCache $cache, $defaultPage = false)
     {
         $this->cache = $cache;
         $this->QueryBuilder = new QueryBuilder($cache);
@@ -37,7 +37,7 @@ class ItemsBuilder extends Utils
             $menuBlock = json_decode($cache->get('menuBlock'),true);
             $itemsData['items'][] = $menuBlock;
             Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
-            foreach ($preparedPage as $section)
+            foreach ($preparedSectionOfThePage as $section)
             {
                 $background = [];
                 if(array_key_exists('background', $section['settings']))
@@ -48,6 +48,8 @@ class ItemsBuilder extends Utils
                 $sectionValue = [
                     'background' => $background,
                     'color'      => $section['color'],
+                    'category'   => $section['category'],
+                    'settings'   => $section['settings'],
                     'items'      => $section['items']
                 ];
 

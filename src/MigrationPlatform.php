@@ -73,28 +73,28 @@ class MigrationPlatform
 
             foreach ($parentPages as $pages)
             {
-//                if ($pages['slug'] != 'home')
-//                {
-//                    continue;
-//                }
+                if ($pages['slug'] != 'donate')
+                {
+                    continue;
+                }
 
                 Utils::log('Take page | ID: ' . $pages['id'], 4, 'MAIN Foreach');
 
                 $this->cache->set('tookPage', $pages);
 
-                $preparedPage = $this->getItemsFromPage($pages);
-                $currentParent = $parentPages[array_key_first($parentPages)];
+                $preparedSectionOfThePage = $this->getItemsFromPage($pages);
+                $firstParentPage = $parentPages[array_key_first($parentPages)];
 
-                $preparedPage = $this->uploadPicturesFromSections($preparedPage);
-                $preparedPage = $this->sortArrayByPosition($preparedPage);
+                $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
+                $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
 
-                if ($pages['id'] === $currentParent['id']) {
+                if ($pages['id'] === $firstParentPage['id']) {
                     $this->setCurrentPageOnWork($this->getCollectionItem("home"));
-                    if ($preparedPage) {
-                        $this->runPageBuilder($preparedPage);
+                    if ($preparedSectionOfThePage) {
+                        $this->runPageBuilder($preparedSectionOfThePage);
                     } else {
                         Utils::log('Set default page template | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'Foreach');
-                        $this->runPageBuilder($preparedPage);
+                        $this->runPageBuilder($preparedSectionOfThePage);
                     }
                 } else {
                     $collectionItem = $this->getCollectionItem($pages['slug']);
@@ -111,11 +111,11 @@ class MigrationPlatform
 
                     $this->setCurrentPageOnWork($collectionItem);
 
-                    if ($preparedPage) {
-                        $this->runPageBuilder($preparedPage);
+                    if ($preparedSectionOfThePage) {
+                        $this->runPageBuilder($preparedSectionOfThePage);
                     } else {
                         Utils::log('Set default page template | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'Foreach');
-                        $this->runPageBuilder($preparedPage);
+                        $this->runPageBuilder($preparedSectionOfThePage);
                     }
                 }
             }
@@ -155,16 +155,15 @@ class MigrationPlatform
                 {
                     Utils::log('Collection of item id: ' .$value['id'].' from section id: '. $sectionID['id'], 1, 'getItemsFromPage');
                     $color = '';
-                    if(isset($value['settings']['color']['subpalette']))
-                    {
-                        $color = $this->getColorFromPalette($value['settings']['color']['subpalette']);
+                    if($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
+                        $color = $this->getColorFromPalette($value['settings']['sections']['color']['subpalette']);
                     }
 
-                    $items[] =[
+                    $items[] = [
                         'typeSection'   => $value['typeSection'],
                         'position'      => $value['position'],
-                        'settings'      => $value['settings'],
                         'color'         => $color,
+                        'settings'      => $value['settings'],
                         'items'         => $this->parser->getSectionsItems($value, true)
                     ];
                 }
@@ -172,30 +171,32 @@ class MigrationPlatform
             $result = $items;
         } else if (empty($child)) {
             $sectionFromParent = $this->parser->getSectionsPage($page['id']);
-            if(empty($sectionFromParent))
-            {
+            if(empty($sectionFromParent)) {
                 $result = false;
             } else {
-                foreach ($sectionFromParent as $value)
-                {
+                foreach ($sectionFromParent as $value) {
+                    $items = [];
                     Utils::log('Collection of item id: ' .$value['id'].' -> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
                     $color = '';
-                    if(isset($value['settings']['color']['subpalette']))
-                    {
-                        $color = $this->getColorFromPalette($value['settings']['color']['subpalette']);
+                    if($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
+                        $color = $this->getColorFromPalette($value['settings']['sections']['color']['subpalette']);
+                    }
+                    if($this->checkArrayPath($value, 'settings/layout/color/subpalette')) {
+                        $value['settings']['layout']['color'] = $this->getColorFromPalette($value['settings']['layout']['color']['subpalette']);
                     }
 
-                    $items[] =[
+                    $items[] = [
                         'typeSection'   => $value['typeSection'],
                         'position'      => $value['position'],
-                        'settings'      => $value['settings'],
+                        'category'      => $value['category'],
                         'color'         => $color,
+                        'settings'      => $value['settings'],
                         'items'         => $this->parser->getSectionsItems($value, true)
                     ];
                 }
                 $result = $items;
             }
-        } else{
+        } else {
             Utils::log('Empty parent page | ID: ' . $page['id'] . ' | Name page: ' . $page['name'] . ' | Slug: ' . $page['slug'], 1, 'getItemsFromPage');
             $result = false;
         }
@@ -210,7 +211,7 @@ class MigrationPlatform
         $parentPages = $this->cache->get('menuList');
         $mainMenu = [];
 
-        foreach ($parentPages['list'] as $page){
+        foreach ($parentPages['list'] as $page) {
             $mainMenu[] = [
                 "id" => $page['collection'],
                 "items" => [],
@@ -339,7 +340,7 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function runPageBuilder($preparedPage, $defaultPage = false): void
+    private function runPageBuilder($preparedSectionOfThePage, $defaultPage = false): void
     {
 
         if(!$defaultPage)
@@ -351,7 +352,7 @@ class MigrationPlatform
             Utils::log('Start Builder | create default Page', 4, 'RunPageBuilder');
         }
 
-        $PageBuilder = new ItemsBuilder($preparedPage, $this->cache, $defaultPage);
+        $PageBuilder = new ItemsBuilder($preparedSectionOfThePage, $this->cache, $defaultPage);
 
         if($PageBuilder)
         {
@@ -397,7 +398,7 @@ class MigrationPlatform
         return $url;
     }
 
-    private function uploadPicturesFromSections(array $sectionsItems)
+    private function uploadPicturesFromSections(array $sectionsItems): array
     {
         Utils::log('Start upload image', 1, 'uploadPicturesFromSections');
         foreach ($sectionsItems as &$section)
@@ -418,21 +419,22 @@ class MigrationPlatform
                     {
                         if($item['category'] == 'photo' && $item['content'] != '')
                         {
-                            Utils::log('Found new image', 1, 'uploadPicturesFromSections');
-                            $downloadImageURL = $this->getPisturesUrl($item['content'], $section['typeSection']);
-                            $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
-                            if($result){
-
-                                $result = json_decode($result['body'], true);
-                                Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
-                                $item['imageFileName'] = $result['filename'];
-                                $item['content'] = $result['name'];
-                                Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
-
-                            }
-                            else{
-                                Utils::log('The structure of the image is damaged', 3, 'uploadPicturesFromSections');
-                            }
+                            $item = $this->media($item, $section['typeSection']);
+//                            Utils::log('Found new image', 1, 'uploadPicturesFromSections');
+//                            $downloadImageURL = $this->getPisturesUrl($item['content'], $section['typeSection']);
+//                            $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
+//                            if($result){
+//
+//                                $result = json_decode($result['body'], true);
+//                                Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
+//                                $item['imageFileName'] = $result['filename'];
+//                                $item['content'] = $result['name'];
+//                                Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
+//
+//                            }
+//                            else{
+//                                Utils::log('The structure of the image is damaged', 3, 'uploadPicturesFromSections');
+//                            }
                         }
                     }
                 }
@@ -441,26 +443,77 @@ class MigrationPlatform
                 {
                     if($item['category'] == 'photo' && $item['content'] != '')
                     {
-                        Utils::log('Found new image', 1, 'uploadPicturesFromSections');
-                        $downloadImageURL = $this->getPisturesUrl($item['content'], $section['typeSection']);
-                        $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
-                        if($result){
-
-                            $result = json_decode($result['body'], true);
-                            Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
-                            $item['imageFileName'] = $result['filename'];
-                            $item['content'] = $result['name'];
-                            Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
-
-                        }
-                        else{
-                            Utils::log('The structure of the image is damaged', 3, 'uploadPicturesFromSections');
-                        }
+                        $item = $this->media($item, $section['typeSection']);
+//                        Utils::log('Found new image', 1, 'uploadPicturesFromSections');
+//                        $downloadImageURL = $this->getPisturesUrl($item['content'], $section['typeSection']);
+//                        $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
+//                        if($result){
+//                            if(array_key_exists('status', $result)) {
+//                                if($result['status'] == 201 ) {
+//                                    $result = json_decode($result['body'], true);
+//                                    Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
+//                                    $item['imageFileName'] = $result['filename'];
+//                                    $item['content'] = $result['name'];
+//                                    Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
+//                                }
+//                                else{
+//                                    Utils::log('Unexpected answer: '. json_encode($result), 3, 'uploadPicturesFromSections');
+//                                }
+//                            }
+//                            else{
+//                                Utils::log('Bad response: '. json_encode($result), 3, 'uploadPicturesFromSections');
+//                            }
+//                        }
+//                        else{
+//                            Utils::log('The structure of the image is damaged', 3, 'uploadPicturesFromSections');
+//                        }
                     }
                 }
             }
         }
         return $sectionsItems;
+    }
+
+    private function media(&$item, $section){
+        Utils::log('Found new image', 1, 'media');
+        $downloadImageURL = $this->getPisturesUrl($item['content'], $section);
+        $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
+        if($result){
+            if(array_key_exists('status', $result)) {
+                if($result['status'] == 201 ) {
+                    $result = json_decode($result['body'], true);
+                    Utils::log('Upload image response: ' . json_encode($result), 1, 'media');
+                    $item['imageFileName'] = $result['filename'];
+                    $item['content'] = $result['name'];
+                    Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'media');
+                    return $item;
+                }
+                else{
+                    Utils::log('Unexpected answer: '. json_encode($result), 3, 'media');
+                }
+            }
+            else{
+                Utils::log('Bad response: '. json_encode($result), 3, 'media');
+            }
+        }
+        else{
+            Utils::log('The structure of the image is damaged', 3, 'media');
+        }
+    }
+
+    private function checkArrayPath($array, $path): bool
+    {
+        $keys = explode('/', $path);
+        $current = $array;
+
+        foreach ($keys as $key) {
+            if (!isset($current[$key])) {
+                return false;
+            }
+            $current = $current[$key];
+        }
+
+        return true;
     }
 
     private function getNameHash($data = ''): string

@@ -110,10 +110,11 @@ class BrizyAPI{
         {
             Utils::log('Bad Response', 2, $nameFunction);
         }
-        if($result['code'] == 500)
-        {
-            Utils::log('Error getting token', 5, $nameFunction);
-            exit('Error getting token');
+        if(array_key_exists('code', $result)) {
+            if ($result['code'] == 500) {
+                Utils::log('Error getting token', 5, $nameFunction);
+                exit('Error getting token');
+            }
         }
 
         return $result['access_token'];
