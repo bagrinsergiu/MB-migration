@@ -62,8 +62,8 @@ class Parser
             }
 
             $result[$mainSection['category']] = [
-                'id'=> $requestItemsFromMainSection['id'],
-                'category'=> $requestItemsFromMainSection['category'],
+                'typeSection'=> "main",
+                'category'=> $requestItemsFromMainSection[0]['category'],
                 'items'=> $item,
             ];
         }
@@ -74,7 +74,7 @@ class Parser
     {
         Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
-        $requestPageSite = $this->db->request("SELECT id, slug, name, position FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, position");
+        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, position");
 
         if(!empty($requestPageSite))
         {
@@ -84,7 +84,8 @@ class Parser
                     'id'    => $pageSite['id'],
                     'slug'  => $pageSite['slug'],
                     'name'  => $pageSite['name'],
-                    'position'  => $pageSite['position']
+                    'position'  => $pageSite['position'],
+                    'parentSettings'  => $pageSite['settings']
                     ];
             }
         }
@@ -120,13 +121,18 @@ class Parser
         $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = " . $id);
         foreach ($requestSections as $pageSections)
         {
-            $typeSectionLayoutUuid = $this->db->requestArray("SELECT name FROM section_layouts WHERE uuid  = '" . $pageSections['section_layout_uuid'] . "'");
+            $typeSectionLayoutUuid = $this->db->requestArray("SELECT name, category, settings FROM section_layouts WHERE uuid  = '" . $pageSections['section_layout_uuid'] . "'");
+
             $result[] = [
-                'id'          => $pageSections['id'],
-                'category'    => $pageSections['category'],
-                'typeSection' => $typeSectionLayoutUuid[0]['name'],
-                'position'    => $pageSections['position'],
-                'settings'    => json_decode($pageSections['settings'], true)
+                'id'             => $pageSections['id'],
+                'categoryLayout' => $typeSectionLayoutUuid[0]['category'],
+                'category'       => $pageSections['category'],
+                'typeSection'    => $typeSectionLayoutUuid[0]['name'],
+                'position'       => $pageSections['position'],
+                'settings'       => [
+                    'sections' => json_decode($pageSections['settings'], true),
+                    'layout'   => json_decode($typeSectionLayoutUuid[0]['settings'], true)
+                ]
             ];
         }
         return $result;

@@ -87,7 +87,7 @@ class Config
             'sshUser' => 'brizy_contractor',
             'sshPrivateKeyPath' => __DIR__ . '\ssh\private_key.pem',
             'dbHost' => "localhost",
-            'dbPort' => 57514,
+            'dbPort' => 50000,
             'dbName' => 'api_production',
             'dbUser' => 'brizy_contractor',
             'dbPassword' => "Lg$8AON5^Dk9JLBR2023iUu"

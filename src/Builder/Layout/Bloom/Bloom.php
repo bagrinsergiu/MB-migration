@@ -178,6 +178,19 @@ class Bloom
                 }
             }
         }
+        if($encode['category'] == 'donation')
+        {
+            $button =  json_decode($this->jsonDecode['blocks']['donation'], true);
+            $button['value']['items'][0]['value']['text'] = $encode['settings']['layout']['donations']['text'];
+            $button['value']['items'][0]['value']['linkExternal'] = $encode['settings']['sections']['donations']['url'];
+
+            $button['value']['items'][0]['value']['hoverBgColorHex'] = $encode['settings']['layout']['color'];
+
+        }
+        $block['value']['items'][0]['value']['items'][] = $button;
+
+
+
         return json_encode($block);
     }
 
@@ -255,7 +268,8 @@ class Bloom
         return json_encode($block);
     }
 
-    private function top_media_diamond(array $encoded) {
+    private function top_media_diamond(array $encoded): bool|string
+    {
         Utils::log('Create bloc', 1, "Bloom] [top_media_diamond");
 
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
@@ -314,6 +328,7 @@ class Bloom
 
     private function list_layout(array $encoded): bool|string
     {
+        Utils::log('Redirect', 1, "Bloom] [list_layout");
         $result = $this->full_text($encoded);
         return $result;
     }

@@ -188,7 +188,7 @@ class Utils{
 
     private static function writeLogToFile(array $param): void
     {
-        $typeMessageArray = array("DEBUG","INFO","WARNING","CRITICAL","PROCESS","ERROR", "SUCCESSFULLY");
+        $typeMessageArray = array("DEBUG","INFO","WARNING","CRITICAL","PROCESS","ERROR", "SUCCESSFULLY", "ErrorDump");
         $project_id = '';
         $line = '';
 
