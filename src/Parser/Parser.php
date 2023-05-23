@@ -118,7 +118,7 @@ class Parser
     public function getSectionsPage($id): array
     {
         $result = [];
-        $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = " . $id);
+        $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = " . $id . " ORDER BY position asc");
         foreach ($requestSections as $pageSections)
         {
             $typeSectionLayoutUuid = $this->db->requestArray("SELECT name, category, settings FROM section_layouts WHERE uuid  = '" . $pageSections['section_layout_uuid'] . "'");
@@ -136,6 +136,16 @@ class Parser
             ];
         }
         return $result;
+    }
+
+    private function getItemLink($itemId): string
+    {
+        $requestLinkIdToPages = $this->db->request("SELECT page_id FROM links WHERE item_id  = " . $itemId);
+        if(!empty($requestLinkIdToPages)){
+            $requestItemLink = $this->db->request("SELECT slug FROM pages WHERE id  = " . $requestLinkIdToPages[0]['page_id']);
+            return $requestItemLink[0]['slug'];
+        }
+        return '';
     }
 
     public function getSectionsItems($sectionId, $assembly = false)
@@ -157,6 +167,7 @@ class Parser
                 'item_type' => $sectionsItems['item_type'],
                 'order_by'  => $sectionsItems['order_by'],
                 'parent_id' => $sectionsItems['parent_id'],
+                'link'      => $this->getItemLink($sectionsItems['id']),
                 'content'   => $sectionsItems['content'],
             ];
         }
