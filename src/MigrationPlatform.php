@@ -73,7 +73,7 @@ class MigrationPlatform
 
             foreach ($parentPages as $pages)
             {
-                if ($pages['slug'] != 'donate')
+                if ($pages['slug'] != 'welcome')
                 {
                     continue;
                 }
@@ -160,6 +160,7 @@ class MigrationPlatform
                     }
 
                     $items[] = [
+                        'sectionId'     => $value['id'],
                         'typeSection'   => $value['typeSection'],
                         'position'      => $value['position'],
                         'color'         => $color,
@@ -170,12 +171,13 @@ class MigrationPlatform
             }
             $result = $items;
         } else if (empty($child)) {
-            $sectionFromParent = $this->parser->getSectionsPage($page['id']);
-            if(empty($sectionFromParent)) {
+            $child = $this->parser->getSectionsPage($page['id']);
+            if(empty($child)) {
                 $result = false;
             } else {
-                foreach ($sectionFromParent as $value) {
-                    $items = [];
+                $items = [];
+                foreach ($child as $value) {
+
                     Utils::log('Collection of item id: ' .$value['id'].' -> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
                     $color = '';
                     if($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
@@ -186,6 +188,7 @@ class MigrationPlatform
                     }
 
                     $items[] = [
+                        'sectionId'     => $value['id'],
                         'typeSection'   => $value['typeSection'],
                         'position'      => $value['position'],
                         'category'      => $value['category'],
