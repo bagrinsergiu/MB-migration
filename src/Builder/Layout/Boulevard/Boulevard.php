@@ -1,12 +1,12 @@
 <?php
 
-namespace Brizy\Builder\Layout\Solstice;
+namespace Brizy\Builder\Layout\Boulevard;
 
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use DOMDocument;
 
-class Solstice
+class Boulevard
 {
     private mixed $jsonDecode;
     private DOMDocument $dom;

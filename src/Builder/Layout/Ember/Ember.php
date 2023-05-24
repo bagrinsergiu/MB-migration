@@ -1,12 +1,12 @@
 <?php
 
-namespace Brizy\Builder\Layout\Solstice;
+namespace Brizy\Builder\Layout\Ember;
 
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use DOMDocument;
 
-class Solstice
+class Ember
 {
     private mixed $jsonDecode;
     private DOMDocument $dom;

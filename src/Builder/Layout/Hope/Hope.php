@@ -1,12 +1,12 @@
 <?php
 
-namespace Brizy\Builder\Layout\Solstice;
+namespace Brizy\Builder\Layout\Hope;
 
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use DOMDocument;
 
-class Solstice
+class Hope
 {
     private mixed $jsonDecode;
     private DOMDocument $dom;

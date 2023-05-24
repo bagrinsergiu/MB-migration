@@ -1,12 +1,12 @@
 <?php
 
-namespace Brizy\Builder\Layout\Solstice;
+namespace Brizy\Builder\Layout\Anthem;
 
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use DOMDocument;
 
-class Solstice
+class Anthem
 {
     private mixed $jsonDecode;
     private DOMDocument $dom;
@@ -16,7 +16,7 @@ class Solstice
     {
         $this->dom   = new DOMDocument();
         $this->cache = $cache;
-        Utils::log('Connected!', 4, 'August Builder');
+        Utils::log('Connected!', 4, 'Anthem Builder');
         $file = __DIR__.'\blocksKit.json';
 
         if (file_exists($file))
@@ -25,14 +25,14 @@ class Solstice
             $this->jsonDecode = json_decode($fileContent, true);
             if(empty($fileContent))
             {
-                Utils::log('File empty', 2, "August] [__construct");
+                Utils::log('File empty', 2, "Anthem] [__construct");
                 exit;
             }
-            Utils::log('File exist: ' .$file , 1, "August] [__construct");
+            Utils::log('File exist: ' .$file , 1, "Anthem] [__construct");
         }
         else
         {
-            Utils::log('File does not exist', 2, "August] [__construct");
+            Utils::log('File does not exist', 2, "Anthem] [__construct");
             exit;
         }
 
@@ -40,11 +40,11 @@ class Solstice
 
         if($menuList['create'] == false) {
             if ($this->createMenu($menuList)) {
-                Utils::log('Success create MENU', 1, "August] [__construct");
+                Utils::log('Success create MENU', 1, "Anthem] [__construct");
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                Utils::log("Failed create MENU", 2, "August] [__construct");
+                Utils::log("Failed create MENU", 2, "Anthem] [__construct");
             }
         }
         $this->createFooter($menuList);
@@ -52,7 +52,7 @@ class Solstice
 
     private function createMenu($menuList)
     {
-        Utils::log('Create block menu', 1, "August] [createMenu");
+        Utils::log('Create block menu', 1, "Anthem] [createMenu");
         $decoded = $this->jsonDecode['blocks']['menu'];
         $block = json_decode($decoded['main'], true);
         $lgoItem = $this->cache->get('mainSection')['header']['items'];
@@ -100,7 +100,7 @@ class Solstice
 
     private function left_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [left_media");
+        Utils::log('Create bloc', 1, "Anthem] [left_media");
         $decoded = $this->jsonDecode['blocks']['left-media'];
         $block = json_decode($decoded, true);
 
@@ -126,7 +126,7 @@ class Solstice
     }
     private function right_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [right_media");
+        Utils::log('Create bloc', 1, "Anthem] [right_media");
 
         $decoded = $this->jsonDecode['blocks']['right-media'];
         $block = json_decode($decoded, true);
@@ -153,7 +153,7 @@ class Solstice
 
     private function full_media($encode): bool|string
     {
-        Utils::log('Create full media', 1, "August] [full_media");
+        Utils::log('Create full media', 1, "Anthem] [full_media");
         $decoded = $this->jsonDecode['blocks']['full-media'];
         $block = json_decode($decoded, true);
 
@@ -189,7 +189,7 @@ class Solstice
 
     private function full_text(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [full_text");
+        Utils::log('Create bloc', 1, "Anthem] [full_text");
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
         if(empty($encoded['settings']['sections']['background'])) {
@@ -209,7 +209,7 @@ class Solstice
                 }
             }
         } else {
-            Utils::log('Set background', 1, "August] [full_text");
+            Utils::log('Set background', 1, "Anthem] [full_text");
             $block = json_decode($decoded['background'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
@@ -236,7 +236,7 @@ class Solstice
 
     private function left_media_circle(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [left_media_circle");
+        Utils::log('Create bloc', 1, "Anthem] [left_media_circle");
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
 
@@ -263,7 +263,7 @@ class Solstice
 
     private function top_media_diamond(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [top_media_diamond");
+        Utils::log('Create bloc', 1, "Anthem] [top_media_diamond");
 
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
@@ -277,7 +277,7 @@ class Solstice
 
     private function grid_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [grid_layout");
+        Utils::log('Create bloc', 1, "Anthem] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $block = json_decode($decoded['main'], true);
@@ -322,14 +322,14 @@ class Solstice
 
     private function list_layout(array $encoded): bool|string
     {
-        Utils::log('Redirect', 1, "August] [list_layout");
+        Utils::log('Redirect', 1, "Anthem] [list_layout");
         $result = $this->full_text($encoded);
         return $result;
     }
 
     private function gallery_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [gallery_layout");
+        Utils::log('Create bloc', 1, "Anthem] [gallery_layout");
 
         $encoded['items'] = $this->sortByOrderBy($encoded['items']);
 
@@ -359,7 +359,7 @@ class Solstice
 
     private function create_Default_Page()
     {
-        Utils::log('Create structure default page', 1, "August] [top_media_diamond");
+        Utils::log('Create structure default page', 1, "Anthem] [top_media_diamond");
 
         //$decoded = $this->jsonDecode['blocks']['defaultBlocks'];
 
@@ -367,7 +367,7 @@ class Solstice
 
     private function createFooter(): void
     {
-        Utils::log('Create Footer', 1, "August] [createFooter");
+        Utils::log('Create Footer', 1, "Anthem] [createFooter");
         $decoded = $this->jsonDecode['blocks']['footer'];
         $block = json_decode($decoded, true);
 
@@ -416,7 +416,7 @@ class Solstice
 // brz-text-lg-left
     private function replaceTitleTag($html, $class = 'brz-text-lg-center'): string
     {
-        Utils::log('Replace Title Tag: '. $html, 1, "August] [replaceTitleTag");
+        Utils::log('Replace Title Tag: '. $html, 1, "Anthem] [replaceTitleTag");
         if(empty($html))
             return '';
         $doc = new DOMDocument();
@@ -441,7 +441,7 @@ class Solstice
     }
 
     private function replaceParagraphs($html, $class = 'brz-text-lg-center'): string {
-        Utils::log('Replace Paragraph: '. $html, 1, "August] [replaceParagraphs");
+        Utils::log('Replace Paragraph: '. $html, 1, "Anthem] [replaceParagraphs");
         if(empty($html)){
             return '';
         }
@@ -566,10 +566,10 @@ class Solstice
             if(!isset($params)){
                 $params = $this->jsonDecode;
             }
-            Utils::log('Call method ' . $verifiedMethodName , 1, "August] [callDynamicMethod");
+            Utils::log('Call method ' . $verifiedMethodName , 1, "Anthem] [callDynamicMethod");
             return call_user_func_array(array($this, $verifiedMethodName), [$params]);
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "August] [callDynamicMethod");
+        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "Anthem] [callDynamicMethod");
         return false;
     }
 
