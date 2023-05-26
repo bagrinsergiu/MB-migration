@@ -39,6 +39,28 @@ class Utils{
         }
     }
 
+    public static function findKeyPath($array, $searchKey, $path = '', &$result = [], &$i = 0) {
+        foreach ($array as $key => $value) {
+            $currentPath = $path . '[' . $key . ']';
+
+            if ($key === $searchKey) {
+                $result[] = [
+                    'position' => $i,
+                    'path'  => $currentPath,
+                    'value' => $value
+                ];
+                $i++;
+            }
+
+            if (is_array($value)) {
+                Utils::findKeyPath($value, $searchKey, $currentPath, $result, $i);
+            }
+
+        }
+
+        return $result;
+    }
+
     public static function init(VariableCache $cache = null){
         self::$cache = $cache;
     }

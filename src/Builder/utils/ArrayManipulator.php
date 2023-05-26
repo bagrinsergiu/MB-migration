@@ -47,7 +47,7 @@ class ArrayManipulator
         $result = [];
         $parents = [];
         foreach ($list as $item) {
-            if ($item["parent_id"] == null && $item["content"] == null) {
+            if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'list') {
                 $parents[$item["id"]] = $item;
                 $parents[$item["id"]]["item"] = [];
             }

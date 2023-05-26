@@ -103,21 +103,25 @@ class BrizyAPI{
         Utils::log('get Token', 1, $nameFunction);
 
         $result = $this->httpClient('GET',  $this->createUrlApiProject($projectid));
+        if($result['status'] > 200)
+        {
+            Utils::log('Response: '. json_encode($result), 2, $nameFunction);
+            exit('Error');
+        }
+        $resultDecode = json_decode($result['body'], true);
 
-        $result = json_decode($result['body'], true);
-
-        if(!is_array($result))
+        if(!is_array($resultDecode))
         {
             Utils::log('Bad Response', 2, $nameFunction);
         }
         if(array_key_exists('code', $result)) {
-            if ($result['code'] == 500) {
+            if ($resultDecode['code'] == 500) {
                 Utils::log('Error getting token', 5, $nameFunction);
                 exit('Error getting token');
             }
         }
 
-        return $result['access_token'];
+        return $resultDecode['access_token'];
     }
 
     public function getUserToken($userId)
