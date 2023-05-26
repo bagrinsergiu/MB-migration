@@ -88,6 +88,7 @@ class Parser
                     'parentSettings'  => $pageSite['settings']
                     ];
             }
+            $result[0]['slug'] = 'home';
         }
         else
         {
@@ -138,11 +139,13 @@ class Parser
         return $result;
     }
 
-    private function getItemLink($itemId): string
+    private function getItemLink(int $itemId): string
     {
         $requestLinkIdToPages = $this->db->request("SELECT page_id FROM links WHERE item_id  = " . $itemId);
-        if(!empty($requestLinkIdToPages)){
+        if(!empty($requestLinkIdToPages) && !empty($requestLinkIdToPages[0]['page_id'])){
+
             $requestItemLink = $this->db->request("SELECT slug FROM pages WHERE id  = " . $requestLinkIdToPages[0]['page_id']);
+            Utils::log('Get link for item: '. $requestItemLink[0]['slug'], 1, 'getItemLink');
             return $requestItemLink[0]['slug'];
         }
         return '';

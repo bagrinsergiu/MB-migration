@@ -27,7 +27,7 @@ class MigrationPlatform
         Utils::log('-------------------------------------------------------------------------------------- []', 4, '');
         Utils::log('Start Process!', 4, 'MIGRATION');
 
-
+        $startTime = microtime(true);
         $this->cache     = new VariableCache();
         $this->brizyApi  = new BrizyAPI();
 
@@ -73,7 +73,7 @@ class MigrationPlatform
 
             foreach ($parentPages as $pages)
             {
-                if ($pages['slug'] != 'welcome')
+                if ($pages['slug'] != 'home')
                 {
                     continue;
                 }
@@ -120,13 +120,16 @@ class MigrationPlatform
                 }
             }
             Utils::log('Project migration completed successfully!', 6, 'PROCESS');
-            Utils::log('END', 6, 'PROCESS');
         }
         else
         {
             Utils::log('MB project not found, migration did not start, process completed without errors!', 1, "MAIN Foreach");
-            Utils::log('END', 1, "PROCESS");
         }
+
+        $endTime = microtime(true);
+        $executionTime = ($endTime - $startTime);
+        Utils::log('Work time: ' . $this->Time($executionTime) . ' (seconds: ' . round($executionTime, 1). ')' , 1, 'PROCESS');
+        Utils::log('END', 1, "PROCESS");
     }
 
     private function sortArrayByPosition($array) {
@@ -179,7 +182,7 @@ class MigrationPlatform
                 foreach ($child as $value) {
 
                     Utils::log('Collection of item id: ' .$value['id'].' -> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
-                    $color = '';
+                    $color = $this->getColorFromPalette('subpalette1');
                     if($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
                         $color = $this->getColorFromPalette($value['settings']['sections']['color']['subpalette']);
                     }
@@ -288,10 +291,8 @@ class MigrationPlatform
 
         $collectionItems = $this->QueryBuilder->getCollectionItems($foundCollectionTypes);
 
-        foreach ($collectionItems as $collectionItem) {
-            foreach ($collectionItem['collection'] as $entity) {
+        foreach ($collectionItems['page']['collection'] as $entity) {
                 $entities[$entity['slug']] = $entity['id'];
-            }
         }
         $this->cache->set('ListPages', $entities);
     }
@@ -407,37 +408,29 @@ class MigrationPlatform
         foreach ($sectionsItems as &$section)
         {
             if(array_key_exists('settings', $section)) {
-                if(array_key_exists('background', $section['settings'])) {
+                if(array_key_exists('background', $section['settings']['sections']) && $section['settings']['sections']['background']['photo'] !== null ) {
                     Utils::log('Found background image', 1, 'uploadPicturesFromSections');
-                    $result = $this->brizyApi->createMedia($section['settings']['background']['photo'], $this->projectId);
+                    $result = $this->brizyApi->createMedia($section['settings']['sections']['background']['photo'], $this->projectId);
                     if ($result) {
                         $result = json_decode($result['body'], true);
                         Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
-                        $section['settings']['background']['photo'] = $result['name'];
-                        $section['settings']['background']['filename'] = $result['filename'];
+                        $section['settings']['sections']['background']['photo'] = $result['name'];
+                        $section['settings']['sections']['background']['filename'] = $result['filename'];
                         Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
                     }
                 } else {
                     foreach($section['items'] as &$item)
                     {
-                        if($item['category'] == 'photo' && $item['content'] != '')
-                        {
+                        if($item['category'] == 'photo' && $item['content'] != '') {
                             $item = $this->media($item, $section['typeSection']);
-//                            Utils::log('Found new image', 1, 'uploadPicturesFromSections');
-//                            $downloadImageURL = $this->getPisturesUrl($item['content'], $section['typeSection']);
-//                            $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
-//                            if($result){
-//
-//                                $result = json_decode($result['body'], true);
-//                                Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
-//                                $item['imageFileName'] = $result['filename'];
-//                                $item['content'] = $result['name'];
-//                                Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
-//
-//                            }
-//                            else{
-//                                Utils::log('The structure of the image is damaged', 3, 'uploadPicturesFromSections');
-//                            }
+                        }
+                        if($item['category'] == 'list') {
+                            foreach($item['item'] as &$piece)
+                            {
+                                if($piece['category'] == 'photo' && $piece['content'] != '') {
+                                    $piece = $this->media($piece, $section['typeSection']);
+                                }
+                            }
                         }
                     }
                 }
@@ -554,6 +547,13 @@ class MigrationPlatform
             Utils::log('Create Directory: ' . $directoryPath, 1, 'createDirectory');
             mkdir($directoryPath, 0777, true);
         }
+    }
+
+    private function Time($seconds) {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds - ($hours * 3600)) / 60);
+        $seconds = $seconds - ($hours * 3600) - ($minutes * 60);
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 
 }
