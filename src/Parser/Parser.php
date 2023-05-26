@@ -81,12 +81,14 @@ class Parser
             foreach($requestPageSite as $pageSite)
             {
                 $result[] = [
-                    'id'    => $pageSite['id'],
-                    'slug'  => $pageSite['slug'],
-                    'name'  => $pageSite['name'],
-                    'position'  => $pageSite['position'],
-                    'parentSettings'  => $pageSite['settings']
-                    ];
+                    'id'             => $pageSite['id'],
+                    'slug'           => $pageSite['slug'],
+                    'name'           => $pageSite['name'],
+                    'collection'     => '',
+                    'position'       => $pageSite['position'],
+                    'parentSettings' => $pageSite['settings'],
+                    'childs'         => $this->getChaildsPages($pageSite['id'])
+                ];
             }
             $result[0]['slug'] = 'home';
         }
@@ -94,6 +96,29 @@ class Parser
         {
             Utils::log('MB project pages not found', 2, "getParentPages");
             $result = false;
+        }
+        return $result;
+    }
+
+    private function getChaildsPages($parenId): array
+    {
+        Utils::log('Get child pages', 1, 'getChaildsPages');
+        $result = [];
+
+        $pagesSite = $this->db->request("SELECT id, slug, name, position, settings, hidden FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY position asc");
+
+        foreach($pagesSite as $pageSite) {
+            if ($pageSite['hidden'] == false) {
+                $result[] = [
+                    'id'             => $pageSite['id'],
+                    'slug'           => $pageSite['slug'],
+                    'name'           => $pageSite['name'],
+                    'collection'     => '',
+                    'position'       => $pageSite['position'],
+                    'parentSettings' => $pageSite['settings'],
+                    'childs'         => $this->getChaildsPages($pageSite['id'])
+                ];
+            }
         }
         return $result;
     }
