@@ -6,7 +6,7 @@ use Brizy\core\Config;
 use Brizy\core\Utils;
 use Brizy\layer\Graph\QueryBuilder;
 
-class ItemsBuilder extends Utils
+class ItemsBuilder
 {
     private $namePagesArray;
     private $pageName;
@@ -18,7 +18,7 @@ class ItemsBuilder extends Utils
     /**
      * @throws \Exception
      */
-    function __construct($preparedSectionOfThePage, VariableCache $cache, $defaultPage = false)
+    public function __construct($preparedSectionOfThePage, VariableCache $cache, $defaultPage = false)
     {
         $this->cache = $cache;
         $this->QueryBuilder = new QueryBuilder($cache);
@@ -39,21 +39,8 @@ class ItemsBuilder extends Utils
             Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
             foreach ($preparedSectionOfThePage as $section)
             {
-                $background = [];
-                if(array_key_exists('background', $section['settings']))
-                {
-                    $background = $section['settings']['background'];
-                }
 
-                $sectionValue = [
-                    'background' => $background,
-                    'color'      => $section['color'],
-                    'category'   => $section['category'],
-                    'settings'   => $section['settings'],
-                    'items'      => $section['items']
-                ];
-
-                $blockData = $_WorkClassTemplate->callMethod($section['typeSection'], $sectionValue);
+                $blockData = $_WorkClassTemplate->callMethod($section['typeSection'], $section);
 
                 if (!empty($blockData) && $blockData !== "null") {
                     $decodeBlock = json_decode($blockData, true);
@@ -63,8 +50,7 @@ class ItemsBuilder extends Utils
                 }
             }
 
-//            $footerBlock = json_decode($cache->get('footerBlock'),true);
-//            $itemsData['items'][] = $footerBlock;
+            $itemsData['items'][] = json_decode($cache->get('footerBlock'),true);
 
             $pageData = json_encode($itemsData);
 

@@ -1,9 +1,11 @@
 <?php
+
 namespace Brizy\core;
 
 use Brizy\builder\VariableCache;
 
-class Utils{
+class Utils
+{
 
     /**
      * @var mixed|null
@@ -21,7 +23,7 @@ class Utils{
         var_dump(self::$projectID);
     }
 
-    public static function resourcesInitialization ($directory_path)
+    public static function resourcesInitialization($directory_path)
     {
         $files = glob("$directory_path/*");
 
@@ -39,14 +41,15 @@ class Utils{
         }
     }
 
-    public static function findKeyPath($array, $searchKey, $path = '', &$result = [], &$i = 0) {
+    public static function findKeyPath($array, $searchKey, $path = '', &$result = [], &$i = 0)
+    {
         foreach ($array as $key => $value) {
             $currentPath = $path . '[' . $key . ']';
 
             if ($key === $searchKey) {
                 $result[] = [
                     'position' => $i,
-                    'path'  => $currentPath,
+                    'path' => $currentPath,
                     'value' => $value
                 ];
                 $i++;
@@ -61,17 +64,16 @@ class Utils{
         return $result;
     }
 
-    public static function init(VariableCache $cache = null){
+    public static function init(VariableCache $cache = null)
+    {
         self::$cache = $cache;
     }
 
     function verificArray($array)
     {
-        if(!is_array($array)){
+        if (!is_array($array)) {
             $result = FALSE;
-        }
-        else
-        {
+        } else {
             $result = TRUE;
         }
 
@@ -81,7 +83,7 @@ class Utils{
     function strClear($jsonStr)
     {
         $arrDel = array('\n ', '\\\\');
-        $jsonClearData = str_replace($arrDel, '', $jsonStr);  
+        $jsonClearData = str_replace($arrDel, '', $jsonStr);
 
         return $jsonClearData;
     }
@@ -91,15 +93,13 @@ class Utils{
         $json = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json);
         $json = preg_replace('/[[:space:]]+/', ' ', $json);
         $json = trim($json);
-        
+
         return $json;
     }
 
-    public static function strReplace($blok, $replace, $toteplace)
+    public static function strReplace(string $block, string $replace, string $toReplace): string
     {
-        $ReplaceData = str_replace($replace, $toteplace, $blok);  
-
-        return $ReplaceData;
+        return str_replace($replace, $toReplace, $block);
     }
 
     function addTextInTeg($in, $from)
@@ -134,7 +134,7 @@ class Utils{
 
         if (curl_errno($ch)) {
 
-           print "Error: " . curl_error($ch);
+            print "Error: " . curl_error($ch);
         }
 
         curl_close($ch);
@@ -177,32 +177,29 @@ class Utils{
     public static function debug($value): void
     {
         Utils::log('', 0, "Print data");
-        if(is_array($value)){
+        if (is_array($value)) {
             var_dump($value);
         }
-        print_r($value."\n");
+        print_r($value . "\n");
     }
 
-    public static function log($messageText, $type = 1, $nameFunction = ''): void
+    public static function log(string $messageText, int $type = 1, string $nameFunction = ''): void
     {
         $param = [
-            "message" => $messageText,
-            "type" => $type,
-            "callFunction" => $nameFunction
+            'message' => $messageText,
+            'type' => $type,
+            'callFunction' => $nameFunction
         ];
 
-        if(isset(self::$projectID))
-        {
+        if (isset(self::$projectID)) {
             $param['project_id'] = self::$projectID;
         }
 
-        if(Config::$debugMode)
-        {
+        if (Config::$debugMode) {
             self::writeLogToFile($param);
         }
 
-        if(Config::$debugMode == false && $type > 1)
-        {
+        if (Config::$debugMode === false && $type > 1) {
             self::writeLogToFile($param);
         }
 
@@ -210,32 +207,29 @@ class Utils{
 
     private static function writeLogToFile(array $param): void
     {
-        $typeMessageArray = array("DEBUG","INFO","WARNING","CRITICAL","PROCESS","ERROR", "SUCCESSFULLY", "ErrorDump");
+        $typeMessageArray = array("DEBUG", "INFO", "WARNING", "CRITICAL", "PROCESS", "ERROR", "SUCCESSFULLY", "ErrorDump");
         $project_id = '';
         $line = '';
 
-        if(isset($param['project_id']))
-        {
-            $project_id = '['.$param['project_id'].']';
+        if (isset($param['project_id'])) {
+            $project_id = '[' . $param['project_id'] . ']';
         }
 
-        if(is_array($param['message']))
-        {
+        if (is_array($param['message'])) {
             $message = json_encode($param['message']);
         } else {
             $message = $param['message'];
         }
-        if($param['type']== 0 or $param['type']== 2 or $param['type'] == 3 or $param['type'] == 5)
-        {
+        if ($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
             $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
             $caller = $backtrace[1];
-            $line = ' ('.basename($caller['file']) .':'. $caller['line'].') ';
+            $line = ' (' . basename($caller['file']) . ':' . $caller['line'] . ') ';
         }
         $strlog = "[" . date('Y-m-d H:i:s') . "] " . $project_id . "[" . $typeMessageArray[$param['type']] . "]" . $line . ": [" . $param['callFunction'] . "] " . $message . "\n";
 
         $prefix = date("Y-m-d");
 
-        $dirToLog = Utils::strReplace( Config::$pathLogFile, '{{PREFIX}}', $prefix);
+        $dirToLog = Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
 
         file_put_contents($dirToLog, $strlog, FILE_APPEND);
     }
