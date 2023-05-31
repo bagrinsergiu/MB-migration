@@ -78,7 +78,7 @@ class Parser
     {
         Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
-        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings, landing FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, position");
+        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings, landing FROM pages WHERE site_id = " . $this->siteId . " AND hidden = false AND parent_id IS NULL ORDER BY parent_id ASC, position");
 
         if (empty($requestPageSite)) {
             Utils::log('MB project pages not found', 2, 'getParentPages');

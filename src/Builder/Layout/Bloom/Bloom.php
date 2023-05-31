@@ -4,6 +4,7 @@ namespace Brizy\Builder\Layout\Bloom;
 
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
+use Builder\sectionsBuilder;
 use DOMDocument;
 
 class Bloom
@@ -72,7 +73,6 @@ class Bloom
             }
         }
         $itemMenu = json_decode($decoded['item'], true);
-
 
         $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $logo; //logo
         $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['menuSelected'] = $menuList['uid']; //menu items
@@ -348,6 +348,10 @@ class Bloom
         Utils::log('Create bloc', 1, "Bloom] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
+        $obj_block = new sectionsBuilder($decoded['main']);
+
+        $obj = $obj_block->section()->item(0)->get();
+
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);
 
@@ -358,33 +362,47 @@ class Bloom
 
         foreach ($encoded['items'] as $section)
         {
-            switch ($section['category']) {
-                case 'text':
-                    if($item['item_type'] == 'title')
-                    {
-                        break;
-                    }
-                    if($item['item_type'] == 'body')
-                    {
-                        break;
-                    }
-                case 'list':
-                    foreach ($section['item'] as $sectionItem) {
-                        if($sectionItem['category'] == 'photo') {
-                            $item['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $sectionItem['content'];
-                            $item['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $sectionItem['imageFileName'];
-                            if($sectionItem['link'] != '') {
-                                $item['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
-                                $item['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $sectionItem['link'];
+            if(isset($section['item'])) {
+                switch ($section['category']) {
+                    case 'text':
+                        if ($item['item_type'] == 'title') {
+                            break;
+                        }
+                        if ($item['item_type'] == 'body') {
+                            break;
+                        }
+                    case 'list':
+                        foreach ($section['item'] as $sectionItem) {
+                            if ($sectionItem['category'] == 'photo') {
+                                $item['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $sectionItem['content'];
+                                $item['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $sectionItem['imageFileName'];
+                                if ($sectionItem['link'] != '') {
+                                    $item['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
+                                    $item['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $sectionItem['link'];
+                                }
+                            }
+                            if ($sectionItem['category'] == 'text') {
+                                if ($sectionItem['item_type'] == 'title') {
+                                    $item['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionItem['content']);
+                                }
                             }
                         }
-                        if($sectionItem['category'] == 'text') {
-                            if($sectionItem['item_type']=='title') {
-                                $item['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionItem['content']);
-                            }
-                        }
+                        break;
+                }
+            } else {
+                if ($section['category'] == 'photo') {
+                    $item['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $section['content'];
+                    $item['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $section['imageFileName'];
+                    if ($section['link'] != '') {
+                            $item['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
+                            $item['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $section['link'];
                     }
-                    break;
+                }
+                if ($section['category'] == 'text') {
+                    if ($section['item_type'] == 'title') {
+                        $item['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($section['content']);
+                    }
+                }
             }
             $resultRemove[] = $item;
         }
