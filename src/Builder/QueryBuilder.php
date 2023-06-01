@@ -1,6 +1,6 @@
 <?php
 
-namespace Builder;
+namespace Brizy\Builder;
 
 interface QueryBuilder
 {
@@ -8,7 +8,7 @@ interface QueryBuilder
 
     public function item(int $id): QueryBuilder;
 
-    public function settings(string $key, string $value): QueryBuilder;
+    public function setting(string $key, string $value): QueryBuilder;
 
     public function get();
 

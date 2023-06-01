@@ -4,7 +4,7 @@ namespace Brizy\Builder\Layout\Bloom;
 
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
-use Builder\sectionsBuilder;
+use Brizy\Builder\ItemSetter;
 use DOMDocument;
 
 class Bloom
@@ -348,9 +348,7 @@ class Bloom
         Utils::log('Create bloc', 1, "Bloom] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
-        $obj_block = new sectionsBuilder($decoded['main']);
-
-        $obj = $obj_block->section()->item(0)->get();
+        $objItem = new ItemSetter($decoded['item']);
 
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);
@@ -400,7 +398,13 @@ class Bloom
                 }
                 if ($section['category'] == 'text') {
                     if ($section['item_type'] == 'title') {
-                        $item['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($section['content']);
+
+                        $objItem->addItem($this->itemWrapper($section['content']));
+
+                        $item = $this->itemWrapper($this->replaceTitleTag($section['content']));
+                    }
+                    if ($section['item_type'] == 'body') {
+                        $objItem->addItem($this->itemWrapper($section['content']));
                     }
                 }
             }
@@ -518,6 +522,17 @@ class Bloom
         }
         $this->cache->set('footerBlock', json_encode($block));
     }
+
+    private function itemWrapper($content, $associative = false ){
+        $decoded = $this->jsonDecode['global']['wrapper'];
+        $block = new ItemSetter($decoded);
+        $result = $block->item(0)->setting('text', $content)->get();
+        if(!$associative){
+            return $result;
+        }
+        return json_decode($result, true);
+    }
+
 
     private function removeItemsFromArray(array $array, $index): array
     {
