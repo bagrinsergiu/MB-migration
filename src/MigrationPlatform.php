@@ -114,7 +114,7 @@ class MigrationPlatform
                 $this->launch($pages['childs']);
             }
 
-            if ($pages['slug'] != 'give') {continue;}
+            //if ($pages['slug'] != 'kids-youth') {continue;}
             $this->collector($pages);
         }
     }

@@ -423,6 +423,7 @@ class Bloom
 
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);
+        $image  = json_decode($decoded['image'], true);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
         $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
@@ -441,14 +442,18 @@ class Bloom
                     }
                 case 'list':
                     foreach ($section['item'] as $sectionItem) {
-                        if($sectionItem['category'] == 'photo') {
-                            $item['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $sectionItem['content'];
-                            $item['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $sectionItem['imageFileName'];
+                        if($sectionItem['category'] == 'photo' && $sectionItem['content'] != '' ) {
+
+                            $image['value']['imageSrc'] = $sectionItem['content'];
+                            $image['value']['imageFileName'] = $sectionItem['imageFileName'];
                             if($sectionItem['link'] != '') {
-                                $item['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
-                                $item['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $sectionItem['link'];
+                                $image['value']['linkType'] = "external";
+                                $image['value']['linkExternal'] = '/' . $sectionItem['link'];
                             }
+
+                            $item['value']['items'][0]['value']['items'][0]['value']['items'][0] = $image;
                         }
+
                         if($sectionItem['category'] == 'text') {
                             if($sectionItem['item_type']=='title') {
                                 $item['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionItem['content']);
@@ -510,13 +515,24 @@ class Bloom
     {
         Utils::log('Create Footer', 1, "Bloom] [createFooter");
         $encoded = $this->cache->get('mainSection')['footer'];
-        $decoded = $this->jsonDecode['blocks']['footer'];
+        $decoded = $this->jsonDecode['blocks']['footer']['main'];
+        $iconItem = $this->jsonDecode['blocks']['footer']['item'];
         $block = json_decode($decoded, true);
+        $blockIcon = json_decode($iconItem, true);
 
         $block['value']['bgColorPalette'] = '';
         $block['value']['bgColorHex'] = $encoded['settings']['color']['subpalette'];
         foreach ($encoded['items'] as $item) {
             if ($item['category'] == 'text') {
+                $itemsIcon = $this->getDataIconValue($item['content']);
+                if(!empty($itemsIcon)){
+                    foreach ($itemsIcon as $itemIcon){
+                        $blockIcon['value']['linkExternal'] = $itemIcon['href'];
+                        $blockIcon['value']['name'] = $this->getIcon($itemIcon['icon']);
+
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][] = $blockIcon;
+                    }
+                }
                 $block['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
             }
         }
@@ -582,6 +598,7 @@ class Bloom
         $doc = new DOMDocument();
         $doc->loadHTML($html);
         $paragraphs = $doc->getElementsByTagName('p');
+
         if ($paragraphs->length > 0) {
             foreach ($paragraphs as $paragraph) {
                 $styleValue = 'opacity: 1; ';
@@ -609,7 +626,28 @@ class Bloom
                             $style .= ' font-size:' . $value . ';';
                         }
                     }
+                }
 
+                $spans = $paragraph->getElementsByTagName('span');
+                if($spans->length > 0) {
+                    foreach ($spans as $sapn) {
+                        if ($span->hasAttribute('style')) {
+                            $styleValueString = $paragraph->getAttribute('style');
+                            // font-weight: 200; letter-spacing: -0.05em; line-height: 1.1em; text-align: left;
+                            $styleValue = $this->parseStyle($styleValueString);
+                            foreach ($styleValue as $key => $value) {
+                                if ($key == 'text-align') {
+                                    $textPosition = $this->textPosition[$value];
+                                }
+                                if ($key == 'color') {
+                                    $style .= 'color:' . $value . ';';
+                                }
+                                if ($key == 'font-size') {
+                                    $style .= ' font-size:' . $value . ';';
+                                }
+                            }
+                        }
+                    }
                 }
                 $class .= $textPosition;
                 $paragraph->removeAttribute('style');
@@ -644,7 +682,6 @@ class Bloom
         foreach ($paragraphs as $paragraph) {
             $getTagAInPatragraph = $paragraph->getElementsByTagName('a');
             if($getTagAInPatragraph->length > 0 ){
-
                 $this->createUrl($getTagAInPatragraph->item(0));
             }
             $style = '';
@@ -691,6 +728,24 @@ class Bloom
         return $this->clearHtmlTag($doc->saveHTML());
     }
 
+    function getDataIconValue($html) {
+        $dom = new DOMDocument();
+        $dom->loadHTML($html);
+        $links = $dom->getElementsByTagName('a');
+        $result = [];
+        foreach ($links as $link) {
+            $spans = $link->getElementsByTagName('span');
+            foreach ($spans as $span) {
+                if ($span->hasAttribute('data-icon')) {
+                    $icon = $span->getAttribute('data-icon');
+                    $href = $link->getAttribute('href');
+                    $result[] = [ 'icon' => $icon, 'href' => $href];
+                }
+            }
+        }
+        return $result;
+    }
+
     private function clearHtmlTag($str): string
     {
         $replase = [
@@ -702,6 +757,20 @@ class Bloom
             "\n"
         ];
         return str_replace($replase, '', $str);
+    }
+
+    private function getIcon($iconName)
+    {
+        $icon = [
+            'facebook'  => 'logo-facebook',
+            'instagram' => 'logo-instagram',
+            'youtube'   => 'logo-youtube',
+            'twitter'   => 'logo-twitter',
+        ];
+        if(array_key_exists($iconName, $icon)){
+            return $icon[$iconName];
+        }
+        return false;
     }
 
     private function sortByOrderBy(array $array): array
