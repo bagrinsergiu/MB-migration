@@ -5,13 +5,14 @@ use Brizy\Builder\Utils\ArrayManipulator;
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use Brizy\Layer\DataSource\DBConnector;
+use Exception;
 
 class Parser
 {
     private DBConnector $db;
-    private mixed $siteId;
+    private int $siteId;
     private VariableCache $cache;
-    private ArrayManipulator $monipulator;
+    private ArrayManipulator $manipulator;
 
 
     public function __construct(VariableCache $cache)
@@ -20,13 +21,13 @@ class Parser
         $this->cache       = $cache;
 
         $this->db          = new DBConnector();
-        $this->monipulator = new ArrayManipulator();
+        $this->manipulator = new ArrayManipulator();
 
-        $this->siteId      = $this->cache->get('projectId_MB');
+        $this->siteId      = (int)$this->cache->get('projectId_MB');
         Utils::log('READY', 4, 'Parser Module');
     }
 
-    public function getSite()
+    public function getSite(): array
     {
         Utils::log('Get site', 1, 'getSite');
         $settingSite = $this->db->requestArray("SELECT id, name, title, settings, uuid, design_uuid, favicon from sites WHERE id = " . $this->siteId);
@@ -54,46 +55,75 @@ class Parser
             foreach ($requestItemsFromMainSection as $itemsFromMainSections)
             {
                 $item[] = [
-                    'id'=> $itemsFromMainSections['id'],
-                    'category'=> $itemsFromMainSections['category'],
-                    'position'=> $itemsFromMainSections['order_by'],
-                    'content'=> $itemsFromMainSections['content']
+                    'id'        => $itemsFromMainSections['id'],
+                    'category'  => $itemsFromMainSections['category'],
+                    'position'  => $itemsFromMainSections['order_by'],
+                    'settings'  => json_decode($itemsFromMainSections['settings'], true),
+                    'content'   => $itemsFromMainSections['content']
                 ];
             }
+            $settings = json_decode($mainSection['settings'], true);
 
             $result[$mainSection['category']] = [
-                'typeSection'=> "main",
-                'category'=> $requestItemsFromMainSection[0]['category'],
-                'items'=> $item,
+                'typeSection'   => "main",
+                'category'      => $requestItemsFromMainSection[0]['category'],
+                'settings'      => $settings,
+                'items'         => $item,
             ];
         }
         return $result;
     }
 
-    public function getParentPages(): bool|array
+    public function getParentPages(): array
     {
         Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
-        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, position");
+        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings, landing FROM pages WHERE site_id = " . $this->siteId . " AND hidden = false AND parent_id IS NULL ORDER BY parent_id ASC, position");
 
-        if(!empty($requestPageSite))
-        {
-            foreach($requestPageSite as $pageSite)
-            {
-                $result[] = [
-                    'id'    => $pageSite['id'],
-                    'slug'  => $pageSite['slug'],
-                    'name'  => $pageSite['name'],
-                    'position'  => $pageSite['position'],
-                    'parentSettings'  => $pageSite['settings']
-                    ];
-            }
-            $result[0]['slug'] = 'home';
+        if (empty($requestPageSite)) {
+            Utils::log('MB project pages not found', 2, 'getParentPages');
+
+            return $result;
         }
-        else
-        {
-            Utils::log('MB project pages not found', 2, "getParentPages");
-            $result = false;
+
+        foreach ($requestPageSite as $pageSite) {
+            $result[] = [
+                'id' => $pageSite['id'],
+                'slug' => $pageSite['slug'],
+                'name' => $pageSite['name'],
+                'collection' => '',
+                'position' => $pageSite['position'],
+                'landing' => $pageSite['landing'],
+                'parentSettings' => $pageSite['settings'],
+                'childs' => $this->getChaildsPages($pageSite['id'])
+            ];
+        }
+
+        $result[0]['slug'] = 'home';
+
+        return $result;
+    }
+
+    private function getChaildsPages($parenId): array
+    {
+        Utils::log('Get child pages', 1, 'getChaildsPages');
+        $result = [];
+
+        $pagesSite = $this->db->request("SELECT id, slug, name, position, settings, hidden, landing FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY position asc");
+
+        foreach($pagesSite as $pageSite) {
+            if ($pageSite['hidden'] == false) {
+                $result[] = [
+                    'id'             => $pageSite['id'],
+                    'slug'           => $pageSite['slug'],
+                    'name'           => $pageSite['name'],
+                    'collection'     => '',
+                    'position'       => $pageSite['position'],
+                    'landing'       => $pageSite['landing'],
+                    'parentSettings' => $pageSite['settings'],
+                    'childs'         => $this->getChaildsPages($pageSite['id'])
+                ];
+            }
         }
         return $result;
     }
@@ -164,12 +194,20 @@ class Parser
         foreach($requestItemsFromSection as $sectionsItems)
         {
             Utils::log('Get item | id: ' .$sectionsItems['id'].' from section id: '. $sectionId['id'], 1, 'getSectionsItems');
+            $settings = '';
+            if($this->isJsonString($sectionsItems['settings']))
+            {
+                $settings = json_decode($sectionsItems['settings'], true);
+            }
+
+
             $result[] = [
                 'id'        => $sectionsItems['id'],
                 'category'  => $sectionsItems['category'],
                 'item_type' => $sectionsItems['item_type'],
                 'order_by'  => $sectionsItems['order_by'],
                 'parent_id' => $sectionsItems['parent_id'],
+                'settings'  => $settings,
                 'link'      => $this->getItemLink($sectionsItems['id']),
                 'content'   => $sectionsItems['content'],
             ];
@@ -184,9 +222,22 @@ class Parser
         return $result;
     }
 
+    private function isJsonString($string): bool
+    {
+        if($string == null){
+            return false;
+        }
+        try {
+            json_decode($string);
+            return (json_last_error() == JSON_ERROR_NONE);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     private function assemblySection($id): array
     {
-        $result = $this->monipulator->groupArrayByParentId($this->cache->get($id));
+        $result = $this->manipulator->groupArrayByParentId($this->cache->get($id));
 
         return $result;
     }

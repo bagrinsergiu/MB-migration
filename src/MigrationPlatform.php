@@ -18,18 +18,60 @@ class MigrationPlatform
     private VariableCache $cache;
     private string $projectId;
     private int $projectID_Brizy;
+    private float $startTime;
+    private string $graphApiBrizy;
 
     /**
      * @throws Exception
      */
     public function __construct(int $projectID_MB, int $projectID_Brizy)
     {
+        $this->init($projectID_MB, $projectID_Brizy);
+
+        $this->createProjectFolders();
+
+        $parentPages = $this->parser->getParentPages();
+
+        if (!$parentPages) {
+            Utils::log('MB project not found, migration did not start, process completed without errors!', 1, "MAIN Foreach");
+
+            $this->logFinalProcess($this->startTime);
+
+            return;
+        }
+
+        $this->cache->set('settings', $this->parser->getSite());
+        $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
+        $this->cache->set('graphToken', $this->brizyApi->getGraphToken($projectID_Brizy));
+
+        $this->QueryBuilder = new QueryBuilder($this->cache);
+
+        $mainSection = $this->parser->getMainSection();
+        $this->updateColorSection($mainSection);
+        Utils::log('Upload Logo menu', 1, 'createMenu');
+        $mainSection = $this->uploadPicturesFromSections($mainSection);
+        $this->cache->set('mainSection', $mainSection);
+
+        $this->getAllPage();
+        $this->createBlankPages($parentPages);
+        $this->createMenuStructure();
+
+        $this->launch($parentPages);
+
+        Utils::log('Project migration completed successfully!', 6, 'PROCESS');
+
+        $this->logFinalProcess($this->startTime);
+    }
+
+    private function init(int $projectID_MB, int $projectID_Brizy): void
+    {
         Utils::log('-------------------------------------------------------------------------------------- []', 4, '');
         Utils::log('Start Process!', 4, 'MIGRATION');
 
-        $startTime = microtime(true);
-        $this->cache     = new VariableCache();
-        $this->brizyApi  = new BrizyAPI();
+        $this->cache = new VariableCache();
+        $this->brizyApi = new BrizyAPI();
+
+        $this->startTime = microtime(true);
 
         $this->projectId = $projectID_MB . '_' . $projectID_Brizy . '_';
         $migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
@@ -43,170 +85,107 @@ class MigrationPlatform
 
         $errorDump->setDate($this->cache);
 
-        $GraphApi_Brizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
+        $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
 
         $this->cache->set('projectId_MB', $projectID_MB);
         $this->cache->set('projectId_Brizy', $projectID_Brizy);
 
         $this->parser = new Parser($this->cache);
+    }
 
-        $this->createProjectFolders();
 
-        $parentPages = $this->parser->getParentPages();
-
-        if ($parentPages)
-        {
-            $this->cache->set('settings', $this->parser->getSite());
-            $this->cache->set('GraphApi_Brizy', $GraphApi_Brizy);
-            $this->cache->set('graphToken', $this->brizyApi->getGraphToken($projectID_Brizy));
-
-            $this->QueryBuilder = new QueryBuilder($this->cache);
-
-            $mainSection = $this->parser->getMainSection();
-            Utils::log('Upload Logo menu', 1, 'createMenu');
-            $mainSection = $this->uploadPicturesFromSections($mainSection);
-            $this->cache->set('mainSection', $mainSection);
-
-            $this->getAllPage();
-            $this->createBlankPages($parentPages);
-            $this->createMenuStructure();
-
-            foreach ($parentPages as $pages)
-            {
-                if ($pages['slug'] != 'home')
-                {
-                    continue;
-                }
-
-                Utils::log('Take page | ID: ' . $pages['id'], 4, 'MAIN Foreach');
-
-                $this->cache->set('tookPage', $pages);
-
-                $preparedSectionOfThePage = $this->getItemsFromPage($pages);
-                $firstParentPage = $parentPages[array_key_first($parentPages)];
-
-                $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
-                $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
-
-                if ($pages['id'] === $firstParentPage['id']) {
-                    $this->setCurrentPageOnWork($this->getCollectionItem("home"));
-                    if ($preparedSectionOfThePage) {
-                        $this->runPageBuilder($preparedSectionOfThePage);
-                    } else {
-                        Utils::log('Set default page template | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'Foreach');
-                        $this->runPageBuilder($preparedSectionOfThePage);
-                    }
-                } else {
-                    $collectionItem = $this->getCollectionItem($pages['slug']);
-
-                    if (!$collectionItem) {
-                        $newPage = $this->creteNewPage($pages['slug'], $pages['name']);
-                        if (!$newPage) {
-                            Utils::log('Failed created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 2, 'creteNewPage');
-                        } else {
-                            Utils::log('Success created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'creteNewPage');
-                            $collectionItem = $newPage;
-                        }
-                    }
-
-                    $this->setCurrentPageOnWork($collectionItem);
-
-                    if ($preparedSectionOfThePage) {
-                        $this->runPageBuilder($preparedSectionOfThePage);
-                    } else {
-                        Utils::log('Set default page template | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'Foreach');
-                        $this->runPageBuilder($preparedSectionOfThePage);
-                    }
-                }
-            }
-            Utils::log('Project migration completed successfully!', 6, 'PROCESS');
-        }
-        else
-        {
-            Utils::log('MB project not found, migration did not start, process completed without errors!', 1, "MAIN Foreach");
-        }
-
+    private function logFinalProcess(float $startTime): void
+    {
         $endTime = microtime(true);
         $executionTime = ($endTime - $startTime);
+
         Utils::log('Work time: ' . $this->Time($executionTime) . ' (seconds: ' . round($executionTime, 1). ')' , 1, 'PROCESS');
         Utils::log('END', 1, "PROCESS");
     }
 
-    private function sortArrayByPosition($array) {
-        usort($array, function($a, $b) {
-            return $a['position'] - $b['position'];
-        });
+    /**
+     * @throws Exception
+     */
+    private function launch($parentPages): void
+    {
+        foreach ($parentPages as $pages) {
 
-        return $array;
+            if(!empty($pages['childs'])){
+                $this->launch($pages['childs']);
+            }
+
+            //if ($pages['slug'] != 'kids-youth') {continue;}
+            $this->collector($pages);
+        }
     }
 
-    private function getItemsFromPage(array $page)
+    /**
+     * @throws Exception
+     */
+    private function collector($pages): void
+    {
+        Utils::log('Take page | ID: ' . $pages['id'], 4, 'MAIN Foreach');
+
+        $this->cache->set('tookPage', $pages);
+
+        $preparedSectionOfThePage = $this->getItemsFromPage($pages);
+        $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
+        $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
+
+        $collectionItem = $this->getCollectionItem($pages['slug']);
+        if (!$collectionItem) {
+            $newPage = $this->creteNewPage($pages['slug'], $pages['name']);
+            if (!$newPage) {
+                Utils::log('Failed created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 2, 'creteNewPage');
+            } else {
+                Utils::log('Success created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'creteNewPage');
+                $collectionItem = $newPage;
+            }
+        }
+
+        $this->setCurrentPageOnWork($collectionItem);
+
+        if($preparedSectionOfThePage) {
+            $this->runPageBuilder($preparedSectionOfThePage);
+        } else {
+            Utils::log('Set default page template | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'Foreach');
+            $this->runPageBuilder($preparedSectionOfThePage);
+        }
+    }
+
+    private function getItemsFromPage(array $page): bool|array
     {
         Utils::log('Parent Page id: ' . $page['id'] . ' | Name page: ' . $page['name'] . ' | Slug: ' . $page['slug'], 1, 'getItemsFromPage');
-        $child = $this->parser->getChildFromPages($page['id']);
 
-        if(!empty($child))
-        {
+        $child = $this->parser->getSectionsPage($page['id']);
+        if(!empty($child)) {
             $items = [];
+            foreach ($child as $value) {
 
-            foreach ($child as $sectionID)
-            {
-                Utils::log('Current Section id: ' . $sectionID['id'], 1, 'getItemsFromPage');
-                $section = $this->parser->getSectionsPage($sectionID['id']);
-
-                foreach ($section as $value)
-                {
-                    Utils::log('Collection of item id: ' .$value['id'].' from section id: '. $sectionID['id'], 1, 'getItemsFromPage');
-                    $color = '';
-                    if($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
-                        $color = $this->getColorFromPalette($value['settings']['sections']['color']['subpalette']);
-                    }
-
-                    $items[] = [
-                        'sectionId'     => $value['id'],
-                        'typeSection'   => $value['typeSection'],
-                        'position'      => $value['position'],
-                        'color'         => $color,
-                        'settings'      => $value['settings'],
-                        'items'         => $this->parser->getSectionsItems($value, true)
-                    ];
+                Utils::log('Collection of item id: ' .$value['id'].' -> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
+                $color = $this->getColorFromPalette('subpalette1');
+                if($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
+                    $color = $this->getColorFromPalette($value['settings']['sections']['color']['subpalette']);
                 }
+                if($this->checkArrayPath($value, 'settings/layout/color/subpalette')) {
+                    $value['settings']['layout']['color'] = $this->getColorFromPalette($value['settings']['layout']['color']['subpalette']);
+                }
+
+                $items[] = [
+                    'sectionId'     => $value['id'],
+                    'typeSection'   => $value['typeSection'],
+                    'position'      => $value['position'],
+                    'category'      => $value['category'],
+                    'color'         => $color,
+                    'settings'      => $value['settings'],
+                    'items'         => $this->parser->getSectionsItems($value, true)
+                ];
             }
             $result = $items;
-        } else if (empty($child)) {
-            $child = $this->parser->getSectionsPage($page['id']);
-            if(empty($child)) {
-                $result = false;
-            } else {
-                $items = [];
-                foreach ($child as $value) {
-
-                    Utils::log('Collection of item id: ' .$value['id'].' -> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
-                    $color = $this->getColorFromPalette('subpalette1');
-                    if($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
-                        $color = $this->getColorFromPalette($value['settings']['sections']['color']['subpalette']);
-                    }
-                    if($this->checkArrayPath($value, 'settings/layout/color/subpalette')) {
-                        $value['settings']['layout']['color'] = $this->getColorFromPalette($value['settings']['layout']['color']['subpalette']);
-                    }
-
-                    $items[] = [
-                        'sectionId'     => $value['id'],
-                        'typeSection'   => $value['typeSection'],
-                        'position'      => $value['position'],
-                        'category'      => $value['category'],
-                        'color'         => $color,
-                        'settings'      => $value['settings'],
-                        'items'         => $this->parser->getSectionsItems($value, true)
-                    ];
-                }
-                $result = $items;
-            }
         } else {
             Utils::log('Empty parent page | ID: ' . $page['id'] . ' | Name page: ' . $page['name'] . ' | Slug: ' . $page['slug'], 1, 'getItemsFromPage');
             $result = false;
         }
-
         return $result;
     }
 
@@ -215,17 +194,7 @@ class MigrationPlatform
         Utils::log('Create menu structure', 1, 'createMenuStructure');
 
         $parentPages = $this->cache->get('menuList');
-        $mainMenu = [];
-
-        foreach ($parentPages['list'] as $page) {
-            $mainMenu[] = [
-                "id" => $page['collection'],
-                "items" => [],
-                "isNewTab" => false,
-                "label" => $page['name'],
-                "uid"=> $this->getNameHash()
-            ];
-        }
+        $mainMenu = $this->transformToBrizyMenu($parentPages['list']);
 
         $data = [
             'project'=>$this->projectID_Brizy,
@@ -235,6 +204,21 @@ class MigrationPlatform
 
         $result = $this->brizyApi->createMenu($data);
         $this->cache->add('menuList', $result);
+    }
+
+    private function transformToBrizyMenu(array $parentMenu): array
+    {
+        $mainMenu = [];
+        foreach ($parentMenu as $item) {
+            $mainMenu[] = [
+                "id" => $item['collection'],
+                "items" => $this->transformToBrizyMenu($item['childs']),
+                "isNewTab" => false,
+                "label" => $item['name'],
+                "uid"=> $this->getNameHash()
+            ];
+        }
+        return $mainMenu;
     }
 
     private function getColorFromPalette(string $color)
@@ -364,18 +348,28 @@ class MigrationPlatform
         }
     }
 
-    private function createBlankPages(array $parentPages): void
+    /**
+     * @throws Exception
+     */
+    private function createBlankPages(array &$parentPages): void
     {
         Utils::log('Start created pages', 1, 'createBlankPages');
-
         foreach ($parentPages as &$pages)
         {
-            $newPage = $this->creteNewPage($pages['slug'], $pages['name'], $this->cache, false);
-            if (!$newPage) {
-                Utils::log('Failed created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 2, 'createBlankPages');
-            } else {
-                Utils::log('Success created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'createBlankPages');
-                $pages['collection'] = $newPage;
+            if(!empty($pages['childs'])) {
+                $this->createBlankPages($pages['childs']);
+            }
+            if($pages['landing'] == true) {
+                $newPage = $this->creteNewPage($pages['slug'], $pages['name']);
+                if (!$newPage) {
+                    Utils::log('Failed created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 2, 'createBlankPages');
+                } else {
+                    Utils::log('Success created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'createBlankPages');
+                    $pages['collection'] = $newPage;
+                }
+            }
+            else{
+                $pages['collection'] = $pages['childs'][0]['collection'];
             }
         }
         $this->cache->set('menuList', [
@@ -407,8 +401,8 @@ class MigrationPlatform
         Utils::log('Start upload image', 1, 'uploadPicturesFromSections');
         foreach ($sectionsItems as &$section)
         {
-            if(array_key_exists('settings', $section)) {
-                if(array_key_exists('background', $section['settings']['sections']) && $section['settings']['sections']['background']['photo'] !== null ) {
+            if($this->checkArrayPath($section,'settings/sections/background/photo')) {
+                if($section['settings']['sections']['background']['photo'] != null){
                     Utils::log('Found background image', 1, 'uploadPicturesFromSections');
                     $result = $this->brizyApi->createMedia($section['settings']['sections']['background']['photo'], $this->projectId);
                     if ($result) {
@@ -419,58 +413,34 @@ class MigrationPlatform
                         Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
                     }
                 } else {
-                    foreach($section['items'] as &$item)
-                    {
-                        if($item['category'] == 'photo' && $item['content'] != '') {
-                            $item = $this->media($item, $section['typeSection']);
-                        }
-                        if($item['category'] == 'list') {
-                            foreach($item['item'] as &$piece)
-                            {
-                                if($piece['category'] == 'photo' && $piece['content'] != '') {
-                                    $piece = $this->media($piece, $section['typeSection']);
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                foreach($section['items'] as &$item)
-                {
-                    if($item['category'] == 'photo' && $item['content'] != '')
-                    {
-                        $item = $this->media($item, $section['typeSection']);
-//                        Utils::log('Found new image', 1, 'uploadPicturesFromSections');
-//                        $downloadImageURL = $this->getPisturesUrl($item['content'], $section['typeSection']);
-//                        $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
-//                        if($result){
-//                            if(array_key_exists('status', $result)) {
-//                                if($result['status'] == 201 ) {
-//                                    $result = json_decode($result['body'], true);
-//                                    Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
-//                                    $item['imageFileName'] = $result['filename'];
-//                                    $item['content'] = $result['name'];
-//                                    Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
-//                                }
-//                                else{
-//                                    Utils::log('Unexpected answer: '. json_encode($result), 3, 'uploadPicturesFromSections');
-//                                }
-//                            }
-//                            else{
-//                                Utils::log('Bad response: '. json_encode($result), 3, 'uploadPicturesFromSections');
-//                            }
-//                        }
-//                        else{
-//                            Utils::log('The structure of the image is damaged', 3, 'uploadPicturesFromSections');
-//                        }
-                    }
+                    $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
                 }
             }
+            $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
         }
         return $sectionsItems;
     }
 
-    private function media(&$item, $section){
+    private function checkItemForMediaFiles(&$section, $typeSection = ''): void
+    {
+        foreach($section as &$item)
+        {
+            if($item['category'] == 'photo' && $item['content'] != '') {
+                $this->media($item, $typeSection);
+            }
+            if($item['category'] == 'list') {
+                foreach($item['item'] as &$piece)
+                {
+                    if($piece['category'] == 'photo' && $piece['content'] != '') {
+                        $this->media($piece, $typeSection);
+                    }
+                }
+            }
+        }
+    }
+
+    private function media(&$item, $section): void
+    {
         Utils::log('Found new image', 1, 'media');
         $downloadImageURL = $this->getPisturesUrl($item['content'], $section);
         $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
@@ -482,7 +452,6 @@ class MigrationPlatform
                     $item['imageFileName'] = $result['filename'];
                     $item['content'] = $result['name'];
                     Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'media');
-                    return $item;
                 }
                 else{
                     Utils::log('Unexpected answer: '. json_encode($result), 3, 'media');
@@ -495,6 +464,14 @@ class MigrationPlatform
         else{
             Utils::log('The structure of the image is damaged', 3, 'media');
         }
+    }
+
+    private function sortArrayByPosition($array) {
+        usort($array, function($a, $b) {
+            return $a['position'] - $b['position'];
+        });
+
+        return $array;
     }
 
     private function checkArrayPath($array, $path): bool
@@ -537,7 +514,7 @@ class MigrationPlatform
         ];
         foreach ($folds as $fold) {
             $path = __DIR__ . '/../tmp/' . $this->projectId . $fold;
-                    $this->createDirectory($path);
+            $this->createDirectory($path);
         }
     }
 
@@ -549,11 +526,26 @@ class MigrationPlatform
         }
     }
 
-    private function Time($seconds) {
+    private function Time($seconds): string
+    {
         $hours = floor($seconds / 3600);
         $minutes = floor(($seconds - ($hours * 3600)) / 60);
         $seconds = $seconds - ($hours * 3600) - ($minutes * 60);
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+    }
+
+    private function updateColorSection(array &$mainSection)
+    {
+        foreach ($mainSection as $item => &$value)
+        {
+            if(is_array($value)){
+                $this->updateColorSection($value);
+            }
+            if($item === 'subpalette')
+            {
+                $value = $this->getColorFromPalette($value);
+            }
+        }
     }
 
 }

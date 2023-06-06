@@ -4,6 +4,7 @@ namespace Brizy\Builder\Layout\Majesty;
 
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
+use Brizy\Builder\ItemSetter;
 use DOMDocument;
 
 class Majesty
@@ -12,11 +13,19 @@ class Majesty
     private DOMDocument $dom;
     private VariableCache $cache;
 
+    private array $textPosition;
+    /**
+     * @var array|string[]
+     */
+    private array $textDefaultPosition;
+
     public function __construct(VariableCache $cache)
     {
         $this->dom   = new DOMDocument();
         $this->cache = $cache;
-        Utils::log('Connected!', 4, 'August Builder');
+        $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
+
+        Utils::log('Connected!', 4, 'Majesty Builder');
         $file = __DIR__.'\blocksKit.json';
 
         if (file_exists($file))
@@ -25,14 +34,14 @@ class Majesty
             $this->jsonDecode = json_decode($fileContent, true);
             if(empty($fileContent))
             {
-                Utils::log('File empty', 2, "August] [__construct");
+                Utils::log('File empty', 2, "Majesty] [__construct");
                 exit;
             }
-            Utils::log('File exist: ' .$file , 1, "August] [__construct");
+            Utils::log('File exist: ' .$file , 1, "Majesty] [__construct");
         }
         else
         {
-            Utils::log('File does not exist', 2, "August] [__construct");
+            Utils::log('File does not exist', 2, "Majesty] [__construct");
             exit;
         }
 
@@ -40,11 +49,11 @@ class Majesty
 
         if($menuList['create'] == false) {
             if ($this->createMenu($menuList)) {
-                Utils::log('Success create MENU', 1, "August] [__construct");
+                Utils::log('Success create MENU', 1, "Majesty] [__construct");
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                Utils::log("Failed create MENU", 2, "August] [__construct");
+                Utils::log("Failed create MENU", 2, "Majesty] [__construct");
             }
         }
         $this->createFooter($menuList);
@@ -52,7 +61,7 @@ class Majesty
 
     private function createMenu($menuList)
     {
-        Utils::log('Create block menu', 1, "August] [createMenu");
+        Utils::log('Create block menu', 1, "Majesty] [createMenu");
         $decoded = $this->jsonDecode['blocks']['menu'];
         $block = json_decode($decoded['main'], true);
         $lgoItem = $this->cache->get('mainSection')['header']['items'];
@@ -65,27 +74,11 @@ class Majesty
         }
         $itemMenu = json_decode($decoded['item'], true);
 
-
         $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $logo; //logo
         $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['menuSelected'] = $menuList['uid']; //menu items
 
-        $itemsMenu = [];
+        $itemsMenu = $this->creatingMenuTree($menuList['list'], $itemMenu);
 
-        foreach ($menuList['list'] as $item)
-        {
-            $itemMenu['value']['itemId'] = $item['collection'];
-            $itemMenu['value']['title'] = $item['name'];
-            if($item['slug'] == 'home') {
-                $itemMenu['value']['url'] = '/';
-            } else {
-                $itemMenu['value']['url'] = $item['slug'];
-            }
-            $encodeItem = json_encode($itemMenu);
-
-            $itemMenu['value']['id'] = $this->getNameHash($encodeItem);
-
-            $itemsMenu[] = $itemMenu;
-        }
         $block['value']['items'][0]['value']['bgColorHex'] = $menuList['color'];
         $block['value']['items'][0]['value']['bgColorType'] = 'solid';
 
@@ -98,9 +91,35 @@ class Majesty
         return true;
     }
 
+    private function creatingMenuTree($menuList, $blockMenu): array
+    {
+        $treeMenu = [];
+        foreach ($menuList as $item)
+        {
+            $blockMenu['value']['itemId'] = $item['collection'];
+            $blockMenu['value']['title'] = $item['name'];
+            if($item['slug'] == 'home') {
+                $blockMenu['value']['url'] = '/';
+            } else {
+                $blockMenu['value']['url'] = $item['slug'];
+            }
+            $blockMenu['value']['items'] = $this->creatingMenuTree($item['childs'], $blockMenu);
+            if($item['landing'] == false){
+                $blockMenu['value']['url'] = $blockMenu['value']['items'][0]['value']['url'];
+            }
+
+            $encodeItem = json_encode($blockMenu);
+
+            $blockMenu['value']['id'] = $this->getNameHash($encodeItem);
+
+            $treeMenu[] = $blockMenu;
+        }
+        return $treeMenu;
+    }
+
     private function left_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [left_media");
+        Utils::log('Create bloc', 1, "Majesty] [left_media");
         $decoded = $this->jsonDecode['blocks']['left-media'];
         $block = json_decode($decoded, true);
 
@@ -108,9 +127,13 @@ class Majesty
         $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
 
         foreach ($encoded['items'] as $item){
-            if($item['category'] == 'photo'){
+            if($item['category'] == 'photo' && $item['content']!= ''){
                 $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $item['content'];
                 $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
+                if($this->checkArrayPath($item, 'settings/image')){
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageWidth'] = $item['settings']['image']['width'];
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageHeight'] = $item['settings']['image']['height'];
+                }
             }
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
@@ -121,12 +144,12 @@ class Majesty
                 }
             }
         }
-
+        $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
     private function right_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [right_media");
+        Utils::log('Create bloc', 1, "Majesty] [right_media");
 
         $decoded = $this->jsonDecode['blocks']['right-media'];
         $block = json_decode($decoded, true);
@@ -148,12 +171,13 @@ class Majesty
                 }
             }
         }
+        $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
 
     private function full_media($encode): bool|string
     {
-        Utils::log('Create full media', 1, "August] [full_media");
+        Utils::log('Create full media', 1, "Majesty] [full_media");
         $decoded = $this->jsonDecode['blocks']['full-media'];
         $block = json_decode($decoded, true);
 
@@ -184,32 +208,74 @@ class Majesty
             $button['value']['items'][0]['value']['hoverBgColorHex'] = $encode['settings']['layout']['color'];
             $block['value']['items'][0]['value']['items'][] = $button;
         }
+        $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
 
     private function full_text(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [full_text");
+        Utils::log('Create bloc', 1, "Majesty] [full_text");
         $decoded = $this->jsonDecode['blocks']['full-text'];
-
-        if(empty($encoded['settings']['sections']['background'])) {
+        if($this->checkArrayPath($encoded, 'settings/sections/background/photoOption'))
+        {
+            if( $encoded['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
+                $encoded['settings']['sections']['background']['photoOption'] === 'parallax-fixed')
+            {
+                return $this->parallaxScroll($encoded);
+            }
+        }
+        if (!$this->checkArrayPath($encoded, 'settings/sections/background/filename')) {
             $block = json_decode($decoded['main'], true);
 
             $block['value']['items'][0]['value']['bgColorPalette'] = '';
-            $block['value']['items'][0]['value']['bgColorHex']     = $encoded['color'];
+            $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
 
-            foreach ($encoded['items'] as $item){
-                if($item['category'] == 'text') {
-                    if($item['item_type']=='title'){
+            foreach ($encoded['items'] as $item) {
+                if ($item['category'] == 'text') {
+                    if ($item['item_type'] == 'title') {
                         $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
                     }
-                    if($item['item_type']=='body'){
+                    if ($item['item_type'] == 'body') {
                         $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
                     }
                 }
             }
         } else {
-            Utils::log('Set background', 1, "August] [full_text");
+            Utils::log('Set background', 1, "Majesty] [full_text");
+            $block = json_decode($decoded['background'], true);
+
+            $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
+            $block['value']['items'][0]['value']['bgImageSrc'] = $encoded['settings']['sections']['background']['photo'];
+
+            foreach ($encoded['items'] as $item) {
+                if ($item['category'] == 'text') {
+                    if ($item['item_type'] == 'title') {
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                    }
+                    if ($item['item_type'] == 'body') {
+                        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                    }
+                }
+            }
+        }
+
+        $block = $this->replaceIdWithRandom($block);
+        return json_encode($block);
+    }
+
+    private function parallaxScroll(array $encoded): bool|string
+    {
+        Utils::log('Create bloc', 1, "Majesty] [full_text (parallaxScroll)");
+        $decoded = $this->jsonDecode['blocks']['full-text'];
+
+        if(!empty($encoded['settings']['sections']['background'])) {
+            $block = json_decode($decoded['parallax-scroll'], true);
+
+            $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
+            $block['value']['items'][0]['value']['bgImageSrc']      = $encoded['settings']['sections']['background']['photo'];
+
+        } else {
+            Utils::log('Set background', 1, "Majesty] [full_text (parallaxScroll)");
             $block = json_decode($decoded['background'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
@@ -226,6 +292,8 @@ class Majesty
                 }
             }
         }
+
+        $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
 
@@ -236,7 +304,7 @@ class Majesty
 
     private function left_media_circle(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [left_media_circle");
+        Utils::log('Create bloc', 1, "Majesty] [left_media_circle");
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
 
@@ -250,20 +318,20 @@ class Majesty
             }
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content'], 'brz-text-lg-left');
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
                 }
                 if($item['item_type']=='body'){
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], 'brz-text-lg-left');
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
                 }
             }
         }
-
+        $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
 
     private function top_media_diamond(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [top_media_diamond");
+        Utils::log('Create bloc', 1, "Majesty] [top_media_diamond");
 
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
@@ -277,8 +345,10 @@ class Majesty
 
     private function grid_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [grid_layout");
+        Utils::log('Create bloc', 1, "Majesty] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
+
+        $objItem = new ItemSetter($decoded['item']);
 
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);
@@ -286,50 +356,121 @@ class Majesty
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
         $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
 
-        foreach ($encoded as $item)
-        {
-            switch ($item['category']) {
-                case 'text':
-                    if($item['item_type'] == 'title')
-                    {
-                        $replaceHeadTitle = $this->replaceTitleTag($item['content']);
-                        $resultRemove[0]['value']['items'][0]['value']['text'] = $replaceHeadTitle;
-                        break;
-                    }
-                    if($item['item_type'] == 'body')
-                    {
-                        $newBlock = $block['items'][0]['value']['items'][0]['value']['items'][3]['value']['items'][1]['value']['items'][2];
-                        $replaceBody = $this->replaceParagraphs($item['content']);
-                        $newBlock['value']['items'][0]['value']['text'] = $replaceBody;
-                        $resultRemove = $this->insertItemInArray($resultRemove, $newBlock, 1);
-                        break;
-                    }
-                case 'list':
-                    $replaceTitle = $this->replaceTitleTag($item['children'][1]['content'], 'brz-tp-lg-heading4');
-                    $replaceBody  = $this->replaceParagraphs($item['children'][2]['content']);
+        $path = Utils::findKeyPath($block, '_id');
 
-                    //$decodeRow['value']['items'][0]['value']['items'][0]; //image
-                    $decodeRow['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text']  = $replaceTitle;
-                    $decodeRow['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = '';
-                    $decodeRow['value']['items'][1]['value']['items'][2]['value']['items'][0]['value']['text'] = $replaceBody;
-                    $resultRemove[] = $decodeRow;
-                    break;
+        foreach ($encoded['items'] as $section)
+        {
+            if(isset($section['item'])) {
+                switch ($section['category']) {
+                    case 'text':
+                        if ($item['item_type'] == 'title') {
+                            break;
+                        }
+                        if ($item['item_type'] == 'body') {
+                            break;
+                        }
+                    case 'list':
+                        foreach ($section['item'] as $sectionItem) {
+                            if ($sectionItem['category'] == 'photo') {
+                                $item['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $sectionItem['content'];
+                                $item['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $sectionItem['imageFileName'];
+                                if ($sectionItem['link'] != '') {
+                                    $item['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
+                                    $item['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $sectionItem['link'];
+                                }
+                            }
+                            if ($sectionItem['category'] == 'text') {
+                                if ($sectionItem['item_type'] == 'title') {
+                                    $item['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionItem['content']);
+                                }
+                            }
+                        }
+                        break;
+                }
+            } else {
+                if ($section['category'] == 'photo') {
+                    $item['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $section['content'];
+                    $item['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $section['imageFileName'];
+                    if ($section['link'] != '') {
+                        $item['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
+                        $item['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $section['link'];
+                    }
+                }
+                if ($section['category'] == 'text') {
+                    if ($section['item_type'] == 'title') {
+
+                        $objItem->addItem($this->itemWrapper($section['content']));
+
+                        $item = $this->itemWrapper($this->replaceTitleTag($section['content']));
+                    }
+                    if ($section['item_type'] == 'body') {
+                        $objItem->addItem($this->itemWrapper($section['content']));
+                    }
+                }
             }
+            $resultRemove[] = $item;
         }
-        $decodeBlock['items'][0]['value']['items'][0]['value']['items'] = $resultRemove;
-        return json_encode($decodeBlock);
+        $block['value']['items'][0]['value']['items'][0]['value']['items'] = $resultRemove;
+
+        $block = $this->replaceIdWithRandom($block);
+        return json_encode($block);
     }
 
     private function list_layout(array $encoded): bool|string
     {
-        Utils::log('Redirect', 1, "August] [list_layout");
-        $result = $this->full_text($encoded);
-        return $result;
+        Utils::log('Create bloc', 1, "Majesty] [grid_layout");
+        $decoded = $this->jsonDecode['blocks']['list-layout'];
+
+        $block = json_decode($decoded['main'], true);
+        $item  = json_decode($decoded['item'], true);
+
+        $block['value']['items'][0]['value']['bgColorPalette'] = '';
+        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color'];
+
+        foreach ($encoded['items'] as $section)
+        {
+            switch ($section['category']) {
+                case 'text':
+                    if($item['item_type'] == 'title')
+                    {
+                        break;
+                    }
+                    if($item['item_type'] == 'body')
+                    {
+                        break;
+                    }
+                case 'list':
+                    foreach ($section['item'] as $sectionItem) {
+                        if($sectionItem['category'] == 'photo') {
+                            $item['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $sectionItem['content'];
+                            $item['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $sectionItem['imageFileName'];
+                            if($sectionItem['link'] != '') {
+                                $item['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
+                                $item['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $sectionItem['link'];
+                            }
+                        }
+                        if($sectionItem['category'] == 'text') {
+                            if($sectionItem['item_type']=='title') {
+                                $item['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionItem['content']);
+                            }
+                            if($sectionItem['item_type']=='body') {
+                                $item['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($sectionItem['content']);
+                            }
+                        }
+                    }
+                    break;
+            }
+            $resultRemove[] = $item;
+        }
+        $block['value']['items'][0]['value']['items'][0]['value']['items'] = $resultRemove;
+
+        $block = $this->replaceIdWithRandom($block);
+        return json_encode($block);
     }
 
     private function gallery_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [gallery_layout");
+        Utils::log('Create bloc', 1, "Majesty] [gallery_layout");
 
         $encoded['items'] = $this->sortByOrderBy($encoded['items']);
 
@@ -339,11 +480,11 @@ class Majesty
         $block['value']['items'] = [];
 
         foreach ($encoded['items'] as $item){
-            $slide = $this->replaceIdWithRandom($slide);
             $slide['value']['bgImageFileName'] = $item['imageFileName'];
             $slide['value']['bgImageSrc']      = $item['content'];
             $block['value']['items'][] = $slide;
         }
+        $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
 
@@ -359,7 +500,7 @@ class Majesty
 
     private function create_Default_Page()
     {
-        Utils::log('Create structure default page', 1, "August] [top_media_diamond");
+        Utils::log('Create structure default page', 1, "Majesty] [top_media_diamond");
 
         //$decoded = $this->jsonDecode['blocks']['defaultBlocks'];
 
@@ -367,12 +508,31 @@ class Majesty
 
     private function createFooter(): void
     {
-        Utils::log('Create Footer', 1, "August] [createFooter");
+        Utils::log('Create Footer', 1, "Majesty] [createFooter");
+        $encoded = $this->cache->get('mainSection')['footer'];
         $decoded = $this->jsonDecode['blocks']['footer'];
         $block = json_decode($decoded, true);
 
+        $block['value']['bgColorPalette'] = '';
+        $block['value']['bgColorHex'] = $encoded['settings']['color']['subpalette'];
+        foreach ($encoded['items'] as $item) {
+            if ($item['category'] == 'text') {
+                $block['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+            }
+        }
         $this->cache->set('footerBlock', json_encode($block));
     }
+
+    private function itemWrapper($content, $associative = false ){
+        $decoded = $this->jsonDecode['global']['wrapper'];
+        $block = new ItemSetter($decoded);
+        $result = $block->item(0)->setting('text', $content)->get();
+        if(!$associative){
+            return $result;
+        }
+        return json_decode($result, true);
+    }
+
 
     private function removeItemsFromArray(array $array, $index): array
     {
@@ -414,34 +574,63 @@ class Majesty
     }
 // brz-text-lg-center
 // brz-text-lg-left
-    private function replaceTitleTag($html, $class = 'brz-text-lg-center'): string
+    private function replaceTitleTag($html, $type = ''): string
     {
-        Utils::log('Replace Title Tag: '. $html, 1, "August] [replaceTitleTag");
+        Utils::log('Replace Title Tag: '. $html, 1, "Majesty] [replaceTitleTag");
         if(empty($html))
             return '';
         $doc = new DOMDocument();
         $doc->loadHTML($html);
         $paragraphs = $doc->getElementsByTagName('p');
+        if ($paragraphs->length > 0) {
+            foreach ($paragraphs as $paragraph) {
+                $styleValue = 'opacity: 1; ';
+                $style = '';
+                $class = 'brz-cp-color6';
+                $textPosition = ' brz-text-lg-center';
 
-        foreach ($paragraphs as $paragraph) {
-            $paragraph->removeAttribute('style');
-            $htmlClass = 'brz-tp-lg-heading1 ' . $class;
-            $paragraph->setAttribute('class', $htmlClass);
+                if($type !== ''){
+                    $textPosition  = ' ' . $type;
+                }
 
-            $span = $doc->createElement('span');
-            $span->setAttribute('style', 'opacity: 1;');
-            $span->setAttribute('class', 'brz-cp-color6');
+                if ($paragraph->hasAttribute('style')) {
+                    $styleValueString = $paragraph->getAttribute('style');
+                    // font-weight: 200; letter-spacing: -0.05em; line-height: 1.1em; text-align: left;
+                    $styleValue = $this->parseStyle($styleValueString);
+                    foreach ($styleValue as $key => $value)
+                    {
+                        if($key == 'text-align'){
+                            $textPosition = $this->textPosition[$value];
+                        }
+                        if($key == 'color'){
+                            $style .= 'color:' . $value . ';';
+                        }
+                        if($key == 'font-size'){
+                            $style .= ' font-size:' . $value . ';';
+                        }
+                    }
 
-            while ($paragraph->firstChild) {
-                $span->appendChild($paragraph->firstChild);
+                }
+                $class .= $textPosition;
+                $paragraph->removeAttribute('style');
+                $htmlClass = 'brz-tp-lg-heading1 ' . $class;
+                $paragraph->setAttribute('class', $htmlClass);
+
+                $span = $doc->createElement('span');
+                $span->setAttribute('style', $style);
+                $span->setAttribute('class', $class);
+
+                while ($paragraph->firstChild) {
+                    $span->appendChild($paragraph->firstChild);
+                }
+                $paragraph->appendChild($span);
             }
-            $paragraph->appendChild($span);
         }
         return $this->clearHtmlTag($doc->saveHTML());
     }
 
-    private function replaceParagraphs($html, $class = 'brz-text-lg-center'): string {
-        Utils::log('Replace Paragraph: '. $html, 1, "August] [replaceParagraphs");
+    private function replaceParagraphs($html, $type = ''): string {
+        Utils::log('Replace Paragraph: '. $html, 1, "Majesty] [replaceParagraphs");
         if(empty($html)){
             return '';
         }
@@ -458,13 +647,41 @@ class Majesty
 
                 $this->createUrl($getTagAInPatragraph->item(0));
             }
+            $style = '';
+            $class = 'brz-cp-color6';
+
+            $textPosition = ' brz-text-lg-center';
+
+            if($type !== ''){
+                $class  .= ' ' . $type;
+            }
+            else{
+                $class .= $textPosition;
+            }
+
+            $styleValueString = $paragraph->getAttribute('style');
+            // font-weight: 200; letter-spacing: -0.05em; line-height: 1.1em; text-align: left;
+            $styleValue = $this->parseStyle($styleValueString);
+            foreach ($styleValue as $key => $value)
+            {
+                if($key == 'text-align'){
+                    $class .= $this->textPosition[$value];
+                }
+                if($key == 'color'){
+                    $style .= 'color:' . $value . ';';
+                }
+                if($key == 'font-size'){
+                    $style .= ' font-size:' . $value . ';';
+                }
+            }
+
             $paragraph->removeAttribute('style');
             $htmlClass = 'brz-tp-lg-paragraph ' . $class;
             $paragraph->setAttribute('class', $htmlClass);
 
             $span = $doc->createElement('span');
-            $span->setAttribute('style', 'opacity: 1;');
-            $span->setAttribute('class', 'brz-cp-color6');
+            $span->setAttribute('style', $style);
+            $span->setAttribute('class', $class);
 
             while ($paragraph->firstChild) {
                 $span->appendChild($paragraph->firstChild);
@@ -495,6 +712,70 @@ class Majesty
         return $array;
     }
 
+    function parseStyle(string $styleString): array
+    {
+        $styles = array();
+        $stylePairs = explode(';', $styleString);
+        foreach ($stylePairs as $pair) {
+            $parts = explode(':', $pair);
+            if (count($parts) === 2) {
+                $key = trim($parts[0]);
+                $value = trim($parts[1]);
+                $styles[$key] = $value;
+            }
+        }
+        return $styles;
+    }
+
+    private function rgbToHex($rgb): bool|string
+    {
+        $regex = '/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/';
+        preg_match($regex, $rgb, $matches);
+
+        if (count($matches) === 4) {
+            $red = dechex($matches[1]);
+            $green = dechex($matches[2]);
+            $blue = dechex($matches[3]);
+
+            $red = str_pad($red, 2, "0", STR_PAD_LEFT);
+            $green = str_pad($green, 2, "0", STR_PAD_LEFT);
+            $blue = str_pad($blue, 2, "0", STR_PAD_LEFT);
+
+            return "#$red$green$blue";
+        }
+
+        return false;
+    }
+
+    private function checkArrayPath($array, $path, $check = ''): bool
+    {
+        $keys = explode('/', $path);
+        $current = $array;
+
+        foreach ($keys as $key) {
+            if (!isset($current[$key])) {
+                return false;
+            }
+            $current = $current[$key];
+        }
+
+        if($check != '')
+        {
+            if(is_array($check)){
+                foreach ($check as $look){
+                    if ($current === $look) {
+                        return true;
+                    }
+                }
+            } else {
+                if ($current === $check) {
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
+
     private function replaceInName($str): string
     {
         if(empty($str))
@@ -519,6 +800,7 @@ class Majesty
         $random_number = rand(1000, 9999);
         return $microtime . $random_number;
     }
+
     private function replaceValue($data, $keyToReplace, $newValue) {
         if (is_array($data)) {
             foreach ($data as $key => &$value) {
@@ -566,10 +848,10 @@ class Majesty
             if(!isset($params)){
                 $params = $this->jsonDecode;
             }
-            Utils::log('Call method ' . $verifiedMethodName , 1, "August] [callDynamicMethod");
+            Utils::log('Call method ' . $verifiedMethodName , 1, "Majesty] [callDynamicMethod");
             return call_user_func_array(array($this, $verifiedMethodName), [$params]);
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "August] [callDynamicMethod");
+        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "Majesty] [callDynamicMethod");
         return false;
     }
 

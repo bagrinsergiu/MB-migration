@@ -5,7 +5,7 @@ namespace Brizy\Layer\DataSource;
 use Brizy\core\Config;
 use Brizy\core\Utils;
 use Brizy\Layer\DataSource\driver\MySql;
-use Brizy\Layer\DataSource\driver\PostgreSQL;
+use Brizy\Layer\DataSource\driver\PostgresSQL;
 use Exception;
 
 class DBConnector
@@ -22,7 +22,7 @@ class DBConnector
         if ($selectedDatabase === 'mysql') {
             $this->connectToMySQL();
         } elseif ($selectedDatabase === 'postgresql') {
-            $this->connectToPostgreSQL();
+            $this->connectToPostgresSQL();
         } else {
             throw new Exception('Unsupported database');
         }
@@ -34,9 +34,9 @@ class DBConnector
         $this->connection = new MySql();
     }
 
-    private function connectToPostgreSQL(): void
+    private function connectToPostgresSQL(): void
     {
-        $this->connection = new PostgreSQL();
+        $this->connection = new PostgresSQL();
     }
 
     public function request($query)
