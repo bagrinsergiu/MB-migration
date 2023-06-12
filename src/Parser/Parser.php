@@ -42,7 +42,7 @@ class Parser
         ];
     }
 
-    public function getMainSection()
+    public function getMainSection(): array
     {
         Utils::log('Get main Section', 1, 'getParentPages');
         $result = [];
@@ -95,7 +95,7 @@ class Parser
                 'position' => $pageSite['position'],
                 'landing' => $pageSite['landing'],
                 'parentSettings' => $pageSite['settings'],
-                'childs' => $this->getChaildsPages($pageSite['id'])
+                'child' => $this->getChildPages($pageSite['id'])
             ];
         }
 
@@ -104,15 +104,15 @@ class Parser
         return $result;
     }
 
-    private function getChaildsPages($parenId): array
+    private function getChildPages($parentId): array
     {
-        Utils::log('Get child pages', 1, 'getChaildsPages');
+        Utils::log('Get child pages', 1, 'getChildPages');
         $result = [];
 
-        $pagesSite = $this->db->request("SELECT id, slug, name, position, settings, hidden, landing FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY position asc");
+        $pagesSite = $this->db->request("SELECT id, slug, name, position, settings, hidden, landing FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parentId . " ORDER BY position asc");
 
         foreach($pagesSite as $pageSite) {
-            if ($pageSite['hidden'] == false) {
+            if ($pageSite['hidden'] === false) {
                 $result[] = [
                     'id'             => $pageSite['id'],
                     'slug'           => $pageSite['slug'],
@@ -121,7 +121,7 @@ class Parser
                     'position'       => $pageSite['position'],
                     'landing'       => $pageSite['landing'],
                     'parentSettings' => $pageSite['settings'],
-                    'childs'         => $this->getChaildsPages($pageSite['id'])
+                    'child'         => $this->getChildPages($pageSite['id'])
                 ];
             }
         }
@@ -190,7 +190,7 @@ class Parser
             return $this->cache->get($sectionId['id']);
         }
 
-        $requestItemsFromSection = $this->db->request("SELECT * FROM items WHERE 'group' is not null and section_id = " . $sectionId['id']);
+        $requestItemsFromSection = $this->db->request("SELECT * FROM items WHERE 'group' is not null and section_id = " . $sectionId['id'] . " ORDER BY parent_id DESC, order_by");
         foreach($requestItemsFromSection as $sectionsItems)
         {
             Utils::log('Get item | id: ' .$sectionsItems['id'].' from section id: '. $sectionId['id'], 1, 'getSectionsItems');
@@ -237,9 +237,7 @@ class Parser
 
     private function assemblySection($id): array
     {
-        $result = $this->manipulator->groupArrayByParentId($this->cache->get($id));
-
-        return $result;
+        return $this->manipulator->groupArrayByParentId($this->cache->get($id));
     }
 
 }

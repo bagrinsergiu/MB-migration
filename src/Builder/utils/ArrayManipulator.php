@@ -99,6 +99,13 @@ class ArrayManipulator
              }
              return $result;
          }
+
+        foreach ($list as $item) {
+            if ($item["parent_id"] == null && $item["category"] !== 'list') {
+                $parents['item'][] = $item;
+            }
+        }
+
         return $parents;
     }
 

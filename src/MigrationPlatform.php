@@ -1,5 +1,6 @@
 <?php
 
+use Brizy\Builder\ColorMapper;
 use Brizy\Builder\VariableCache;
 use Brizy\Core\ErrorDump;
 use Brizy\Core\Utils;
@@ -32,7 +33,7 @@ class MigrationPlatform
 
         $parentPages = $this->parser->getParentPages();
 
-        if (!$parentPages) {
+        if (empty($parentPages)) {
             Utils::log('MB project not found, migration did not start, process completed without errors!', 1, "MAIN Foreach");
 
             $this->logFinalProcess($this->startTime);
@@ -46,6 +47,7 @@ class MigrationPlatform
 
         $this->QueryBuilder = new QueryBuilder($this->cache);
 
+        $this->createPalette();
         $mainSection = $this->parser->getMainSection();
         $this->updateColorSection($mainSection);
         Utils::log('Upload Logo menu', 1, 'createMenu');
@@ -110,11 +112,11 @@ class MigrationPlatform
     {
         foreach ($parentPages as $pages) {
 
-            if(!empty($pages['childs'])){
-                $this->launch($pages['childs']);
+            if(!empty($pages['child'])){
+                $this->launch($pages['child']);
             }
 
-            //if ($pages['slug'] != 'kids-youth') {continue;}
+            if ($pages['slug'] != 'kids-youth') {continue;}
             $this->collector($pages);
         }
     }
@@ -145,7 +147,7 @@ class MigrationPlatform
 
         $this->setCurrentPageOnWork($collectionItem);
 
-        if($preparedSectionOfThePage) {
+        if(!empty($preparedSectionOfThePage)) {
             $this->runPageBuilder($preparedSectionOfThePage);
         } else {
             Utils::log('Set default page template | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 1, 'Foreach');
@@ -159,29 +161,43 @@ class MigrationPlatform
 
         $child = $this->parser->getSectionsPage($page['id']);
         if(!empty($child)) {
-            $items = [];
+            $sections = [];
             foreach ($child as $value) {
 
                 Utils::log('Collection of item id: ' .$value['id'].' -> Parent page id:'. $page['id'], 1, 'getItemsFromPage');
-                $color = $this->getColorFromPalette('subpalette1');
                 if($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
-                    $color = $this->getColorFromPalette($value['settings']['sections']['color']['subpalette']);
+                    $value['settings']['color'] = $this->getColorFromPalette($value['settings']['sections']['color']['subpalette']);
+                    unset($value['settings']['sections']['color']);
                 }
                 if($this->checkArrayPath($value, 'settings/layout/color/subpalette')) {
-                    $value['settings']['layout']['color'] = $this->getColorFromPalette($value['settings']['layout']['color']['subpalette']);
+                    $value['settings']['color'] = $this->getColorFromPalette($value['settings']['layout']['color']['subpalette']);
+                    unset($value['settings']['layout']['color']);
                 }
 
-                $items[] = [
+                $items = [
                     'sectionId'     => $value['id'],
                     'typeSection'   => $value['typeSection'],
                     'position'      => $value['position'],
                     'category'      => $value['category'],
-                    'color'         => $color,
                     'settings'      => $value['settings'],
-                    'items'         => $this->parser->getSectionsItems($value, true)
+                    'head'          => [],
+                    'items'          => []
+
                 ];
+                $sectionItems = $this->parser->getSectionsItems($value, true);
+
+                foreach ($sectionItems as $key => $Item )
+                {
+                    if($key === 'item'){
+                        $items['head'] =  $Item;
+                    }
+                    else{
+                        $items['items'][] = $Item;
+                    }
+                }
+                $sections[] = $items;
             }
-            $result = $items;
+            $result = $sections;
         } else {
             Utils::log('Empty parent page | ID: ' . $page['id'] . ' | Name page: ' . $page['name'] . ' | Slug: ' . $page['slug'], 1, 'getItemsFromPage');
             $result = false;
@@ -212,7 +228,7 @@ class MigrationPlatform
         foreach ($parentMenu as $item) {
             $mainMenu[] = [
                 "id" => $item['collection'],
-                "items" => $this->transformToBrizyMenu($item['childs']),
+                "items" => $this->transformToBrizyMenu($item['child']),
                 "isNewTab" => false,
                 "label" => $item['name'],
                 "uid"=> $this->getNameHash()
@@ -223,20 +239,12 @@ class MigrationPlatform
 
     private function getColorFromPalette(string $color)
     {
-        $parameter = $this->cache->get('settings')['parameter'];
-        $map = [
-            'subpalette1' => 'color1',
-            'subpalette2' => 'color2',
-            'subpalette3' => 'color3',
-            'subpalette4' => 'color4',
-            'subpalette5' => 'color5',
-            'subpalette6' => 'color6'
-        ];
-        foreach ($parameter['palette'] as $palette)
+        $subPalette = $this->cache->get('subpalette','parameter');
+        foreach ($subPalette as $key => $palette)
         {
-            if ($palette['tag'] == $map[$color])
+            if ($key === $color)
             {
-                return $palette['color'];
+                return $palette;
             }
         }
         return false;
@@ -356,8 +364,8 @@ class MigrationPlatform
         Utils::log('Start created pages', 1, 'createBlankPages');
         foreach ($parentPages as &$pages)
         {
-            if(!empty($pages['childs'])) {
-                $this->createBlankPages($pages['childs']);
+            if(!empty($pages['child'])) {
+                $this->createBlankPages($pages['child']);
             }
             if($pages['landing'] == true) {
                 $newPage = $this->creteNewPage($pages['slug'], $pages['name']);
@@ -369,13 +377,16 @@ class MigrationPlatform
                 }
             }
             else{
-                $pages['collection'] = $pages['childs'][0]['collection'];
+                $pages['collection'] = $pages['child'][0]['collection'];
             }
         }
         $this->cache->set('menuList', [
-            'color' => $this->cache->get('settings')['parameter']['palette'][0]['color'],
-            'create' => false ,
-            'list' => $parentPages
+            'id' => null,
+            'uid' => null,
+            'name' => null,
+            'create' => false,
+            'list' => $parentPages,
+            'data' => ""
         ]);
     }
 
@@ -489,6 +500,21 @@ class MigrationPlatform
         return true;
     }
 
+    private function colorPalette(): array
+    {
+        $result = [];
+        $settings = $this->cache->get('settings');
+
+        if($this->checkArrayPath($settings, 'parameter/palette')) {
+            $palette = $this->cache->get('settings')['parameter']['palette'];
+
+            foreach ($palette as $item) {
+                $result[$item['tag']] = $item['color'];
+            }
+        }
+        return $result;
+    }
+
     private function getNameHash($data = ''): string
     {
         $to_hash = $this->generateCharID() . $data;
@@ -534,7 +560,7 @@ class MigrationPlatform
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 
-    private function updateColorSection(array &$mainSection)
+    private function updateColorSection(array &$mainSection): void
     {
         foreach ($mainSection as $item => &$value)
         {
@@ -546,6 +572,16 @@ class MigrationPlatform
                 $value = $this->getColorFromPalette($value);
             }
         }
+    }
+
+    private function createPalette(): void
+    {
+        $colorMapper = new ColorMapper();
+        $colorKit = $this->colorPalette();
+        $design = $this->cache->get('design' , 'settings');
+        $this->cache->set('subpalette', [] ,'parameter');
+        $subPalette = $colorMapper->getPalette($design, $colorKit);
+        $this->cache->update('subpalette', $subPalette, 'parameter');
     }
 
 }

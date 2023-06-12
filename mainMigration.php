@@ -13,7 +13,7 @@ require_once(__DIR__ . '/src/MigrationPlatform.php');
 //256 https://eternalrock.org/
 //4305682  https://mang4305682.brizy.org/
 
-$ProjectId_MB    = 75776;
-$ProjectId_Brizy = 4303928;
+$ProjectId_MB    = 256;
+$ProjectId_Brizy = 4305682;
 
 $StartProcess_Migration = new MigrationPlatform($ProjectId_MB, $ProjectId_Brizy);

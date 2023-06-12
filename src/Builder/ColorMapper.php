@@ -774,7 +774,7 @@ class ColorMapper
         return $contrastColor;
     }
 
-    public function getPalette (string $design, array $colorKit): string|bool
+    public function getPalette (string $design, array $colorKit): array|bool
     {
         if (method_exists($this, $design)) {
             Utils::log('Call method ' . $design , 1, "getPalette");

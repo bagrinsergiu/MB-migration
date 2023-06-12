@@ -181,7 +181,7 @@ class ItemsBuilder
             $pathLayoutData = $path;
         }
 
-        $jsonDataLayout = Utils::strReplace(Config::$pathLayoutData, array("{theme}", "{page}"), array(Config::$themes[$nameTemplate], $namePage) );
+        $jsonDataLayout = Utils::strReplace(Config::$pathLayoutData, ["{theme}", "{page}"], [Config::$themes[$nameTemplate], $namePage] );
 
         Utils::log('Import: '.$jsonDataLayout,0,$nameFunction);
 
