@@ -166,6 +166,16 @@ class BrizyAPI{
         return false;
     }
 
+    public function createFonts($fontsName, $projectID, $pathToFonts): bool|array
+    {
+        return $this->httpClient('POST', $this->createPrivatUrlAPI('fonts'), [
+            'family' => $fontsName,
+            'uid' => $this->generateUID(),
+            'files' => [$this->readBinaryFile($pathToFonts)],
+            'container' => $projectID
+        ]);
+    }
+
     public function createUser(array $value)
     {
         $result = $this->httpClient('POST', $this->createUrlAPI('users'), $value);
@@ -318,6 +328,11 @@ class BrizyAPI{
         return $microtime . $random_number;
     }
 
+    private function generateUID(): string
+    {
+        return $this->getNameHash($this->generateUniqueID());
+    }
+
     private function getFileExtension($mime_type) {
         $extensions = array(
             'image/x-icon'  => 'ico',
@@ -356,6 +371,17 @@ class BrizyAPI{
             Utils::log('Failed to load image!!! path: ' . $path, 2, 'downloadImage');
         }
         return $path;
+    }
+
+    private function readBinaryFile($filename): bool|string
+    {
+        $handle = fopen($filename, 'rb');
+        if ($handle === false) {
+            return false;
+        }
+        $data = fread($handle, filesize($filename));
+        fclose($handle);
+        return $data;
     }
 
     private function isUrlOrFile($urlOrPath) {

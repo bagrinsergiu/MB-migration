@@ -97,7 +97,7 @@ class Utils
         return $json;
     }
 
-    public static function strReplace(string $block, string $replace, string $toReplace): string
+    public static function strReplace(string $block, string|array $replace, string|array $toReplace): string
     {
         return str_replace($replace, $toReplace, $block);
     }
