@@ -10,6 +10,15 @@
         'dev' => true,
     ),
     'versions' => array(
+        'amphp/amp' => array(
+            'pretty_version' => 'v3.0.0',
+            'version' => '3.0.0.0',
+            'reference' => 'aaf0ec1d5a2c20b523258995a10e80c1fb765871',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../amphp/amp',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'brizy/migration' => array(
             'pretty_version' => '1.0.0+no-version-set',
             'version' => '1.0.0.0',
@@ -178,6 +187,15 @@
             'reference' => '120b605dfeb996808c31b6477290a714d356e822',
             'type' => 'library',
             'install_path' => __DIR__ . '/../ralouphie/getallheaders',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'revolt/event-loop' => array(
+            'pretty_version' => 'v1.0.1',
+            'version' => '1.0.1.0',
+            'reference' => '9ac31d36635c60a9b28bb2a476384c5ec55c95cc',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../revolt/event-loop',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

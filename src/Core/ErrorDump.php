@@ -70,13 +70,15 @@ class ErrorDump
             $dump_file .= '.txt';
         }
 
+        $cache = $this->cache ?? [];
+
         $data = [
             'error_message' => $error->getMessage(),
             'error_code' => $error->getCode(),
             'error_file' => $error->getFile(),
             'error_line' => $error->getLine(),
             'error_trace' => $error->getTraceAsString(),
-            'cache' => $this->cache,
+            'cache' => $cache,
             'server_data' => $_SERVER,
             'post_data' => $_POST,
             'get_data' => $_GET,

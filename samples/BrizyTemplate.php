@@ -19,7 +19,7 @@ $brizyAPI   = new BrizyAPI();
 //var_dump($brizyAPI->createdWorkspaces());
 
 //создаем проетк с именеи в worksapce и возвращем его id
-//var_dump($brizyAPI->createProject('Project_migration', 4303835, 'id'));
+var_dump($brizyAPI->createProject('Project_migration', 4303835, 'id'));
 
 //получаем полный список проектов или ищим проект по названию и получаем его id
 //var_dump($brizyAPI->getProject(4303835));

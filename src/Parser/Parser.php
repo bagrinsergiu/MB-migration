@@ -30,14 +30,20 @@ class Parser
     public function getSite(): array
     {
         Utils::log('Get site', 1, 'getSite');
-        $settingSite = $this->db->requestArray("SELECT id, name, title, settings, uuid, design_uuid, favicon from sites WHERE id = " . $this->siteId);
+        $settingSite = $this->db->requestArray("SELECT id, name, title, settings, uuid, design_uuid, favicon, palette_uuid from sites WHERE id = " . $this->siteId);
         $designSite = $this->db->requestArray("SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
+
+        $settings = json_decode($settingSite[0]['settings'], true);
+        if(!array_key_exists('palette', $settings)){
+            $settings['palette'] = $this->getPalettes($settingSite[0]['palette_uuid']);
+        }
+
         return [
             'name'      => $settingSite[0]['name'],
             'title'     => $settingSite[0]['title'],
             'design'    => $designSite[0]['name'],
             'uuid'      => $settingSite[0]['uuid'],
-            'parameter' => json_decode($settingSite[0]['settings'], true),
+            'parameter' => $settings,
             'favicon'   => $settingSite[0]['favicon']
         ];
     }
@@ -74,11 +80,30 @@ class Parser
         return $result;
     }
 
+    private function getPalettes($paletteUUID): ?array
+    {
+        $palette = null;
+
+        if($paletteUUID === null ){
+            return $palette;
+        }
+
+        $palettes = $this->db->requestArray("SELECT id from palettes WHERE uuid = '$paletteUUID'");
+        $colorsKit = $this->db->requestArray("SELECT * from colors WHERE palette_id = '".$palettes[0]['id']."' ORDER BY position");
+        foreach ($colorsKit as $color){
+            $palette[] = [
+                'tag' => $color['tag'],
+                'color' => $color['color']
+            ];
+        }
+        return $palette;
+    }
+
     public function getParentPages(): array
     {
         Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
-        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings, landing FROM pages WHERE site_id = " . $this->siteId . " AND hidden = false AND parent_id IS NULL ORDER BY parent_id ASC, position");
+        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings, landing FROM pages WHERE site_id = " . $this->siteId . " AND hidden = 'false' AND parent_id IS NULL ORDER BY parent_id ASC, position");
 
         if (empty($requestPageSite)) {
             Utils::log('MB project pages not found', 2, 'getParentPages');
@@ -97,6 +122,7 @@ class Parser
                 'parentSettings' => $pageSite['settings'],
                 'child' => $this->getChildPages($pageSite['id'])
             ];
+            $this->cache->update('Total', '++', 'Status');
         }
 
         $result[0]['slug'] = 'home';
@@ -109,7 +135,7 @@ class Parser
         Utils::log('Get child pages', 1, 'getChildPages');
         $result = [];
 
-        $pagesSite = $this->db->request("SELECT id, slug, name, position, settings, hidden, landing FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parentId . " ORDER BY position asc");
+        $pagesSite = $this->db->request("SELECT id, slug, name, position, settings, hidden, landing FROM pages WHERE site_id = " . $this->siteId . " AND hidden = 'false' AND  parent_id = " . $parentId . " ORDER BY position asc");
 
         foreach($pagesSite as $pageSite) {
             if ($pageSite['hidden'] === false) {
@@ -123,6 +149,7 @@ class Parser
                     'parentSettings' => $pageSite['settings'],
                     'child'         => $this->getChildPages($pageSite['id'])
                 ];
+                $this->cache->update('Total', '++', 'Status');
             }
         }
         return $result;
@@ -187,7 +214,7 @@ class Parser
         if($this->cache->exist($sectionId['id']))
         {
             Utils::log('Get item from cache | Section id: '. $sectionId['id'], 1, 'getSectionsItems');
-            return $this->cache->get($sectionId['id']);
+            return $this->cache->get($sectionId['id'], 'Sections');
         }
 
         $requestItemsFromSection = $this->db->request("SELECT * FROM items WHERE 'group' is not null and section_id = " . $sectionId['id'] . " ORDER BY parent_id DESC, order_by");
@@ -206,13 +233,14 @@ class Parser
                 'category'  => $sectionsItems['category'],
                 'item_type' => $sectionsItems['item_type'],
                 'order_by'  => $sectionsItems['order_by'],
+                'group'  => $sectionsItems['group'],
                 'parent_id' => $sectionsItems['parent_id'],
                 'settings'  => $settings,
                 'link'      => $this->getItemLink($sectionsItems['id']),
                 'content'   => $sectionsItems['content'],
             ];
         }
-        $this->cache->set($sectionId['id'], $result);
+        $this->cache->set($sectionId['id'], $result, 'Sections');
 
         if($assembly)
         {
@@ -237,7 +265,7 @@ class Parser
 
     private function assemblySection($id): array
     {
-        return $this->manipulator->groupArrayByParentId($this->cache->get($id));
+        return $this->manipulator->groupArrayByParentId($this->cache->get($id, 'Sections'));
     }
 
 }

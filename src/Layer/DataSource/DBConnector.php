@@ -26,7 +26,7 @@ class DBConnector
         } else {
             throw new Exception('Unsupported database');
         }
-        Utils::log('READY', 4, 'DBConnector Module');
+       Utils::log('READY', 4, 'DBConnector Module');
     }
 
     private function connectToMySQL(): void

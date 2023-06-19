@@ -7,9 +7,11 @@ use Brizy\layer\Brizy\BrizyAPI;
 class FontsController
 {
     private BrizyAPI $BrizyApi;
+    private array $fontsMap;
 
     public function __construct(){
         $this->BrizyApi = new BrizyAPI();
+        $this->kitFonts();
     }
 
     public function upLoadFonts($fontName, $projectID): bool|array
@@ -20,7 +22,7 @@ class FontsController
 
     private function getPathToFonts($fontName): string
     {
-        $fonts = $this->kitFonts();
+        $fonts =
         $path = false;
         if(array_key_exists($fontName, $fonts)){
             $path = __DIR__ . $fonts[$fontName];
@@ -28,10 +30,10 @@ class FontsController
         return $path;
     }
 
-    private function kitFonts(): array
+    private function kitFonts():void
     {
-        return [
-            'Arial' => '/FontSet/Arial.wft'
-        ];
+        $file = __DIR__ . '\fonts.json.json';
+        $fileContent = file_get_contents($file);
+        $this->fontsMap = json_decode($fileContent, true);
     }
 }

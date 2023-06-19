@@ -24,13 +24,19 @@ class VariableCache {
         }
     }
 
-    public function update($key, $value, $section = ''): void
+    public function update($key, $value, $section = null): void
     {
-        if ($section !== '') {
+        if ($section != null) {
             $this->updateKeyRecursive($section, $key, $value, $this->cache);
         }
         if (array_key_exists($key, $this->cache)) {
-            $this->cache[$key] = $value;
+            if ($value === "++") {
+                if (isset($this->cache[$key])) {
+                    $this->cache[$key] += 1;
+                }
+            } else {
+                $this->cache[$key] = $value;
+            }
         }
     }
 
@@ -42,16 +48,12 @@ class VariableCache {
         return false;
     }
 
-    public function set($key, $value, $section = '', $expiration = 0): void
+    public function set($key, $value, $section = null, $expiration = 0): void
     {
-        if ($section !== '') {
+        if ($section !== null) {
             $this->setKeyRecursive($section, $key, $value, $this->cache);
         } else {
             $this->cache[$key] = $value;
-            if ($expiration > 0) {
-                $expiration_time = time() + $expiration;
-                $this->cache[$key . '_expiration'] = $expiration_time;
-            }
         }
     }
 
@@ -88,15 +90,24 @@ class VariableCache {
 
     private function setKeyRecursive($section, $key, $value, &$array): void
     {
-        foreach ($array as $k => &$v) {
-            if ($k === $section && is_array($v)) {
-                $v[$key] = $value;
+        if(is_array($section)) {
+            $currentSection = array_shift($section);
+        } else {
+            $currentSection = $section;
+        }
+        if (!isset($array[$currentSection])) {
+            $array[$currentSection] = [];
+        }
+        if(is_array($section)) {
+            if (count($section) === 0) {
+                $array[$currentSection][$key] = $value;
                 return;
             }
-            if (is_array($v)) {
-                $this->setKeyRecursive($section, $key, $value, $v);
-            }
+        } else {
+            $array[$currentSection][$key] = $value;
+            return;
         }
+        $this->setKeyRecursive($section, $key, $value, $array[$currentSection]);
     }
 
     private function getKeyRecursive($key, $section, $array) {
@@ -136,7 +147,13 @@ class VariableCache {
         foreach ($array as $k => &$v) {
             if ($k === $section && is_array($v)) {
                 if (array_key_exists($key, $v)) {
-                    $v[$key] = $value;
+                    if ($value === "++") {
+                        if (isset($v[$key])) {
+                            $v[$key] += 1;
+                        }
+                    } else {
+                        $v[$key] = $value;
+                    }
                     return;
                 }
             }

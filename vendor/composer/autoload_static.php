@@ -13,6 +13,9 @@ class ComposerStaticInit8cd89f3fd533e903a3fb94a79e222820
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
+        '88254829cb0eed057c30eaabb6d8edc4' => __DIR__ . '/..' . '/amphp/amp/src/functions.php',
+        '429ae5f14a13a9076791c19422e10996' => __DIR__ . '/..' . '/amphp/amp/src/Future/functions.php',
+        'c8601a4144b50a7b548da082c89c4dc1' => __DIR__ . '/..' . '/amphp/amp/src/Internal/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -28,6 +31,10 @@ class ComposerStaticInit8cd89f3fd533e903a3fb94a79e222820
             'Symfony\\Component\\Process\\' => 26,
             'Symfony\\Component\\EventDispatcher\\' => 34,
         ),
+        'R' => 
+        array (
+            'Revolt\\' => 7,
+        ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
@@ -42,6 +49,10 @@ class ComposerStaticInit8cd89f3fd533e903a3fb94a79e222820
             'GuzzleHttp\\' => 11,
             'GraphQL\\' => 8,
             'GitWrapper\\' => 11,
+        ),
+        'A' => 
+        array (
+            'Amp\\' => 4,
         ),
     );
 
@@ -69,6 +80,10 @@ class ComposerStaticInit8cd89f3fd533e903a3fb94a79e222820
         'Symfony\\Component\\EventDispatcher\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
+        ),
+        'Revolt\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/revolt/event-loop/src',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -106,6 +121,10 @@ class ComposerStaticInit8cd89f3fd533e903a3fb94a79e222820
         'GitWrapper\\' => 
         array (
             0 => __DIR__ . '/..' . '/cpliakas/git-wrapper/src',
+        ),
+        'Amp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/amphp/amp/src',
         ),
     );
 

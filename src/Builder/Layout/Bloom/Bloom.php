@@ -6,6 +6,7 @@ use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use Brizy\Builder\ItemSetter;
 use DOMDocument;
+use InvalidArgumentException;
 
 class Bloom
 {
@@ -62,6 +63,7 @@ class Bloom
     private function createMenu($menuList)
     {
         Utils::log('Create block menu', 1, "Bloom] [createMenu");
+        $this->cache->set('currentSectionData', $menuList);
         $decoded = $this->jsonDecode['blocks']['menu'];
         $block = json_decode($decoded['main'], true);
         $lgoItem = $this->cache->get('header','mainSection');
@@ -129,13 +131,14 @@ class Bloom
     private function left_media(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [left_media");
+        $this->cache->set('currentSectionData', $encoded);
         $decoded = $this->jsonDecode['blocks']['left-media'];
         $block = json_decode($decoded, true);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color']['bg'];
+        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
 
-        $this->marginAndPaddingOffset($block);
+        //$this->marginAndPaddingOffset($block);
 
         foreach ($encoded['items'] as $item){
             if($item['category'] == 'photo' && $item['content']!= ''){
@@ -161,17 +164,18 @@ class Bloom
     private function right_media(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [right_media");
+        $this->cache->set('currentSectionData', $encoded);
 
         $decoded = $this->jsonDecode['blocks']['right-media'];
         $block = json_decode($decoded, true);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color']['bg'];
+        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
 
-        $this->marginAndPaddingOffset($block);
+        //$this->marginAndPaddingOffset($block);
 
         foreach ($encoded['items'] as $item){
-            if($item['category'] == 'photo'){
+            if($item['category'] == 'photo' && $item['content'] !== ''){
                 $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $item['content'];
                 $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
             }
@@ -191,16 +195,17 @@ class Bloom
     private function full_media($encode): bool|string
     {
         Utils::log('Create full media', 1, "Bloom] [full_media");
+        $this->cache->set('currentSectionData', $encode);
         $decoded = $this->jsonDecode['blocks']['full-media'];
         $block = json_decode($decoded, true);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        $block['value']['items'][0]['value']['bgColorHex'] = $encode['color']['bg'];
+        $block['value']['items'][0]['value']['bgColorHex'] = $encode['settings']['color']['bg'];
 
-        $this->marginAndPaddingOffset($block);
+        //$this->marginAndPaddingOffset($block);
 
         foreach ($encode['items'] as $item){
-            if($item['category'] == 'photo'){
+            if($item['category'] == 'photo' && $item['content'] !== ''){
                 $block['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['imageSrc'] = $item['content'];
                 $block['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
                 $block['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['_id'] = $this->generateCharID();
@@ -220,7 +225,7 @@ class Bloom
             $button =  json_decode($this->jsonDecode['blocks']['donation'], true);
             $button['value']['items'][0]['value']['text'] = $encode['settings']['layout']['donations']['text'];
             $button['value']['items'][0]['value']['linkExternal'] = $encode['settings']['sections']['donations']['url'];
-            $button['value']['items'][0]['value']['hoverBgColorHex'] = $encode['settings']['layout']['color']['bg'];
+            $button['value']['items'][0]['value']['hoverBgColorHex'] = $encode['settings']['color']['bg'];
             $block['value']['items'][0]['value']['items'][] = $button;
         }
         $block = $this->replaceIdWithRandom($block);
@@ -230,6 +235,7 @@ class Bloom
     private function full_text(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [full_text");
+        $this->cache->set('currentSectionData', $encoded);
         $decoded = $this->jsonDecode['blocks']['full-text'];
         if($this->checkArrayPath($encoded, 'settings/sections/background/photoOption'))
         {
@@ -243,9 +249,11 @@ class Bloom
                 $block = json_decode($decoded['main'], true);
 
                 $block['value']['items'][0]['value']['bgColorPalette'] = '';
-                $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color']['bg'];
+                if($this->checkArrayPath($encoded, 'settings/color/bg')) {
+                    $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+                }
 
-                $this->marginAndPaddingOffset($block);
+                //$this->marginAndPaddingOffset($block);
 
                 foreach ($encoded['items'] as $item) {
                     if ($item['category'] == 'text') {
@@ -264,7 +272,7 @@ class Bloom
                 $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
                 $block['value']['items'][0]['value']['bgImageSrc'] = $encoded['settings']['sections']['background']['photo'];
 
-                $this->marginAndPaddingOffset($block);
+                //$this->marginAndPaddingOffset($block);
 
                 foreach ($encoded['items'] as $item) {
                     if ($item['category'] == 'text') {
@@ -285,6 +293,7 @@ class Bloom
     private function parallaxScroll(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [full_text (parallaxScroll)");
+        $this->cache->set('currentSectionData', $encoded);
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
         if(!empty($encoded['settings']['sections']['background'])) {
@@ -318,22 +327,27 @@ class Bloom
 
     private function right_media_circle(array $encoded): bool|string
     {
+        Utils::log('Create bloc', 1, "Bloom] [right_media_circle");
+        $this->cache->set('currentSectionData', $encoded);
         return '';
     }
 
     private function left_media_circle(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [left_media_circle");
+        $this->cache->set('currentSectionData', $encoded);
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color']['bg'];
 
-        $this->marginAndPaddingOffset($block);
+        if($this->checkArrayPath($encoded, 'settings/color/bg')) {
+            $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+        }
+        //$this->marginAndPaddingOffset($block);
 
         foreach ($encoded['items'] as $item){
-            if($item['category'] == 'photo'){
+            if($item['category'] == 'photo' && $item['content'] !== ''){
                 $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $item['content'];
                 $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
             }
@@ -353,7 +367,7 @@ class Bloom
     private function top_media_diamond(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [top_media_diamond");
-
+        $this->cache->set('currentSectionData', $encoded);
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
         $decode = json_decode($decoded['main'], true);
@@ -367,6 +381,7 @@ class Bloom
     private function grid_layout(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [grid_layout");
+        $this->cache->set('currentSectionData', $encoded);
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $objItem = new ItemSetter($decoded['item']);
@@ -374,10 +389,12 @@ class Bloom
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);
 
-        $this->marginAndPaddingOffset($block);
+//        $this->marginAndPaddingOffset($block);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color']['bg'];
+        if($this->checkArrayPath($encoded, 'settings/color/bg')) {
+            $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+        }
 
         $path = Utils::findKeyPath($block, '_id');
 
@@ -422,12 +439,12 @@ class Bloom
                 if ($section['category'] == 'text') {
                     if ($section['item_type'] == 'title') {
 
-                        $objItem->addItem($this->itemWrapper($section['content']));
+                        $objItem->addItem($this->itemWrapperRichText($section['content']));
 
-                        $item = $this->itemWrapper($this->replaceTitleTag($section['content']));
+                        $item = $this->itemWrapperRichText($this->replaceTitleTag($section['content']));
                     }
                     if ($section['item_type'] == 'body') {
-                        $objItem->addItem($this->itemWrapper($section['content']));
+                        $objItem->addItem($this->itemWrapperRichText($section['content']));
                     }
                 }
             }
@@ -442,16 +459,19 @@ class Bloom
     private function list_layout(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [grid_layout");
+        $this->cache->set('currentSectionData', $encoded);
         $decoded = $this->jsonDecode['blocks']['list-layout'];
-
+        $sb = new SectionBuilder();
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);
         $image  = json_decode($decoded['image'], true);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+        if($this->checkArrayPath($encoded, 'settings/color/bg')) {
+            $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+        }
 
-        $this->marginAndPaddingOffset($block);
+        //$this->marginAndPaddingOffset($block);
 
         if($this->checkArrayPath($encoded, 'settings/sections/background'))
         {
@@ -474,28 +494,39 @@ class Bloom
         {
             if($hitem['category'] == 'text') {
                 if ($hitem['item_type'] === 'title') {
-                    $content = $this->replaceTitleTag($hitem['content'], 'brz-text-lg-left');
+                    $content = $this->replaceTitleTag($hitem['content'], 'brz-text-lg-center');
                     $position = 0;
                 } else {
-                    $content = $this->replaceParagraphs($hitem['content'], 'brz-text-lg-left');
+                    $content = $this->replaceParagraphs($hitem['content'], 'brz-text-lg-center');
                     $position++;
                 }
-                $wrapper = $this->itemWrapper($content, true);
+                $wrapper = $this->itemWrapperRichText($content, true);
                 $this->insertElementAtPosition($block, 'value/items/0/value/items', $wrapper, $position);
             }
         }
+
+        $p = 0;
         foreach ($encoded['items'] as $section)
         {
             switch ($section['category']) {
                 case 'text':
-                    if($item['item_type'] == 'title')
-                    {
-                        break;
-                    }
-                    if($item['item_type'] == 'body')
-                    {
-                        break;
-                    }
+
+                    $this->integrationOfTheWrapperItem(
+                        $block,
+                        $section,
+                        'value/items/0/value/items'
+                    );
+
+//                    if ($section['item_type'] === 'title') {
+//                        $content = $this->replaceTitleTag($section['content'], 'brz-text-lg-center');
+//                        $p = 0;
+//                    } else {
+//                        $content = $this->replaceParagraphs($section['content'], 'brz-text-lg-center');
+//                        $p++;
+//                    }
+//                    $wrapper = $this->itemWrapper($content, true);
+//                    $this->insertElementAtPosition($block, 'value/items/0/value/items', $wrapper, $p);
+                    break;
                 case 'list':
                     foreach ($section['item'] as $sectionItem) {
                         if($sectionItem['category'] == 'photo' && $sectionItem['content'] != '' ) {
@@ -510,21 +541,27 @@ class Bloom
                             $item['value']['items'][0]['value']['value'][0]['value']['items'][0] = $image;
                         }
 
-                        if($sectionItem['category'] == 'text') {
-                            if($sectionItem['item_type']=='title') {
-                                $item['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionItem['content'], 'brz-text-lg-left');
-                            }
-                            if($sectionItem['item_type']=='body') {
-                                $item['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($sectionItem['content'], 'brz-text-lg-left');
-                            }
-                        }
+                        $this->integrationOfTheWrapperItem(
+                            $block,
+                            $sectionItem,
+                            'value/items/0/value/items'
+                        );
+
+//                        if($sectionItem['category'] == 'text') {
+//                            if($sectionItem['item_type']=='title') {
+//                                $item['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionItem['content'], 'brz-text-lg-left');
+//                            }
+//                            if($sectionItem['item_type']=='body') {
+//                                $item['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($sectionItem['content'], 'brz-text-lg-left');
+//                            }
+//                        }
                     }
                     break;
             }
-            $resultRemove[] = $item;
+            //$resultRemove[] = $item;
         }
 
-        $this->mergeArrayAtPath($block, 'value/items/0/value/items', $resultRemove);
+        //$this->mergeArrayAtPath($block, 'value/items/0/value/items', $resultRemove);
         //$block['value']['items'][0]['value']['items'][0]['value']['items'] = $resultRemove;
 
         $block = $this->replaceIdWithRandom($block);
@@ -534,20 +571,21 @@ class Bloom
     private function gallery_layout(array $encoded): bool|string
     {
         Utils::log('Create bloc', 1, "Bloom] [gallery_layout");
+        $this->cache->set('currentSectionData', $encoded);
 
         $encoded['items'] = $this->sortByOrderBy($encoded['items']);
 
         $decoded = $this->jsonDecode['blocks']['gallery-layout'];
-        $block = json_decode($decoded, true);
-        $slide = $block['value']['items'][0];
-        $block['value']['items'] = [];
+        $block = json_decode($decoded['main'], true);
+        $slide  = json_decode($decoded['item'], true);
 
-        $this->marginAndPaddingOffset($block);
+        //$this->marginAndPaddingOffset($block);
 
         foreach ($encoded['items'] as $item){
             $slide['value']['bgImageFileName'] = $item['imageFileName'];
             $slide['value']['bgImageSrc']      = $item['content'];
-            $block['value']['items'][] = $slide;
+
+            $this->insertElementAtPosition($block, 'value/items', $slide);
         }
         $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
@@ -555,11 +593,14 @@ class Bloom
 
     private function empty_layout(array $encoded)
     {
+        $this->cache->set('curentSectionData', $encoded);
         $decoded = $this->jsonDecode['blocks']['empty-layout'];
         $block = json_decode($decoded, true);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        $block['value']['items'][0]['value']['bgColorHex'] = $encoded['color']['bg'];
+        if($this->checkArrayPath($encoded, 'settings/color/bg')) {
+            $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+        }
         return json_encode($block);
     }
 
@@ -602,8 +643,8 @@ class Bloom
 
     private function marginAndPaddingOffset(&$block): void
     {
-        $flags = $this->cache->get('flags');
-        if(!$flags['createdFirstSection']){
+        $flags = $this->cache->get('createdFirstSection','flags');
+        if(!$flags){
             $block['value']['marginTop'] = -200;
             $block['value']['marginTopSuffix'] = "px";
             $block['value']['tempMarginTop'] = -200;
@@ -614,10 +655,33 @@ class Bloom
             $block['value']['items'][0]['value']['tempPaddingTop'] = 250;
             $block['value']['items'][0]['value']['tempPaddingTopSuffix'] = "px";
         }
+        $this->cache->update('createdFirstSection',true, 'flags');
     }
 
-    private function itemWrapper($content, $associative = false ){
-        $decoded = $this->jsonDecode['global']['wrapper'];
+    private function integrationOfTheWrapperItem(array &$block, array $section, string $path): void
+    {
+        if ($section['item_type'] === 'title') {
+            $content = $this->replaceTitleTag($section['content'], 'brz-text-lg-center');
+            $position = 0;
+        } else {
+            $content = $this->replaceParagraphs($section['content'], 'brz-text-lg-center');
+            $position = null;
+        }
+        $wrapper = $this->itemWrapperRichText($content, true);
+        $this->insertElementAtPosition($block, $path, $wrapper, $position);
+    }
+
+    private function itemWrapperRichText($content, $associative = false ){
+        $decoded = $this->jsonDecode['global']['wrapper--richText'];
+        $block = new ItemSetter($decoded);
+        $result = $block->item(0)->setting('text', $content)->get();
+        if(!$associative){
+            return $result;
+        }
+        return json_decode(json_encode($result), true);
+    }
+    private function itemWrapperImage($content, $associative = false ){
+        $decoded = $this->jsonDecode['global']['wrapper--image'];
         $block = new ItemSetter($decoded);
         $result = $block->item(0)->setting('text', $content)->get();
         if(!$associative){
@@ -626,6 +690,15 @@ class Bloom
         return json_decode(json_encode($result), true);
     }
 
+    private function itemWrappericon($content, $associative = false ){
+        $decoded = $this->jsonDecode['global']['wrapper--icon'];
+        $block = new ItemSetter($decoded);
+        $result = $block->item(0)->setting('text', $content)->get();
+        if(!$associative){
+            return $result;
+        }
+        return json_decode(json_encode($result), true);
+    }
 
     private function removeItemsFromArray(array $array, $index): array
     {
@@ -707,7 +780,7 @@ class Bloom
 
                 $spans = $paragraph->getElementsByTagName('span');
                 if($spans->length > 0) {
-                    foreach ($spans as $sapn) {
+                    foreach ($spans as $span) {
                         if ($span->hasAttribute('style')) {
                             $styleValueString = $paragraph->getAttribute('style');
                             // font-weight: 200; letter-spacing: -0.05em; line-height: 1.1em; text-align: left;
@@ -779,7 +852,11 @@ class Bloom
             foreach ($styleValue as $key => $value)
             {
                 if($key == 'text-align'){
-                    $class .= $this->textPosition[$value];
+                    if(array_key_exists($value, $this->textPosition)){
+                        $class .= $this->textPosition[$value];
+                    } else {
+                        $class .= $this->textPosition['center'];
+                    }
                 }
                 if($key == 'color'){
                     $style .= 'color:' . $value . ';';
@@ -987,7 +1064,7 @@ class Bloom
         return $randomString;
     }
 
-    private function insertElementAtPosition(array &$array, string $path, array $element, int $position): void
+    private function insertElementAtPosition(array &$array, string $path, array $element, $position = null): void
     {
         $keys = explode('/', $path);
 
@@ -998,8 +1075,19 @@ class Bloom
             }
             $current = &$current[$key];
         }
-
-        array_splice($current, $position, 0, array($element));
+        if($position === null){
+            $current[] = $element;
+        } else {
+            $count = count($current);
+            if ($position < 0 || $position > $count) {
+                throw new InvalidArgumentException("Invalid position: $position");
+            }
+            $current = array_merge(
+                array_slice($current, 0, $position),
+                [$element],
+                array_slice($current, $position, $count - $position)
+            );
+        }
     }
 
     private function mergeArrayAtPath(array &$array, string $path, array $mergeArray): void

@@ -1,11 +1,9 @@
 <?php
 
-namespace Brizy\core;
+namespace Brizy\Core;
 
 class Config
 {
-
-
     public static bool $debugMode = true;
     public static string $DBconnection = 'postgresql';   //  mysql|postgresql
 

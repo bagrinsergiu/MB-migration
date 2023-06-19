@@ -16,11 +16,9 @@ class Utils
      */
     private static $cache;
 
-
     public function __construct(VariableCache $cache = null)
     {
         self::$projectID = $cache->get('projectId_Brizy');
-        var_dump(self::$projectID);
     }
 
     public static function resourcesInitialization($directory_path)
@@ -64,7 +62,7 @@ class Utils
         return $result;
     }
 
-    public static function init(VariableCache $cache = null)
+    public static function init(VariableCache $cache = null): void
     {
         self::$cache = $cache;
     }
@@ -208,12 +206,13 @@ class Utils
     private static function writeLogToFile(array $param): void
     {
         $typeMessageArray = array("DEBUG", "INFO", "WARNING", "CRITICAL", "PROCESS", "ERROR", "SUCCESSFULLY", "ErrorDump");
+//        $project_id = self::$cache->get('migrationID') !== null;
         $project_id = '';
-        $line = '';
-
-        if (isset($param['project_id'])) {
-            $project_id = '[' . $param['project_id'] . ']';
+        if(isset(self::$cache))
+        {
+            $project_id = "[UMID: " . self::$cache->get('migrationID') . "] ";
         }
+        $line = '';
 
         if (is_array($param['message'])) {
             $message = json_encode($param['message']);
@@ -232,5 +231,12 @@ class Utils
         $dirToLog = Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
 
         file_put_contents($dirToLog, $strlog, FILE_APPEND);
+        if($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
+            $dirToLog = self::$cache->get('log', ) . 'error.log';
+            file_put_contents($dirToLog, $strlog, FILE_APPEND);
+
+            $dirToLog = self::$cache->get('log', ) . 'error.log';
+            file_put_contents($dirToLog, $strlog, FILE_APPEND);
+        }
     }
 }
