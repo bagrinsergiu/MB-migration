@@ -10,6 +10,7 @@
         "phpseclib/phpseclib2_compat": "~1.0",
       "ext-mysqli": "*",
       "ext-fileinfo": "*",
-      "ext-curl": "*"
+      "ext-curl": "*",
+        "amphp/amp": "^3.0"
     }
 }

@@ -21,7 +21,7 @@ class ColorMapper
             'subpalette1' => [
                 'bg'                => $colorKit['color1'],
                 'accent'            => $colorKit['color7'],
-                'text'              => $colorKit['color7'],
+                'text'              => $this->getContrastingColor($colorKit['color1']),
                 'header'            => $colorKit['color6'],
                 'link'              => $colorKit['color7'],
                 'btn'               => $colorKit['color7'],
@@ -30,7 +30,7 @@ class ColorMapper
             'subpalette2' => [
                 'bg'                => $colorKit['color5'],
                 'accent'            => $colorKit['color8'],
-                'text'              => $colorKit['color8'],
+                'text'              => $this->getContrastingColor($colorKit['color5']),
                 'header'            => $colorKit['color8'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color2'],
@@ -39,7 +39,7 @@ class ColorMapper
             'subpalette3' => [
                 'bg'                => $colorKit['color2'],
                 'accent'            => $colorKit['colorA'],
-                'text'              => $colorKit['colorA'],
+                'text'              => $this->getContrastingColor($colorKit['color2']),
                 'header'            => $colorKit['colorA'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['colorA'],
@@ -48,7 +48,7 @@ class ColorMapper
             'subpalette4' => [
                 'bg'                => $colorKit['color3'],
                 'accent'            => $colorKit['color9'],
-                'text'              => $colorKit['color9'],
+                'text'              => $this->getContrastingColor($colorKit['color3']),
                 'header'            => $colorKit['color9'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color2'],

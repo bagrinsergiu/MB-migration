@@ -12,4 +12,7 @@ return array(
     'c964ee0ededf28c96ebd9db5099ef910' => $vendorDir . '/guzzlehttp/promises/src/functions_include.php',
     '37a3dc5111fe8f707ab4c132ef1dbc62' => $vendorDir . '/guzzlehttp/guzzle/src/functions_include.php',
     'decc78cc4436b1292c6c0d151b19445c' => $vendorDir . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
+    '88254829cb0eed057c30eaabb6d8edc4' => $vendorDir . '/amphp/amp/src/functions.php',
+    '429ae5f14a13a9076791c19422e10996' => $vendorDir . '/amphp/amp/src/Future/functions.php',
+    'c8601a4144b50a7b548da082c89c4dc1' => $vendorDir . '/amphp/amp/src/Internal/functions.php',
 );

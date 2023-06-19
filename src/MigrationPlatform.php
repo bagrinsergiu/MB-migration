@@ -21,13 +21,39 @@ class MigrationPlatform
     private int $projectID_Brizy;
     private float $startTime;
     private string $graphApiBrizy;
+    private int $projectID_MB;
+    private string $migrationID;
 
     /**
      * @throws Exception
      */
-    public function __construct(int $projectID_MB, int $projectID_Brizy)
+    public function initParameter(int $projectID_MB, int $projectID_Brizy = 0): array
     {
-        $this->init($projectID_MB, $projectID_Brizy);
+        $this->brizyApi = new BrizyAPI();
+
+        if($projectID_Brizy == 0)
+        {
+            $this->projectID_Brizy = $this->brizyApi->createProject('analaiseProject', 4303835, 'id' );
+        } else {
+            $this->projectID_Brizy = $projectID_Brizy;
+        }
+        $this->projectID_MB = $projectID_MB;
+
+        $this->projectId = $projectID_MB . '_' . $this->projectID_Brizy . '_';
+        $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
+        $this->projectId .= $this->migrationID;
+
+        //$this->run();
+        return ['ID'=>$this->projectID_Brizy, 'UID'=>$this->migrationID];
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function run(): void
+    {
+        $this->init($this->projectID_MB, $this->projectID_Brizy);
 
         $this->createProjectFolders();
 
@@ -43,7 +69,7 @@ class MigrationPlatform
 
         $this->cache->set('settings', $this->parser->getSite());
         $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
-        $this->cache->set('graphToken', $this->brizyApi->getGraphToken($projectID_Brizy));
+        $this->cache->set('graphToken', $this->brizyApi->getGraphToken($this->projectID_Brizy));
 
         $this->QueryBuilder = new QueryBuilder($this->cache);
 
@@ -71,19 +97,15 @@ class MigrationPlatform
         Utils::log('Start Process!', 4, 'MIGRATION');
 
         $this->cache = new VariableCache();
-        $this->brizyApi = new BrizyAPI();
+
+        Utils::init($this->cache);
 
         $this->startTime = microtime(true);
 
-        $this->projectId = $projectID_MB . '_' . $projectID_Brizy . '_';
-        $migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
-        $this->projectId .= $migrationID;
-        $this->projectID_Brizy = $projectID_Brizy;
+        $this->cache->set('migrationID', $this->migrationID);
+        Utils::log('Migration ID: ' . $this->migrationID, 4, 'MIGRATION');
 
-        $this->cache->set('migrationID', $migrationID);
-        Utils::log('Migration ID: ' . $migrationID, 4, 'MIGRATION');
-
-        $errorDump       = new ErrorDump($this->projectId);
+        $errorDump = new ErrorDump($this->projectId);
 
         $errorDump->setDate($this->cache);
 
@@ -91,6 +113,7 @@ class MigrationPlatform
 
         $this->cache->set('projectId_MB', $projectID_MB);
         $this->cache->set('projectId_Brizy', $projectID_Brizy);
+        $this->cache->set('Status', ['Total'=>0, 'Current'=>0]);
 
         $this->parser = new Parser($this->cache);
     }
@@ -115,8 +138,7 @@ class MigrationPlatform
             if(!empty($pages['child'])){
                 $this->launch($pages['child']);
             }
-
-            if ($pages['slug'] != 'kids-youth') {continue;}
+           if ($pages['slug'] != 'home') {continue;}
             $this->collector($pages);
         }
     }
@@ -169,10 +191,11 @@ class MigrationPlatform
                     $value['settings']['color'] = $this->getColorFromPalette($value['settings']['sections']['color']['subpalette']);
                     unset($value['settings']['sections']['color']);
                 }
-                if($this->checkArrayPath($value, 'settings/layout/color/subpalette')) {
-                    $value['settings']['color'] = $this->getColorFromPalette($value['settings']['layout']['color']['subpalette']);
+                if ($this->checkArrayPath($value, 'settings/layout/color/subpalette')) {
+                    $value['settings']['layout-color'] = $this->getColorFromPalette($value['settings']['layout']['color']['subpalette']);
                     unset($value['settings']['layout']['color']);
                 }
+
 
                 $items = [
                     'sectionId'     => $value['id'],
@@ -226,13 +249,28 @@ class MigrationPlatform
     {
         $mainMenu = [];
         foreach ($parentMenu as $item) {
-            $mainMenu[] = [
-                "id" => $item['collection'],
-                "items" => $this->transformToBrizyMenu($item['child']),
-                "isNewTab" => false,
-                "label" => $item['name'],
-                "uid"=> $this->getNameHash()
-            ];
+
+            $settings = json_decode($item['parentSettings'], true);
+            if(array_key_exists('external_url', $settings)) {
+                $mainMenu[] = [
+                    'id'=>'',
+                    "items" => $this->transformToBrizyMenu($item['child']),
+                    "isNewTab" => false,
+                    "label" => $item['name'],
+                    "type" => "custom_link",
+                    'url'=>$settings['external_url'],
+                    "uid"=> $this->getNameHash(),
+                    "description" => ""
+                    ];
+            } else {
+                $mainMenu[] = [
+                    "id" => $item['collection'],
+                    "items" => $this->transformToBrizyMenu($item['child']),
+                    "isNewTab" => false,
+                    "label" => $item['name'],
+                    "uid" => $this->getNameHash()
+                ];
+            }
         }
         return $mainMenu;
     }
@@ -477,6 +515,12 @@ class MigrationPlatform
         }
     }
 
+    public function getStatus(): bool|string
+    {
+        return json_encode($this->cache->get('Status'));
+    }
+
+
     private function sortArrayByPosition($array) {
         usort($array, function($a, $b) {
             return $a['position'] - $b['position'];
@@ -535,13 +579,18 @@ class MigrationPlatform
     private function createProjectFolders(): void
     {
         $folds = [
-            '/media/',
-            '/log/dump/'
+            'main' => '/',
+            'page' => '/page/',
+            'media' => '/media/',
+            'log' => '/log/',
+            'dump' =>'/log/dump/'
         ];
-        foreach ($folds as $fold) {
+        foreach ($folds as $key => $fold) {
             $path = __DIR__ . '/../tmp/' . $this->projectId . $fold;
             $this->createDirectory($path);
+            $paths[$key] = $path;
         }
+        $this->cache->set('ProjectFolders', $paths);
     }
 
     private function createDirectory($directoryPath): void
