@@ -1,8 +1,8 @@
 <?php
 require_once(__DIR__ . '/src/MigrationPlatform.php');
 
-$ProjectId_MB    = 29629;
-$ProjectId_Brizy = 4306600;
+$ProjectId_MB    = (int)$argv[1];
+$ProjectId_Brizy = (int)$argv[2];
 
 $StartProcess_Migration = new MigrationPlatform();
 

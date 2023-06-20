@@ -414,7 +414,7 @@ class BrizyAPI{
 
         $client = new Client();
 
-        $token = $token ? $this->projectToken : Config::$devToken;
+        $token = Config::$devToken;
 
         try {
             $headers = [
@@ -453,19 +453,19 @@ class BrizyAPI{
                 $statusCode = $response->getStatusCode();
                 $body = $response->getBody()->getContents();
 
-                Utils::log(['status' => $statusCode, 'body' => $body], 3, $nameFunction);
+                Utils::log(json_encode(['status' => $statusCode, 'body' => $body]), 3, $nameFunction);
 
                 return ['status' => $statusCode, 'body' => $body];
             }
             else
             {
-                Utils::log(['status' => false, 'body' => 'Request timed out.'], 3, $nameFunction);
+                Utils::log(json_encode(['status' => false, 'body' => 'Request timed out.']), 3, $nameFunction);
 
                 return ['status' => false, 'body' => 'Request timed out.'];
             }
         } catch (GuzzleException $e) {
 
-            Utils::log(['status' => false, 'body' => $e->getMessage()], 3, $nameFunction);
+            Utils::log(json_encode(['status' => false, 'body' => $e->getMessage()]), 3, $nameFunction);
 
             return ['status' => false, 'body' => $e->getMessage()];
         }

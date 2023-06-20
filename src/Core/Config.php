@@ -4,92 +4,65 @@ namespace Brizy\Core;
 
 class Config
 {
-    public static bool $debugMode = true;
-    public static string $DBconnection = 'postgresql';   //  mysql|postgresql
+    public static bool $debugMode;
+    public static array $endPointApi;
+    public static string $endPointVersion;
+    public static string $urlAPI;
+    public static string $urlProjectAPI;
+    public static string $urlGetApiToken;
+    public static string $urlGraphqlAPI;
+    public static string $pathTmp;
+    public static string $pathLogFile;
+    public static string $devToken;
+    public static string $DBConnection;
+    public static string $nameMigration; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
 
-    public static string $brizyClientId = '3onlcdgeeh0k8s4s4wkccwo8kwwo4g0g';
-    public static string $brizyClientSecret = '4ock4cos8wsowskw4c8cs4wkcskwkow0';
+    private static string $cloud_host;
+    public function __construct($cloud_host = "https://beta1.brizy.cloud",
+                                $path = __DIR__,
+                                $token = 'ZDRmZjIxMzc4M2Y0YmMzZjg5ZmE5YmE4OTUyOTVjMzNkZmFhNmRlZTMwNjliNzIwODhlM2I0MmEwNTlkNGIwMA'
+    )
+    {
+        self::$debugMode        = true;
 
+        self::$DBConnection     = 'postgresql'; // mysql|postgresql
 
-    public static string $nameMigration = "Migration"; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
-    public static string $urlAPI = "https://beta1.brizy.cloud/api";
+        self::$nameMigration    = 'Migration';
+        self::$endPointVersion  = '/2.0';
 
-    public static string $urlProjectAPI = "https://beta1.brizy.cloud/projects/{project}";
-    public static string $devToken = 'ZDRmZjIxMzc4M2Y0YmMzZjg5ZmE5YmE4OTUyOTVjMzNkZmFhNmRlZTMwNjliNzIwODhlM2I0MmEwNTlkNGIwMA';
+        self::$cloud_host       = $cloud_host;
+        self::$devToken         = $token;
 
-    public static string $urlGetApiToken = 'https://beta1.brizy.cloud/api/projects/{project}/token';
+        self::$urlAPI           = self::$cloud_host . '/api';
+        self::$urlProjectAPI    = self::$cloud_host . '/projects/{project}';
+        self::$urlGetApiToken   = self::$cloud_host . '/api/projects/{project}/token';
+        self::$urlGraphqlAPI    = self::$cloud_host . '/graphql/{ProjectId}';
 
-    public static string $urlGraphqlAPI = 'https://beta1.brizy.cloud/graphql/{ProjectId}';
+        self::$pathTmp          = $path . '/../../tmp/';
+        self::$pathLogFile      = $path . "/../../log/{{PREFIX}}.log";
 
-    public static string $endPointVersion = '/2.0';
-    public static array $endPointApi = [
-        'workspaces' => '/workspaces',
-        'projects' => '/projects',
-        'team_members' => '/team_members',
-        'users' => '/users',
-        'pages' => '/pages',
-        'menus/create' => '/menus/create',
-        'media' => '/media',
-        'menu' => '/menus',
-        'fonts' => '/fonts'
-    ];
+        self::$endPointApi      = [
+            'workspaces' => '/workspaces',
+            'projects' => '/projects',
+            'team_members' => '/team_members',
+            'users' => '/users',
+            'pages' => '/pages',
+            'menus/create' => '/menus/create',
+            'media' => '/media',
+            'menu' => '/menus',
+            'fonts' => '/fonts'
+        ];
 
-    public static string $authenticateParametr = "client_id={client_id}&client_secret={client_secret}&grant_type=user_client_credentials&scope=user";
-
-
-    public static string $pathLayoutData = __DIR__ . '/../../Layout/{theme}/{page}/data.json';
-    public static string $pathLayoutResurce = __DIR__ . '/../Layout/{theme}/file';
-
-    public static string $pathLogFile = __DIR__ . "/../../log/{{PREFIX}}.log";
-    public static string $pathMedia = __DIR__ . "/../../tmp/media/";
-    public static string $pathTmp = __DIR__ . "/../../tmp/";
-
-    public static $themes = array(
-        "Anthem" => "Anthem",
-        "August" => "August",
-        "Aurora" => "Aurora",
-        "Bloom" => "Bloom",
-        "Boulevard" => "Boulevard",
-        "Dusk" => "Dusk",
-        "Ember" => "Ember",
-        "Hope" => "Hope",
-        "Majesty" => "Majesty",
-        "Serene" => "Serene",
-        "Solstice" => "Solstice",
-        "Tradition" => "Tradition",
-        "Voyage" => "Voyage",
-        "Zion" => "Zion"
-    );
-
-    public static $idThemes = array(
-        "Anthem" => 569,
-        "August" => 563,
-        "Aurora" => 570,
-        "Bloom" => 562,
-        "Boulevard" => 565,
-        "Dusk" => 568,
-        "Ember" => 567,
-        "Hope" => 559,
-        "Majesty" => 561,
-        "Serene" => 576,
-        "Solstice" => 564,
-        "Tradition" => 566,
-        "Voyage" => 560,
-        "Zion" => 571
-    );
+    }
 
     public static function configPostgreSQL(): array
     {
         return [
-            'sshHost' => '54.149.121.133',
-            'sshPort' => '22',
-            'sshUser' => 'brizy_contractor',
-            'sshPrivateKeyPath' => __DIR__ . '\ssh\private_key.pem',
             'dbHost' => "localhost",
             'dbPort' => 50000,
             'dbName' => 'api_production',
             'dbUser' => 'brizy_contractor',
-            'dbPassword' => "Lg$8AON5^Dk9JLBR2023iUu"
+            'dbPass' => "Lg$8AON5^Dk9JLBR2023iUu"
         ];
     }
     public static function configMySQL(): array

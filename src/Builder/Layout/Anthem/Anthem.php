@@ -2,6 +2,7 @@
 
 namespace Brizy\Builder\Layout\Anthem;
 
+use Brizy\Builder\Layout\Layout;
 use Brizy\Builder\VariableCache;
 use Brizy\core\Utils;
 use Brizy\Builder\ItemSetter;
@@ -451,7 +452,7 @@ class Anthem
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
-        $objItem = new ItemSetter($decoded['item']);
+        //$objItem = new ItemSetter($decoded['item']);
 
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);

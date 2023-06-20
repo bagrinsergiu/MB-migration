@@ -28,11 +28,14 @@ class PostgresSQL
         $dbHost = $config['dbHost'];
         $dbPort = $config['dbPort'];
         $dbName = $config['dbName'];
+        $dbUser = $config['dbUser'];
+        $dbPass = $config['dbPass'];
+
         try {
             $this->connection = new PDO(
                 "pgsql:host=$dbHost;port=$dbPort;dbname=$dbName",
-                $config['dbUser'],
-                $config['dbPassword']
+                $dbUser,
+                $dbPass
             );
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             Utils::log('Connection success', 4, 'PostgresSQL');

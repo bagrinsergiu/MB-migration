@@ -11,6 +11,7 @@
       "ext-mysqli": "*",
       "ext-fileinfo": "*",
       "ext-curl": "*",
-        "amphp/amp": "^3.0"
+        "amphp/amp": "^3.0",
+        "vlucas/phpdotenv": "^5.5"
     }
 }
