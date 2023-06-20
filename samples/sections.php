@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../src/Core/core.php');
+require_once(__DIR__ . '/../lib/Core/core.php');
 
 
 $itemsID = '/collection_items/33351';

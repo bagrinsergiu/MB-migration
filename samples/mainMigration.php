@@ -1,8 +1,9 @@
 <?php
 
-use Brizy\Layer\DataSource\DBConnector;
+use MBMigration\Layer\DataSource\DBConnector;
+use MBMigration\MigrationPlatform;
 
-require_once(__DIR__ . '/../src/MigrationPlatform.php');
+require_once(__DIR__ . '/../lib/MigrationPlatform.php');
 //75776   - http://www.troycsc.org/
 //4303928  - https://grapefruit4303928.brizy.org/
 

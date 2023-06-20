@@ -1,10 +1,10 @@
 <?php
 
-use Brizy\core\Config;
 use Brizy\core\Helper;
 use Brizy\layer\Graph\GQLT;
+use MBMigration\Core\Config;
 
-require_once(__DIR__ . '/../src/Core.php');
+require_once(__DIR__ . '/../lib/Core.php');
 
 $GT = new GQLT();
 

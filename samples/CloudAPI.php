@@ -3,6 +3,6 @@
 
 use Layer\BrizyCloud\BrizyCloud;
 
-require_once(__DIR__ . '/../src/Core.php');
+require_once(__DIR__ . '/../lib/Core.php');
 
 $GT = new BrizyCloud();

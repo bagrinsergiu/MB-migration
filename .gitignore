@@ -1,4 +1,5 @@
-/log/
-/tmp/
+/samples/log/
+/samples/tmp/
+/vendor/
 .idea
-error_log.txt
+samples/log/error_log.txt
