@@ -3,6 +3,7 @@
     "description": "Library for migration from Ministry Brands to Brizy",
     "type": "library",
     "require": {
+      "php": "7.2",
       "gmostafa/php-graphql-client": "^1.13",
       "ext-dom": "*",
       "ext-pdo": "*",
