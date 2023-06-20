@@ -1,5 +1,5 @@
 /samples/log/
 /samples/tmp/
-/vendor
+/vendor/
 .idea
 samples/log/error_log.txt
