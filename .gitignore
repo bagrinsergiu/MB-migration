@@ -1,5 +1,4 @@
 /log/
 /tmp/
 .idea
-/error_log.txt
-info.txt
+error_log.txt

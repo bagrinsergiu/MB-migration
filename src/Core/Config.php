@@ -18,10 +18,7 @@ class Config
     public static string $nameMigration; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
 
     private static string $cloud_host;
-    public function __construct($cloud_host = "https://beta1.brizy.cloud",
-                                $path = __DIR__,
-                                $token = 'ZDRmZjIxMzc4M2Y0YmMzZjg5ZmE5YmE4OTUyOTVjMzNkZmFhNmRlZTMwNjliNzIwODhlM2I0MmEwNTlkNGIwMA'
-    )
+    public function __construct($cloud_host, $path, $token)
     {
         self::$debugMode        = true;
 
