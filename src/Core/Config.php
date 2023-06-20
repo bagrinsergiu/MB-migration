@@ -55,11 +55,11 @@ class Config
     public static function configPostgreSQL(): array
     {
         return [
-            'dbHost' => "localhost",
+            'dbHost' => "",
             'dbPort' => 50000,
-            'dbName' => 'api_production',
-            'dbUser' => 'brizy_contractor',
-            'dbPass' => "Lg$8AON5^Dk9JLBR2023iUu"
+            'dbName' => '',
+            'dbUser' => '',
+            'dbPass' => ""
         ];
     }
     public static function configMySQL(): array
