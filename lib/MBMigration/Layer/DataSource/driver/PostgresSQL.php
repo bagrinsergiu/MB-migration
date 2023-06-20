@@ -13,7 +13,7 @@ use PDOException;
 
 class PostgresSQL
 {
-    private PDO $connection;
+    private $connection;
 
     /**
      * @throws Exception
@@ -22,7 +22,7 @@ class PostgresSQL
     {
         Utils::log('Initialization', 4, 'PostgresSQL');
 
-        $config = Config::configPostgreSQL();
+        $config = Config::$configPostgreSQL;
 
         $dbHost = $config['dbHost'];
         $dbPort = $config['dbPort'];
@@ -47,7 +47,7 @@ class PostgresSQL
     /**
      * @throws Exception
      */
-    public function request($sql): bool|array
+    public function request($sql)
     {
         if (!$this->connection) {
             Utils::log('Not connected to the database.', 2, 'PostgresSQL');
@@ -65,7 +65,7 @@ class PostgresSQL
     /**
      * @throws Exception
      */
-    public function requestArray($sql): bool|array
+    public function requestArray($sql)
     {
        return $this->request($sql);
     }

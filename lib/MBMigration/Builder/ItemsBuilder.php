@@ -7,8 +7,8 @@ use MBMigration\Layer\Graph\QueryBuilder;
 
 class ItemsBuilder
 {
-    private VariableCache $cache;
-    private QueryBuilder $QueryBuilder;
+    private  $cache;
+    private  $QueryBuilder;
 
     /**
      * @throws \Exception

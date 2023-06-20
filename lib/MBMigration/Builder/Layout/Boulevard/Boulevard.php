@@ -8,9 +8,9 @@ use MBMigration\Core\Utils;
 
 class Boulevard
 {
-    private mixed $jsonDecode;
-    private DOMDocument $dom;
-    private VariableCache $cache;
+    private $jsonDecode;
+    private $dom;
+    private $cache;
 
     public function __construct(VariableCache $cache)
     {

@@ -4,7 +4,6 @@ namespace MBMigration\Builder\utils;
 
 class ArrayManipulator
 {
-
     private $array;
 
     public function init(array $array) {

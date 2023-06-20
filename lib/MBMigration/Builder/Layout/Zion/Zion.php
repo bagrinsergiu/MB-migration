@@ -9,15 +9,10 @@ use MBMigration\Core\Utils;
 
 class Zion
 {
-    private mixed $jsonDecode;
-    private DOMDocument $dom;
-    private VariableCache $cache;
-
-    private array $textPosition;
-    /**
-     * @var array|string[]
-     */
-    private array $textDefaultPosition;
+    private $jsonDecode;
+    private $dom;
+    private $cache;
+    private $textPosition;
 
     public function __construct(VariableCache $cache)
     {

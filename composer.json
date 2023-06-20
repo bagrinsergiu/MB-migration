@@ -3,16 +3,14 @@
     "description": "Library for migration from Ministry Brands to Brizy",
     "type": "library",
     "require": {
-        "gmostafa/php-graphql-client": "^1.13",
-        "cpliakas/git-wrapper": "^3.1",
+      "gmostafa/php-graphql-client": "^1.13",
       "ext-dom": "*",
-        "phpseclib/phpseclib": "^3.0",
       "ext-pdo": "*",
-        "phpseclib/phpseclib2_compat": "~1.0",
       "ext-mysqli": "*",
       "ext-fileinfo": "*",
       "ext-curl": "*",
-        "amphp/amp": "^3.0"
+      "ext-json": "*",
+      "ext-zip": "*"
     },
     "autoload": {
       "psr-0": {

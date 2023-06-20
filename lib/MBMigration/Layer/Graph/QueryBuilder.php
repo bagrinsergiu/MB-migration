@@ -3,8 +3,6 @@
 namespace MBMigration\Layer\Graph;
 
 use MBMigration\Builder\VariableCache;
-use Brizy\layer\Graph\Collection;
-use Brizy\layer\Graph\GeneralUtils;
 use GraphQL\Client;
 use GraphQL\InlineFragment;
 use GraphQL\Mutation;
@@ -16,18 +14,10 @@ use MBMigration\Core\Utils;
 class QueryBuilder
 {
 
-    private Client $client;
-
-    /**
-     * @var string
-     */
-    private mixed $brizy_cms_api_url;
-
-    private mixed $session;
-    /**
-     * @var VariableCache
-     */
-    private VariableCache $cache;
+    private  $client;
+    private  $brizy_cms_api_url;
+    private  $session;
+    private  $cache;
 
     public function __construct(VariableCache $cache)
     {
@@ -67,9 +57,6 @@ class QueryBuilder
     }
 
     /**
-     * @param $title
-     * @param $url
-     * @return array|mixed
      * @throws \Exception
      */
     public function createEditor($title, $url, $hidden = false)
@@ -100,16 +87,6 @@ class QueryBuilder
         return $results->getData()['createCollectionEditor']['collectionEditor'];
     }
 
-    /**
-     * @param $editor_id
-     * @param $title
-     * @param $slug
-     * @param array $fields
-     * @param array $settings
-     * @param $priority
-     * @return mixed
-     * @throws \Exception
-     */
     public function createCollectionType($editor_id, $title, $slug, array $fields, array $settings, $priority, $public = true, $showUI = true, $showInMenu = true)
     {
         if (!$this->client) {
@@ -172,11 +149,7 @@ class QueryBuilder
         return $results->getData()['createCollectionType']['collectionType'];
     }
 
-    /**
-     * @return array|mixed
-     * @throws \Exception
-     */
-    public function getCollectionTypes($withFieldsSet = true): mixed
+    public function getCollectionTypes($withFieldsSet = true)
     {
         if (!$this->client) {
             Utils::log('Client was not init.', 2, 'getCollectionTypes');
@@ -234,7 +207,6 @@ class QueryBuilder
     }
 
     /**
-     * @return array|mixed
      * @throws \Exception
      */
     public function getCollectionType($collection_type_id)
@@ -514,7 +486,7 @@ class QueryBuilder
     /**
      * @throws \Exception
      */
-    public function updateCollectionItem($collection_item_id, $slug, $pageData, $status = 'published', array $fields = [], $title = null): object|array
+    public function updateCollectionItem($collection_item_id, $slug, $pageData, $status = 'published', array $fields = [], $title = null)
     {
         if (!$this->client) {
             throw new \Exception('Client was not init.');

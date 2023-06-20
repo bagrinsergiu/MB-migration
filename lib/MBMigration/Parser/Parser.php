@@ -1,19 +1,18 @@
 <?php
 namespace MBMigration\Parser;
 
-use MBMigration\Builder\utils\ArrayManipulator;
-use MBMigration\Builder\VariableCache;
 use Exception;
 use MBMigration\Core\Utils;
+use MBMigration\Builder\VariableCache;
 use MBMigration\Layer\DataSource\DBConnector;
+use MBMigration\Builder\utils\ArrayManipulator;
 
 class Parser
 {
-    private DBConnector $db;
-    private int $siteId;
-    private VariableCache $cache;
-    private ArrayManipulator $manipulator;
-
+    private $db;
+    private $siteId;
+    private $cache;
+    private $manipulator;
 
     public function __construct(VariableCache $cache)
     {
@@ -233,7 +232,7 @@ class Parser
                 'category'  => $sectionsItems['category'],
                 'item_type' => $sectionsItems['item_type'],
                 'order_by'  => $sectionsItems['order_by'],
-                'group'  => $sectionsItems['group'],
+                'group'     => $sectionsItems['group'],
                 'parent_id' => $sectionsItems['parent_id'],
                 'settings'  => $settings,
                 'link'      => $this->getItemLink($sectionsItems['id']),

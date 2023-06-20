@@ -2,7 +2,6 @@
 
 namespace MBMigration\Builder\Layout\Anthem;
 
-use Brizy\Builder\Layout\Anthem\SectionBuilder;
 use MBMigration\Builder\ItemSetter;
 use MBMigration\Builder\VariableCache;
 use DOMDocument;
@@ -11,15 +10,10 @@ use MBMigration\Core\Utils;
 
 class Anthem
 {
-    private mixed $jsonDecode;
-    private DOMDocument $dom;
-    private VariableCache $cache;
-
-    private array $textPosition;
-    /**
-     * @var array|string[]
-     */
-    private array $textDefaultPosition;
+    private $jsonDecode;
+    private $dom;
+    private $cache;
+    private  $textPosition;
 
     public function __construct(VariableCache $cache)
     {

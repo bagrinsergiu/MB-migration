@@ -2,6 +2,7 @@
 
 namespace MBMigration;
 
+use Exception;
 use MBMigration\Builder\ColorMapper;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Builder\ItemsBuilder;
@@ -12,25 +13,28 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Parser\Parser;
 
-require_once(__DIR__ . '/Core/core.php');
-
 class MigrationPlatform
 {
-    private Parser $parser;
-    private QueryBuilder $QueryBuilder;
-    private BrizyAPI $brizyApi;
-    private VariableCache $cache;
-    private string $projectId;
-    private int $projectID_Brizy;
-    private float $startTime;
-    private string $graphApiBrizy;
-    private int $projectID_MB;
-    private string $migrationID;
+    private $parser;
+    private $QueryBuilder;
+    private $brizyApi;
+    private $cache;
+    private $projectId;
+    private $projectID_Brizy;
+    private $startTime;
+    private $graphApiBrizy;
+    private $projectID_MB;
+    private $migrationID;
+
+    public function __construct(Config $config)
+    {
+        $setConfig = $config;
+    }
 
     /**
      * @throws Exception
      */
-    public function initParameter(int $projectID_MB, int $projectID_Brizy = 0): array
+    public function start(int $projectID_MB, int $projectID_Brizy = 0): array
     {
         $this->brizyApi = new BrizyAPI();
 
@@ -45,7 +49,7 @@ class MigrationPlatform
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
 
-        //$this->run();
+        $this->run();
         return ['ID' => $this->projectID_Brizy, 'UID' => $this->migrationID];
     }
 
@@ -53,7 +57,7 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    public function run(): void
+    private function run(): void
     {
         $this->init($this->projectID_MB, $this->projectID_Brizy);
 
@@ -181,7 +185,7 @@ class MigrationPlatform
         }
     }
 
-    private function getItemsFromPage(array $page): bool|array
+    private function getItemsFromPage(array $page)
     {
         Utils::log('Parent Page id: ' . $page['id'] . ' | Name page: ' . $page['name'] . ' | Slug: ' . $page['slug'], 1, 'getItemsFromPage');
 
@@ -496,7 +500,7 @@ class MigrationPlatform
         }
     }
 
-    public function getStatus(): bool|string
+    public function getStatus()
     {
         return json_encode($this->cache->get('Status'));
     }

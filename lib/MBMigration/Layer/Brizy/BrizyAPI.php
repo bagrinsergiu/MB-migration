@@ -8,9 +8,8 @@ use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
 
-class BrizyAPI{
-
-    private $projectId;
+class BrizyAPI
+{
     private $projectToken;
     private $nameFolder;
 
@@ -143,7 +142,7 @@ class BrizyAPI{
         $this->projectToken = $newToken;
     }
 
-    public function createMedia($pathOrUrlToFileName, $nameFolder = ''): bool|array
+    public function createMedia($pathOrUrlToFileName, $nameFolder = '')
     {
         if($nameFolder != ''){
             $this->nameFolder = $nameFolder;
@@ -166,7 +165,7 @@ class BrizyAPI{
         return false;
     }
 
-    public function createFonts($fontsName, $projectID, $pathToFonts): bool|array
+    public function createFonts($fontsName, $projectID, $pathToFonts)
     {
         return $this->httpClient('POST', $this->createPrivatUrlAPI('fonts'), [
             'family' => $fontsName,
@@ -373,7 +372,7 @@ class BrizyAPI{
         return $path;
     }
 
-    private function readBinaryFile($filename): bool|string
+    private function readBinaryFile($filename)
     {
         $handle = fopen($filename, 'rb');
         if ($handle === false) {
