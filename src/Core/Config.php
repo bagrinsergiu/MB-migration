@@ -65,10 +65,10 @@ class Config
     public static function configMySQL(): array
     {
         return [
-            'dbLocal' => '127.0.0.1',
-            'dbName' => 'test',
-            'dbUser' => 'root',
-            'dbPass' => ''
+            'dbLocal' => '',
+            'dbName'  => '',
+            'dbUser'  => '',
+            'dbPass'  => ''
         ];
     }
 }
