@@ -1,5 +1,5 @@
 {
-    "name": "bagrinsergiu/MB-migration",
+    "name": "bagrinsergiu/mb-migration",
     "description": "Library for migration from Ministry Brands to Brizy",
     "type": "library",
     "require": {
