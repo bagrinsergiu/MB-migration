@@ -6,37 +6,12 @@ use MBMigration\Builder\VariableCache;
 
 class Utils
 {
-
-    /**
-     * @var mixed|null
-     */
     private static $projectID;
-    /**
-     * @var VariableCache|null
-     */
     private static $cache;
 
     public function __construct(VariableCache $cache = null)
     {
         self::$projectID = $cache->get('projectId_Brizy');
-    }
-
-    public static function resourcesInitialization($directory_path)
-    {
-        $files = glob("$directory_path/*");
-
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                $file_info = pathinfo($file);
-
-                if ($file_info['extension'] === 'php' && filetype($file) === 'file') {
-                    require_once $file;
-                }
-
-            } elseif (is_dir($file)) {
-                self::resourcesInitialization($file);
-            }
-        }
     }
 
     public static function findKeyPath($array, $searchKey, $path = '', &$result = [], &$i = 0)
@@ -58,7 +33,6 @@ class Utils
             }
 
         }
-
         return $result;
     }
 
@@ -67,118 +41,9 @@ class Utils
         self::$cache = $cache;
     }
 
-    function verificArray($array)
-    {
-        if (!is_array($array)) {
-            $result = FALSE;
-        } else {
-            $result = TRUE;
-        }
-
-        return $result;
-    }
-
-    function strClear($jsonStr)
-    {
-        $arrDel = array('\n ', '\\\\');
-        $jsonClearData = str_replace($arrDel, '', $jsonStr);
-
-        return $jsonClearData;
-    }
-
-    function cleanJson($json)
-    {
-        $json = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json);
-        $json = preg_replace('/[[:space:]]+/', ' ', $json);
-        $json = trim($json);
-
-        return $json;
-    }
-
-    public static function strReplace(string $block, string|array $replace, string|array $toReplace): string
+    public static function strReplace(string $block, $replace, $toReplace): string
     {
         return str_replace($replace, $toReplace, $block);
-    }
-
-    function addTextInTeg($in, $from)
-    {
-        $ff = preg_match("/>(.*?)</", $from, $matches);
-
-        $jsonDataE = preg_replace('|(">).*(</)|Uis', '$1' . $matches[1] . '$2', $in);
-
-        return $jsonDataE;
-    }
-
-    public static function curlExec($url, $params, $method = 'GET')
-    {
-
-        $ch = curl_init();
-
-        if ($method == 'GET') {
-            $url = $url . '?' . http_build_query($params);
-            curl_setopt($ch, CURLOPT_URL, $url);
-        } else {
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-        }
-
-        // Общие настройки
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-
-        // Выполнение запроса
-        $response = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-
-            print "Error: " . curl_error($ch);
-        }
-
-        curl_close($ch);
-
-        return $response;
-
-
-//        $ch = curl_init();
-//        curl_setopt($ch, CURLOPT_URL, $url.$value['slug']);
-//        curl_setopt($ch, CURLOPT_POST, 1);
-//        //curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//
-//        if(array_key_exists('getToken', $value))
-//        {
-//            curl_setopt($ch, CURLOPT_POSTFIELDS, $value['getToken']);
-//            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
-//        }
-//
-//        if(array_key_exists('postParam', $value))
-//        {
-//            curl_setopt($ch, CURLOPT_POST, true);
-//            curl_setopt($ch, CURLOPT_POSTFIELDS, $value['post_param']);
-//            var_dump($value);
-//        }
-//
-//        $response = curl_exec($ch);
-//
-//        if (curl_errno($ch)) {
-//
-//            print "Error: " . curl_error($ch);
-//
-//        }
-//        curl_close($ch);
-//
-//        return $response;
-
-    }
-
-    public static function debug($value): void
-    {
-        Utils::log('', 0, "Print data");
-        if (is_array($value)) {
-            var_dump($value);
-        }
-        print_r($value . "\n");
     }
 
     public static function log(string $messageText, int $type = 1, string $nameFunction = ''): void
@@ -205,9 +70,9 @@ class Utils
 
     private static function writeLogToFile(array $param): void
     {
-        $typeMessageArray = array("DEBUG", "INFO", "WARNING", "CRITICAL", "PROCESS", "ERROR", "SUCCESSFULLY", "ErrorDump");
-//        $project_id = self::$cache->get('migrationID') !== null;
+        $typeMessageArray = ["DEBUG", "INFO", "WARNING", "CRITICAL", "PROCESS", "ERROR", "SUCCESSFULLY", "ErrorDump"];
         $project_id = '';
+
         if(isset(self::$cache))
         {
             $project_id = "[UMID: " . self::$cache->get('migrationID') . "] ";
@@ -232,10 +97,10 @@ class Utils
 
         file_put_contents($dirToLog, $strlog, FILE_APPEND);
         if($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
-            $dirToLog = self::$cache->get('log', ) . 'error.log';
+            $dirToLog = self::$cache->get('log') . 'error.log';
             file_put_contents($dirToLog, $strlog, FILE_APPEND);
 
-            $dirToLog = self::$cache->get('log', ) . 'error.log';
+            $dirToLog = self::$cache->get('log') . 'error.log';
             file_put_contents($dirToLog, $strlog, FILE_APPEND);
         }
     }

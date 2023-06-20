@@ -6,15 +6,15 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 
 class FontsController
 {
-    private BrizyAPI $BrizyApi;
-    private array $fontsMap;
+    private $BrizyApi;
+    private $fontsMap;
 
     public function __construct(){
         $this->BrizyApi = new BrizyAPI();
         $this->kitFonts();
     }
 
-    public function upLoadFonts($fontName, $projectID): bool|array
+    public function upLoadFonts($fontName, $projectID)
     {
         $path = $this->getPathToFonts($fontName);
         return $this->BrizyApi->createFonts($fontName, $projectID, $path);

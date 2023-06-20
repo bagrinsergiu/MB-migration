@@ -11,10 +11,10 @@ class MySql
     function __construct()
     {
         Utils::log('Initialization', 4, 'MySql');
-        $this->connect(Config::configMySQL());
+        $this->connect(Config::$configMySQL);
     }
 
-    public function request($query): \mysqli_result|bool
+    public function request($query)
     {
         if($result = mysqli_query($this->mySqlConnect, $query))
         {
@@ -27,7 +27,7 @@ class MySql
         }
     }
 
-    public function requestArray($query): bool|array|null
+    public function requestArray($query)
     {
         if($resultArray = mysqli_query($this->mySqlConnect, $query))
         {
@@ -40,7 +40,7 @@ class MySql
         }
     }
 
-    private function connect($config): void
+    private function connect($config)
     {
         $this->mySqlConnect = mysqli_connect($config['dbLocal'], $config['dbUser'], $config['dbPass'], $config['dbName']);
         if(!$this->mySqlConnect)

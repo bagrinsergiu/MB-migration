@@ -2,21 +2,14 @@
 
 namespace MBMigration\Core;
 
-use MBMigration\Builder\VariableCache;
 use ErrorException;
+use MBMigration\Builder\VariableCache;
 
 class ErrorDump
 {
-
     private $log_file = 'error_log.txt';
-    /**
-     * @var VariableCache
-     */
-    private VariableCache $cache;
-    /**
-     * @var mixed|null
-     */
-    private mixed $projectID;
+    private $cache;
+    private $projectID;
 
     public function __construct($projectID = null)
     {
@@ -82,7 +75,7 @@ class ErrorDump
             'server_data' => $_SERVER,
             'post_data' => $_POST,
             'get_data' => $_GET,
-            //'session_data' => $_SESSION,
+            'session_data' => $_SESSION,
             'cookie_data' => $_COOKIE,
             'request_headers' => getallheaders()
         ];

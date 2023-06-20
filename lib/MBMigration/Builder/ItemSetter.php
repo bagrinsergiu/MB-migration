@@ -4,15 +4,15 @@ namespace MBMigration\Builder;
 
 class ItemSetter
 {
-    private mixed $data;
-    private mixed $item;
+    private $data;
+    private $item;
 
     public function __construct($json){
         $this->data = json_decode($json);
         $this->begin();
     }
 
-    private function begin(): static
+    private function begin()
     {
         if (isset($this->data->value)) {
             $this->item = $this->data->value;
@@ -20,14 +20,14 @@ class ItemSetter
         return $this;
     }
 
-    public function item(int $id): static
+    public function item(int $id)
     {
         if (isset($this->item->items[$id])) {
             $this->item = $this->item->items[$id];
         }
         return $this;
     }
-    public function section(int $id): static
+    public function section(int $id)
     {
         if (isset($this->item->items[$id])) {
             $this->item = $this->item->items[$id];
@@ -35,7 +35,7 @@ class ItemSetter
         return $this;
     }
 
-    public function setting(string $key, string $value, $externalValue = false): static
+    public function setting(string $key, string $value, $externalValue = false)
     {
         if($externalValue) {
             if (isset($this->item->$key)) {
@@ -52,7 +52,7 @@ class ItemSetter
         }
         return $this;
     }
-    public function addItem($value): static
+    public function addItem($value)
     {
         $this->item->items[] = $value;
         return $this;
@@ -63,7 +63,7 @@ class ItemSetter
         return $this->data;
     }
 
-    private function addParameter(string $key, $value): static
+    private function addParameter(string $key, $value)
     {
         $this->item->$key = $value;
         return $this;

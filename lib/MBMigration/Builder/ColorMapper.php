@@ -720,7 +720,7 @@ class ColorMapper
         }
     }
 
-    private function calculateBrightness($color): float|int
+    private function calculateBrightness($color)
     {
         $red = hexdec(substr($color, 1, 2));
         $green = hexdec(substr($color, 3, 2));
@@ -774,7 +774,7 @@ class ColorMapper
         return $contrastColor;
     }
 
-    public function getPalette (string $design, array $colorKit): array|bool
+    public function getPalette (string $design, array $colorKit)
     {
         if (method_exists($this, $design)) {
             Utils::log('Call method ' . $design , 1, "getPalette");
