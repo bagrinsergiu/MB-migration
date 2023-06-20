@@ -1,0 +1,1881 @@
+[2023-05-11 14:16:01] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 14:16:01] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 14:16:01] [INFO]: [Class VariableCache] Init
+[2023-05-11 14:16:01] [INFO]: [getGraphToken] get Token
+[2023-05-11 14:16:04] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 14:16:04] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 14:16:04] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 14:16:04] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 14:16:04] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 14:16:04] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 14:16:04] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 14:16:04] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 14:16:04] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 14:16:04] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 14:16:04] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 14:16:04] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 14:16:04] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 14:16:04] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 14:16:04] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 14:16:04] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 14:16:04] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 14:16:04] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 14:16:04] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 14:16:04] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 14:16:04] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 14:16:04] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 14:16:04] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 14:16:04] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 14:16:04] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 14:16:04] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 14:16:04] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 14:16:04] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 14:16:04] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 14:16:04] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 14:16:04] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34186 | Slug: about-us
+[2023-05-11 14:16:05] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34186 | Slug: about-us
+[2023-05-11 14:16:05] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 14:16:05] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 14:16:05] [SUCCESSFULLY]: [PROCESS] END
+[2023-05-11 15:26:00] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:26:00] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:26:00] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:26:00] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:26:03] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:26:03] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:26:03] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:26:03] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:26:03] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:26:03] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:26:03] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:26:03] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:26:03] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:26:03] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 15:26:03] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 15:26:03] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 15:26:03] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 15:26:03] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:26:03] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:26:03] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:26:03] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:26:03] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 15:26:03] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:26:03] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:26:03] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:26:03] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:26:03] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 15:26:03] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:26:03] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:26:03] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:26:03] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:26:03] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:26:03] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:26:03] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:26:03] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:26:04] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:26:04] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:26:04] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 15:26:04] [SUCCESSFULLY]: [PROCESS] END
+[2023-05-11 15:32:29] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:32:29] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:32:29] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:32:29] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:32:31] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:32:31] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:32:31] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:32:31] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:32:31] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:32:31] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:32:31] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:32:31] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:32:31] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:32:31] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 15:32:31] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 15:32:31] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 15:32:31] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 15:32:31] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:32:31] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:32:31] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:32:31] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:32:31] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 15:32:31] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:32:31] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:32:31] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:32:31] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:32:31] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 15:32:31] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:32:31] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:32:31] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:32:31] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:32:31] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:32:31] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:32:31] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:40:18] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:40:18] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:40:18] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:40:18] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:40:21] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:40:21] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:40:21] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:40:21] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:40:21] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:40:21] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:40:21] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:40:21] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:40:21] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:40:21] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 15:40:21] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 15:40:21] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 15:40:21] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 15:40:21] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:40:21] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:40:21] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:40:21] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:40:21] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 15:40:21] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:40:21] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:40:21] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:40:21] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:40:21] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 15:40:21] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:40:21] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:40:21] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:40:21] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:40:21] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:40:21] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:40:21] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:40:21] [DEBUG] (Utils.php:159) : [UTILS] VOID data
+[2023-05-11 15:40:21] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:40:22] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:40:22] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:40:22] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 15:40:22] [SUCCESSFULLY]: [PROCESS] END
+[2023-05-11 15:45:20] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:45:20] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:45:20] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:45:20] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:45:25] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:45:25] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:45:25] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:45:25] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:45:25] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:45:25] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:45:25] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:45:25] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:45:25] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:45:25] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 15:45:25] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 15:45:25] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 15:45:25] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 15:45:25] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:45:25] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:45:25] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:45:25] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:45:25] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 15:45:25] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:45:25] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:45:25] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:45:25] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:45:25] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 15:45:25] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:45:25] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:45:25] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:45:25] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:45:25] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:45:25] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:45:25] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:45:25] [DEBUG] (Utils.php:160) : [] Print data
+[2023-05-11 15:45:25] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:45:26] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:45:26] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:45:26] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 15:45:26] [SUCCESSFULLY]: [PROCESS] END
+[2023-05-11 15:45:49] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:45:49] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:45:49] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:45:50] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:45:54] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:45:54] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:45:54] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:45:54] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:45:54] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:45:54] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:45:54] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:45:54] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:45:54] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:45:54] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 15:45:54] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 15:45:54] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 15:45:54] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 15:45:54] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:45:54] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:45:54] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:45:54] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:45:54] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 15:45:54] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:45:54] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:45:54] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:45:54] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:45:54] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 15:45:54] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:45:54] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:45:54] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:45:54] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:45:54] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:45:54] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:45:54] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:45:54] [DEBUG] (Utils.php:160) : [Print data] 
+[2023-05-11 15:45:54] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:45:55] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:45:55] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:45:55] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 15:45:55] [SUCCESSFULLY]: [PROCESS] END
+[2023-05-11 15:47:02] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:47:02] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:47:02] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:47:02] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:47:06] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:47:06] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:47:06] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:47:06] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:47:06] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:47:06] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:47:06] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:47:06] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:47:06] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:47:06] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 15:47:06] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 15:47:06] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 15:47:06] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 15:47:06] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:47:06] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:47:06] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:47:06] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:47:06] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 15:47:06] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:47:06] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:47:06] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:47:06] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:47:06] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 15:47:06] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:47:06] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:47:06] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:47:06] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:47:06] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:47:06] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:47:06] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:47:06] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:47:07] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:47:07] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:47:07] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 15:47:07] [SUCCESSFULLY]: [PROCESS] END
+[2023-05-11 15:49:21] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:49:21] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:49:21] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:49:21] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:49:24] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:49:24] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:49:24] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:49:24] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:49:24] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:49:24] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:49:24] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:49:24] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:49:24] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:49:24] [PROCESS]: [MAIN Foreach] Take page | ID: 3462
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Parent Page id: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:49:24] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/33351
+[2023-05-11 15:49:24] [INFO]: [Foreach] Set default page template | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:49:24] [PROCESS]: [RunPageBuilder] Start Builder | create default Page
+[2023-05-11 15:49:24] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:49:24] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:49:24] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:49:24] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 15:49:24] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:49:24] [INFO]: [ItemsBuilder] Build default Page: /collection_items/33351 | Slug: home
+[2023-05-11 15:49:24] [INFO]: [ZION] [callDynamicMethod] Call method createDefaultPage
+[2023-05-11 15:49:24] [INFO]: [ZION] [top_media_diamond] Create structure default page
+[2023-05-11 15:49:24] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:49:24] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 15:49:24] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 15:49:24] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 15:49:24] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 15:49:24] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:49:24] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:49:24] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:49:24] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:49:24] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:49:24] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:49:24] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:49:24] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 15:49:24] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:49:24] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:49:24] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:49:24] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:49:24] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:49:24] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:49:24] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:49:24] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:49:25] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:49:25] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:49:25] [PROCESS]: [MAIN Foreach] Take page | ID: 4086
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Parent Page id: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Current Section id: 4089
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Current Section id: 4090
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Current Section id: 4092
+[2023-05-11 15:49:25] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34710
+[2023-05-11 15:49:25] [INFO]: [Foreach] Set default page template | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:49:25] [PROCESS]: [RunPageBuilder] Start Builder | create default Page
+[2023-05-11 15:49:25] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:49:25] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:49:25] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:49:25] [INFO]: [ItemsBuilder] Build default Page: /collection_items/34710 | Slug: ministries
+[2023-05-11 15:49:25] [INFO]: [ZION] [callDynamicMethod] Call method createDefaultPage
+[2023-05-11 15:49:25] [INFO]: [ZION] [top_media_diamond] Create structure default page
+[2023-05-11 15:49:25] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:49:25] [PROCESS]: [MAIN Foreach] Take page | ID: 3464
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Parent Page id: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Current Section id: 50458
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Collection of item id: 163959 from section id: 50458
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 695827 from section id: 163959
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 695828 from section id: 163959
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 695829 from section id: 163959
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 695830 from section id: 163959
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 695831 from section id: 163959
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Current Section id: 50463
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Current Section id: 50468
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Collection of item id: 164119 from section id: 50468
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696485 from section id: 164119
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696486 from section id: 164119
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696487 from section id: 164119
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Current Section id: 50472
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Collection of item id: 164132 from section id: 50472
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696560 from section id: 164132
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696561 from section id: 164132
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696562 from section id: 164132
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Current Section id: 50475
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Collection of item id: 164154 from section id: 50475
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696654 from section id: 164154
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696655 from section id: 164154
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696656 from section id: 164154
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Current Section id: 50478
+[2023-05-11 15:49:25] [INFO]: [getItemsFromPage] Collection of item id: 164159 from section id: 50478
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696680 from section id: 164159
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696681 from section id: 164159
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696682 from section id: 164159
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696683 from section id: 164159
+[2023-05-11 15:49:25] [INFO]: [getSectionsItems] Get item | id: 696684 from section id: 164159
+[2023-05-11 15:49:25] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34711
+[2023-05-11 15:49:25] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:49:25] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:49:25] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:49:25] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:49:25] [INFO]: [ItemsBuilder] Current Page: /collection_items/34711 | Slug: connect
+[2023-05-11 15:49:25] [WARNING] (Zion.php:390) : [ZION] [callDynamicMethod] Method three_bottom_media_diamond does not exist
+[2023-05-11 15:49:25] [WARNING] (ItemsBuilder.php:45) : [ItemsBuilder] nullconnect
+[2023-05-11 15:49:25] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:49:25] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:49:25] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:49:25] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:49:25] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:49:25] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:49:25] [WARNING] (Zion.php:390) : [ZION] [callDynamicMethod] Method three_bottom_media_diamond does not exist
+[2023-05-11 15:49:25] [WARNING] (ItemsBuilder.php:45) : [ItemsBuilder] nullconnect
+[2023-05-11 15:49:25] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34711 | Slug: connect
+[2023-05-11 15:49:26] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34711 | Slug: connect
+[2023-05-11 15:49:26] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:49:26] [PROCESS]: [MAIN Foreach] Take page | ID: 51283
+[2023-05-11 15:49:26] [INFO]: [getItemsFromPage] Parent Page id: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:49:26] [INFO]: [getItemsFromPage] Current Section id: 51284
+[2023-05-11 15:49:26] [INFO]: [getItemsFromPage] Current Section id: 51297
+[2023-05-11 15:49:26] [INFO]: [getItemsFromPage] Collection of item id: 166288 from section id: 51297
+[2023-05-11 15:49:26] [INFO]: [getSectionsItems] Get item | id: 706270 from section id: 166288
+[2023-05-11 15:49:26] [INFO]: [getSectionsItems] Get item | id: 706271 from section id: 166288
+[2023-05-11 15:49:26] [INFO]: [getSectionsItems] Get item | id: 706272 from section id: 166288
+[2023-05-11 15:49:26] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34712
+[2023-05-11 15:49:26] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:49:26] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:49:26] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:49:26] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:49:26] [INFO]: [ItemsBuilder] Current Page: /collection_items/34712 | Slug: donate
+[2023-05-11 15:49:26] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:49:26] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:49:26] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34712 | Slug: donate
+[2023-05-11 15:49:27] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34712 | Slug: donate
+[2023-05-11 15:49:27] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:49:27] [PROCESS]: [MAIN Foreach] Take page | ID: 50457
+[2023-05-11 15:49:27] [INFO]: [getItemsFromPage] Parent Page id: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:49:27] [INFO]: [getItemsFromPage] Current Section id: 50474
+[2023-05-11 15:49:27] [INFO]: [getItemsFromPage] Collection of item id: 163407 from section id: 50474
+[2023-05-11 15:49:27] [INFO]: [getSectionsItems] Get item | id: 693310 from section id: 163407
+[2023-05-11 15:49:27] [INFO]: [getSectionsItems] Get item | id: 693311 from section id: 163407
+[2023-05-11 15:49:27] [INFO]: [getItemsFromPage] Collection of item id: 163408 from section id: 50474
+[2023-05-11 15:49:27] [INFO]: [getSectionsItems] Get item | id: 693312 from section id: 163408
+[2023-05-11 15:49:27] [INFO]: [getSectionsItems] Get item | id: 693313 from section id: 163408
+[2023-05-11 15:49:27] [INFO]: [getSectionsItems] Get item | id: 693314 from section id: 163408
+[2023-05-11 15:49:27] [INFO]: [getItemsFromPage] Collection of item id: 163409 from section id: 50474
+[2023-05-11 15:49:27] [INFO]: [getSectionsItems] Get item | id: 693315 from section id: 163409
+[2023-05-11 15:49:27] [INFO]: [getSectionsItems] Get item | id: 693316 from section id: 163409
+[2023-05-11 15:49:27] [INFO]: [getSectionsItems] Get item | id: 693317 from section id: 163409
+[2023-05-11 15:49:27] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34713
+[2023-05-11 15:49:27] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:49:27] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:49:27] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:49:27] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:49:27] [INFO]: [ItemsBuilder] Current Page: /collection_items/34713 | Slug: media
+[2023-05-11 15:49:27] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:49:27] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:49:27] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:49:27] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:49:27] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:49:27] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:49:27] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34713 | Slug: media
+[2023-05-11 15:49:28] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34713 | Slug: media
+[2023-05-11 15:49:28] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:49:28] [PROCESS]: [MAIN Foreach] Take page | ID: 4087
+[2023-05-11 15:49:28] [INFO]: [getItemsFromPage] Parent Page id: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:49:28] [INFO]: [getItemsFromPage] Current Section id: 50460
+[2023-05-11 15:49:28] [INFO]: [getItemsFromPage] Collection of item id: 175931 from section id: 50460
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749711 from section id: 175931
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749712 from section id: 175931
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749713 from section id: 175931
+[2023-05-11 15:49:28] [INFO]: [getItemsFromPage] Current Section id: 50465
+[2023-05-11 15:49:28] [INFO]: [getItemsFromPage] Collection of item id: 175998 from section id: 50465
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749934 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749935 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749936 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749937 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749938 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749939 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749940 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749941 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749942 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749943 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749944 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749945 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749946 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749947 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749953 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749954 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749955 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749956 from section id: 175998
+[2023-05-11 15:49:28] [INFO]: [getItemsFromPage] Collection of item id: 175999 from section id: 50465
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749951 from section id: 175999
+[2023-05-11 15:49:28] [INFO]: [getSectionsItems] Get item | id: 749952 from section id: 175999
+[2023-05-11 15:49:28] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34714
+[2023-05-11 15:49:28] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:49:28] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:49:28] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:49:28] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:49:28] [INFO]: [ItemsBuilder] Current Page: /collection_items/34714 | Slug: resources
+[2023-05-11 15:49:28] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:49:28] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:49:28] [INFO]: [ZION] [callDynamicMethod] Call method list_layout
+[2023-05-11 15:49:28] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:49:28] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:49:28] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:49:28] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34714 | Slug: resources
+[2023-05-11 15:49:29] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34714 | Slug: resources
+[2023-05-11 15:49:29] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:49:29] [PROCESS]: [MAIN Foreach] Take page | ID: 4088
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Parent Page id: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Current Section id: 50461
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 164219 from section id: 50461
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 696944 from section id: 164219
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 696945 from section id: 164219
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 696946 from section id: 164219
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Current Section id: 50466
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163383 from section id: 50466
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693246 from section id: 163383
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693247 from section id: 163383
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163385 from section id: 50466
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693251 from section id: 163385
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693252 from section id: 163385
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693253 from section id: 163385
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Current Section id: 50470
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163396 from section id: 50470
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693280 from section id: 163396
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693281 from section id: 163396
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693282 from section id: 163396
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Current Section id: 50473
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163404 from section id: 50473
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693302 from section id: 163404
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693303 from section id: 163404
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163405 from section id: 50473
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693304 from section id: 163405
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693305 from section id: 163405
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693306 from section id: 163405
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163406 from section id: 50473
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693307 from section id: 163406
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693308 from section id: 163406
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693309 from section id: 163406
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Current Section id: 50476
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163413 from section id: 50476
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693326 from section id: 163413
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693327 from section id: 163413
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163414 from section id: 50476
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693328 from section id: 163414
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693329 from section id: 163414
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693330 from section id: 163414
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Current Section id: 50479
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163422 from section id: 50479
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693350 from section id: 163422
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693351 from section id: 163422
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163423 from section id: 50479
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693352 from section id: 163423
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693353 from section id: 163423
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693354 from section id: 163423
+[2023-05-11 15:49:29] [INFO]: [getItemsFromPage] Collection of item id: 163424 from section id: 50479
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693355 from section id: 163424
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693356 from section id: 163424
+[2023-05-11 15:49:29] [INFO]: [getSectionsItems] Get item | id: 693357 from section id: 163424
+[2023-05-11 15:49:29] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34715
+[2023-05-11 15:49:29] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:49:29] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:49:29] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:49:29] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:49:29] [INFO]: [ItemsBuilder] Current Page: /collection_items/34715 | Slug: ministry-leader-login
+[2023-05-11 15:49:29] [INFO]: [ZION] [callDynamicMethod] Call method full_media
+[2023-05-11 15:49:29] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:53:08] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:53:08] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:53:08] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:53:08] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:53:14] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:53:14] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:53:14] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:53:14] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:53:14] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:53:14] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:53:14] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:53:14] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:53:14] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:53:14] [PROCESS]: [MAIN Foreach] Take page | ID: 3462
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Parent Page id: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:53:14] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/33351
+[2023-05-11 15:53:14] [INFO]: [Foreach] Set default page template | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:53:14] [PROCESS]: [RunPageBuilder] Start Builder | create default Page
+[2023-05-11 15:53:14] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:53:14] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:53:14] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:53:14] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 15:53:14] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:53:14] [INFO]: [ItemsBuilder] Build default Page: /collection_items/33351 | Slug: home
+[2023-05-11 15:53:14] [INFO]: [ZION] [callDynamicMethod] Call method createDefaultPage
+[2023-05-11 15:53:14] [INFO]: [ZION] [top_media_diamond] Create structure default page
+[2023-05-11 15:53:14] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:53:14] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 15:53:14] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 15:53:14] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 15:53:14] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 15:53:14] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:53:14] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:53:14] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:53:14] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:53:14] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:53:14] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:53:14] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:53:14] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 15:53:14] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:53:14] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:53:14] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:53:14] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:53:14] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:53:14] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:53:14] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:53:14] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:53:15] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:53:15] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:53:15] [PROCESS]: [MAIN Foreach] Take page | ID: 4086
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Parent Page id: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Current Section id: 4089
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Current Section id: 4090
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Current Section id: 4092
+[2023-05-11 15:53:15] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34710
+[2023-05-11 15:53:15] [INFO]: [Foreach] Set default page template | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:53:15] [PROCESS]: [RunPageBuilder] Start Builder | create default Page
+[2023-05-11 15:53:15] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:53:15] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:53:15] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:53:15] [INFO]: [ItemsBuilder] Build default Page: /collection_items/34710 | Slug: ministries
+[2023-05-11 15:53:15] [INFO]: [ZION] [callDynamicMethod] Call method createDefaultPage
+[2023-05-11 15:53:15] [INFO]: [ZION] [top_media_diamond] Create structure default page
+[2023-05-11 15:53:15] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:53:15] [PROCESS]: [MAIN Foreach] Take page | ID: 3464
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Parent Page id: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Current Section id: 50458
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Collection of item id: 163959 from section id: 50458
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 695827 from section id: 163959
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 695828 from section id: 163959
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 695829 from section id: 163959
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 695830 from section id: 163959
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 695831 from section id: 163959
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Current Section id: 50463
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Current Section id: 50468
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Collection of item id: 164119 from section id: 50468
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696485 from section id: 164119
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696486 from section id: 164119
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696487 from section id: 164119
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Current Section id: 50472
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Collection of item id: 164132 from section id: 50472
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696560 from section id: 164132
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696561 from section id: 164132
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696562 from section id: 164132
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Current Section id: 50475
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Collection of item id: 164154 from section id: 50475
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696654 from section id: 164154
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696655 from section id: 164154
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696656 from section id: 164154
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Current Section id: 50478
+[2023-05-11 15:53:15] [INFO]: [getItemsFromPage] Collection of item id: 164159 from section id: 50478
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696680 from section id: 164159
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696681 from section id: 164159
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696682 from section id: 164159
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696683 from section id: 164159
+[2023-05-11 15:53:15] [INFO]: [getSectionsItems] Get item | id: 696684 from section id: 164159
+[2023-05-11 15:53:15] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34711
+[2023-05-11 15:53:15] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:53:15] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:53:15] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:53:15] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:53:15] [INFO]: [ItemsBuilder] Current Page: /collection_items/34711 | Slug: connect
+[2023-05-11 15:53:15] [WARNING] (Zion.php:390) : [ZION] [callDynamicMethod] Method three_bottom_media_diamond does not exist
+[2023-05-11 15:53:15] [WARNING] (ItemsBuilder.php:45) : [ItemsBuilder] nullconnect
+[2023-05-11 15:53:15] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:53:15] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:53:15] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:53:15] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:53:15] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:53:15] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:53:15] [WARNING] (Zion.php:390) : [ZION] [callDynamicMethod] Method three_bottom_media_diamond does not exist
+[2023-05-11 15:53:15] [WARNING] (ItemsBuilder.php:45) : [ItemsBuilder] nullconnect
+[2023-05-11 15:53:15] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34711 | Slug: connect
+[2023-05-11 15:53:16] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34711 | Slug: connect
+[2023-05-11 15:53:16] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:53:16] [PROCESS]: [MAIN Foreach] Take page | ID: 51283
+[2023-05-11 15:53:16] [INFO]: [getItemsFromPage] Parent Page id: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:53:16] [INFO]: [getItemsFromPage] Current Section id: 51284
+[2023-05-11 15:53:16] [INFO]: [getItemsFromPage] Current Section id: 51297
+[2023-05-11 15:53:16] [INFO]: [getItemsFromPage] Collection of item id: 166288 from section id: 51297
+[2023-05-11 15:53:16] [INFO]: [getSectionsItems] Get item | id: 706270 from section id: 166288
+[2023-05-11 15:53:16] [INFO]: [getSectionsItems] Get item | id: 706271 from section id: 166288
+[2023-05-11 15:53:16] [INFO]: [getSectionsItems] Get item | id: 706272 from section id: 166288
+[2023-05-11 15:53:16] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34712
+[2023-05-11 15:53:16] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:53:16] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:53:16] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:53:16] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:53:16] [INFO]: [ItemsBuilder] Current Page: /collection_items/34712 | Slug: donate
+[2023-05-11 15:53:16] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:53:16] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:53:16] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34712 | Slug: donate
+[2023-05-11 15:53:17] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34712 | Slug: donate
+[2023-05-11 15:53:17] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:53:17] [PROCESS]: [MAIN Foreach] Take page | ID: 50457
+[2023-05-11 15:53:17] [INFO]: [getItemsFromPage] Parent Page id: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:53:17] [INFO]: [getItemsFromPage] Current Section id: 50474
+[2023-05-11 15:53:17] [INFO]: [getItemsFromPage] Collection of item id: 163407 from section id: 50474
+[2023-05-11 15:53:17] [INFO]: [getSectionsItems] Get item | id: 693310 from section id: 163407
+[2023-05-11 15:53:17] [INFO]: [getSectionsItems] Get item | id: 693311 from section id: 163407
+[2023-05-11 15:53:17] [INFO]: [getItemsFromPage] Collection of item id: 163408 from section id: 50474
+[2023-05-11 15:53:17] [INFO]: [getSectionsItems] Get item | id: 693312 from section id: 163408
+[2023-05-11 15:53:17] [INFO]: [getSectionsItems] Get item | id: 693313 from section id: 163408
+[2023-05-11 15:53:17] [INFO]: [getSectionsItems] Get item | id: 693314 from section id: 163408
+[2023-05-11 15:53:17] [INFO]: [getItemsFromPage] Collection of item id: 163409 from section id: 50474
+[2023-05-11 15:53:17] [INFO]: [getSectionsItems] Get item | id: 693315 from section id: 163409
+[2023-05-11 15:53:17] [INFO]: [getSectionsItems] Get item | id: 693316 from section id: 163409
+[2023-05-11 15:53:17] [INFO]: [getSectionsItems] Get item | id: 693317 from section id: 163409
+[2023-05-11 15:53:17] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34713
+[2023-05-11 15:53:17] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:53:17] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:53:17] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:53:17] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:53:17] [INFO]: [ItemsBuilder] Current Page: /collection_items/34713 | Slug: media
+[2023-05-11 15:53:17] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:53:17] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:53:17] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:53:17] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:53:17] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:53:17] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:53:17] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34713 | Slug: media
+[2023-05-11 15:53:18] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34713 | Slug: media
+[2023-05-11 15:53:18] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:53:18] [PROCESS]: [MAIN Foreach] Take page | ID: 4087
+[2023-05-11 15:53:18] [INFO]: [getItemsFromPage] Parent Page id: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:53:18] [INFO]: [getItemsFromPage] Current Section id: 50460
+[2023-05-11 15:53:18] [INFO]: [getItemsFromPage] Collection of item id: 175931 from section id: 50460
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749711 from section id: 175931
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749712 from section id: 175931
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749713 from section id: 175931
+[2023-05-11 15:53:18] [INFO]: [getItemsFromPage] Current Section id: 50465
+[2023-05-11 15:53:18] [INFO]: [getItemsFromPage] Collection of item id: 175998 from section id: 50465
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749934 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749935 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749936 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749937 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749938 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749939 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749940 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749941 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749942 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749943 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749944 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749945 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749946 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749947 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749953 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749954 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749955 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749956 from section id: 175998
+[2023-05-11 15:53:18] [INFO]: [getItemsFromPage] Collection of item id: 175999 from section id: 50465
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749951 from section id: 175999
+[2023-05-11 15:53:18] [INFO]: [getSectionsItems] Get item | id: 749952 from section id: 175999
+[2023-05-11 15:53:18] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34714
+[2023-05-11 15:53:18] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:53:18] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:53:18] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:53:18] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:53:18] [INFO]: [ItemsBuilder] Current Page: /collection_items/34714 | Slug: resources
+[2023-05-11 15:53:18] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:53:18] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:53:18] [INFO]: [ZION] [callDynamicMethod] Call method list_layout
+[2023-05-11 15:53:18] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:53:18] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:53:18] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:53:18] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34714 | Slug: resources
+[2023-05-11 15:53:19] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34714 | Slug: resources
+[2023-05-11 15:53:19] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:53:19] [PROCESS]: [MAIN Foreach] Take page | ID: 4088
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Parent Page id: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Current Section id: 50461
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 164219 from section id: 50461
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 696944 from section id: 164219
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 696945 from section id: 164219
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 696946 from section id: 164219
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Current Section id: 50466
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163383 from section id: 50466
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693246 from section id: 163383
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693247 from section id: 163383
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163385 from section id: 50466
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693251 from section id: 163385
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693252 from section id: 163385
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693253 from section id: 163385
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Current Section id: 50470
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163396 from section id: 50470
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693280 from section id: 163396
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693281 from section id: 163396
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693282 from section id: 163396
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Current Section id: 50473
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163404 from section id: 50473
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693302 from section id: 163404
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693303 from section id: 163404
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163405 from section id: 50473
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693304 from section id: 163405
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693305 from section id: 163405
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693306 from section id: 163405
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163406 from section id: 50473
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693307 from section id: 163406
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693308 from section id: 163406
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693309 from section id: 163406
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Current Section id: 50476
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163413 from section id: 50476
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693326 from section id: 163413
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693327 from section id: 163413
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163414 from section id: 50476
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693328 from section id: 163414
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693329 from section id: 163414
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693330 from section id: 163414
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Current Section id: 50479
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163422 from section id: 50479
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693350 from section id: 163422
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693351 from section id: 163422
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163423 from section id: 50479
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693352 from section id: 163423
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693353 from section id: 163423
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693354 from section id: 163423
+[2023-05-11 15:53:19] [INFO]: [getItemsFromPage] Collection of item id: 163424 from section id: 50479
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693355 from section id: 163424
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693356 from section id: 163424
+[2023-05-11 15:53:19] [INFO]: [getSectionsItems] Get item | id: 693357 from section id: 163424
+[2023-05-11 15:53:19] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34715
+[2023-05-11 15:53:19] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:53:19] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:53:19] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:53:19] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:53:19] [INFO]: [ItemsBuilder] Current Page: /collection_items/34715 | Slug: ministry-leader-login
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method full_media
+[2023-05-11 15:53:19] [INFO]: [ZION] [full_media] Create full media
+[2023-05-11 15:53:19] [DEBUG] (Utils.php:160) : [Print data] 
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:53:19] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:53:19] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:53:19] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:53:19] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:53:19] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:53:19] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:53:19] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:53:19] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:53:19] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:53:19] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:53:19] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:53:19] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34715 | Slug: ministry-leader-login
+[2023-05-11 15:53:20] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34715 | Slug: ministry-leader-login
+[2023-05-11 15:53:20] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:53:20] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 15:53:20] [SUCCESSFULLY]: [PROCESS] END
+[2023-05-11 15:54:17] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:54:17] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:54:17] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:54:17] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:54:19] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:54:19] [INFO]: [createBlankPages] Success created pages | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:54:19] [INFO]: [createBlankPages] Success created pages | ID: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:54:19] [INFO]: [createBlankPages] Success created pages | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:54:19] [INFO]: [createBlankPages] Success created pages | ID: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:54:19] [INFO]: [createBlankPages] Success created pages | ID: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:54:19] [INFO]: [createBlankPages] Success created pages | ID: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:54:19] [INFO]: [createBlankPages] Success created pages | ID: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:54:19] [INFO]: [createBlankPages] Success created pages | ID: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:54:19] [PROCESS]: [MAIN Foreach] Take page | ID: 3462
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Parent Page id: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:54:19] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/33351
+[2023-05-11 15:54:19] [INFO]: [Foreach] Set default page template | ID: 3462 | Name page: Home | Slug: home
+[2023-05-11 15:54:19] [PROCESS]: [RunPageBuilder] Start Builder | create default Page
+[2023-05-11 15:54:19] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:54:19] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:54:19] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 15:54:19] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 15:54:19] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:54:19] [INFO]: [ItemsBuilder] Build default Page: /collection_items/33351 | Slug: home
+[2023-05-11 15:54:19] [INFO]: [ZION] [callDynamicMethod] Call method createDefaultPage
+[2023-05-11 15:54:19] [INFO]: [ZION] [top_media_diamond] Create structure default page
+[2023-05-11 15:54:19] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:54:19] [PROCESS]: [MAIN Foreach] Take page | ID: 3463
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Parent Page id: 3463 | Name page: About Us | Slug: about-us
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Current Section id: 4097
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Current Section id: 4091
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Collection of item id: 13641 from section id: 4091
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 52199 from section id: 13641
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 52200 from section id: 13641
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 52201 from section id: 13641
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Current Section id: 4093
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Collection of item id: 104422 from section id: 4093
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433939 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433940 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433941 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433942 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433943 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433944 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433945 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433946 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433947 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433948 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433949 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433950 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433951 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 433952 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434159 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434160 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434161 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434162 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434171 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434172 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434173 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434174 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434181 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434182 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434183 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434184 from section id: 104422
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Current Section id: 4095
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Collection of item id: 104490 from section id: 4095
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434229 from section id: 104490
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434230 from section id: 104490
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Current Section id: 4096
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Collection of item id: 104534 from section id: 4096
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434341 from section id: 104534
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434342 from section id: 104534
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 434343 from section id: 104534
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Current Section id: 49814
+[2023-05-11 15:54:19] [INFO]: [getItemsFromPage] Collection of item id: 160763 from section id: 49814
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 681382 from section id: 160763
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 681383 from section id: 160763
+[2023-05-11 15:54:19] [INFO]: [getSectionsItems] Get item | id: 681384 from section id: 160763
+[2023-05-11 15:54:19] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34186
+[2023-05-11 15:54:19] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:54:19] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:54:19] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:54:19] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:54:19] [INFO]: [ItemsBuilder] Current Page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:54:19] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:54:19] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:54:19] [INFO]: [ZION] [callDynamicMethod] Call method grid_layout
+[2023-05-11 15:54:19] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:54:19] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:54:19] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:54:19] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:54:19] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:54:19] [INFO]: [ZION] [callDynamicMethod] Call method top_media_diamond
+[2023-05-11 15:54:19] [INFO]: [ZION] [top_media_diamond] Create bloc
+[2023-05-11 15:54:19] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:54:21] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34186 | Slug: about-us
+[2023-05-11 15:54:21] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:54:21] [PROCESS]: [MAIN Foreach] Take page | ID: 4086
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Parent Page id: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Current Section id: 4089
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Current Section id: 4090
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Current Section id: 4092
+[2023-05-11 15:54:21] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34710
+[2023-05-11 15:54:21] [INFO]: [Foreach] Set default page template | ID: 4086 | Name page: Ministries | Slug: ministries
+[2023-05-11 15:54:21] [PROCESS]: [RunPageBuilder] Start Builder | create default Page
+[2023-05-11 15:54:21] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:54:21] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:54:21] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:54:21] [INFO]: [ItemsBuilder] Build default Page: /collection_items/34710 | Slug: ministries
+[2023-05-11 15:54:21] [INFO]: [ZION] [callDynamicMethod] Call method createDefaultPage
+[2023-05-11 15:54:21] [INFO]: [ZION] [top_media_diamond] Create structure default page
+[2023-05-11 15:54:21] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:54:21] [PROCESS]: [MAIN Foreach] Take page | ID: 3464
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Parent Page id: 3464 | Name page: Connect | Slug: connect
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Current Section id: 50458
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Collection of item id: 163959 from section id: 50458
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 695827 from section id: 163959
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 695828 from section id: 163959
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 695829 from section id: 163959
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 695830 from section id: 163959
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 695831 from section id: 163959
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Current Section id: 50463
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Current Section id: 50468
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Collection of item id: 164119 from section id: 50468
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696485 from section id: 164119
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696486 from section id: 164119
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696487 from section id: 164119
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Current Section id: 50472
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Collection of item id: 164132 from section id: 50472
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696560 from section id: 164132
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696561 from section id: 164132
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696562 from section id: 164132
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Current Section id: 50475
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Collection of item id: 164154 from section id: 50475
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696654 from section id: 164154
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696655 from section id: 164154
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696656 from section id: 164154
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Current Section id: 50478
+[2023-05-11 15:54:21] [INFO]: [getItemsFromPage] Collection of item id: 164159 from section id: 50478
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696680 from section id: 164159
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696681 from section id: 164159
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696682 from section id: 164159
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696683 from section id: 164159
+[2023-05-11 15:54:21] [INFO]: [getSectionsItems] Get item | id: 696684 from section id: 164159
+[2023-05-11 15:54:21] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34711
+[2023-05-11 15:54:21] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:54:21] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:54:21] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:54:21] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:54:21] [INFO]: [ItemsBuilder] Current Page: /collection_items/34711 | Slug: connect
+[2023-05-11 15:54:21] [WARNING] (Zion.php:390) : [ZION] [callDynamicMethod] Method three_bottom_media_diamond does not exist
+[2023-05-11 15:54:21] [WARNING] (ItemsBuilder.php:45) : [ItemsBuilder] nullconnect
+[2023-05-11 15:54:21] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:54:21] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:54:21] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:54:21] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:54:21] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:54:21] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:54:21] [WARNING] (Zion.php:390) : [ZION] [callDynamicMethod] Method three_bottom_media_diamond does not exist
+[2023-05-11 15:54:21] [WARNING] (ItemsBuilder.php:45) : [ItemsBuilder] nullconnect
+[2023-05-11 15:54:21] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34711 | Slug: connect
+[2023-05-11 15:54:22] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34711 | Slug: connect
+[2023-05-11 15:54:22] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:54:22] [PROCESS]: [MAIN Foreach] Take page | ID: 51283
+[2023-05-11 15:54:22] [INFO]: [getItemsFromPage] Parent Page id: 51283 | Name page: Donate | Slug: donate
+[2023-05-11 15:54:22] [INFO]: [getItemsFromPage] Current Section id: 51284
+[2023-05-11 15:54:22] [INFO]: [getItemsFromPage] Current Section id: 51297
+[2023-05-11 15:54:22] [INFO]: [getItemsFromPage] Collection of item id: 166288 from section id: 51297
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 706270 from section id: 166288
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 706271 from section id: 166288
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 706272 from section id: 166288
+[2023-05-11 15:54:22] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34712
+[2023-05-11 15:54:22] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:54:22] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:54:22] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:54:22] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:54:22] [INFO]: [ItemsBuilder] Current Page: /collection_items/34712 | Slug: donate
+[2023-05-11 15:54:22] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:54:22] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:54:22] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34712 | Slug: donate
+[2023-05-11 15:54:22] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34712 | Slug: donate
+[2023-05-11 15:54:22] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:54:22] [PROCESS]: [MAIN Foreach] Take page | ID: 50457
+[2023-05-11 15:54:22] [INFO]: [getItemsFromPage] Parent Page id: 50457 | Name page: MEDIA | Slug: media
+[2023-05-11 15:54:22] [INFO]: [getItemsFromPage] Current Section id: 50474
+[2023-05-11 15:54:22] [INFO]: [getItemsFromPage] Collection of item id: 163407 from section id: 50474
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 693310 from section id: 163407
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 693311 from section id: 163407
+[2023-05-11 15:54:22] [INFO]: [getItemsFromPage] Collection of item id: 163408 from section id: 50474
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 693312 from section id: 163408
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 693313 from section id: 163408
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 693314 from section id: 163408
+[2023-05-11 15:54:22] [INFO]: [getItemsFromPage] Collection of item id: 163409 from section id: 50474
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 693315 from section id: 163409
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 693316 from section id: 163409
+[2023-05-11 15:54:22] [INFO]: [getSectionsItems] Get item | id: 693317 from section id: 163409
+[2023-05-11 15:54:22] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34713
+[2023-05-11 15:54:22] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:54:22] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:54:22] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:54:22] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:54:22] [INFO]: [ItemsBuilder] Current Page: /collection_items/34713 | Slug: media
+[2023-05-11 15:54:22] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:54:22] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:54:22] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:54:22] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:54:22] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:54:22] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:54:22] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34713 | Slug: media
+[2023-05-11 15:54:23] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34713 | Slug: media
+[2023-05-11 15:54:23] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:54:23] [PROCESS]: [MAIN Foreach] Take page | ID: 4087
+[2023-05-11 15:54:23] [INFO]: [getItemsFromPage] Parent Page id: 4087 | Name page: Resources | Slug: resources
+[2023-05-11 15:54:23] [INFO]: [getItemsFromPage] Current Section id: 50460
+[2023-05-11 15:54:23] [INFO]: [getItemsFromPage] Collection of item id: 175931 from section id: 50460
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749711 from section id: 175931
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749712 from section id: 175931
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749713 from section id: 175931
+[2023-05-11 15:54:23] [INFO]: [getItemsFromPage] Current Section id: 50465
+[2023-05-11 15:54:23] [INFO]: [getItemsFromPage] Collection of item id: 175998 from section id: 50465
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749934 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749935 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749936 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749937 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749938 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749939 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749940 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749941 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749942 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749943 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749944 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749945 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749946 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749947 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749953 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749954 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749955 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749956 from section id: 175998
+[2023-05-11 15:54:23] [INFO]: [getItemsFromPage] Collection of item id: 175999 from section id: 50465
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749951 from section id: 175999
+[2023-05-11 15:54:23] [INFO]: [getSectionsItems] Get item | id: 749952 from section id: 175999
+[2023-05-11 15:54:23] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34714
+[2023-05-11 15:54:23] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:54:23] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:54:23] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:54:23] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:54:23] [INFO]: [ItemsBuilder] Current Page: /collection_items/34714 | Slug: resources
+[2023-05-11 15:54:23] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:54:23] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:54:23] [INFO]: [ZION] [callDynamicMethod] Call method list_layout
+[2023-05-11 15:54:23] [INFO]: [ZION] [grid_layout] Create bloc
+[2023-05-11 15:54:23] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:54:23] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:54:23] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34714 | Slug: resources
+[2023-05-11 15:54:25] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34714 | Slug: resources
+[2023-05-11 15:54:25] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:54:25] [PROCESS]: [MAIN Foreach] Take page | ID: 4088
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Parent Page id: 4088 | Name page: Ministry Leader Login | Slug: ministry-leader-login
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Current Section id: 50461
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 164219 from section id: 50461
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 696944 from section id: 164219
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 696945 from section id: 164219
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 696946 from section id: 164219
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Current Section id: 50466
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163383 from section id: 50466
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693246 from section id: 163383
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693247 from section id: 163383
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163385 from section id: 50466
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693251 from section id: 163385
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693252 from section id: 163385
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693253 from section id: 163385
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Current Section id: 50470
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163396 from section id: 50470
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693280 from section id: 163396
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693281 from section id: 163396
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693282 from section id: 163396
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Current Section id: 50473
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163404 from section id: 50473
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693302 from section id: 163404
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693303 from section id: 163404
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163405 from section id: 50473
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693304 from section id: 163405
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693305 from section id: 163405
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693306 from section id: 163405
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163406 from section id: 50473
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693307 from section id: 163406
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693308 from section id: 163406
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693309 from section id: 163406
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Current Section id: 50476
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163413 from section id: 50476
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693326 from section id: 163413
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693327 from section id: 163413
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163414 from section id: 50476
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693328 from section id: 163414
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693329 from section id: 163414
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693330 from section id: 163414
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Current Section id: 50479
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163422 from section id: 50479
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693350 from section id: 163422
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693351 from section id: 163422
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163423 from section id: 50479
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693352 from section id: 163423
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693353 from section id: 163423
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693354 from section id: 163423
+[2023-05-11 15:54:25] [INFO]: [getItemsFromPage] Collection of item id: 163424 from section id: 50479
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693355 from section id: 163424
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693356 from section id: 163424
+[2023-05-11 15:54:25] [INFO]: [getSectionsItems] Get item | id: 693357 from section id: 163424
+[2023-05-11 15:54:25] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34715
+[2023-05-11 15:54:25] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 15:54:25] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 15:54:25] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 15:54:25] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 15:54:25] [INFO]: [ItemsBuilder] Current Page: /collection_items/34715 | Slug: ministry-leader-login
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method full_media
+[2023-05-11 15:54:25] [INFO]: [ZION] [full_media] Create full media
+[2023-05-11 15:54:25] [DEBUG] (Utils.php:160) : [Print data] 
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:54:25] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:54:25] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:54:25] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:54:25] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:54:25] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:54:25] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:54:25] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:54:25] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method full_text
+[2023-05-11 15:54:25] [INFO]: [ZION] [full_text] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method right_media_diamond
+[2023-05-11 15:54:25] [INFO]: [ZION] [right-media-diamond] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ZION] [callDynamicMethod] Call method left_media_diamond
+[2023-05-11 15:54:25] [INFO]: [ZION] [left_media_diamond] Create bloc
+[2023-05-11 15:54:25] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/34715 | Slug: ministry-leader-login
+[2023-05-11 15:54:26] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/34715 | Slug: ministry-leader-login
+[2023-05-11 15:54:26] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 15:54:26] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 15:54:26] [SUCCESSFULLY]: [PROCESS] END
+[2023-05-11 15:56:59] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 15:56:59] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 15:56:59] [INFO]: [Class VariableCache] Init
+[2023-05-11 15:56:59] [INFO]: [getGraphToken] get Token
+[2023-05-11 15:57:02] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 15:57:02] [INFO]: [creteNewPage] Request to create a new page: bienvenido
+[2023-05-11 15:57:03] [INFO]: [createBlankPages] Success created pages | ID: 139887 | Name page: BIENVENIDO | Slug: bienvenido
+[2023-05-11 15:57:03] [INFO]: [creteNewPage] Request to create a new page: localidades
+[2023-05-11 15:57:04] [INFO]: [createBlankPages] Success created pages | ID: 820474 | Name page: Localidades | Slug: localidades
+[2023-05-11 15:57:04] [INFO]: [creteNewPage] Request to create a new page: enlaces
+[2023-05-11 15:57:05] [INFO]: [createBlankPages] Success created pages | ID: 139889 | Name page: ENLACES | Slug: enlaces
+[2023-05-11 15:57:05] [PROCESS]: [MAIN Foreach] Take page | ID: 139887
+[2023-05-11 15:57:05] [INFO]: [getItemsFromPage] Parent Page id: 139887 | Name page: BIENVENIDO | Slug: bienvenido
+[2023-05-11 15:57:05] [INFO]: [getItemsFromPage] Collection of item id: 509135 -> section id: -> Parent page id:139887
+[2023-05-11 16:05:39] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:05:39] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:05:39] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:05:40] [WARNING] (Parser.php:59) : [getParentPages] MB project pages not found
+[2023-05-11 16:05:40] [INFO]: [MAIN Foreach] MB project not found, migration did not start, process completed without errors!
+[2023-05-11 16:05:40] [INFO]: [PROCESS] END
+[2023-05-11 16:11:19] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:11:19] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:11:19] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:11:19] [WARNING] (Parser.php:59) : [getParentPages] MB project pages not found
+[2023-05-11 16:11:19] [INFO]: [MAIN Foreach] MB project not found, migration did not start, process completed without errors!
+[2023-05-11 16:11:19] [INFO]: [PROCESS] END
+[2023-05-11 16:11:32] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:11:32] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:11:32] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:11:32] [WARNING] (Parser.php:59) : [getParentPages] MB project pages not found
+[2023-05-11 16:11:32] [INFO]: [MAIN Foreach] MB project not found, migration did not start, process completed without errors!
+[2023-05-11 16:11:32] [INFO]: [PROCESS] END
+[2023-05-11 16:11:52] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:11:52] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:11:52] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:11:52] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:11:54] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:11:54] [INFO]: [creteNewPage] Request to create a new page: livesermons
+[2023-05-11 16:11:55] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:11:55] [INFO]: [creteNewPage] Request to create a new page: calendar
+[2023-05-11 16:11:56] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:11:56] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:11:56] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:11:56] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:12:15] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:12:15] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:12:15] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:12:15] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:12:17] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:12:17] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:12:17] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:12:17] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:12:17] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:12:17] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:16:02] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:16:02] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:16:02] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:16:02] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:16:04] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:16:04] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:16:04] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:16:04] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:16:04] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:16:04] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:16:04] [DEBUG] (Utils.php:160) : [Print data] 
+[2023-05-11 16:20:23] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:20:23] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:20:23] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:20:23] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:20:24] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:20:24] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:20:24] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:20:24] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:20:24] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:20:24] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:20:44] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:20:44] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:20:44] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:20:44] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:20:46] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:20:46] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:20:46] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:20:46] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:20:46] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:20:46] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:21:04] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:21:04] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:21:04] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:21:04] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:21:06] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:21:06] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:06] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:21:06] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:21:06] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:06] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:21:12] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:21:12] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:21:12] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:21:12] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:21:14] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:21:14] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:14] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:21:14] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:21:14] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:14] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:21:31] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:21:31] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:21:31] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:21:31] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:21:33] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:21:33] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:33] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:21:33] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:21:33] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:33] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:21:35] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:21:35] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:21:35] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:21:35] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:21:37] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:21:37] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:37] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:21:37] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:21:37] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:37] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:21:44] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:21:44] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:21:44] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:21:44] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:21:46] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:21:46] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:46] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:21:46] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:21:46] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:21:46] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:22:03] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:22:03] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:22:03] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:22:03] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:22:05] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:22:05] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:22:05] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:22:05] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:22:05] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:22:05] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:22:40] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:22:40] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:22:40] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:22:40] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:22:42] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:22:42] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:22:42] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:22:42] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:22:42] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:22:42] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:23:36] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:23:36] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:23:36] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:23:36] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:23:38] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:23:38] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:23:38] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:23:38] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:23:38] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:23:38] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:24:22] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:24:22] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:24:22] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:24:22] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:24:24] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:24:24] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:24:24] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:24:24] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:24:24] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:24:24] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:25:42] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:25:42] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:25:42] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:25:42] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:25:44] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:25:44] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:25:44] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:25:44] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:25:44] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:25:44] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:26:23] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:26:23] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:26:23] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:26:23] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:26:25] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:26:25] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:26:25] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:26:25] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:26:25] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:26:40] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:26:56] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:26:56] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:26:56] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:26:56] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:26:58] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:26:58] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:26:58] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:26:58] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:26:58] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:28:18] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:28:18] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:28:18] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:28:18] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:28:20] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:28:20] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:28:20] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:28:20] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:28:20] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:28:31] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:28:37] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/33351
+[2023-05-11 16:28:38] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 16:28:38] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 16:28:38] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 16:28:38] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 16:28:38] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 16:28:38] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 16:28:38] [INFO]: [ItemsBuilder] Current Page: /collection_items/33351 | Slug: livesermons
+[2023-05-11 16:28:38] [WARNING] (Zion.php:390) : [ZION] [callDynamicMethod] Method  does not exist
+[2023-05-11 16:28:38] [WARNING] (ItemsBuilder.php:45) : [ItemsBuilder] nulllivesermons
+[2023-05-11 16:28:38] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/33351 | Slug: livesermons
+[2023-05-11 16:28:39] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/33351 | Slug: livesermons
+[2023-05-11 16:28:39] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 16:28:40] [PROCESS]: [MAIN Foreach] Take page | ID: 757296
+[2023-05-11 16:28:41] [INFO]: [getItemsFromPage] Parent Page id: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:28:45] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34811
+[2023-05-11 16:28:46] [INFO]: [Foreach] Set default page template | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:28:47] [PROCESS]: [RunPageBuilder] Start Builder | create default Page
+[2023-05-11 16:28:47] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 16:28:47] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 16:28:47] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 16:28:47] [INFO]: [ItemsBuilder] Build default Page: /collection_items/34811 | Slug: calendar
+[2023-05-11 16:28:47] [INFO]: [ZION] [callDynamicMethod] Call method createDefaultPage
+[2023-05-11 16:28:47] [INFO]: [ZION] [top_media_diamond] Create structure default page
+[2023-05-11 16:28:47] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 16:28:48] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 16:28:48] [SUCCESSFULLY]: [PROCESS] END
+[2023-05-11 16:32:55] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-05-11 16:32:55] [PROCESS]: [MIGRATION] Start Process!
+[2023-05-11 16:32:55] [INFO]: [Class VariableCache] Init
+[2023-05-11 16:32:55] [INFO]: [getGraphToken] get Token
+[2023-05-11 16:32:57] [INFO]: [createBlankPages] Start created pages
+[2023-05-11 16:32:57] [INFO]: [creteNewPage] Request to create a new page: livesermons
+[2023-05-11 16:32:58] [INFO]: [createBlankPages] Success created pages | ID: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:32:58] [INFO]: [creteNewPage] Request to create a new page: calendar
+[2023-05-11 16:32:59] [INFO]: [createBlankPages] Success created pages | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:32:59] [PROCESS]: [MAIN Foreach] Take page | ID: 580749
+[2023-05-11 16:32:59] [INFO]: [getItemsFromPage] Parent Page id: 580749 | Name page: Live/Sermons | Slug: livesermons
+[2023-05-11 16:32:59] [INFO]: [getItemsFromPage] Collection of item id: 2378365 -> section id: -> Parent page id:580749
+[2023-05-11 16:32:59] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/33351
+[2023-05-11 16:32:59] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-05-11 16:32:59] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 16:32:59] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 16:32:59] [INFO]: [ZION] [createMenu] Create menu
+[2023-05-11 16:32:59] [INFO]: [ZION] [__construct] Success create MENU
+[2023-05-11 16:32:59] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 16:32:59] [INFO]: [ItemsBuilder] Current Page: /collection_items/33351 | Slug: livesermons
+[2023-05-11 16:32:59] [WARNING] (Zion.php:390) : [ZION] [callDynamicMethod] Method  does not exist
+[2023-05-11 16:32:59] [WARNING] (ItemsBuilder.php:45) : [ItemsBuilder] nulllivesermons
+[2023-05-11 16:32:59] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/33351 | Slug: livesermons
+[2023-05-11 16:33:00] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/33351 | Slug: livesermons
+[2023-05-11 16:33:00] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 16:33:00] [PROCESS]: [MAIN Foreach] Take page | ID: 757296
+[2023-05-11 16:33:00] [INFO]: [getItemsFromPage] Parent Page id: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:33:00] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/34814
+[2023-05-11 16:33:00] [INFO]: [Foreach] Set default page template | ID: 757296 | Name page: Calendar | Slug: calendar
+[2023-05-11 16:33:00] [PROCESS]: [RunPageBuilder] Start Builder | create default Page
+[2023-05-11 16:33:00] [PROCESS]: [ZION Builder] Connected!
+[2023-05-11 16:33:00] [INFO]: [ZION] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Zion\blocksKit.json
+[2023-05-11 16:33:00] [INFO]: [ZION] [createFooter] Create Footer
+[2023-05-11 16:33:00] [INFO]: [ItemsBuilder] Build default Page: /collection_items/34814 | Slug: calendar
+[2023-05-11 16:33:00] [INFO]: [ZION] [callDynamicMethod] Call method createDefaultPage
+[2023-05-11 16:33:00] [INFO]: [ZION] [top_media_diamond] Create structure default page
+[2023-05-11 16:33:00] [INFO]: [PageBuilder] Page created successfully!
+[2023-05-11 16:33:00] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-05-11 16:33:00] [SUCCESSFULLY]: [PROCESS] END

@@ -1,8 +1,8 @@
 <?php
 
-use Brizy\layer\Brizy\BrizyAPI;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
-require_once(__DIR__ . '/../src/Core/Core.php');
+require_once(__DIR__ . '/../lib/Core/core.php');
 
 $brizyAPI   = new BrizyAPI();
 

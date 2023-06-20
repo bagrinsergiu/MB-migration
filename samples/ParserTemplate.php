@@ -1,8 +1,8 @@
 <?php
 
-use Brizy\Parser\Parser;
+use MBMigration\Parser\Parser;
 
-require_once(__DIR__ . '/../src/Core.php');
+require_once(__DIR__ . '/../lib/Core.php');
 
 /**
  * Создаем класс и указываем id проекта с которым будем набоать

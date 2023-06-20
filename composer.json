@@ -1,6 +1,7 @@
 {
-    "name": "brizy/migration",
-    "type": "project",
+    "name": "bagrinsergiu/MB-migration",
+    "description": "Library for migration from Ministry Brands to Brizy",
+    "type": "library",
     "require": {
         "gmostafa/php-graphql-client": "^1.13",
         "cpliakas/git-wrapper": "^3.1",
@@ -12,5 +13,10 @@
       "ext-fileinfo": "*",
       "ext-curl": "*",
         "amphp/amp": "^3.0"
+    },
+    "autoload": {
+      "psr-0": {
+      "MBMigration": "lib/"
+        }
     }
 }

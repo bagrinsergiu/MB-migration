@@ -1,0 +1,883 @@
+Array
+(
+    [error_message] => Call to undefined method Brizy\Builder\Layout\Anthem\Anthem::creatingMenuTree()
+    [error_code] => 0
+    [error_file] => D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Anthem\Anthem.php
+    [error_line] => 74
+    [error_trace] => #0 D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Anthem\Anthem.php(42): Brizy\Builder\Layout\Anthem\Anthem->createMenu()
+#1 D:\SOFT\OSPanel\domains\MB-migration\src\Builder\ItemsBuilder.php(32): Brizy\Builder\Layout\Anthem\Anthem->__construct()
+#2 D:\SOFT\OSPanel\domains\MB-migration\src\MigrationPlatform.php(389): Builder\ItemsBuilder->__construct()
+#3 D:\SOFT\OSPanel\domains\MB-migration\src\MigrationPlatform.php(173): MigrationPlatform->runPageBuilder()
+#4 D:\SOFT\OSPanel\domains\MB-migration\src\MigrationPlatform.php(142): MigrationPlatform->collector()
+#5 D:\SOFT\OSPanel\domains\MB-migration\src\MigrationPlatform.php(87): MigrationPlatform->launch()
+#6 D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php(39): MigrationPlatform->run()
+#7 {main}
+    [cache] => Brizy\Builder\VariableCache Object
+        (
+            [cache:Brizy\Builder\VariableCache:private] => Array
+                (
+                    [migrationID] => 27717b9d35
+                    [projectId_MB] => 29629
+                    [projectId_Brizy] => 4306652
+                    [Status] => Array
+                        (
+                            [Total] => 5
+                            [Current] => 0
+                        )
+
+                    [ProjectFolders] => Array
+                        (
+                            [main] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/29629_4306652_27717b9d35/
+                            [page] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/29629_4306652_27717b9d35/page/
+                            [media] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/29629_4306652_27717b9d35/media/
+                            [log] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/29629_4306652_27717b9d35/log/
+                            [dump] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/29629_4306652_27717b9d35/log/dump/
+                        )
+
+                    [settings] => Array
+                        (
+                            [name] => arborbaptistchurch
+                            [title] => Arbor Baptist Church
+                            [design] => Anthem
+                            [uuid] => 63967cf0-9175-4d86-8d2d-e4c5497269a9
+                            [parameter] => Array
+                                (
+                                    [palette] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [tag] => color1
+                                                    [color] => #F0EED8
+                                                )
+
+                                            [1] => Array
+                                                (
+                                                    [tag] => color2
+                                                    [color] => #423024
+                                                )
+
+                                            [2] => Array
+                                                (
+                                                    [tag] => color3
+                                                    [color] => #FFFFFF
+                                                )
+
+                                            [3] => Array
+                                                (
+                                                    [tag] => color4
+                                                    [color] => #333333
+                                                )
+
+                                            [4] => Array
+                                                (
+                                                    [tag] => color5
+                                                    [color] => #DDDEC6
+                                                )
+
+                                            [5] => Array
+                                                (
+                                                    [tag] => color6
+                                                    [color] => #CC5733
+                                                )
+
+                                        )
+
+                                )
+
+                            [favicon] => 
+                        )
+
+                    [GraphApi_Brizy] => https://beta1.brizy.cloud/graphql/4306652
+                    [graphToken] => eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzb3hpNHo5cmdlMHcwbzR3NHM4d2tzYzQ4d29nY2s4cyIsImp0aSI6ImEyMGMxYjk3ZTk3MDQ4ZWEzNTBmNTdiNzcwOTkzOTY2OTM3NDllY2UwZDRiOWE2NTQzMDI1OWRmN2NkY2JhMjFlNTEzMDhiZGYwMzdiMzI1IiwiaWF0IjoxNjg3MTYzMTI1LjkzOTExMSwibmJmIjoxNjg3MTYzMTI1LjkzOTExNCwiZXhwIjoxNzE4Nzg1NTI1LjkyMDYwOCwic3ViIjoiMjAzMSIsInNjb3BlcyI6WyJwcm9qZWN0Il19.RytkMsQSY6wMQfhmckMP4bPIDdyQXL5mBy8dKr1p0UvW-sCQTEsArX8zTOC3O_L-VDIQ5VxPa8oiwZmmzKCne84nQFEEbdsWg364_TKvlSmVQ9___bl0P_4rPR3RYANXu1EfmhxvvYptpgmUmgPTAGo-9X_hkWKDdOQ3Xh3vzxA
+                    [parameter] => Array
+                        (
+                            [subpalette] => Array
+                                (
+                                    [subpalette1] => Array
+                                        (
+                                            [bg] => #F0EED8
+                                            [accent] => #F0EED8
+                                            [text] => #F0EED8
+                                            [header] => #CC5733
+                                            [link] => #F0EED8
+                                            [btn] => #F0EED8
+                                            [btn-text] => #FFFFFF
+                                        )
+
+                                    [subpalette2] => Array
+                                        (
+                                            [bg] => #DDDEC6
+                                            [accent] => #F0EED8
+                                            [text] => #F0EED8
+                                            [header] => #F0EED8
+                                            [link] => #CC5733
+                                            [btn] => #423024
+                                            [btn-text] => #F0EED8
+                                        )
+
+                                    [subpalette3] => Array
+                                        (
+                                            [bg] => #423024
+                                            [accent] => #FFFFFF
+                                            [text] => #FFFFFF
+                                            [header] => #FFFFFF
+                                            [link] => #CC5733
+                                            [btn] => #FFFFFF
+                                            [btn-text] => #423024
+                                        )
+
+                                    [subpalette4] => Array
+                                        (
+                                            [bg] => #FFFFFF
+                                            [accent] => #FFFFFF
+                                            [text] => #FFFFFF
+                                            [header] => #FFFFFF
+                                            [link] => #CC5733
+                                            [btn] => #423024
+                                            [btn-text] => #423024
+                                        )
+
+                                )
+
+                        )
+
+                    [mainSection] => Array
+                        (
+                            [footer] => Array
+                                (
+                                    [typeSection] => main
+                                    [category] => text
+                                    [settings] => Array
+                                        (
+                                            [color] => Array
+                                                (
+                                                    [subpalette] => Array
+                                                        (
+                                                            [bg] => #FFFFFF
+                                                            [accent] => #FFFFFF
+                                                            [text] => #FFFFFF
+                                                            [header] => #FFFFFF
+                                                            [link] => #CC5733
+                                                            [btn] => #423024
+                                                            [btn-text] => #423024
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [items] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [id] => 6018628
+                                                    [category] => text
+                                                    [position] => 0
+                                                    [settings] => Array
+                                                        (
+                                                        )
+
+                                                    [content] => <p style="font-weight: 700;">ARBOR BAPTIST CHURCH</p><p><span style="text-align: left; font-size: 0.94em; letter-spacing: 0.01em;">802 Comer Ave., Pell City, AL 35125 . 205.338.7046</span></p><p>arborbaptist@gmail.com</p><p><a href="https://www.facebook.com/arborbaptist.church.16" data-location="external" data-detail="https://www.facebook.com/arborbaptist.church.16" data-category="link" target="_blank" class="cloverlinks">https://www.facebook.com/arborbaptist.church.16</a><br></p><p><br></p>
+                                                )
+
+                                        )
+
+                                )
+
+                            [header] => Array
+                                (
+                                    [typeSection] => main
+                                    [category] => photo
+                                    [settings] => Array
+                                        (
+                                        )
+
+                                    [items] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [id] => 6018629
+                                                    [category] => photo
+                                                    [position] => 0
+                                                    [settings] => Array
+                                                        (
+                                                            [image] => Array
+                                                                (
+                                                                    [height] => 374
+                                                                    [width] => 720
+                                                                )
+
+                                                        )
+
+                                                    [content] => c8759053f8d50f0377f5d9c16c001b03.png
+                                                    [imageFileName] => 4d0d9144-790a-4428-90b5-e6dd9a283001.png
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                    [mainCollectionType] => /collection_types/30538
+                    [ListPages] => Array
+                        (
+                            [home] => /collection_items/38180
+                            [sermons] => /collection_items/38186
+                            [who-we-are] => /collection_items/38187
+                            [missions] => /collection_items/38188
+                        )
+
+                    [currentPageOnWork] => /collection_items/38180
+                    [menuList] => Array
+                        (
+                            [id] => 4306654
+                            [uid] => f04b3141803477a2a8ff863133e4b9aea676781fa4e982f1a83d340e151b7058
+                            [name] => mainMenu
+                            [create] => 
+                            [list] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 367571
+                                            [slug] => home
+                                            [name] => Home
+                                            [collection] => /collection_items/38180
+                                            [position] => 1
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 570999
+                                            [slug] => sermons
+                                            [name] => Sermons
+                                            [collection] => /collection_items/38186
+                                            [position] => 2
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [id] => 367572
+                                            [slug] => about-us
+                                            [name] => About Us
+                                            [collection] => /collection_items/38187
+                                            [position] => 3
+                                            [landing] => 
+                                            [parentSettings] => {"category":"text"}
+                                            [child] => Array
+                                                (
+                                                    [0] => Array
+                                                        (
+                                                            [id] => 367576
+                                                            [slug] => who-we-are
+                                                            [name] => Who We Are
+                                                            [collection] => /collection_items/38187
+                                                            [position] => 1
+                                                            [landing] => 1
+                                                            [parentSettings] => {}
+                                                            [child] => Array
+                                                                (
+                                                                )
+
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [3] => Array
+                                        (
+                                            [id] => 368170
+                                            [slug] => missions
+                                            [name] => MISSIONS
+                                            [collection] => /collection_items/38188
+                                            [position] => 4
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                )
+
+                            [data] => [{"id":"\/collection_items\/38180","items":[],"isNewTab":false,"label":"Home","uid":"5d347da07065bc81c3fa02228b3f7ab4"},{"id":"\/collection_items\/38186","items":[],"isNewTab":false,"label":"Sermons","uid":"b6940151d09e21aa57e6bdaf70559861"},{"id":"\/collection_items\/38187","items":[{"id":"\/collection_items\/38187","items":[],"isNewTab":false,"label":"Who We Are","uid":"0d610c9a940ca87281105c8e5e268e9c"}],"isNewTab":false,"label":"About Us","uid":"37114e500c7f050fe8c0184737669472"},{"id":"\/collection_items\/38188","items":[],"isNewTab":false,"label":"MISSIONS","uid":"76414424cd8652bf1de83707298b44c8"}]
+                        )
+
+                    [tookPage] => Array
+                        (
+                            [id] => 367571
+                            [slug] => home
+                            [name] => Home
+                            [collection] => /collection_items/38180
+                            [position] => 1
+                            [landing] => 1
+                            [parentSettings] => {}
+                            [child] => Array
+                                (
+                                )
+
+                        )
+
+                    [Sections] => Array
+                        (
+                            [1901810] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 21829410
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 
+                                                            [slide_width] => 
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                            [extension] => jpg
+                                                            [mobile_extension] => jpg
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => f0923020-a98b-4f68-a2de-b9c730aea999.jpg
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 14536998
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 
+                                                            [slide_width] => 
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => cc41ef45-4fa4-43bb-bd4f-07edaf3ff8cc.jpg
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [id] => 21930736
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 2
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 1
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 631
+                                                            [slide_width] => 1122
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                            [extension] => jpg
+                                                            [mobile_extension] => jpg
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => 5de53c52-c731-4b78-8637-0cea4164a4a9.jpg
+                                        )
+
+                                    [3] => Array
+                                        (
+                                            [id] => 14537065
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 3
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 
+                                                            [slide_width] => 
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => eba62751-0b1f-4f76-972a-b33c3b112d56.jpg
+                                        )
+
+                                    [4] => Array
+                                        (
+                                            [id] => 14537784
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 4
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 1
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 513
+                                                            [slide_width] => 1000
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => 4197f63d-14d8-42fc-9990-4abf5ad937db.png
+                                        )
+
+                                    [5] => Array
+                                        (
+                                            [id] => 14537785
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 5
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 1
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 372
+                                                            [slide_width] => 640
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => 99c30dae-5779-4898-9848-02c80ab962d7.jpg
+                                        )
+
+                                    [6] => Array
+                                        (
+                                            [id] => 11774544
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 6
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 
+                                                            [slide_width] => 
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                        )
+
+                                                )
+
+                                            [link] => who-we-are
+                                            [content] => 94e0599e-f9fc-48d8-92d9-ac66dc0f8d40.jpg
+                                        )
+
+                                    [7] => Array
+                                        (
+                                            [id] => 11774543
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 7
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 
+                                                            [slide_width] => 
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => fcff7c61-2f6e-4e2d-a6d1-3bf6997f888d.png
+                                        )
+
+                                    [8] => Array
+                                        (
+                                            [id] => 7947510
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 8
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 1
+                                                            [mobile_fit] => 1
+                                                            [slide_height] => 631
+                                                            [slide_width] => 1225
+                                                            [mobile_height] => 387
+                                                            [mobile_width] => 750
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => d3c9a6c3-5d8e-4f14-a1f5-5743a9f75de3.jpg
+                                        )
+
+                                )
+
+                            [1451037] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 6020607
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p style="text-align: center; font-size: 0.7778em; font-weight: 700;">KEEPING THE MAIN THING <br>THE MAIN THING</p>
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 6018631
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p style="text-align: center; font-size: 0.7778em; font-weight: 700;">WHAT WE BELIEVE</p>
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [id] => 6018630
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [3] => Array
+                                        (
+                                            [id] => 6018632
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p><br><br>Here at Arbor we believe the Bible is the inspired work and Word of God. The Bible is the ultimate authority in all matters of doctrine and practice. <a style="color: rgb(227, 0, 0); font-weight: 700;" href="/about-us" data-location="existing" data-detail="367572" data-category="link" target="_self" class="cloverlinks">READ MORE HERE.</a></p>
+                                        )
+
+                                    [4] => Array
+                                        (
+                                            [id] => 6020608
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p>Sunday mornings are focused on God's Word.&nbsp; We gather together to hear God's Word taught book by book, chapter by chapter, verse by verse, so that as God's people we can go out into the world equipped to live as Christ's disciples. If you desire to grow in your knowledge of the scriptures, please join us on Sunday mornings at 10:00 am.&nbsp;</p>
+                                        )
+
+                                )
+
+                            [1451537] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 6020641
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p style="text-align: center; font-size: 0.7778em; font-weight: 700;"><br></p>
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 6020643
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p style="text-align: center; font-weight: 700; font-size: 0.7778em;">WHEN WE MEET</p>
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [id] => 6020644
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p style="font-weight: 700; color: rgb(227, 0, 0); font-size: 1.1429em;">Sundays</p><p><span class="clovercustom" style="font-weight: 700;">10:00 AM</span>- Worship Service</p><p><br></p><p style="font-weight: 700; color: rgb(227, 0, 0); font-size: 1.1429em;">Wednesdays</p><p style="font-weight: 400;"><span class="clovercustom" style="font-weight: 700;">6:30 PM</span>- Adult Bible Study &amp; Prayer</p><p style="font-weight: 400;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p><p>&nbsp;</p>
+                                        )
+
+                                    [3] => Array
+                                        (
+                                            [id] => 6020642
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p><br></p>
+                                        )
+
+                                )
+
+                        )
+
+                    [currentSectionData] => Array
+                        (
+                            [id] => 4306654
+                            [uid] => f04b3141803477a2a8ff863133e4b9aea676781fa4e982f1a83d340e151b7058
+                            [name] => mainMenu
+                            [create] => 
+                            [list] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 367571
+                                            [slug] => home
+                                            [name] => Home
+                                            [collection] => /collection_items/38180
+                                            [position] => 1
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 570999
+                                            [slug] => sermons
+                                            [name] => Sermons
+                                            [collection] => /collection_items/38186
+                                            [position] => 2
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [id] => 367572
+                                            [slug] => about-us
+                                            [name] => About Us
+                                            [collection] => /collection_items/38187
+                                            [position] => 3
+                                            [landing] => 
+                                            [parentSettings] => {"category":"text"}
+                                            [child] => Array
+                                                (
+                                                    [0] => Array
+                                                        (
+                                                            [id] => 367576
+                                                            [slug] => who-we-are
+                                                            [name] => Who We Are
+                                                            [collection] => /collection_items/38187
+                                                            [position] => 1
+                                                            [landing] => 1
+                                                            [parentSettings] => {}
+                                                            [child] => Array
+                                                                (
+                                                                )
+
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [3] => Array
+                                        (
+                                            [id] => 368170
+                                            [slug] => missions
+                                            [name] => MISSIONS
+                                            [collection] => /collection_items/38188
+                                            [position] => 4
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                )
+
+                            [data] => [{"id":"\/collection_items\/38180","items":[],"isNewTab":false,"label":"Home","uid":"5d347da07065bc81c3fa02228b3f7ab4"},{"id":"\/collection_items\/38186","items":[],"isNewTab":false,"label":"Sermons","uid":"b6940151d09e21aa57e6bdaf70559861"},{"id":"\/collection_items\/38187","items":[{"id":"\/collection_items\/38187","items":[],"isNewTab":false,"label":"Who We Are","uid":"0d610c9a940ca87281105c8e5e268e9c"}],"isNewTab":false,"label":"About Us","uid":"37114e500c7f050fe8c0184737669472"},{"id":"\/collection_items\/38188","items":[],"isNewTab":false,"label":"MISSIONS","uid":"76414424cd8652bf1de83707298b44c8"}]
+                        )
+
+                )
+
+        )
+
+    [server_data] => Array
+        (
+            [ACSetupSvcPort] => 23210
+            [ACSvcPort] => 17532
+            [ALLUSERSPROFILE] => C:\ProgramData
+            [APPDATA] => C:\Users\Adminяо\AppData\Roaming
+            [CommonProgramFiles] => C:\Program Files\Common Files
+            [CommonProgramFiles(x86)] => C:\Program Files (x86)\Common Files
+            [CommonProgramW6432] => C:\Program Files\Common Files
+            [COMPUTERNAME] => DESKTOP-L8HEGH6
+            [ComSpec] => C:\Windows\system32\cmd.exe
+            [DriverData] => C:\Windows\System32\Drivers\DriverData
+            [FPS_BROWSER_APP_PROFILE_STRING] => Internet Explorer
+            [FPS_BROWSER_USER_PROFILE_STRING] => Default
+            [HOMEDRIVE] => C:
+            [HOMEPATH] => \Users\Adminяо
+            [IDEA_INITIAL_DIRECTORY] => C:\Windows\system32
+            [LOCALAPPDATA] => C:\Users\Adminяо\AppData\Local
+            [LOGONSERVER] => \\DESKTOP-L8HEGH6
+            [NUMBER_OF_PROCESSORS] => 16
+            [NWScheduler] => C&E)H@McQfTjWnZr4u7x!A%D*G-JaNdRgUkXp2s5v8y/B?E(H+MbPeShVmYq3t6w
+            [OneDrive] => C:\Users\Adminяо\OneDrive
+            [OS] => Windows_NT
+            [Path] => C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\WinSCP\;D:\SOFT\OSPanel\modules\php\PHP_5.6;C:\composer;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Users\Adminяо\AppData\Local\Microsoft\WindowsApps;D:\SOFT\OSPanel\modules\php\PHP_8.1;C:\Users\Adminяо\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PhpStorm 2022.3.3\bin;;C:\Users\Adminяо\AppData\Roaming\Composer\vendor\bin;C:\Users\Adminяо\AppData\Local\GitHubDesktop\bin;C:\Users\Adminяо\AppData\Roaming\npm;
+            [PATHEXT] => .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+            [PhpStorm] => C:\Program Files\JetBrains\PhpStorm 2022.3.3\bin;
+            [PROCESSOR_ARCHITECTURE] => AMD64
+            [PROCESSOR_IDENTIFIER] => AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD
+            [PROCESSOR_LEVEL] => 23
+            [PROCESSOR_REVISION] => 6001
+            [ProgramData] => C:\ProgramData
+            [ProgramFiles] => C:\Program Files
+            [ProgramFiles(x86)] => C:\Program Files (x86)
+            [ProgramW6432] => C:\Program Files
+            [PSModulePath] => C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+            [PUBLIC] => C:\Users\Public
+            [RlsSvcPort] => 22112
+            [SESSIONNAME] => Console
+            [SystemDrive] => C:
+            [SystemRoot] => C:\Windows
+            [TEMP] => C:\Users\ADMIN~1\AppData\Local\Temp
+            [TERM] => xterm
+            [TMP] => C:\Users\ADMIN~1\AppData\Local\Temp
+            [USERDOMAIN] => DESKTOP-L8HEGH6
+            [USERDOMAIN_ROAMINGPROFILE] => DESKTOP-L8HEGH6
+            [USERNAME] => Admin
+            [USERPROFILE] => C:\Users\Adminяо
+            [windir] => C:\Windows
+            [PHP_SELF] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+            [SCRIPT_NAME] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+            [SCRIPT_FILENAME] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+            [PATH_TRANSLATED] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+            [DOCUMENT_ROOT] => 
+            [REQUEST_TIME_FLOAT] => 1687163117.2492
+            [REQUEST_TIME] => 1687163117
+            [argv] => Array
+                (
+                    [0] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+                )
+
+            [argc] => 1
+        )
+
+    [post_data] => Array
+        (
+        )
+
+    [get_data] => Array
+        (
+        )
+
+    [cookie_data] => Array
+        (
+        )
+
+    [request_headers] => Array
+        (
+        )
+
+)

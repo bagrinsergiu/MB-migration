@@ -1,11 +1,11 @@
 <?php
 
-use Brizy\Layer\DataSource\DBConnector;
+use MBMigration\Layer\DataSource\DBConnector;
 
-require_once(__DIR__ . '/src/Core/Utils.php');
-require_once(__DIR__ . '/src/Core/Config.php');
-require_once(__DIR__ . '/src/Layer/DataSource/DBConnector.php');
-require_once(__DIR__ . '/src/Layer/DataSource/driver/PostgresSQL.php');
+require_once(__DIR__ . '/lib/Core/Utils.php');
+require_once(__DIR__ . '/lib/Core/Config.php');
+require_once(__DIR__ . '/lib/Layer/DataSource/DBConnector.php');
+require_once(__DIR__ . '/lib/Layer/DataSource/driver/PostgresSQL.php');
 
 
 

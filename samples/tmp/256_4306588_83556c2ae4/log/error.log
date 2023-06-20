@@ -1,0 +1,2 @@
+[2023-06-16 18:25:10] [UID: 83556c2ae4] [WARNING] (PostgresSQL.php:58) : [PostgresSQL] Query execution failed: SQLSTATE[HY000]: General error: 7 SSL SYSCALL error: EOF detected
+[2023-06-16 18:25:10] [UID: 83556c2ae4] [WARNING] (PostgresSQL.php:58) : [PostgresSQL] Query execution failed: SQLSTATE[HY000]: General error: 7 SSL SYSCALL error: EOF detected

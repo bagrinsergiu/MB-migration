@@ -1,0 +1,171 @@
+Array
+(
+    [error_message] => Brizy\core\Utils::log(): Argument #1 ($messageText) must be of type string, array given, called in D:\SOFT\OSPanel\domains\MB-migration\src\Layer\Brizy\BrizyAPI.php on line 456
+    [error_code] => 0
+    [error_file] => D:\SOFT\OSPanel\domains\MB-migration\src\Core\Utils.php
+    [error_line] => 184
+    [error_trace] => #0 D:\SOFT\OSPanel\domains\MB-migration\src\Layer\Brizy\BrizyAPI.php(456): Brizy\core\Utils::log()
+#1 D:\SOFT\OSPanel\domains\MB-migration\src\Layer\Brizy\BrizyAPI.php(105): Brizy\layer\Brizy\BrizyAPI->httpClient()
+#2 D:\SOFT\OSPanel\domains\MB-migration\src\MigrationPlatform.php(72): Brizy\layer\Brizy\BrizyAPI->getGraphToken()
+#3 D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php(42): MigrationPlatform->run()
+#4 {main}
+    [cache] => Brizy\Builder\VariableCache Object
+        (
+            [cache:Brizy\Builder\VariableCache:private] => Array
+                (
+                    [migrationID] => 02f0488207
+                    [projectId_MB] => 247
+                    [projectId_Brizy] => 4306588
+                    [Status] => Array
+                        (
+                            [Total] => 13
+                            [Current] => 0
+                        )
+
+                    [ProjectFolders] => Array
+                        (
+                            [main] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/247_4306588_02f0488207/
+                            [page] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/247_4306588_02f0488207/page/
+                            [media] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/247_4306588_02f0488207/media/
+                            [log] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/247_4306588_02f0488207/log/
+                            [dump] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/247_4306588_02f0488207/log/dump/
+                        )
+
+                    [settings] => Array
+                        (
+                            [name] => anthologychurchofstudiocity
+                            [title] => Anthology Church of Studio City
+                            [design] => Anthem
+                            [uuid] => 1603d3a4-665b-4e22-bc3b-6193818253f6
+                            [parameter] => Array
+                                (
+                                    [palette] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [tag] => color1
+                                                    [color] => #FFFFFF
+                                                )
+
+                                            [1] => Array
+                                                (
+                                                    [tag] => color2
+                                                    [color] => #2b6db3
+                                                )
+
+                                            [2] => Array
+                                                (
+                                                    [tag] => color3
+                                                    [color] => #505050
+                                                )
+
+                                            [3] => Array
+                                                (
+                                                    [tag] => color4
+                                                    [color] => #003482
+                                                )
+
+                                            [4] => Array
+                                                (
+                                                    [tag] => color5
+                                                    [color] => #c4c4c4
+                                                )
+
+                                            [5] => Array
+                                                (
+                                                    [tag] => color6
+                                                    [color] => #B2D622
+                                                )
+
+                                        )
+
+                                )
+
+                            [favicon] => 1529346088-New_icon.ico
+                        )
+
+                    [GraphApi_Brizy] => https://beta1.brizy.cloud//graphql/4306588
+                )
+
+        )
+
+    [server_data] => Array
+        (
+            [ACSetupSvcPort] => 23210
+            [ACSvcPort] => 17532
+            [ALLUSERSPROFILE] => C:\ProgramData
+            [APPDATA] => C:\Users\Adminяо\AppData\Roaming
+            [CommonProgramFiles] => C:\Program Files\Common Files
+            [CommonProgramFiles(x86)] => C:\Program Files (x86)\Common Files
+            [CommonProgramW6432] => C:\Program Files\Common Files
+            [COMPUTERNAME] => DESKTOP-L8HEGH6
+            [ComSpec] => C:\Windows\system32\cmd.exe
+            [DriverData] => C:\Windows\System32\Drivers\DriverData
+            [FPS_BROWSER_APP_PROFILE_STRING] => Internet Explorer
+            [FPS_BROWSER_USER_PROFILE_STRING] => Default
+            [HOMEDRIVE] => C:
+            [HOMEPATH] => \Users\Adminяо
+            [IDEA_INITIAL_DIRECTORY] => C:\Windows\system32
+            [LOCALAPPDATA] => C:\Users\Adminяо\AppData\Local
+            [LOGONSERVER] => \\DESKTOP-L8HEGH6
+            [NUMBER_OF_PROCESSORS] => 16
+            [NWScheduler] => C&E)H@McQfTjWnZr4u7x!A%D*G-JaNdRgUkXp2s5v8y/B?E(H+MbPeShVmYq3t6w
+            [OneDrive] => C:\Users\Adminяо\OneDrive
+            [OS] => Windows_NT
+            [Path] => C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\WinSCP\;D:\SOFT\OSPanel\modules\php\PHP_5.6;C:\composer;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Users\Adminяо\AppData\Local\Microsoft\WindowsApps;D:\SOFT\OSPanel\modules\php\PHP_8.1;C:\Users\Adminяо\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PhpStorm 2022.3.3\bin;;C:\Users\Adminяо\AppData\Roaming\Composer\vendor\bin;C:\Users\Adminяо\AppData\Local\GitHubDesktop\bin;C:\Users\Adminяо\AppData\Roaming\npm;
+            [PATHEXT] => .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+            [PhpStorm] => C:\Program Files\JetBrains\PhpStorm 2022.3.3\bin;
+            [PROCESSOR_ARCHITECTURE] => AMD64
+            [PROCESSOR_IDENTIFIER] => AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD
+            [PROCESSOR_LEVEL] => 23
+            [PROCESSOR_REVISION] => 6001
+            [ProgramData] => C:\ProgramData
+            [ProgramFiles] => C:\Program Files
+            [ProgramFiles(x86)] => C:\Program Files (x86)
+            [ProgramW6432] => C:\Program Files
+            [PSModulePath] => C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+            [PUBLIC] => C:\Users\Public
+            [RlsSvcPort] => 22112
+            [SESSIONNAME] => Console
+            [SystemDrive] => C:
+            [SystemRoot] => C:\Windows
+            [TEMP] => C:\Users\ADMIN~1\AppData\Local\Temp
+            [TERM] => xterm
+            [TMP] => C:\Users\ADMIN~1\AppData\Local\Temp
+            [USERDOMAIN] => DESKTOP-L8HEGH6
+            [USERDOMAIN_ROAMINGPROFILE] => DESKTOP-L8HEGH6
+            [USERNAME] => Admin
+            [USERPROFILE] => C:\Users\Adminяо
+            [windir] => C:\Windows
+            [PHP_SELF] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+            [SCRIPT_NAME] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+            [SCRIPT_FILENAME] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+            [PATH_TRANSLATED] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+            [DOCUMENT_ROOT] => 
+            [REQUEST_TIME_FLOAT] => 1687248160.2354
+            [REQUEST_TIME] => 1687248160
+            [argv] => Array
+                (
+                    [0] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+                )
+
+            [argc] => 1
+        )
+
+    [post_data] => Array
+        (
+        )
+
+    [get_data] => Array
+        (
+        )
+
+    [cookie_data] => Array
+        (
+        )
+
+    [request_headers] => Array
+        (
+        )
+
+)

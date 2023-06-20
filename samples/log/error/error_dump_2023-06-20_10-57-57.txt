@@ -1,0 +1,98 @@
+Array
+(
+    [error_message] => Class "Brizy\Builder\Layout\Layout" not found
+    [error_code] => 0
+    [error_file] => D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Anthem\Anthem.php
+    [error_line] => 12
+    [error_trace] => #0 D:\SOFT\OSPanel\domains\MB-migration\src\Core\Utils.php(33): require_once()
+#1 D:\SOFT\OSPanel\domains\MB-migration\src\Core\Utils.php(37): Brizy\core\Utils::resourcesInitialization()
+#2 D:\SOFT\OSPanel\domains\MB-migration\src\Core\Utils.php(37): Brizy\core\Utils::resourcesInitialization()
+#3 D:\SOFT\OSPanel\domains\MB-migration\src\Core\Utils.php(37): Brizy\core\Utils::resourcesInitialization()
+#4 D:\SOFT\OSPanel\domains\MB-migration\src\Core\core.php(15): Brizy\core\Utils::resourcesInitialization()
+#5 D:\SOFT\OSPanel\domains\MB-migration\src\MigrationPlatform.php(13): require_once('D:\\SOFT\\OSPanel...')
+#6 D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php(5): require_once('D:\\SOFT\\OSPanel...')
+#7 {main}
+    [cache] => Array
+        (
+        )
+
+    [server_data] => Array
+        (
+            [ACSetupSvcPort] => 23210
+            [ACSvcPort] => 17532
+            [ALLUSERSPROFILE] => C:\ProgramData
+            [APPDATA] => C:\Users\Adminяо\AppData\Roaming
+            [CommonProgramFiles] => C:\Program Files\Common Files
+            [CommonProgramFiles(x86)] => C:\Program Files (x86)\Common Files
+            [CommonProgramW6432] => C:\Program Files\Common Files
+            [COMPUTERNAME] => DESKTOP-L8HEGH6
+            [ComSpec] => C:\Windows\system32\cmd.exe
+            [DriverData] => C:\Windows\System32\Drivers\DriverData
+            [FPS_BROWSER_APP_PROFILE_STRING] => Internet Explorer
+            [FPS_BROWSER_USER_PROFILE_STRING] => Default
+            [HOMEDRIVE] => C:
+            [HOMEPATH] => \Users\Adminяо
+            [IDEA_INITIAL_DIRECTORY] => C:\Windows\system32
+            [LOCALAPPDATA] => C:\Users\Adminяо\AppData\Local
+            [LOGONSERVER] => \\DESKTOP-L8HEGH6
+            [NUMBER_OF_PROCESSORS] => 16
+            [NWScheduler] => C&E)H@McQfTjWnZr4u7x!A%D*G-JaNdRgUkXp2s5v8y/B?E(H+MbPeShVmYq3t6w
+            [OneDrive] => C:\Users\Adminяо\OneDrive
+            [OS] => Windows_NT
+            [Path] => C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\WinSCP\;D:\SOFT\OSPanel\modules\php\PHP_5.6;C:\composer;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Users\Adminяо\AppData\Local\Microsoft\WindowsApps;D:\SOFT\OSPanel\modules\php\PHP_8.1;C:\Users\Adminяо\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PhpStorm 2022.3.3\bin;;C:\Users\Adminяо\AppData\Roaming\Composer\vendor\bin;C:\Users\Adminяо\AppData\Local\GitHubDesktop\bin;C:\Users\Adminяо\AppData\Roaming\npm;
+            [PATHEXT] => .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+            [PhpStorm] => C:\Program Files\JetBrains\PhpStorm 2022.3.3\bin;
+            [PROCESSOR_ARCHITECTURE] => AMD64
+            [PROCESSOR_IDENTIFIER] => AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD
+            [PROCESSOR_LEVEL] => 23
+            [PROCESSOR_REVISION] => 6001
+            [ProgramData] => C:\ProgramData
+            [ProgramFiles] => C:\Program Files
+            [ProgramFiles(x86)] => C:\Program Files (x86)
+            [ProgramW6432] => C:\Program Files
+            [PSModulePath] => C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+            [PUBLIC] => C:\Users\Public
+            [RlsSvcPort] => 22112
+            [SESSIONNAME] => Console
+            [SystemDrive] => C:
+            [SystemRoot] => C:\Windows
+            [TEMP] => C:\Users\ADMIN~1\AppData\Local\Temp
+            [TERM] => xterm
+            [TMP] => C:\Users\ADMIN~1\AppData\Local\Temp
+            [USERDOMAIN] => DESKTOP-L8HEGH6
+            [USERDOMAIN_ROAMINGPROFILE] => DESKTOP-L8HEGH6
+            [USERNAME] => Admin
+            [USERPROFILE] => C:\Users\Adminяо
+            [windir] => C:\Windows
+            [PHP_SELF] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+            [SCRIPT_NAME] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+            [SCRIPT_FILENAME] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+            [PATH_TRANSLATED] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+            [DOCUMENT_ROOT] => 
+            [REQUEST_TIME_FLOAT] => 1687247877.413
+            [REQUEST_TIME] => 1687247877
+            [argv] => Array
+                (
+                    [0] => D:\SOFT\OSPanel\domains\MB-migration\samples\mainMigration.php
+                )
+
+            [argc] => 1
+        )
+
+    [post_data] => Array
+        (
+        )
+
+    [get_data] => Array
+        (
+        )
+
+    [cookie_data] => Array
+        (
+        )
+
+    [request_headers] => Array
+        (
+        )
+
+)

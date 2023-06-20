@@ -1,0 +1,1323 @@
+Array
+(
+    [error_message] => Array to string conversion
+    [error_code] => 0
+    [error_file] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+    [error_line] => 39
+    [error_trace] => #0 D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php(39): Brizy\core\ErrorDump->errorHandler()
+#1 {main}
+    [cache] => Brizy\Builder\VariableCache Object
+        (
+            [cache:Brizy\Builder\VariableCache:private] => Array
+                (
+                    [migrationID] => 83556c2ae4
+                    [projectId_MB] => 256
+                    [projectId_Brizy] => 4306588
+                    [Status] => Array
+                        (
+                            [Total] => 12
+                            [Current] => 0
+                        )
+
+                    [ProjectFolders] => Array
+                        (
+                            [main] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/256_4306588_83556c2ae4/
+                            [page] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/256_4306588_83556c2ae4/page/
+                            [media] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/256_4306588_83556c2ae4/media/
+                            [log] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/256_4306588_83556c2ae4/log/
+                            [dump] => D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/256_4306588_83556c2ae4/log/dump/
+                        )
+
+                    [settings] => Array
+                        (
+                            [name] => eternalrocklutheranchurch
+                            [title] => Eternal Rock Lutheran Church
+                            [design] => Bloom
+                            [uuid] => 2f3546d2-406f-4fe3-a83e-4989a378e038
+                            [parameter] => Array
+                                (
+                                    [palette] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [tag] => color1
+                                                    [color] => #152f3b
+                                                )
+
+                                            [1] => Array
+                                                (
+                                                    [tag] => color2
+                                                    [color] => #52656e
+                                                )
+
+                                            [2] => Array
+                                                (
+                                                    [tag] => color3
+                                                    [color] => #f7f4f7
+                                                )
+
+                                            [3] => Array
+                                                (
+                                                    [tag] => color4
+                                                    [color] => #7f8d94
+                                                )
+
+                                            [4] => Array
+                                                (
+                                                    [tag] => color5
+                                                    [color] => #faf7fa
+                                                )
+
+                                            [5] => Array
+                                                (
+                                                    [tag] => color6
+                                                    [color] => #d6d941
+                                                )
+
+                                        )
+
+                                )
+
+                            [favicon] => 1643305562-favicon.ico
+                        )
+
+                    [GraphApi_Brizy] => https://beta1.brizy.cloud/graphql/4306588
+                    [graphToken] => eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzb3hpNHo5cmdlMHcwbzR3NHM4d2tzYzQ4d29nY2s4cyIsImp0aSI6IjExZmUzZDVhNTg2YzgwM2EwOWU3MzliZGU0YWE1ZDcwMjdkODg5Yzc3NmFiMWUxYWIxOWE0ZDFlMGQ3ZjM1OWVmMTI2ZjM2ZWYyMmI2M2Y3IiwiaWF0IjoxNjg2OTI5MDU5LjAwNjU5NywibmJmIjoxNjg2OTI5MDU5LjAwNjYsImV4cCI6MTcxODU1MTQ1OC45ODk1MTksInN1YiI6IjIwMzEiLCJzY29wZXMiOlsicHJvamVjdCJdfQ.CfrmX4xs5XHlsUKzdOCw766XBNLkrLNnirGIGXUx32Ip4qgL97l0fiKCkryn8EiBtu1BWfXFufBrQleQnq_SvTLUgsfUPVnLBUtZuuv2JloCjz6J6BG_lmCOrsTArSsRqufBZC7-MNbBog4iQOKYRQgFpx-nUOad8PZivRv1qFc
+                    [parameter] => Array
+                        (
+                            [subpalette] => Array
+                                (
+                                    [subpalette1] => Array
+                                        (
+                                            [bg] => #152f3b
+                                            [accent] => #faf7fa
+                                            [text] => #faf7fa
+                                            [header] => #faf7fa
+                                            [link] => #d6d941
+                                            [btn] => #faf7fa
+                                            [gallery-btn] => #d6d941
+                                            [gallery-acc] => #faf7fa
+                                            [input-border] => #faf7fa
+                                            [input-unselected] => #faf7fa
+                                            [input-selected] => #faf7fa
+                                        )
+
+                                    [subpalette2] => Array
+                                        (
+                                            [bg] => #7f8d94
+                                            [accent] => #faf7fa
+                                            [text] => #faf7fa
+                                            [header] => #faf7fa
+                                            [link] => #d6d941
+                                            [btn] => #faf7fa
+                                            [gallery-btn] => #faf7fa
+                                            [gallery-acc] => #d6d941
+                                            [input-border] => #faf7fa
+                                            [input-unselected] => #faf7fa
+                                            [input-selected] => #faf7fa
+                                        )
+
+                                    [subpalette3] => Array
+                                        (
+                                            [bg] => #52656e
+                                            [accent] => #faf7fa
+                                            [text] => #faf7fa
+                                            [header] => #faf7fa
+                                            [link] => #d6d941
+                                            [btn] => #faf7fa
+                                            [gallery-btn] => #faf7fa
+                                            [gallery-acc] => #d6d941
+                                            [input-border] => #faf7fa
+                                            [input-unselected] => #faf7fa
+                                            [input-selected] => #faf7fa
+                                        )
+
+                                    [subpalette4] => Array
+                                        (
+                                            [bg] => #f7f4f7
+                                            [accent] => #faf7fa
+                                            [text] => #faf7fa
+                                            [header] => #faf7fa
+                                            [link] => #d6d941
+                                            [btn] => #faf7fa
+                                            [gallery-btn] => #faf7fa
+                                            [gallery-acc] => #d6d941
+                                            [input-border] => #faf7fa
+                                            [input-unselected] => #faf7fa
+                                            [input-selected] => #faf7fa
+                                        )
+
+                                )
+
+                        )
+
+                    [mainSection] => Array
+                        (
+                            [footer] => Array
+                                (
+                                    [typeSection] => main
+                                    [category] => text
+                                    [settings] => Array
+                                        (
+                                            [color] => Array
+                                                (
+                                                    [subpalette] => Array
+                                                        (
+                                                            [bg] => #7f8d94
+                                                            [accent] => #faf7fa
+                                                            [text] => #faf7fa
+                                                            [header] => #faf7fa
+                                                            [link] => #d6d941
+                                                            [btn] => #faf7fa
+                                                            [gallery-btn] => #faf7fa
+                                                            [gallery-acc] => #d6d941
+                                                            [input-border] => #faf7fa
+                                                            [input-unselected] => #faf7fa
+                                                            [input-selected] => #faf7fa
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [items] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [id] => 39971
+                                                    [category] => text
+                                                    [position] => 0
+                                                    [settings] => Array
+                                                        (
+                                                        )
+
+                                                    [content] => <p style="font-weight: 300; font-size: 1.25em;"><br></p><p style="font-weight: 700; font-size: 2.4392em;"><a class="socialIconLink cloverlinks" href="https://www.facebook.com/Eternal.Rock.Lutheran" data-location="external" data-button="false" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran" data-category="link" target="_blank" style="color: rgb(55, 103, 155); font-size: 1.3345em;"><span class="clovericons fab" data-icon="facebook" data-srtext="Facebook"></span></a> &nbsp; &nbsp;<a class="socialIconLink cloverlinks" href="https://www.youtube.com/channel/UCWb9TgqKiX8MgBffjQKgyhw" data-location="external" data-button="false" data-detail="https://www.youtube.com/channel/UCWb9TgqKiX8MgBffjQKgyhw" data-category="link" target="_blank" style="color: rgb(55, 103, 155);"><span class="clovericons fab clovercustom" data-icon="youtube" data-srtext="YouTube" style="font-size: 1.3345em;"></span></a><span class="clovercustom" style="font-size: 1.3345em;"> </span>&nbsp; &nbsp;<a class="socialIconLink cloverlinks" href="https://www.instagram.com/eternalrock_castlerock/" data-location="external" data-button="false" data-detail="https://www.instagram.com/eternalrock_castlerock/" data-category="link" target="_blank" style="color: rgb(55, 103, 155); font-size: 1.3345em;"><span class="clovericons fab" data-icon="instagram" data-srtext="Instagram"></span> </a><br></p><p style="font-weight: 700; font-size: 1.0417em;"><br></p><p><a href="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-location="external" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-category="link" target="_blank" class="cloverlinks">
+</a></p><p style="font-weight: 700; font-size: 1.9397em;"><a href="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-location="external" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-category="link" target="_blank" class="cloverlinks" style="color: rgb(247, 247, 239);">FOLLOW JESUS: LIVE LOVE</a></p><p><a href="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-location="external" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-category="link" target="_blank" class="cloverlinks">
+</a></p><p style="color: rgb(57, 101, 130);"><a href="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-location="external" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-category="link" target="_blank" class="cloverlinks"><span class="clovercustom" style="color: rgb(250, 250, 245);">Our mission at Eternal Rock is to follow Jesus in worship and Bible stud</span><span class="clovercustom" style="color: rgb(250, 250, 245);"><span class="clovercustom" style="color: rgb(250, 250, 245);">y </span>and Live His love by serving others. &nbsp;We take the Bible seriously</span></a><span class="clovercustom" style="color: rgb(250, 250, 245);"> and seek to grow in our faith through God's Word and Sacraments at church as well as our personal study at home.&nbsp;&nbsp;&nbsp;</span></p><p style="color: rgb(57, 101, 130);"><span class="clovercustom" style="color: rgb(250, 250, 245);"><br></span></p><p style="color: rgb(57, 101, 130);"><span class="clovercustom" style="color: rgb(250, 250, 245);"><a href="/next-steps" data-location="existing" data-category="link" target="_self" data-detail="30073" class="cloverlinks" style="font-weight: 700;" data-button="false">Learn more about what we believe.</a><br></span></p><p style="color: rgb(57, 101, 130);"><span class="clovercustom" style="color: rgb(250, 250, 245);"><br></span></p><p style="color: rgb(57, 101, 130); font-weight: 700; font-size: 1.8148em;"><span class="clovercustom" style="color: rgb(250, 250, 245);">Eternal Rock Lutheran Church</span></p><p style="color: rgb(57, 101, 130); font-style: italic;"><span class="clovercustom" style="color: rgb(250, 250, 245);">Worship every Sunday at 10:00am </span></p><p style="font-size: 1.3125em;"><font color="#fafaf5">2 Phelps Street</font></p><p style="font-size: 1.3125em;"><font color="#fafaf5">Castle Rock, CO 80104</font></p><p style="color: rgb(57, 101, 130); font-size: 1.3125em;"><span class="clovercustom" style="color: rgb(250, 250, 245);"><br></span></p><p style="color: rgb(57, 101, 130); font-size: 1.3125em;"><span class="clovercustom" style="color: rgb(250, 250, 245);">tel. 303-638-5434 &nbsp;</span></p><p style="color: rgb(57, 101, 130); font-size: 1.3125em;"><span class="clovercustom" style="color: rgb(250, 250, 245);">admin@eternalrock.org</span></p><p style="color: rgb(57, 101, 130);"><br></p><p><a href="https://er.ccbchurch.com/login.php" data-location="external" data-detail="https://er.ccbchurch.com/login.php" data-category="link" target="_blank" class="cloverlinks">&nbsp;&nbsp;<span class="clovercustom" style="font-style: italic;">my</span>ER (online community) login</a></p><p><br></p>
+                                                )
+
+                                        )
+
+                                )
+
+                            [header] => Array
+                                (
+                                    [typeSection] => main
+                                    [category] => photo
+                                    [settings] => Array
+                                        (
+                                        )
+
+                                    [items] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [id] => 39972
+                                                    [category] => photo
+                                                    [position] => 0
+                                                    [settings] => Array
+                                                        (
+                                                            [image] => Array
+                                                                (
+                                                                    [height] => 360
+                                                                    [width] => 540
+                                                                )
+
+                                                        )
+
+                                                    [content] => 44b284d0a9c721b4d89d214a1712245e.png
+                                                    [imageFileName] => 5714ffe0-9398-47e3-aa8c-9b0303f318e4.png
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                    [mainCollectionType] => /collection_types/30388
+                    [ListPages] => Array
+                        (
+                            [home] => /collection_items/37961
+                            [start-here] => /collection_items/37967
+                            [next-steps] => /collection_items/37968
+                            [watch-listen] => /collection_items/37969
+                            [give] => /collection_items/37970
+                            [bible-basics-online] => /collection_items/37971
+                            [bible-classes] => /collection_items/37972
+                            [kids-youth] => /collection_items/37973
+                            [staff] => /collection_items/37974
+                            [myer-online-community] => /collection_items/37975
+                            [transformed-by-grace] => /collection_items/37976
+                            [church-planter-weekend] => /collection_items/37977
+                        )
+
+                    [currentPageOnWork] => /collection_items/37977
+                    [menuList] => Array
+                        (
+                            [id] => 4306590
+                            [uid] => 81d78f8d871c47efc16d1da86110d8e498e1ba1eab4efd56bcad27ce596aab52
+                            [name] => mainMenu
+                            [create] => 
+                            [list] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 2929
+                                            [slug] => home
+                                            [name] => Home
+                                            [collection] => /collection_items/37961
+                                            [position] => 1
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 1060661
+                                            [slug] => start-here
+                                            [name] => Start Here
+                                            [collection] => /collection_items/37967
+                                            [position] => 2
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [id] => 30073
+                                            [slug] => next-steps
+                                            [name] => Next Steps
+                                            [collection] => /collection_items/37968
+                                            [position] => 3
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [3] => Array
+                                        (
+                                            [id] => 438528
+                                            [slug] => watch-listen
+                                            [name] => Watch & Listen
+                                            [collection] => /collection_items/37969
+                                            [position] => 4
+                                            [landing] => 1
+                                            [parentSettings] => {"tags":null}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [4] => Array
+                                        (
+                                            [id] => 2932
+                                            [slug] => give
+                                            [name] => Give
+                                            [collection] => /collection_items/37970
+                                            [position] => 5
+                                            [landing] => 1
+                                            [parentSettings] => {"donations_settings":{"donations":{"url":"https://er.ccbchurch.com/login.php"}}}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [5] => Array
+                                        (
+                                            [id] => 1097993
+                                            [slug] => bible-classes
+                                            [name] => Bible Classes
+                                            [collection] => /collection_items/37972
+                                            [position] => 6
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                    [0] => Array
+                                                        (
+                                                            [id] => 848334
+                                                            [slug] => bible-basics-online
+                                                            [name] => Bible Basics Online
+                                                            [collection] => /collection_items/37971
+                                                            [position] => 1
+                                                            [landing] => 1
+                                                            [parentSettings] => {}
+                                                            [child] => Array
+                                                                (
+                                                                )
+
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [6] => Array
+                                        (
+                                            [id] => 926764
+                                            [slug] => kids-youth
+                                            [name] => Kids & Youth
+                                            [collection] => /collection_items/37973
+                                            [position] => 7
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [7] => Array
+                                        (
+                                            [id] => 3011
+                                            [slug] => staff
+                                            [name] => Staff
+                                            [collection] => /collection_items/37974
+                                            [position] => 12
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [8] => Array
+                                        (
+                                            [id] => 34255
+                                            [slug] => myer-online-community
+                                            [name] => myER (online community)
+                                            [collection] => /collection_items/37975
+                                            [position] => 13
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [9] => Array
+                                        (
+                                            [id] => 527150
+                                            [slug] => transformed-by-grace
+                                            [name] => Transformed by Grace
+                                            [collection] => /collection_items/37976
+                                            [position] => 14
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                    [10] => Array
+                                        (
+                                            [id] => 759100
+                                            [slug] => church-planter-weekend
+                                            [name] => Church Planter Weekend
+                                            [collection] => /collection_items/37977
+                                            [position] => 17
+                                            [landing] => 1
+                                            [parentSettings] => {}
+                                            [child] => Array
+                                                (
+                                                )
+
+                                        )
+
+                                )
+
+                            [data] => [{"id":"\/collection_items\/37961","items":[],"isNewTab":false,"label":"Home","uid":"07d391e9c3f0285929e8ebbcfda99386"},{"id":"\/collection_items\/37967","items":[],"isNewTab":false,"label":"Start Here","uid":"591d371d9ad0da9b76840d749450007e"},{"id":"\/collection_items\/37968","items":[],"isNewTab":false,"label":"Next Steps","uid":"af125b0ab6e231298dfc362463d0ec7f"},{"id":"\/collection_items\/37969","items":[],"isNewTab":false,"label":"Watch & Listen","uid":"860907797629da44542cc9449c859211"},{"id":"\/collection_items\/37970","items":[],"isNewTab":false,"label":"Give","uid":"157d60e8cffdda568d56d070e063079e"},{"id":"\/collection_items\/37972","items":[{"id":"\/collection_items\/37971","items":[],"isNewTab":false,"label":"Bible Basics Online","uid":"47523abc7dd9f02b724873eabedc2def"}],"isNewTab":false,"label":"Bible Classes","uid":"6b58ead3502d2567361260c4c0b9df51"},{"id":"\/collection_items\/37973","items":[],"isNewTab":false,"label":"Kids & Youth","uid":"c75cc5fa319aa19b01a9d5326562a1d8"},{"id":"\/collection_items\/37974","items":[],"isNewTab":false,"label":"Staff","uid":"66b94f6f2622f055aa823119af50aa50"},{"id":"\/collection_items\/37975","items":[],"isNewTab":false,"label":"myER (online community)","uid":"9e734f605c02c4a155e4194e343b688f"},{"id":"\/collection_items\/37976","items":[],"isNewTab":false,"label":"Transformed by Grace","uid":"14135f64dfc2b553e80aeef6a4824765"},{"id":"\/collection_items\/37977","items":[],"isNewTab":false,"label":"Church Planter Weekend","uid":"2d2a637192d786413b86bd571343c7d4"}]
+                        )
+
+                    [tookPage] => Array
+                        (
+                            [id] => 2929
+                            [slug] => home
+                            [name] => Home
+                            [collection] => /collection_items/37961
+                            [position] => 1
+                            [landing] => 1
+                            [parentSettings] => {}
+                            [child] => Array
+                                (
+                                )
+
+                        )
+
+                    [Sections] => Array
+                        (
+                            [3986649] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 16996535
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [used_fonts] => Array
+                                                        (
+                                                            [0] => oswald_stencil
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => <p style="font-size: 2.1446em; letter-spacing: -0.1632px; line-height: 1.3em; font-family: &quot;Oswald Stencil&quot;, sans-serif; font-weight: 400;"><a href="https://live.eternalrock.org" role="button" data-location="external" data-detail="https://live.eternalrock.org" data-category="button" target="_self" class="sites-button cloverlinks" style="font-size: 0.5464em; font-weight: 400;">CLICK HERE FOR LIVESTREAM</a></p><p align="center" style=""><br></p>
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 18067589
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [id] => 18067590
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [3] => Array
+                                        (
+                                            [id] => 16996536
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p style="font-size: 2.1446em; font-weight: 500;"><br></p>
+                                        )
+
+                                )
+
+                            [91214] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 378087
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 378088
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p><br><br></p>
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [id] => 378089
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p align="center" style="font-size: 4.473em;"><br></p><p align="center" style="font-size: 3.6152em;">God's Word for your everyday...God's Word every week.<br></p><p style="letter-spacing: -1.50144px; line-height: 60.0576px; font-size: 1.9821em;"><br></p><p style="letter-spacing: -1.50144px; line-height: 60.0576px; font-size: 1.9821em;">10:00am Sunday Worship </p><p style="letter-spacing: -1.50144px; line-height: 60.0576px; font-size: 1.8542em;">2 PHELPS STREET<br></p><p style="letter-spacing: -1.50144px; line-height: 1.2em; font-size: 1.8542em;">Castle Rock, CO 80104</p><p style="letter-spacing: -1.50144px; line-height: 1.2em; font-size: 1.8542em;"><a href="https://www.google.com/maps/dir//Eternal+Rock+Lutheran+Church,+2575+Meadows+Blvd,+Castle+Rock,+CO+80109/@39.4085161,-104.8917379,17z/data=!4m13!1m4!3m3!1s0x876c999fdbf6391d:0xb21bb263ef14c62c!2sEternal+Rock+Lutheran+Church!3b1!4m7!1m0!1m5!1m1!1s0x876c999fdbf6391d:0xb21bb263ef14c62c!2m2!1d-104.8917379!2d39.4085161" data-location="external" data-detail="https://www.google.com/maps/dir//Eternal+Rock+Lutheran+Church,+2575+Meadows+Blvd,+Castle+Rock,+CO+80109/@39.4085161,-104.8917379,17z/data=!4m13!1m4!3m3!1s0x876c999fdbf6391d:0xb21bb263ef14c62c!2sEternal+Rock+Lutheran+Church!3b1!4m7!1m0!1m5!1m1!1s0x876c999fdbf6391d:0xb21bb263ef14c62c!2m2!1d-104.8917379!2d39.4085161" data-category="link" target="_blank" class="cloverlinks">​</a><a href="https://goo.gl/maps/b7feuj45c4H2" data-location="external" data-detail="https://goo.gl/maps/b7feuj45c4H2" data-category="link" target="_blank" class="cloverlinks" style="font-size: 0.6897em;"><span class="socialIconSymbol clovercustom"></span>​</a></p>
+                                        )
+
+                                )
+
+                            [10531] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 41166
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p>Get Connected at Eternal Rock</p>
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 41167
+                                            [category] => list
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [id] => 41171
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type the main content for this grid section here. This is just example text to show you what it will look like when you enter text content into this section. Your unique, authentic, and appropriate text will be filled into this section. Once you click into this section, you will see the filler text disappear, and you can begin typing your real content.</p>
+                                        )
+
+                                    [3] => Array
+                                        (
+                                            [id] => 41170
+                                            [category] => list
+                                            [item_type] => 
+                                            [order_by] => 3
+                                            [parent_id] => 
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [4] => Array
+                                        (
+                                            [id] => 96444
+                                            [category] => list
+                                            [item_type] => 
+                                            [order_by] => 4
+                                            [parent_id] => 
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [5] => Array
+                                        (
+                                            [id] => 377059
+                                            [category] => list
+                                            [item_type] => 
+                                            [order_by] => 5
+                                            [parent_id] => 
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [6] => Array
+                                        (
+                                            [id] => 14461553
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 14461552
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [7] => Array
+                                        (
+                                            [id] => 14461554
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 14461552
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>List Item</p>
+                                        )
+
+                                    [8] => Array
+                                        (
+                                            [id] => 14461555
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 14461552
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [9] => Array
+                                        (
+                                            [id] => 14461546
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 14461545
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [10] => Array
+                                        (
+                                            [id] => 14461547
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 14461545
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>List Item</p>
+                                        )
+
+                                    [11] => Array
+                                        (
+                                            [id] => 14461548
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 14461545
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [12] => Array
+                                        (
+                                            [id] => 14325824
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 14325823
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [13] => Array
+                                        (
+                                            [id] => 14325825
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 14325823
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>List Item</p>
+                                        )
+
+                                    [14] => Array
+                                        (
+                                            [id] => 14325826
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 14325823
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [15] => Array
+                                        (
+                                            [id] => 14290393
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 14290392
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [16] => Array
+                                        (
+                                            [id] => 14290394
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 14290392
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>List Item</p>
+                                        )
+
+                                    [17] => Array
+                                        (
+                                            [id] => 14290395
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 14290392
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [18] => Array
+                                        (
+                                            [id] => 377066
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 377063
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => 
+                                        )
+
+                                    [19] => Array
+                                        (
+                                            [id] => 377065
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 377063
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>List Item</p>
+                                        )
+
+                                    [20] => Array
+                                        (
+                                            [id] => 377064
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 377063
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [21] => Array
+                                        (
+                                            [id] => 377062
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 377059
+                                            [settings] => Array
+                                                (
+                                                    [image] => Array
+                                                        (
+                                                            [height] => 466
+                                                            [width] => 466
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => c252617a-66ed-4903-963b-2bd85c3a44e2.png
+                                        )
+
+                                    [22] => Array
+                                        (
+                                            [id] => 377061
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 377059
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p>myER (Online Community Login)</p>
+                                        )
+
+                                    [23] => Array
+                                        (
+                                            [id] => 377060
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 377059
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [24] => Array
+                                        (
+                                            [id] => 96447
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 96444
+                                            [settings] => Array
+                                                (
+                                                    [image] => Array
+                                                        (
+                                                            [height] => 466
+                                                            [width] => 466
+                                                        )
+
+                                                )
+
+                                            [link] => give
+                                            [content] => 82b513be-bf0c-4c53-9552-a8295d326b5e.png
+                                        )
+
+                                    [25] => Array
+                                        (
+                                            [id] => 96446
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 96444
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p><a href="https://pushpay.com/g/eternalrock" data-location="external" data-button="false" data-detail="https://pushpay.com/g/eternalrock" data-category="link" target="_blank" class="cloverlinks" style="color: rgb(252, 252, 249);">GIVE NOW</a></p>
+                                        )
+
+                                    [26] => Array
+                                        (
+                                            [id] => 96445
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 96444
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [27] => Array
+                                        (
+                                            [id] => 41183
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 41170
+                                            [settings] => Array
+                                                (
+                                                    [image] => Array
+                                                        (
+                                                            [height] => 466
+                                                            [width] => 466
+                                                        )
+
+                                                )
+
+                                            [link] => watch-listen
+                                            [content] => df452bec-b43c-4bcc-ba55-c78c0e4f5910.png
+                                        )
+
+                                    [28] => Array
+                                        (
+                                            [id] => 41182
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 41170
+                                            [settings] => Array
+                                                (
+                                                    [used_fonts] => Array
+                                                        (
+                                                            [0] => proxima_nova_regular
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => <p style="font-style: italic; font-family: &quot;Proxima Nova&quot;, &quot;Proxima Nova Regular&quot;, sans-serif; font-weight: 200; line-height: 1em;">Watch &amp; Listen</p><p style="font-style: italic; font-family: &quot;Proxima Nova&quot;, &quot;Proxima Nova Regular&quot;, sans-serif; font-weight: 200; line-height: 1em;"><br></p>
+                                        )
+
+                                    [29] => Array
+                                        (
+                                            [id] => 41181
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 41170
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [30] => Array
+                                        (
+                                            [id] => 41180
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 41169
+                                            [settings] => Array
+                                                (
+                                                    [image] => Array
+                                                        (
+                                                            [height] => 466
+                                                            [width] => 466
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => 14dec927-f353-4d02-8152-d9d8cbc1bde6.png
+                                        )
+
+                                    [31] => Array
+                                        (
+                                            [id] => 41179
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 41169
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>List Item</p>
+                                        )
+
+                                    [32] => Array
+                                        (
+                                            [id] => 41178
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 41169
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [33] => Array
+                                        (
+                                            [id] => 41177
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 41168
+                                            [settings] => Array
+                                                (
+                                                    [image] => Array
+                                                        (
+                                                            [height] => 466
+                                                            [width] => 466
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => 54f5c258-4652-4d9a-84e8-c15e2892e2cc.png
+                                        )
+
+                                    [34] => Array
+                                        (
+                                            [id] => 41176
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 41168
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p>Media</p>
+                                        )
+
+                                    [35] => Array
+                                        (
+                                            [id] => 41175
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 41168
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                    [36] => Array
+                                        (
+                                            [id] => 41174
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 41167
+                                            [settings] => Array
+                                                (
+                                                    [image] => Array
+                                                        (
+                                                            [height] => 466
+                                                            [width] => 466
+                                                        )
+
+                                                )
+
+                                            [link] => next-steps
+                                            [content] => 2b5c7902-f369-42cb-9503-97039c08c8fd.png
+                                        )
+
+                                    [37] => Array
+                                        (
+                                            [id] => 41173
+                                            [category] => text
+                                            [item_type] => title
+                                            [order_by] => 1
+                                            [parent_id] => 41167
+                                            [settings] => Array
+                                                (
+                                                )
+
+                                            [link] => 
+                                            [content] => <p>Next Steps</p>
+                                        )
+
+                                    [38] => Array
+                                        (
+                                            [id] => 41172
+                                            [category] => text
+                                            [item_type] => body
+                                            [order_by] => 2
+                                            [parent_id] => 41167
+                                            [settings] => 
+                                            [link] => 
+                                            [content] => <p class='finaldraft_placeholder'>Type content here...</p>
+                                        )
+
+                                )
+
+                            [2966322] => Array
+                                (
+                                    [0] => Array
+                                        (
+                                            [id] => 12300367
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 0
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 
+                                                            [slide_width] => 
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => 1e643f90-aa77-45fc-ac4c-b72d05adf099.JPG
+                                        )
+
+                                    [1] => Array
+                                        (
+                                            [id] => 12300368
+                                            [category] => photo
+                                            [item_type] => 
+                                            [order_by] => 1
+                                            [parent_id] => 
+                                            [settings] => Array
+                                                (
+                                                    [slide] => Array
+                                                        (
+                                                            [fit] => 
+                                                            [mobile_fit] => 
+                                                            [slide_height] => 
+                                                            [slide_width] => 
+                                                            [mobile_height] => 
+                                                            [mobile_width] => 
+                                                        )
+
+                                                )
+
+                                            [link] => 
+                                            [content] => c60948ee-3018-4d01-aa7b-5040ffa7ccec.JPG
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [server_data] => Array
+        (
+            [ACSetupSvcPort] => 23210
+            [ACSvcPort] => 17532
+            [ALLUSERSPROFILE] => C:\ProgramData
+            [APPDATA] => C:\Users\Adminяо\AppData\Roaming
+            [CommonProgramFiles] => C:\Program Files\Common Files
+            [CommonProgramFiles(x86)] => C:\Program Files (x86)\Common Files
+            [CommonProgramW6432] => C:\Program Files\Common Files
+            [COMPUTERNAME] => DESKTOP-L8HEGH6
+            [ComSpec] => C:\Windows\system32\cmd.exe
+            [DriverData] => C:\Windows\System32\Drivers\DriverData
+            [FPS_BROWSER_APP_PROFILE_STRING] => Internet Explorer
+            [FPS_BROWSER_USER_PROFILE_STRING] => Default
+            [HOMEDRIVE] => C:
+            [HOMEPATH] => \Users\Adminяо
+            [IDEA_INITIAL_DIRECTORY] => C:\Windows\system32
+            [LOCALAPPDATA] => C:\Users\Adminяо\AppData\Local
+            [LOGONSERVER] => \\DESKTOP-L8HEGH6
+            [NUMBER_OF_PROCESSORS] => 16
+            [NWScheduler] => C&E)H@McQfTjWnZr4u7x!A%D*G-JaNdRgUkXp2s5v8y/B?E(H+MbPeShVmYq3t6w
+            [OneDrive] => C:\Users\Adminяо\OneDrive
+            [OS] => Windows_NT
+            [Path] => C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\WinSCP\;D:\SOFT\OSPanel\modules\php\PHP_5.6;C:\composer;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Users\Adminяо\AppData\Local\Microsoft\WindowsApps;D:\SOFT\OSPanel\modules\php\PHP_8.1;C:\Users\Adminяо\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PhpStorm 2022.3.3\bin;;C:\Users\Adminяо\AppData\Roaming\Composer\vendor\bin;C:\Users\Adminяо\AppData\Local\GitHubDesktop\bin;C:\Users\Adminяо\AppData\Roaming\npm;
+            [PATHEXT] => .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+            [PhpStorm] => C:\Program Files\JetBrains\PhpStorm 2022.3.3\bin;
+            [PROCESSOR_ARCHITECTURE] => AMD64
+            [PROCESSOR_IDENTIFIER] => AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD
+            [PROCESSOR_LEVEL] => 23
+            [PROCESSOR_REVISION] => 6001
+            [ProgramData] => C:\ProgramData
+            [ProgramFiles] => C:\Program Files
+            [ProgramFiles(x86)] => C:\Program Files (x86)
+            [ProgramW6432] => C:\Program Files
+            [PROMPT] => $P$G
+            [PSModulePath] => C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+            [PUBLIC] => C:\Users\Public
+            [RlsSvcPort] => 22112
+            [SESSIONNAME] => Console
+            [SystemDrive] => C:
+            [SystemRoot] => C:\Windows
+            [TEMP] => C:\Users\ADMIN~1\AppData\Local\Temp
+            [TERM] => xterm
+            [TMP] => C:\Users\ADMIN~1\AppData\Local\Temp
+            [USERDOMAIN] => DESKTOP-L8HEGH6
+            [USERDOMAIN_ROAMINGPROFILE] => DESKTOP-L8HEGH6
+            [USERNAME] => Admin
+            [USERPROFILE] => C:\Users\Adminяо
+            [windir] => C:\Windows
+            [PHP_SELF] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+            [SCRIPT_NAME] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+            [SCRIPT_FILENAME] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+            [PATH_TRANSLATED] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+            [DOCUMENT_ROOT] => 
+            [REQUEST_TIME_FLOAT] => 1686929046.4035
+            [REQUEST_TIME] => 1686929046
+            [argv] => Array
+                (
+                    [0] => D:\SOFT\OSPanel\domains\MB-migration\mainMigration.php
+                    [1] => {"MB_ID":78305,"BZ_ID":0}
+                )
+
+            [argc] => 2
+        )
+
+    [post_data] => Array
+        (
+        )
+
+    [get_data] => Array
+        (
+        )
+
+    [cookie_data] => Array
+        (
+        )
+
+    [request_headers] => Array
+        (
+        )
+
+)

@@ -1,7 +1,7 @@
 <?php
 namespace Brizy;
 
-require_once(__DIR__ . '/src/Core.php');
+require_once(__DIR__ . '/lib/Core.php');
 $brizyAPI   = new BrizyAPI();
 
 

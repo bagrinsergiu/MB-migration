@@ -1,0 +1,437 @@
+[2023-06-07 15:32:25] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-06-07 15:32:25] [PROCESS]: [MIGRATION] Start Process!
+[2023-06-07 15:32:25] [PROCESS]: [Cache] Initialization
+[2023-06-07 15:32:25] [PROCESS]: [BrizyAPI] Initialization
+[2023-06-07 15:32:25] [PROCESS]: [MIGRATION] Migration ID: 0037b83116
+[2023-06-07 15:32:25] [PROCESS]: [Parser Module] Initialization
+[2023-06-07 15:32:25] [PROCESS]: [DBConnector] Initialization
+[2023-06-07 15:32:25] [PROCESS]: [PostgresSQL] Initialization
+[2023-06-07 15:32:26] [PROCESS]: [PostgresSQL] Connection success
+[2023-06-07 15:32:26] [PROCESS]: [PostgresSQL Module] READY
+[2023-06-07 15:32:26] [PROCESS]: [DBConnector Module] READY
+[2023-06-07 15:32:26] [PROCESS]: [Parser Module] READY
+[2023-06-07 15:32:26] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_0037b83116/media/
+[2023-06-07 15:32:26] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_0037b83116/log/dump/
+[2023-06-07 15:32:26] [INFO]: [getParentPages] Get parent pages
+[2023-06-07 15:32:26] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:32:27] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:32:27] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:32:28] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:32:29] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:32:29] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:32:30] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:32:30] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:32:31] [INFO]: [getSite] Get site
+[2023-06-07 15:32:32] [INFO]: [getGraphToken] get Token
+[2023-06-07 15:32:33] [INFO]: [getParentPages] Get main Section
+[2023-06-07 15:32:35] [INFO]: [createMenu] Upload Logo menu
+[2023-06-07 15:32:35] [INFO]: [uploadPicturesFromSections] Start upload image
+[2023-06-07 15:32:35] [INFO]: [media] Found new image
+[2023-06-07 15:32:35] [INFO]: [getPisturesUrl] Created url pictures: https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/site-images/5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png Type folder main
+[2023-06-07 15:32:35] [INFO]: [uploadPicturesFromSections] Check image address
+[2023-06-07 15:32:35] [INFO]: [downloadImage] Loading a picture
+[2023-06-07 15:32:36] [INFO]: [media] Upload image response: {"id":4305511,"uid":"6a0ab08a7023648c163039c29845f2dfdc498c64424f1ef51c966a623ca8ea12","name":"74771f8127c2ebc9569411c2dfcecf6a.png","filename":"5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png"}
+[2023-06-07 15:32:36] [INFO]: [media] Success upload image fileName: 5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png srcName: 74771f8127c2ebc9569411c2dfcecf6a.png
+[2023-06-07 15:32:40] [INFO]: [createBlankPages] Start created pages
+[2023-06-07 15:32:40] [INFO]: [createBlankPages] Success created pages | ID: 1183206 | Name page: HOME | Slug: home
+[2023-06-07 15:32:40] [INFO]: [createBlankPages] Success created pages | ID: 1183205 | Name page: Our Mission | Slug: our-mission
+[2023-06-07 15:32:40] [INFO]: [createBlankPages] Success created pages | ID: 1183200 | Name page: Fellowship | Slug: fellowship
+[2023-06-07 15:32:40] [INFO]: [createBlankPages] Success created pages | ID: 1183203 | Name page: Serve | Slug: serve
+[2023-06-07 15:32:40] [INFO]: [createBlankPages] Success created pages | ID: 1183202 | Name page: Our Staff | Slug: our-staff
+[2023-06-07 15:32:40] [INFO]: [createBlankPages] Success created pages | ID: 1183198 | Name page: Resources | Slug: resources
+[2023-06-07 15:32:40] [INFO]: [createBlankPages] Success created pages | ID: 1183197 | Name page: Connect | Slug: connect
+[2023-06-07 15:32:40] [INFO]: [createBlankPages] Success created pages | ID: 1183196 | Name page: Donate | Slug: donate
+[2023-06-07 15:32:40] [INFO]: [createMenuStructure] Create menu structure
+[2023-06-07 15:32:40] [INFO]: [createMenu] Request to create menu
+[2023-06-07 15:32:41] [INFO]: [createMenu] Created menu
+[2023-06-07 15:32:41] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-06-07 15:32:41] [INFO]: [PROCESS] Work time: 00:00:15 (seconds: 15.9)
+[2023-06-07 15:32:41] [INFO]: [PROCESS] END
+[2023-06-07 15:33:13] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-06-07 15:33:13] [PROCESS]: [MIGRATION] Start Process!
+[2023-06-07 15:33:13] [PROCESS]: [Cache] Initialization
+[2023-06-07 15:33:13] [PROCESS]: [BrizyAPI] Initialization
+[2023-06-07 15:33:13] [PROCESS]: [MIGRATION] Migration ID: 7fe7be57ba
+[2023-06-07 15:33:13] [PROCESS]: [Parser Module] Initialization
+[2023-06-07 15:33:13] [PROCESS]: [DBConnector] Initialization
+[2023-06-07 15:33:13] [PROCESS]: [PostgresSQL] Initialization
+[2023-06-07 15:33:14] [PROCESS]: [PostgresSQL] Connection success
+[2023-06-07 15:33:14] [PROCESS]: [PostgresSQL Module] READY
+[2023-06-07 15:33:14] [PROCESS]: [DBConnector Module] READY
+[2023-06-07 15:33:14] [PROCESS]: [Parser Module] READY
+[2023-06-07 15:33:14] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_7fe7be57ba/media/
+[2023-06-07 15:33:14] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_7fe7be57ba/log/dump/
+[2023-06-07 15:33:14] [INFO]: [getParentPages] Get parent pages
+[2023-06-07 15:33:15] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:33:16] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:33:16] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:33:17] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:33:17] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:33:18] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:33:18] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:33:19] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:33:19] [INFO]: [getSite] Get site
+[2023-06-07 15:33:21] [INFO]: [getGraphToken] get Token
+[2023-06-07 15:33:21] [INFO]: [getParentPages] Get main Section
+[2023-06-07 15:33:23] [INFO]: [createMenu] Upload Logo menu
+[2023-06-07 15:33:23] [INFO]: [uploadPicturesFromSections] Start upload image
+[2023-06-07 15:33:23] [INFO]: [media] Found new image
+[2023-06-07 15:33:23] [INFO]: [getPisturesUrl] Created url pictures: https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/site-images/5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png Type folder main
+[2023-06-07 15:33:23] [INFO]: [uploadPicturesFromSections] Check image address
+[2023-06-07 15:33:23] [INFO]: [downloadImage] Loading a picture
+[2023-06-07 15:33:25] [INFO]: [media] Upload image response: {"id":4305512,"uid":"1a2a5d4207b85c2f0e985e643aa890257f3344c90160968182943edb629dcdae","name":"5386e9c52d002c032a4d21909b7108b5.png","filename":"5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png"}
+[2023-06-07 15:33:25] [INFO]: [media] Success upload image fileName: 5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png srcName: 5386e9c52d002c032a4d21909b7108b5.png
+[2023-06-07 15:33:27] [INFO]: [createBlankPages] Start created pages
+[2023-06-07 15:33:27] [INFO]: [createBlankPages] Success created pages | ID: 1183206 | Name page: HOME | Slug: home
+[2023-06-07 15:33:27] [INFO]: [createBlankPages] Success created pages | ID: 1183205 | Name page: Our Mission | Slug: our-mission
+[2023-06-07 15:33:27] [INFO]: [createBlankPages] Success created pages | ID: 1183200 | Name page: Fellowship | Slug: fellowship
+[2023-06-07 15:33:27] [INFO]: [createBlankPages] Success created pages | ID: 1183203 | Name page: Serve | Slug: serve
+[2023-06-07 15:33:27] [INFO]: [createBlankPages] Success created pages | ID: 1183202 | Name page: Our Staff | Slug: our-staff
+[2023-06-07 15:33:27] [INFO]: [createBlankPages] Success created pages | ID: 1183198 | Name page: Resources | Slug: resources
+[2023-06-07 15:33:27] [INFO]: [createBlankPages] Success created pages | ID: 1183197 | Name page: Connect | Slug: connect
+[2023-06-07 15:33:27] [INFO]: [createBlankPages] Success created pages | ID: 1183196 | Name page: Donate | Slug: donate
+[2023-06-07 15:33:27] [INFO]: [createMenuStructure] Create menu structure
+[2023-06-07 15:33:27] [INFO]: [createMenu] Request to create menu
+[2023-06-07 15:33:28] [INFO]: [createMenu] Created menu
+[2023-06-07 15:33:28] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-06-07 15:33:28] [INFO]: [PROCESS] Work time: 00:00:14 (seconds: 14.8)
+[2023-06-07 15:33:28] [INFO]: [PROCESS] END
+[2023-06-07 15:37:13] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-06-07 15:37:13] [PROCESS]: [MIGRATION] Start Process!
+[2023-06-07 15:37:13] [PROCESS]: [Cache] Initialization
+[2023-06-07 15:37:13] [PROCESS]: [BrizyAPI] Initialization
+[2023-06-07 15:37:13] [PROCESS]: [MIGRATION] Migration ID: 56d2a1ff94
+[2023-06-07 15:37:13] [PROCESS]: [Parser Module] Initialization
+[2023-06-07 15:37:13] [PROCESS]: [DBConnector] Initialization
+[2023-06-07 15:37:13] [PROCESS]: [PostgresSQL] Initialization
+[2023-06-07 15:37:14] [PROCESS]: [PostgresSQL] Connection success
+[2023-06-07 15:37:14] [PROCESS]: [PostgresSQL Module] READY
+[2023-06-07 15:37:14] [PROCESS]: [DBConnector Module] READY
+[2023-06-07 15:37:14] [PROCESS]: [Parser Module] READY
+[2023-06-07 15:37:14] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_56d2a1ff94/media/
+[2023-06-07 15:37:14] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_56d2a1ff94/log/dump/
+[2023-06-07 15:37:14] [INFO]: [getParentPages] Get parent pages
+[2023-06-07 15:37:14] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:37:15] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:37:15] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:37:16] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:37:16] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:37:17] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:37:18] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:37:18] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:37:19] [INFO]: [getSite] Get site
+[2023-06-07 15:37:20] [INFO]: [getGraphToken] get Token
+[2023-06-07 15:37:21] [INFO]: [getParentPages] Get main Section
+[2023-06-07 15:37:22] [INFO]: [createMenu] Upload Logo menu
+[2023-06-07 15:37:22] [INFO]: [uploadPicturesFromSections] Start upload image
+[2023-06-07 15:37:22] [INFO]: [media] Found new image
+[2023-06-07 15:37:22] [INFO]: [getPisturesUrl] Created url pictures: https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/site-images/5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png Type folder main
+[2023-06-07 15:37:22] [INFO]: [uploadPicturesFromSections] Check image address
+[2023-06-07 15:37:22] [INFO]: [downloadImage] Loading a picture
+[2023-06-07 15:37:24] [INFO]: [media] Upload image response: {"id":4305513,"uid":"067e62fb4cc51667e146c0a72a79ec2d4705b540b498c505d3e43566b7609fb4","name":"4703a7d38fa72d5da30269bb807d0217.png","filename":"5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png"}
+[2023-06-07 15:37:24] [INFO]: [media] Success upload image fileName: 5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png srcName: 4703a7d38fa72d5da30269bb807d0217.png
+[2023-06-07 15:37:27] [INFO]: [createBlankPages] Start created pages
+[2023-06-07 15:37:27] [INFO]: [createBlankPages] Success created pages | ID: 1183206 | Name page: HOME | Slug: home
+[2023-06-07 15:37:27] [INFO]: [createBlankPages] Success created pages | ID: 1183205 | Name page: Our Mission | Slug: our-mission
+[2023-06-07 15:37:27] [INFO]: [createBlankPages] Success created pages | ID: 1183200 | Name page: Fellowship | Slug: fellowship
+[2023-06-07 15:37:27] [INFO]: [createBlankPages] Success created pages | ID: 1183203 | Name page: Serve | Slug: serve
+[2023-06-07 15:37:27] [INFO]: [createBlankPages] Success created pages | ID: 1183202 | Name page: Our Staff | Slug: our-staff
+[2023-06-07 15:37:27] [INFO]: [createBlankPages] Success created pages | ID: 1183198 | Name page: Resources | Slug: resources
+[2023-06-07 15:37:27] [INFO]: [createBlankPages] Success created pages | ID: 1183197 | Name page: Connect | Slug: connect
+[2023-06-07 15:37:27] [INFO]: [createBlankPages] Success created pages | ID: 1183196 | Name page: Donate | Slug: donate
+[2023-06-07 15:37:27] [INFO]: [createMenuStructure] Create menu structure
+[2023-06-07 15:37:27] [INFO]: [createMenu] Request to create menu
+[2023-06-07 15:37:27] [INFO]: [createMenu] Created menu
+[2023-06-07 15:37:27] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-06-07 15:37:27] [INFO]: [PROCESS] Work time: 00:00:14 (seconds: 14.8)
+[2023-06-07 15:37:27] [INFO]: [PROCESS] END
+[2023-06-07 15:41:35] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-06-07 15:41:35] [PROCESS]: [MIGRATION] Start Process!
+[2023-06-07 15:41:35] [PROCESS]: [Cache] Initialization
+[2023-06-07 15:41:35] [PROCESS]: [BrizyAPI] Initialization
+[2023-06-07 15:41:35] [PROCESS]: [MIGRATION] Migration ID: 9b090577b8
+[2023-06-07 15:41:35] [PROCESS]: [Parser Module] Initialization
+[2023-06-07 15:41:35] [PROCESS]: [DBConnector] Initialization
+[2023-06-07 15:41:35] [PROCESS]: [PostgresSQL] Initialization
+[2023-06-07 15:41:36] [PROCESS]: [PostgresSQL] Connection success
+[2023-06-07 15:41:36] [PROCESS]: [PostgresSQL Module] READY
+[2023-06-07 15:41:36] [PROCESS]: [DBConnector Module] READY
+[2023-06-07 15:41:36] [PROCESS]: [Parser Module] READY
+[2023-06-07 15:41:36] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_9b090577b8/media/
+[2023-06-07 15:41:36] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_9b090577b8/log/dump/
+[2023-06-07 15:41:36] [INFO]: [getParentPages] Get parent pages
+[2023-06-07 15:41:36] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:41:37] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:41:37] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:41:38] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:41:39] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:41:39] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:41:40] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:41:40] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:41:41] [INFO]: [getSite] Get site
+[2023-06-07 15:41:42] [INFO]: [getGraphToken] get Token
+[2023-06-07 15:41:43] [INFO]: [getParentPages] Get main Section
+[2023-06-07 15:41:45] [INFO]: [createMenu] Upload Logo menu
+[2023-06-07 15:41:45] [INFO]: [uploadPicturesFromSections] Start upload image
+[2023-06-07 15:41:45] [INFO]: [media] Found new image
+[2023-06-07 15:41:45] [INFO]: [getPisturesUrl] Created url pictures: https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/site-images/5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png Type folder main
+[2023-06-07 15:41:45] [INFO]: [uploadPicturesFromSections] Check image address
+[2023-06-07 15:41:45] [INFO]: [downloadImage] Loading a picture
+[2023-06-07 15:41:46] [INFO]: [media] Upload image response: {"id":4305514,"uid":"9e0cd51e204b1e9f593f6798c88ff6ff4faf7a295ad8e732044ddacffcaf16ca","name":"4a3a364acae747476323f5a99bb4d4a7.png","filename":"5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png"}
+[2023-06-07 15:41:46] [INFO]: [media] Success upload image fileName: 5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png srcName: 4a3a364acae747476323f5a99bb4d4a7.png
+[2023-06-07 15:41:49] [INFO]: [createBlankPages] Start created pages
+[2023-06-07 15:41:49] [INFO]: [createBlankPages] Success created pages | ID: 1183206 | Name page: HOME | Slug: home
+[2023-06-07 15:41:49] [INFO]: [createBlankPages] Success created pages | ID: 1183205 | Name page: Our Mission | Slug: our-mission
+[2023-06-07 15:41:49] [INFO]: [createBlankPages] Success created pages | ID: 1183200 | Name page: Fellowship | Slug: fellowship
+[2023-06-07 15:41:49] [INFO]: [createBlankPages] Success created pages | ID: 1183203 | Name page: Serve | Slug: serve
+[2023-06-07 15:41:49] [INFO]: [createBlankPages] Success created pages | ID: 1183202 | Name page: Our Staff | Slug: our-staff
+[2023-06-07 15:41:49] [INFO]: [createBlankPages] Success created pages | ID: 1183198 | Name page: Resources | Slug: resources
+[2023-06-07 15:41:49] [INFO]: [createBlankPages] Success created pages | ID: 1183197 | Name page: Connect | Slug: connect
+[2023-06-07 15:41:49] [INFO]: [createBlankPages] Success created pages | ID: 1183196 | Name page: Donate | Slug: donate
+[2023-06-07 15:41:49] [INFO]: [createMenuStructure] Create menu structure
+[2023-06-07 15:41:49] [INFO]: [createMenu] Request to create menu
+[2023-06-07 15:41:49] [INFO]: [createMenu] Created menu
+[2023-06-07 15:41:49] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-06-07 15:41:49] [INFO]: [PROCESS] Work time: 00:00:14 (seconds: 14.7)
+[2023-06-07 15:41:49] [INFO]: [PROCESS] END
+[2023-06-07 15:42:27] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-06-07 15:42:27] [PROCESS]: [MIGRATION] Start Process!
+[2023-06-07 15:42:27] [PROCESS]: [Cache] Initialization
+[2023-06-07 15:42:27] [PROCESS]: [BrizyAPI] Initialization
+[2023-06-07 15:42:27] [PROCESS]: [MIGRATION] Migration ID: 818e217a72
+[2023-06-07 15:42:27] [PROCESS]: [Parser Module] Initialization
+[2023-06-07 15:42:27] [PROCESS]: [DBConnector] Initialization
+[2023-06-07 15:42:27] [PROCESS]: [PostgresSQL] Initialization
+[2023-06-07 15:42:28] [PROCESS]: [PostgresSQL] Connection success
+[2023-06-07 15:42:28] [PROCESS]: [PostgresSQL Module] READY
+[2023-06-07 15:42:28] [PROCESS]: [DBConnector Module] READY
+[2023-06-07 15:42:28] [PROCESS]: [Parser Module] READY
+[2023-06-07 15:42:28] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_818e217a72/media/
+[2023-06-07 15:42:28] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/75776_4303928_818e217a72/log/dump/
+[2023-06-07 15:42:28] [INFO]: [getParentPages] Get parent pages
+[2023-06-07 15:42:28] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:29] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:29] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:30] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:30] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:31] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:32] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:32] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:33] [INFO]: [getSite] Get site
+[2023-06-07 15:42:34] [INFO]: [getGraphToken] get Token
+[2023-06-07 15:42:35] [INFO]: [getParentPages] Get main Section
+[2023-06-07 15:42:36] [INFO]: [createMenu] Upload Logo menu
+[2023-06-07 15:42:36] [INFO]: [uploadPicturesFromSections] Start upload image
+[2023-06-07 15:42:36] [INFO]: [media] Found new image
+[2023-06-07 15:42:36] [INFO]: [getPisturesUrl] Created url pictures: https://s3.amazonaws.com/media.cloversites.com/55/55afd3c5-e660-4611-b111-392f24015bfe/site-images/5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png Type folder main
+[2023-06-07 15:42:36] [INFO]: [uploadPicturesFromSections] Check image address
+[2023-06-07 15:42:36] [INFO]: [downloadImage] Loading a picture
+[2023-06-07 15:42:38] [INFO]: [media] Upload image response: {"id":4305515,"uid":"728f985ea590a9d378dac68b2315c9337cd71286f97c032083382863bcec6446","name":"b3bf0d610db5d7dd4dcfae12e764b2ca.png","filename":"5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png"}
+[2023-06-07 15:42:38] [INFO]: [media] Success upload image fileName: 5b790a6a-6c8a-4eec-9559-eb4d866dff2b.png srcName: b3bf0d610db5d7dd4dcfae12e764b2ca.png
+[2023-06-07 15:42:40] [INFO]: [createBlankPages] Start created pages
+[2023-06-07 15:42:40] [INFO]: [createBlankPages] Success created pages | ID: 1183206 | Name page: HOME | Slug: home
+[2023-06-07 15:42:40] [INFO]: [createBlankPages] Success created pages | ID: 1183205 | Name page: Our Mission | Slug: our-mission
+[2023-06-07 15:42:40] [INFO]: [createBlankPages] Success created pages | ID: 1183200 | Name page: Fellowship | Slug: fellowship
+[2023-06-07 15:42:40] [INFO]: [createBlankPages] Success created pages | ID: 1183203 | Name page: Serve | Slug: serve
+[2023-06-07 15:42:40] [INFO]: [createBlankPages] Success created pages | ID: 1183202 | Name page: Our Staff | Slug: our-staff
+[2023-06-07 15:42:40] [INFO]: [createBlankPages] Success created pages | ID: 1183198 | Name page: Resources | Slug: resources
+[2023-06-07 15:42:40] [INFO]: [createBlankPages] Success created pages | ID: 1183197 | Name page: Connect | Slug: connect
+[2023-06-07 15:42:40] [INFO]: [createBlankPages] Success created pages | ID: 1183196 | Name page: Donate | Slug: donate
+[2023-06-07 15:42:40] [INFO]: [createMenuStructure] Create menu structure
+[2023-06-07 15:42:40] [INFO]: [createMenu] Request to create menu
+[2023-06-07 15:42:41] [INFO]: [createMenu] Created menu
+[2023-06-07 15:42:41] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-06-07 15:42:41] [INFO]: [PROCESS] Work time: 00:00:14 (seconds: 14.3)
+[2023-06-07 15:42:41] [INFO]: [PROCESS] END
+[2023-06-07 15:42:51] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-06-07 15:42:51] [PROCESS]: [MIGRATION] Start Process!
+[2023-06-07 15:42:51] [PROCESS]: [Cache] Initialization
+[2023-06-07 15:42:51] [PROCESS]: [BrizyAPI] Initialization
+[2023-06-07 15:42:51] [PROCESS]: [MIGRATION] Migration ID: 3c18bf38c2
+[2023-06-07 15:42:51] [PROCESS]: [Parser Module] Initialization
+[2023-06-07 15:42:51] [PROCESS]: [DBConnector] Initialization
+[2023-06-07 15:42:51] [PROCESS]: [PostgresSQL] Initialization
+[2023-06-07 15:42:52] [PROCESS]: [PostgresSQL] Connection success
+[2023-06-07 15:42:52] [PROCESS]: [PostgresSQL Module] READY
+[2023-06-07 15:42:52] [PROCESS]: [DBConnector Module] READY
+[2023-06-07 15:42:52] [PROCESS]: [Parser Module] READY
+[2023-06-07 15:42:52] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/256_4305682_3c18bf38c2/media/
+[2023-06-07 15:42:52] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/256_4305682_3c18bf38c2/log/dump/
+[2023-06-07 15:42:52] [INFO]: [getParentPages] Get parent pages
+[2023-06-07 15:42:52] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:53] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:53] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:54] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:54] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:55] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:56] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:56] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:57] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:57] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:58] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:58] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 15:42:59] [INFO]: [getSite] Get site
+[2023-06-07 15:43:00] [INFO]: [getGraphToken] get Token
+[2023-06-07 15:43:01] [INFO]: [getParentPages] Get main Section
+[2023-06-07 15:43:03] [INFO]: [createMenu] Upload Logo menu
+[2023-06-07 15:43:03] [INFO]: [uploadPicturesFromSections] Start upload image
+[2023-06-07 15:43:03] [INFO]: [media] Found new image
+[2023-06-07 15:43:03] [INFO]: [getPisturesUrl] Created url pictures: https://s3.amazonaws.com/media.cloversites.com/2f/2f3546d2-406f-4fe3-a83e-4989a378e038/site-images/5714ffe0-9398-47e3-aa8c-9b0303f318e4.png Type folder main
+[2023-06-07 15:43:03] [INFO]: [uploadPicturesFromSections] Check image address
+[2023-06-07 15:43:03] [INFO]: [downloadImage] Loading a picture
+[2023-06-07 15:43:04] [INFO]: [media] Upload image response: {"id":4305516,"uid":"aef4b84e6059debc365f25264ccf0c8515b3b9288cf3f8b11498621e45d524bc","name":"4944dc344cd0601ea6699856b8e1b6c1.png","filename":"5714ffe0-9398-47e3-aa8c-9b0303f318e4.png"}
+[2023-06-07 15:43:04] [INFO]: [media] Success upload image fileName: 5714ffe0-9398-47e3-aa8c-9b0303f318e4.png srcName: 4944dc344cd0601ea6699856b8e1b6c1.png
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Start created pages
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 2929 | Name page: Home | Slug: home
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 1060661 | Name page: Start Here | Slug: start-here
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 30073 | Name page: Next Steps | Slug: next-steps
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 438528 | Name page: Watch & Listen | Slug: watch-listen
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 2932 | Name page: Give | Slug: give
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Start created pages
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 848334 | Name page: Bible Basics Online | Slug: bible-basics-online
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 1097993 | Name page: Bible Classes | Slug: bible-classes
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 926764 | Name page: Kids & Youth | Slug: kids-youth
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 3011 | Name page: Staff | Slug: staff
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 34255 | Name page: myER (online community) | Slug: myer-online-community
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 527150 | Name page: Transformed by Grace | Slug: transformed-by-grace
+[2023-06-07 15:43:06] [INFO]: [createBlankPages] Success created pages | ID: 759100 | Name page: Church Planter Weekend | Slug: church-planter-weekend
+[2023-06-07 15:43:06] [INFO]: [createMenuStructure] Create menu structure
+[2023-06-07 15:43:06] [INFO]: [createMenu] Request to create menu
+[2023-06-07 15:43:07] [INFO]: [createMenu] Created menu
+[2023-06-07 15:43:41] [PROCESS]: [MAIN Foreach] Take page | ID: 926764
+[2023-06-07 15:43:41] [INFO]: [getItemsFromPage] Parent Page id: 926764 | Name page: Kids & Youth | Slug: kids-youth
+[2023-06-07 15:43:42] [INFO]: [getItemsFromPage] Collection of item id: 3899563 -> Parent page id:926764
+[2023-06-07 15:43:42] [INFO]: [getSectionsItems] Get item | id: 16541646 from section id: 3899563
+[2023-06-07 15:43:43] [INFO]: [getSectionsItems] Get item | id: 16541649 from section id: 3899563
+[2023-06-07 15:43:43] [INFO]: [getSectionsItems] Get item | id: 16541652 from section id: 3899563
+[2023-06-07 15:43:44] [INFO]: [getSectionsItems] Get item | id: 16541655 from section id: 3899563
+[2023-06-07 15:43:45] [INFO]: [getSectionsItems] Get item | id: 16541658 from section id: 3899563
+[2023-06-07 15:43:45] [INFO]: [getSectionsItems] Get item | id: 16541641 from section id: 3899563
+[2023-06-07 15:43:46] [INFO]: [getSectionsItems] Get item | id: 16541642 from section id: 3899563
+[2023-06-07 15:43:46] [INFO]: [getSectionsItems] Get item | id: 16541643 from section id: 3899563
+[2023-06-07 15:43:47] [INFO]: [getSectionsItems] Get item | id: 16541644 from section id: 3899563
+[2023-06-07 15:43:47] [INFO]: [getSectionsItems] Get item | id: 16541656 from section id: 3899563
+[2023-06-07 15:43:48] [INFO]: [getSectionsItems] Get item | id: 16541653 from section id: 3899563
+[2023-06-07 15:43:48] [INFO]: [getSectionsItems] Get item | id: 16541650 from section id: 3899563
+[2023-06-07 15:43:49] [INFO]: [getSectionsItems] Get item | id: 16541647 from section id: 3899563
+[2023-06-07 15:43:50] [INFO]: [getSectionsItems] Get item | id: 16541648 from section id: 3899563
+[2023-06-07 15:43:50] [INFO]: [getSectionsItems] Get item | id: 16541651 from section id: 3899563
+[2023-06-07 15:43:51] [INFO]: [getSectionsItems] Get item | id: 16541654 from section id: 3899563
+[2023-06-07 15:43:51] [INFO]: [getSectionsItems] Get item | id: 16541657 from section id: 3899563
+[2023-06-07 15:43:52] [INFO]: [getSectionsItems] Get item | id: 16541645 from section id: 3899563
+[2023-06-07 15:43:52] [INFO]: [uploadPicturesFromSections] Start upload image
+[2023-06-07 15:43:52] [INFO]: [uploadPicturesFromSections] Found background image
+[2023-06-07 15:43:52] [INFO]: [uploadPicturesFromSections] Check image address
+[2023-06-07 15:43:52] [INFO]: [downloadImage] Loading a picture
+[2023-06-07 15:43:55] [INFO]: [uploadPicturesFromSections] Upload image response: {"id":4305517,"uid":"6dbd4cb58e7dbd824bec15468c399d62353283260fc5c24ee1410f4a1d7909ab","name":"a66dbe220deae7d4a045f55b22d57f0b.jpg","filename":"1bd5e934-a022-401a-a540-9271bfbfd687.jpg"}
+[2023-06-07 15:43:55] [INFO]: [uploadPicturesFromSections] Success upload image fileName: 1bd5e934-a022-401a-a540-9271bfbfd687.jpg srcName: a66dbe220deae7d4a045f55b22d57f0b.jpg
+[2023-06-07 15:43:55] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/36652
+[2023-06-07 16:11:52] [PROCESS]: [RunPageBuilder] Start Builder
+[2023-06-07 16:11:53] [PROCESS]: [Bloom Builder] Connected!
+[2023-06-07 16:11:53] [INFO]: [Bloom] [__construct] File exist: D:\SOFT\OSPanel\domains\MB-migration\src\Builder\Layout\Bloom\blocksKit.json
+[2023-06-07 16:11:53] [INFO]: [Bloom] [createMenu] Create block menu
+[2023-06-07 16:11:53] [INFO]: [Bloom] [__construct] Success create MENU
+[2023-06-07 16:11:53] [INFO]: [Bloom] [createFooter] Create Footer
+[2023-06-07 16:11:53] [INFO]: [Bloom] [replaceParagraphs] Replace Paragraph: <p style="font-weight: 300; font-size: 1.25em;"><br></p><p style="font-weight: 700; font-size: 2.4392em;"><a class="socialIconLink cloverlinks" href="https://www.facebook.com/Eternal.Rock.Lutheran" data-location="external" data-button="false" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran" data-category="link" target="_blank" style="color: rgb(55, 103, 155); font-size: 1.3345em;"><span class="clovericons fab" data-icon="facebook" data-srtext="Facebook"></span></a> &nbsp; &nbsp;<a class="socialIconLink cloverlinks" href="https://www.youtube.com/channel/UCWb9TgqKiX8MgBffjQKgyhw" data-location="external" data-button="false" data-detail="https://www.youtube.com/channel/UCWb9TgqKiX8MgBffjQKgyhw" data-category="link" target="_blank" style="color: rgb(55, 103, 155);"><span class="clovericons fab clovercustom" data-icon="youtube" data-srtext="YouTube" style="font-size: 1.3345em;"></span></a><span class="clovercustom" style="font-size: 1.3345em;"> </span>&nbsp; &nbsp;<a class="socialIconLink cloverlinks" href="https://www.instagram.com/eternalrock_castlerock/" data-location="external" data-button="false" data-detail="https://www.instagram.com/eternalrock_castlerock/" data-category="link" target="_blank" style="color: rgb(55, 103, 155); font-size: 1.3345em;"><span class="clovericons fab" data-icon="instagram" data-srtext="Instagram"></span> </a><br></p><p style="font-weight: 700; font-size: 1.0417em;"><br></p><p><a href="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-location="external" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-category="link" target="_blank" class="cloverlinks">
+</a></p><p style="font-weight: 700; font-size: 1.9397em;"><a href="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-location="external" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-category="link" target="_blank" class="cloverlinks" style="color: rgb(247, 247, 239);">FOLLOW JESUS: LIVE LOVE</a></p><p><a href="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-location="external" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-category="link" target="_blank" class="cloverlinks">
+</a></p><p style="color: rgb(57, 101, 130);"><a href="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-location="external" data-detail="https://www.facebook.com/Eternal.Rock.Lutheran?pnref=lhc" data-category="link" target="_blank" class="cloverlinks"><span class="clovercustom" style="color: rgb(250, 250, 245);">Our mission at Eternal Rock is to follow Jesus in worship and Bible stud</span><span class="clovercustom" style="color: rgb(250, 250, 245);"><span class="clovercustom" style="color: rgb(250, 250, 245);">y </span>and Live His love by serving others. &nbsp;We take the Bible seriously</span></a><span class="clovercustom" style="color: rgb(250, 250, 245);"> and seek to grow in our faith through God's Word and Sacraments at church as well as our personal study at home.&nbsp;&nbsp;&nbsp;</span></p><p style="color: rgb(57, 101, 130);"><span class="clovercustom" style="color: rgb(250, 250, 245);"><br></span></p><p style="color: rgb(57, 101, 130);"><span class="clovercustom" style="color: rgb(250, 250, 245);"><a href="/next-steps" data-location="existing" data-category="link" target="_self" data-detail="30073" class="cloverlinks" style="font-weight: 700;" data-button="false">Learn more about what we believe.</a><br></span></p><p style="color: rgb(57, 101, 130);"><span class="clovercustom" style="color: rgb(250, 250, 245);"><br></span></p><p style="color: rgb(57, 101, 130); font-weight: 700; font-size: 1.8148em;"><span class="clovercustom" style="color: rgb(250, 250, 245);">Eternal Rock Lutheran Church</span></p><p style="color: rgb(57, 101, 130); font-style: italic;"><span class="clovercustom" style="color: rgb(250, 250, 245);">Worship every Sunday at 10:00am </span></p><p style="font-size: 1.3125em;"><font color="#fafaf5">2 Phelps Street</font></p><p style="font-size: 1.3125em;"><font color="#fafaf5">Castle Rock, CO 80104</font></p><p style="color: rgb(57, 101, 130); font-size: 1.3125em;"><span class="clovercustom" style="color: rgb(250, 250, 245);"><br></span></p><p style="color: rgb(57, 101, 130); font-size: 1.3125em;"><span class="clovercustom" style="color: rgb(250, 250, 245);">tel. 303-638-5434 &nbsp;</span></p><p style="color: rgb(57, 101, 130); font-size: 1.3125em;"><span class="clovercustom" style="color: rgb(250, 250, 245);">admin@eternalrock.org</span></p><p style="color: rgb(57, 101, 130);"><br></p><p><a href="https://er.ccbchurch.com/login.php" data-location="external" data-detail="https://er.ccbchurch.com/login.php" data-category="link" target="_blank" class="cloverlinks">&nbsp;&nbsp;<span class="clovercustom" style="font-style: italic;">my</span>ER (online community) login</a></p><p><br></p>
+[2023-06-07 16:11:53] [INFO]: [ItemsBuilder] Current Page: /collection_items/36652 | Slug: kids-youth
+[2023-06-07 16:11:54] [INFO]: [Bloom] [callDynamicMethod] Call method list_layout
+[2023-06-07 16:11:54] [INFO]: [Bloom] [grid_layout] Create bloc
+[2023-06-07 16:11:54] [INFO]: [Bloom] [replaceParagraphs] Replace Paragraph: <p style="font-size: 1.4323em;">Rock Tots is available for children ages birth - 3 years and meets in the nursery. Staffed by one adult and one teen helper, your youngest kiddos will be taken care of while you focus on worship.&nbsp;</p>
+[2023-06-07 16:11:54] [INFO]: [Bloom] [replaceTitleTag] Replace Title Tag: <p>Rock Tots</p>
+[2023-06-07 16:11:54] [INFO]: [Bloom] [replaceParagraphs] Replace Paragraph: <p style="font-size: 1.4323em;"><span style="letter-spacing: -0.1632px;" class="clovercustom">Rock Kids offers classes during worship for ages pre-K - 6th grade. We meet in the church classrooms (divided by grade) directly after the children's lesson in the sanctuary. 5th &amp; 6th grade students follow the same curriculum as the younger children, but in a deeper, more meaningful level.</span><br></p>
+[2023-06-07 16:11:54] [INFO]: [Bloom] [replaceTitleTag] Replace Title Tag: <p>Rock Kids</p>
+[2023-06-07 16:11:54] [INFO]: [Bloom] [replaceParagraphs] Replace Paragraph: <p style="font-size: 1.4323em;"><span style="letter-spacing: -0.1632px;" class="clovercustom">A two-year course for our 7th and 8th grade students. It meets at church from 11:30pm - 1:00pm. Click </span><a href="https://docs.google.com/spreadsheets/d/1Urm0tbWYuJWmg867Fc5LY26QQKjaas25MitYFiHBK1Q/edit?usp=sharing" data-location="external" data-button="false" data-detail="https://docs.google.com/spreadsheets/d/1Urm0tbWYuJWmg867Fc5LY26QQKjaas25MitYFiHBK1Q/edit?usp=sharing" data-category="link" target="_blank" class="cloverlinks" style="letter-spacing: -0.01em;">here </a><span style="letter-spacing: -0.1632px;" class="clovercustom">for more specific information regarding Schedule/Assignments/Recording of Lesson</span><br></p>
+[2023-06-07 16:11:54] [INFO]: [Bloom] [replaceTitleTag] Replace Title Tag: <p>Confirmation/Catechism</p>
+[2023-06-07 16:11:54] [INFO]: [Bloom] [replaceParagraphs] Replace Paragraph: <p style="font-size: 1.4323em;"><span style="font-style: normal; font-weight: 300; letter-spacing: -0.1632px; text-align: left; text-decoration: none;" class="clovercustom">(High School) Meets the first Sunday of the month. It's hosted by youth families who take turns providing lunch, Bible study and activities.</span><br></p>
+[2023-06-07 16:11:54] [INFO]: [Bloom] [replaceTitleTag] Replace Title Tag: <p>Youth Group</p>
+[2023-06-07 16:11:54] [INFO]: [ItemsBuilder] Request to send content to the page: /collection_items/36652 | Slug: kids-youth
+[2023-06-07 16:11:55] [INFO]: [ItemsBuilder] Content added to the page successfully: /collection_items/36652 | Slug: kids-youth
+[2023-06-07 16:11:55] [INFO]: [PageBuilder] Page created successfully!
+[2023-06-07 16:11:55] [SUCCESSFULLY]: [PROCESS] Project migration completed successfully!
+[2023-06-07 16:11:55] [INFO]: [PROCESS] Work time: 00:29:04 (seconds: 1744.9)
+[2023-06-07 16:11:55] [INFO]: [PROCESS] END
+[2023-06-07 16:12:39] [PROCESS]: [] -------------------------------------------------------------------------------------- []
+[2023-06-07 16:12:39] [PROCESS]: [MIGRATION] Start Process!
+[2023-06-07 16:12:39] [PROCESS]: [Cache] Initialization
+[2023-06-07 16:12:39] [PROCESS]: [BrizyAPI] Initialization
+[2023-06-07 16:12:39] [PROCESS]: [MIGRATION] Migration ID: 2fb9cb662a
+[2023-06-07 16:12:39] [PROCESS]: [Parser Module] Initialization
+[2023-06-07 16:12:39] [PROCESS]: [DBConnector] Initialization
+[2023-06-07 16:12:39] [PROCESS]: [PostgresSQL] Initialization
+[2023-06-07 16:12:40] [PROCESS]: [PostgresSQL] Connection success
+[2023-06-07 16:12:40] [PROCESS]: [PostgresSQL Module] READY
+[2023-06-07 16:12:40] [PROCESS]: [DBConnector Module] READY
+[2023-06-07 16:12:40] [PROCESS]: [Parser Module] READY
+[2023-06-07 16:12:40] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/256_4305682_2fb9cb662a/media/
+[2023-06-07 16:12:40] [INFO]: [createDirectory] Create Directory: D:\SOFT\OSPanel\domains\MB-migration\src/../tmp/256_4305682_2fb9cb662a/log/dump/
+[2023-06-07 16:12:40] [INFO]: [getParentPages] Get parent pages
+[2023-06-07 16:12:40] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:41] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:41] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:42] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:43] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:43] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:44] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:44] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:45] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:45] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:46] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:46] [INFO]: [getChaildsPages] Get child pages
+[2023-06-07 16:12:47] [INFO]: [getSite] Get site
+[2023-06-07 16:12:48] [INFO]: [getGraphToken] get Token
+[2023-06-07 16:12:49] [INFO]: [getParentPages] Get main Section
+[2023-06-07 16:12:51] [INFO]: [createMenu] Upload Logo menu
+[2023-06-07 16:12:51] [INFO]: [uploadPicturesFromSections] Start upload image
+[2023-06-07 16:12:51] [INFO]: [media] Found new image
+[2023-06-07 16:12:51] [INFO]: [getPisturesUrl] Created url pictures: https://s3.amazonaws.com/media.cloversites.com/2f/2f3546d2-406f-4fe3-a83e-4989a378e038/site-images/5714ffe0-9398-47e3-aa8c-9b0303f318e4.png Type folder main
+[2023-06-07 16:12:51] [INFO]: [uploadPicturesFromSections] Check image address
+[2023-06-07 16:12:51] [INFO]: [downloadImage] Loading a picture
+[2023-06-07 16:12:52] [INFO]: [media] Upload image response: {"id":4305518,"uid":"b8bafee219ac822913867590729c696c22bfbcd15b7cb756696e541b27658b4b","name":"1cc4181f7e8675299a18c33e5f3dd1f8.png","filename":"5714ffe0-9398-47e3-aa8c-9b0303f318e4.png"}
+[2023-06-07 16:12:52] [INFO]: [media] Success upload image fileName: 5714ffe0-9398-47e3-aa8c-9b0303f318e4.png srcName: 1cc4181f7e8675299a18c33e5f3dd1f8.png
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Start created pages
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 2929 | Name page: Home | Slug: home
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 1060661 | Name page: Start Here | Slug: start-here
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 30073 | Name page: Next Steps | Slug: next-steps
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 438528 | Name page: Watch & Listen | Slug: watch-listen
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 2932 | Name page: Give | Slug: give
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Start created pages
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 848334 | Name page: Bible Basics Online | Slug: bible-basics-online
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 1097993 | Name page: Bible Classes | Slug: bible-classes
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 926764 | Name page: Kids & Youth | Slug: kids-youth
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 3011 | Name page: Staff | Slug: staff
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 34255 | Name page: myER (online community) | Slug: myer-online-community
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 527150 | Name page: Transformed by Grace | Slug: transformed-by-grace
+[2023-06-07 16:12:54] [INFO]: [createBlankPages] Success created pages | ID: 759100 | Name page: Church Planter Weekend | Slug: church-planter-weekend
+[2023-06-07 16:12:54] [INFO]: [createMenuStructure] Create menu structure
+[2023-06-07 16:12:54] [INFO]: [createMenu] Request to create menu
+[2023-06-07 16:12:55] [INFO]: [createMenu] Created menu
+[2023-06-07 16:13:09] [PROCESS]: [MAIN Foreach] Take page | ID: 926764
+[2023-06-07 16:13:09] [INFO]: [getItemsFromPage] Parent Page id: 926764 | Name page: Kids & Youth | Slug: kids-youth
+[2023-06-07 16:13:10] [INFO]: [getItemsFromPage] Collection of item id: 3899563 -> Parent page id:926764
+[2023-06-07 16:13:11] [INFO]: [getSectionsItems] Get item | id: 16541646 from section id: 3899563
+[2023-06-07 16:13:11] [INFO]: [getSectionsItems] Get item | id: 16541649 from section id: 3899563
+[2023-06-07 16:13:12] [INFO]: [getSectionsItems] Get item | id: 16541652 from section id: 3899563
+[2023-06-07 16:13:12] [INFO]: [getSectionsItems] Get item | id: 16541655 from section id: 3899563
+[2023-06-07 16:13:13] [INFO]: [getSectionsItems] Get item | id: 16541658 from section id: 3899563
+[2023-06-07 16:13:13] [INFO]: [getSectionsItems] Get item | id: 16541641 from section id: 3899563
+[2023-06-07 16:13:14] [INFO]: [getSectionsItems] Get item | id: 16541642 from section id: 3899563
+[2023-06-07 16:13:15] [INFO]: [getSectionsItems] Get item | id: 16541643 from section id: 3899563
+[2023-06-07 16:13:15] [INFO]: [getSectionsItems] Get item | id: 16541644 from section id: 3899563
+[2023-06-07 16:13:16] [INFO]: [getSectionsItems] Get item | id: 16541656 from section id: 3899563
+[2023-06-07 16:13:16] [INFO]: [getSectionsItems] Get item | id: 16541653 from section id: 3899563
+[2023-06-07 16:13:17] [INFO]: [getSectionsItems] Get item | id: 16541650 from section id: 3899563
+[2023-06-07 16:13:17] [INFO]: [getSectionsItems] Get item | id: 16541647 from section id: 3899563
+[2023-06-07 16:13:18] [INFO]: [getSectionsItems] Get item | id: 16541648 from section id: 3899563
+[2023-06-07 16:13:18] [INFO]: [getSectionsItems] Get item | id: 16541651 from section id: 3899563
+[2023-06-07 16:13:19] [INFO]: [getSectionsItems] Get item | id: 16541654 from section id: 3899563
+[2023-06-07 16:13:20] [INFO]: [getSectionsItems] Get item | id: 16541657 from section id: 3899563
+[2023-06-07 16:13:20] [INFO]: [getSectionsItems] Get item | id: 16541645 from section id: 3899563
+[2023-06-07 16:13:21] [INFO]: [uploadPicturesFromSections] Start upload image
+[2023-06-07 16:13:21] [INFO]: [uploadPicturesFromSections] Found background image
+[2023-06-07 16:13:21] [INFO]: [uploadPicturesFromSections] Check image address
+[2023-06-07 16:13:21] [INFO]: [downloadImage] Loading a picture
+[2023-06-07 16:13:23] [INFO]: [uploadPicturesFromSections] Upload image response: {"id":4305519,"uid":"0890d6c73a8b7112c13031ff9f5ecfaefc81a8a2e245aa78fe668e647d6c9d8b","name":"1f0abbca41f580240aba7511214d0ec6.jpg","filename":"1bd5e934-a022-401a-a540-9271bfbfd687.jpg"}
+[2023-06-07 16:13:23] [INFO]: [uploadPicturesFromSections] Success upload image fileName: 1bd5e934-a022-401a-a540-9271bfbfd687.jpg srcName: 1f0abbca41f580240aba7511214d0ec6.jpg
+[2023-06-07 16:13:23] [INFO]: [setCurrentPageOnWork] Set the current page to work: /collection_items/36652
