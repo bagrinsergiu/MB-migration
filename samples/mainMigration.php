@@ -2,7 +2,7 @@
 
 use Brizy\Layer\DataSource\DBConnector;
 
-require_once(__DIR__ . '/src/MigrationPlatform.php');
+require_once(__DIR__ . '/../src/MigrationPlatform.php');
 //75776   - http://www.troycsc.org/
 //4303928  - https://grapefruit4303928.brizy.org/
 
@@ -47,7 +47,7 @@ try {
 
 function mainLog($inMessage): void
 {
-    $dirToLog = __DIR__ . '/log/logsAnalysis/statistic.log';
+    $dirToLog = __DIR__ . '/../log/logsAnalysis/statistic.log';
     $message = "[" . date('Y-m-d H:i:s') . "] " . $inMessage . "\n";
     file_put_contents($dirToLog, $message, FILE_APPEND);
 }

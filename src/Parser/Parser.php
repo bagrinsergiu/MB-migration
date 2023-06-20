@@ -23,7 +23,7 @@ class Parser
         $this->db          = new DBConnector();
         $this->manipulator = new ArrayManipulator();
 
-        $this->siteId      = (int)$this->cache->get('projectId_MB');
+        $this->siteId      = $this->cache->get('projectId_MB');
         Utils::log('READY', 4, 'Parser Module');
     }
 

@@ -17,7 +17,7 @@ class DBConnector
      */
     public function __construct() {
         Utils::log('Initialization', 4, 'DBConnector');
-        $selectedDatabase = Config::$DBconnection;
+        $selectedDatabase = Config::$DBConnection;
 
         if ($selectedDatabase === 'mysql') {
             $this->connectToMySQL();
