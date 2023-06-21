@@ -74,7 +74,6 @@ class ErrorDump
             'server_data' => $_SERVER,
             'post_data' => $_POST,
             'get_data' => $_GET,
-            'session_data' => $_SESSION,
             'cookie_data' => $_COOKIE,
             'request_headers' => getallheaders()
         ];
