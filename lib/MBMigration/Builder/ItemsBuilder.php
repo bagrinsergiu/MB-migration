@@ -22,7 +22,7 @@ class ItemsBuilder
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
 
-        $workClass = 'MBMigration\\' . __NAMESPACE__ . '\\Layout\\' . $design . '\\' . $design;
+        $workClass = __NAMESPACE__ . '\\Layout\\' . $design . '\\' . $design;
         $_WorkClassTemplate = new $workClass($cache);
 
         if(!$defaultPage)
