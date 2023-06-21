@@ -130,7 +130,7 @@ class Anthem
         return $treeMenu;
     }
 
-    private function left_media(array $sectionData): bool|string
+    private function left_media(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [left_media");
         $this->cache->set('currentSectionData', $sectionData);
