@@ -27,12 +27,14 @@ class Config
     public static $nameMigration; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
 
     private static $cloud_host;
+    public static $path;
 
     /**
      * @throws Exception
      */
     public function __construct($cloud_host, $path, $token, $DBConnection)
     {
+        $path = $this->checkPath($path);
         $this->checkDBConnection($DBConnection);
 
         self::$debugMode        = true;
@@ -50,8 +52,9 @@ class Config
         self::$urlGetApiToken   = self::$cloud_host . '/api/projects/{project}/token';
         self::$urlGraphqlAPI    = self::$cloud_host . '/graphql/{ProjectId}';
 
-        self::$pathTmp          = $this->checkPath($path) . '/mb_tmp/';
-        self::$pathLogFile      = $this->checkPath($path) . '/mb_log/{{PREFIX}}.log';
+        self::$path             = $path;
+        self::$pathTmp          = $path . '/mb_tmp/';
+        self::$pathLogFile      = $path . '/mb_log/{{PREFIX}}.log';
 
         self::$endPointApi      = [
             'team_members'  => '/team_members',
