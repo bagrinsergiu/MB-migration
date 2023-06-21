@@ -22,8 +22,7 @@ class ItemsBuilder
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
 
-        $workClass = 'Brizy\\' . __NAMESPACE__ . '\\Layout\\' . $design . '\\' . $design;
-
+        $workClass = 'MBMigration\\' . __NAMESPACE__ . '\\Layout\\' . $design . '\\' . $design;
         $_WorkClassTemplate = new $workClass($cache);
 
         if(!$defaultPage)
