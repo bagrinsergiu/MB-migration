@@ -95,7 +95,7 @@ class Config
 
         foreach ($requiredFields as $field) {
             if (empty($confConnection[$field])) {
-                throw new Exception($field . " value is not set"); // Если одно из значений отсутствует или пустое, возвращаем false
+                throw new Exception($field . " value is not set");
             }
         }
 
@@ -112,7 +112,7 @@ class Config
         if ($headers && strpos($headers[0], '200') !== false) {
             return $url;
         } else {
-            throw new Exception("Ошибка инициализации конфигурации");
+            throw new Exception("Url is wrong or not set");
         }
     }
 }
