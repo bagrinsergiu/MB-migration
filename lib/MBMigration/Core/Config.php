@@ -111,8 +111,7 @@ class Config
      * @throws Exception
      */
     private function checkURL($url) {
-        $headers = @get_headers($url);
-        if ($headers && strpos($headers[0], '200') !== false) {
+        if (!empty($url)) {
             return $url;
         } else {
             throw new Exception("Url is wrong or not set");
