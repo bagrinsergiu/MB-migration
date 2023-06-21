@@ -98,7 +98,7 @@ class Aurora
         return true;
     }
 
-    private function left_media(array $encoded): bool|string
+    private function left_media(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [left_media");
         $decoded = $this->jsonDecode['blocks']['left-media'];
@@ -124,7 +124,7 @@ class Aurora
 
         return json_encode($block);
     }
-    private function right_media(array $encoded): bool|string
+    private function right_media(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [right_media");
 
@@ -151,7 +151,7 @@ class Aurora
         return json_encode($block);
     }
 
-    private function full_media($encode): bool|string
+    private function full_media($encode)
     {
         Utils::log('Create full media', 1, "August] [full_media");
         $decoded = $this->jsonDecode['blocks']['full-media'];
@@ -187,7 +187,7 @@ class Aurora
         return json_encode($block);
     }
 
-    private function full_text(array $encoded): bool|string
+    private function full_text(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [full_text");
         $decoded = $this->jsonDecode['blocks']['full-text'];
@@ -229,13 +229,12 @@ class Aurora
         return json_encode($block);
     }
 
-    private function right_media_circle(array $encoded): bool|string
+    private function right_media_circle(array $encoded)
     {
         return '';
     }
 
-    private function left_media_circle(array $encoded): bool|string
-    {
+    private function left_media_circle(array $encoded){
         Utils::log('Create bloc', 1, "August] [left_media_circle");
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);

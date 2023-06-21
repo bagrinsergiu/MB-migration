@@ -98,7 +98,7 @@ class August
         return true;
     }
 
-    private function left_media(array $encoded): bool|string
+    private function left_media(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [left_media");
         $decoded = $this->jsonDecode['blocks']['left-media'];
@@ -124,7 +124,7 @@ class August
 
         return json_encode($block);
     }
-    private function right_media(array $encoded): bool|string
+    private function right_media(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [right_media");
 
@@ -151,7 +151,7 @@ class August
         return json_encode($block);
     }
 
-    private function full_media($encode): bool|string
+    private function full_media($encode)
     {
         Utils::log('Create full media', 1, "August] [full_media");
         $decoded = $this->jsonDecode['blocks']['full-media'];
@@ -187,7 +187,7 @@ class August
         return json_encode($block);
     }
 
-    private function full_text(array $encoded): bool|string
+    private function full_text(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [full_text");
         $decoded = $this->jsonDecode['blocks']['full-text'];
@@ -229,12 +229,12 @@ class August
         return json_encode($block);
     }
 
-    private function right_media_circle(array $encoded): bool|string
+    private function right_media_circle(array $encoded)
     {
         return '';
     }
 
-    private function left_media_circle(array $encoded): bool|string
+    private function left_media_circle(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [left_media_circle");
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
@@ -261,7 +261,7 @@ class August
         return json_encode($block);
     }
 
-    private function top_media_diamond(array $encoded): bool|string
+    private function top_media_diamond(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [top_media_diamond");
 
@@ -275,7 +275,7 @@ class August
         return json_encode($decode);
     }
 
-    private function grid_layout(array $encoded): bool|string
+    private function grid_layout(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
@@ -320,14 +320,14 @@ class August
         return json_encode($decodeBlock);
     }
 
-    private function list_layout(array $encoded): bool|string
+    private function list_layout(array $encoded)
     {
         Utils::log('Redirect', 1, "August] [list_layout");
         $result = $this->full_text($encoded);
         return $result;
     }
 
-    private function gallery_layout(array $encoded): bool|string
+    private function gallery_layout(array $encoded)
     {
         Utils::log('Create bloc', 1, "August] [gallery_layout");
 

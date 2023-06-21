@@ -175,7 +175,7 @@ class Anthem
         $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
-    private function right_media(array $sectionData): bool|string
+    private function right_media(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [right_media");
         $this->cache->set('currentSectionData', $sectionData);
@@ -206,7 +206,7 @@ class Anthem
         return json_encode($block);
     }
 
-    private function full_media($sectionData): bool|string
+    private function full_media($sectionData)
     {
         Utils::log('Create full media', 1, "Anthem] [full_media");
         $this->cache->set('currentSectionData', $sectionData);
@@ -249,7 +249,7 @@ class Anthem
         return json_encode($block);
     }
 
-    private function full_text(array $sectionData): bool|string
+    private function full_text(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [full_text");
         $this->cache->set('currentSectionData', $sectionData);
@@ -310,7 +310,7 @@ class Anthem
         return json_encode($block);
     }
 
-    private function parallaxScroll(array $sectionData): bool|string
+    private function parallaxScroll(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [full_text (parallaxScroll)");
         $this->cache->set('currentSectionData', $sectionData);
@@ -346,7 +346,7 @@ class Anthem
     }
 
 
-    public function two_horizontal_text($sectionData): bool|string
+    public function two_horizontal_text($sectionData)
     {
         Utils::log('Create full media', 1, "Anthem] [full_media");
         $this->cache->set('currentSectionData', $sectionData);
@@ -387,14 +387,13 @@ class Anthem
         return json_encode($block);
     }
 
-    private function right_media_circle(array $sectionData): bool|string
-    {
+    private function right_media_circle(array $sectionData){
         Utils::log('Create bloc', 1, "Anthem] [right_media_circle");
         $this->cache->set('currentSectionData', $sectionData);
         return '';
     }
 
-    private function left_media_circle(array $sectionData): bool|string
+    private function left_media_circle(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [left_media_circle");
         $this->cache->set('currentSectionData', $sectionData);
@@ -426,7 +425,7 @@ class Anthem
         return json_encode($block);
     }
 
-    private function top_media_diamond(array $sectionData): bool|string
+    private function top_media_diamond(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [top_media_diamond");
         $this->cache->set('currentSectionData', $sectionData);
@@ -440,7 +439,7 @@ class Anthem
         return json_encode($decode);
     }
 
-    private function grid_layout(array $sectionData): bool|string
+    private function grid_layout(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [grid_layout");
         $this->cache->set('currentSectionData', $sectionData);
@@ -524,7 +523,7 @@ class Anthem
         return json_encode($block);
     }
 
-    private function list_layout(array $sectionData): bool|string
+    private function list_layout(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [grid_layout");
         $this->cache->set('currentSectionData', $sectionData);
@@ -636,7 +635,7 @@ class Anthem
         return json_encode($block);
     }
 
-    private function gallery_layout(array $sectionData): bool|string
+    private function gallery_layout(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [gallery_layout");
         $this->cache->set('currentSectionData', $sectionData);
@@ -680,7 +679,7 @@ class Anthem
 
     }
 
-    private function createFooter(): void
+    private function createFooter()
     {
         Utils::log('Create Footer', 1, "Anthem] [createFooter");
         $sectionData = $this->cache->get('mainSection')['footer'];
@@ -709,7 +708,7 @@ class Anthem
     }
 
 
-    private function marginAndPaddingOffset(&$block): void
+    private function marginAndPaddingOffset(&$block)
     {
         $flags = $this->cache->get('createdFirstSection','flags');
         if(!$flags){
@@ -885,7 +884,8 @@ class Anthem
         return $this->clearHtmlTag($doc->saveHTML());
     }
 
-    private function replaceParagraphs($html, $type = ''): string {
+    private function replaceParagraphs($html, $type = ''): string
+    {
         Utils::log('Replace Paragraph: '. $html, 1, "Anthem] [replaceParagraphs");
         if(empty($html)){
             return '';
@@ -1018,7 +1018,7 @@ class Anthem
         return $styles;
     }
 
-    private function rgbToHex($rgb): bool|string
+    private function rgbToHex($rgb)
     {
         $regex = '/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/';
         preg_match($regex, $rgb, $matches);
