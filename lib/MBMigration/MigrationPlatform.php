@@ -572,7 +572,7 @@ class MigrationPlatform
             'dump' => '/log/dump/'
         ];
         foreach ($folds as $key => $fold) {
-            $path = __DIR__ . '/../tmp/' . $this->projectId . $fold;
+            $path = Config::$pathTmp . $this->projectId . $fold;
             $this->createDirectory($path);
             $paths[$key] = $path;
         }

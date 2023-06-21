@@ -68,6 +68,14 @@ class Utils
 
     }
 
+    private static function createDirectoryIfNeeded($filePath) {
+        $directory = dirname($filePath);
+
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+    }
+
     private static function writeLogToFile(array $param): void
     {
         $typeMessageArray = ["DEBUG", "INFO", "WARNING", "CRITICAL", "PROCESS", "ERROR", "SUCCESSFULLY", "ErrorDump"];
@@ -93,6 +101,7 @@ class Utils
 
         $prefix = date("Y-m-d");
 
+        self::createDirectoryIfNeeded(Config::$pathLogFile);
         $dirToLog = Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
 
         file_put_contents($dirToLog, $strlog, FILE_APPEND);
