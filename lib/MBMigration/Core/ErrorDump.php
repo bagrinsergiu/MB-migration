@@ -37,7 +37,7 @@ class ErrorDump
             '/log/dump/'
         ];
         foreach ($folds as $fold) {
-            $path = __DIR__ . '/../../tmp/' . $this->projectID . $fold;
+            $path = Config::$pathTmp . $this->projectID . $fold;
             $this->createDirectory($path);
         }
     }
@@ -53,14 +53,13 @@ class ErrorDump
     private function createDump($error): void
     {
         $this->createProjectFolders();
-        $dump_file = __DIR__ . '/../../log/error/error_dump_' . date('Y-m-d_H-i-s') . '.txt';
+        $dump_file = Config::$pathTmp . '/log/error/error_dump_' . date('Y-m-d_H-i-s') . '.log';
         if($this->projectID !== null ){
-            $dump_file = __DIR__;
-            $dump_file .= '/../../tmp/';
+            $dump_file = Config::$pathTmp;
             $dump_file .= $this->projectID;
             $dump_file .= '/log/dump/';
             $dump_file .= date('Y-m-d_H-i-s');
-            $dump_file .= '.txt';
+            $dump_file .= '.log';
         }
 
         $cache = $this->cache ?? [];
