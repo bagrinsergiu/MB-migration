@@ -2,6 +2,8 @@
 
 namespace MBMigration\Core;
 
+use Exception;
+
 class Config
 {
     public static $debugMode;
@@ -26,16 +28,21 @@ class Config
 
     private static $cloud_host;
 
-    public function __construct($cloud_host, $path, $token)
+    /**
+     * @throws Exception
+     */
+    public function __construct($cloud_host, $path, $token, $DBConnection)
     {
+        $this->checkDBConnection($DBConnection);
+
         self::$debugMode        = true;
 
-        self::$DBConnection     = 'postgresql'; // mysql|postgresql
+        self::$DBConnection     = $DBConnection['dbType']; // mysql|postgresql
 
         self::$nameMigration    = 'Migration';
         self::$endPointVersion  = '/2.0';
 
-        self::$cloud_host       = $cloud_host;
+        self::$cloud_host       = $this->checkURL($cloud_host);
         self::$devToken         = $token;
 
         self::$urlAPI           = self::$cloud_host . '/api';
@@ -43,8 +50,8 @@ class Config
         self::$urlGetApiToken   = self::$cloud_host . '/api/projects/{project}/token';
         self::$urlGraphqlAPI    = self::$cloud_host . '/graphql/{ProjectId}';
 
-        self::$pathTmp          = $path . '/mb_tmp/';
-        self::$pathLogFile      = $path . '/mb_log/{{PREFIX}}.log';
+        self::$pathTmp          = $this->checkPath($path) . '/mb_tmp/';
+        self::$pathLogFile      = $this->checkPath($path) . '/mb_log/{{PREFIX}}.log';
 
         self::$endPointApi      = [
             'team_members'  => '/team_members',
@@ -59,39 +66,53 @@ class Config
         ];
 
         self::$configPostgreSQL = [
-            'dbHost' => "localhost",
-            'dbPort' => 50000,
-            'dbName' => 'api_production',
-            'dbUser' => 'brizy_contractor',
-            'dbPass' => 'Lg$8AON5^Dk9JLBR2023iUu'
+            'dbHost' => $DBConnection['dbHost'],
+            'dbPort' => $DBConnection['dbPort'],
+            'dbName' => $DBConnection['dbName'],
+            'dbUser' => $DBConnection['dbUser'],
+            'dbPass' => $DBConnection['dbPass']
         ];
 
         self::$configMySQL      = [
-            'dbLocal' => '127.0.0.1',
-            'dbName' => 'test',
-            'dbUser' => 'root',
-            'dbPass' => ''
+            'dbHost' => $DBConnection['dbHost'],
+            'dbName' => $DBConnection['dbName'],
+            'dbUser' => $DBConnection['dbUser'],
+            'dbPass' => $DBConnection['dbPass']
         ];
     }
 
-    public static function configPostgreSQL(): array
+    private function checkPath($path): string
     {
-        return [
-            'dbHost' => 'localhost',
-            'dbPort' => 50000,
-            'dbName' => 'api_production',
-            'dbUser' => 'brizy_contractor',
-            'dbPass' => 'Lg$8AON5^Dk9JLBR2023iUu'
-        ];
+        return is_dir($path) ? $path : sys_get_temp_dir();
     }
 
-    public static function configMySQL(): array
+    /**
+     * @throws Exception
+     */
+    private function checkDBConnection($confConnection): void
     {
-        return [
-            'dbLocal' => '127.0.0.1',
-            'dbName' => 'test',
-            'dbUser' => 'root',
-            'dbPass' => ''
-        ];
+        $requiredFields = ['dbType', 'dbHost', 'dbPort', 'dbName', 'dbUser', 'dbPass'];
+
+        foreach ($requiredFields as $field) {
+            if (empty($confConnection[$field])) {
+                throw new Exception($field . " value is not set"); // Если одно из значений отсутствует или пустое, возвращаем false
+            }
+        }
+
+        if ($confConnection['dbType'] !== 'mysql' && $confConnection['dbType'] !== 'postgresql') {
+            throw new Exception("The '" . $confConnection['dbType'] . "' value is not correct");
+            }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkURL($url) {
+        $headers = @get_headers($url);
+        if ($headers && strpos($headers[0], '200') !== false) {
+            return $url;
+        } else {
+            throw new Exception("Ошибка инициализации конфигурации");
+        }
     }
 }

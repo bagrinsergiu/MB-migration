@@ -42,7 +42,7 @@ class MySql
 
     private function connect($config)
     {
-        $this->mySqlConnect = mysqli_connect($config['dbLocal'], $config['dbUser'], $config['dbPass'], $config['dbName']);
+        $this->mySqlConnect = mysqli_connect($config['dbHost'], $config['dbUser'], $config['dbPass'], $config['dbName']);
         if(!$this->mySqlConnect)
         {
             die();
