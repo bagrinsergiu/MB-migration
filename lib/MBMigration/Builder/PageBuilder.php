@@ -5,7 +5,7 @@ use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 use MBMigration\Layer\Graph\QueryBuilder;
 
-class ItemsBuilder
+class PageBuilder
 {
     private  $cache;
     private  $QueryBuilder;
@@ -30,7 +30,7 @@ class ItemsBuilder
             $itemsData = [];
             $menuBlock = json_decode($cache->get('menuBlock'),true);
             $itemsData['items'][] = $menuBlock;
-            Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+            Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
             $this->cache->update('createdFirstSection',false, 'flags');
             $this->cache->update('Current', '++', 'Status');
             foreach ($preparedSectionOfThePage as $section)
@@ -41,7 +41,7 @@ class ItemsBuilder
                     $decodeBlock = json_decode($blockData, true);
                     $itemsData['items'][] = $decodeBlock;
                 } else {
-                    Utils::log('null' . $slug, 2, 'ItemsBuilder');
+                    Utils::log('null' . $slug, 2, 'PageBuilder');
                 }
             }
             $this->sendStatus();
@@ -50,18 +50,18 @@ class ItemsBuilder
 
             $pageData = json_encode($itemsData);
 
-            Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+            Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
 
             $this->saveLayoutJson($pageData, $slug);
 
             $this->QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
 
-            Utils::log('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+            Utils::log('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
             return true;
         }
         else
         {
-            Utils::log('Build default Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'ItemsBuilder');
+            Utils::log('Build default Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
             $_WorkClassTemplate->callMethod('create-Default-Page');
             return true;
         }

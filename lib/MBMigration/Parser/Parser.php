@@ -197,12 +197,16 @@ class Parser
 
     private function getItemLink(int $itemId): string
     {
-        $requestLinkIdToPages = $this->db->request("SELECT page_id FROM links WHERE item_id  = " . $itemId);
-        if(!empty($requestLinkIdToPages) && !empty($requestLinkIdToPages[0]['page_id'])){
-
-            $requestItemLink = $this->db->request("SELECT slug FROM pages WHERE id  = " . $requestLinkIdToPages[0]['page_id']);
-            Utils::log('Get link for item: '. $requestItemLink[0]['slug'], 1, 'getItemLink');
-            return $requestItemLink[0]['slug'];
+        Utils::log('Check link for item: '. $itemId, 1, 'getItemLink');
+        $requestLinkIdToPages = $this->db->request("SELECT * FROM links WHERE item_id  = " . $itemId);
+        if(!empty($requestLinkIdToPages)){
+            if(!is_null($requestLinkIdToPages[0]['page_id'])) {
+                $requestItemLink = $this->db->request("SELECT slug FROM pages WHERE id  = " . $requestLinkIdToPages[0]['page_id']);
+                Utils::log('Get link for item: '. $requestItemLink[0]['slug'], 1, 'getItemLink');
+                return $requestItemLink[0]['slug'];
+            } else if ($requestLinkIdToPages[0]['category'] === 'link') {
+                return $requestLinkIdToPages[0]['detail'];
+            }
         }
         return '';
     }
@@ -216,7 +220,7 @@ class Parser
             return $this->cache->get($sectionId['id'], 'Sections');
         }
 
-        $requestItemsFromSection = $this->db->request("SELECT * FROM items WHERE 'group' is not null and section_id = " . $sectionId['id'] . " ORDER BY parent_id DESC, order_by");
+        $requestItemsFromSection = $this->db->request('SELECT * FROM items WHERE "group" is not null and section_id = ' . $sectionId['id'] . ' ORDER BY parent_id DESC, order_by');
         foreach($requestItemsFromSection as $sectionsItems)
         {
             Utils::log('Get item | id: ' .$sectionsItems['id'].' from section id: '. $sectionId['id'], 1, 'getSectionsItems');

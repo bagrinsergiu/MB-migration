@@ -11,7 +11,8 @@
       "ext-fileinfo": "*",
       "ext-curl": "*",
       "ext-json": "*",
-      "ext-zip": "*"
+      "ext-zip": "*",
+      "ext-libxml": "*"
     },
     "autoload": {
       "psr-0": {
