@@ -2,6 +2,7 @@
 
 namespace MBMigration\Core;
 
+use Exception;
 use MBMigration\Builder\VariableCache;
 
 class Utils
@@ -12,6 +13,17 @@ class Utils
     public function __construct(VariableCache $cache = null)
     {
         self::$projectID = $cache->get('projectId_Brizy');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function check($value, $message)
+    {
+        if(empty($value)){
+            throw new Exception($message);
+        }
+        return $value;
     }
 
     public static function findKeyPath($array, $searchKey, $path = '', &$result = [], &$i = 0)

@@ -35,6 +35,7 @@ class Config
     public function __construct($cloud_host, $path, $token, $DBConnection)
     {
         $path = $this->checkPath($path);
+
         $this->checkDBConnection($DBConnection);
 
         self::$debugMode        = true;
@@ -45,7 +46,7 @@ class Config
         self::$endPointVersion  = '/2.0';
 
         self::$cloud_host       = $this->checkURL($cloud_host);
-        self::$devToken         = $token;
+        self::$devToken         = $this->checkToken($token);
 
         self::$urlAPI           = self::$cloud_host . '/api';
         self::$urlProjectAPI    = self::$cloud_host . '/projects/{project}';
@@ -103,7 +104,7 @@ class Config
         }
 
         if ($confConnection['dbType'] !== 'mysql' && $confConnection['dbType'] !== 'postgresql') {
-            throw new Exception("The '" . $confConnection['dbType'] . "' value is not correct");
+            throw new Exception("The '" . $confConnection['dbType'] . "' value does not match the expected value. Specify one of these parameters mysql or postgresql. ");
             }
     }
 
@@ -116,5 +117,16 @@ class Config
         } else {
             throw new Exception("Url is wrong or not set");
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkToken($token)
+    {
+        if (empty($token)) {
+            throw new Exception("Token not set");
+        }
+        return $token;
     }
 }

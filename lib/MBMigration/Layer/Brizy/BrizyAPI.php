@@ -1,6 +1,7 @@
 <?php
 namespace MBMigration\Layer\Brizy;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
@@ -8,15 +9,18 @@ use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
 
-class BrizyAPI
+class BrizyAPI extends Utils
 {
     private $projectToken;
     private $nameFolder;
 
-    function __construct()
+    /**
+     * @throws Exception
+     */
+    public function __construct()
     {
         Utils::log('Initialization', 4, 'BrizyAPI');
-        $this->projectToken = Config::$devToken;
+        $this->projectToken = $this->check(Config::$devToken, 'Сonfig not initialized');
     }
 
     public function getWorkspaces($name = null)

@@ -2,18 +2,15 @@
 
 namespace MBMigration\Builder\Layout\Anthem;
 
-use MBMigration\Builder\ItemSetter;
-use MBMigration\Builder\VariableCache;
 use DOMDocument;
-use InvalidArgumentException;
 use MBMigration\Core\Utils;
+use InvalidArgumentException;
+use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\Layout\Layout;
+use MBMigration\Builder\VariableCache;
 
-class Anthem
+class Anthem extends Layout
 {
-    private $jsonDecode;
-    private $dom;
-    private $cache;
-    private  $textPosition;
 
     public function __construct(VariableCache $cache)
     {
@@ -133,48 +130,61 @@ class Anthem
     private function left_media(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [left_media");
+
+        $objBlock = new ItemSetter();
+
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['left-media'];
         $block = json_decode($decoded, true);
 
-        $block['value']['items'][0]['value']['bgColorPalette'] = '';
+        $objBlock->newItem($decoded);
+
+
+        $objBlock->item(0)->setting('bgColorPalette','');
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $block['value']['items'][0]['value']['bgColorHex'] = strtolower($sectionData['settings']['color']['bg']);
+            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
         }
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
             Utils::log('Set background', 1, "Anthem] [left_media");
 
-            $block['value']['items'][0]['value']['bgImageFileName'] = $sectionData['settings']['sections']['background']['filename'];
-            $block['value']['items'][0]['value']['bgImageSrc'] = $sectionData['settings']['sections']['background']['photo'];
-            $block['value']['items'][0]['value']['bgColorOpacity'] = 0;
-            $block['value']['items'][0]['value']['bgColorType'] = "none";
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
+            $objBlock->item(0)->setting('bgColorType', 'none');
         }
 
         //$this->marginAndPaddingOffset($block);
 
-        foreach ($sectionData['items'] as $item){
-            if($item['category'] == 'photo' && $item['content']!= ''){
-                $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $item['content'];
-                $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
-                if($this->checkArrayPath($item, 'settings/image')){
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageWidth'] = $item['settings']['image']['width'];
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageHeight'] = $item['settings']['image']['height'];
+        foreach ($sectionData['items'] as $item) {
+            if($item['category'] == 'photo' && $item['content']!= '') {
+                $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageSrc', $item['content']);
+                $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+
+                if($this->checkArrayPath($item, 'settings/image')) {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageWidth', $item['settings']['image']['width']);
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageHeight', $item['settings']['image']['height']);
+                }
+
+                if ($item['link'] != '') {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkType', 'external');
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternal', $item['link']);
                 }
             }
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content'], 'brz-text-lg-left');
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
                 }
                 if($item['item_type']=='body'){
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], 'brz-text-lg-left');
+                    $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
                 }
             }
         }
-        $block = $this->replaceIdWithRandom($block);
+        $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
+
     private function right_media(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [right_media");
@@ -195,10 +205,10 @@ class Anthem
             }
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content'], 'brz-text-lg-right');
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content'], '','brz-text-lg-right');
                 }
                 if($item['item_type']=='body'){
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], 'brz-text-lg-right');
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], '', 'brz-text-lg-right');
                 }
             }
         }
@@ -252,6 +262,9 @@ class Anthem
     private function full_text(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [full_text");
+
+        $objBlock = new ItemSetter();
+
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['full-text'];
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption'))
@@ -262,80 +275,91 @@ class Anthem
                 return $this->parallaxScroll($sectionData);
             }
         }
+
         if (!$this->checkArrayPath($sectionData, 'settings/sections/background/filename')) {
             $block = json_decode($decoded['main'], true);
 
-            $block['value']['items'][0]['value']['bgColorPalette'] = '';
-            if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-                $block['value']['items'][0]['value']['bgColorHex'] = $sectionData['settings']['color']['bg'];
-            } else {
-                $block['value']['items'][0]['value']['bgColorHex'] = $this->cache->get('subpalette1','subpalette')['bg'];
-            }
+            $objBlock->newItem($decoded['main']);
 
+            $objBlock->item(0)->setting('bgColorPalette', '');
+
+            if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+                $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+            } else {
+                $objBlock->item(0)->setting('bgColorHex', $this->cache->get('subpalette1','subpalette')['bg']);
+            }
 
             //$this->marginAndPaddingOffset($block);
 
             foreach ($sectionData['items'] as $item) {
                 if ($item['category'] == 'text') {
                     if ($item['item_type'] == 'title') {
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
                     }
                     if ($item['item_type'] == 'body') {
-                        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
                     }
                 }
             }
         } else {
             Utils::log('Set background', 1, "Anthem] [full_text");
-            $block = json_decode($decoded['background'], true);
 
-            $block['value']['items'][0]['value']['bgImageFileName'] = $sectionData['settings']['sections']['background']['filename'];
-            $block['value']['items'][0]['value']['bgImageSrc'] = $sectionData['settings']['sections']['background']['photo'];
+            $objBlock->newItem($decoded['background']);
+
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
 
             //$this->marginAndPaddingOffset($block);
 
             foreach ($sectionData['items'] as $item) {
                 if ($item['category'] == 'text') {
                     if ($item['item_type'] == 'title') {
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+
                     }
                     if ($item['item_type'] == 'body') {
-                        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
                     }
                 }
             }
         }
 
-        $block = $this->replaceIdWithRandom($block);
+        $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
 
     private function parallaxScroll(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [full_text (parallaxScroll)");
+        $objBlock = new ItemSetter();
+
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
-        if(!empty($sectionData['settings']['sections']['background'])) {
-            $block = json_decode($decoded['parallax-scroll'], true);
-
-            $block['value']['items'][0]['value']['bgImageFileName'] = $sectionData['settings']['sections']['background']['filename'];
-            $block['value']['items'][0]['value']['bgImageSrc']      = $sectionData['settings']['sections']['background']['photo'];
-
-        } else {
+        if(!empty($sectionData['settings']['sections']['background']))  {
             Utils::log('Set background', 1, "Anthem] [full_text (parallaxScroll)");
-            $block = json_decode($decoded['background'], true);
+            $block = json_decode($decoded['parallax-scroll'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $sectionData['settings']['sections']['background']['filename'];
             $block['value']['items'][0]['value']['bgImageSrc']      = $sectionData['settings']['sections']['background']['photo'];
 
             foreach ($sectionData['items'] as $item){
                 if($item['category'] == 'text') {
-                    if($item['item_type']=='title'){
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                    $show_header = true;
+                    $show_body = true;
+
+                    if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
+                        $show_header = $sectionData['settings']['sections']['text']['show_header'];
                     }
-                    if($item['item_type']=='body'){
-                        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                    if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
+                        $show_body = $sectionData['settings']['sections']['text']['show_body'];
+                    }
+
+                    if($item['item_type'] == 'title' &&  $show_header) {
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content'] ,'', 'brz-text-lg-left');
+                    }
+                    if($item['item_type'] == 'body' && $show_body) {
+                        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], '', 'brz-text-lg-left');
                     }
                 }
             }
@@ -344,7 +368,6 @@ class Anthem
         $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
-
 
     public function two_horizontal_text($sectionData)
     {
@@ -442,53 +465,57 @@ class Anthem
     private function grid_layout(array $sectionData)
     {
         Utils::log('Create bloc', 1, "Anthem] [grid_layout");
+
+        $objItem = new ItemSetter();
+        $objBlock = new ItemSetter();
+
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
-        //$objItem = new ItemSetter($decoded['item']);
+        $objBlock->newItem($decoded['main']);
+        $objItem->newItem($decoded['item']);
 
-        $block = json_decode($decoded['main'], true);
-        $item  = json_decode($decoded['item'], true);
 
 //        $this->marginAndPaddingOffset($block);
 
-        $block['value']['items'][0]['value']['bgColorPalette'] = '';
+        $objBlock->item(0)->setting('bgColorPalette', '');
+
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $block['value']['items'][0]['value']['bgColorHex'] = $sectionData['settings']['color']['bg'];
+            $objBlock->setting('bgColorHex',$sectionData['settings']['color']['bg']);
         }
+
         if(!empty($sectionData['settings']['sections']['background'])) {
-            $block = json_decode($decoded['parallax-scroll'], true);
-
-            $block['value']['items'][0]['value']['bgImageFileName'] = $sectionData['settings']['sections']['background']['filename'];
-            $block['value']['items'][0]['value']['bgImageSrc']      = $sectionData['settings']['sections']['background']['photo'];
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
         }
-
-        $path = Utils::findKeyPath($block, '_id');
-
+        $resultRemove = [];
         foreach ($sectionData['items'] as $section)
         {
             if(isset($section['item'])) {
                 switch ($section['category']) {
                     case 'text':
-                        if ($item['item_type'] == 'title') {
+                        if ($section['item_type'] == 'title') {
                             break;
                         }
-                        if ($item['item_type'] == 'body') {
+                        if ($section['item_type'] == 'body') {
                             break;
                         }
                     case 'list':
                         foreach ($section['item'] as $sectionItem) {
                             if ($sectionItem['category'] == 'photo') {
-                                $item['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $sectionItem['content'];
-                                $item['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $sectionItem['imageFileName'];
+                                $objItem->setting('bgImageSrc', $sectionItem['content']);
+                                $objItem->setting('bgImageFileName', $sectionItem['imageFileName']);
+
                                 if ($sectionItem['link'] != '') {
-                                    $item['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
-                                    $item['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $sectionItem['link'];
+                                    $objItem->setting('linkType', 'external');
+                                    $objItem->setting('linkExternal', '/' . $sectionItem['link']);
                                 }
                             }
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
-                                    $item['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionItem['content']);
+                                     $objItem->item(1)->item(0)->setText($this->replaceParagraphs($sectionItem['content'], 'brz-tp-lg-empty brz-ff-palanquin brz-ft-google brz-fs-lg-27 brz-fss-lg-px brz-fw-lg-700 brz-ls-lg-0 brz-lh-lg-1_9'));
+                                    $objItem->item(1)->item(0)->setting('typographyFontSize', 27);
                                 }
                             }
                         }
@@ -496,30 +523,29 @@ class Anthem
                 }
             } else {
                 if ($section['category'] == 'photo') {
-                    $item['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $section['content'];
-                    $item['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $section['imageFileName'];
+                    $objItem->item(0)->item(0)->setting('imageSrc', $section['content']);
+                    $objItem->item(0)->item(0)->setting('imageFileName', $section['imageFileName']);
+
                     if ($section['link'] != '') {
-                        $item['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
-                        $item['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $section['link'];
+                        $objItem->item(0)->item(0)->setting('linkType', "external");
+                        $objItem->item(0)->item(0)->setting('linkExternal', '/' . $section['link']);
                     }
                 }
                 if ($section['category'] == 'text') {
                     if ($section['item_type'] == 'title') {
-
-                        $objItem->addItem($this->itemWrapperRichText($section['content']));
-
-                        $item = $this->itemWrapperRichText($this->replaceTitleTag($section['content']));
+                        $objItem->addItem($this->itemWrapperRichText($this->replaceTitleTag($section['content'])));
                     }
                     if ($section['item_type'] == 'body') {
-                        $objItem->addItem($this->itemWrapperRichText($section['content']));
+                        $objItem->addItem($this->itemWrapperRichText($this->replaceParagraphs($section['content'])));
                     }
                 }
             }
-            $resultRemove[] = $item;
+            $resultRemove[] = $objItem->get();
         }
-        $block['value']['items'][0]['value']['items'][0]['value']['items'] = $resultRemove;
 
-        $block = $this->replaceIdWithRandom($block);
+        $objBlock->item(0)->item(1)->addItem($resultRemove);
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
 
@@ -528,7 +554,6 @@ class Anthem
         Utils::log('Create bloc', 1, "Anthem] [grid_layout");
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['list-layout'];
-        $sb = new SectionBuilder();
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);
         $image  = json_decode($decoded['image'], true);
@@ -707,7 +732,6 @@ class Anthem
         $this->cache->set('footerBlock', json_encode($block));
     }
 
-
     private function marginAndPaddingOffset(&$block)
     {
         $flags = $this->cache->get('createdFirstSection','flags');
@@ -738,15 +762,21 @@ class Anthem
         $this->insertElementAtPosition($block, $path, $wrapper, $position);
     }
 
-    private function itemWrapperRichText($content, $associative = false ){
+    private function itemWrapperRichText($content, array $settings = [], $associative = false ){
         $decoded = $this->jsonDecode['global']['wrapper--richText'];
         $block = new ItemSetter($decoded);
         $result = $block->item(0)->setting('text', $content)->get();
+        if(!empty($settings)) {
+            foreach ($settings as $key => $value) {
+                $result = $block->item(0)->setting($key, $value);
+            }
+        }
         if(!$associative){
             return $result;
         }
         return json_decode(json_encode($result), true);
     }
+
     private function itemWrapperImage($content, $associative = false ){
         $decoded = $this->jsonDecode['global']['wrapper--image'];
         $block = new ItemSetter($decoded);
@@ -757,7 +787,7 @@ class Anthem
         return json_decode(json_encode($result), true);
     }
 
-    private function itemWrappericon($content, $associative = false ){
+    private function itemWrapperIcon($content, $associative = false ){
         $decoded = $this->jsonDecode['global']['wrapper--icon'];
         $block = new ItemSetter($decoded);
         $result = $block->item(0)->setting('text', $content)->get();
@@ -805,11 +835,10 @@ class Anthem
         $href->setAttribute('data-href', $dataHref);
         $href->setAttribute('class', 'link--external');
     }
-// brz-text-lg-center
-// brz-text-lg-left
-    private function replaceTitleTag($html, $type = ''): string
+
+    private function replaceTitleTag($html, $type = '', $position = ''): string
     {
-        Utils::log('Replace Title Tag: '. $html, 1, "Anthem] [replaceTitleTag");
+        Utils::log('Replace Title Tag ', 1, "Anthem] [replaceTitleTag");
         if(empty($html))
             return '';
         $doc = new DOMDocument();
@@ -821,10 +850,15 @@ class Anthem
                 $styleValue = 'opacity: 1; ';
                 $style = '';
                 $class = 'brz-cp-color2';
+
                 $textPosition = ' brz-text-lg-center';
 
+                if($position !== ''){
+                    $textPosition  = ' ' . $position;
+                }
+
                 if($type !== ''){
-                    $textPosition  = ' ' . $type;
+                    $textPosition  .= ' ' . $type;
                 }
 
                 if ($paragraph->hasAttribute('style')) {
@@ -884,9 +918,9 @@ class Anthem
         return $this->clearHtmlTag($doc->saveHTML());
     }
 
-    private function replaceParagraphs($html, $type = ''): string
+    private function replaceParagraphs($html, $type = '', $position = ''): string
     {
-        Utils::log('Replace Paragraph: '. $html, 1, "Anthem] [replaceParagraphs");
+        Utils::log('Replace Paragraph', 1, "Anthem] [replaceParagraphs");
         if(empty($html)){
             return '';
         }
@@ -906,6 +940,10 @@ class Anthem
             $class = 'brz-cp-color2';
 
             $textPosition = ' brz-text-lg-center';
+
+            if($position !== ''){
+                $textPosition  = ' ' . $position;
+            }
 
             if($type !== ''){
                 $class  .= ' ' . $type;
@@ -930,7 +968,7 @@ class Anthem
                     $style .= 'color:' . $value . ';';
                 }
                 if($key == 'font-size'){
-                    $style .= ' font-size:' . $value . ';';
+                    $style .= ' font-size:' . $this->convertFontSize($value) . ';';
                 }
             }
 
@@ -948,246 +986,6 @@ class Anthem
             $paragraph->appendChild($span);
         }
         return $this->clearHtmlTag($doc->saveHTML());
-    }
-
-    function getDataIconValue($html) {
-        $dom = new DOMDocument();
-        $dom->loadHTML($html);
-        $links = $dom->getElementsByTagName('a');
-        $result = [];
-        foreach ($links as $link) {
-            $spans = $link->getElementsByTagName('span');
-            foreach ($spans as $span) {
-                if ($span->hasAttribute('data-icon')) {
-                    $icon = $span->getAttribute('data-icon');
-                    $href = $link->getAttribute('href');
-                    $result[] = [ 'icon' => $icon, 'href' => $href];
-                }
-            }
-        }
-        return $result;
-    }
-
-    private function clearHtmlTag($str): string
-    {
-        $replase = [
-            '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">',
-            "<html>",
-            "<body>",
-            "</html>",
-            "</body>",
-            "\n"
-        ];
-        return str_replace($replase, '', $str);
-    }
-
-    private function getIcon($iconName)
-    {
-        $icon = [
-            'facebook'  => 'logo-facebook',
-            'instagram' => 'logo-instagram',
-            'youtube'   => 'logo-youtube',
-            'twitter'   => 'logo-twitter',
-        ];
-        if(array_key_exists($iconName, $icon)){
-            return $icon[$iconName];
-        }
-        return false;
-    }
-
-    private function sortByOrderBy(array $array): array
-    {
-        usort($array, function($a, $b) {
-            return $a['order_by'] - $b['order_by'];
-        });
-        return $array;
-    }
-
-    function parseStyle(string $styleString): array
-    {
-        $styles = array();
-        $stylePairs = explode(';', $styleString);
-        foreach ($stylePairs as $pair) {
-            $parts = explode(':', $pair);
-            if (count($parts) === 2) {
-                $key = trim($parts[0]);
-                $value = trim($parts[1]);
-                $styles[$key] = $value;
-            }
-        }
-        return $styles;
-    }
-
-    private function rgbToHex($rgb)
-    {
-        $regex = '/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/';
-        preg_match($regex, $rgb, $matches);
-
-        if (count($matches) === 4) {
-            $red = dechex($matches[1]);
-            $green = dechex($matches[2]);
-            $blue = dechex($matches[3]);
-
-            $red = str_pad($red, 2, "0", STR_PAD_LEFT);
-            $green = str_pad($green, 2, "0", STR_PAD_LEFT);
-            $blue = str_pad($blue, 2, "0", STR_PAD_LEFT);
-
-            return "#$red$green$blue";
-        }
-
-        return false;
-    }
-
-    private function checkArrayPath($array, $path, $check = ''): bool
-    {
-        $keys = explode('/', $path);
-        $current = $array;
-
-        foreach ($keys as $key) {
-            if (!isset($current[$key])) {
-                return false;
-            }
-            $current = $current[$key];
-        }
-
-        if($check != '')
-        {
-            if(is_array($check)){
-                foreach ($check as $look){
-                    if ($current === $look) {
-                        return true;
-                    }
-                }
-            } else {
-                if ($current === $check) {
-                    return true;
-                }
-            }
-        }
-        return true;
-    }
-
-    private function replaceInName($str): string
-    {
-        if(empty($str))
-        {
-            return false;
-        }
-        return str_replace("-", "_", $str);
-    }
-
-    private function getNameHash($data = ''): string
-    {
-        $to_hash = $this->generateUniqueID() . $data;
-        $newHash = hash('sha256', $to_hash);
-        return substr($newHash, 0, 32);
-    }
-
-    private function generateUniqueID(): string
-    {
-        $microtime = microtime();
-        $microtime = str_replace('.', '', $microtime);
-        $microtime = substr($microtime, 0, 10);
-        $random_number = rand(1000, 9999);
-        return $microtime . $random_number;
-    }
-
-    private function replaceValue($data, $keyToReplace, $newValue) {
-        if (is_array($data)) {
-            foreach ($data as $key => &$value) {
-                if (is_array($value)) {
-                    $value = $this->replaceValue($value, $keyToReplace, $newValue);
-                } elseif ($key === $keyToReplace) {
-                    $data[$key] = $newValue;
-                }
-            }
-            unset($value);
-        }
-
-        return $data;
-    }
-
-    private function replaceIdWithRandom($data) {
-        if (is_array($data)) {
-            foreach ($data as $key => &$value) {
-                if (is_array($value)) {
-                    $value = $this->replaceIdWithRandom($value);
-                } elseif ($key === '_id') {
-                    $data[$key] = $this->generateCharID();
-                }
-            }
-            unset($value);
-        }
-
-        return $data;
-    }
-
-    private function generateCharID(int $length = 32): string
-    {
-        $characters = 'abcdefghijklmnopqrstuvwxyz';
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
-        }
-        return $randomString;
-    }
-
-    private function insertElementAtPosition(array &$array, string $path, array $element, $position = null): void
-    {
-        $keys = explode('/', $path);
-
-        $current = &$array;
-        foreach ($keys as $key) {
-            if (!isset($current[$key]) || !is_array($current[$key])) {
-                $current[$key] = [];
-            }
-            $current = &$current[$key];
-        }
-        if($position === null){
-            $current[] = $element;
-        } else {
-            $count = count($current);
-            if ($position < 0 || $position > $count) {
-                throw new InvalidArgumentException("Invalid position: $position");
-            }
-            $current = array_merge(
-                array_slice($current, 0, $position),
-                [$element],
-                array_slice($current, $position, $count - $position)
-            );
-        }
-    }
-
-    private function mergeArrayAtPath(array &$array, string $path, array $mergeArray): void
-    {
-        $keys = explode('/', $path);
-
-        $current = &$array;
-        foreach ($keys as $key) {
-            if (!isset($current[$key]) || !is_array($current[$key])) {
-                $current[$key] = [];
-            }
-            $current = &$current[$key];
-        }
-
-        $current = array_merge($current, $mergeArray);
-    }
-
-    private function getKeyRecursive($key, $section, $array) {
-        foreach ($array as $k => $value) {
-            if ($k === $section && is_array($value)) {
-                if (array_key_exists($key, $value)) {
-                    return $value[$key];
-                }
-            }
-            if (is_array($value)) {
-                $result = $this->getKeyRecursive($key, $section, $value);
-                if ($result !== null) {
-                    return $result;
-                }
-            }
-        }
-        return null;
     }
 
     public function callMethod($methodName, $params = null)

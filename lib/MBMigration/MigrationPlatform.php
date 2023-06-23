@@ -5,7 +5,7 @@ namespace MBMigration;
 use Exception;
 use MBMigration\Builder\ColorMapper;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Builder\ItemsBuilder;
+use MBMigration\Builder\PageBuilder;
 use MBMigration\Core\Config;
 use MBMigration\Core\ErrorDump;
 use MBMigration\Core\Utils;
@@ -144,7 +144,7 @@ class MigrationPlatform
             if (!empty($pages['child'])) {
                 $this->launch($pages['child']);
             }
-            if ($pages['slug'] != 'home') {
+            if ($pages['slug'] != 'our-mission-vision') {
                 continue;
             }
             $this->collector($pages);
@@ -380,7 +380,7 @@ class MigrationPlatform
             Utils::log('Start Builder | create default Page', 4, 'RunPageBuilder');
         }
 
-        $PageBuilder = new ItemsBuilder($preparedSectionOfThePage, $this->cache, $defaultPage);
+        $PageBuilder = new PageBuilder($preparedSectionOfThePage, $this->cache, $defaultPage);
 
         if ($PageBuilder) {
             Utils::log('Page created successfully!', 1, 'PageBuilder');
@@ -539,7 +539,7 @@ class MigrationPlatform
             $palette = $this->cache->get('settings')['parameter']['palette'];
 
             foreach ($palette as $item) {
-                $result[$item['tag']] = $item['color'];
+                $result[$item['tag']] = strtolower($item['color']);
             }
         }
         return $result;
