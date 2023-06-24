@@ -60,7 +60,7 @@ class ItemSetter
     public function addItem(array $value): void
     {
         $value = $this->arrayToObject($value);
-        $this->item->value->items = $this->mergeObjects($this->item->value->items, $value);
+        $this->item->value->items[] = $value;
         $this->begin();
     }
 

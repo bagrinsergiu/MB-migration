@@ -144,9 +144,7 @@ class MigrationPlatform
             if (!empty($pages['child'])) {
                 $this->launch($pages['child']);
             }
-            if ($pages['slug'] != 'our-mission-vision') {
-                continue;
-            }
+            if ($pages['slug'] != 'community-groups') { continue; }
             $this->collector($pages);
         }
     }
