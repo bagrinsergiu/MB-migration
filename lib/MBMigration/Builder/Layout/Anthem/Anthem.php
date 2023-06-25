@@ -139,7 +139,7 @@ class Anthem extends Layout
         $objBlock = new ItemSetter();
 
         $this->cache->set('currentSectionData', $sectionData);
-        $decoded = $this->jsonDecode['blocks']['left-media'];
+        $decoded = $this->jsonDecode['blocks']['left-media']['main'];
 
         $objBlock->newItem($decoded);
 
@@ -194,8 +194,7 @@ class Anthem extends Layout
 
         $objBlock = new ItemSetter();
 
-        $decoded = $this->jsonDecode['blocks']['right-media'];
-        $block = json_decode($decoded, true);
+        $decoded = $this->jsonDecode['blocks']['right-media']['main'];
 
         $objBlock->newItem($decoded);
 
@@ -203,6 +202,10 @@ class Anthem extends Layout
         $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
 
         foreach ($sectionData['items'] as $item) {
+//
+//            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText('');
+//            $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('');
+
             if($item['category'] == 'photo' && $item['content'] !== '') {
                 $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageSrc',$item['content']);
                 $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageFileName',$item['imageFileName']);
@@ -211,11 +214,7 @@ class Anthem extends Layout
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkType', 'external');
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkExternal', $item['link']);
                 }
-
             }
-
-            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText('');
-            $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('');
 
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
@@ -238,7 +237,7 @@ class Anthem extends Layout
 
         $this->cache->set('currentSectionData', $sectionData);
 
-        $decoded = $this->jsonDecode['blocks']['full-media'];
+        $decoded = $this->jsonDecode['blocks']['full-media']['main'];
 
         $objBlock->newItem($decoded);
 
@@ -268,16 +267,26 @@ class Anthem extends Layout
             $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
         }
 
-        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText('');
-        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('');
+        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText('<p></p>');
+        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('<p></p>');
 
         foreach ($sectionData['items'] as $item) {
             if($item['category'] == 'text') {
 
-                if($item['item_type']=='title') {
+                $show_header = true;
+                $show_body = true;
+
+                if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
+                    $show_header = $sectionData['settings']['sections']['text']['show_header'];
+                }
+                if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
+                    $show_body = $sectionData['settings']['sections']['text']['show_body'];
+                }
+
+                if($item['item_type']=='title' && $show_header) {
                     $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content']));
                 }
-                if($item['item_type']=='body') {
+                if($item['item_type']=='body' && $show_body) {
                     $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content']));
                 }
             }
@@ -411,7 +420,7 @@ class Anthem extends Layout
 
     private function two_horizontal_text($sectionData)
     {
-        Utils::log('Create full media', 1, "Anthem] [full_media");
+        Utils::log('Create full media', 1, "Anthem] [two-horizontal-text");
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['two-horizontal-text'];
         $block = json_decode($decoded, true);
@@ -693,6 +702,67 @@ class Anthem extends Layout
             $this->insertElementAtPosition($block, 'value/items', $slide);
         }
         $block = $this->replaceIdWithRandom($block);
+        return json_encode($block);
+    }
+
+    private function three_top_media_circle(array $sectionData)
+    {
+        Utils::log('Create bloc', 1, "Anthem] [three_top_media_circle");
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $this->jsonDecode['blocks']['three-top-media-circle'];
+
+        $objBlock = new ItemSetter();
+        $objItem = new ItemSetter();
+        $objSpacer = new ItemSetter();
+
+        $objBlock->newItem($decoded['main']);
+        $objItem->newItem($decoded['item']);
+        $objSpacer->newItem($decoded['spacer']);
+
+        $objBlock->item(0)->setting('bgAttachment', 'none');
+        $objBlock->item(0)->setting('bgColorPalette', '');
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
+            Utils::log('Set background', 1, "Anthem] [three_top_media_circle");
+
+            $background = $this->getKeyRecursive('background', 'sections', $sectionData);
+
+            if(isset($background['photo']) && isset($background['filename'])) {
+                $objBlock->item(0)->setting('bgImageSrc', $background['photo']);
+                $objBlock->item(0)->setting('bgImageFileName', $background['filename']);
+            }
+            if(isset($background['opacity'])) {
+                $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($background['opacity']));
+                $objBlock->item(0)->setting('tempBgColorOpacity', $this->colorOpacity($background['opacity']));
+            }
+            if(isset($background['photoOption'])){
+                $objBlock->item(0)->setting('bgAttachment', 'fixed');
+            }
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+        }
+
+        foreach ($sectionData['items'] as $item)
+        {
+            if ($item['category'] === 'photo') {
+                $objItem->item(0)->item(0)->setting('imageSrc', $item['content']);
+                $objItem->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+                $objBlock->item(0)->item(0)->addItem($objItem->get());
+            }
+
+            if ($item['item_type'] === 'title') {
+                $objBlock->item(0)->item(1)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+            }
+
+            if ($item['item_type'] === 'body') {
+                $objBlock->item(0)->item(1)->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+            }
+        }
+        $objBlock->item(0)->item(0)->addItem($objSpacer->get());
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
 
@@ -1001,7 +1071,7 @@ class Anthem extends Layout
         return $this->clearHtmlTag($doc->saveHTML());
     }
 
-    public function callMethod($methodName, $params = null)
+    public function callMethod($methodName, $params = null, $marker = '')
     {
         $verifiedMethodName = $this->replaceInName($methodName);
         if (method_exists($this, $verifiedMethodName)) {
@@ -1011,7 +1081,7 @@ class Anthem extends Layout
             Utils::log('Call method ' . $verifiedMethodName , 1, "Anthem] [callDynamicMethod");
             return call_user_func_array(array($this, $verifiedMethodName), [$params]);
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "Anthem] [callDynamicMethod");
+        Utils::log('Method ' . $verifiedMethodName . ' does not exist. Page: ' . $marker, 2, "Anthem] [callDynamicMethod");
         return false;
     }
 
