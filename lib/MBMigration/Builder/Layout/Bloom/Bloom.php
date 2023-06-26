@@ -150,11 +150,17 @@ class Bloom extends Layout
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content'], 'brz-text-lg-left');
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];;
+
+                    if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    }
                 }
                 if($item['item_type']=='body'){
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], 'brz-text-lg-left');
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];;
+
+                    if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    }
                 }
             }
         }
@@ -183,11 +189,17 @@ class Bloom extends Layout
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content'], 'brz-text-lg-right');
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];;
+
+                    if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    }
                 }
                 if($item['item_type']=='body'){
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], 'brz-text-lg-right');
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];;
+
+                    if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    }
                 }
             }
         }
@@ -217,11 +229,19 @@ class Bloom extends Layout
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+
+                    if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    }
+
                 }
                 if($item['item_type']=='body'){
                     $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
-                    $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+
+                    if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                        $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    }
+
                 }
             }
         }
@@ -265,11 +285,17 @@ class Bloom extends Layout
                     if ($item['category'] == 'text') {
                         if ($item['item_type'] == 'title') {
                             $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content'], '', '');
-                            $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                            
+                            if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                                $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                            }
                         }
                         if ($item['item_type'] == 'body') {
                             $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], '', '');
-                            $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                            
+                            if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                                $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                            }
                         }
                     }
                 }
@@ -286,11 +312,19 @@ class Bloom extends Layout
                     if ($item['category'] == 'text') {
                         if ($item['item_type'] == 'title') {
                             $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content'], '', '');
-                            $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+
+                            if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                                $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                            }
+
                         }
                         if ($item['item_type'] == 'body') {
                             $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], '', '');
-                            $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+
+                            if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                                $block['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                            }
+
                         }
 
                     }
@@ -301,27 +335,27 @@ class Bloom extends Layout
         return json_encode($block);
     }
 
-    protected function right_media_circle(array $encoded)
+    protected function right_media_circle(array $sectionData)
     {
         Utils::log('Create bloc', 1, $this->layoutName . "] [right_media_circle");
-        $this->cache->set('currentSectionData', $encoded);
+        $this->cache->set('currentSectionData', $sectionData);
         return '';
     }
 
-    protected function left_media_circle(array $encoded){
+    protected function left_media_circle(array $sectionData){
         Utils::log('Create bloc', 1, $this->layoutName . "] [left_media_circle");
-        $this->cache->set('currentSectionData', $encoded);
+        $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
 
-        if($this->checkArrayPath($encoded, 'settings/color/bg')) {
-            $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $block['value']['items'][0]['value']['bgColorHex'] = $sectionData['settings']['color']['bg'];
         }
         $this->marginAndPaddingOffset($block);
 
-        foreach ($encoded['items'] as $item){
+        foreach ($sectionData['items'] as $item){
             if($item['category'] == 'photo' && $item['content'] !== ''){
                 $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $item['content'];
                 $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $item['imageFileName'];
@@ -329,11 +363,17 @@ class Bloom extends Layout
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['color'] = $encoded['settings']['color']['text'];
+                    if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    }
                 }
                 if($item['item_type']=='body'){
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['color'] = $encoded['settings']['color']['text'];
+
+                    if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    }
+
                 }
             }
         }
@@ -341,18 +381,18 @@ class Bloom extends Layout
         return json_encode($block);
     }
 
-    protected function top_media_diamond(array $encoded)
+    protected function top_media_diamond(array $sectionData)
     {
         Utils::log('Create bloc', 1, $this->layoutName . "] [top_media_diamond");
-        $this->cache->set('currentSectionData', $encoded);
+        $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
         $decode = json_decode($decoded['main'], true);
 
-        $decode['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($encoded[0]['content']);
-        $decode['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $encoded['settings']['color']['text'];
-        $decode['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($encoded[1]['content']);
-        $decode['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $encoded['settings']['color']['text'];
+        $decode['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionData[0]['content']);
+        $decode['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+        $decode['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($sectionData[1]['content']);
+        $decode['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $sectionData['settings']['color']['text'];
 
         return json_encode($decode);
     }
@@ -360,12 +400,13 @@ class Bloom extends Layout
     /**
      * @throws \Exception
      */
-    protected function grid_layout(array $encoded)
+    protected function grid_layout(array $sectionData)
     {
         Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
-        $this->cache->set('currentSectionData', $encoded);
+        $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
+        $objBlock = new ItemSetter($decoded['main']);
         $objItem = new ItemSetter($decoded['item']);
 
         $block = json_decode($decoded['main'], true);
@@ -373,15 +414,16 @@ class Bloom extends Layout
 
         $this->marginAndPaddingOffset($block);
 
-        $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        if($this->checkArrayPath($encoded, 'settings/color/bg')) {
-            $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+        $objBlock->item(0)->setting('bgColorPalette', '');
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
         }
 
-        $path = Utils::findKeyPath($block, '_id');
-
-        foreach ($encoded['items'] as $section)
+        foreach ($sectionData['items'] as $section)
         {
+            $objItem->newItem($decoded['item']);
+
             if(isset($section['item'])) {
                 switch ($section['category']) {
                     case 'text':
@@ -394,16 +436,18 @@ class Bloom extends Layout
                     case 'list':
                         foreach ($section['item'] as $sectionItem) {
                             if ($sectionItem['category'] == 'photo') {
-                                $item['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $sectionItem['content'];
-                                $item['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $sectionItem['imageFileName'];
+
+                                $objItem->item(0)->item(0)->setting('imageSrc', $sectionItem['content']);
+                                $objItem->item(0)->item(0)->setting('imageFileName', $sectionItem['content']);
+
                                 if ($sectionItem['link'] != '') {
-                                    $item['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
-                                    $item['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $sectionItem['link'];
+                                    $objItem->item(0)->item(0)->setting('linkType', "external");
+                                    $objItem->item(0)->item(0)->setting('linkExternal', '/' . $sectionItem['content']);
                                 }
                             }
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
-                                    $item['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($sectionItem['content']);
+                                    $objItem->item(0)->item(0)->setText($this->replaceTitleTag($sectionItem['content']));
                                 }
                             }
                         }
@@ -411,37 +455,37 @@ class Bloom extends Layout
                 }
             } else {
                 if ($section['category'] == 'photo') {
-                    $item['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $section['content'];
-                    $item['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $section['imageFileName'];
+
+                    $objItem->item(0)->item(0)->setting('imageSrc', $section['content']);
+                    $objItem->item(0)->item(0)->setting('imageFileName', $section['imageFileName']);
+
                     if ($section['link'] != '') {
-                            $item['value']['items'][0]['value']['items'][0]['value']['linkType'] = "external";
-                            $item['value']['items'][0]['value']['items'][0]['value']['linkExternal'] = '/' . $section['link'];
+                        $objItem->item(0)->item(0)->setting('linkType', "external");
+                        $objItem->item(0)->item(0)->setting('linkExternal', '/' . $sectionItem['content']);
                     }
                 }
                 if ($section['category'] == 'text') {
                     if ($section['item_type'] == 'title') {
-
-                        $objItem->addItem($this->itemWrapperRichText($section['content']));
-
-                        $item = $this->itemWrapperRichText($this->replaceTitleTag($section['content']));
+                        $objItem->item(0)->addItem($this->itemWrapperRichText($section['content']));
                     }
                     if ($section['item_type'] == 'body') {
-                        $objItem->addItem($this->itemWrapperRichText($section['content']));
+                        $objItem->item(0)->addItem($this->itemWrapperRichText($section['content']));
                     }
                 }
             }
-            $resultRemove[] = $item;
+            $objBlock->item(0)->item(0)->addItem($objItem->get());
         }
-        $block['value']['items'][0]['value']['items'][0]['value']['items'] = $resultRemove;
 
-        $block = $this->replaceIdWithRandom($block);
+        $objBlock->item(0)->item(0)->addItem($objItem->get());
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
 
-//    protected function list_layout(array $encoded)
+//    protected function list_layout(array $sectionData)
 //    {
 //        Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
-//        $this->cache->set('currentSectionData', $encoded);
+//        $this->cache->set('currentSectionData', $sectionData);
 //        $decoded = $this->jsonDecode['blocks']['list-layout'];
 //        $sb = new SectionBuilder();
 //        $block = json_decode($decoded['main'], true);
@@ -449,15 +493,15 @@ class Bloom extends Layout
 //        $image  = json_decode($decoded['image'], true);
 //
 //        $block['value']['items'][0]['value']['bgColorPalette'] = '';
-//        if($this->checkArrayPath($encoded, 'settings/color/bg')) {
-//            $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+//        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+//            $block['value']['items'][0]['value']['bgColorHex'] = $sectionData['settings']['color']['bg'];
 //        }
 //
 //        //$this->marginAndPaddingOffset($block);
 //
-//        if($this->checkArrayPath($encoded, 'settings/sections/background'))
+//        if($this->checkArrayPath($sectionData, 'settings/sections/background'))
 //        {
-//            $background = $this->getKeyRecursive('background', 'sections', $encoded);
+//            $background = $this->getKeyRecursive('background', 'sections', $sectionData);
 //
 //            if(isset($background['photo']) && isset($background['filename'])) {
 //                $block['value']['items'][0]['value']['bgImageSrc'] = $background['photo'];
@@ -472,7 +516,7 @@ class Bloom extends Layout
 //        }
 //
 //        $position = 0;
-//        foreach ($encoded['head'] as $hitem)
+//        foreach ($sectionData['head'] as $hitem)
 //        {
 //            if($hitem['category'] == 'text') {
 //                if ($hitem['item_type'] === 'title') {
@@ -488,7 +532,7 @@ class Bloom extends Layout
 //        }
 //
 //        $p = 0;
-//        foreach ($encoded['items'] as $section)
+//        foreach ($sectionData['items'] as $section)
 //        {
 //            switch ($section['category']) {
 //                case 'text':
@@ -550,38 +594,38 @@ class Bloom extends Layout
 //        return json_encode($block);
 //    }
 
-    protected function gallery_layout(array $encoded)
+//    protected function gallery_layout(array $sectionData)
+//    {
+//        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
+//        $this->cache->set('currentSectionData', $sectionData);
+//
+//        $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);
+//
+//        $decoded = $this->jsonDecode['blocks']['gallery-layout'];
+//        $block = json_decode($decoded['main'], true);
+//        $slide  = json_decode($decoded['item'], true);
+//
+//        $this->marginAndPaddingOffset($block);
+//
+//        foreach ($sectionData['items'] as $item){
+//            $slide['value']['bgImageFileName'] = $item['imageFileName'];
+//            $slide['value']['bgImageSrc']      = $item['content'];
+//
+//            $this->insertElementAtPosition($block, 'value/items', $slide);
+//        }
+//        $block = $this->replaceIdWithRandom($block);
+//        return json_encode($block);
+//    }
+
+    protected function empty_layout(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
-        $this->cache->set('currentSectionData', $encoded);
-
-        $encoded['items'] = $this->sortByOrderBy($encoded['items']);
-
-        $decoded = $this->jsonDecode['blocks']['gallery-layout'];
-        $block = json_decode($decoded['main'], true);
-        $slide  = json_decode($decoded['item'], true);
-
-        $this->marginAndPaddingOffset($block);
-
-        foreach ($encoded['items'] as $item){
-            $slide['value']['bgImageFileName'] = $item['imageFileName'];
-            $slide['value']['bgImageSrc']      = $item['content'];
-
-            $this->insertElementAtPosition($block, 'value/items', $slide);
-        }
-        $block = $this->replaceIdWithRandom($block);
-        return json_encode($block);
-    }
-
-    protected function empty_layout(array $encoded)
-    {
-        $this->cache->set('curentSectionData', $encoded);
+        $this->cache->set('curentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['empty-layout'];
         $block = json_decode($decoded, true);
 
         $block['value']['items'][0]['value']['bgColorPalette'] = '';
-        if($this->checkArrayPath($encoded, 'settings/color/bg')) {
-            $block['value']['items'][0]['value']['bgColorHex'] = $encoded['settings']['color']['bg'];
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $block['value']['items'][0]['value']['bgColorHex'] = $sectionData['settings']['color']['bg'];
         }
         return json_encode($block);
     }
@@ -589,15 +633,15 @@ class Bloom extends Layout
     protected function createFooter(): void
     {
         Utils::log('Create Footer', 1, $this->layoutName . "] [createFooter");
-        $encoded = $this->cache->get('mainSection')['footer'];
+        $sectionData = $this->cache->get('mainSection')['footer'];
         $decoded = $this->jsonDecode['blocks']['footer']['main'];
         $iconItem = $this->jsonDecode['blocks']['footer']['item'];
         $block = json_decode($decoded, true);
         $blockIcon = json_decode($iconItem, true);
 
         $block['value']['bgColorPalette'] = '';
-        $block['value']['bgColorHex'] = $encoded['settings']['color']['subpalette']['bg'];
-        foreach ($encoded['items'] as $item) {
+        $block['value']['bgColorHex'] = $sectionData['settings']['color']['subpalette']['bg'];
+        foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 $itemsIcon = $this->getDataIconValue($item['content']);
                 if(!empty($itemsIcon)){

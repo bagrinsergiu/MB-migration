@@ -303,6 +303,8 @@ class Layout extends LayoutUtils
         $block = json_decode($decoded['main'], true);
         $slide = json_decode($decoded['item'], true);
 
+        $this->marginAndPaddingOffset($block);
+
         foreach ($sectionData['items'] as $item) {
             $slide['value']['bgImageFileName'] = $item['imageFileName'];
             $slide['value']['bgImageSrc'] = $item['content'];
@@ -331,7 +333,7 @@ class Layout extends LayoutUtils
 
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);
-        $imageCircle = [$this->layoutName . ""];
+        $imageCircle = ['August'];
         $designName = $this->cache->get('design', 'settings');
 
         if(in_array($designName,$imageCircle)) {
@@ -484,7 +486,7 @@ class Layout extends LayoutUtils
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $jsonDecode['blocks']['full-text'];
         
-        if (!$this->checkArrayPath($sectionData, 'settings/sections/background')) {
+        if ($this->checkArrayPath($sectionData, 'settings/sections/background')) {
             Utils::log('Set background', 1, $this->layoutName . "] [full_text (parallaxScroll)");
 
             $objBlock->newItem($decoded['parallax-scroll']);

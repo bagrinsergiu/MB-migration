@@ -146,7 +146,7 @@ class MigrationPlatform
             if (!empty($pages['child'])) {
                 $this->launch($pages['child']);
             }
-//         if ($pages['slug'] != 'fellowship') { continue; }
+ //       if ($pages['slug'] != 'home') { continue; }
             $this->collector($pages);
         }
     }

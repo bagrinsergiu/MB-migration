@@ -461,21 +461,28 @@ class LayoutUtils
         $this->insertElementAtPosition($block, $path, $wrapper, $position);
     }
 
-    protected function marginAndPaddingOffset(&$block)
+    protected function marginAndPaddingOffset(&$block, $settings =[])
     {
-        $flags = $this->cache->get('createdFirstSection', 'flags');
-        if (!$flags) {
-            $block['value']['marginTop'] = -200;
-            $block['value']['marginTopSuffix'] = "px";
-            $block['value']['tempMarginTop'] = -200;
-            $block['value']['tempMarginTopSuffix'] = "px";
-            $block['value']['marginType'] = "ungrouped";
-            $block['value']['items'][0]['value']['paddingTop'] = 250;
-            $block['value']['items'][0]['value']['paddingTopSuffix'] = "px";
-            $block['value']['items'][0]['value']['tempPaddingTop'] = 250;
-            $block['value']['items'][0]['value']['tempPaddingTopSuffix'] = "px";
+        $imageOffset = ['Bloom'];
+        $designName = $this->cache->get('design', 'settings');
+
+
+        if(in_array($designName,$imageOffset)) {
+            $flags = $this->cache->get('createdFirstSection', 'flags');
+            if (!$flags) {
+                $block['value']['marginTop'] = -200;
+                $block['value']['marginTopSuffix'] = "px";
+                $block['value']['tempMarginTop'] = -200;
+                $block['value']['tempMarginTopSuffix'] = "px";
+                $block['value']['marginType'] = "ungrouped";
+
+                $block['value']['paddingTop'] = 250;
+                $block['value']['paddingTopSuffix'] = "px";
+                $block['value']['tempPaddingTop'] = 250;
+                $block['value']['tempPaddingTopSuffix'] = "px";
+            }
+            $this->cache->update('createdFirstSection', true, 'flags');
         }
-        $this->cache->update('createdFirstSection', true, 'flags');
     }
 
 
