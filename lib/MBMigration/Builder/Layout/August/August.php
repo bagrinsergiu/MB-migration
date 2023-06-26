@@ -138,102 +138,102 @@ class August extends Layout
         return $treeMenu;
     }
 
-//    private function left_media(array $sectionData)
-//    {
-//        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
+    private function left_media(array $sectionData)
+    {
+        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
+
+        $objBlock = new ItemSetter();
+
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $this->jsonDecode['blocks']['left-media']['main'];
+
+        $objBlock->newItem($decoded);
+
+
+        $objBlock->item(0)->setting('bgColorPalette', '');
+
+        if ($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+        }
+
+        if ($this->checkArrayPath($sectionData, 'settings/sections/background')) {
+            Utils::log('Set background', 1, $this->layoutName . "] [left_media");
+
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
+            $objBlock->item(0)->setting('bgColorType', 'none');
+        }
+
+        foreach ($sectionData['items'] as $item) {
+            if ($item['category'] == 'photo' && $item['content'] != '') {
+                $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageSrc', $item['content']);
+                $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+
+                if ($this->checkArrayPath($item, 'settings/image')) {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageWidth', $item['settings']['image']['width']);
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageHeight', $item['settings']['image']['height']);
+                }
+
+                if ($item['link'] != '') {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkType', 'external');
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternal', $item['link']);
+                }
+            }
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] == 'title') {
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                }
+                if ($item['item_type'] == 'body') {
+                    $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                }
+            }
+        }
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    private function right_media(array $sectionData)
+    {
+        Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $objBlock = new ItemSetter();
+
+        $decoded = $this->jsonDecode['blocks']['right-media']['main'];
+
+        $objBlock->newItem($decoded);
+
+        $objBlock->item(0)->setting('bgColorPalette', '');
+        $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+
+        foreach ($sectionData['items'] as $item) {
 //
-//        $objBlock = new ItemSetter();
-//
-//        $this->cache->set('currentSectionData', $sectionData);
-//        $decoded = $this->jsonDecode['blocks']['left-media']['main'];
-//
-//        $objBlock->newItem($decoded);
-//
-//
-//        $objBlock->item(0)->setting('bgColorPalette', '');
-//
-//        if ($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-//            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
-//        }
-//
-//        if ($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-//            Utils::log('Set background', 1, $this->layoutName . "] [left_media");
-//
-//            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-//            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-//            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
-//            $objBlock->item(0)->setting('bgColorType', 'none');
-//        }
-//
-//        foreach ($sectionData['items'] as $item) {
-//            if ($item['category'] == 'photo' && $item['content'] != '') {
-//                $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageSrc', $item['content']);
-//                $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
-//
-//                if ($this->checkArrayPath($item, 'settings/image')) {
-//                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageWidth', $item['settings']['image']['width']);
-//                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageHeight', $item['settings']['image']['height']);
-//                }
-//
-//                if ($item['link'] != '') {
-//                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkType', 'external');
-//                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternal', $item['link']);
-//                }
-//            }
-//            if ($item['category'] == 'text') {
-//                if ($item['item_type'] == 'title') {
-//                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
-//                }
-//                if ($item['item_type'] == 'body') {
-//                    $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
-//                }
-//            }
-//        }
-//        $block = $this->replaceIdWithRandom($objBlock->get());
-//        return json_encode($block);
-//    }
-//
-//    private function right_media(array $sectionData)
-//    {
-//        Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
-//        $this->cache->set('currentSectionData', $sectionData);
-//
-//        $objBlock = new ItemSetter();
-//
-//        $decoded = $this->jsonDecode['blocks']['right-media']['main'];
-//
-//        $objBlock->newItem($decoded);
-//
-//        $objBlock->item(0)->setting('bgColorPalette', '');
-//        $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
-//
-//        foreach ($sectionData['items'] as $item) {
-////
-////            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText('');
-////            $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('');
-//
-//            if ($item['category'] == 'photo' && $item['content'] !== '') {
-//                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageSrc', $item['content']);
-//                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
-//
-//                if ($item['link'] != '') {
-//                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkType', 'external');
-//                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkExternal', $item['link']);
-//                }
-//            }
-//
-//            if ($item['category'] == 'text') {
-//                if ($item['item_type'] == 'title') {
-//                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-right'));
-//                }
-//                if ($item['item_type'] == 'body') {
-//                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-right'));
-//                }
-//            }
-//        }
-//        $block = $this->replaceIdWithRandom($objBlock->get());
-//        return json_encode($block);
-//    }
+//            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText('');
+//            $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('');
+
+            if ($item['category'] == 'photo' && $item['content'] !== '') {
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageSrc', $item['content']);
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+
+                if ($item['link'] != '') {
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkType', 'external');
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkExternal', $item['link']);
+                }
+            }
+
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] == 'title') {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-right'));
+                }
+                if ($item['item_type'] == 'body') {
+                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-right'));
+                }
+            }
+        }
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
 
     protected function full_media(array $sectionData)
     {
@@ -312,74 +312,74 @@ class August extends Layout
         return json_encode($block);
     }
 
-//    protected function full_text(array $sectionData)
-//    {
-//        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
-//
-//        $objBlock = new ItemSetter();
-//
-//        $this->cache->set('currentSectionData', $sectionData);
-//        $decoded = $this->jsonDecode['blocks']['full-text'];
-//        if ($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
-//            if ($sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
-//                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
-//                return $this->parallaxScroll($sectionData);
-//            }
-//        }
-//
-//        if (!$this->checkArrayPath($sectionData, 'settings/sections/background/filename')) {
-//            $block = json_decode($decoded['main'], true);
-//
-//            $objBlock->newItem($decoded['main']);
-//
-//            $objBlock->item(0)->setting('bgColorPalette', '');
-//
-//            if ($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-//                $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
-//            } else {
-//                $objBlock->item(0)->setting('bgColorHex', $this->cache->get('subpalette1', 'subpalette')['bg']);
-//            }
-//
-//            $objBlock->item(0)->item(0)->item(0)->setText('');
-//            $objBlock->item(0)->item(2)->item(0)->setText('');
-//
-//            foreach ($sectionData['items'] as $item) {
-//                if ($item['category'] == 'text') {
-//                    if ($item['item_type'] == 'title') {
-//                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
-//                    }
-//                    if ($item['item_type'] == 'body') {
-//                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
-//                    }
-//                }
-//            }
-//        } else {
-//            Utils::log('Set background', 1, $this->layoutName . "] [full_text");
-//
-//            $objBlock->newItem($decoded['background']);
-//
-//            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-//            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-//
-//            $objBlock->item(0)->item(0)->item(0)->setText('');
-//            $objBlock->item(0)->item(2)->item(0)->setText('');
-//
-//            foreach ($sectionData['items'] as $item) {
-//                if ($item['category'] == 'text') {
-//                    if ($item['item_type'] == 'title') {
-//                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
-//
-//                    }
-//                    if ($item['item_type'] == 'body') {
-//                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
-//                    }
-//                }
-//            }
-//        }
-//
-//        $block = $this->replaceIdWithRandom($objBlock->get());
-//        return json_encode($block);
-//    }
+    protected function full_text(array $sectionData)
+    {
+        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
+
+        $objBlock = new ItemSetter();
+
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $this->jsonDecode['blocks']['full-text'];
+        if ($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
+            if ($sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
+                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
+                return $this->parallaxScroll($sectionData);
+            }
+        }
+
+        if (!$this->checkArrayPath($sectionData, 'settings/sections/background/filename')) {
+            $block = json_decode($decoded['main'], true);
+
+            $objBlock->newItem($decoded['main']);
+
+            $objBlock->item(0)->setting('bgColorPalette', '');
+
+            if ($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+                $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+            } else {
+                $objBlock->item(0)->setting('bgColorHex', $this->cache->get('subpalette1', 'subpalette')['bg']);
+            }
+
+            $objBlock->item(0)->item(0)->item(0)->setText('');
+            $objBlock->item(0)->item(2)->item(0)->setText('');
+
+            foreach ($sectionData['items'] as $item) {
+                if ($item['category'] == 'text') {
+                    if ($item['item_type'] == 'title') {
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                    }
+                    if ($item['item_type'] == 'body') {
+                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                    }
+                }
+            }
+        } else {
+            Utils::log('Set background', 1, $this->layoutName . "] [full_text");
+
+            $objBlock->newItem($decoded['background']);
+
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+
+            $objBlock->item(0)->item(0)->item(0)->setText('');
+            $objBlock->item(0)->item(2)->item(0)->setText('');
+
+            foreach ($sectionData['items'] as $item) {
+                if ($item['category'] == 'text') {
+                    if ($item['item_type'] == 'title') {
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+
+                    }
+                    if ($item['item_type'] == 'body') {
+                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                    }
+                }
+            }
+        }
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
 
     protected function two_horizontal_text($sectionData)
     {

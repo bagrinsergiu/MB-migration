@@ -329,11 +329,11 @@ class Bloom extends Layout
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['color'] = $encoded['settings']['color']['text'];
                 }
                 if($item['item_type']=='body'){
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
-                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['color'] = $sectionData['settings']['color']['text'];
+                    $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['color'] = $encoded['settings']['color']['text'];
                 }
             }
         }
