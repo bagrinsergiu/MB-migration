@@ -90,6 +90,8 @@ class MigrationPlatform
         $this->createBlankPages($parentPages);
         $this->createMenuStructure();
 
+        echo $this->cache->get('design', 'settings'). "\n";
+
         $this->launch($parentPages);
 
         Utils::log('Project migration completed successfully!', 6, 'PROCESS');
@@ -144,9 +146,7 @@ class MigrationPlatform
             if (!empty($pages['child'])) {
                 $this->launch($pages['child']);
             }
-            if ($pages['slug'] != 'our-mission-vision') {
-                continue;
-            }
+ //       if ($pages['slug'] != 'home') { continue; }
             $this->collector($pages);
         }
     }

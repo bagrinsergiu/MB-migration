@@ -2,274 +2,537 @@
 
 namespace MBMigration\Builder\Layout;
 
-use DOMDocument;
-use InvalidArgumentException;
+use Exception;
+use MBMigration\Builder\ItemSetter;
+use MBMigration\Core\Utils;
 
-class Layout
+class Layout extends LayoutUtils
 {
-    public function colorOpacity($value): int
+    /**
+     * @throws Exception
+     */
+    private function initData()
     {
-        return 1 - (int) $value;
-    }
+        Utils::log('initData!', 4, 'Main Layout');
 
-    protected function replaceIdWithRandom($data) {
-        if (is_array($data)) {
-            foreach ($data as $key => &$value) {
-                if (is_array($value)) {
-                    $value = $this->replaceIdWithRandom($value);
-                } elseif ($key === '_id') {
-                    $data[$key] = $this->generateCharID();
-                }
-            }
-            unset($value);
+        $file = __DIR__.'\globalBlocksKit.json';
+
+        if (file_exists($file)) {
+            $fileContent = file_get_contents($file);
+            return json_decode($fileContent, true);
+        } else {
+            Utils::log('File does not exist', 2, "Main Layout] [__construct");
+            throw new Exception('File does not exist');
         }
-
-        return $data;
     }
 
-    protected function generateCharID(int $length = 32): string
+    /**
+     * @throws Exception
+     */
+    protected function full_text(array $sectionData)
     {
-        $characters = 'abcdefghijklmnopqrstuvwxyz';
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
-        }
-        return $randomString;
-    }
+        $jsonDecode = $this->initData();
+        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
 
-    protected function convertFontSize($fontSize, $unit = 'px') {
-        $value = (float)$fontSize;
-        $originalUnit = strtolower(trim($unit));
+        $objBlock = new ItemSetter();
 
-        $unitFactors = [
-            'px' => 1,
-            'em' => 16,
-            'rem' => 16,
-            'pt' => 1.33,
-            'percent' => 0.16
-        ];
-
-        if (!isset($unitFactors[$originalUnit])) {
-            return $fontSize;
-        }
-
-        return $value * $unitFactors[$originalUnit];
-    }
-
-    protected function getDataIconValue($html): array
-    {
-        $dom = new DOMDocument();
-        $dom->loadHTML($html);
-        $links = $dom->getElementsByTagName('a');
-        $result = [];
-        foreach ($links as $link) {
-            $spans = $link->getElementsByTagName('span');
-            foreach ($spans as $span) {
-                if ($span->hasAttribute('data-icon')) {
-                    $icon = $span->getAttribute('data-icon');
-                    $href = $link->getAttribute('href');
-                    $result[] = [ 'icon' => $icon, 'href' => $href];
-                }
-            }
-        }
-        return $result;
-    }
-
-    protected function clearHtmlTag($str): string
-    {
-        $replase = [
-            '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">',
-            "<html>",
-            "<body>",
-            "</html>",
-            "</body>",
-            "\n"
-        ];
-        return str_replace($replase, '', $str);
-    }
-
-    protected function checkArrayPath($array, $path, $check = ''): bool
-    {
-        $keys = explode('/', $path);
-        $current = $array;
-
-        foreach ($keys as $key) {
-            if (!isset($current[$key])) {
-                return false;
-            }
-            $current = $current[$key];
-        }
-
-        if($check != '')
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $jsonDecode['blocks']['full-text'];
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption'))
         {
-            if(is_array($check)){
-                foreach ($check as $look){
-                    if ($current === $look) {
-                        return true;
+            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
+                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed')
+            {
+                return $this->parallaxScroll($sectionData);
+            }
+        }
+
+        if (!$this->checkArrayPath($sectionData, 'settings/sections/background/filename')) {
+            $block = json_decode($decoded['main'], true);
+
+            $objBlock->newItem($decoded['main']);
+
+            $objBlock->item(0)->setting('bgColorPalette', '');
+
+            if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+                $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+            } else {
+                $objBlock->item(0)->setting('bgColorHex', $this->cache->get('subpalette1','subpalette')['bg']);
+            }
+
+            $objBlock->item(0)->item(0)->item(0)->setText('');
+            $objBlock->item(0)->item(2)->item(0)->setText('');
+
+            foreach ($sectionData['items'] as $item) {
+                if ($item['category'] == 'text') {
+                    if ($item['item_type'] == 'title') {
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                    }
+                    if ($item['item_type'] == 'body') {
+                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
                     }
                 }
-            } else {
-                if ($current === $check) {
-                    return true;
-                }
             }
-        }
-        return true;
-    }
-
-    protected function getIcon($iconName)
-    {
-        $icon = [
-            'facebook'  => 'logo-facebook',
-            'instagram' => 'logo-instagram',
-            'youtube'   => 'logo-youtube',
-            'twitter'   => 'logo-twitter',
-        ];
-        if(array_key_exists($iconName, $icon)){
-            return $icon[$iconName];
-        }
-        return false;
-    }
-
-    protected function getKeyRecursive($key, $section, $array) {
-        foreach ($array as $k => $value) {
-            if ($k === $section && is_array($value)) {
-                if (array_key_exists($key, $value)) {
-                    return $value[$key];
-                }
-            }
-            if (is_array($value)) {
-                $result = $this->getKeyRecursive($key, $section, $value);
-                if ($result !== null) {
-                    return $result;
-                }
-            }
-        }
-        return null;
-    }
-
-     function mergeArrayAtPath(array &$array, string $path, array $mergeArray): void
-    {
-        $keys = explode('/', $path);
-
-        $current = &$array;
-        foreach ($keys as $key) {
-            if (!isset($current[$key]) || !is_array($current[$key])) {
-                $current[$key] = [];
-            }
-            $current = &$current[$key];
-        }
-
-        $current = array_merge($current, $mergeArray);
-    }
-
-    protected function replaceValue($data, $keyToReplace, $newValue) {
-        if (is_array($data)) {
-            foreach ($data as $key => &$value) {
-                if (is_array($value)) {
-                    $value = $this->replaceValue($value, $keyToReplace, $newValue);
-                } elseif ($key === $keyToReplace) {
-                    $data[$key] = $newValue;
-                }
-            }
-            unset($value);
-        }
-
-        return $data;
-    }
-
-    protected function insertElementAtPosition(array &$array, string $path, array $element, $position = null): void
-    {
-        $keys = explode('/', $path);
-
-        $current = &$array;
-        foreach ($keys as $key) {
-            if (!isset($current[$key]) || !is_array($current[$key])) {
-                $current[$key] = [];
-            }
-            $current = &$current[$key];
-        }
-        if($position === null){
-            $current[] = $element;
         } else {
-            $count = count($current);
-            if ($position < 0 || $position > $count) {
-                throw new InvalidArgumentException("Invalid position: $position");
-            }
-            $current = array_merge(
-                array_slice($current, 0, $position),
-                [$element],
-                array_slice($current, $position, $count - $position)
-            );
-        }
-    }
+            Utils::log('Set background', 1, $this->layoutName . "] [full_text");
 
-    protected function getNameHash($data = ''): string
-    {
-        $to_hash = $this->generateUniqueID() . $data;
-        $newHash = hash('sha256', $to_hash);
-        return substr($newHash, 0, 32);
-    }
+            $objBlock->newItem($decoded['background']);
 
-    protected function generateUniqueID(): string
-    {
-        $microtime = microtime();
-        $microtime = str_replace('.', '', $microtime);
-        $microtime = substr($microtime, 0, 10);
-        $random_number = rand(1000, 9999);
-        return $microtime . $random_number;
-    }
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
 
-    protected function sortByOrderBy(array $array): array
-    {
-        usort($array, function($a, $b) {
-            return $a['order_by'] - $b['order_by'];
-        });
-        return $array;
-    }
+            $objBlock->item(0)->item(0)->item(0)->setText('');
+            $objBlock->item(0)->item(2)->item(0)->setText('');
 
-    protected function parseStyle(string $styleString): array
-    {
-        $styles = array();
-        $stylePairs = explode(';', $styleString);
-        foreach ($stylePairs as $pair) {
-            $parts = explode(':', $pair);
-            if (count($parts) === 2) {
-                $key = trim($parts[0]);
-                $value = trim($parts[1]);
-                $styles[$key] = $value;
+            foreach ($sectionData['items'] as $item) {
+                if ($item['category'] == 'text') {
+                    if ($item['item_type'] == 'title') {
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+
+                    }
+                    if ($item['item_type'] == 'body') {
+                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                    }
+                }
             }
         }
-        return $styles;
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
     }
 
-    protected function rgbToHex($rgb)
+    /**
+     * @throws Exception
+     */
+    protected function full_media(array $sectionData)
     {
-        $regex = '/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/';
-        preg_match($regex, $rgb, $matches);
+        $jsonGlobal = $this->initData();
+        Utils::log('Create full media', 1, $this->layoutName . "] [full_media");
 
-        if (count($matches) === 4) {
-            $red = dechex($matches[1]);
-            $green = dechex($matches[2]);
-            $blue = dechex($matches[3]);
+        $objBlock = new ItemSetter();
 
-            $red = str_pad($red, 2, "0", STR_PAD_LEFT);
-            $green = str_pad($green, 2, "0", STR_PAD_LEFT);
-            $blue = str_pad($blue, 2, "0", STR_PAD_LEFT);
+        $this->cache->set('currentSectionData', $sectionData);
 
-            return "#$red$green$blue";
+        $decoded = $jsonGlobal['blocks']['full-media']['main'];
+
+        $objBlock->newItem($decoded);
+
+        $objBlock->item(0)->setting('bgColorPalette','');
+        $objBlock->item(0)->setting('bgColorOpacity', 1);
+        $objBlock->item(0)->setting('bgImageSrc', '');
+        $objBlock->item(0)->setting('bgImageFileName', '');
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
+            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
+                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
+                $objBlock->item(0)->setting('bgAttachment','fixed');
+            }
         }
 
-        return false;
-    }
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', strtolower($sectionData['settings']['color']['bg']));
+        }
 
-    protected function replaceInName($str): string
-    {
-        if(empty($str))
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/photo') &&
+            $this->checkArrayPath($sectionData, 'settings/sections/background/filename'))
         {
-            return false;
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+            $objBlock->item(0)->setting('bgColorOpacity', 0);
         }
-        return str_replace("-", "_", $str);
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
+        }
+
+        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText('<p></p>');
+        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('<p></p>');
+
+        foreach ($sectionData['items'] as $item) {
+            if($item['category'] == 'text') {
+
+                $show_header = true;
+                $show_body = true;
+
+                if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
+                    $show_header = $sectionData['settings']['sections']['text']['show_header'];
+                }
+                if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
+                    $show_body = $sectionData['settings']['sections']['text']['show_body'];
+                }
+
+                if($item['item_type']=='title' && $show_header) {
+                    $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content']));
+                }
+                if($item['item_type']=='body' && $show_body) {
+                    $objBlock->item(0)->item(1)->item(0)->setText($this->replaceParagraphs($item['content']));
+                }
+            }
+            if($item['category'] == 'photo' && $item['content'] !== '') {
+                $objBlock->item(0)->item(3)->item(0)->setting('imageSrc', $item['content']);
+                $objBlock->item(0)->item(3)->item(0)->setting('imageFileName', $item['imageFileName']);
+
+                if ($item['link'] != '') {
+                    $objBlock->item(0)->item(3)->item(0)->setting('linkType', 'external');
+                    $objBlock->item(0)->item(3)->item(0)->setting('linkExternal', $item['link']);
+                }
+            }
+        }
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function left_media(array $sectionData)
+    {
+        $jsonDecode = $this->initData();
+        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
+
+        $objBlock = new ItemSetter();
+
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $jsonDecode['blocks']['left-media']['main'];
+
+        $objBlock->newItem($decoded);
+
+        $objBlock->item(0)->setting('bgColorOpacity', 1);
+        $objBlock->item(0)->setting('bgColorPalette', '');
+
+        if ($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+        }
+
+        if ($this->checkArrayPath($sectionData, 'settings/sections/background')) {
+            Utils::log('Set background', 1, $this->layoutName . "] [left_media");
+
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
+            $objBlock->item(0)->setting('bgColorType', 'none');
+        }
+
+        foreach ($sectionData['items'] as $item) {
+            if ($item['category'] == 'photo' && $item['content'] != '') {
+                $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageSrc', $item['content']);
+                $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+
+                if ($this->checkArrayPath($item, 'settings/image')) {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageWidth', $item['settings']['image']['width']);
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageHeight', $item['settings']['image']['height']);
+                }
+
+                if ($item['link'] != '') {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkType', 'external');
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternal', $item['link']);
+                }
+            }
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] == 'title') {
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                }
+                if ($item['item_type'] == 'body') {
+                    $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                }
+            }
+        }
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function right_media(array $sectionData)
+    {
+        $jsonDecode = $this->initData();
+        Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $objBlock = new ItemSetter();
+
+        $decoded =  $jsonDecode['blocks']['right-media']['main'];
+
+        $objBlock->newItem($decoded);
+
+        $objBlock->item(0)->setting('bgColorOpacity', 1);
+        $objBlock->item(0)->setting('bgColorPalette', '');
+        $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+
+        foreach ($sectionData['items'] as $item) {
+//
+//            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText('');
+//            $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('');
+
+            if ($item['category'] == 'photo' && $item['content'] !== '') {
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageSrc', $item['content']);
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+
+                if ($item['link'] != '') {
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkType', 'external');
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkExternal', $item['link']);
+                }
+            }
+
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] == 'title') {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-right'));
+                }
+                if ($item['item_type'] == 'body') {
+                    $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-right'));
+                }
+            }
+        }
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function gallery_layout(array $sectionData)
+    {
+        $jsonDecode = $this->initData();
+        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);
+
+        $decoded = $jsonDecode['blocks']['gallery-layout'];
+        $block = json_decode($decoded['main'], true);
+        $slide = json_decode($decoded['item'], true);
+
+        $this->marginAndPaddingOffset($block);
+
+        foreach ($sectionData['items'] as $item) {
+            $slide['value']['bgImageFileName'] = $item['imageFileName'];
+            $slide['value']['bgImageSrc'] = $item['content'];
+
+            $this->insertElementAtPosition($block, 'value/items', $slide);
+        }
+        $block = $this->replaceIdWithRandom($block);
+        return json_encode($block);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function list_layout(array $sectionData){
+
+        $jsonDecode = $this->initData();
+        Utils::log('Create bloc', 1, $this->layoutName . "] [list_layout");
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $jsonDecode['blocks']['list-layout'];
+
+        $objBlock = new ItemSetter();
+        $objItem = new ItemSetter();
+        $objHead = new ItemSetter();
+        $objImage = new ItemSetter();
+        $objRow = new ItemSetter();
+
+        $objBlock->newItem($decoded['main']);
+        $objHead->newItem($decoded['head']);
+        $imageCircle = ['August'];
+        $designName = $this->cache->get('design', 'settings');
+
+        if(in_array($designName,$imageCircle)) {
+            $loadImageItem = $decoded['image-circle'];
+        } else {
+            $loadImageItem = $decoded['image'];
+        }
+
+        $objBlock->item(0)->setting('bgColorPalette', '');
+        $objBlock->item(0)->setting('bgColorOpacity', 1);
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
+            $background = $this->getKeyRecursive('background', 'sections', $sectionData);
+
+            if(isset($background['photo']) && isset($background['filename'])) {
+                $objBlock->item(0)->setting('bgImageSrc', $background['photo']);
+                $objBlock->item(0)->setting('bgImageFileName', $background['filename']);
+            }
+            if(isset($background['opacity']) ) {
+                $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($background['opacity']));
+                $objBlock->item(0)->setting('tempBgColorOpacity', $this->colorOpacity($background['opacity']));
+            }
+        }
+
+        $blockHead = false;
+        foreach ($sectionData['head'] as $headItem)
+        {
+            if($headItem['category'] !== 'text') { continue; }
+
+            $show_header = true;
+            $show_body = true;
+
+            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
+                $show_header = $sectionData['settings']['sections']['list']['show_header'];
+            }
+            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
+                $show_body = $sectionData['settings']['sections']['list']['show_body'];
+            }
+
+            if ($headItem['item_type'] === 'title' && $show_header) {
+                $blockHead = true;
+                $objHead->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($headItem['content'], '', 'brz-text-lg-left'));
+            }
+
+            if ($headItem['item_type'] === 'body' && $show_body) {
+                $blockHead = true;
+                $objHead->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($headItem['content'], '', 'brz-text-lg-left'));
+            }
+        }
+
+        if($blockHead) {
+            $objBlock->item(0)->addItem($objHead->get());
+        }
+
+        foreach ($sectionData['items'] as $section) {
+            $objRow->newItem($decoded['row']);
+            $objItem->newItem($decoded['item']);
+
+            if(!array_key_exists('item', $section)){
+                continue;
+            }
+            $objImage->newItem($loadImageItem);
+            foreach ($section['item'] as $item) {
+
+                if ($item['category'] === 'photo' && array_key_exists('imageFileName', $item)) {
+                    $objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
+                    $objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+                }
+                if ($item['category'] === 'text') {
+                    if ($item['item_type'] === 'title') {
+                        $objItem->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                    }
+
+                    if ($item['item_type'] === 'body') {
+                        $objItem->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                    }
+                }
+            }
+            $objRow->addItem($objImage->get());
+            $objRow->addItem($objItem->get());
+            $objBlock->item(0)->addItem($objRow->get());
+        }
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function itemWrapperRichText($content, array $settings = [], $associative = false)
+    {
+        $jsonDecode = $this->initData();
+        $decoded = $jsonDecode['global']['wrapper--richText'];
+        $block = new ItemSetter($decoded);
+        $result = $block->item(0)->setting('text', $content)->get();
+        if (!empty($settings)) {
+            foreach ($settings as $key => $value) {
+                $result = $block->item(0)->setting($key, $value);
+            }
+        }
+        if (!$associative) {
+            return $result;
+        }
+        return json_decode(json_encode($result), true);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function itemWrapperImage($content, $associative = false)
+    {
+        $jsonDecode = $this->initData();
+        $decoded = $jsonDecode['global']['wrapper--image'];
+        $block = new ItemSetter($decoded);
+        $result = $block->item(0)->setting('text', $content)->get();
+        if (!$associative) {
+            return $result;
+        }
+        return json_decode(json_encode($result), true);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function itemWrapperIcon($content, $associative = false)
+    {
+        $jsonDecode = $this->initData();
+        $decoded = $jsonDecode['global']['wrapper--icon'];
+        $block = new ItemSetter($decoded);
+        $result = $block->item(0)->setting('text', $content)->get();
+        if (!$associative) {
+            return $result;
+        }
+        return json_decode(json_encode($result), true);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function parallaxScroll(array $sectionData)
+    {
+        $jsonDecode = $this->initData();
+        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text (parallaxScroll)");
+        $objBlock = new ItemSetter();
+
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $jsonDecode['blocks']['full-text'];
+        
+        if ($this->checkArrayPath($sectionData, 'settings/sections/background')) {
+            Utils::log('Set background', 1, $this->layoutName . "] [full_text (parallaxScroll)");
+
+            $objBlock->newItem($decoded['parallax-scroll']);
+
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+
+            foreach ($sectionData['items'] as $item) {
+                if ($item['category'] == 'text') {
+                    $show_header = true;
+                    $show_body = true;
+
+                    if ($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')) {
+                        $show_header = $sectionData['settings']['sections']['text']['show_header'];
+                    }
+                    if ($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')) {
+                        $show_body = $sectionData['settings']['sections']['text']['show_body'];
+                    }
+
+                    if ($item['item_type'] == 'title' && $show_header) {
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                    }
+                    if ($item['item_type'] == 'body' && $show_body) {
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                    }
+                }
+            }
+        }
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    /**
+     * array insert
+     */
+    protected function insertItemInArray(array $array, array $item, $index): array
+    {
+        if ($index >= 0 && $index <= count($array)) {
+            $left = array_slice($array, 0, $index);
+            $right = array_slice($array, $index);
+            $result = array_merge($left, [$item], $right);
+        } else {
+            $result = array_merge($array, [$item]);
+        }
+        return $result;
     }
 
 

@@ -116,11 +116,12 @@ class Utils
         self::createDirectoryIfNeeded(Config::$pathLogFile);
         $dirToLog = Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
 
-        file_put_contents($dirToLog, $strlog, FILE_APPEND);
-        if($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
-            $dirToLog = self::$cache->get('log') . 'error.log';
-            file_put_contents($dirToLog, $strlog, FILE_APPEND);
+        self::createDirectoryIfNeeded(Config::$pathTmp . '/log/log_dump.log');
+        $dirToDumpLog = Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
 
+        file_put_contents($dirToLog, $strlog, FILE_APPEND);
+        file_put_contents($dirToDumpLog, $strlog, FILE_APPEND);
+        if($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
             $dirToLog = self::$cache->get('log') . 'error.log';
             file_put_contents($dirToLog, $strlog, FILE_APPEND);
         }

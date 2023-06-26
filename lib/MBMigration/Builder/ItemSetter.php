@@ -9,6 +9,13 @@ class ItemSetter
     private $data;
     private $item;
 
+    public function __construct($json = '')
+    {
+        if($json !== '') {
+            $this->newItem($json);
+        }
+    }
+
     public function newItem($json): void
     {
         $this->data = json_decode($json);
@@ -60,7 +67,7 @@ class ItemSetter
     public function addItem(array $value): void
     {
         $value = $this->arrayToObject($value);
-        $this->item->value->items = $this->mergeObjects($this->item->value->items, $value);
+        $this->item->value->items[] = $value;
         $this->begin();
     }
 

@@ -3,11 +3,12 @@
 namespace MBMigration\Builder\Layout\Ember;
 
 use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use DOMDocument;
 use MBMigration\Core\Utils;
 
-class Ember
+class Ember extends Layout
 {
     private $jsonDecode;
     private $dom;
