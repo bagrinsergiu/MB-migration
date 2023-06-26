@@ -2,11 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Boulevard;
 
+use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use DOMDocument;
 use MBMigration\Core\Utils;
 
-class Boulevard
+class Boulevard extends Layout
 {
     private $jsonDecode;
     private $dom;

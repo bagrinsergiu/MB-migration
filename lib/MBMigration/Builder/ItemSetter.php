@@ -9,6 +9,13 @@ class ItemSetter
     private $data;
     private $item;
 
+    public function __construct($json = '')
+    {
+        if($json !== '') {
+            $this->newItem($json);
+        }
+    }
+
     public function newItem($json): void
     {
         $this->data = json_decode($json);

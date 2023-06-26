@@ -3,11 +3,12 @@
 namespace MBMigration\Builder\Layout\Serene;
 
 use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use DOMDocument;
 use MBMigration\Core\Utils;
 
-class Serene
+class Serene  extends Layout
 {
     private $jsonDecode;
     private $dom;

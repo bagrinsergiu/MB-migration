@@ -37,11 +37,15 @@ class PageBuilder
             {
                 $blockData = $_WorkClassTemplate->callMethod($section['typeSection'], $section, $slug);
 
-                if (!empty($blockData) && $blockData !== "null") {
-                    $decodeBlock = json_decode($blockData, true);
-                    $itemsData['items'][] = $decodeBlock;
+                if($blockData === true) {
+                    $itemsData['items'][] = json_decode($this->cache->get('callMethodResult'));
                 } else {
-                    Utils::log('CallMethod return null. input data: ' . json_encode($section) . ' | Slug: '.$slug, 2, 'PageBuilder');
+                    if (!empty($blockData) && $blockData !== "null") {
+                        $decodeBlock = json_decode($blockData, true);
+                        $itemsData['items'][] = $decodeBlock;
+                    } else {
+                        Utils::log('CallMethod return null. input data: ' . json_encode($section) . ' | Slug: '.$slug, 2, 'PageBuilder');
+                    }
                 }
             }
             $this->sendStatus();
@@ -82,7 +86,7 @@ class PageBuilder
 
     private function sendStatus(): void
     {
-        echo json_encode($this->cache->get('Status'));
+        echo json_encode($this->cache->get('Status')) . "\n";
     }
 
 }

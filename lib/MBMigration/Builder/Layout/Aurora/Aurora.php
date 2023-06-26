@@ -11,9 +11,15 @@ class Aurora
     private $jsonDecode;
     private $dom;
     private $cache;
+    /**
+     * @var string
+     */
+    private $layoutName;
 
     public function __construct(VariableCache $cache)
     {
+
+        $this->layoutName = 'Aurora';
         $this->dom   = new DOMDocument();
         $this->cache = $cache;
         Utils::log('Connected!', 4, 'August Builder');
@@ -558,17 +564,19 @@ class Aurora
         return $randomString;
     }
 
-    public function callMethod($methodName, $params = null)
+    public function callMethod($methodName, $params = [], $marker = ''): bool
     {
         $verifiedMethodName = $this->replaceInName($methodName);
         if (method_exists($this, $verifiedMethodName)) {
-            if(!isset($params)){
+            if (!isset($params)) {
                 $params = $this->jsonDecode;
             }
-            Utils::log('Call method ' . $verifiedMethodName , 1, "August] [callDynamicMethod");
-            return call_user_func_array(array($this, $verifiedMethodName), [$params]);
+            Utils::log('Call method ' . $verifiedMethodName, 1,  $this->layoutName . "] [callDynamicMethod");
+            $result = call_user_func_array(array($this, $verifiedMethodName), [$params]);
+            $this->cache->set('callMethodResult', $result);
+            return $result;
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "August] [callDynamicMethod");
+        Utils::log('Method ' . $verifiedMethodName . ' does not exist. Page: ' . $marker, 2, "August] [callDynamicMethod");
         return false;
     }
 

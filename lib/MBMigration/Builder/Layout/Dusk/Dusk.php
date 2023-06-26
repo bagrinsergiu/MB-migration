@@ -2,11 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Dusk;
 
+use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use DOMDocument;
 use MBMigration\Core\Utils;
 
-class Dusk
+class Dusk  extends Layout
 {
     private $jsonDecode;
     private $dom;

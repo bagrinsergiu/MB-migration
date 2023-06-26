@@ -3,11 +3,12 @@
 namespace MBMigration\Builder\Layout\Majesty;
 
 use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use DOMDocument;
 use MBMigration\Core\Utils;
 
-class Majesty
+class Majesty  extends Layout
 {
     private $jsonDecode;
     private $dom;
