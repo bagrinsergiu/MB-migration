@@ -58,6 +58,43 @@ class Utils
         return str_replace($replace, $toReplace, $block);
     }
 
+    public static function keepItClean(){
+        $deleteDir = ['page','media'];
+        $deleteFolders = [];
+
+        $folders = self::$cache->get('ProjectFolders');
+
+        foreach($deleteDir as $name){
+            if(array_key_exists($name, $folders)){
+                $deleteFolders[] =  $folders[$name];
+            }
+        }
+        foreach ($deleteFolders as $directory) {
+            self::removeDir($directory);
+        }
+        Utils::log('Derictories removed success', 1, 'KeepItClean');
+    }
+
+    private static function removeDir($directory): void
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
+
+        $files = array_diff(scandir($directory), array('.', '..'));
+
+        foreach ($files as $file) {
+            $path = $directory . '/' . $file;
+
+            if (is_dir($path)) {
+                self::removeDir($path);
+            } else {
+                @unlink($path);
+            }
+        }
+        @rmdir($directory);
+    }
+
     public static function log(string $messageText, int $type = 1, string $nameFunction = ''): void
     {
         $param = [

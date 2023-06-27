@@ -94,6 +94,7 @@ class ErrorDump
         fclose($dump_handle);
         $log_entry = date('Y-m-d H:i:s') . ": Error occurred, dump created in file $dump_file\n";
         error_log($log_entry, 3, $this->log_file);
+        Utils::keepItClean();
         Utils::log('FATAL ' . $this->projectID, 7, 'createDump');
         Utils::log('Details: ' . $dump_file, 7, 'createDump');
         Utils::log('', 7, 'END] -= PROCESS =- [END');
