@@ -23,8 +23,8 @@ class Aurora extends Layout
      */
     public function __construct(VariableCache $cache)
     {
-
         $this->layoutName = 'Aurora';
+
         $this->dom   = new DOMDocument();
         $this->cache = $cache;
         Utils::log('Connected!', 4, 'August Builder');

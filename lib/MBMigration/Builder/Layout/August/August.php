@@ -21,6 +21,7 @@ class August extends Layout
         $this->dom = new DOMDocument();
 
         $this->layoutName = 'August';
+
         $this->cache = $cache;
         $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
 

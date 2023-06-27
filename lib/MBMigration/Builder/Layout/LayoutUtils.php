@@ -495,6 +495,7 @@ class LayoutUtils
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
         $response = curl_exec($curl);
         $error = curl_error($curl);
@@ -511,27 +512,54 @@ class LayoutUtils
             Utils::log('JSON decoding error: ' . json_encode(json_last_error_msg()), 3, $this->layoutName . "] [loadJsonFromUrl");
             throw new Exception('JSON decoding error: ' . json_encode(json_last_error_msg()));
         }
+
+        Utils::log('JSON success download from: ' . json_encode($url), 1, $this->layoutName . "] [loadJsonFromUrl");
         return $data;
     }
 
     /**
      * @throws Exception
      */
-    protected function loadKit($layoutName, $fileName = 'blocksKit.json'){
-        Utils::log('Load json BlocksKit', 2, $this->layoutName . "] [loadKit");
+    protected function loadKit($layoutName = '', $fileName = ''){
 
-        if(Config::$urlJsonKits){
-            $createUrl = Config::$urlJsonKits . '/Layout/' .  $layoutName . '/'. $fileName;
+        if(Config::$urlJsonKits) {
+            Utils::log('Download json BlocksKit', 1, $this->layoutName . "] [loadKit");
+            $createUrl = Config::$urlJsonKits . '/Layout';
+
+            if($fileName === '' && $layoutName === '' ) {
+                $createUrl .= '/globalBlocksKit.json';
+            } else {
+                if ($layoutName !== '') {
+                    $createUrl .= '/' . $layoutName;
+                }
+                if ($fileName !== '') {
+                    $createUrl .= '/' . $fileName;
+                } else {
+                    $createUrl .= '/blocksKit.json';
+                }
+            }
             $url = $this->validateAndFixURL($createUrl);
-            if(!$url){
-                Utils::log('Bad Url: ' . $createUrl, 1, $this->layoutName . "] [loadKit");
+            if(!$url) {
+                Utils::log('Bad Url: ' . $createUrl, 3, $this->layoutName . "] [loadKit");
                 throw new Exception("Bad Url: loadKit");
             }
             return $this->loadJsonFromUrl($url);
 
         } else {
-            $file = __DIR__ . '/' . $layoutName .'/'. $fileName;
-
+            Utils::log('Open file json BlocksKit', 1, $this->layoutName . "] [loadKit");
+            $file = __DIR__;
+            if($fileName === '' && $layoutName === '' ) {
+                $file .= '/globalBlocksKit.json';
+            } else {
+                if ($layoutName !== '') {
+                    $file .= '/' . $layoutName;
+                }
+                if ($fileName !== '') {
+                    $file .= '/' . $fileName;
+                } else {
+                    $file .= '/blocksKit.json';
+                }
+            }
             if (file_exists($file)) {
                 $fileContent = file_get_contents($file);
 

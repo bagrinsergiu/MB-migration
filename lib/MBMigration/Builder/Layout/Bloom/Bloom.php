@@ -30,6 +30,7 @@ class Bloom extends Layout
         $this->dom   = new DOMDocument();
 
         $this->layoutName = 'Bloom';
+
         $this->cache = $cache;
         $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
 

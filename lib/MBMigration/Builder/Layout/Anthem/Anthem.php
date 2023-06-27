@@ -23,7 +23,9 @@ class Anthem extends Layout
     public function __construct(VariableCache $cache)
     {
         $this->dom   = new DOMDocument();
+
         $this->layoutName = 'Anthem';
+
         $this->cache = $cache;
         $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
 
