@@ -3,6 +3,7 @@
 namespace MBMigration\Core;
 
 use ErrorException;
+use Exception;
 use MBMigration\Builder\VariableCache;
 
 class ErrorDump
@@ -21,12 +22,19 @@ class ErrorDump
     {
         $this->cache = $cache;
     }
+
+    /**
+     * @throws Exception
+     */
     public function errorHandler($errno, $errstr, $errfile, $errline)
     {
         $error = new ErrorException($errstr, 0, $errno, $errfile, $errline);
         $this->createDump($error);
     }
 
+    /**
+     * @throws Exception
+     */
     public function exceptionHandler($exception) {
         $this->createDump($exception);
     }
@@ -50,6 +58,9 @@ class ErrorDump
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function createDump($error): void
     {
         $this->createProjectFolders();
@@ -86,6 +97,6 @@ class ErrorDump
         Utils::log('FATAL ' . $this->projectID, 7, 'createDump');
         Utils::log('Details: ' . $dump_file, 7, 'createDump');
         Utils::log('', 7, 'END] -= PROCESS =- [END');
-        exit();
+        throw new Exception('End process, Dump created ');
     }
 }

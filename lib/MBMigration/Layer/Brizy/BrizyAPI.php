@@ -99,6 +99,9 @@ class BrizyAPI extends Utils
 
     }
 
+    /**
+     * @throws Exception
+     */
     public function getGraphToken($projectid)
     {
         $nameFunction = __FUNCTION__;
@@ -120,7 +123,7 @@ class BrizyAPI extends Utils
         if(array_key_exists('code', $result)) {
             if ($resultDecode['code'] == 500) {
                 Utils::log('Error getting token', 5, $nameFunction);
-                exit('Error getting token');
+                throw new Exception('getting token');
             }
         }
 
@@ -295,7 +298,7 @@ class BrizyAPI extends Utils
         return json_decode($result['body'], true);
     }
 
-    private function createUrlApiProject($projectId)
+    private function createUrlApiProject($projectId): string
     {
         return Utils::strReplace(Config::$urlGetApiToken, '{project}', $projectId);
     }
