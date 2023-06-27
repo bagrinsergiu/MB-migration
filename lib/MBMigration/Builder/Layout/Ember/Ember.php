@@ -19,37 +19,24 @@ class Ember extends Layout
     {
         $this->dom   = new DOMDocument();
         $this->cache = $cache;
+
+        $this->layoutName = 'Ember';
+
         $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
 
         Utils::log('Connected!', 4, 'Ember Builder');
-        $file = __DIR__.'\blocksKit.json';
 
-        if (file_exists($file))
-        {
-            $fileContent = file_get_contents($file);
-            $this->jsonDecode = json_decode($fileContent, true);
-            if(empty($fileContent))
-            {
-                Utils::log('File empty', 2, "Ember] [__construct");
-                exit;
-            }
-            Utils::log('File exist: ' .$file , 1, "Ember] [__construct");
-        }
-        else
-        {
-            Utils::log('File does not exist', 2, "Ember] [__construct");
-            exit;
-        }
+        $this->jsonDecode = $this->loadKit($this->layoutName);
 
         $menuList = $this->cache->get('menuList');
 
         if($menuList['create'] == false) {
             if ($this->createMenu($menuList)) {
-                Utils::log('Success create MENU', 1, "Ember] [__construct");
+                Utils::log('Success create MENU', 1, $this->layoutName . "] [__construct");
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                Utils::log("Failed create MENU", 2, "Ember] [__construct");
+                Utils::log("Failed create MENU", 2, $this->layoutName . "] [__construct");
             }
         }
         $this->createFooter($menuList);
@@ -57,7 +44,7 @@ class Ember extends Layout
 
     private function createMenu($menuList)
     {
-        Utils::log('Create block menu', 1, "Ember] [createMenu");
+        Utils::log('Create block menu', 1, $this->layoutName . "] [createMenu");
         $decoded = $this->jsonDecode['blocks']['menu'];
         $block = json_decode($decoded['main'], true);
         $lgoItem = $this->cache->get('mainSection')['header']['items'];
@@ -115,7 +102,7 @@ class Ember extends Layout
 
     private function left_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Ember] [left_media");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
         $decoded = $this->jsonDecode['blocks']['left-media'];
         $block = json_decode($decoded, true);
 
@@ -145,7 +132,7 @@ class Ember extends Layout
     }
     private function right_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Ember] [right_media");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
 
         $decoded = $this->jsonDecode['blocks']['right-media'];
         $block = json_decode($decoded, true);
@@ -173,7 +160,7 @@ class Ember extends Layout
 
     private function full_media($encode): bool|string
     {
-        Utils::log('Create full media', 1, "Ember] [full_media");
+        Utils::log('Create full media', 1, $this->layoutName . "] [full_media");
         $decoded = $this->jsonDecode['blocks']['full-media'];
         $block = json_decode($decoded, true);
 
@@ -210,7 +197,7 @@ class Ember extends Layout
 
     private function full_text(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Ember] [full_text");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
         $decoded = $this->jsonDecode['blocks']['full-text'];
         if($this->checkArrayPath($encoded, 'settings/sections/background/photoOption'))
         {
@@ -237,7 +224,7 @@ class Ember extends Layout
                 }
             }
         } else {
-            Utils::log('Set background', 1, "Ember] [full_text");
+            Utils::log('Set background', 1, $this->layoutName . "] [full_text");
             $block = json_decode($decoded['background'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
@@ -261,7 +248,7 @@ class Ember extends Layout
 
     private function parallaxScroll(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Ember] [full_text (parallaxScroll)");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text (parallaxScroll)");
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
         if(!empty($encoded['settings']['sections']['background'])) {
@@ -271,7 +258,7 @@ class Ember extends Layout
             $block['value']['items'][0]['value']['bgImageSrc']      = $encoded['settings']['sections']['background']['photo'];
 
         } else {
-            Utils::log('Set background', 1, "Ember] [full_text (parallaxScroll)");
+            Utils::log('Set background', 1, $this->layoutName . "] [full_text (parallaxScroll)");
             $block = json_decode($decoded['background'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
@@ -300,7 +287,7 @@ class Ember extends Layout
 
     private function left_media_circle(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Ember] [left_media_circle");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media_circle");
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
 
@@ -327,7 +314,7 @@ class Ember extends Layout
 
     private function top_media_diamond(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Ember] [top_media_diamond");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [top_media_diamond");
 
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
@@ -341,7 +328,7 @@ class Ember extends Layout
 
     private function grid_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Ember] [grid_layout");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $objItem = new ItemSetter($decoded['item']);
@@ -414,7 +401,7 @@ class Ember extends Layout
 
     private function list_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Ember] [grid_layout");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['list-layout'];
 
         $block = json_decode($decoded['main'], true);
@@ -466,7 +453,7 @@ class Ember extends Layout
 
     private function gallery_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "Ember] [gallery_layout");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
 
         $encoded['items'] = $this->sortByOrderBy($encoded['items']);
 
@@ -496,7 +483,7 @@ class Ember extends Layout
 
     private function create_Default_Page()
     {
-        Utils::log('Create structure default page', 1, "Ember] [top_media_diamond");
+        Utils::log('Create structure default page', 1, $this->layoutName . "] [top_media_diamond");
 
         //$decoded = $this->jsonDecode['blocks']['defaultBlocks'];
 
@@ -504,7 +491,7 @@ class Ember extends Layout
 
     private function createFooter(): void
     {
-        Utils::log('Create Footer', 1, "Ember] [createFooter");
+        Utils::log('Create Footer', 1, $this->layoutName . "] [createFooter");
         $encoded = $this->cache->get('mainSection')['footer'];
         $decoded = $this->jsonDecode['blocks']['footer'];
         $block = json_decode($decoded, true);
@@ -572,7 +559,7 @@ class Ember extends Layout
 // brz-text-lg-left
     private function replaceTitleTag($html, $type = ''): string
     {
-        Utils::log('Replace Title Tag: '. $html, 1, "Ember] [replaceTitleTag");
+        Utils::log('Replace Title Tag: '. $html, 1, $this->layoutName . "] [replaceTitleTag");
         if(empty($html))
             return '';
         $doc = new DOMDocument();
@@ -626,7 +613,7 @@ class Ember extends Layout
     }
 
     private function replaceParagraphs($html, $type = ''): string {
-        Utils::log('Replace Paragraph: '. $html, 1, "Ember] [replaceParagraphs");
+        Utils::log('Replace Paragraph: '. $html, 1, $this->layoutName . "] [replaceParagraphs");
         if(empty($html)){
             return '';
         }
@@ -844,10 +831,10 @@ class Ember extends Layout
             if(!isset($params)){
                 $params = $this->jsonDecode;
             }
-            Utils::log('Call method ' . $verifiedMethodName , 1, "Ember] [callDynamicMethod");
+            Utils::log('Call method ' . $verifiedMethodName , 1, $this->layoutName . "] [callDynamicMethod");
             return call_user_func_array(array($this, $verifiedMethodName), [$params]);
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "Ember] [callDynamicMethod");
+        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, $this->layoutName . "] [callDynamicMethod");
         return false;
     }
 

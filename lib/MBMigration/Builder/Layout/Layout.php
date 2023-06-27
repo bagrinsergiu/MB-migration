@@ -14,16 +14,7 @@ class Layout extends LayoutUtils
     private function initData()
     {
         Utils::log('initData!', 4, 'Main Layout');
-
-        $file = __DIR__.'\globalBlocksKit.json';
-
-        if (file_exists($file)) {
-            $fileContent = file_get_contents($file);
-            return json_decode($fileContent, true);
-        } else {
-            Utils::log('File does not exist', 2, "Main Layout] [__construct");
-            throw new Exception('File does not exist');
-        }
+        return $this->loadKit();
     }
 
     /**
