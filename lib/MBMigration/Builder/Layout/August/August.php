@@ -11,7 +11,7 @@ use MBMigration\Core\Utils;
 
 class August extends Layout
 {
-    private $layoutName;
+    protected $layoutName;
     
     /**
      * @throws Exception
@@ -25,20 +25,8 @@ class August extends Layout
         $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
 
         Utils::log('Connected!', 4, 'August Builder');
-        $file = __DIR__ . '\blocksKit.json';
 
-        if (file_exists($file)) {
-            $fileContent = file_get_contents($file);
-            $this->jsonDecode = json_decode($fileContent, true);
-            if (empty($fileContent)) {
-                Utils::log('File empty', 2, $this->layoutName . "] [__construct");
-                throw new Exception('File empty');
-            }
-            Utils::log('File exist: ' . $file, 1, $this->layoutName . "] [__construct");
-        } else {
-            Utils::log('File does not exist', 2, $this->layoutName . "] [__construct");
-            throw new Exception('File does not exist');
-        }
+        $this->jsonDecode = $this->loadKit($this->layoutName);
 
         $menuList = $this->cache->get('menuList');
 
@@ -138,7 +126,7 @@ class August extends Layout
         return $treeMenu;
     }
 
-    private function left_media(array $sectionData)
+    protected function left_media(array $sectionData)
     {
         Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
 
@@ -193,7 +181,7 @@ class August extends Layout
         return json_encode($block);
     }
 
-    private function right_media(array $sectionData)
+    protected function right_media(array $sectionData)
     {
         Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
         $this->cache->set('currentSectionData', $sectionData);

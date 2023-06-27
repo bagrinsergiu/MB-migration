@@ -20,22 +20,7 @@ class Dusk  extends Layout
         Utils::log('Connected!', 4, 'August Builder');
         $file = __DIR__.'\blocksKit.json';
 
-        if (file_exists($file))
-        {
-            $fileContent = file_get_contents($file);
-            $this->jsonDecode = json_decode($fileContent, true);
-            if(empty($fileContent))
-            {
-                Utils::log('File empty', 2, "August] [__construct");
-                exit;
-            }
-            Utils::log('File exist: ' .$file , 1, "August] [__construct");
-        }
-        else
-        {
-            Utils::log('File does not exist', 2, "August] [__construct");
-            exit;
-        }
+        $this->jsonDecode = $this->loadKit($this->layoutName);
 
         $menuList = $this->cache->get('menuList');
 
