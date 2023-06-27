@@ -3,7 +3,9 @@
 namespace MBMigration\Builder\Layout;
 
 use DOMDocument;
+use Exception;
 use InvalidArgumentException;
+use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
 class LayoutUtils
@@ -485,6 +487,79 @@ class LayoutUtils
         }
     }
 
+    /**
+     * @throws Exception
+     */
+    protected function loadJsonFromUrl($url) {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 
+        $response = curl_exec($curl);
+        $error = curl_error($curl);
+        curl_close($curl);
+
+        if ($response === false) {
+            Utils::log('Download error: ' . json_encode($error), 3, $this->layoutName . "] [loadJsonFromUrl");
+            throw new Exception('Download error: ' . json_encode($error));
+        }
+
+        $data = json_decode($response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Utils::log('JSON decoding error: ' . json_encode(json_last_error_msg()), 3, $this->layoutName . "] [loadJsonFromUrl");
+            throw new Exception('JSON decoding error: ' . json_encode(json_last_error_msg()));
+        }
+        return $data;
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function loadKit($layoutName, $fileName = 'blocksKit.json'){
+        Utils::log('Load json BlocksKit', 2, $this->layoutName . "] [loadKit");
+
+        if(Config::$urlJsonKits){
+            $createUrl = Config::$urlJsonKits . '/Layout/' .  $layoutName . '/'. $fileName;
+            $url = $this->validateAndFixURL($createUrl);
+            if(!$url){
+                Utils::log('Bad Url: ' . $createUrl, 1, $this->layoutName . "] [loadKit");
+                throw new Exception("Bad Url: loadKit");
+            }
+            return $this->loadJsonFromUrl($url);
+
+        } else {
+            $file = __DIR__ . '/' . $layoutName .'/'. $fileName;
+
+            if (file_exists($file)) {
+                $fileContent = file_get_contents($file);
+
+                if (empty($fileContent)) {
+                    Utils::log('File ' . $file . ' empty', 2, $this->layoutName . "] [loadKit");
+                    throw new Exception('File ' . $file . ' empty');
+                }
+                Utils::log('File exist: ' . $file, 1, $this->layoutName . "] [loadKit");
+                return json_decode($fileContent, true);
+
+            } else {
+                Utils::log('File does not exist. Path: ' . $file, 2, $this->layoutName . "] [loadKit");
+                throw new Exception('File does not exist. Path: ' . $file);
+            }
+        }
+    }
+
+    protected function validateAndFixURL($url) {
+        if (!parse_url($url, PHP_URL_SCHEME)) {
+            $url = 'https://' . $url;
+        }
+        if (!parse_url($url, PHP_URL_HOST)) {
+            return false;
+        }
+        if (preg_match('/[^A-Za-z0-9-._~:\/?#\[\]@!$&\'()*+,;=]/', $url)) {
+            return false;
+        }
+        return str_replace(' ', '%20', $url);
+    }
 
 }

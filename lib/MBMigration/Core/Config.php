@@ -32,6 +32,10 @@ class Config
      * @var bool
      */
     public static $devMode;
+    /**
+     * @var mixed
+     */
+    public static $urlJsonKits;
 
     public static $path;
     /**
@@ -49,6 +53,7 @@ class Config
      */
     private static $defaultSettings;
 
+
     /**
      * @throws Exception
      */
@@ -61,12 +66,15 @@ class Config
         $this->setSettings($settings);
 
         self::$defaultSettings  = [
-            'devMode'   => false,
-            'debugMode' => true
+            'devMode'       => false,
+            'debugMode'     => true,
+            'urlJsonKit'   => false
         ];
 
         self::$debugMode        = $this->checkSettings('debugMode');
         self::$devMode          = $this->checkSettings('devMode');
+
+        self::$urlJsonKits          = $this->checkSettings('urlJsonKit');
 
         self::$DBConnection     = $DBConnection['dbType']; // mysql|postgresql
 

@@ -2,11 +2,13 @@
 
 namespace MBMigration\Builder\Layout\Bloom;
 
+use Exception;
 use MBMigration\Builder\ItemSetter;
 use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use DOMDocument;
 use InvalidArgumentException;
+use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
 class Bloom extends Layout
@@ -15,7 +17,14 @@ class Bloom extends Layout
     protected  $dom;
     protected  $cache;
     protected  $textPosition;
+    /**
+     * @var string
+     */
+    protected $layoutName;
 
+    /**
+     * @throws Exception
+     */
     public function __construct(VariableCache $cache)
     {
         $this->dom   = new DOMDocument();
@@ -25,24 +34,8 @@ class Bloom extends Layout
         $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
 
         Utils::log('Connected!', 4, $this->layoutName . ' Builder');
-        $file = __DIR__.'\blocksKit.json';
 
-        if (file_exists($file))
-        {
-            $fileContent = file_get_contents($file);
-            $this->jsonDecode = json_decode($fileContent, true);
-            if(empty($fileContent))
-            {
-                Utils::log('File empty', 2, $this->layoutName . "] [__construct");
-                exit;
-            }
-            Utils::log('File exist: ' .$file , 1, $this->layoutName . "] [__construct");
-        }
-        else
-        {
-            Utils::log('File does not exist', 2, $this->layoutName . "] [__construct");
-            exit;
-        }
+        $this->jsonDecode = $this->loadKit($this->layoutName);
 
         $menuList = $this->cache->get('menuList');
 

@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Boulevard;
 
+use Exception;
 use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use DOMDocument;
@@ -12,40 +13,31 @@ class Boulevard extends Layout
     private $jsonDecode;
     private $dom;
     private $cache;
+    protected $layoutName;
 
+    /**
+     * @throws Exception
+     */
     public function __construct(VariableCache $cache)
     {
         $this->dom   = new DOMDocument();
         $this->cache = $cache;
-        Utils::log('Connected!', 4, 'August Builder');
-        $file = __DIR__.'\blocksKit.json';
 
-        if (file_exists($file))
-        {
-            $fileContent = file_get_contents($file);
-            $this->jsonDecode = json_decode($fileContent, true);
-            if(empty($fileContent))
-            {
-                Utils::log('File empty', 2, "August] [__construct");
-                exit;
-            }
-            Utils::log('File exist: ' .$file , 1, "August] [__construct");
-        }
-        else
-        {
-            Utils::log('File does not exist', 2, "August] [__construct");
-            exit;
-        }
+        $this->layoutName = 'Boulevard';
+
+        Utils::log('Connected!', 4, $this->layoutName . ' Builder');
+
+        $this->jsonDecode = $this->loadKit($this->layoutName);
 
         $menuList = $this->cache->get('menuList');
 
         if($menuList['create'] == false) {
             if ($this->createMenu($menuList)) {
-                Utils::log('Success create MENU', 1, "August] [__construct");
+                Utils::log('Success create MENU', 1, $this->layoutName . "] [__construct");
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                Utils::log("Failed create MENU", 2, "August] [__construct");
+                Utils::log("Failed create MENU", 2, $this->layoutName . "] [__construct");
             }
         }
         $this->createFooter($menuList);
@@ -53,7 +45,7 @@ class Boulevard extends Layout
 
     private function createMenu($menuList)
     {
-        Utils::log('Create block menu', 1, "August] [createMenu");
+        Utils::log('Create block menu', 1, $this->layoutName . "] [createMenu");
         $decoded = $this->jsonDecode['blocks']['menu'];
         $block = json_decode($decoded['main'], true);
         $lgoItem = $this->cache->get('mainSection')['header']['items'];
@@ -101,7 +93,7 @@ class Boulevard extends Layout
 
     private function left_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [left_media");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
         $decoded = $this->jsonDecode['blocks']['left-media'];
         $block = json_decode($decoded, true);
 
@@ -127,7 +119,7 @@ class Boulevard extends Layout
     }
     private function right_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [right_media");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
 
         $decoded = $this->jsonDecode['blocks']['right-media'];
         $block = json_decode($decoded, true);
@@ -154,7 +146,7 @@ class Boulevard extends Layout
 
     private function full_media($encode): bool|string
     {
-        Utils::log('Create full media', 1, "August] [full_media");
+        Utils::log('Create full media', 1, $this->layoutName . "] [full_media");
         $decoded = $this->jsonDecode['blocks']['full-media'];
         $block = json_decode($decoded, true);
 
@@ -190,7 +182,7 @@ class Boulevard extends Layout
 
     private function full_text(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [full_text");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
         if(empty($encoded['settings']['sections']['background'])) {
@@ -210,7 +202,7 @@ class Boulevard extends Layout
                 }
             }
         } else {
-            Utils::log('Set background', 1, "August] [full_text");
+            Utils::log('Set background', 1, $this->layoutName . "] [full_text");
             $block = json_decode($decoded['background'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
@@ -237,7 +229,7 @@ class Boulevard extends Layout
 
     private function left_media_circle(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [left_media_circle");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media_circle");
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
 
@@ -264,7 +256,7 @@ class Boulevard extends Layout
 
     private function top_media_diamond(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [top_media_diamond");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [top_media_diamond");
 
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
@@ -278,7 +270,7 @@ class Boulevard extends Layout
 
     private function grid_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [grid_layout");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $block = json_decode($decoded['main'], true);
@@ -323,14 +315,14 @@ class Boulevard extends Layout
 
     private function list_layout(array $encoded): bool|string
     {
-        Utils::log('Redirect', 1, "August] [list_layout");
+        Utils::log('Redirect', 1, $this->layoutName . "] [list_layout");
         $result = $this->full_text($encoded);
         return $result;
     }
 
     private function gallery_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, "August] [gallery_layout");
+        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
 
         $encoded['items'] = $this->sortByOrderBy($encoded['items']);
 
@@ -360,7 +352,7 @@ class Boulevard extends Layout
 
     private function create_Default_Page()
     {
-        Utils::log('Create structure default page', 1, "August] [top_media_diamond");
+        Utils::log('Create structure default page', 1, $this->layoutName . "] [top_media_diamond");
 
         //$decoded = $this->jsonDecode['blocks']['defaultBlocks'];
 
@@ -368,7 +360,7 @@ class Boulevard extends Layout
 
     private function createFooter(): void
     {
-        Utils::log('Create Footer', 1, "August] [createFooter");
+        Utils::log('Create Footer', 1, $this->layoutName . "] [createFooter");
         $decoded = $this->jsonDecode['blocks']['footer'];
         $block = json_decode($decoded, true);
 
@@ -417,7 +409,7 @@ class Boulevard extends Layout
 // brz-text-lg-left
     private function replaceTitleTag($html, $class = 'brz-text-lg-center'): string
     {
-        Utils::log('Replace Title Tag: '. $html, 1, "August] [replaceTitleTag");
+        Utils::log('Replace Title Tag: '. $html, 1, $this->layoutName . "] [replaceTitleTag");
         if(empty($html))
             return '';
         $doc = new DOMDocument();
@@ -442,7 +434,7 @@ class Boulevard extends Layout
     }
 
     private function replaceParagraphs($html, $class = 'brz-text-lg-center'): string {
-        Utils::log('Replace Paragraph: '. $html, 1, "August] [replaceParagraphs");
+        Utils::log('Replace Paragraph: '. $html, 1, $this->layoutName . "] [replaceParagraphs");
         if(empty($html)){
             return '';
         }
@@ -567,10 +559,10 @@ class Boulevard extends Layout
             if(!isset($params)){
                 $params = $this->jsonDecode;
             }
-            Utils::log('Call method ' . $verifiedMethodName , 1, "August] [callDynamicMethod");
+            Utils::log('Call method ' . $verifiedMethodName , 1, $this->layoutName . "] [callDynamicMethod");
             return call_user_func_array(array($this, $verifiedMethodName), [$params]);
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, "August] [callDynamicMethod");
+        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, $this->layoutName . "] [callDynamicMethod");
         return false;
     }
 
