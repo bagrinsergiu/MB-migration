@@ -133,7 +133,7 @@ class MigrationPlatform
     {
         $endTime = microtime(true);
         $executionTime = ($endTime - $startTime);
-
+        $this->keepItClean();
         Utils::log('Work time: ' . $this->Time($executionTime) . ' (seconds: ' . round($executionTime, 1) . ')', 1, 'PROCESS');
         Utils::log('END', 1, "PROCESS");
     }
@@ -148,7 +148,7 @@ class MigrationPlatform
             if (!empty($pages['child'])) {
                 $this->launch($pages['child']);
             }
- //       if ($pages['slug'] != 'home') { continue; }
+      if ($pages['slug'] != 'home') { continue; }
             $this->collector($pages);
         }
     }
@@ -607,6 +607,10 @@ class MigrationPlatform
                 $value = $this->getColorFromPalette($value);
             }
         }
+    }
+
+    private function keepItClean(){
+        Utils::keepItClean();
     }
 
     private function createPalette(): void

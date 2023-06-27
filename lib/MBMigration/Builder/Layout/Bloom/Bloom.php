@@ -441,7 +441,7 @@ class Bloom extends Layout
                             }
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
-                                    $objItem->item(0)->item(0)->setText($this->replaceTitleTag($sectionItem['content']));
+                                     $objItem->item(1)->item(0)->setText($this->replaceTitleTag($sectionItem['content']));
                                 }
                             }
                         }
@@ -469,8 +469,6 @@ class Bloom extends Layout
             }
             $objBlock->item(0)->item(0)->addItem($objItem->get());
         }
-
-        $objBlock->item(0)->item(0)->addItem($objItem->get());
 
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
