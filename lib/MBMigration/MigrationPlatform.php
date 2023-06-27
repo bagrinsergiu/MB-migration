@@ -63,17 +63,19 @@ class MigrationPlatform
 
         $this->createProjectFolders();
 
+        $this->cache->set('settings', $this->parser->getSite());
+
+        $this->checkDesign();
+
         $parentPages = $this->parser->getParentPages();
 
         if (empty($parentPages)) {
             Utils::log('MB project not found, migration did not start, process completed without errors!', 1, "MAIN Foreach");
-
             $this->logFinalProcess($this->startTime);
 
-            return;
+            throw new Exception('MB project not found, migration did not start, process completed without errors!');
         }
 
-        $this->cache->set('settings', $this->parser->getSite());
         $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
         $this->cache->set('graphToken', $this->brizyApi->getGraphToken($this->projectID_Brizy));
 
@@ -617,4 +619,15 @@ class MigrationPlatform
         $this->cache->update('subpalette', $subPalette, 'parameter');
     }
 
+    /**
+     * @throws Exception
+     */
+    private function checkDesign() {
+        $designName = $this->cache->get('design', 'settings');
+        $designInDevelop = Config::$designInDevelop;
+        $devMode= Config::$devMode;
+        if(in_array($designName, $designInDevelop) && !$devMode) {
+            throw new Exception('This design is not ready for migration, but is in development');
+        }
+    }
 }

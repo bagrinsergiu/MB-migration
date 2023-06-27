@@ -27,18 +27,46 @@ class Config
     public static $nameMigration; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
 
     private static $cloud_host;
+
+    /**
+     * @var bool
+     */
+    public static $devMode;
+
     public static $path;
+    /**
+     * @var array|string[]
+     */
+    public static $designInDevelop;
+
+
+    /**
+     * @var array
+     */
+    private static $settings;
+    /**
+     * @var array
+     */
+    private static $defaultSettings;
 
     /**
      * @throws Exception
      */
-    public function __construct($cloud_host, $path, $token, $DBConnection)
+    public function __construct(string $cloud_host, string $path, string $token, array $DBConnection, array $settings = [])
     {
         $path = $this->checkPath($path);
 
         $this->checkDBConnection($DBConnection);
 
-        self::$debugMode        = true;
+        $this->setSettings($settings);
+
+        self::$defaultSettings  = [
+            'devMode'   => false,
+            'debugMode' => true
+        ];
+
+        self::$debugMode        = $this->checkSettings('debugMode');
+        self::$devMode          = $this->checkSettings('devMode');
 
         self::$DBConnection     = $DBConnection['dbType']; // mysql|postgresql
 
@@ -83,6 +111,11 @@ class Config
             'dbUser' => $DBConnection['dbUser'],
             'dbPass' => $DBConnection['dbPass']
         ];
+        
+        self::$designInDevelop  = [
+            'Boulevard'
+        ];
+
     }
 
     private function checkPath($path): string
@@ -128,5 +161,22 @@ class Config
             throw new Exception("Token not set");
         }
         return $token;
+    }
+
+    private function setSettings(array $settings)
+    {
+        self::$settings = $settings;
+    }
+
+    private function checkSettings(string $flag)
+    {
+        if(array_key_exists($flag, self::$settings)){
+            return self::$settings[$flag];
+        } else {
+            if(array_key_exists($flag, self::$defaultSettings)){
+                return self::$defaultSettings[$flag];
+            }
+        }
+        return false;
     }
 }
