@@ -92,10 +92,11 @@ class Utils
     {
         $typeMessageArray = ["DEBUG", "INFO", "WARNING", "CRITICAL", "PROCESS", "ERROR", "SUCCESSFULLY", "ErrorDump"];
         $project_id = '';
-
+        $dirToDumpLog = null;
         if(isset(self::$cache))
         {
             $project_id = "[UMID: " . self::$cache->get('migrationID') . "] ";
+            $dirToDumpLog = self::$cache->get('log', 'ProjectFolders');
         }
         $line = '';
 
@@ -116,11 +117,12 @@ class Utils
         self::createDirectoryIfNeeded(Config::$pathLogFile);
         $dirToLog = Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
 
-        self::createDirectoryIfNeeded(Config::$pathTmp . '/log/log_dump.log');
-        $dirToDumpLog = Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
+        if ($dirToDumpLog !== null){
+            file_put_contents($dirToDumpLog . 'process.log', $strlog, FILE_APPEND);
+        }
 
         file_put_contents($dirToLog, $strlog, FILE_APPEND);
-        file_put_contents($dirToDumpLog, $strlog, FILE_APPEND);
+
         if($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
             $dirToLog = self::$cache->get('log') . 'error.log';
             file_put_contents($dirToLog, $strlog, FILE_APPEND);
