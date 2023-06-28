@@ -300,7 +300,6 @@ class Anthem extends Layout
         Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
 
         $objBlock = new ItemSetter();
-        $a = $objBlocks[0];
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['full-text'];
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption'))
@@ -632,6 +631,77 @@ class Anthem extends Layout
                     }
 
                     if ($item['item_type'] === 'body') {
+                        $objItem->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                    }
+                }
+            }
+            $objRow->addItem($objItem->get());
+            $objBlock->item(0)->addItem($objRow->get());
+        }
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    protected function accordion_layout(array $sectionData) {
+        Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $this->jsonDecode['blocks']['accordion-layout'];
+
+        $objBlock = new ItemSetter();
+        $objItem = new ItemSetter();
+
+        $objBlock->newItem($decoded['main']);
+
+        $objBlock->item(0)->setting('bgColorPalette', '');
+        $objBlock->item(0)->setting('colorPalette', '');
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
+            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
+                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
+                $objBlock->item(0)->setting('bgAttachment','fixed');
+            }
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
+            $background = $this->getKeyRecursive('background', 'sections', $sectionData);
+
+            if(isset($background['photo']) && isset($background['filename'])) {
+                $objBlock->item(0)->setting('bgImageSrc', $background['photo']);
+                $objBlock->item(0)->setting('bgImageFileName', $background['filename']);
+            }
+            if(isset($background['opacity']) ) {
+                $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($background['opacity']));
+                $objBlock->item(0)->setting('tempBgColorOpacity', $this->colorOpacity($background['opacity']));
+            }
+        }
+
+        $blockHead = false;
+
+
+        if($blockHead) {
+            //$objBlock->item(0)->addItem($objHead->get());
+        }
+
+        foreach ($sectionData['items'] as $section) {
+
+            $objItem->newItem($decoded['item']);
+
+            foreach ($section['item'] as $item) {
+                if ($item['category'] === 'photo') {
+                    //$objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
+                    //$objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+                    //$objRow->addItem($objImage->get());
+                }
+                if ($item['category'] === 'text') {
+                    if ($item['item_type'] === 'accordion_title') {
+                        $objItem->setting($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                    }
+
+                    if ($item['item_type'] === 'accordion_body') {
                         $objItem->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
                     }
                 }

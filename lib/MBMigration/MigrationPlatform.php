@@ -159,9 +159,8 @@ class MigrationPlatform
             if (!empty($pages['child'])){
                 $this->launch($pages['child']);
             }
-      if ($pages['slug'] != 'home') { continue; }
             if(Config::$devMode === true){
-                //if ($pages['slug'] != 'videos') { continue; }
+                //if ($pages['slug'] != 'community-impact') { continue; }
             }
             $this->collector($pages);
         }

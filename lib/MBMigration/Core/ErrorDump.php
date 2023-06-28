@@ -100,8 +100,7 @@ class ErrorDump
                 'error_file' => $this->errorDetails->getFile(),
                 'error_line' => $this->errorDetails->getLine(),
                 'error_trace' => $this->errorDetails->getTraceAsString(),
-                'cache' => $cache,
-                'request_headers' => getallheaders()
+                'cache' => $cache
             ];
         }
         return $dump;

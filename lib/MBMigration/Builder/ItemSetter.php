@@ -47,6 +47,23 @@ class ItemSetter
         $this->begin();
     }
 
+    public function mainSetting(string $key, $value, $externalValue = false): void
+    {
+        if($externalValue) {
+            if (isset($this->item->$key)) {
+                $this->item->$key = $value;
+            } else {
+                $this->addParameter($key, $value);
+            }
+        }
+        if (isset($this->item->value->$key)) {
+            $this->item->value->$key = $value;
+        } else {
+            $this->addParameter($key, $value);
+        }
+        $this->begin();
+    }
+
     public function section(int $id): ItemSetter
     {
         if (isset($this->item->items[$id])) {
