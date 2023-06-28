@@ -139,4 +139,12 @@ class VariableCache
         }
     }
 
+    /**
+     * @return array
+     */
+    public function getCache(): array
+    {
+        return $this->cache;
+    }
+
 }

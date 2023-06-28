@@ -25,16 +25,25 @@ class MigrationPlatform
     private $graphApiBrizy;
     private $projectID_MB;
     private $migrationID;
+    /**
+     * @var ErrorDump
+     */
+    private $errorDump;
+    /**
+     * @var mixed
+     */
+    private $finalSuccess;
 
     public function __construct(Config $config)
     {
         $setConfig = $config;
+        $this->finalSuccess['status'] = 'start';
     }
 
     /**
      * @throws Exception
      */
-    public function start(int $projectID_MB, int $projectID_Brizy = 0): array
+    public function start(int $projectID_MB, int $projectID_Brizy = 0): void
     {
         $this->brizyApi = new BrizyAPI();
 
@@ -48,9 +57,7 @@ class MigrationPlatform
         $this->projectId = $projectID_MB . '_' . $this->projectID_Brizy . '_';
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
-
         $this->run();
-        return ['ID' => $this->projectID_Brizy, 'UID' => $this->migrationID];
     }
 
 
@@ -115,9 +122,9 @@ class MigrationPlatform
         $this->cache->set('migrationID', $this->migrationID);
         Utils::log('Migration ID: ' . $this->migrationID, 4, 'MIGRATION');
 
-        $errorDump = new ErrorDump($this->projectId);
+        $this->errorDump = new ErrorDump($this->projectId);
 
-        $errorDump->setDate($this->cache);
+        $this->errorDump->setDate($this->cache);
 
         $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
 
@@ -133,6 +140,11 @@ class MigrationPlatform
     {
         $endTime = microtime(true);
         $executionTime = ($endTime - $startTime);
+        $this->finalSuccess['UMID'] = $this->migrationID;
+        $this->finalSuccess['status'] = 'success';
+        $this->finalSuccess['progress'] = $this->cache->get('Status');
+        $this->finalSuccess['processTime'] = round($executionTime, 1);
+        Utils::keepItClean();
         Utils::log('Work time: ' . $this->Time($executionTime) . ' (seconds: ' . round($executionTime, 1) . ')', 1, 'PROCESS');
         Utils::log('END', 1, "PROCESS");
     }
@@ -148,6 +160,9 @@ class MigrationPlatform
                 $this->launch($pages['child']);
             }
       if ($pages['slug'] != 'home') { continue; }
+            if(Config::$devMode === true){
+                //if ($pages['slug'] != 'videos') { continue; }
+            }
             $this->collector($pages);
         }
     }
@@ -632,5 +647,13 @@ class MigrationPlatform
         if(in_array($designName, $designInDevelop) && !$devMode) {
             throw new Exception('This design is not ready for migration, but is in development');
         }
+    }
+
+    public function getLogs():string
+    {
+        if($this->finalSuccess['status'] === 'success'){
+            return json_encode($this->finalSuccess);
+        }
+        return json_encode($this->errorDump->getDump());
     }
 }

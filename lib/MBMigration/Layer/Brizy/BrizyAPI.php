@@ -414,6 +414,9 @@ class BrizyAPI extends Utils
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function httpClient($method, $url, $data = null, $token = null ): array
     {
         $nameFunction = __FUNCTION__;
@@ -460,7 +463,10 @@ class BrizyAPI extends Utils
                 $body = $response->getBody()->getContents();
 
                 Utils::log(json_encode(['status' => $statusCode, 'body' => $body]), 3, $nameFunction);
-
+                if($statusCode > 200)
+                {
+                    throw new Exception("Error: httpClient status Code:  $statusCode Response $body");
+                }
                 return ['status' => $statusCode, 'body' => $body];
             }
             else
