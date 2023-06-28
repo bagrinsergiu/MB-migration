@@ -133,7 +133,6 @@ class MigrationPlatform
     {
         $endTime = microtime(true);
         $executionTime = ($endTime - $startTime);
-        $this->keepItClean();
         Utils::log('Work time: ' . $this->Time($executionTime) . ' (seconds: ' . round($executionTime, 1) . ')', 1, 'PROCESS');
         Utils::log('END', 1, "PROCESS");
     }
@@ -145,7 +144,7 @@ class MigrationPlatform
     {
         foreach ($parentPages as $pages) {
 
-            if (!empty($pages['child'])) {
+            if (!empty($pages['child'])){
                 $this->launch($pages['child']);
             }
       if ($pages['slug'] != 'home') { continue; }
