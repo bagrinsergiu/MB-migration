@@ -300,7 +300,7 @@ class Anthem extends Layout
         Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
 
         $objBlock = new ItemSetter();
-
+        $a = $objBlocks[0];
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['full-text'];
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption'))
@@ -371,9 +371,13 @@ class Anthem extends Layout
         Utils::log('Create full media', 1, $this->layoutName . "] [two-horizontal-text");
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['two-horizontal-text'];
-        $block = json_decode($decoded, true);
+        $block = json_decode($decoded['main'], true);
+
+        $objBlock = new ItemSetter($decoded['main']);
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+
             $block['value']['items'][0]['value']['bgColorHex'] = strtolower($sectionData['settings']['color']['bg']);
         }
 
@@ -556,8 +560,16 @@ class Anthem extends Layout
         $objHead->newItem($decoded['head']);
         $objImage->newItem($decoded['image']);
 
-
         $objBlock->item(0)->setting('bgColorPalette', '');
+        $objBlock->item(0)->setting('colorPalette', '');
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
+            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
+                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
+                $objBlock->item(0)->setting('bgAttachment','fixed');
+            }
+        }
+
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
         }

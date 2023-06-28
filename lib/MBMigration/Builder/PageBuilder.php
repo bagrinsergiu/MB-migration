@@ -2,6 +2,7 @@
 namespace MBMigration\Builder;
 
 use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -86,6 +87,7 @@ class PageBuilder
 
     private function sendStatus(): void
     {
+        if(Config::$devMode !== true){return;}
         echo json_encode($this->cache->get('Status')) . "\n";
     }
 

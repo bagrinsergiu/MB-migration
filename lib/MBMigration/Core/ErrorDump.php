@@ -11,6 +11,10 @@ class ErrorDump
     private $log_file = 'error_log.txt';
     private $cache;
     private $projectID;
+    /**
+     * @var ErrorException
+     */
+    private $errorDetails;
 
     public function __construct($projectID = null)
     {
@@ -18,6 +22,7 @@ class ErrorDump
         set_exception_handler([$this, 'exceptionHandler']);
         $this->projectID = $projectID;
     }
+
     public function setDate(VariableCache $cache): void
     {
         $this->cache = $cache;
@@ -26,17 +31,17 @@ class ErrorDump
     /**
      * @throws Exception
      */
-    public function errorHandler($errno, $errstr, $errfile, $errline)
-    {
-        $error = new ErrorException($errstr, 0, $errno, $errfile, $errline);
-        $this->createDump($error);
+    public function errorHandler($errno, $errstr, $errfile, $errline) {
+        $this->errorDetails = new ErrorException($errstr, 0, $errno, $errfile, $errline);
+        $this->createDump();
     }
 
     /**
      * @throws Exception
      */
     public function exceptionHandler($exception) {
-        $this->createDump($exception);
+        $this->errorDetails = $exception;
+        $this->createDump();
     }
 
     private function createProjectFolders(): void
@@ -61,7 +66,7 @@ class ErrorDump
     /**
      * @throws Exception
      */
-    private function createDump($error): void
+    public function createDump()
     {
         $this->createProjectFolders();
         $dump_file = Config::$pathTmp . '/log/error/error_dump_' . date('Y-m-d_H-i-s') . '.log';
@@ -72,23 +77,38 @@ class ErrorDump
             $dump_file .= date('Y-m-d_H-i-s');
             $dump_file .= '.log';
         }
+        $data = $this->getDump(false);
+        $this->writeDump($dump_file, $data);
+    }
 
+    public function getDump(bool $inJson = true): array
+    {
         $cache = $this->cache ?? [];
+        if ($inJson) {
+            $dump = [
+                'error_message' => $this->errorDetails->getMessage(),
+                'error_code' => $this->errorDetails->getCode(),
+                'error_file' => $this->errorDetails->getFile(),
+                'error_line' => $this->errorDetails->getLine(),
+                'error_trace' => $this->errorDetails->getTrace(),
+                'cache' => $cache->getCache()
+            ];
+        } else {
+            $dump = [
+                'error_message' => $this->errorDetails->getMessage(),
+                'error_code' => $this->errorDetails->getCode(),
+                'error_file' => $this->errorDetails->getFile(),
+                'error_line' => $this->errorDetails->getLine(),
+                'error_trace' => $this->errorDetails->getTraceAsString(),
+                'cache' => $cache,
+                'request_headers' => getallheaders()
+            ];
+        }
+        return $dump;
+    }
 
-        $data = [
-            'error_message' => $error->getMessage(),
-            'error_code' => $error->getCode(),
-            'error_file' => $error->getFile(),
-            'error_line' => $error->getLine(),
-            'error_trace' => $error->getTraceAsString(),
-            'cache' => $cache,
-            'server_data' => $_SERVER,
-            'post_data' => $_POST,
-            'get_data' => $_GET,
-            'cookie_data' => $_COOKIE,
-            'request_headers' => getallheaders()
-        ];
-
+    private function writeDump($dump_file, $data): void
+    {
         $dump_handle = fopen($dump_file, 'w');
         fwrite($dump_handle, print_r($data, true));
         fclose($dump_handle);
@@ -99,5 +119,7 @@ class ErrorDump
         Utils::log('Details: ' . $dump_file, 7, 'createDump');
         Utils::log('', 7, 'END] -= PROCESS =- [END');
         throw new Exception('End process, Dump created ');
+
     }
+
 }

@@ -414,8 +414,7 @@ class Bloom extends Layout
             $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
         }
 
-        foreach ($sectionData['items'] as $section)
-        {
+        foreach ($sectionData['items'] as $section) {
             $objItem->newItem($decoded['item']);
 
             if(isset($section['item'])) {
