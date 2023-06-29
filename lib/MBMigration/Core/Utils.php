@@ -7,8 +7,10 @@ use MBMigration\Builder\VariableCache;
 
 class Utils
 {
+    public static $ERROR_MESSAGE;
     private static $projectID;
     private static $cache;
+
 
     public function __construct(VariableCache $cache = null)
     {

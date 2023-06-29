@@ -24,6 +24,7 @@ class DBConnector
         } elseif ($selectedDatabase === 'postgresql') {
             $this->connectToPostgresSQL();
         } else {
+            Utils::$ERROR_MESSAGE  = 'Unsupported database';
             throw new Exception('Unsupported database');
         }
        Utils::log('READY', 4, 'DBConnector Module');
