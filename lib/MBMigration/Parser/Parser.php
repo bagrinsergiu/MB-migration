@@ -49,7 +49,7 @@ class Parser
 
     public function getMainSection(): array
     {
-        Utils::log('Get main Section', 1, 'getParentPages');
+        Utils::log('Get main Section', 1, 'getMainSection');
         $result = [];
         $requestMainSections = $this->db->request("SELECT * FROM sections WHERE site_id =  " . $this->siteId . " and (page_id isnull or page_id = 0) ORDER BY position");
 
@@ -125,7 +125,7 @@ class Parser
         }
 
         $result[0]['slug'] = 'home';
-
+        $this->cache->set('ParentPages', $result);
         return $result;
     }
 

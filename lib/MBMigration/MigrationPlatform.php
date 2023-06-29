@@ -13,13 +13,13 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Parser\Parser;
 
-class MigrationPlatform
+class MigrationPlatform extends ErrorDump
 {
+    protected $cache;
+    protected $projectId;
     private $parser;
     private $QueryBuilder;
     private $brizyApi;
-    private $cache;
-    private $projectId;
     private $projectID_Brizy;
     private $startTime;
     private $graphApiBrizy;
@@ -37,6 +37,9 @@ class MigrationPlatform
 
     public function __construct(Config $config)
     {
+
+        set_error_handler([$this, 'errorHandler']);
+        set_exception_handler([$this, 'exceptionHandler']);
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
         $this->buildPage = '';
@@ -45,7 +48,7 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    public function start(int $projectID_MB, int $projectID_Brizy = 0): void
+    public function start(int $projectID_MB, int $projectID_Brizy = 0): bool
     {
         $this->brizyApi = new BrizyAPI();
 
@@ -60,6 +63,7 @@ class MigrationPlatform
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
         $this->run();
+        return true;
     }
 
 
@@ -80,7 +84,7 @@ class MigrationPlatform
 
         if (empty($parentPages)) {
             Utils::log('MB project not found, migration did not start, process completed without errors!', 1, "MAIN Foreach");
-            $this->logFinalProcess($this->startTime);
+            $this->logFinalProcess($this->startTime, false);
 
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
         }
@@ -101,7 +105,7 @@ class MigrationPlatform
         $this->createBlankPages($parentPages);
         $this->createMenuStructure();
 
-        echo $this->cache->get('design', 'settings'). "\n";
+        if(Config::$devMode){ echo $this->cache->get('design', 'settings'). "\n";}
 
         $this->launch($parentPages);
 
@@ -124,10 +128,6 @@ class MigrationPlatform
         $this->cache->set('migrationID', $this->migrationID);
         Utils::log('Migration ID: ' . $this->migrationID, 4, 'MIGRATION');
 
-        $this->errorDump = new ErrorDump($this->projectId);
-
-        $this->errorDump->setDate($this->cache);
-
         $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
 
         $this->cache->set('projectId_MB', $projectID_MB);
@@ -137,12 +137,12 @@ class MigrationPlatform
         $this->parser = new Parser($this->cache);
     }
 
-    private function logFinalProcess(float $startTime): void
+    private function logFinalProcess(float $startTime, bool $seccessWorkCompletion = true): void
     {
         $endTime = microtime(true);
         $executionTime = ($endTime - $startTime);
         $this->finalSuccess['UMID'] = $this->migrationID;
-        $this->finalSuccess['status'] = 'success';
+        if($seccessWorkCompletion ) {$this->finalSuccess['status'] = 'success';}
         $this->finalSuccess['progress'] = $this->cache->get('Status');
         $this->finalSuccess['processTime'] = round($executionTime, 1);
         Utils::keepItClean();
@@ -654,6 +654,6 @@ class MigrationPlatform
         if($this->finalSuccess['status'] === 'success'){
             return json_encode($this->finalSuccess);
         }
-        return json_encode($this->errorDump->getDump());
+        return json_encode($this->getDump());
     }
 }
