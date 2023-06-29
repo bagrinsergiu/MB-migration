@@ -33,11 +33,13 @@ class MigrationPlatform
      * @var mixed
      */
     private $finalSuccess;
+    private $buildPage;
 
     public function __construct(Config $config)
     {
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
+        $this->buildPage = '';
     }
 
     /**
@@ -135,7 +137,6 @@ class MigrationPlatform
         $this->parser = new Parser($this->cache);
     }
 
-
     private function logFinalProcess(float $startTime): void
     {
         $endTime = microtime(true);
@@ -159,8 +160,8 @@ class MigrationPlatform
             if (!empty($pages['child'])){
                 $this->launch($pages['child']);
             }
-            if(Config::$devMode === true){
-                //if ($pages['slug'] != 'community-impact') { continue; }
+            if(Config::$devMode && $this->buildPage !== ''){
+                if ($pages['slug'] !== $this->buildPage) { continue; }
             }
             $this->collector($pages);
         }

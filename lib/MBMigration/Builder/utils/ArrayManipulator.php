@@ -77,6 +77,9 @@ class ArrayManipulator
                  if ($item["parent_id"] == null && $item["category"] == "list") {
                      $parents[$item["id"]] = $item;
                      $parents[$item["id"]]["children"] = [];
+                 } else if ($item["parent_id"] == null && $item["category"] == "accordion") {
+                     $parents[$item["id"]] = $item;
+                     $parents[$item["id"]]["children"] = [];
                  } else if ($item["parent_id"] == null && $item["category"] == "text") {
                      $result[] = $item;
                  } else if ($item["parent_id"] == null && $item["category"] == "photo") {
@@ -107,7 +110,7 @@ class ArrayManipulator
         foreach ($list as $item) {
             if ($item["parent_id"] == null && $item["category"] !== 'list') {
                 $parents['item'][] = $item;
-            }else if ($item["parent_id"] == null && $item["category"] !== 'accordion') {
+            } else if ($item["parent_id"] == null && $item["category"] !== 'accordion') {
                 $parents['item'][] = $item;
             }
         }
