@@ -742,6 +742,28 @@ class Anthem extends Layout
         return json_encode($block);
     }
 
+    protected function new_gallery_layout(array $sectionData)
+    {
+        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);
+
+        $decoded = $this->jsonDecode['blocks']['gallery-layout'];
+        $block = json_decode($decoded['main'], true);
+        $slide  = json_decode($decoded['item'], true);
+
+        foreach ($sectionData['items'] as $item){
+            $slide['value']['bgImageFileName'] = $item['imageFileName'];
+            $slide['value']['bgImageSrc']      = $item['content'];
+
+            $this->insertElementAtPosition($block, 'value/items', $slide);
+        }
+        $block = $this->replaceIdWithRandom($block);
+        return json_encode($block);
+    }
+
+
     protected function three_top_media_circle(array $sectionData)
     {
         Utils::log('Create bloc', 1, $this->layoutName . "] [three_top_media_circle");
