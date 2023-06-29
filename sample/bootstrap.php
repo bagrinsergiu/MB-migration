@@ -21,8 +21,26 @@ require $composerAutoload;
 // 4306634 - https://grapefruit4306634.brizy.org/
 
 
-$ProjectId_MB    = 512;
-$ProjectId_Brizy = 4306634;
+//256 https://eternalrock.org/
+//4305682  https://mang4305682.brizy.org/
+
+// 49345 - www.ovidchurch.com
+// 4303852 - https://pear4303852.brizy.org/
+
+// 29629  - https://arborbaptist.com
+// 4306600 - https://pomegranate4306600.brizy.org/
+
+// 247
+// 4306588
+
+// 1211 - http://bradbolandentertainment.com/
+// 4306658 - https://banana4306658.brizy.org/
+
+// 30565 https://thechurchesofrome.com
+// 4306661 https://quince4306661.brizy.org
+
+$ProjectId_MB    = 30565;
+$ProjectId_Brizy = 4306661;
 
 $db = [
         'dbType' => "postgresql",
@@ -34,14 +52,8 @@ $db = [
 ];
 
 $settings = [
-    'devMode' => true,
-    'debugMode' => true
-];
 
-$settingsR = [
-    'devMode' => true,
-    'debugMode' => true,
-    'urlJsonKit'=> 'https://bitblox-develop.s3.amazonaws.com'
+    'devMode' => true
 ];
 
 try {
@@ -61,5 +73,6 @@ try {
     $MigrationPlatform->start($ProjectId_MB, $ProjectId_Brizy);
     echo $MigrationPlatform->getLogs();
 } catch (Exception $e) {
-    echo $MigrationPlatform->getLogs();
+    echo "Message: " . $e->getMessage();
+    return $MigrationPlatform->getLogs();
 }

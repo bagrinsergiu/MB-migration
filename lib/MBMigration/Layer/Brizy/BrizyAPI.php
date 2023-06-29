@@ -20,7 +20,7 @@ class BrizyAPI extends Utils
     public function __construct()
     {
         Utils::log('Initialization', 4, 'BrizyAPI');
-        $this->projectToken = $this->check(Config::$devToken, 'Сonfig not initialized');
+        $this->projectToken = $this->check(Config::$devToken, 'Config not initialized');
     }
 
     public function getWorkspaces($name = null)
@@ -182,6 +182,9 @@ class BrizyAPI extends Utils
         ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function createUser(array $value)
     {
         $result = $this->httpClient('POST', $this->createUrlAPI('users'), $value);
@@ -197,7 +200,10 @@ class BrizyAPI extends Utils
 
     }
 
-    public function createProject($projectName,$workspacesId, $filter = null)
+    /**
+     * @throws Exception
+     */
+    public function createProject($projectName, $workspacesId, $filter = null)
     {
         $result = $this->httpClient('POST', $this->createUrlAPI('projects'), [
             'name' => $projectName,
@@ -219,11 +225,17 @@ class BrizyAPI extends Utils
     }
 
 
-    public function createdWorkspaces()
+    /**
+     * @throws Exception
+     */
+    public function createdWorkspaces(): array
     {
         return $this->httpClient('POST', $this->createUrlAPI('projects'), ['name' => Config::$nameMigration]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getPage($projectID)
     {
         $param = [
@@ -256,6 +268,9 @@ class BrizyAPI extends Utils
 
     }
 
+    /**
+     * @throws Exception
+     */
     public function createPage($projectID, $pageName, $filter = null)
     {
         $result = $this->httpClient('POST', $this->createPrivatUrlAPI('pages'), [
@@ -282,6 +297,9 @@ class BrizyAPI extends Utils
         return $result[$filter];
     }
 
+    /**
+     * @throws Exception
+     */
     public function createMenu($data)
     {
         Utils::log('Request to create menu', 1, 'createMenu');
@@ -390,7 +408,8 @@ class BrizyAPI extends Utils
         return $data;
     }
 
-    private function isUrlOrFile($urlOrPath) {
+    private function isUrlOrFile($urlOrPath): string
+    {
         Utils::log('Check image address', 1, 'uploadPicturesFromSections');
         if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
             return $this->downloadImage($urlOrPath);

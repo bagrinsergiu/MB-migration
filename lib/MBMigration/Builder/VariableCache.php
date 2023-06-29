@@ -13,6 +13,14 @@ class VariableCache
         Utils::log('Initialization', 4, 'Cache');
     }
 
+    /**
+     * @return array
+     */
+    public function getCache(): array
+    {
+        return $this->cache;
+    }
+
     public function get($key, $section = ''){
         if ($section !== '') {
             return $this->getKeyRecursive($key, $section, $this->cache);
@@ -137,14 +145,6 @@ class VariableCache
                 $this->updateKeyRecursive($section, $key, $value, $v);
             }
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function getCache(): array
-    {
-        return $this->cache;
     }
 
 }

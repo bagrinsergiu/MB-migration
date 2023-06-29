@@ -649,11 +649,18 @@ class Anthem extends Layout
 
         $objBlock = new ItemSetter();
         $objItem = new ItemSetter();
+        $objList = new ItemSetter();
 
         $objBlock->newItem($decoded['main']);
+        $objList->newItem($decoded['list']);
 
         $objBlock->item(0)->setting('bgColorPalette', '');
         $objBlock->item(0)->setting('colorPalette', '');
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objList->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+            $objList->item(0)->setting('navIcon', 'filled');
+        }
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
             if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
@@ -698,17 +705,18 @@ class Anthem extends Layout
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'accordion_title') {
-                        $objItem->setting($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                        $objItem->setting('labelText', $this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
                     }
 
                     if ($item['item_type'] === 'accordion_body') {
-                        $objItem->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                        $objItem->item(0)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
                     }
                 }
+
             }
-            $objRow->addItem($objItem->get());
-            $objBlock->item(0)->addItem($objRow->get());
+            $objList->item(0)->addItem($objItem->get());
         }
+        $objBlock->item(0)->addItem($objList->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }

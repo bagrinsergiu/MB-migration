@@ -63,16 +63,17 @@ class Utils
         $deleteFolders = [];
 
         $folders = self::$cache->get('ProjectFolders');
-
-        foreach($deleteDir as $name){
-            if(array_key_exists($name, $folders)){
-                $deleteFolders[] =  $folders[$name];
+        if (!empty($folders)) {
+            foreach ($deleteDir as $name) {
+                if (array_key_exists($name, $folders)) {
+                    $deleteFolders[] = $folders[$name];
+                }
             }
+            foreach ($deleteFolders as $directory) {
+                self::removeDir($directory);
+            }
+            Utils::log('Derictories removed success', 1, 'KeepItClean');
         }
-        foreach ($deleteFolders as $directory) {
-            self::removeDir($directory);
-        }
-        Utils::log('Derictories removed success', 1, 'KeepItClean');
     }
 
     private static function removeDir($directory): void

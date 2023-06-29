@@ -68,13 +68,13 @@ class Config
         self::$defaultSettings  = [
             'devMode'       => false,
             'debugMode'     => true,
-            'urlJsonKit'   => false
+            'urlJsonKit'    => false
         ];
 
-        self::$debugMode        = $this->checkSettings('debugMode');
-        self::$devMode          = $this->checkSettings('devMode');
+        self::$debugMode        = (bool) $this->checkSettings('debugMode');
+        self::$devMode          = (bool) $this->checkSettings('devMode');
 
-        self::$urlJsonKits          = $this->checkSettings('urlJsonKit');
+        self::$urlJsonKits      = $this->checkSettings('urlJsonKit');
 
         self::$DBConnection     = $DBConnection['dbType']; // mysql|postgresql
 
