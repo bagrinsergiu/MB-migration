@@ -19,17 +19,63 @@ class ErrorDump
      * @var true
      */
     private $errorStatus;
+    /**
+     * @var mixed
+     */
+    private $projectId;
+    /**
+     * @var VariableCache
+     */
+    private $cache;
+
+    /**
+     * @var array
+     */
+    public $errors;
+
+    public function __construct(VariableCache $cache)
+    {
+        $this->errorStatus = false;
+        $this->cache = $cache;
+        $this->errors = [];
+    }
+
+    public function handleError($severity, $message, $file, $line) {
+        $this->errorStatus = true;
+        $this->errors[] = [
+            'severity' => $severity,
+            'message' => $message,
+            'file' => $file,
+            'line' => $line,
+            'details_message' => Utils::$MESSAGES_POOL,
+            'cache' => $this->cache->getCache()
+        ];
 
 
+    }
 
+    /**
+     * @throws Exception
+     */
+    public function handleFatalError() {
+        $error = error_get_last();
+        if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+            $this->handleError($error['type'], $error['message'], $error['file'], $error['line']);
+        }
+
+    }
+    
     /**
      * @throws Exception
      */
     public function errorHandler($errno, $errstr, $errfile, $errline) {
         $this->errorStatus = true;
         $this->errorDetails = new ErrorException($errstr, 0, $errno, $errfile, $errline);
-        if(Config::$devMode){ $this->createDump();}
-        throw new Exception('error');
+        if(Config::$devMode) {
+            $this->createDump();
+        } else {
+            throw new Exception('error');
+        }
     }
 
     /**
@@ -38,8 +84,11 @@ class ErrorDump
     public function exceptionHandler($exception) {
         $this->errorStatus = true;
         $this->errorDetails = $exception;
-        if(Config::$devMode){ $this->createDump();}
-        throw new Exception('error');
+        if(Config::$devMode) {
+            $this->createDump();
+        } else {
+            throw new Exception('error');
+        }
     }
 
     private function createProjectFolders(): void
@@ -80,37 +129,20 @@ class ErrorDump
         throw new Exception('error');
     }
 
-    public function getDump(bool $inJson = true): array
+    public function getAllErrors(): array
     {
-        if($this->errorStatus) {
-            if ($inJson) {
-                $dump = [
-                    'error_message' => $this->errorDetails->getMessage(),
-                    'error_code' => $this->errorDetails->getCode(),
-                    'error_file' => $this->errorDetails->getFile(),
-                    'error_line' => $this->errorDetails->getLine(),
-                    'error_trace' => $this->errorDetails->getTrace(),
-                    'details_message' => Utils::$ERROR_MESSAGE,
-                    'cache' => $this->cache->getCache()
-                ];
-            } else {
-                $dump = [
-                    'error_message' => $this->errorDetails->getMessage(),
-                    'error_code' => $this->errorDetails->getCode(),
-                    'error_file' => $this->errorDetails->getFile(),
-                    'error_line' => $this->errorDetails->getLine(),
-                    'error_trace' => $this->errorDetails->getTraceAsString(),
-                    'details_message' => Utils::$ERROR_MESSAGE,
-                    'cache' => $this->cache->getCache()
-                ];
-            }
-        } else {
-            $dump = [
-                'details_message' => Utils::$ERROR_MESSAGE,
-                'cache' => $this->cache->getCache()
-            ];
+        if(!$this->errorStatus) {
+            return $this->getDump();
         }
-        return $dump;
+        return $this->errors;
+    }
+
+    public function getDump(): array
+    {
+        return [
+            'details_message' => Utils::$MESSAGES_POOL,
+            'cache' => $this->cache->getCache()
+        ];
     }
 
     private function writeDump($dump_file, $data): void

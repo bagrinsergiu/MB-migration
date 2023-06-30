@@ -301,7 +301,7 @@ class Anthem extends Layout
 
         $objBlock = new ItemSetter();
         $this->cache->set('currentSectionData', $sectionData);
-        $decoded = $this->jsonDecode['blocks']['full-text'];
+        $decoded = $this->jsonDecode['blocks']['full-text']['cc'];
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption'))
         {
             if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
@@ -660,6 +660,85 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $objList->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
             $objList->item(0)->setting('navIcon', 'filled');
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
+            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
+                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
+                $objBlock->item(0)->setting('bgAttachment','fixed');
+            }
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
+            $background = $this->getKeyRecursive('background', 'sections', $sectionData);
+
+            if(isset($background['photo']) && isset($background['filename'])) {
+                $objBlock->item(0)->setting('bgImageSrc', $background['photo']);
+                $objBlock->item(0)->setting('bgImageFileName', $background['filename']);
+            }
+            if(isset($background['opacity']) ) {
+                $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($background['opacity']));
+                $objBlock->item(0)->setting('tempBgColorOpacity', $this->colorOpacity($background['opacity']));
+            }
+        }
+
+        $blockHead = false;
+
+
+        if($blockHead) {
+            //$objBlock->item(0)->addItem($objHead->get());
+        }
+
+        foreach ($sectionData['items'] as $section) {
+
+            $objItem->newItem($decoded['item']);
+
+            foreach ($section['item'] as $item) {
+                if ($item['category'] === 'photo') {
+                    //$objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
+                    //$objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+                    //$objRow->addItem($objImage->get());
+                }
+                if ($item['category'] === 'text') {
+                    if ($item['item_type'] === 'accordion_title') {
+                        $objItem->setting('labelText', $this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                    }
+
+                    if ($item['item_type'] === 'accordion_body') {
+                        $objItem->item(0)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                    }
+                }
+
+            }
+            $objList->item(0)->addItem($objItem->get());
+        }
+        $objBlock->item(0)->addItem($objList->get());
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    protected function tabs_layout(array $sectionData) {
+        Utils::log('Create bloc', 1, $this->layoutName . "] [tabs_layout");
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $this->jsonDecode['blocks']['tabs-layout'];
+
+        $objBlock = new ItemSetter();
+        $objItem = new ItemSetter();
+        $objRow = new ItemSetter();
+
+        $objBlock->newItem($decoded['main']);
+        $objRow->newItem($decoded['row']);
+
+        $objBlock->item(0)->setting('bgColorPalette', '');
+        $objBlock->item(0)->setting('colorPalette', '');
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objRow->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+            $objRow->item(0)->setting('navIcon', 'filled');
         }
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {

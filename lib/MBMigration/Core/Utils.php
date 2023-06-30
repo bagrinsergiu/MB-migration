@@ -7,13 +7,14 @@ use MBMigration\Builder\VariableCache;
 
 class Utils
 {
-    public static $ERROR_MESSAGE;
+    public static $MESSAGES_POOL;
     private static $projectID;
     private static $cache;
 
 
     public function __construct(VariableCache $cache = null)
     {
+        self::$MESSAGES_POOL = [];
         self::$projectID = $cache->get('projectId_Brizy');
     }
 
@@ -26,6 +27,35 @@ class Utils
             throw new Exception($message);
         }
         return $value;
+    }
+
+    public static function MESSAGES_POOL($message, $key = '')
+    {
+        $tmpMessage = [];
+
+        if($key === '') {
+            if(!empty(Utils::$MESSAGES_POOL) && is_array(Utils::$MESSAGES_POOL))  {
+                $tmpMessage[] = $message;
+                $tmpMessage = array_merge($tmpMessage, Utils::$MESSAGES_POOL);
+                Utils::$MESSAGES_POOL = $tmpMessage;
+            } else if (!empty(Utils::$MESSAGES_POOL) && !is_array(Utils::$MESSAGES_POOL))  {
+                $tmpMessage[] = $message;
+                $MESSAGES_POOL[] = Utils::$MESSAGES_POOL;
+                Utils::$MESSAGES_POOL = array_merge($tmpMessage, $MESSAGES_POOL);
+            } else {
+                Utils::$MESSAGES_POOL = [];
+                $array_message[] = $message;
+                Utils::$MESSAGES_POOL = array_merge(Utils::$MESSAGES_POOL, $array_message );
+            }
+        } else {
+            if(array_key_exists($key, Utils::$MESSAGES_POOL)){
+                $tmpMessage[]  = $message;
+                $tmpMessage[]  = Utils::$MESSAGES_POOL[$key];
+                Utils::$MESSAGES_POOL[$key] = $tmpMessage;
+            } else {
+                Utils::$MESSAGES_POOL[$key] = $message;
+            }
+        }
     }
 
     public static function findKeyPath($array, $searchKey, $path = '', &$result = [], &$i = 0)

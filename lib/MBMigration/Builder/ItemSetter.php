@@ -8,6 +8,7 @@ class ItemSetter
 {
     private $data;
     private $item;
+    private $text;
 
     public function __construct($json = '')
     {
@@ -72,12 +73,21 @@ class ItemSetter
         return $this;
     }
 
-    public function setText(string $value): void
+    public function setText($value): void
     {
+        $this->text = $value;
         if (isset($this->item->value->text)) {
             $this->item->value->text = $value;
         } else {
-            $this->addParameter('text', $value);
+            $this->addParameter('text', $this->textContent('FontStyle'));
+            $this->addParameter('typographyFontStyle', $this->textContent('FontStyle'));
+            $this->addParameter('typographyFontFamily', $this->textContent('FontFamily'));
+            $this->addParameter('typographyFontFamilyType', $this->textContent('FontFamilyType'));
+            $this->addParameter('typographyFontSize', $this->textContent('FontSize'));
+            $this->addParameter('typographyFontSizeSuffix', $this->textContent('FontSizeSuffix'));
+            $this->addParameter('typographyFontWeight', $this->textContent('FontWeight'));
+            $this->addParameter('typographyLetterSpacing', $this->textContent('LetterSpacing'));
+            $this->addParameter('typographyLineHeight', $this->textContent('LineHeight'));
         }
         $this->begin();
     }
@@ -142,5 +152,15 @@ class ItemSetter
         } else {
             return $array;
         }
+    }
+
+    private function textContent($key)
+    {
+        if(is_array($this->text)){
+            if(array_key_exists($key, $this->text)){
+                return $this->text[$key];
+            }
+        }
+        return '';
     }
 }

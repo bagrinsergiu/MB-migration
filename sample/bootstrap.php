@@ -53,7 +53,7 @@ $db = [
 
 $settings = [
 
-    'devMode' => true
+    'devMode' => false
 ];
 
 try {
@@ -69,10 +69,9 @@ try {
 
 $MigrationPlatform = new MigrationPlatform($config);
 
-try {
-    $MigrationPlatform->start($ProjectId_MB, $ProjectId_Brizy);
+$status = $MigrationPlatform->start($ProjectId_MB, $ProjectId_Brizy);
+if($status) {
     echo $MigrationPlatform->getLogs();
-} catch (Exception $e) {
-    echo "Message: " . $e->getMessage();
-    return $MigrationPlatform->getLogs();
+} else {
+    echo 'Error: '. $MigrationPlatform->getLogs();
 }
