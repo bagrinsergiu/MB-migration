@@ -288,11 +288,13 @@ class LayoutUtils
         $href->setAttribute('class', 'link--external');
     }
 
-    protected function replaceTitleTag($html, $type = '', $position = '', $options = []): string
+    protected function replaceTitleTag($html, $type = '', $position = '', $options = []): array
     {
         Utils::log('Replace Title Tag ', 1, $this->layoutName . "] [replaceTitleTag");
         if(empty($html))
-            return '';
+            return [
+                'text' => ''
+            ];
         $doc = new DOMDocument();
         $doc->loadHTML($html);
         $paragraphs = $doc->getElementsByTagName('p');
@@ -367,7 +369,9 @@ class LayoutUtils
                 $paragraph->appendChild($span);
             }
         }
-        return $this->clearHtmlTag($doc->saveHTML());
+        return [
+            'text' => $this->clearHtmlTag($doc->saveHTML())
+        ];
     }
 
     protected function replaceParagraphs($html, $type = '', $position = '', $options = []): string

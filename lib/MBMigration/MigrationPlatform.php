@@ -13,7 +13,7 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Parser\Parser;
 
-class MigrationPlatform extends ErrorDump
+class MigrationPlatform
 {
     protected $cache;
     protected $projectId;
@@ -37,18 +37,31 @@ class MigrationPlatform extends ErrorDump
 
     public function __construct(Config $config)
     {
-
-        set_error_handler([$this, 'errorHandler']);
-        set_exception_handler([$this, 'exceptionHandler']);
+        $this->cache = new VariableCache();
+        $this->errorDump = new ErrorDump($this->cache);
+        set_error_handler([$this->errorDump, 'handleError']);
+        register_shutdown_function([$this->errorDump, 'handleFatalError']);
+        Utils::MESSAGES_POOL('initialization');
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
         $this->buildPage = '';
     }
 
+    public function start(int $projectID_MB, int $projectID_Brizy = 0): bool
+    {
+        try {
+            $this->run($projectID_MB, $projectID_Brizy);
+        } catch (Exception $e) {
+            Utils::MESSAGES_POOL($e->getMessage());
+            return false;
+        }
+        return true;
+    }
+
     /**
      * @throws Exception
      */
-    public function start(int $projectID_MB, int $projectID_Brizy = 0): bool
+    private function run(int $projectID_MB, int $projectID_Brizy = 0): void
     {
         $this->brizyApi = new BrizyAPI();
 
@@ -62,16 +75,7 @@ class MigrationPlatform extends ErrorDump
         $this->projectId = $projectID_MB . '_' . $this->projectID_Brizy . '_';
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
-        $this->run();
-        return true;
-    }
 
-
-    /**
-     * @throws Exception
-     */
-    private function run(): void
-    {
         $this->init($this->projectID_MB, $this->projectID_Brizy);
 
         $this->createProjectFolders();
@@ -118,8 +122,6 @@ class MigrationPlatform extends ErrorDump
     {
         Utils::log('-------------------------------------------------------------------------------------- []', 4, '');
         Utils::log('Start Process!', 4, 'MIGRATION');
-
-        $this->cache = new VariableCache();
 
         Utils::init($this->cache);
 
@@ -654,6 +656,6 @@ class MigrationPlatform extends ErrorDump
         if($this->finalSuccess['status'] === 'success'){
             return json_encode($this->finalSuccess);
         }
-        return json_encode($this->getDump());
+        return json_encode($this->errorDump->getAllErrors());
     }
 }

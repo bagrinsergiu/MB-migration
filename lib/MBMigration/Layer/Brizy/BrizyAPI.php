@@ -23,6 +23,9 @@ class BrizyAPI extends Utils
         $this->projectToken = $this->check(Config::$devToken, 'Config not initialized');
     }
 
+    /**
+     * @throws Exception
+     */
     public function getWorkspaces($name = null)
     {
         $result = $this->httpClient('GET', $this->createUrlAPI('workspaces'),['page'=>1,'count'=>100]);
@@ -112,17 +115,21 @@ class BrizyAPI extends Utils
         if($result['status'] > 200)
         {
             Utils::log('Response: '. json_encode($result), 2, $nameFunction);
-            exit('Error');
+            Utils::$MESSAGES_POOL = 'Response: '. json_encode($result);
+            throw new Exception('Bad Response from Brizy');
         }
         $resultDecode = json_decode($result['body'], true);
 
         if(!is_array($resultDecode))
         {
             Utils::log('Bad Response', 2, $nameFunction);
+            Utils::$MESSAGES_POOL = 'Bad Response from Brizy' . json_encode($result);
+            throw new Exception('Bad Response from Brizy');
         }
         if(array_key_exists('code', $result)) {
             if ($resultDecode['code'] == 500) {
                 Utils::log('Error getting token', 5, $nameFunction);
+                Utils::$MESSAGES_POOL = 'Getting token' . json_encode($result);
                 throw new Exception('getting token');
             }
         }
@@ -130,6 +137,9 @@ class BrizyAPI extends Utils
         return $resultDecode['access_token'];
     }
 
+    /**
+     * @throws Exception
+     */
     public function getUserToken($userId)
     {
         $result = $this->httpClient('GET', $this->createUrlAPI('users'), ['id'=>$userId]);
@@ -149,6 +159,9 @@ class BrizyAPI extends Utils
         $this->projectToken = $newToken;
     }
 
+    /**
+     * @throws Exception
+     */
     public function createMedia($pathOrUrlToFileName, $nameFolder = '')
     {
         if($nameFolder != ''){
@@ -172,7 +185,10 @@ class BrizyAPI extends Utils
         return false;
     }
 
-    public function createFonts($fontsName, $projectID, $pathToFonts)
+    /**
+     * @throws Exception
+     */
+    public function createFonts($fontsName, $projectID, $pathToFonts): array
     {
         return $this->httpClient('POST', $this->createPrivatUrlAPI('fonts'), [
             'family' => $fontsName,
@@ -484,9 +500,10 @@ class BrizyAPI extends Utils
                 Utils::log(json_encode(['status' => $statusCode, 'body' => $body]), 3, $nameFunction);
                 if($statusCode > 200)
                 {
-                    throw new Exception("Error: httpClient status Code:  $statusCode Response $body");
+                    Utils::$MESSAGES_POOL = "Error: RequestException status Code:  $statusCode Response: ". json_encode($body);
+                    throw new Exception("Error: RequestException status Code:  $statusCode Response $body");
                 }
-                return ['status' => $statusCode, 'body' => $body];
+                throw new Exception("Error: RequestException Message: " . json_encode(['status' => $statusCode, 'body' => $body]));
             }
             else
             {
@@ -495,10 +512,9 @@ class BrizyAPI extends Utils
                 return ['status' => false, 'body' => 'Request timed out.'];
             }
         } catch (GuzzleException $e) {
-
+            Utils::$MESSAGES_POOL = "Error: GuzzleException Message:". json_encode($e->getMessage());
             Utils::log(json_encode(['status' => false, 'body' => $e->getMessage()]), 3, $nameFunction);
-
-            return ['status' => false, 'body' => $e->getMessage()];
+            throw new Exception("Error: GuzzleException Message:  $statusCode Response $body");
         }
     }
 
