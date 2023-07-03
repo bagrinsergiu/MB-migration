@@ -8,7 +8,6 @@ use GuzzleHttp\Exception\RequestException;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
-
 class BrizyAPI extends Utils
 {
     private $projectToken;
@@ -187,15 +186,64 @@ class BrizyAPI extends Utils
 
     /**
      * @throws Exception
+     * @throws GuzzleException
      */
-    public function createFonts($fontsName, $projectID, $pathToFonts): array
+    public function createFonts($fontsName, $projectID, $pathToFonts, $fontWeight)
     {
-        return $this->httpClient('POST', $this->createPrivatUrlAPI('fonts'), [
+        $fontBin = fopen($pathToFonts, 'r');
+
+        $fileExtension =  $this->getExtensionFromFileString($pathToFonts);
+
+        $param = [
             'family' => $fontsName,
-            'uid' => $this->generateUID(),
-            'files' => [$this->readBinaryFile($pathToFonts)],
+            'uid' => $this->generateCharID(36),
+            'files' => [ $fontWeight => [ $fileExtension => [$fontBin]]],
             'container' => $projectID
-        ]);
+        ];
+
+
+        $result = $this->httpClient('POST', $this->createPrivatUrlAPI('fonts'), $param, '');
+
+        if($result['status'] !== 200 ){
+            return false;
+        }
+
+        $responseBody = json_decode($result['body'],true);
+
+        return [
+            'family' => $responseBody['family'],
+            'type' => $responseBody['type']
+            ];
+    }
+
+    protected function generateCharID(int $length = 32): string
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyz';
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $randomString;
+    }
+
+    private function getExtensionFromFileString($fileString) {
+        $parts = explode('/', $fileString);
+        $filename = end($parts);
+        return pathinfo($filename, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getProjectContainer($projectID)
+    {
+        $url =  $this->createPrivatUrlAPI('projects');
+        $result = $this->httpClient('GET_P', $url, $projectID);
+        if($result['status'] === 200 ){
+            $response = json_decode($result['body'], true);
+            return $response['container'];
+        }
+        return $result;
     }
 
     /**
@@ -415,7 +463,7 @@ class BrizyAPI extends Utils
 
     private function readBinaryFile($filename)
     {
-        $handle = fopen($filename, 'rb');
+        $handle = fopen($filename, 'r');
         if ($handle === false) {
             return false;
         }
@@ -452,19 +500,19 @@ class BrizyAPI extends Utils
     /**
      * @throws Exception
      */
-    private function httpClient($method, $url, $data = null, $token = null ): array
+    private function httpClient($method, $url, $data = null, $contentType = 'application/x-www-form-urlencoded'): array
     {
         $nameFunction = __FUNCTION__;
 
         $client = new Client();
 
         $token = Config::$devToken;
-
         try {
-            $headers = [
-                'Content-Type' => 'application/x-www-form-urlencoded',
-                'x-auth-user-token' => $token
-            ];
+
+            if($contentType !== '' && $method === 'POST'){
+                $headers['Content-Type'] = $contentType;
+            }
+            $headers['x-auth-user-token'] = $token;
 
             $options = [
                 'headers' => $headers,
@@ -481,6 +529,12 @@ class BrizyAPI extends Utils
             {
                 $data = http_build_query($data);
                 $url  = sprintf("%s?%s", $url, $data);
+            }
+
+            if($method === 'GET_P'  && isset($data))
+            {
+                $method = 'GET';
+                $url  = $url .'/'. $data;
             }
 
             $response = $client->request($method, $url, $options);

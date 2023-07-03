@@ -5,6 +5,7 @@ use Exception;
 use MBMigration\Core\Utils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Layer\DataSource\DBConnector;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\utils\ArrayManipulator;
 
 class Parser
@@ -13,19 +14,40 @@ class Parser
     private $siteId;
     private $cache;
     private $manipulator;
+    /**
+     * @var FontsController
+     */
+    private $fontsController;
+    /**
+     * @var mixed|null
+     */
+    private $projectId;
+    /**
+     * @var mixed|null
+     */
+    private $container;
 
     public function __construct(VariableCache $cache)
     {
         Utils::log('Initialization', 4, 'Parser Module');
         $this->cache       = $cache;
 
-        $this->db          = new DBConnector();
-        $this->manipulator = new ArrayManipulator();
-
         $this->siteId      = $this->cache->get('projectId_MB');
+        $this->projectId      = $this->cache->get('projectId_Brizy');
+        $this->container      = $this->cache->get('container');
+
+        $this->db               = new DBConnector();
+        $this->manipulator      = new ArrayManipulator();
+        $this->fontsController  = new FontsController($this->container);
+
+
+
         Utils::log('READY', 4, 'Parser Module');
     }
 
+    /**
+     * @throws Exception
+     */
     public function getSite(): array
     {
         Utils::log('Get site', 1, 'getSite');
@@ -43,8 +65,25 @@ class Parser
             'design'    => $designSite[0]['name'],
             'uuid'      => $settingSite[0]['uuid'],
             'parameter' => $settings,
+            'font'      => $this->getFonts($settings),
             'favicon'   => $settingSite[0]['favicon']
         ];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getFonts($settings): array
+    {
+        if(array_key_exists('theme', $settings)){
+
+            foreach ($settings['theme'] as &$font){
+                $settingSite = $this->db->request("SELECT name from fonts WHERE id = " . $font['font_id']);
+                $result = $this->fontsController->upLoadFonts($settingSite[0]['name']);
+                $font['fontName'] = $result['family'];
+            }
+        }
+        return $settings;
     }
 
     public function getMainSection(): array
@@ -264,6 +303,16 @@ class Parser
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    protected function generateCharID(int $length = 32): string
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyz';
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $randomString;
     }
 
     private function assemblySection($id): array

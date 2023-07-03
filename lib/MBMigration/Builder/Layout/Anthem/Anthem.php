@@ -300,21 +300,32 @@ class Anthem extends Layout
         Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
 
         $objBlock = new ItemSetter();
+
         $this->cache->set('currentSectionData', $sectionData);
-        $decoded = $this->jsonDecode['blocks']['full-text']['cc'];
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption'))
-        {
+        $decoded = $this->jsonDecode['blocks']['full-text'];
+
+        $objBlock->newItem($decoded['main']);
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
             if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
-                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed')
-            {
-                return $this->parallaxScroll($sectionData);
+                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
+                $objBlock->item(0)->setting('bgAttachment','fixed');
+                $objBlock->item(0)->setting('bgColorOpacity', 0);
             }
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $objBlock->item(0)->setting('bgColorHex', strtolower($sectionData['settings']['color']['bg']));
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
         }
 
         if (!$this->checkArrayPath($sectionData, 'settings/sections/background/filename')) {
             $block = json_decode($decoded['main'], true);
 
-            $objBlock->newItem($decoded['main']);
+
 
             $objBlock->item(0)->setting('bgColorPalette', '');
 
@@ -340,7 +351,7 @@ class Anthem extends Layout
         } else {
             Utils::log('Set background', 1, $this->layoutName . "] [full_text");
 
-            $objBlock->newItem($decoded['background']);
+            //$objBlock->newItem($decoded['background']);
 
             $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
             $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
@@ -461,6 +472,9 @@ class Anthem extends Layout
         return json_encode($decode);
     }
 
+    /**
+     * @throws \DOMException
+     */
     protected function grid_layout(array $sectionData) {
         Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
 
@@ -471,9 +485,15 @@ class Anthem extends Layout
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $objBlock->newItem($decoded['main']);
-        $objItem->newItem($decoded['item']);
 
         $objBlock->item(0)->setting('bgColorPalette', '');
+        foreach ( $sectionData['head'] as $head){
+            if ($head['category'] == 'text') {
+                if ($head['item_type'] == 'title') {
+                    $objBlock->item()->item()->item()->setText($this->replaceParagraphs($head['content'], '', ''));
+                }
+            }
+        }
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $objBlock->setting('bgColorHex',$sectionData['settings']['color']['bg']);
@@ -487,6 +507,8 @@ class Anthem extends Layout
         $resultRemove = [];
         foreach ($sectionData['items'] as $section)
         {
+            $objItem->newItem($decoded['item']);
+
             if(isset($section['item'])) {
                 switch ($section['category']) {
                     case 'text':
@@ -509,7 +531,7 @@ class Anthem extends Layout
                             }
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
-                                     $objItem->item(1)->item(0)->setText($this->replaceParagraphs($sectionItem['content'], 'brz-tp-lg-empty brz-ff-palanquin brz-ft-google brz-fs-lg-27 brz-fss-lg-px brz-fw-lg-700 brz-ls-lg-0 brz-lh-lg-1_9'));
+                                    $objItem->item(1)->item(0)->setText($this->replaceParagraphs($sectionItem['content'], 'brz-tp-lg-empty brz-ff-palanquin brz-ft-google brz-fs-lg-27 brz-fss-lg-px brz-fw-lg-700 brz-ls-lg-0 brz-lh-lg-1_9'));
                                     $objItem->item(1)->item(0)->setting('typographyFontSize', 27);
                                 }
                             }
@@ -535,10 +557,9 @@ class Anthem extends Layout
                     }
                 }
             }
-            $resultRemove[] = $objItem->get();
-        }
+            $objBlock->item(0)->item(1)->addItem($objItem->get());
 
-        $objBlock->item(0)->item(1)->addItem($resultRemove);
+        }
 
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
@@ -939,7 +960,7 @@ class Anthem extends Layout
                         $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][] = $blockIcon;
                     }
                 }
-                $block['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
+                $block['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'])['text'];
             }
         }
         $this->cache->set('footerBlock', json_encode($block));

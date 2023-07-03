@@ -36,11 +36,17 @@ require $composerAutoload;
 // 1211 - http://bradbolandentertainment.com/
 // 4306658 - https://banana4306658.brizy.org/
 
-// 30565 https://thechurchesofrome.com
-// 4306661 https://quince4306661.brizy.org
+// 30565 - https://thechurchesofrome.com
+// 4306661 - https://quince4306661.brizy.org
 
-$ProjectId_MB    = 30565;
-$ProjectId_Brizy = 4306661;
+// https://beta1.brizydemo.com/
+// https://beta1.brizy.cloud
+
+
+
+
+$ProjectId_MB    = 1211;
+$ProjectId_Brizy = 4306658;
 
 $db = [
         'dbType' => "postgresql",
@@ -52,13 +58,12 @@ $db = [
 ];
 
 $settings = [
-
-    'devMode' => false
+    'devMode' => true
 ];
 
 try {
     $config = new Config(
-        'https://beta1.brizy.cloud',
+        'https://beta1.brizydemo.com',
         __DIR__,
         'ZDRmZjIxMzc4M2Y0YmMzZjg5ZmE5YmE4OTUyOTVjMzNkZmFhNmRlZTMwNjliNzIwODhlM2I0MmEwNTlkNGIwMA',
         $db,

@@ -8,7 +8,10 @@ class ItemSetter
 {
     private $data;
     private $item;
-    private $text;
+    /**
+     * @var mixed
+     */
+    private $content;
 
     public function __construct($json = '')
     {
@@ -23,7 +26,7 @@ class ItemSetter
         $this->begin();
     }
 
-    public function item(int $id): ItemSetter
+    public function item(int $id = 0): ItemSetter
     {
         if (isset($this->item->value->items[$id])) {
             $this->item = $this->item->value->items[$id];
@@ -75,21 +78,27 @@ class ItemSetter
 
     public function setText($value): void
     {
-        $this->text = $value;
-        if (isset($this->item->value->text)) {
-            $this->item->value->text = $value;
+        $this->content = $value;
+
+        if (is_array($value)) {
+            $this->addParameter('text', $this->textContent('text'));
+//            $this->addParameter('typographyFontStyle', $this->textContent('FontStyle'));
+//            $this->addParameter('typographyFontFamily', $this->textContent('FontFamily'));
+//            $this->addParameter('typographyFontFamilyType', $this->textContent('FontFamilyType'));
+//            $this->addParameter('typographyFontSize', $this->textContent('FontSize'));
+//            $this->addParameter('typographyFontSizeSuffix', $this->textContent('FontSizeSuffix'));
+//            $this->addParameter('typographyFontWeight', $this->textContent('FontWeight'));
+//            $this->addParameter('typographyLetterSpacing', $this->textContent('LetterSpacing'));
+//            $this->addParameter('typographyLineHeight', $this->textContent('LineHeight'));
+
+            $this->begin();
         } else {
-            $this->addParameter('text', $this->textContent('FontStyle'));
-            $this->addParameter('typographyFontStyle', $this->textContent('FontStyle'));
-            $this->addParameter('typographyFontFamily', $this->textContent('FontFamily'));
-            $this->addParameter('typographyFontFamilyType', $this->textContent('FontFamilyType'));
-            $this->addParameter('typographyFontSize', $this->textContent('FontSize'));
-            $this->addParameter('typographyFontSizeSuffix', $this->textContent('FontSizeSuffix'));
-            $this->addParameter('typographyFontWeight', $this->textContent('FontWeight'));
-            $this->addParameter('typographyLetterSpacing', $this->textContent('LetterSpacing'));
-            $this->addParameter('typographyLineHeight', $this->textContent('LineHeight'));
+            if (isset($this->item->value->text)) {
+                $this->item->value->text = $value;
+            } else {
+                $this->addParameter('text', $this->textContent('text'));
+            }
         }
-        $this->begin();
     }
     public function addItem(array $value): void
     {
@@ -156,9 +165,9 @@ class ItemSetter
 
     private function textContent($key)
     {
-        if(is_array($this->text)){
-            if(array_key_exists($key, $this->text)){
-                return $this->text[$key];
+        if(is_array($this->content)){
+            if(array_key_exists($key, $this->content)){
+                return $this->content[$key];
             }
         }
         return '';
