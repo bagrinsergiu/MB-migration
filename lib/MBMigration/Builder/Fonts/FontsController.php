@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Fonts;
 
+use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use function MongoDB\Driver\Monitoring\removeSubscriber;
 
@@ -22,6 +23,7 @@ class FontsController
 
     /**
      * @throws \Exception
+     * @throws GuzzleException
      */
     public function upLoadFonts($fontName, $fontWeight = 400)
     {
