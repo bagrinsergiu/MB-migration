@@ -44,7 +44,8 @@ class MigrationPlatform
         Utils::MESSAGES_POOL('initialization');
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
-        $this->buildPage = '';
+
+        $this->buildPage = 'home';
     }
 
     public function start(int $projectID_MB, int $projectID_Brizy = 0): bool
@@ -75,6 +76,8 @@ class MigrationPlatform
         $this->projectId = $projectID_MB . '_' . $this->projectID_Brizy . '_';
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
+
+        $this->cache->set('container', $this->brizyApi->getProjectContainer($this->projectID_Brizy));
 
         $this->init($this->projectID_MB, $this->projectID_Brizy);
 

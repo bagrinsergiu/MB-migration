@@ -10,9 +10,9 @@ use MBMigration\Core\Utils;
 
 class LayoutUtils
 {
-    public function colorOpacity($value): int
+    public function colorOpacity($value): float
     {
-        return 1 - (int) $value;
+        return 1 - (float) $value;
     }
 
     protected function replaceIdWithRandom($data) {
@@ -374,11 +374,14 @@ class LayoutUtils
         ];
     }
 
-    protected function replaceParagraphs($html, $type = '', $position = '', $options = []): string
+    /**
+     * @throws \DOMException
+     */
+    protected function replaceParagraphs($html, $type = '', $position = '', $options = []): array
     {
         Utils::log('Replace Paragraph', 1, $this->layoutName . "] [replaceParagraphs");
         if(empty($html)){
-            return '';
+            return [ 'text' => '' ];
         }
 
         $doc = new DOMDocument();
@@ -441,7 +444,9 @@ class LayoutUtils
             }
             $paragraph->appendChild($span);
         }
-        return $this->clearHtmlTag($doc->saveHTML());
+        return [
+            'text' => $this->clearHtmlTag($doc->saveHTML())
+        ];
     }
 
     protected function removeItemsFromArray(array $array, $index): array

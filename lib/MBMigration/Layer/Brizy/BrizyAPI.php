@@ -1,4 +1,5 @@
 <?php
+
 namespace MBMigration\Layer\Brizy;
 
 use Exception;
@@ -8,11 +9,11 @@ use GuzzleHttp\Exception\RequestException;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
-
 class BrizyAPI extends Utils
 {
     private $projectToken;
     private $nameFolder;
+    private $containerID;
 
     /**
      * @throws Exception
@@ -28,23 +29,20 @@ class BrizyAPI extends Utils
      */
     public function getWorkspaces($name = null)
     {
-        $result = $this->httpClient('GET', $this->createUrlAPI('workspaces'),['page'=>1,'count'=>100]);
+        $result = $this->httpClient('GET', $this->createUrlAPI('workspaces'), ['page' => 1, 'count' => 100]);
 
-        if (!isset($name)){
-            return  $result;
+        if (!isset($name)) {
+            return $result;
         }
 
         $result = json_decode($result['body'], true);
 
-        if(!is_array($result))
-        {
+        if (!is_array($result)) {
             return false;
         }
 
-        foreach($result as $value)
-        {
-            if($value['name'] === $name)
-            {
+        foreach ($result as $value) {
+            if ($value['name'] === $name) {
                 return $value['id'];
             }
         }
@@ -61,21 +59,18 @@ class BrizyAPI extends Utils
 
         $result = $this->httpClient('GET', $this->createUrlAPI('projects'), $param);
 
-        if (!isset($filtre)){
-            return  $result;
+        if (!isset($filtre)) {
+            return $result;
         }
 
         $result = json_decode($result['body'], true);
 
-        if(!is_array($result))
-        {
+        if (!is_array($result)) {
             return false;
         }
 
-        foreach($result as $value)
-        {
-            if($value['name'] === $filtre)
-            {
+        foreach ($result as $value) {
+            if ($value['name'] === $filtre) {
                 return $value['id'];
             }
         }
@@ -85,16 +80,15 @@ class BrizyAPI extends Utils
 
     public function getProjectPrivateApi($projectID)
     {
-        $param = [ 'project' => $projectID ];
+        $param = ['project' => $projectID];
 
         $url = $this->createPrivatUrlAPI('projects') . '/' . $projectID;
 
-        $result = $this->httpClient('GET',  $url, $param);
+        $result = $this->httpClient('GET', $url, $param);
 
         $result = json_decode($result['body'], true);
 
-        if(!is_array($result))
-        {
+        if (!is_array($result)) {
             return false;
         }
 
@@ -111,22 +105,20 @@ class BrizyAPI extends Utils
 
         Utils::log('get Token', 1, $nameFunction);
 
-        $result = $this->httpClient('GET',  $this->createUrlApiProject($projectid));
-        if($result['status'] > 200)
-        {
-            Utils::log('Response: '. json_encode($result), 2, $nameFunction);
-            Utils::$MESSAGES_POOL = 'Response: '. json_encode($result);
+        $result = $this->httpClient('GET', $this->createUrlApiProject($projectid));
+        if ($result['status'] > 200) {
+            Utils::log('Response: ' . json_encode($result), 2, $nameFunction);
+            Utils::$MESSAGES_POOL = 'Response: ' . json_encode($result);
             throw new Exception('Bad Response from Brizy');
         }
         $resultDecode = json_decode($result['body'], true);
 
-        if(!is_array($resultDecode))
-        {
+        if (!is_array($resultDecode)) {
             Utils::log('Bad Response', 2, $nameFunction);
             Utils::$MESSAGES_POOL = 'Bad Response from Brizy' . json_encode($result);
             throw new Exception('Bad Response from Brizy');
         }
-        if(array_key_exists('code', $result)) {
+        if (array_key_exists('code', $result)) {
             if ($resultDecode['code'] == 500) {
                 Utils::log('Error getting token', 5, $nameFunction);
                 Utils::$MESSAGES_POOL = 'Getting token' . json_encode($result);
@@ -142,12 +134,11 @@ class BrizyAPI extends Utils
      */
     public function getUserToken($userId)
     {
-        $result = $this->httpClient('GET', $this->createUrlAPI('users'), ['id'=>$userId]);
+        $result = $this->httpClient('GET', $this->createUrlAPI('users'), ['id' => $userId]);
 
         $result = json_decode($result['body'], true);
 
-        if(!is_array($result))
-        {
+        if (!is_array($result)) {
             return false;
         }
 
@@ -164,14 +155,14 @@ class BrizyAPI extends Utils
      */
     public function createMedia($pathOrUrlToFileName, $nameFolder = '')
     {
-        if($nameFolder != ''){
+        if ($nameFolder != '') {
             $this->nameFolder = $nameFolder;
         }
         $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
         $mime_type = mime_content_type($pathToFileName);
-        if($this->getFileExtension($mime_type)) {
+        if ($this->getFileExtension($mime_type)) {
             $file_contents = file_get_contents($pathToFileName);
-            if(!$file_contents){
+            if (!$file_contents) {
                 Utils::log('Failed get contents image!!! path: ' . $pathToFileName, 2, 'createMedia');
             }
             $base64_content = base64_encode($file_contents);
@@ -187,15 +178,102 @@ class BrizyAPI extends Utils
 
     /**
      * @throws Exception
+     * @throws GuzzleException
      */
-    public function createFonts($fontsName, $projectID, $pathToFonts): array
+    public function createFonts($fontsName, $projectID, $pathToFonts, $fontWeight)
     {
-        return $this->httpClient('POST', $this->createPrivatUrlAPI('fonts'), [
-            'family' => $fontsName,
-            'uid' => $this->generateUID(),
-            'files' => [$this->readBinaryFile($pathToFonts)],
-            'container' => $projectID
-        ]);
+        Utils::log("Request to Upload font name: $fontsName, path: $pathToFonts", 1, "createFonts");
+        $fileExtension = $this->getExtensionFromFileString($pathToFonts);
+        $res = $this->request('POST', $this->createPrivatUrlAPI('fonts'),
+            [
+                'multipart' => [
+                    [
+                        'name'     => "files[$fontWeight][$fileExtension]",
+                        'contents' => fopen($pathToFonts, 'r'),
+                    ],
+                    [
+                        'name'=>'family',
+                        'contents' => $fontsName
+                    ],
+                    [
+                        'name'=>'uid',
+                        'contents' => $this->generateCharID(36)
+                    ],
+                    [
+                        'name'=>'container',
+                        'contents' => $projectID
+                    ],
+
+                ],
+            ]
+        );
+
+        $data = json_decode($res->getBody()->getContents(), true);
+
+        $this->addFontAndUpdateProject($data);
+
+        return json_decode($res->getBody()->getContents(), true);
+    }
+
+    /**
+     * @throws GuzzleException
+     * @throws Exception
+     */
+    private function addFontAndUpdateProject($data) {
+        Utils::log('Add font '. $data['family'] . ' in project and update project', 1, "createFonts");
+        $containerID = Utils::$cache->get('projectId_Brizy');
+
+        $projectFullData = $this->getProjectContainer($containerID, true);
+
+        $projectData = json_decode($projectFullData['data'], true);
+
+        $newData['family']  = $data['family'];
+        $newData['files']   = $data['files'];
+        $newData['weights'] = $data['weights'];
+        $newData['type']    = $data['type'];
+        $newData['id']      = $data['uid'];
+        $newData['brizyId'] = $this->generateCharID(36);
+
+        $projectData['fonts']['upload']['data'][] = $newData;
+        $url = $this->createPrivatUrlAPI('projects') . '/'. $containerID;
+
+        $r_projectFullData['data'] = json_encode($projectData);
+        $r_projectFullData['is_autosave'] = 0;
+        $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
+
+        $this->request('PUT', $url , [ 'form_params' => $r_projectFullData]);
+    }
+
+    protected function generateCharID(int $length = 32): string
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyz';
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $randomString;
+    }
+
+    private function getExtensionFromFileString($fileString)
+    {
+        $parts = explode('/', $fileString);
+        $filename = end($parts);
+        return pathinfo($filename, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getProjectContainer(int $containerID, $fullDataProject = false) {
+        $url = $this->createPrivatUrlAPI('projects');
+        $result = $this->httpClient('GET_P', $url, $containerID);
+        if(!$fullDataProject){
+            if ($result['status'] === 200) {
+                $response = json_decode($result['body'], true);
+                return $response['container'];
+            }
+        }
+        return json_decode($result['body'], true);
     }
 
     /**
@@ -207,8 +285,7 @@ class BrizyAPI extends Utils
 
         $result = json_decode($result['body'], true);
 
-        if(!is_array($result))
-        {
+        if (!is_array($result)) {
             return false;
         }
 
@@ -226,14 +303,13 @@ class BrizyAPI extends Utils
             'workspace' => $workspacesId
         ]);
 
-        if (!isset($filter)){
-            return  $result;
+        if (!isset($filter)) {
+            return $result;
         }
 
         $result = json_decode($result['body'], true);
 
-        if(!is_array($result))
-        {
+        if (!is_array($result)) {
             return false;
         }
 
@@ -262,21 +338,18 @@ class BrizyAPI extends Utils
 
         $result = $this->httpClient('GET', $this->createPrivatUrlAPI('pages'), $param);
 
-        if (!isset($filtre)){
-            return  $result;
+        if (!isset($filtre)) {
+            return $result;
         }
 
         $result = json_decode($result['body'], true);
 
-        if(!is_array($result))
-        {
+        if (!is_array($result)) {
             return false;
         }
 
-        foreach($result as $value)
-        {
-            if($value['name'] === $filtre)
-            {
+        foreach ($result as $value) {
+            if ($value['name'] === $filtre) {
                 return $value['id'];
             }
         }
@@ -299,14 +372,13 @@ class BrizyAPI extends Utils
             'is_autosave' => true
         ]);
 
-        if (!isset($filter)){
-            return  $result;
+        if (!isset($filter)) {
+            return $result;
         }
 
         $result = json_decode($result['body'], true);
 
-        if(!is_array($result))
-        {
+        if (!is_array($result)) {
             return false;
         }
 
@@ -321,10 +393,10 @@ class BrizyAPI extends Utils
         Utils::log('Request to create menu', 1, 'createMenu');
         $result = $this->httpClient('POST', $this->createPrivatUrlAPI('menu'), [
             'project' => $data['project'],
-            'name'    => $data['name'],
-            'data'    => $data['data']
+            'name' => $data['name'],
+            'data' => $data['data']
         ]);
-        if($result['status'] !== 201){
+        if ($result['status'] !== 201) {
             Utils::log('Failed menu', 2, 'createMenu');
             return false;
         }
@@ -359,6 +431,7 @@ class BrizyAPI extends Utils
         $newHash = hash('sha256', $to_hash);
         return substr($newHash, 0, $length);
     }
+
     private function generateUniqueID(): string
     {
         $microtime = microtime();
@@ -373,25 +446,24 @@ class BrizyAPI extends Utils
         return $this->getNameHash($this->generateUniqueID());
     }
 
-    private function getFileExtension($mime_type) {
+    private function getFileExtension($mime_type)
+    {
         $extensions = array(
-            'image/x-icon'  => 'ico',
-            'image/jpeg'    => 'jpg',
-            'image/png'     => 'png',
-            'image/gif'     => 'gif',
-            'image/bmp'     => 'bmp'
+            'image/x-icon' => 'ico',
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/bmp' => 'bmp'
         );
         return $extensions[$mime_type] ?? false;
     }
 
-    private function getFileName($string) {
+    private function getFileName($string)
+    {
         $parts = pathinfo($string);
-        if (isset($parts['extension']))
-        {
+        if (isset($parts['extension'])) {
             return $parts['basename'];
-        }
-        else
-        {
+        } else {
             return $string;
         }
     }
@@ -407,7 +479,7 @@ class BrizyAPI extends Utils
         $file_name = basename($url);
         $path = Config::$pathTmp . $this->nameFolder . '/media/' . $file_name;
         $status = file_put_contents($path, $image_data);
-        if(!$status){
+        if (!$status) {
             Utils::log('Failed to load image!!! path: ' . $path, 2, 'downloadImage');
         }
         return $path;
@@ -429,14 +501,10 @@ class BrizyAPI extends Utils
         Utils::log('Check image address', 1, 'uploadPicturesFromSections');
         if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
             return $this->downloadImage($urlOrPath);
-        }
-        else
-        {
+        } else {
             if (file_exists($urlOrPath)) {
                 return $urlOrPath;
-            }
-            else
-            {
+            } else {
                 return "unknown";
             }
         }
@@ -450,21 +518,51 @@ class BrizyAPI extends Utils
     }
 
     /**
+     * @throws GuzzleException
+     */
+    private function request(string $method, $uri = '', array $options = [], $contentType = false): \Psr\Http\Message\ResponseInterface
+    {
+        $client = new Client();
+        $headers = [
+            'x-auth-user-token' => Config::$devToken
+        ];
+
+        if($method === 'PUT'){
+            $headers['X-HTTP-Method-Override'] = 'PUT';
+        }
+
+        if ($contentType) {
+            $headers['Content-Type'] = $contentType;
+        }
+
+        $defaultOptions = [
+            'headers' => $headers,
+            'timeout' => 10,
+            'connect_timeout' => 5
+        ];
+        $options = array_merge_recursive($defaultOptions, $options);
+
+        return $client->request($method, $uri, $options);
+    }
+
+    /**
      * @throws Exception
      */
-    private function httpClient($method, $url, $data = null, $token = null ): array
+    private function httpClient($method, $url, $data = null, $contentType = 'application/x-www-form-urlencoded'): array
     {
         $nameFunction = __FUNCTION__;
 
         $client = new Client();
 
         $token = Config::$devToken;
-
         try {
-            $headers = [
-                'Content-Type' => 'application/x-www-form-urlencoded',
-                'x-auth-user-token' => $token
-            ];
+
+            if ($contentType !== '') {
+                $headers['Content-Type'] = $contentType;
+            } else {
+                $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            }
+            $headers['x-auth-user-token'] = $token;
 
             $options = [
                 'headers' => $headers,
@@ -472,15 +570,22 @@ class BrizyAPI extends Utils
                 'connect_timeout' => 5
             ];
 
-            if ($method === 'POST' && isset($data))
-            {
-                    $options['form_params'] = $data;
+            if ($method === 'POST' && isset($data)) {
+                $options['form_params'] = $data;
             }
 
-            if($method === 'GET'  && isset($data))
-            {
+            if ($method === 'GET' && isset($data)) {
                 $data = http_build_query($data);
-                $url  = sprintf("%s?%s", $url, $data);
+                $url = sprintf("%s?%s", $url, $data);
+            }
+
+            if ($method === 'GET_P' && isset($data)) {
+                $method = 'GET';
+                $url = $url . '/' . $data;
+            }
+
+            if ($method === 'PUT' && isset($data)) {
+                $options['json'] = $data;
             }
 
             $response = $client->request($method, $url, $options);
@@ -491,28 +596,24 @@ class BrizyAPI extends Utils
             return ['status' => $statusCode, 'body' => $body];
 
         } catch (RequestException $e) {
-            if ($e->hasResponse())
-            {
+            if ($e->hasResponse()) {
                 $response = $e->getResponse();
                 $statusCode = $response->getStatusCode();
                 $body = $response->getBody()->getContents();
 
                 Utils::log(json_encode(['status' => $statusCode, 'body' => $body]), 3, $nameFunction);
-                if($statusCode > 200)
-                {
-                    Utils::$MESSAGES_POOL = "Error: RequestException status Code:  $statusCode Response: ". json_encode($body);
+                if ($statusCode > 200) {
+                    Utils::$MESSAGES_POOL = "Error: RequestException status Code:  $statusCode Response: " . json_encode($body);
                     throw new Exception("Error: RequestException status Code:  $statusCode Response $body");
                 }
                 throw new Exception("Error: RequestException Message: " . json_encode(['status' => $statusCode, 'body' => $body]));
-            }
-            else
-            {
+            } else {
                 Utils::log(json_encode(['status' => false, 'body' => 'Request timed out.']), 3, $nameFunction);
 
                 return ['status' => false, 'body' => 'Request timed out.'];
             }
         } catch (GuzzleException $e) {
-            Utils::$MESSAGES_POOL = "Error: GuzzleException Message:". json_encode($e->getMessage());
+            Utils::$MESSAGES_POOL = "Error: GuzzleException Message:" . json_encode($e->getMessage());
             Utils::log(json_encode(['status' => false, 'body' => $e->getMessage()]), 3, $nameFunction);
             throw new Exception("Error: GuzzleException Message:  $statusCode Response $body");
         }
