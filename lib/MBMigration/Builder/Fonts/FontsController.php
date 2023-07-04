@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Fonts;
 
 use GuzzleHttp\Exception\GuzzleException;
+use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use function MongoDB\Driver\Monitoring\removeSubscriber;
 
@@ -27,6 +28,7 @@ class FontsController
      */
     public function upLoadFonts($fontName, $fontWeight = 400)
     {
+        Utils::log("Create FontName $fontName", 1, "upLoadFonts");
         $path = $this->getPathFont($fontName, $fontWeight);
         if($path){
             $responce =  $this->BrizyApi->createFonts($fontName, $this->projectId, __DIR__ . $path, $fontWeight);
@@ -42,7 +44,10 @@ class FontsController
 
                 } else {
                     if($this->checkArrayPath($font['fonts'], 'normal/normal/0')) {
-                        return $font['fonts']['normal']['normal'][0]['path'];
+                        return [
+                            'path' => $font['fonts']['normal']['normal'][0]['path'],
+                            'fontWeight' =>
+                            ];
                     }
                     if($this->checkArrayPath($font['fonts'], '400/normal/0')) {
                         return $font['fonts']['400']['normal'][0]['path'];

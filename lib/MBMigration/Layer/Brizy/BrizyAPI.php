@@ -13,6 +13,7 @@ class BrizyAPI extends Utils
 {
     private $projectToken;
     private $nameFolder;
+    private $containerID;
 
     /**
      * @throws Exception
@@ -181,6 +182,7 @@ class BrizyAPI extends Utils
      */
     public function createFonts($fontsName, $projectID, $pathToFonts, $fontWeight)
     {
+        Utils::log("Request to Upload font name: $fontsName, path: $pathToFonts", 1, "createFonts");
         $fileExtension = $this->getExtensionFromFileString($pathToFonts);
         $res = $this->request('POST', $this->createPrivatUrlAPI('fonts'),
             [
@@ -206,7 +208,40 @@ class BrizyAPI extends Utils
             ]
         );
 
+        $data = json_decode($res->getBody()->getContents(), true);
+
+        $this->addFontAndUpdateProject($data);
+
         return json_decode($res->getBody()->getContents(), true);
+    }
+
+    /**
+     * @throws GuzzleException
+     * @throws Exception
+     */
+    private function addFontAndUpdateProject($data) {
+        Utils::log('Add font '. $data['family'] . ' in project and update project', 1, "createFonts");
+        $containerID = Utils::$cache->get('projectId_Brizy');
+
+        $projectFullData = $this->getProjectContainer($containerID, true);
+
+        $projectData = json_decode($projectFullData['data'], true);
+
+        $newData['family']  = $data['family'];
+        $newData['files']   = $data['files'];
+        $newData['weights'] = $data['weights'];
+        $newData['type']    = $data['type'];
+        $newData['id']      = $data['uid'];
+        $newData['brizyId'] = $this->generateCharID(36);
+
+        $projectData['fonts']['upload']['data'][] = $newData;
+        $url = $this->createPrivatUrlAPI('projects') . '/'. $containerID;
+
+        $r_projectFullData['data'] = json_encode($projectData);
+        $r_projectFullData['is_autosave'] = 0;
+        $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
+
+        $this->request('PUT', $url , [ 'form_params' => $r_projectFullData]);
     }
 
     protected function generateCharID(int $length = 32): string
@@ -229,15 +264,16 @@ class BrizyAPI extends Utils
     /**
      * @throws Exception
      */
-    public function getProjectContainer($projectID)
-    {
+    public function getProjectContainer(int $containerID, $fullDataProject = false) {
         $url = $this->createPrivatUrlAPI('projects');
-        $result = $this->httpClient('GET_P', $url, $projectID);
-        if ($result['status'] === 200) {
-            $response = json_decode($result['body'], true);
-            return $response['container'];
+        $result = $this->httpClient('GET_P', $url, $containerID);
+        if(!$fullDataProject){
+            if ($result['status'] === 200) {
+                $response = json_decode($result['body'], true);
+                return $response['container'];
+            }
         }
-        return $result;
+        return json_decode($result['body'], true);
     }
 
     /**
@@ -484,12 +520,21 @@ class BrizyAPI extends Utils
     /**
      * @throws GuzzleException
      */
-    private function request(string $method, $uri = '', array $options = []): \Psr\Http\Message\ResponseInterface
+    private function request(string $method, $uri = '', array $options = [], $contentType = false): \Psr\Http\Message\ResponseInterface
     {
         $client = new Client();
         $headers = [
             'x-auth-user-token' => Config::$devToken
         ];
+
+        if($method === 'PUT'){
+            $headers['X-HTTP-Method-Override'] = 'PUT';
+        }
+
+        if ($contentType) {
+            $headers['Content-Type'] = $contentType;
+        }
+
         $defaultOptions = [
             'headers' => $headers,
             'timeout' => 10,
@@ -537,6 +582,10 @@ class BrizyAPI extends Utils
             if ($method === 'GET_P' && isset($data)) {
                 $method = 'GET';
                 $url = $url . '/' . $data;
+            }
+
+            if ($method === 'PUT' && isset($data)) {
+                $options['json'] = $data;
             }
 
             $response = $client->request($method, $url, $options);

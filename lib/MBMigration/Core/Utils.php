@@ -9,7 +9,8 @@ class Utils
 {
     public static $MESSAGES_POOL;
     private static $projectID;
-    private static $cache;
+
+    protected static $cache;
 
 
     public function __construct(VariableCache $cache = null)

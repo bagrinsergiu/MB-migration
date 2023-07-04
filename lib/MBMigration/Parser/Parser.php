@@ -2,6 +2,7 @@
 namespace MBMigration\Parser;
 
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Core\Utils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Layer\DataSource\DBConnector;
@@ -72,6 +73,7 @@ class Parser
 
     /**
      * @throws Exception
+     * @throws GuzzleException
      */
     public function getFonts($settings): array
     {
