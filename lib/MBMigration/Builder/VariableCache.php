@@ -64,8 +64,11 @@ class VariableCache
 
     public function add($key, $value, $expiration = 0): void
     {
-        $this->cache[$key] = array_merge($this->cache[$key], $value);
-
+        if(array_key_exists($key, $this->cache)) {
+            $this->cache[$key] = array_merge_recursive($this->cache[$key], $value);
+        } else {
+            $this->cache[$key] = $value;
+        }
         if ($expiration > 0) {
             $expiration_time = time() + $expiration;
             $this->cache[$key . '_expiration'] = $expiration_time;

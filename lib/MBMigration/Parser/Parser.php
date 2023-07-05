@@ -28,18 +28,21 @@ class Parser
      */
     private $container;
 
+    /**
+     * @throws Exception
+     */
     public function __construct(VariableCache $cache)
     {
         Utils::log('Initialization', 4, 'Parser Module');
-        $this->cache       = $cache;
+        $this->cache            = $cache;
 
-        $this->siteId      = $this->cache->get('projectId_MB');
-        $this->projectId      = $this->cache->get('projectId_Brizy');
-        $this->container      = $this->cache->get('container');
+        $this->siteId           = $this->cache->get('projectId_MB');
+        $this->projectId        = $this->cache->get('projectId_Brizy');
+        $this->container        = $this->cache->get('container');
 
         $this->db               = new DBConnector();
         $this->manipulator      = new ArrayManipulator();
-        $this->fontsController  = new FontsController($this->container);
+        $this->fontsController  = new FontsController($this->container, $cache);
 
 
 
@@ -52,7 +55,7 @@ class Parser
     public function getSite(): array
     {
         Utils::log('Get site', 1, 'getSite');
-        $settingSite = $this->db->requestArray("SELECT id, name, title, settings, uuid, design_uuid, favicon, palette_uuid from sites WHERE id = " . $this->siteId);
+        $settingSite = $this->db->requestArray("SELECT id, name, title, settings, uuid, design_uuid, favicon, palette_uuid, font_theme_uuid from sites WHERE id = " . $this->siteId);
         $designSite = $this->db->requestArray("SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
 
         $settings = json_decode($settingSite[0]['settings'], true);
@@ -66,7 +69,7 @@ class Parser
             'design'    => $designSite[0]['name'],
             'uuid'      => $settingSite[0]['uuid'],
             'parameter' => $settings,
-            'font'      => $this->getFonts($settings),
+            'fonts'      => $this->getFonts($settings, $settingSite[0]['font_theme_uuid']),
             'favicon'   => $settingSite[0]['favicon']
         ];
     }
@@ -75,17 +78,45 @@ class Parser
      * @throws Exception
      * @throws GuzzleException
      */
-    public function getFonts($settings): array
+    public function getFonts($settings, $fontThemeUUID): array
     {
         if(array_key_exists('theme', $settings)){
-
-            foreach ($settings['theme'] as &$font){
+            $addedFonts = [];
+            foreach ($settings['theme'] as &$font) {
                 $settingSite = $this->db->request("SELECT name from fonts WHERE id = " . $font['font_id']);
-                $result = $this->fontsController->upLoadFonts($settingSite[0]['name']);
-                $font['fontName'] = $result['family'];
+                $font['fontName'] = $settingSite[0]['name'];
+
+                if(in_array($font['font_id'], $addedFonts)) {
+                    $font['uuid'] = $addedFonts[$font['font_id']];
+                    continue;
+                }
+
+                $font['uuid'] = $this->fontsController->upLoadFonts($settingSite[0]['name']);
+                $addedFonts[$font['font_id']] = $font['uuid'];
             }
+            return $settings['theme'];
+        } else {
+            return $this->getDefaultFont($fontThemeUUID);
         }
-        return $settings;
+    }
+
+    function getDefaultFont($fontThemeUUID)
+    {
+        $fontStyle = $this->db->request("select display_name, name, font_id, font_size, text_transform, letter_spacing, position, bold, italic FROM font_theme_styles WHERE font_theme_id IN(SELECT id from font_themes WHERE uuid = '$fontThemeUUID') ORDER BY position");
+        $addedFonts = [];
+        foreach ($fontStyle as &$font) {
+            $fontName = $this->db->request("SELECT name from fonts WHERE id = " . $font['font_id']);
+            $font['fontName'] = $fontName[0]['name'];
+
+            if(array_key_exists($font['font_id'], $addedFonts)) {
+                $font['uuid'] = $addedFonts[$font['font_id']];
+                continue;
+            }
+
+            $font['uuid'] = $this->fontsController->upLoadFonts($fontName[0]['name']);
+            $addedFonts[$font['font_id']] = $font['uuid'];
+        }
+        return $fontStyle;
     }
 
     public function getMainSection(): array

@@ -234,7 +234,7 @@ class Anthem extends Layout
 
         $objBlock->item(0)->setting('bgColorPalette','');
         $objBlock->item(0)->setting('bgAttachment','none');
-        $objBlock->item(0)->setting('bgColorOpacity', 0);
+        $objBlock->item(0)->setting('bgColorOpacity', 1);
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
             if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
@@ -244,7 +244,12 @@ class Anthem extends Layout
         }
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $objBlock->item(0)->setting('bgColorHex', strtolower($sectionData['settings']['color']['bg']));
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
         }
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photo') &&
@@ -275,15 +280,15 @@ class Anthem extends Layout
                 }
 
                 if($item['item_type']=='title' && $show_header) {
-                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content']));
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], ['bg'=> $blockBg]));
                 }
                 if($item['item_type']=='body' && $show_body) {
                     $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content']));
                 }
             }
             if($item['category'] == 'photo' && $item['content'] !== '') {
-                $objBlock->item(0)->item(0)->item(0)->item(3)->item(0)->setting('imageSrc', $item['content']);
-                $objBlock->item(0)->item(0)->item(0)->item(3)->item(0)->setting('imageFileName', $item['imageFileName']);
+                $objBlock->item()->item()->item()->item(3)->item()->setting('imageSrc', $item['content']);
+                $objBlock->item()->item()->item()->item(3)->item()->setting('imageFileName', $item['imageFileName']);
 
                 if ($item['link'] != '') {
                     $objBlock->item(0)->item(0)->item(0)->item(3)->item(0)->setting('linkType', 'external');

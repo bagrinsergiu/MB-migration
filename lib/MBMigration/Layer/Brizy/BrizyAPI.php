@@ -176,41 +176,66 @@ class BrizyAPI extends Utils
         return false;
     }
 
+    public function fopenFromURL($url) {
+        $context = stream_context_create(array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+            ),
+        ));
+
+        $fileHandle = fopen($url, 'r', false, $context);
+
+        if (!$fileHandle) {
+            return false;
+        }
+
+        return $fileHandle;
+    }
+
     /**
      * @throws Exception
      * @throws GuzzleException
      */
-    public function createFonts($fontsName, $projectID, $pathToFonts, $fontWeight)
+    public function createFonts($fontsName, $projectID, array $KitFonts, $displayName)
     {
-        Utils::log("Request to Upload font name: $fontsName, path: $pathToFonts", 1, "createFonts");
-        $fileExtension = $this->getExtensionFromFileString($pathToFonts);
-        $res = $this->request('POST', $this->createPrivatUrlAPI('fonts'),
+        $fonts = [];
+        foreach ($KitFonts as $fontWeight => $pathToFonts){
+            Utils::log("Request to Upload font name: $fontsName, font weight: $fontWeight", 1, "createFonts");
+            foreach ($pathToFonts as $pathToFont) {
+                $fileExtension = $this->getExtensionFromFileString($pathToFont);
+                if (Config::$urlJsonKits) {
+                    $pathToFont = Config::$urlJsonKits . '/fonts/' . $pathToFont;
+                    $fonts[] = [
+                        'name' => "files[$fontWeight][$fileExtension]",
+                        'contents' => $this->fopenFromURL($pathToFont),
+                    ];
+                } else {
+                    $pathToFont = __DIR__ . '/' . $pathToFont;
+                    $fonts[] = [
+                        'name' => "files[$fontWeight][$fileExtension]",
+                        'contents' => fopen($pathToFont, 'r'),
+                    ];
+                }
+            }
+        }
+
+        $options['multipart'] = array_merge_recursive($fonts, [
             [
-                'multipart' => [
-                    [
-                        'name'     => "files[$fontWeight][$fileExtension]",
-                        'contents' => fopen($pathToFonts, 'r'),
-                    ],
-                    [
-                        'name'=>'family',
-                        'contents' => $fontsName
-                    ],
-                    [
-                        'name'=>'uid',
-                        'contents' => $this->generateCharID(36)
-                    ],
-                    [
-                        'name'=>'container',
-                        'contents' => $projectID
-                    ],
-
-                ],
+                'name'=>'family',
+                'contents' => $displayName
+            ],
+            [
+                'name'=>'uid',
+                'contents' => $this->generateCharID(36)
+            ],
+            [
+                'name'=>'container',
+                'contents' => $projectID
             ]
-        );
+        ]);
 
-        $data = json_decode($res->getBody()->getContents(), true);
-
-        $this->addFontAndUpdateProject($data);
+        $res = $this->request('POST', $this->createPrivatUrlAPI('fonts'), $options);
 
         return json_decode($res->getBody()->getContents(), true);
     }
@@ -219,7 +244,8 @@ class BrizyAPI extends Utils
      * @throws GuzzleException
      * @throws Exception
      */
-    private function addFontAndUpdateProject($data) {
+    public function addFontAndUpdateProject(array $data): string
+    {
         Utils::log('Add font '. $data['family'] . ' in project and update project', 1, "createFonts");
         $containerID = Utils::$cache->get('projectId_Brizy');
 
@@ -242,6 +268,7 @@ class BrizyAPI extends Utils
         $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
 
         $this->request('PUT', $url , [ 'form_params' => $r_projectFullData]);
+        return $data['uid'];
     }
 
     protected function generateCharID(int $length = 32): string
