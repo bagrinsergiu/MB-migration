@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\utils;
+namespace MBMigration\Builder\Utils;
 
 class ArrayManipulator
 {

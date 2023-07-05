@@ -3,11 +3,13 @@
 namespace MBMigration\Builder\Fonts;
 
 use GuzzleHttp\Exception\GuzzleException;
+use MBMigration\Builder\Utils\builderUtils;
+use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
-use function MongoDB\Driver\Monitoring\removeSubscriber;
 
-class FontsController
+class FontsController extends builderUtils
 {
     private $BrizyApi;
     private $fontsMap;
@@ -15,69 +17,68 @@ class FontsController
      * @var mixed
      */
     private $projectId;
+    /**
+     * @var VariableCache
+     */
+    private $cache;
 
-    public function __construct($projectId){
+    /**
+     * @throws \Exception
+     */
+    public function __construct($projectId, VariableCache $cache){
         $this->BrizyApi = new BrizyAPI();
-        $this->kitFonts();
+        $this->getFontsMap();
         $this->projectId = $projectId;
+        $this->cache = $cache;
     }
 
     /**
      * @throws \Exception
      * @throws GuzzleException
      */
-    public function upLoadFonts($fontName, $fontWeight = 400)
+    public function upLoadFonts($fontName)
     {
         Utils::log("Create FontName $fontName", 1, "upLoadFonts");
-        $path = $this->getPathFont($fontName, $fontWeight);
-        if($path){
-            $responce =  $this->BrizyApi->createFonts($fontName, $this->projectId, __DIR__ . $path, $fontWeight);
+        $KitFonts = $this->getPathFont($fontName);
+        if($KitFonts){
+            $responseDataAddedNewFont = $this->BrizyApi->createFonts($fontName, $this->projectId, $KitFonts['fontsFile'], $KitFonts['displayName']);
+            $this->cache->add('responseDataAddedNewFont', [$fontName => $responseDataAddedNewFont]);
+            return $this->BrizyApi->addFontAndUpdateProject($responseDataAddedNewFont);
         }
-        return $responce;
     }
 
-    private function getPathFont($name, $weight): string
+    /**
+     * @throws \Exception
+     */
+    public function getFontsMap(): void
     {
+        Utils::log("Download fonts map", 1, "downloadMapFontsFromUrl");
+        if(Config::$urlJsonKits) {
+            $createUrlForFileFontsMap = Config::$urlJsonKits . '/fonts/fonts.json';
+            $this->fontsMap = $this->loadJsonFromUrl($createUrlForFileFontsMap);
+        } else {
+            $file = __DIR__ . '\fonts.json';
+            $fileContent = file_get_contents($file);
+            $this->fontsMap = json_decode($fileContent, true);
+        }
+    }
+
+    private function getPathFont($name)
+    {
+        $fontPack = [];
         foreach ($this->fontsMap as $key=>$font) {
             if($key === $name) {
-                if($weight !== 400){
-
-                } else {
-                    if($this->checkArrayPath($font['fonts'], 'normal/normal/0')) {
-                        return [
-                            'path' => $font['fonts']['normal']['normal'][0]['path'],
-                            'fontWeight' =>
-                            ];
-                    }
-                    if($this->checkArrayPath($font['fonts'], '400/normal/0')) {
-                        return $font['fonts']['400']['normal'][0]['path'];
-                    }
-                    if($this->checkArrayPath($font['fonts'], '300/normal/0')) {
-                        return $font['fonts']['300']['normal'][0]['path'];
-                    }
-                    if($this->checkArrayPath($font['fonts'], '200/normal/0')) {
-                        return $font['fonts']['200']['normal'][0]['path'];
-                    }
-                    if($this->checkArrayPath($font['fonts'], '500/normal/0')) {
-                        return $font['fonts']['500']['normal'][0]['path'];
-                    }
-                    if($this->checkArrayPath($font['fonts'], '600/normal/0')) {
-                        return $font['fonts']['600']['normal'][0]['path'];
-                    }
-                    if($this->checkArrayPath($font['fonts'], '700/normal/0')) {
-                        return $font['fonts']['700']['normal'][0]['path'];
-                    }
+                foreach ($font['fonts'] as $fontWeight => $fontStyle) {
+                    $fontPack[$fontWeight] = $fontStyle['normal'];
                 }
+                $this->cache->add('fonsUpload',  [$name => $fontPack]);
+                return [
+                    'displayName' => $font['settings']['display_name'],
+                    'fontsFile' => $fontPack
+                ];
             }
         }
         return false;
-    }
-
-    private function kitFonts():void
-    {
-        $file = __DIR__ . '\fonts.json';
-        $fileContent = file_get_contents($file);
-        $this->fontsMap = json_decode($fileContent, true);
     }
 
     protected function checkArrayPath($array, $path, $check = ''): bool

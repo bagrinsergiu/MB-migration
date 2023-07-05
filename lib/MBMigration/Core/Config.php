@@ -42,8 +42,6 @@ class Config
      * @var array|string[]
      */
     public static $designInDevelop;
-
-
     /**
      * @var array
      */
@@ -52,7 +50,6 @@ class Config
      * @var array
      */
     private static $defaultSettings;
-
 
     /**
      * @throws Exception

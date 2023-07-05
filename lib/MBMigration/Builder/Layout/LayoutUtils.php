@@ -5,10 +5,11 @@ namespace MBMigration\Builder\Layout;
 use DOMDocument;
 use Exception;
 use InvalidArgumentException;
+use MBMigration\Builder\Utils\builderUtils;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
-class LayoutUtils
+class LayoutUtils extends builderUtils
 {
     public function colorOpacity($value): float
     {
@@ -40,7 +41,8 @@ class LayoutUtils
         return $randomString;
     }
 
-    protected function convertFontSize($fontSize, $unit = 'px') {
+    protected function convertFontSize_($fontSize, $unit = 'px'): float
+    {
         $value = (float)$fontSize;
         $originalUnit = strtolower(trim($unit));
 
@@ -57,6 +59,36 @@ class LayoutUtils
         }
 
         return $value * $unitFactors[$originalUnit];
+    }
+
+    function convertFontSize($fontSize): string
+    {
+        preg_match('/(\d+(\.\d+)?)\s*([a-z]{2})/', $fontSize, $matches);
+
+        if (count($matches) === 4) {
+            $size = (float) $matches[1];
+            $unit = $matches[3];
+
+            if ($unit === 'em') {
+                $size *= 16;
+            } elseif ($unit === 'rem') {
+                $size *= 16;
+            } elseif ($unit === 'pt') {
+                $size *= (4 / 3);
+            } elseif ($unit === 'pc') {
+                $size *= 16;
+            } elseif ($unit === 'cm') {
+                $size *= (96 / 2.54);
+            } elseif ($unit === 'mm') {
+                $size *= (96 / 25.4);
+            } elseif ($unit === 'in') {
+                $size *= 96;
+            }
+            $result = round($size);
+        } else {
+            $result = (float) $matches[1];
+        }
+        return $result;
     }
 
     protected function getDataIconValue($html): array
@@ -288,13 +320,59 @@ class LayoutUtils
         $href->setAttribute('class', 'link--external');
     }
 
-    protected function replaceTitleTag($html, $type = '', $position = '', $options = []): array
+    protected function getContrastingColor($color): string
+    {
+        $red = hexdec(substr($color, 1, 2));
+        $green = hexdec(substr($color, 3, 2));
+        $blue = hexdec(substr($color, 5, 2));
+
+        $brightness = ($red * 299 + $green * 587 + $blue * 114) / 1000;
+
+        if ($brightness > 127) {
+            $contrastColor = '#000000';
+        } else {
+            $contrastColor = '#ffffff';
+        }
+        return $contrastColor;
+    }
+
+    protected function hexToRgb($hex): string
+    {
+        $hex = str_replace('#', '', $hex);
+
+        if (strlen($hex) === 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+
+        $red = hexdec(substr($hex, 0, 2));
+        $green = hexdec(substr($hex, 2, 2));
+        $blue = hexdec(substr($hex, 4, 2));
+
+        return "rgb($red, $green, $blue)";
+    }
+
+
+    /**
+     * @throws \DOMException
+     */
+    protected function replaceTitleTag($html, $options = [], $type = '', $position = ''): array
     {
         Utils::log('Replace Title Tag ', 1, $this->layoutName . "] [replaceTitleTag");
         if(empty($html))
             return [
                 'text' => ''
             ];
+
+        $mainFonts = $this->getFonts('headers');
+        $size = $this->convertFontSize($mainFonts['font_size']);
+        $fontWeight = 400;
+        if(isset($options['bg'])){
+            $textColor = $this->getContrastingColor($options['bg']);
+        } else {
+            $textColor = '#000000';
+        }
+
+
         $doc = new DOMDocument();
         $doc->loadHTML($html);
         $paragraphs = $doc->getElementsByTagName('p');
@@ -303,17 +381,17 @@ class LayoutUtils
             foreach ($paragraphs as $paragraph) {
                 $styleValue = 'opacity: 1; ';
                 $style = '';
-                $class = 'brz-cp-color2';
+                $class = '';
 
                 $textPosition = ' brz-text-lg-center';
-
-                if($position !== ''){
+                 if($position !== ''){
                     $textPosition  = ' ' . $position;
                 }
 
                 if($type !== ''){
                     $textPosition  .= ' ' . $type;
                 }
+
 
                 if ($paragraph->hasAttribute('style')) {
                     $styleValueString = $paragraph->getAttribute('style');
@@ -322,7 +400,7 @@ class LayoutUtils
                     foreach ($styleValue as $key => $value)
                     {
                         if($key == 'text-align'){
-                            $textPosition = $this->textPosition[$value];
+                            $textPosition .= $this->textPosition[$value];
                         }
                         if($key == 'color'){
                             $style .= 'color:' . $value . ';';
@@ -330,6 +408,10 @@ class LayoutUtils
                         if($key == 'font-size'){
                             $style .= ' font-size:' . $value . ';';
                         }
+                        if($key == 'font-weight'){
+                            $fontWeight = $value;
+                        }
+
                     }
                 }
 
@@ -344,9 +426,9 @@ class LayoutUtils
                                 if ($key == 'text-align') {
                                     $textPosition = $this->textPosition[$value];
                                 }
-                                if ($key == 'color') {
-                                    $style .= 'color:' . $value . ';';
-                                }
+
+                                    $style .= 'color:' . $this->hexToRgb($textColor) . ';';
+
                                 if ($key == 'font-size') {
                                     $style .= ' font-size:' . $value . ';';
                                 }
@@ -354,6 +436,8 @@ class LayoutUtils
                         }
                     }
                 }
+                $textPosition .= " brz-tp-lg-empty brz-ff-" . $mainFonts['uuid'] . " brz-ft-upload brz-fs-lg-$size brz-fss-lg-px brz-fw-lg-$fontWeight brz-ls-lg-0 brz-lh-lg-1_9 syler";
+
                 $class .= $textPosition;
                 $paragraph->removeAttribute('style');
                 $htmlClass = 'brz-tp-lg-heading1 ' . $class;
@@ -370,7 +454,16 @@ class LayoutUtils
             }
         }
         return [
-            'text' => $this->clearHtmlTag($doc->saveHTML())
+            'text' => $this->clearHtmlTag($doc->saveHTML()),
+            'FontStyle' => '',
+            'FontFamily' => $mainFonts['uuid'],
+            'FontFamilyType' => 'upload',
+            'FontSize' => $size,
+            'FontSizeSuffix' => 'px',
+            'FontWeight' => $fontWeight,
+            'LetterSpacing' => $mainFonts['letter_spacing'],
+            'LineHeight' => 1,
+            'FontColor' => $textColor
         ];
     }
 
@@ -396,7 +489,7 @@ class LayoutUtils
                 $this->createUrl($getTagAInPatragraph->item(0));
             }
             $style = '';
-            $class = 'brz-cp-color2';
+            $class = '';
 
             $textPosition = ' brz-text-lg-center';
 
@@ -499,36 +592,6 @@ class LayoutUtils
     /**
      * @throws Exception
      */
-    protected function loadJsonFromUrl($url) {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-
-        $response = curl_exec($curl);
-        $error = curl_error($curl);
-        curl_close($curl);
-
-        if ($response === false) {
-            Utils::log('Download error: ' . json_encode($error), 3, $this->layoutName . "] [loadJsonFromUrl");
-            throw new Exception('Download error: ' . json_encode($error));
-        }
-
-        $data = json_decode($response, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            Utils::log('JSON decoding error: ' . json_encode(json_last_error_msg()), 3, $this->layoutName . "] [loadJsonFromUrl");
-            throw new Exception('JSON decoding error: ' . json_encode(json_last_error_msg()));
-        }
-
-        Utils::log('JSON success download from: ' . json_encode($url), 1, $this->layoutName . "] [loadJsonFromUrl");
-        return $data;
-    }
-
-    /**
-     * @throws Exception
-     */
     protected function loadKit($layoutName = '', $fileName = ''){
 
         if(Config::$urlJsonKits) {
@@ -597,6 +660,16 @@ class LayoutUtils
             return false;
         }
         return str_replace(' ', '%20', $url);
+    }
+
+    private function getFonts($fontsType) {
+        $fonts = $this->cache->get('fonts', 'settings');
+        foreach ($fonts as $font) {
+            if ($font['name'] === $fontsType) {
+                return $font;
+            }
+        }
+        return false;
     }
 
 }

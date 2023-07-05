@@ -44,9 +44,12 @@ require $composerAutoload;
 
 
 
+// 2775 - arlingtonfirst.org
+// 4308345
+
 
 $ProjectId_MB    = 1211;
-$ProjectId_Brizy = 4306658;
+$ProjectId_Brizy = 4309430;
 
 $db = [
         'dbType' => "postgresql",
@@ -58,7 +61,8 @@ $db = [
 ];
 
 $settings = [
-    'devMode' => true
+    'devMode' => true,
+    'urlJsonKit' => 'https://bitblox-develop.s3.amazonaws.com'
 ];
 
 try {
