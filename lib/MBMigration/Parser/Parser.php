@@ -100,6 +100,9 @@ class Parser
         }
     }
 
+    /**
+     * @throws GuzzleException
+     */
     function getDefaultFont($fontThemeUUID)
     {
         $fontStyle = $this->db->request("select display_name, name, font_id, font_size, text_transform, letter_spacing, position, bold, italic FROM font_theme_styles WHERE font_theme_id IN(SELECT id from font_themes WHERE uuid = '$fontThemeUUID') ORDER BY position");
@@ -112,7 +115,6 @@ class Parser
                 $font['uuid'] = $addedFonts[$font['font_id']];
                 continue;
             }
-
             $font['uuid'] = $this->fontsController->upLoadFonts($fontName[0]['name']);
             $addedFonts[$font['font_id']] = $font['uuid'];
         }

@@ -36,7 +36,7 @@ class FontsController extends builderUtils
      * @throws \Exception
      * @throws GuzzleException
      */
-    public function upLoadFonts($fontName)
+    public function upLoadFonts($fontName): string
     {
         Utils::log("Create FontName $fontName", 1, "upLoadFonts");
         $KitFonts = $this->getPathFont($fontName);
@@ -45,6 +45,7 @@ class FontsController extends builderUtils
             $this->cache->add('responseDataAddedNewFont', [$fontName => $responseDataAddedNewFont]);
             return $this->BrizyApi->addFontAndUpdateProject($responseDataAddedNewFont);
         }
+        return 'lato';
     }
 
     /**

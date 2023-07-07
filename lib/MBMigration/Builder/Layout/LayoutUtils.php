@@ -351,6 +351,161 @@ class LayoutUtils extends builderUtils
         return "rgb($red, $green, $blue)";
     }
 
+    /**
+     * @throws \DOMException
+     */
+    protected function replaceString($htmlString, $option = []): array
+    {
+        $dom = new DOMDocument();
+        @$dom->loadHTML($htmlString);
+
+        $paragraphs = $dom->getElementsByTagName('p');
+
+        if(array_key_exists('sectionType', $option)) {
+            $sectionType = $option['sectionType'];
+        } else {
+            $sectionType = 'brz-tp-lg-paragraph';
+        }
+
+        if(array_key_exists('mainFonts', $option)) {
+            if($option['mainFonts']['uuid'] === 'lato') {
+                $fontType = 'google';
+            } else {
+                $fontType = 'upload';
+            }
+            $fontFamily = $option['mainFonts']['uuid'];
+        } else {
+            $option['mainFonts'] = $this->getFonts('main_text');
+            if($option['mainFonts']['uuid'] === 'lato') {
+                $fontType = 'google';
+            } else {
+                $fontType = 'upload';
+            }
+            $fontFamily = $option['mainFonts']['uuid'];
+        }
+
+        if(array_key_exists('letterSpacing', $option)) {
+            $letterSpacing = str_replace('.', '_', $option['letterSpacing']);
+        } else {
+            $letterSpacing = '0_8';
+        }
+
+        if(array_key_exists('mainPosition', $option)) {
+            $position = $option['mainPosition'];
+        } else {
+            $position = 'brz-text-lg-center';
+        }
+
+        if(array_key_exists('mainSize', $option)) {
+            $fontSize = $option['mainSize'];
+        } else {
+            $fontSize = 16;
+        }
+
+        if(array_key_exists('bg_color', $option)) {
+            $hexColor = $this->getContrastingColor($option['bg_color']);
+            $mainColor = $this->hexToRgb($hexColor);
+        } else {
+            $mainColor = 'rgb(0, 0, 0)';
+        }
+
+        if(array_key_exists('mainFontWeight', $option)) {
+            $fontWeight = $option['mainFontWeight'];
+        } else {
+            $fontWeight = 400;
+        }
+
+        foreach ($paragraphs as $paragraph) {
+            $p_style = [];
+
+        $span = $dom->createElement('span');
+        $span->setAttribute('style', "color: $mainColor; opacity: 1;");
+        while ($paragraph->childNodes->length > 0) {
+            $child = $paragraph->childNodes->item(0);
+            $span->appendChild($child);
+        }
+        $paragraph->appendChild($span);
+
+            $paragraphStyle = $paragraph->getAttribute('style');
+            if (!empty($paragraphStyle)) {
+                $paragraphStyle = explode('; ', $paragraphStyle);
+                foreach ($paragraphStyle as $value) {
+                    $value = explode(': ', $value);
+                    $value[1] = $this->removeSemicolon($value[1]);
+                    $p_style[$value[0]] = $value[1];
+                }
+                $a = $p_style;
+            }
+            $paragraph->removeAttribute('style');
+
+            $spans = $paragraph->getElementsByTagName('span');
+
+            foreach ($spans as $span) {
+
+                $span->removeAttribute('class');
+
+                $style = [];
+                $styleValue = $span->getAttribute('style');
+
+                if (!empty($styleValue)) {
+                    $styleValue = explode('; ', $styleValue);
+                    foreach ($styleValue as $value)
+                    {
+                        $value = explode(': ', $value);
+                        $value[1] = $this->removeSemicolon($value[1]);
+                        $style[$value[0]] = $value[1];
+                    }
+
+                    if(!array_key_exists('color', $style)){
+                        $style['color'] = $option['textColor'];
+                    }
+
+                    if(array_key_exists('text-align', $style)) {
+                        $controlPosition = ['center' => 'brz-text-lg-center', 'left' => 'brz-text-lg-left', 'right' => 'brz-text-lg-right'];
+                        if(array_key_exists($style['text-align'], $controlPosition)){
+                            $position = $controlPosition[$style['text-align']];
+                        } else {
+                            $position = $option['mainPosition'];
+                        }
+                    }
+
+                    if(array_key_exists('font-size', $style)) {
+                        $fontSize = $this->convertFontSize($style['font-size']);
+                    }
+
+                    if(array_key_exists('font-weight', $style)) {
+                        $fontWeight = $style['font-weight'];
+                    }
+
+                    $style = 'color: ' . $style['color'] . ';';
+                    $span->setAttribute('style', $style. ' opacity: 1;');
+                } else {
+                    $style = 'color: ' .  $option['textColor'] . ';';
+                    $span->setAttribute('style', $style. ' opacity: 1;');
+                }
+            }
+            if($sectionType === 'brz-tp-lg-paragraph') {
+                $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$fontSize brz-fss-lg-px brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing";
+            } else {
+                $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-46 brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing";
+            }
+            $paragraph->setAttribute('class', $newClass);
+        }
+
+        $processedHTML = $dom->saveHTML();
+
+        return [
+            'text' => preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $processedHTML),
+            ];
+    }
+
+    protected function removeSemicolon($string) {
+        if (substr($string, -1) === ';') {
+            $string = substr($string, 0, -1);
+        }
+        return $string;
+    }
+
 
     /**
      * @throws \DOMException
@@ -594,7 +749,7 @@ class LayoutUtils extends builderUtils
      */
     protected function loadKit($layoutName = '', $fileName = ''){
 
-        if(Config::$urlJsonKits) {
+        if(Config::$urlJsonKits && !Config::$devMode) {
             Utils::log('Download json BlocksKit', 1, $this->layoutName . "] [loadKit");
             $createUrl = Config::$urlJsonKits . '/Layout';
 
