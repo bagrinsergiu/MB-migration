@@ -82,21 +82,11 @@ class ItemSetter
 
         if (is_array($value)) {
             $this->addParameter('text', $this->textContent('text'));
-            $this->addParameter('typographyFontStyle', $this->textContent('FontStyle'));
-            $this->addParameter('typographyFontFamily', $this->textContent('FontFamily'));
-            $this->addParameter('typographyFontFamilyType', $this->textContent('FontFamilyType'));
-            $this->addParameter('typographyFontSize', $this->textContent('FontSize'));
-            $this->addParameter('typographyFontSizeSuffix', $this->textContent('FontSizeSuffix'));
-            $this->addParameter('typographyFontWeight', $this->textContent('FontWeight'));
-            $this->addParameter('typographyLetterSpacing', $this->textContent('LetterSpacing'));
-            $this->addParameter('typographyLineHeight', $this->textContent('LineHeight'));
-            $this->addParameter('color', $this->textContent('FontColor'));
-            $this->addParameter('bgColorHex', $this->textContent('FontColor'));
         } else {
             if (isset($this->item->value->text)) {
                 $this->item->value->text = $value;
             } else {
-                $this->addParameter('text', $this->textContent('text'));
+                $this->addParameter('text', $value);
             }
         }
         $this->begin();

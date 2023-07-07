@@ -138,7 +138,12 @@ class Anthem extends Layout
         $objBlock->item(0)->setting('bgColorPalette','');
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
         }
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
@@ -167,10 +172,10 @@ class Anthem extends Layout
             }
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
-                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bg_color' => $blockBg, 'mainPosition'=>'brz-text-lg-left']));
                 }
                 if($item['item_type']=='body'){
-                    $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                    $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg, 'mainPosition'=>'brz-text-lg-left']));
                 }
             }
         }
@@ -190,7 +195,15 @@ class Anthem extends Layout
         $objBlock->newItem($decoded);
 
         $objBlock->item(0)->setting('bgColorPalette', '');
-        $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        }
 
         foreach ($sectionData['items'] as $item) {
 //
@@ -208,11 +221,11 @@ class Anthem extends Layout
             }
 
             if($item['category'] == 'text') {
-                if($item['item_type']=='title'){
-                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '','brz-text-lg-right'));
+                if($item['item_type']=='title') {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bg_color' => $blockBg, 'mainPosition'=>'brz-text-lg-right']));
                 }
-                if($item['item_type']=='body'){
-                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-right'));
+                if($item['item_type']=='body') {
+                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg, 'mainPosition'=>'brz-text-lg-right']));
                 }
             }
         }
@@ -280,10 +293,10 @@ class Anthem extends Layout
                 }
 
                 if($item['item_type']=='title' && $show_header) {
-                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], ['bg'=> $blockBg]));
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bg_color' => $blockBg]));
                 }
                 if($item['item_type']=='body' && $show_body) {
-                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content']));
+                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg]));
                 }
             }
             if($item['category'] == 'photo' && $item['content'] !== '') {
@@ -320,7 +333,12 @@ class Anthem extends Layout
         }
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $objBlock->item(0)->setting('bgColorHex', strtolower($sectionData['settings']['color']['bg']));
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
         }
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
@@ -329,8 +347,6 @@ class Anthem extends Layout
 
         if (!$this->checkArrayPath($sectionData, 'settings/sections/background/filename')) {
             $block = json_decode($decoded['main'], true);
-
-
 
             $objBlock->item(0)->setting('bgColorPalette', '');
 
@@ -346,10 +362,10 @@ class Anthem extends Layout
             foreach ($sectionData['items'] as $item) {
                 if ($item['category'] == 'text') {
                     if ($item['item_type'] == 'title') {
-                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bg_color' => $blockBg, 'mainPosition'=>'brz-text-lg-left']));
                     }
                     if ($item['item_type'] == 'body') {
-                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg, 'mainPosition'=>'brz-text-lg-left']));
                     }
                 }
             }
@@ -367,11 +383,11 @@ class Anthem extends Layout
             foreach ($sectionData['items'] as $item) {
                 if ($item['category'] == 'text') {
                     if ($item['item_type'] == 'title') {
-                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                        $objBlock->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bg_color' => $blockBg, 'mainPosition'=>'brz-text-lg-left']));
 
                     }
                     if ($item['item_type'] == 'body') {
-                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                        $objBlock->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg, 'mainPosition'=>'brz-text-lg-left']));
                     }
                 }
             }
@@ -491,17 +507,22 @@ class Anthem extends Layout
 
         $objBlock->newItem($decoded['main']);
 
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        }
+
         $objBlock->item(0)->setting('bgColorPalette', '');
         foreach ( $sectionData['head'] as $head){
             if ($head['category'] == 'text') {
                 if ($head['item_type'] == 'title') {
-                    $objBlock->item()->item()->item()->setText($this->replaceParagraphs($head['content'], '', ''));
+                    $objBlock->item()->item()->item()->setText($this->replaceString($head['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg]));
                 }
             }
-        }
-
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $objBlock->setting('bgColorHex',$sectionData['settings']['color']['bg']);
         }
 
         if(!empty($sectionData['settings']['sections']['background'])) {
@@ -536,7 +557,7 @@ class Anthem extends Layout
                             }
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
-                                    $objItem->item(1)->item(0)->setText($this->replaceParagraphs($sectionItem['content'], 'brz-tp-lg-empty brz-ff-palanquin brz-ft-google brz-fs-lg-27 brz-fss-lg-px brz-fw-lg-700 brz-ls-lg-0 brz-lh-lg-1_9'));
+                                    $objItem->item(1)->item(0)->setText($this->replaceString($sectionItem['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg]));
                                     $objItem->item(1)->item(0)->setting('typographyFontSize', 27);
                                 }
                             }
@@ -555,10 +576,10 @@ class Anthem extends Layout
                 }
                 if ($section['category'] == 'text') {
                     if ($section['item_type'] == 'title') {
-                        $objItem->addItem($this->itemWrapperRichText($this->replaceTitleTag($section['content'])));
+                        $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bg_color' => $blockBg])));
                     }
                     if ($section['item_type'] == 'body') {
-                        $objItem->addItem($this->itemWrapperRichText($this->replaceParagraphs($section['content'])));
+                        $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg])));
                     }
                 }
             }
@@ -596,7 +617,12 @@ class Anthem extends Layout
         }
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
         }
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
@@ -629,12 +655,12 @@ class Anthem extends Layout
 
             if ($headItem['item_type'] === 'title' && $show_header) {
                 $blockHead = true;
-                $objHead->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($headItem['content'], '', 'brz-text-lg-left'));
+                $objHead->item(0)->item(0)->item(0)->setText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bg_color' => $blockBg, 'position' => 'brz-text-lg-left']));
             }
 
             if ($headItem['item_type'] === 'body' && $show_body) {
                 $blockHead = true;
-                $objHead->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($headItem['content'], '', 'brz-text-lg-left'));
+                $objHead->item(0)->item(2)->item(0)->setText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg, 'position' => 'brz-text-lg-left']));
             }
         }
 
@@ -653,11 +679,11 @@ class Anthem extends Layout
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'title') {
-                        $objItem->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                        $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bg_color' => $blockBg, 'position' => 'brz-text-lg-left']));
                     }
 
                     if ($item['item_type'] === 'body') {
-                        $objItem->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+                        $objItem->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bg_color' => $blockBg, 'position' => 'brz-text-lg-left']));
                     }
                 }
             }
@@ -867,7 +893,6 @@ class Anthem extends Layout
         $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
-
 
     protected function three_top_media_circle(array $sectionData)
     {
