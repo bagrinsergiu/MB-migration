@@ -357,6 +357,8 @@ class LayoutUtils extends builderUtils
     protected function replaceString($htmlString, $option = []): array
     {
         $dom = new DOMDocument();
+
+        $htmlString = $this->replaceDivWithParagraph($htmlString);
         @$dom->loadHTML($htmlString);
 
         $paragraphs = $dom->getElementsByTagName('p');
@@ -402,11 +404,15 @@ class LayoutUtils extends builderUtils
             $fontSize = 16;
         }
 
-        if(array_key_exists('bg_color', $option)) {
-            $hexColor = $this->getContrastingColor($option['bg_color']);
+        if(array_key_exists('bgColor', $option)) {
+            $hexColor = $this->getContrastingColor($option['bgColor']);
             $mainColor = $this->hexToRgb($hexColor);
         } else {
             $mainColor = 'rgb(0, 0, 0)';
+        }
+
+        if(array_key_exists('textColor', $option)) {
+            $mainColor = $this->hexToRgb($option['textColor']);
         }
 
         if(array_key_exists('mainFontWeight', $option)) {
@@ -415,16 +421,27 @@ class LayoutUtils extends builderUtils
             $fontWeight = 400;
         }
 
+        if(array_key_exists('upperCase', $option)) {
+            $upperCase = $option['upperCase'];
+        } else {
+            $upperCase = '';
+        }
+
         foreach ($paragraphs as $paragraph) {
             $p_style = [];
 
-        $span = $dom->createElement('span');
-        $span->setAttribute('style', "color: $mainColor; opacity: 1;");
-        while ($paragraph->childNodes->length > 0) {
-            $child = $paragraph->childNodes->item(0);
-            $span->appendChild($child);
-        }
-        $paragraph->appendChild($span);
+            $getTagAInPatragraph = $paragraph->getElementsByTagName('a');
+            if($getTagAInPatragraph->length > 0 ){
+                $this->createUrl($getTagAInPatragraph->item(0));
+            }
+
+            $span = $dom->createElement('span');
+            $span->setAttribute('style', "color: $mainColor; opacity: 1;");
+            while ($paragraph->childNodes->length > 0) {
+                $child = $paragraph->childNodes->item(0);
+                $span->appendChild($child);
+            }
+            $paragraph->appendChild($span);
 
             $paragraphStyle = $paragraph->getAttribute('style');
             if (!empty($paragraphStyle)) {
@@ -434,7 +451,17 @@ class LayoutUtils extends builderUtils
                     $value[1] = $this->removeSemicolon($value[1]);
                     $p_style[$value[0]] = $value[1];
                 }
-                $a = $p_style;
+                if(isset($p_style['color'])){
+                    $p_mainColor  = $p_style['color'];
+                }
+                $fontWeight = $p_style['font-weight'];
+                $fontSize   = $this->convertFontSize($p_style['font-size']);
+                if(array_key_exists('text-align', $p_style)) {
+                    $controlPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
+                    if(array_key_exists($p_style['text-align'], $controlPosition)){
+                        $position = $controlPosition[$p_style['text-align']];
+                    }
+                }
             }
             $paragraph->removeAttribute('style');
 
@@ -464,8 +491,6 @@ class LayoutUtils extends builderUtils
                         $controlPosition = ['center' => 'brz-text-lg-center', 'left' => 'brz-text-lg-left', 'right' => 'brz-text-lg-right'];
                         if(array_key_exists($style['text-align'], $controlPosition)){
                             $position = $controlPosition[$style['text-align']];
-                        } else {
-                            $position = $option['mainPosition'];
                         }
                     }
 
@@ -487,8 +512,22 @@ class LayoutUtils extends builderUtils
             if($sectionType === 'brz-tp-lg-paragraph') {
                 $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$fontSize brz-fss-lg-px brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing";
             } else {
-                $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-46 brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing";
+                $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-46 brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing ";
             }
+
+            $span = $dom->createElement('span');
+            if(isset($p_mainColor)){
+                $span->setAttribute('style', "color: $p_mainColor; opacity: 1;");
+            }
+            if(isset($upperCase) && $sectionType !== 'brz-tp-lg-paragraph') {
+                $span->setAttribute('class', $upperCase);
+            }
+            while ($paragraph->childNodes->length > 0) {
+                $child = $paragraph->childNodes->item(0);
+                $span->appendChild($child);
+            }
+            $paragraph->appendChild($span);
+
             $paragraph->setAttribute('class', $newClass);
         }
 
@@ -497,6 +536,29 @@ class LayoutUtils extends builderUtils
         return [
             'text' => preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $processedHTML),
             ];
+    }
+
+    private function replaceDivWithParagraph($html) {
+        $dom = new DOMDocument();
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+        $divs = $dom->getElementsByTagName('div');
+
+        foreach ($divs as $div) {
+            $p = $dom->createElement('p');
+            foreach ($div->attributes as $attribute) {
+                $p->setAttribute($attribute->name, $attribute->value);
+            }
+
+            while ($div->firstChild) {
+                $child = $div->firstChild;
+                $div->removeChild($child);
+                $p->appendChild($child);
+            }
+
+            $div->parentNode->replaceChild($p, $div);
+        }
+        return $dom->saveHTML();
     }
 
     protected function removeSemicolon($string) {

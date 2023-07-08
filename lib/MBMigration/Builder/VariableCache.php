@@ -65,7 +65,7 @@ class VariableCache
     public function add($key, $value, $expiration = 0): void
     {
         if(array_key_exists($key, $this->cache)) {
-            $this->cache[$key] = array_merge_recursive($this->cache[$key], $value);
+            $this->cache[$key] = array_merge($this->cache[$key], $value);
         } else {
             $this->cache[$key] = $value;
         }
