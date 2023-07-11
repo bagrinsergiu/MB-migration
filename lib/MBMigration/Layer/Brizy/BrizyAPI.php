@@ -564,8 +564,8 @@ class BrizyAPI extends Utils
 
         $defaultOptions = [
             'headers' => $headers,
-            'timeout' => 10,
-            'connect_timeout' => 5
+            'timeout' => 60,
+            'connect_timeout' => 60
         ];
         $options = array_merge_recursive($defaultOptions, $options);
 
@@ -578,6 +578,9 @@ class BrizyAPI extends Utils
     private function httpClient($method, $url, $data = null, $contentType = 'application/x-www-form-urlencoded'): array
     {
         $nameFunction = __FUNCTION__;
+
+        $statusCode = '';
+        $body = '';
 
         $client = new Client();
 
@@ -593,8 +596,8 @@ class BrizyAPI extends Utils
 
             $options = [
                 'headers' => $headers,
-                'timeout' => 10,
-                'connect_timeout' => 5
+                'timeout' => 60,
+                'connect_timeout' => 50
             ];
 
             if ($method === 'POST' && isset($data)) {

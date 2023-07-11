@@ -17,6 +17,9 @@ class FontsController extends builderUtils
      * @var mixed
      */
     private $projectId;
+
+    protected $layoutName;
+
     /**
      * @var VariableCache
      */
@@ -30,6 +33,7 @@ class FontsController extends builderUtils
         $this->getFontsMap();
         $this->projectId = $projectId;
         $this->cache = $cache;
+        $this->layoutName = 'FontsController';
     }
 
     /**
@@ -53,6 +57,7 @@ class FontsController extends builderUtils
      */
     public function getFontsMap(): void
     {
+        $this->layoutName = 'FontsController';
         Utils::log("Download fonts map", 1, "downloadMapFontsFromUrl");
         if(Config::$urlJsonKits) {
             $createUrlForFileFontsMap = Config::$urlJsonKits . '/fonts/fonts.json';

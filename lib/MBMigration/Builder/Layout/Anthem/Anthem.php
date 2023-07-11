@@ -17,6 +17,8 @@ class Anthem extends Layout
      */
     private $jsonDecode;
 
+    protected $layoutName;
+
     /**
      * @throws Exception
      */
@@ -477,9 +479,13 @@ class Anthem extends Layout
         return json_encode($block);
     }
 
+    /**
+     * @throws \DOMException
+     */
     protected function two_horizontal_text($sectionData)
     {
         Utils::log('Create full media', 1, $this->layoutName . "] [two-horizontal-text");
+        $options = [];
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['two-horizontal-text'];
         $block = json_decode($decoded['main'], true);
@@ -487,9 +493,26 @@ class Anthem extends Layout
         $objBlock = new ItemSetter($decoded['main']);
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        }
 
-            $block['value']['items'][0]['value']['bgColorHex'] = strtolower($sectionData['settings']['color']['bg']);
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
+        }
+
+        $options = array_merge($options, ['bgColor' => $blockBg]);
+
+        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+            $textColor = $sectionData['settings']['color']['text'];
+
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+
+            $options = array_merge($options, ['textColor' => $textColor]);
         }
 
         foreach ($sectionData['items'] as $item) {
@@ -497,20 +520,26 @@ class Anthem extends Layout
             if($item['group'] == 0){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
                     }
                     if($item['item_type']=='body'){
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], 'brz-text-lg-left');
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
                     }
                 }
             }
             if($item['group'] == 1){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content'], 'brz-text-lg-left');
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }
 
@@ -518,7 +547,7 @@ class Anthem extends Layout
 
         }
 
-        $block = $this->replaceIdWithRandom($block);
+        $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
 

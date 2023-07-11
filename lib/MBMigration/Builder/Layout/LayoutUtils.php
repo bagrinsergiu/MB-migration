@@ -363,14 +363,14 @@ class LayoutUtils extends builderUtils
 
         $paragraphs = $dom->getElementsByTagName('p');
 
-        if(array_key_exists('sectionType', $option)) {
+        if (array_key_exists('sectionType', $option)) {
             $sectionType = $option['sectionType'];
         } else {
             $sectionType = 'brz-tp-lg-paragraph';
         }
 
-        if(array_key_exists('mainFonts', $option)) {
-            if($option['mainFonts']['uuid'] === 'lato') {
+        if (array_key_exists('mainFonts', $option)) {
+            if ($option['mainFonts']['uuid'] === 'lato') {
                 $fontType = 'google';
             } else {
                 $fontType = 'upload';
@@ -386,42 +386,42 @@ class LayoutUtils extends builderUtils
             $fontFamily = $option['mainFonts']['uuid'];
         }
 
-        if(array_key_exists('letterSpacing', $option)) {
+        if (array_key_exists('letterSpacing', $option)) {
             $letterSpacing = str_replace('.', '_', $option['letterSpacing']);
         } else {
             $letterSpacing = '0_8';
         }
 
-        if(array_key_exists('mainPosition', $option)) {
+        if (array_key_exists('mainPosition', $option)) {
             $position = $option['mainPosition'];
         } else {
             $position = 'brz-text-lg-center';
         }
 
-        if(array_key_exists('mainSize', $option)) {
+        if (array_key_exists('mainSize', $option)) {
             $fontSize = $option['mainSize'];
         } else {
             $fontSize = 16;
         }
 
-        if(array_key_exists('bgColor', $option)) {
+        if (array_key_exists('bgColor', $option)) {
             $hexColor = $this->getContrastingColor($option['bgColor']);
             $mainColor = $this->hexToRgb($hexColor);
         } else {
             $mainColor = 'rgb(0, 0, 0)';
         }
 
-        if(array_key_exists('textColor', $option)) {
-            $mainColor = $this->hexToRgb($option['textColor']);
+        if (array_key_exists('textColor', $option)) {
+            $mainColor = $option['textColor'];
         }
 
-        if(array_key_exists('mainFontWeight', $option)) {
+        if (array_key_exists('mainFontWeight', $option)) {
             $fontWeight = $option['mainFontWeight'];
         } else {
             $fontWeight = 400;
         }
 
-        if(array_key_exists('upperCase', $option)) {
+        if (array_key_exists('upperCase', $option)) {
             $upperCase = $option['upperCase'];
         } else {
             $upperCase = '';
@@ -430,18 +430,18 @@ class LayoutUtils extends builderUtils
         foreach ($paragraphs as $paragraph) {
             $p_style = [];
 
-            $getTagAInPatragraph = $paragraph->getElementsByTagName('a');
-            if($getTagAInPatragraph->length > 0 ){
-                $this->createUrl($getTagAInPatragraph->item(0));
+            $getTagAInParagraph = $paragraph->getElementsByTagName('a');
+            if ($getTagAInParagraph->length > 0) {
+                $this->createUrl($getTagAInParagraph->item(0));
             }
 
-            $span = $dom->createElement('span');
-            $span->setAttribute('style', "color: $mainColor; opacity: 1;");
-            while ($paragraph->childNodes->length > 0) {
-                $child = $paragraph->childNodes->item(0);
-                $span->appendChild($child);
-            }
-            $paragraph->appendChild($span);
+//            $span = $dom->createElement('span');
+//            $span->setAttribute('style', "color: $mainColor; opacity: 1;");
+//            while ($paragraph->childNodes->length > 0) {
+//                $child = $paragraph->childNodes->item(0);
+//                $span->appendChild($child);
+//            }
+//            $paragraph->appendChild($span);
 
             $paragraphStyle = $paragraph->getAttribute('style');
             if (!empty($paragraphStyle)) {
@@ -451,18 +451,31 @@ class LayoutUtils extends builderUtils
                     $value[1] = $this->removeSemicolon($value[1]);
                     $p_style[$value[0]] = $value[1];
                 }
-                if(isset($p_style['color'])){
-                    $p_mainColor  = $p_style['color'];
+                if (isset($p_style['color'])) {
+                    $p_mainColor = $p_style['color'];
                 }
                 $fontWeight = $p_style['font-weight'];
-                $fontSize   = $this->convertFontSize($p_style['font-size']);
-                if(array_key_exists('text-align', $p_style)) {
+                $fontSize = $this->convertFontSize($p_style['font-size']);
+                if (array_key_exists('text-align', $p_style)) {
                     $controlPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
-                    if(array_key_exists($p_style['text-align'], $controlPosition)){
+                    if (array_key_exists($p_style['text-align'], $controlPosition)) {
                         $position = $controlPosition[$p_style['text-align']];
                     }
                 }
             }
+
+            if ($sectionType === 'brz-tp-lg-paragraph') {
+                $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$fontSize brz-fss-lg-px brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing";
+            } else {
+
+                $fontSize = $this->getFonts('sub_headers');
+                $titleFontSize = $this->convertFontSize($fontSize['font_size']);
+
+                $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$titleFontSize brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing ";
+            }
+
+            $paragraph->setAttribute('class', $newClass);
+
             $paragraph->removeAttribute('style');
 
             $spans = $paragraph->getElementsByTagName('span');
@@ -476,68 +489,85 @@ class LayoutUtils extends builderUtils
 
                 if (!empty($styleValue)) {
                     $styleValue = explode('; ', $styleValue);
-                    foreach ($styleValue as $value)
-                    {
+                    foreach ($styleValue as $value) {
                         $value = explode(': ', $value);
                         $value[1] = $this->removeSemicolon($value[1]);
                         $style[$value[0]] = $value[1];
                     }
 
-                    if(!array_key_exists('color', $style)){
-                        $style['color'] = $option['textColor'];
+                    if (!array_key_exists('color', $style)) {
+                        $style['color'] = $mainColor;
                     }
 
-                    if(array_key_exists('text-align', $style)) {
+                    if (array_key_exists('text-align', $style)) {
                         $controlPosition = ['center' => 'brz-text-lg-center', 'left' => 'brz-text-lg-left', 'right' => 'brz-text-lg-right'];
-                        if(array_key_exists($style['text-align'], $controlPosition)){
+                        if (array_key_exists($style['text-align'], $controlPosition)) {
                             $position = $controlPosition[$style['text-align']];
                         }
                     }
 
-                    if(array_key_exists('font-size', $style)) {
+                    if (array_key_exists('font-size', $style)) {
                         $fontSize = $this->convertFontSize($style['font-size']);
                     }
 
-                    if(array_key_exists('font-weight', $style)) {
+                    if (array_key_exists('font-weight', $style)) {
                         $fontWeight = $style['font-weight'];
                     }
 
-                    $style = 'color: ' . $style['color'] . ';';
-                    $span->setAttribute('style', $style. ' opacity: 1;');
+                    $styleColor = 'color: ' . $style['color'] . ';';
+                    $span->setAttribute('style', $styleColor . ' opacity: 1;');
                 } else {
-                    $style = 'color: ' .  $option['textColor'] . ';';
-                    $span->setAttribute('style', $style. ' opacity: 1;');
+                    $styleColor = 'color: ' . $option['textColor'] . ';';
+                    $span->setAttribute('style', $styleColor . ' opacity: 1;');
+                }
+
+                if (isset($p_mainColor)) {
+                    $span->setAttribute('style', "color: $p_mainColor; opacity: 1;");
+                }
+                if (isset($upperCase) && $sectionType !== 'brz-tp-lg-paragraph') {
+                    $span->setAttribute('class', $upperCase);
                 }
             }
-            if($sectionType === 'brz-tp-lg-paragraph') {
-                $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$fontSize brz-fss-lg-px brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing";
-            } else {
-                $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-46 brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing ";
-            }
 
-            $span = $dom->createElement('span');
-            if(isset($p_mainColor)){
-                $span->setAttribute('style', "color: $p_mainColor; opacity: 1;");
-            }
-            if(isset($upperCase) && $sectionType !== 'brz-tp-lg-paragraph') {
-                $span->setAttribute('class', $upperCase);
-            }
-            while ($paragraph->childNodes->length > 0) {
-                $child = $paragraph->childNodes->item(0);
-                $span->appendChild($child);
-            }
-            $paragraph->appendChild($span);
 
-            $paragraph->setAttribute('class', $newClass);
+
+//            $span = $dom->createElement('span');
+//            if (isset($p_mainColor)) {
+//                $span->setAttribute('style', "color: $p_mainColor; opacity: 1;");
+//            }
+//            if (isset($upperCase) && $sectionType !== 'brz-tp-lg-paragraph') {
+//                $span->setAttribute('class', $upperCase);
+//            }
+
+//            while ($paragraph->childNodes->length > 0) {
+//                $child = $paragraph->childNodes->item(0);
+//                $span->appendChild($child);
+//            }
+
+//            if ($sectionType === 'brz-tp-lg-paragraph') {
+//                $paragraph->appendChild($span);
+//            }
+
+            $content = $paragraph->nodeValue;
+
+            $content = str_replace('&nbsp;', ' ', $content);
+
+            $paragraph->nodeValue = $content;
+
+
         }
 
-        $processedHTML = $dom->saveHTML();
+        $processedHTML = preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $dom->saveHTML());
+        //$processedHTML = '';
 
         return [
-            'text' => preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $processedHTML),
-            ];
+            'text' => $processedHTML
+        ];
     }
 
+    /**
+     * @throws \DOMException
+     */
     private function replaceDivWithParagraph($html) {
         $dom = new DOMDocument();
         $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
