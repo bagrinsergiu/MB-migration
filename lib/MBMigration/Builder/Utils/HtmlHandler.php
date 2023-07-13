@@ -17,7 +17,7 @@ class HtmlHandler
 
     public function __construct($htmlString, $option)
     {
-        $this->htmlString = $htmlString;
+        $this->htmlString = $this->fixNonAsciiChars($htmlString);
         $this->option = $option;
     }
 
@@ -40,6 +40,7 @@ class HtmlHandler
         $fontHeaders    = $this->option['fontHeaders'];
         $fontMain       = $this->option['fontMain'];
         $textColor      = $this->option['textColor'];
+        $color          = $this->option['color'];
 
         //$htmlString = str_replace('&nbsp;', '', $htmlString);
 
@@ -59,7 +60,7 @@ class HtmlHandler
 
             $getTagAInParagraph = $paragraph->getElementsByTagName('a');
             if ($getTagAInParagraph->length > 0) {
-                $this->createUrl($getTagAInParagraph->item(0));
+                $this->createUrl($getTagAInParagraph->item(0), $color);
             }
 
             $paragraphStyle = $paragraph->getAttribute('style');
@@ -79,6 +80,10 @@ class HtmlHandler
                     $fontColor = $p_style['color'];
                 }
 
+                if (array_key_exists('line-height', $p_style)) {
+                    $lineHeight = $p_style['line-height'];
+                }
+
                 if (array_key_exists('font-weight', $p_style)) {
                     $fontWeight = $p_style['font-weight'];
                 }
@@ -90,7 +95,7 @@ class HtmlHandler
                     }
                 }
 
-                if (isset($fontColor)) {
+                if (isset($fontColor) || isset($lineHeight)) {
                     $span = $dom->createElement('span');
                     $span->setAttribute('style', "color: $fontColor; opacity: 1;");
 
@@ -200,6 +205,23 @@ class HtmlHandler
         return $result;
     }
 
+    private function fixNonAsciiChars(string $text): string
+    {
+        $fixedText = "";
+        for ($i = 0; $i < mb_strlen($text); $i++) {
+            $char = mb_substr($text, $i, 1);
+
+            if (mb_check_encoding($char, 'ASCII')) {
+
+                $fixedText .= $char;
+            } else {
+                $fixedChar = mb_convert_encoding($char, 'HTML-ENTITIES', 'UTF-8');
+                $fixedText .= $fixedChar;
+            }
+        }
+        return $fixedText;
+    }
+
     /**
      * @throws \DOMException
      */
@@ -226,7 +248,7 @@ class HtmlHandler
         return $dom->saveHTML();
     }
 
-    private function createUrl(object $href)
+    private function createUrl(object $href, $color)
     {
         $valueAttributeHref = $href->getAttribute('href');
         $aHref = json_decode('{"type":"external","anchor":"","external":"","externalBlank":"off","externalRel":"off","externalType":"external","population":"","popup":"","upload":"","linkToSlide":1}', true);
@@ -237,6 +259,11 @@ class HtmlHandler
         $href->removeAttribute('href');
         $href->setAttribute('data-href', $dataHref);
         $href->setAttribute('class', 'link--external');
+
+        if(!empty($color)){
+            $color = $this->hexToRgb($color['link']);
+            $href->setAttribute('style', "color: $color; opacity: 1;");
+        }
     }
 
     private function removeSemicolon($string) {
