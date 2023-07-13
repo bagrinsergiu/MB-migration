@@ -1493,12 +1493,17 @@ class QueryBuilder
         return $results->getData()['collectionEditors'];
     }
 
+    /**
+     * @throws \Exception
+     */
     private function runQuery($query, $resultsAsArray = false, $variables = [])
     {
         try {
             return $this->client->runQuery($query, $resultsAsArray, $variables);
         } catch (\Exception $e) {
-            Utils::log('Failed query: ' . $query . ' variables: ' . json_encode($variables), 5, 'runQuery');
+            Utils::log('Failed query!! variables: ' . json_encode($variables), 5, 'runQuery');
+            Utils::MESSAGES_POOL($e->getMessage());
+            throw new \Exception('The client received an error.');
         }
     }
 

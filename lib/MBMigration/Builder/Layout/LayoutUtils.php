@@ -89,6 +89,17 @@ class LayoutUtils extends builderUtils
         return $mainColor;
     }
 
+
+    public function getColor($option): array
+    {
+        if (array_key_exists('color', $option)) {
+            $color = $option['color'];
+        } else {
+            $color = [];
+        }
+        return $color;
+    }
+
     /**
      * @param $option
      * @return int
@@ -500,6 +511,7 @@ class LayoutUtils extends builderUtils
             'upperCase'     => $this->getUpperCase($option),
             'fontHeaders'   => $this->getFonts('sub_headers'),
             'fontMain'      => $this->getFonts('main_text'),
+            'color'         => $this->getColor($option),
         ];
 
         $processedHTML = new HtmlHandler($htmlString, $hOptions);
