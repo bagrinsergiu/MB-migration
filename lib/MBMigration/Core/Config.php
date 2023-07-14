@@ -18,7 +18,12 @@ class Config
 
     public static $pathTmp;
     public static $pathLogFile;
-    public static $devToken;
+    public static $mainToken;
+
+    /**
+     * @var string
+     */
+    public static $graphqlToken;
 
     public static $DBConnection;
     public static $configPostgreSQL;
@@ -65,7 +70,8 @@ class Config
         self::$defaultSettings  = [
             'devMode'       => false,
             'debugMode'     => true,
-            'urlJsonKit'    => false
+            'urlJsonKit'    => false,
+            'graphqlToken'  => false
         ];
 
         self::$debugMode        = (bool) $this->checkSettings('debugMode');
@@ -79,7 +85,9 @@ class Config
         self::$endPointVersion  = '/2.0';
 
         self::$cloud_host       = $this->checkURL($cloud_host);
-        self::$devToken         = $this->checkToken($token);
+
+        self::$mainToken        = $this->checkToken($token);
+        self::$graphqlToken     = $this->checkSettings('graphqlToken');
 
         self::$urlAPI           = self::$cloud_host . '/api';
         self::$urlProjectAPI    = self::$cloud_host . '/projects/{project}';
