@@ -51,6 +51,7 @@ class Parser
 
     /**
      * @throws Exception
+     * @throws GuzzleException
      */
     public function getSite(): array
     {
