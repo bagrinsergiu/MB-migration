@@ -64,7 +64,7 @@ require $composerAutoload;
 //4316931
 
 $ProjectId_MB    = 8003;
-$ProjectId_Brizy = 4317779;
+$ProjectId_Brizy = 4317990;
 
 $db = [
         'dbType' => "postgresql",
@@ -77,7 +77,7 @@ $db = [
 
 $settings = [
     'devMode' => true,
-    'urlJsonKit' => 'https://bitblox-develop.s3.amazonaws.com'
+    //'urlJsonKit' => 'https://bitblox-develop.s3.amazonaws.com'
 ];
 
 try {

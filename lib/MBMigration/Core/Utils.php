@@ -13,12 +13,6 @@ class Utils
     protected static $cache;
 
 
-    public function __construct(VariableCache $cache = null)
-    {
-        self::$MESSAGES_POOL = [];
-        self::$projectID = $cache->get('projectId_Brizy');
-    }
-
     /**
      * @throws Exception
      */
@@ -84,6 +78,8 @@ class Utils
     public static function init(VariableCache $cache = null): void
     {
         self::$cache = $cache;
+        self::$MESSAGES_POOL = [];
+        self::$projectID = $cache->get('projectId_Brizy');
     }
 
     public static function strReplace(string $block, $replace, $toReplace): string

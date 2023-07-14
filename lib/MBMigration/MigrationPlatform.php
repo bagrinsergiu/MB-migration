@@ -45,7 +45,7 @@ class MigrationPlatform
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
 
-        $this->buildPage = '';
+        $this->buildPage = 'home';
     }
 
     public function start(int $projectID_MB, int $projectID_Brizy = 0): bool
@@ -122,6 +122,9 @@ class MigrationPlatform
         $this->logFinalProcess($this->startTime);
     }
 
+    /**
+     * @throws Exception
+     */
     private function init(int $projectID_MB, int $projectID_Brizy): void
     {
         Utils::log('-------------------------------------------------------------------------------------- []', 4, '');

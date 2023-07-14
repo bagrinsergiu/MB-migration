@@ -21,7 +21,7 @@ class BrizyAPI extends Utils
     public function __construct()
     {
         Utils::log('Initialization', 4, 'BrizyAPI');
-        $this->projectToken = $this->check(Config::$devToken, 'Config not initialized');
+        $this->projectToken = $this->check(Config::$mainToken, 'Config not initialized');
     }
 
     /**
@@ -211,7 +211,7 @@ class BrizyAPI extends Utils
                         'contents' => $this->fopenFromURL($pathToFont),
                     ];
                 } else {
-                    $pathToFont = __DIR__ . '/' . $pathToFont;
+                    $pathToFont = __DIR__ . '/../../Builder/Fonts/' . $pathToFont;
                     $fonts[] = [
                         'name' => "files[$fontWeight][$fileExtension]",
                         'contents' => fopen($pathToFont, 'r'),
@@ -551,7 +551,7 @@ class BrizyAPI extends Utils
     {
         $client = new Client();
         $headers = [
-            'x-auth-user-token' => Config::$devToken
+            'x-auth-user-token' => Config::$mainToken
         ];
 
         if($method === 'PUT'){
@@ -584,7 +584,7 @@ class BrizyAPI extends Utils
 
         $client = new Client();
 
-        $token = Config::$devToken;
+        $token = Config::$mainToken;
         try {
 
             if ($contentType !== '') {
