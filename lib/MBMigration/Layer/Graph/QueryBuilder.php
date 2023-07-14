@@ -9,6 +9,7 @@ use GraphQL\Mutation;
 use GraphQL\Query;
 use GraphQL\RawObject;
 use GraphQL\Variable;
+use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
 class QueryBuilder
@@ -23,7 +24,12 @@ class QueryBuilder
     {
         $this->cache = $cache;
 
-        $this->session           = $this->cache->get('graphToken');
+        if(Config::$graphqlToken && Config::$devMode) {
+            $this->session = Config::$graphqlToken;
+        } else {
+            $this->session = $this->cache->get('graphToken');
+        }
+
         $this->brizy_cms_api_url = $this->cache->get('GraphApi_Brizy');
 
         $this->setProject();
@@ -1501,7 +1507,7 @@ class QueryBuilder
         try {
             return $this->client->runQuery($query, $resultsAsArray, $variables);
         } catch (\Exception $e) {
-            Utils::log('Failed query!! variables: ' . json_encode($variables), 5, 'runQuery');
+            Utils::log('Failed query!! Message:' . json_encode($e->getMessage()), 5, 'runQuery');
             Utils::MESSAGES_POOL($e->getMessage());
             throw new \Exception('The client received an error.');
         }
