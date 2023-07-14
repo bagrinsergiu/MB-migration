@@ -518,7 +518,7 @@ class Anthem extends Layout
             if($item['group'] == 0){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                            $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
                         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                         $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
                     }
@@ -1127,10 +1127,13 @@ class Anthem extends Layout
         $block = json_decode($decoded, true);
         $blockIcon = json_decode($iconItem, true);
 
-        $block['value']['bgColorPalette'] = '';
-        $block['value']['bgColorHex'] = strtolower($sectionData['settings']['color']['subpalette']['bg']);
-        $objBlock->setting('bgColorPalette', '');
-        $objBlock->setting('bgColorHex', $sectionData['settings']['color']['subpalette']['bg']);
+        if($this->checkArrayPath($sectionData, 'settings/color/subpalette')) {
+
+            $block['value']['bgColorHex'] = strtolower($sectionData['settings']['color']['subpalette']['bg']);
+            $objBlock->setting('bgColorPalette', '');
+            $objBlock->setting('bgColorHex', $sectionData['settings']['color']['subpalette']['bg']);
+            $options = array_merge($options, ['color' => $sectionData['settings']['color']['subpalette']]);
+        }
 
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {

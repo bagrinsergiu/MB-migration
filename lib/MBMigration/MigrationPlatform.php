@@ -83,6 +83,13 @@ class MigrationPlatform
 
         $this->createProjectFolders();
 
+        $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
+        $this->cache->set('graphToken', $this->brizyApi->getGraphToken($this->projectID_Brizy));
+
+        $this->QueryBuilder = new QueryBuilder($this->cache);
+
+        $this->getAllPage();
+
         $this->cache->set('settings', $this->parser->getSite());
 
         $this->checkDesign();
@@ -96,10 +103,7 @@ class MigrationPlatform
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
         }
 
-        $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
-        $this->cache->set('graphToken', $this->brizyApi->getGraphToken($this->projectID_Brizy));
 
-        $this->QueryBuilder = new QueryBuilder($this->cache);
 
         $this->createPalette();
         $mainSection = $this->parser->getMainSection();
@@ -108,7 +112,6 @@ class MigrationPlatform
         $mainSection = $this->uploadPicturesFromSections($mainSection);
         $this->cache->set('mainSection', $mainSection);
 
-        $this->getAllPage();
         $this->createBlankPages($parentPages);
         $this->createMenuStructure();
 
