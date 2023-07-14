@@ -103,8 +103,6 @@ class MigrationPlatform
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
         }
 
-
-
         $this->createPalette();
         $mainSection = $this->parser->getMainSection();
         $this->updateColorSection($mainSection);
