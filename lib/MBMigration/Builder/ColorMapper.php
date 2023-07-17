@@ -21,38 +21,83 @@ class ColorMapper
             'subpalette1' => [
                 'bg'                => $colorKit['color1'],
                 'accent'            => $colorKit['color7'],
-                'text'              => $this->getContrastingColor($colorKit['color1']),
-                'header'            => $colorKit['color6'],
-                'link'              => $colorKit['color7'],
+                'text'              => $this->desaturateByPercent($colorKit['color7'], 50),
+                'header'            => $colorKit['color7'],
+                'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color7'],
-                'btn-text'          => $colorKit['color3']
+                'btn-text'          => $this->getContrastingColor($colorKit['color7']),
+                'gal-btn'           => $this->getContrastingColor($colorKit['color3']),
+                'input-border'      => $colorKit['color7'],
+                'input-unselected'  => $colorKit['color7'],
+                'input-selected'    => $colorKit['color7'],
+                'tab-border'        => $colorKit['color7'],
+                'tab-text'          => $colorKit['color7'],
+                'tab-text-active'   => $colorKit['color6'],
+                'accordion-border'  => $colorKit['color7'],
+                'accordion-control' => $colorKit['color6']
             ],
             'subpalette2' => [
                 'bg'                => $colorKit['color5'],
                 'accent'            => $colorKit['color8'],
-                'text'              => $this->getContrastingColor($colorKit['color5']),
+                'text'              => $this->desaturateByPercent($colorKit['color8'],50),
                 'header'            => $colorKit['color8'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color2'],
-                'btn-text'          => $colorKit['color8']
+                'btn-text'          => $this->getContrastingColor($colorKit['color2']),
+                'gal-btn'           => $this->getContrastingColor($colorKit['color1']),
+                'input-border'      => $colorKit['color2'],
+                'input-unselected'  => $colorKit['color2'],
+                'input-selected'    => $colorKit['color2'],
+                'tab-border'        => $colorKit['color8'],
+                'tab-text'          => $colorKit['color8'],
+                'tab-text-active'   => $colorKit['color6'],
+                'accordion-border'  => $colorKit['color8'],
+                'accordion-control' => $colorKit['color6']
             ],
             'subpalette3' => [
                 'bg'                => $colorKit['color2'],
                 'accent'            => $colorKit['colorA'],
-                'text'              => $this->getContrastingColor($colorKit['color2']),
+                'text'              => $this->desaturateByPercent($colorKit['colorA'],50),
                 'header'            => $colorKit['colorA'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['colorA'],
-                'btn-text'          => $colorKit['color2']
+                'btn-text'          => $colorKit['color2'],
+                'gal-btn'           => $this->getContrastingColor($colorKit['color2']),
+                'input-border'      => $colorKit['colorA'],
+                'input-unselected'  => $colorKit['colorA'],
+                'input-selected'    => $colorKit['colorA'],
+                'tab-border'        => $colorKit['colorA'],
+                'tab-text'          => $colorKit['colorA'],
+                'tab-text-active'   => $colorKit['color6'],
+                'accordion-border'  => $colorKit['colorA'],
+                'accordion-control' => $colorKit['color6']
             ],
             'subpalette4' => [
                 'bg'                => $colorKit['color3'],
                 'accent'            => $colorKit['color9'],
-                'text'              => $this->getContrastingColor($colorKit['color3']),
+                'text'              => $this->desaturateByPercent($colorKit['color9'],50),
                 'header'            => $colorKit['color9'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color2'],
-                'btn-text'          => $colorKit['color2']
+                'btn-text'          => $this->getContrastingColor($colorKit['color2']),
+                'gal-btn'           => $this->getContrastingColor($colorKit['color3']),
+                'input-border'      => $colorKit['color2'],
+                'input-unselected'  => $colorKit['color2'],
+                'input-selected'    => $colorKit['color2'],
+                'tab-border'        => $colorKit['color9'],
+                'tab-text'          => $colorKit['color9'],
+                'tab-text-active'   => $colorKit['color6'],
+                'accordion-border'  => $colorKit['color9'],
+                'accordion-control' => $colorKit['color6']
+            ],
+            'nav-subpalette' => [
+                'bg'                => $colorKit['color1'],
+                'nav-bg'            => $colorKit['color1'],
+                'sub-bg'            => $colorKit['color3'],
+                'nav-text'          => $this->mixContrastingColor($colorKit['color1'],24),
+                'sub-text'          => $this->mixContrastingColor($colorKit['color3'],24),
+                'nav-acc'           => $this->mixContrastingColor($colorKit['color1'],0),
+                'sub-acc'           => $this->mixContrastingColor($colorKit['color3'],0)
             ]
         ];
     }
@@ -772,6 +817,94 @@ class ColorMapper
             $contrastColor = '#FFFFFF';
         }
         return $contrastColor;
+    }
+
+    private function mixContrastingColor($hexColor, $percentage): string
+    {
+
+        if (!preg_match('/^#[a-fA-F0-9]{6}$/', $hexColor)) {
+            return "Invalid HEX color format";
+        }
+
+        $percentage = min(max($percentage, 0), 100);
+
+
+        $red = hexdec(substr($hexColor, 1, 2));
+        $green = hexdec(substr($hexColor, 3, 2));
+        $blue = hexdec(substr($hexColor, 5, 2));
+
+        $mixFactor = $percentage / 100;
+
+        $mixedRed = round((1 - $mixFactor) * 255 + $mixFactor * $red);
+        $mixedGreen = round((1 - $mixFactor) * 255 + $mixFactor * $green);
+        $mixedBlue = round((1 - $mixFactor) * 255 + $mixFactor * $blue);
+
+        return sprintf("#%02X%02X%02X", $mixedRed, $mixedGreen, $mixedBlue);
+    }
+
+    private function desaturateByPercent($colorHex, $percent): string
+    {
+        $percent = max(0, min(100, $percent));
+
+        $colorHex = ltrim($colorHex, '#');
+        $colorRgb = sscanf($colorHex, "%02x%02x%02x");
+
+        list($r, $g, $b) = $colorRgb;
+        $r /= 255;
+        $g /= 255;
+        $b /= 255;
+
+        $max = max($r, $g, $b);
+        $min = min($r, $g, $b);
+        $h = 0;
+        $s = 0;
+        $l = ($max + $min) / 2;
+
+        if ($max !== $min) {
+            $d = $max - $min;
+            $s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
+
+            switch ($max) {
+                case $r:
+                    $h = ($g - $b) / $d + ($g < $b ? 6 : 0);
+                    break;
+                case $g:
+                    $h = ($b - $r) / $d + 2;
+                    break;
+                case $b:
+                    $h = ($r - $g) / $d + 4;
+                    break;
+            }
+            $h /= 6;
+        }
+
+        $s -= $s * ($percent / 100);
+
+        $s = max(0, min(1, $s));
+
+        if ($s === 0) {
+            $r = $g = $b = $l;
+        } else {
+            function hue2rgb($p, $q, $t) {
+                if ($t < 0) $t += 1;
+                if ($t > 1) $t -= 1;
+                if ($t < 1 / 6) return $p + ($q - $p) * 6 * $t;
+                if ($t < 1 / 2) return $q;
+                if ($t < 2 / 3) return $p + ($q - $p) * (2 / 3 - $t) * 6;
+                return $p;
+            }
+
+            $q = $l < 0.5 ? $l * (1 + $s) : $l + $s - $l * $s;
+            $p = 2 * $l - $q;
+            $r = hue2rgb($p, $q, $h + 1 / 3);
+            $g = hue2rgb($p, $q, $h);
+            $b = hue2rgb($p, $q, $h - 1 / 3);
+        }
+
+        $r = round($r * 255);
+        $g = round($g * 255);
+        $b = round($b * 255);
+        return sprintf("#%02x%02x%02x", $r, $g, $b);
     }
 
     public function getPalette (string $design, array $colorKit)
