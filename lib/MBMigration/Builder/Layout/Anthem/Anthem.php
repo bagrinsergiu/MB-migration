@@ -826,8 +826,14 @@ class Anthem extends Layout
         return json_encode($block);
     }
 
+    /**
+     * @throws \DOMException
+     */
     protected function accordion_layout(array $sectionData) {
         Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
+
+        $options = [];
+
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['accordion-layout'];
 
@@ -889,11 +895,14 @@ class Anthem extends Layout
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'accordion_title') {
-                        $objItem->setting('labelText', $this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left', 'upperCase' => 'brz-capitalize-on']);
+                        $objItem->setting('labelText', $this->replaceString($item['content'], $options)['text']);
                     }
 
                     if ($item['item_type'] === 'accordion_body') {
-                        $objItem->item(0)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
+
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }
 

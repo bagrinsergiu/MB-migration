@@ -517,7 +517,7 @@ class LayoutUtils extends builderUtils
         $processedHTML = new HtmlHandler($htmlString, $hOptions);
 
         return [
-            'text' => $processedHTML->getNewHtml()
+            'text' => $this->removeNewlines($processedHTML->getNewHtml())
         ];
     }
 
@@ -873,6 +873,11 @@ class LayoutUtils extends builderUtils
             }
         }
         return false;
+    }
+
+    private function removeNewlines($inputString) {
+        $newlines = array("\n", "\r");
+        return str_replace($newlines, '', $inputString);
     }
 
 }
