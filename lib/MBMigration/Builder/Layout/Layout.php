@@ -423,10 +423,11 @@ class Layout extends LayoutUtils
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--richText'];
         $block = new ItemSetter($decoded);
-        $result = $block->item(0)->setting('text', $content)->get();
+        $block->item(0)->setText($content);
+        $result = $block->get();
         if (!empty($settings)) {
             foreach ($settings as $key => $value) {
-                $result = $block->item(0)->setting($key, $value);
+                $block->item(0)->setting($key, $value);
             }
         }
         if (!$associative) {
