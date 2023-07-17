@@ -41,7 +41,7 @@ class ArrayManipulator
         return $this->array;
     }
 
-    public function groupArrayByParentId($list)
+    public function groupArrayByParentId($list): array
     {
         $result = [];
         $parents = [];
@@ -50,6 +50,9 @@ class ArrayManipulator
                 $parents[$item["id"]] = $item;
                 $parents[$item["id"]]["item"] = [];
             } else if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'accordion') {
+                $parents[$item["id"]] = $item;
+                $parents[$item["id"]]["item"] = [];
+            } else if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'tab') {
                 $parents[$item["id"]] = $item;
                 $parents[$item["id"]]["item"] = [];
             }
@@ -69,7 +72,6 @@ class ArrayManipulator
                 return $a["order_by"] <=> $b["order_by"];
             });
 
-
         } else {
              $result = [];
              $parents = [];
@@ -87,6 +89,8 @@ class ArrayManipulator
                  } else if ($item["parent_id"] == null && $item["category"] == "media") {
                      $result[] = $item;
                  } else if ($item["parent_id"] == null && $item["category"] == "accordion") {
+                     $result[] = $item;
+                 } else if ($item["parent_id"] == null && $item["category"] == "tab") {
                      $result[] = $item;
                  } else {
                      $parents[$item["parent_id"]]["children"][] = $item;
@@ -108,9 +112,7 @@ class ArrayManipulator
          }
 
         foreach ($list as $item) {
-            if ($item["parent_id"] == null && $item["category"] !== 'list') {
-                $parents['item'][] = $item;
-            } else if ($item["parent_id"] == null && $item["category"] !== 'accordion') {
+            if ($item["parent_id"] == null && $item["category"] === 'text') {
                 $parents['item'][] = $item;
             }
         }

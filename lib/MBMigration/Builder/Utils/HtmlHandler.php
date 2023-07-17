@@ -49,6 +49,13 @@ class HtmlHandler
         $htmlString = $this->replaceDivWithParagraph($htmlString);
         @$dom->loadHTML($htmlString);
 
+        if($upperCase !== '' && $sectionType !== 'brz-tp-lg-paragraph') {
+            $paragraphsInUpperCase = $dom->getElementsByTagName('p');
+            foreach ($paragraphsInUpperCase as $node) {
+                $node->nodeValue = mb_strtoupper($node->nodeValue, 'utf-8');
+            }
+        }
+
         $paragraphs = $dom->getElementsByTagName('p');
 
         foreach ($paragraphs as $paragraph) {
@@ -200,7 +207,7 @@ class HtmlHandler
 
 
         }
-
+        $this->option = [];
         $result = preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $dom->saveHTML());
         return $result;
     }
