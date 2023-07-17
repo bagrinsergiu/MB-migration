@@ -423,17 +423,11 @@ class Anthem extends Layout
                 $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
             }
             if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
-                if ($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode')) {
-                    if ($sectionData['settings']['sections']['background']['fadeMode'] !== 'none'){
-                        $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-                        if ($opacity <= 0.3) {
-                            $options = array_merge($options, ['textColor' => '#000000']);
-                        }
-                        $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-                    } else {
-                        $objBlock->item(0)->setting('bgColorOpacity', 1);
-                    }
+                $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
+                if ($opacity <= 0.3) {
+                    $options = array_merge($options, ['textColor' => '#000000']);
                 }
+                $objBlock->item(0)->setting('bgColorOpacity', $opacity);
                 $objBlock->item(0)->setting('bgColorType', 'none');
             }
         }
