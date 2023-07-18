@@ -188,11 +188,17 @@ class Anthem extends Layout
             }
             if($item['category'] == 'text') {
                 if($item['item_type']=='title') {
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left', 'upperCase' => 'brz-capitalize-on']);
 
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if($item['item_type']=='body') {
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
 
                     $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
@@ -278,12 +284,18 @@ class Anthem extends Layout
 
             if($item['category'] == 'text') {
                 if($item['item_type']=='title') {
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
 
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-right', 'upperCase' => 'brz-capitalize-on']);
 
                     $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if($item['item_type']=='body') {
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
 
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-right']);
 
@@ -355,9 +367,17 @@ class Anthem extends Layout
                 }
 
                 if($item['item_type']=='title' && $show_header) {
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
+
                     $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg]));
                 }
                 if($item['item_type']=='body' && $show_body) {
+
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
                     $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bgColor' => $blockBg]));
                 }
             }
@@ -458,10 +478,16 @@ class Anthem extends Layout
                 }
 
                 if ($item['item_type'] == 'title' && $show_header) {
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left', 'upperCase' => 'brz-capitalize-on']);
                     $objBlock->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if ($item['item_type'] == 'body' && $show_body) {
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                     $objBlock->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
@@ -513,11 +539,17 @@ class Anthem extends Layout
             if($item['group'] == 0){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                            $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
                         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                         $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
                     }
                     if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                         $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                         $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
@@ -527,10 +559,16 @@ class Anthem extends Layout
             if($item['group'] == 1){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
                         $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                         $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
@@ -570,9 +608,15 @@ class Anthem extends Layout
             }
             if($item['category'] == 'text') {
                 if($item['item_type']=='title'){
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceTitleTag($item['content']);
                 }
                 if($item['item_type']=='body'){
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
                     $block['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][1]['value']['items'][0]['value']['text'] = $this->replaceParagraphs($item['content']);
                 }
             }
@@ -660,6 +704,9 @@ class Anthem extends Layout
                             }
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
+                                    if (isset($item['settings']['used_fonts'])){
+                                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                                    }
                                     $objItem->item(1)->item(0)->setText($this->replaceString($sectionItem['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bgColor' => $blockBg]));
                                     $objItem->item(1)->item(0)->setting('typographyFontSize', 27);
                                 }
@@ -679,9 +726,15 @@ class Anthem extends Layout
                 }
                 if ($section['category'] == 'text') {
                     if ($section['item_type'] == 'title') {
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])));
                     }
                     if ($section['item_type'] == 'body') {
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bgColor' => $blockBg])));
                     }
                 }
@@ -783,12 +836,18 @@ class Anthem extends Layout
 
             if ($headItem['item_type'] === 'title' && $show_header) {
                 $blockHead = true;
+                if (isset($item['settings']['used_fonts'])){
+                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                }
                 $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
                 $objHead->item(0)->item(0)->item(0)->setText($this->replaceString($headItem['content'], $options));
             }
 
             if ($headItem['item_type'] === 'body' && $show_body) {
                 $blockHead = true;
+                if (isset($item['settings']['used_fonts'])){
+                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                }
                 $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
                 $objHead->item(0)->item(2)->item(0)->setText($this->replaceString($headItem['content'], $options));
             }
@@ -809,11 +868,17 @@ class Anthem extends Layout
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'title') {
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
                         $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
 
                     if ($item['item_type'] === 'body') {
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
                         $objItem->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
@@ -895,11 +960,17 @@ class Anthem extends Layout
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'accordion_title') {
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left', 'upperCase' => 'brz-capitalize-on']);
                         $objItem->setting('labelText', $this->replaceString($item['content'], $options)['text']);
                     }
 
                     if ($item['item_type'] === 'accordion_body') {
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
 
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                         $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
@@ -991,12 +1062,18 @@ class Anthem extends Layout
 
             if ($headItem['item_type'] === 'title' && $show_header) {
                 $blockHead = true;
+                if (isset($item['settings']['used_fonts'])){
+                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                }
                 $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
                 $objBlock->item(0)->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], $options)));
             }
 
             if ($headItem['item_type'] === 'body' && $show_body) {
                 $blockHead = true;
+                if (isset($item['settings']['used_fonts'])){
+                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                }
                 $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
                 $objBlock->item(0)->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], $options)));
             }
@@ -1014,11 +1091,17 @@ class Anthem extends Layout
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'tab_title') {
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
                         $objItem->setting('labelText', $this->replaceString($item['content'], $options)['text']);
                     }
 
                     if ($item['item_type'] === 'tab_body') {
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
                         $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
@@ -1124,10 +1207,16 @@ class Anthem extends Layout
             }
 
             if ($item['item_type'] === 'title') {
+                if (isset($item['settings']['used_fonts'])){
+                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                }
                 $objBlock->item(0)->item(1)->item(0)->item(0)->item(0)->setText($this->replaceTitleTag($item['content'], '', 'brz-text-lg-left'));
             }
 
             if ($item['item_type'] === 'body') {
+                if (isset($item['settings']['used_fonts'])){
+                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                }
                 $objBlock->item(0)->item(1)->item(0)->item(2)->item(0)->setText($this->replaceParagraphs($item['content'], '', 'brz-text-lg-left'));
             }
         }
