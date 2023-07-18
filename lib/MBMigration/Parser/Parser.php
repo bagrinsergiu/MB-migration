@@ -286,6 +286,9 @@ class Parser
         return '';
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function getSectionsItems($sectionId, $assembly = false)
     {
         $result = [];
@@ -296,15 +299,29 @@ class Parser
         }
 
         $requestItemsFromSection = $this->db->request('SELECT * FROM items WHERE "group" is not null and section_id = ' . $sectionId['id'] . ' ORDER BY parent_id DESC, order_by');
-        foreach($requestItemsFromSection as $sectionsItems)
-        {
-            Utils::log('Get item | id: ' .$sectionsItems['id'].' from section id: '. $sectionId['id'], 1, 'getSectionsItems');
+        foreach($requestItemsFromSection as $sectionsItems) {
+            Utils::log('Get item | id: ' . $sectionsItems['id'] . ' from section id: ' . $sectionId['id'], 1, 'getSectionsItems');
             $settings = '';
-            if($this->isJsonString($sectionsItems['settings']))
-            {
+            $uploadedFont = [];
+            if ($this->isJsonString($sectionsItems['settings'])) {
                 $settings = json_decode($sectionsItems['settings'], true);
-            }
 
+                if (isset($settings['used_fonts'])) {
+                    foreach ($settings['used_fonts'] as $fontName) {
+                        $defaultFont = $this->cache->get('fonts', 'settings');
+                        foreach ($defaultFont as $font) {
+                            if ($font['fontName'] === $fontName) {
+                                $settings['used_fonts'] = ['fontName' => $font['fontName'], 'uuid' => $font['uuid']];
+                                continue 2;
+                            }
+                        }
+                        $uploadedFont[] = ['fontName' => $fontName, 'uuid' => $this->fontsController->upLoadFonts($fontName)];
+                        $defaultFont = array_merge($defaultFont, $uploadedFont);
+                        $this->cache->set('fonts', $defaultFont, 'settings');
+                        $settings['used_fonts'] = $uploadedFont;
+                    }
+                }
+            }
 
             $result[] = [
                 'id'        => $sectionsItems['id'],
