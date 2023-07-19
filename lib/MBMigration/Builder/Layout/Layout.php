@@ -174,6 +174,102 @@ class Layout extends LayoutUtils
     }
 
     /**
+     * @throws \DOMException
+     * @throws Exception
+     */
+    protected function top_media(array $sectionData) {
+
+        $jsonGlobal = $this->initData();
+
+        Utils::log('Create full media', 1, $this->layoutName . "] [top_media");
+
+        $objBlock = new ItemSetter();
+
+        $options = [];
+
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $decoded = $this->$jsonGlobal['blocks']['top_media']['main'];
+
+        $objBlock->newItem($decoded);
+
+        $objBlock->item(0)->setting('bgColorPalette','');
+        $objBlock->item(0)->setting('bgAttachment','none');
+        $objBlock->item(0)->setting('bgColorOpacity', 1);
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
+            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
+                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
+                $objBlock->item(0)->setting('bgAttachment','fixed');
+            }
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/photo') &&
+            $this->checkArrayPath($sectionData, 'settings/sections/background/filename'))
+        {
+            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
+        }
+
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setText('<p></p>');
+        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('<p></p>');
+
+        foreach ($sectionData['items'] as $item) {
+            if($item['category'] == 'text') {
+
+                $show_header = true;
+                $show_body = true;
+
+                if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
+                    $show_header = $sectionData['settings']['sections']['text']['show_header'];
+                }
+                if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
+                    $show_body = $sectionData['settings']['sections']['text']['show_body'];
+                }
+
+                if($item['item_type']=='title' && $show_header) {
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
+
+                    $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg]));
+                }
+                if($item['item_type']=='body' && $show_body) {
+
+                    if (isset($item['settings']['used_fonts'])){
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
+                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bgColor' => $blockBg]));
+                }
+            }
+            if($item['category'] == 'photo' && $item['content'] !== '') {
+                $objBlock->item()->item()->item()->item(0)->item()->setting('imageSrc', $item['content']);
+                $objBlock->item()->item()->item()->item(0)->item()->setting('imageFileName', $item['imageFileName']);
+
+                if ($item['link'] != '') {
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkType', 'external');
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternal', $item['link']);
+                }
+            }
+        }
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    /**
      * @throws Exception
      */
     protected function left_media(array $sectionData)
@@ -275,6 +371,325 @@ class Layout extends LayoutUtils
                 }
             }
         }
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function two_horizontal_text($sectionData)
+    {
+        $jsonDecode = $this->initData();
+
+        Utils::log('Create full media', 1, $this->layoutName . "] [two-horizontal-text");
+
+        $options = [];
+
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $decoded = $jsonDecode['blocks']['two-horizontal-text'];
+        $block = json_decode($decoded['main'], true);
+
+        $objBlock = new ItemSetter($decoded['main']);
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
+        }
+
+        $options = array_merge($options, ['bgColor' => $blockBg]);
+
+        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+            $textColor = $sectionData['settings']['color']['text'];
+
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+
+            $options = array_merge($options, ['textColor' => $textColor]);
+        }
+
+        foreach ($sectionData['items'] as $item) {
+
+            if($item['group'] == 0){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
+                    }
+                    if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
+                    }
+                }
+            }
+            if($item['group'] == 1){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                    if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                }
+
+            }
+
+        }
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+
+    /**
+     * @throws \DOMException
+     */
+    protected function three_horizontal_text($sectionData)
+    {
+        $jsonDecode = $this->initData();
+
+        Utils::log('Create full media', 1, $this->layoutName . "] [three-horizontal-text");
+
+        $options = [];
+
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $decoded = $jsonDecode['blocks']['three-horizontal-text'];
+        $block = json_decode($decoded['main'], true);
+
+        $objBlock = new ItemSetter($decoded['main']);
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
+        }
+
+        $options = array_merge($options, ['bgColor' => $blockBg]);
+
+        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+            $textColor = $sectionData['settings']['color']['text'];
+
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+
+            $options = array_merge($options, ['textColor' => $textColor]);
+        }
+
+        foreach ($sectionData['items'] as $item) {
+
+            if($item['group'] == 0){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
+                    }
+                    if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
+                    }
+                }
+            }
+            if($item['group'] == 1){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                    if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                }
+            }
+            if($item['group'] == 2){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(2)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                    if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(2)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                }
+            }
+        }
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    /**
+     * @throws \DOMException
+     * @throws Exception
+     */
+    protected function four_horizontal_text($sectionData)
+    {
+        $jsonDecode = $this->initData();
+
+        Utils::log('Create full media', 1, $this->layoutName . "] [three-horizontal-text");
+
+        $options = [];
+
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $decoded = $jsonDecode['blocks']['three-horizontal-text'];
+        $block = json_decode($decoded['main'], true);
+
+        $objBlock = new ItemSetter($decoded['main']);
+
+        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+            $blockBg = $sectionData['settings']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
+            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
+        }
+
+        $options = array_merge($options, ['bgColor' => $blockBg]);
+
+        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+            $textColor = $sectionData['settings']['color']['text'];
+
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+
+            $options = array_merge($options, ['textColor' => $textColor]);
+        }
+
+        foreach ($sectionData['items'] as $item) {
+
+            if($item['group'] == 0){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
+                    }
+                    if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
+                    }
+                }
+            }
+            if($item['group'] == 1){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                    if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                }
+            }
+            if($item['group'] == 2){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(2)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                    if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(2)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                }
+            }
+            if($item['group'] == 3){
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $objBlock->item(0)->item(0)->item(3)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                    if($item['item_type']=='body'){
+                        if (isset($item['settings']['used_fonts'])){
+                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                        }
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $objBlock->item(0)->item(0)->item(3)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                }
+            }
+        }
+
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
