@@ -17,7 +17,7 @@ class ColorMapper
 
         $colorKit = array_merge($colorKit, $magicColors);
 
-        return [
+        $result = [
             'subpalette1' => [
                 'bg'                => $colorKit['color1'],
                 'accent'            => $colorKit['color7'],
@@ -55,6 +55,8 @@ class ColorMapper
                 'btn-text'          => $colorKit['color2']
             ]
         ];
+
+        return $result;
     }
 
     private function August (array $colorKit): array
@@ -690,7 +692,39 @@ class ColorMapper
         ];
     }
 
-    private function chooseLargerContrast($color1, $color2, $color3): string
+
+
+    private function chooseLargerContrast($color1, $color2, $color3) {
+        $contrast1 = $this->getContrast($color1, $color2);
+        $contrast2 = $this->getContrast($color1, $color3);
+        $contrast3 = $this->getContrast($color2, $color3);
+
+        $highestContrast = max($contrast1, $contrast2, $contrast3);
+
+        if ($highestContrast == $contrast1) {
+            return $color1;
+        } else if ($highestContrast == $contrast2) {
+            return $color2;
+        } else {
+            return $color3;
+        }
+    }
+
+    private function getContrast($color1, $color2) {
+        $r1 = hexdec(substr($color1, 1, 2));
+        $g1 = hexdec(substr($color1, 3, 2));
+        $b1 = hexdec(substr($color1, 5, 2));
+
+        $r2 = hexdec(substr($color2, 1, 2));
+        $g2 = hexdec(substr($color2, 3, 2));
+        $b2 = hexdec(substr($color2, 5, 2));
+
+        $contrast = (max($r1, $g1, $b1) - min($r1, $g1, $b1)) * (max($r2, $g2, $b2) - min($r2, $g2, $b2));
+
+        return $contrast;
+    }
+
+    private function chooseLargerContrast_($color1, $color2, $color3): string
     {
         $brightness1 = $this->calculateBrightness($color1);
         $brightness2 = $this->calculateBrightness($color2);

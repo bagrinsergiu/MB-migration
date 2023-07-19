@@ -89,6 +89,34 @@ class LayoutUtils extends builderUtils
         return $mainColor;
     }
 
+    public function getTextColor($option): string
+    {
+        if (array_key_exists('textColor', $option)) {
+            $textColor = $option['textColor'];
+        } else {
+            if (array_key_exists('color', $option)) {
+                $textColor = $option['color']['text'];
+            } else {
+                $textColor = 'rgb(0, 0, 0)';
+            }
+        }
+        return $this->convertHexColorToLowercase($textColor);
+    }
+
+    public function getLinkColor($option): string
+    {
+        if (array_key_exists('textColor', $option)) {
+            $textColor = $option['textColor'];
+        } else {
+            if (array_key_exists('color', $option)) {
+                $textColor = $option['color']['link'];
+            } else {
+                $textColor = 'rgb(0, 0, 0)';
+            }
+        }
+        return $this->convertHexColorToLowercase($textColor);
+    }
+
 
     public function getColor($option): array
     {
@@ -109,7 +137,13 @@ class LayoutUtils extends builderUtils
         if (array_key_exists('mainSize', $option)) {
             $fontSize = $option['mainSize'];
         } else {
-            $fontSize = 16;
+            if ($option['sectionType'] === 'brz-tp-lg-paragraph') {
+                $font = $this->getFonts('main_text');
+                $fontSize = $this->convertFontSize($font['font_size']);
+            } else {
+                $font = $this->getFonts('headers');
+                $fontSize = $this->convertFontSize($font['font_size']);
+            }
         }
         return $fontSize;
     }
@@ -506,7 +540,8 @@ class LayoutUtils extends builderUtils
             'position'      => $this->getPosition($option),
             'fontSize'      => $this->getFontSize($option),
             'mainColor'     => $this->getMainColor($option),
-            'textColor'     => $this->getMainColor($option),
+            'textColor'     => $this->getTextColor($option),
+            'linkColor'     => $this->getLinkColor($option),
             'fontWeight'    => $this->getWeight($option),
             'upperCase'     => $this->getUpperCase($option),
             'fontHeaders'   => $this->getFonts('sub_headers'),
@@ -873,6 +908,14 @@ class LayoutUtils extends builderUtils
             }
         }
         return false;
+    }
+
+    function convertHexColorToLowercase($hexColor) {
+        $result = strtolower($hexColor);
+        if (substr($result, 0, 1) === '#') {
+            $result = substr($result, 1);
+        }
+        return '#'.$result;
     }
 
     private function removeNewlines($inputString) {

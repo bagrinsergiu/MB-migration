@@ -40,9 +40,11 @@ class HtmlHandler
         $fontHeaders    = $this->option['fontHeaders'];
         $fontMain       = $this->option['fontMain'];
         $textColor      = $this->option['textColor'];
+        $linkColor      = $this->option['linkColor'];
         $color          = $this->option['color'];
 
         //$htmlString = str_replace('&nbsp;', '', $htmlString);
+
 
         $dom = new DOMDocument();
 
@@ -67,7 +69,7 @@ class HtmlHandler
 
             $getTagAInParagraph = $paragraph->getElementsByTagName('a');
             if ($getTagAInParagraph->length > 0) {
-                $this->createUrl($getTagAInParagraph->item(0), $color);
+                $this->createUrl($getTagAInParagraph->item(0), $linkColor);
             }
 
             $paragraphStyle = $paragraph->getAttribute('style');
