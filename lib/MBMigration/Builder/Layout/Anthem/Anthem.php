@@ -149,7 +149,7 @@ class Anthem extends Layout
         }
         
         $options = array_merge($options, ['bgColor' => $blockBg]);
-        
+
         if($this->checkArrayPath($sectionData, 'settings/color/text')) {
             $textColor = $sectionData['settings']['color']['text'];
 
@@ -161,14 +161,23 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
             Utils::log('Set background', 1, $this->layoutName . "] [left_media");
 
-            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-            $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-            if($opacity <= 0.3) {
-                $options = array_merge($options, ['textColor' => '#000000']);
+            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') && $sectionData['settings']['sections']['background']['filename'] !== ''){
+                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
             }
-            $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-            $objBlock->item(0)->setting('bgColorType', 'none');
+            if($this->checkArrayPath($sectionData, 'settings/sections/background/photo') && $sectionData['settings']['sections']['background']['photo'] !== '') {
+                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+            }
+
+            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
+                $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
+                if ($opacity <= 0.3) {
+                    $options = array_merge($options, ['textColor' => '#000000']);
+                }
+                if($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode') && $sectionData['settings']['sections']['background']['fadeMode'] !== 'none') {
+                    $objBlock->item(0)->setting('bgColorOpacity', $opacity);
+                }
+                $objBlock->item(0)->setting('bgColorType', 'none');
+            }
         }
 
         foreach ($sectionData['items'] as $item) {
