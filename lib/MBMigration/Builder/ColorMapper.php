@@ -17,7 +17,7 @@ class ColorMapper
 
         $colorKit = array_merge($colorKit, $magicColors);
 
-        return [
+        $result = [
             'subpalette1' => [
                 'bg'                => $colorKit['color1'],
                 'accent'            => $colorKit['color7'],
@@ -100,6 +100,8 @@ class ColorMapper
                 'sub-acc'           => $this->mixContrastingColor($colorKit['color3'],0)
             ]
         ];
+
+        return $result;
     }
 
     private function August (array $colorKit): array
@@ -737,13 +739,15 @@ class ColorMapper
 
     private function chooseLargerContrast($color1, $color2, $color3): string
     {
-        $brightness1 = $this->calculateBrightness($color1);
-        $brightness2 = $this->calculateBrightness($color2);
-        $brightness3 = $this->calculateBrightness($color3);
+        $contrast1 = $this->getContrast($color1, $color2);
+        $contrast2 = $this->getContrast($color1, $color3);
+        $contrast3 = $this->getContrast($color2, $color3);
 
-        if ($brightness1 >= $brightness2 && $brightness1 >= $brightness3) {
+        $highestContrast = max($contrast1, $contrast2, $contrast3);
+
+        if ($highestContrast == $contrast1) {
             return $color1;
-        } elseif ($brightness2 >= $brightness1 && $brightness2 >= $brightness3) {
+        } else if ($highestContrast == $contrast2) {
             return $color2;
         } else {
             return $color3;
@@ -771,6 +775,23 @@ class ColorMapper
         $green = hexdec(substr($color, 3, 2));
         $blue = hexdec(substr($color, 5, 2));
         return ($red * 299 + $green * 587 + $blue * 114) / 1000;
+    }
+
+    private function getContrast($color1, $color2): float
+    {
+        $luma1 = 0.2126 * hexdec(substr($color1, 1, 2)) +
+            0.7152 * hexdec(substr($color1, 3, 2)) +
+            0.0722 * hexdec(substr($color1, 5, 2));
+
+        $luma2 = 0.2126 * hexdec(substr($color2, 1, 2)) +
+            0.7152 * hexdec(substr($color2, 3, 2)) +
+            0.0722 * hexdec(substr($color2, 5, 2));
+
+        if ($luma1 > $luma2) {
+            return ($luma1 + 0.05) / ($luma2 + 0.05);
+        } else {
+            return ($luma2 + 0.05) / ($luma1 + 0.05);
+        }
     }
 
     private function darken($color, $amount): string
@@ -885,26 +906,27 @@ class ColorMapper
         if ($s === 0) {
             $r = $g = $b = $l;
         } else {
-            function hue2rgb($p, $q, $t) {
-                if ($t < 0) $t += 1;
-                if ($t > 1) $t -= 1;
-                if ($t < 1 / 6) return $p + ($q - $p) * 6 * $t;
-                if ($t < 1 / 2) return $q;
-                if ($t < 2 / 3) return $p + ($q - $p) * (2 / 3 - $t) * 6;
-                return $p;
-            }
 
             $q = $l < 0.5 ? $l * (1 + $s) : $l + $s - $l * $s;
             $p = 2 * $l - $q;
-            $r = hue2rgb($p, $q, $h + 1 / 3);
-            $g = hue2rgb($p, $q, $h);
-            $b = hue2rgb($p, $q, $h - 1 / 3);
+            $r = $this->hue2rgb($p, $q, $h + 1 / 3);
+            $g = $this->hue2rgb($p, $q, $h);
+            $b = $this->hue2rgb($p, $q, $h - 1 / 3);
         }
 
         $r = round($r * 255);
         $g = round($g * 255);
         $b = round($b * 255);
         return sprintf("#%02x%02x%02x", $r, $g, $b);
+    }
+
+    function hue2rgb($p, $q, $t) {
+        if ($t < 0) $t += 1;
+        if ($t > 1) $t -= 1;
+        if ($t < 1 / 6) return $p + ($q - $p) * 6 * $t;
+        if ($t < 1 / 2) return $q;
+        if ($t < 2 / 3) return $p + ($q - $p) * (2 / 3 - $t) * 6;
+        return $p;
     }
 
     public function getPalette (string $design, array $colorKit)
