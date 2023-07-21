@@ -254,6 +254,11 @@ class Parser
         foreach ($requestSections as $pageSections)
         {
             $typeSectionLayoutUuid = $this->db->requestArray("SELECT name, category, settings FROM section_layouts WHERE uuid  = '" . $pageSections['section_layout_uuid'] . "'");
+            $settings = json_decode($pageSections['settings'], true);
+
+            if(!array_key_exists( 'color', $settings)) {
+                $settings['color'] = $this->cache->get('subpalette', 'parameter')['subpalette1'];
+            }
 
             $result[] = [
                 'id'             => $pageSections['id'],
@@ -262,7 +267,7 @@ class Parser
                 'typeSection'    => $typeSectionLayoutUuid[0]['name'],
                 'position'       => $pageSections['position'],
                 'settings'       => [
-                    'sections' => json_decode($pageSections['settings'], true),
+                    'sections' => $settings,
                     'layout'   => json_decode($typeSectionLayoutUuid[0]['settings'], true)
                 ]
             ];
