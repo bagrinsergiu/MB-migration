@@ -142,11 +142,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
         
         $options = array_merge($options, ['bgColor' => $blockBg]);
 
@@ -237,11 +233,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
 
         $options = array_merge($options, ['bgColor' => $blockBg]);
 
@@ -347,11 +339,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photo') &&
             $this->checkArrayPath($sectionData, 'settings/sections/background/filename'))
@@ -440,11 +428,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photo') &&
             $this->checkArrayPath($sectionData, 'settings/sections/background/filename'))
@@ -525,11 +509,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
 
         $options = array_merge($options, ['bgColor' => $blockBg]);
 
@@ -621,11 +601,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
 
         if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
             $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
@@ -796,11 +772,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
 
         $objBlock->item(0)->setting('bgColorPalette', '');
         foreach ( $sectionData['head'] as $head){
@@ -917,11 +889,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
 
         $options = array_merge($options, ['bgColor' => $blockBg]);
 
@@ -1162,11 +1130,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
 
         $options = array_merge($options, ['bgColor' => $blockBg]);
 
@@ -1331,11 +1295,7 @@ class Anthem extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        } 
 
         $options = array_merge($options, ['bgColor' => $blockBg]);
 
