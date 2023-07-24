@@ -761,34 +761,75 @@ class Anthem extends Layout
     protected function grid_layout(array $sectionData) {
         Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
 
-        $objItem = new ItemSetter();
-        $objBlock = new ItemSetter();
+        $objItem    = new ItemSetter();
+        $objBlock   = new ItemSetter();
+        $objHead    = new ItemSetter();
+        $objRow     = new ItemSetter();
+
+        $options = [];
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $objBlock->newItem($decoded['main']);
+        $objHead->newItem($decoded['head']);
+        $objRow->newItem($decoded['row']);
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } 
+            $options = array_merge($options, ['bgColor' => $blockBg]);
+        }
+
+        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
+            $textColor = $sectionData['settings']['color']['text'];
+            $options = array_merge($options, ['textColor' => $textColor]);
+        }
 
         $objBlock->item(0)->setting('bgColorPalette', '');
         foreach ( $sectionData['head'] as $head){
             if ($head['category'] == 'text') {
-                if ($head['item_type'] == 'title') {
-                    $objBlock->item()->item()->item()->setText($this->replaceString($head['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bgColor' => $blockBg]));
+
+                $show_header = true;
+                $show_body = true;
+
+                if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
+                    $show_header = $sectionData['settings']['sections']['list']['show_header'];
+                }
+                if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
+                    $show_body = $sectionData['settings']['sections']['list']['show_body'];
+                }
+
+                if ($head['item_type'] === 'title' && $show_header) {
+
+                    if (isset($item['settings']['used_fonts'])) {
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
+
+                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center']);
+                    $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($head['content'], $options)));
+
+                }
+
+                if ($head['item_type'] === 'body' && $show_body) {
+
+                    if (isset($item['settings']['used_fonts'])) {
+                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
+                    }
+
+                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
+                    $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($head['content'], $options)));
                 }
             }
         }
+        $objBlock->item()->addItem($objHead->get());
 
         if(!empty($sectionData['settings']['sections']['background'])) {
             $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
             $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
             $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
         }
-        $resultRemove = [];
+
         foreach ($sectionData['items'] as $section)
         {
             $objItem->newItem($decoded['item']);
@@ -836,13 +877,24 @@ class Anthem extends Layout
                     }
                 }
                 if ($section['category'] == 'text') {
-                    if ($section['item_type'] == 'title') {
+
+                    $show_header = true;
+                    $show_body = true;
+
+                    if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
+                        $show_header = $sectionData['settings']['sections']['list']['show_header'];
+                    }
+                    if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
+                        $show_body = $sectionData['settings']['sections']['list']['show_body'];
+                    }
+
+                    if ($section['item_type'] == 'title' && $show_header) {
                         if (isset($item['settings']['used_fonts'])){
                             $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                         }
                         $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])));
                     }
-                    if ($section['item_type'] == 'body') {
+                    if ($section['item_type'] == 'body' && $show_body) {
                         if (isset($item['settings']['used_fonts'])){
                             $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                         }
@@ -850,10 +902,9 @@ class Anthem extends Layout
                     }
                 }
             }
-            $objBlock->item(0)->item(1)->addItem($objItem->get());
-
+            $objRow->addItem($objItem->get());
         }
-
+        $objBlock->item()->addItem($objRow->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
