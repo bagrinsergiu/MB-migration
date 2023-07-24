@@ -271,6 +271,26 @@ class BrizyAPI extends Utils
         return $data['uid'];
     }
 
+    /**
+     * @throws GuzzleException
+     */
+    public function createLinksBetweenProjects()
+    {
+        Utils::log('Create links between projects', 1, "createFonts");
+
+        $containerID = Utils::$cache->get('projectId_Brizy');
+
+        $metadata['site_id']        = Utils::$cache->get('projectId_MB');
+        $metadata['secret']         = Utils::$cache->get('projectSecret');
+        $metadata['MBAccountID']    = Utils::$cache->get('accountID_MB');
+        $metadata['MBVisitorID']    = null;
+        $metadata['MBThemeName']    = Utils::$cache->get('design', 'settings');
+
+        $url = $this->createUrlAPI('projects') . '/'. $containerID;
+
+        $this->request('PATCH', $url , [ 'form_params' => $metadata]);
+    }
+
     protected function generateCharID(int $length = 32): string
     {
         $characters = 'abcdefghijklmnopqrstuvwxyz';
@@ -556,6 +576,10 @@ class BrizyAPI extends Utils
 
         if($method === 'PUT'){
             $headers['X-HTTP-Method-Override'] = 'PUT';
+        }
+
+        if($method === 'PATCH'){
+            $headers['X-HTTP-Method-Override'] = 'PATCH';
         }
 
         if ($contentType) {
