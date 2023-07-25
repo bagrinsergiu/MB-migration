@@ -278,17 +278,17 @@ class BrizyAPI extends Utils
     {
         Utils::log('Create links between projects', 1, "createFonts");
 
-        $containerID = Utils::$cache->get('projectId_Brizy');
+        $projectId_MB = Utils::$cache->get('projectId_MB');
 
-        $metadata['site_id']        = Utils::$cache->get('projectId_MB');
+        $metadata['site_id']        = $projectId_MB;
         $metadata['secret']         = Utils::$cache->get('projectSecret');
         $metadata['MBAccountID']    = Utils::$cache->get('accountID_MB');
         $metadata['MBVisitorID']    = null;
         $metadata['MBThemeName']    = Utils::$cache->get('design', 'settings');
 
-        $url = $this->createUrlAPI('projects') . '/'. $containerID;
+        $url = $this->createUrlAPI('projects') . '/' . $projectId_MB;
 
-        $this->request('PATCH', $url , [ 'form_params' => $metadata]);
+        $this->request('PATCH', $url, [ 'form_params' => ['metadata' => json_encode($metadata) ]]);
     }
 
     protected function generateCharID(int $length = 32): string
