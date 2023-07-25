@@ -830,6 +830,22 @@ class Layout extends LayoutUtils
         return json_encode($block);
     }
 
+    protected function list_media_layout(array $sectionData){
+        $this->sermon_layout_placeholder($sectionData);
+    }
+
+    protected function sermon_layout_placeholder(array $sectionData) {
+        $jsonDecode = $this->initData();
+
+        $objBlock = new ItemSetter();
+
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $jsonDecode['dynamic']['sermon_layout_placeholder'];
+
+
+        $objBlock->newItem($decoded['main']);
+    }
+
     /**
      * @throws Exception
      */
