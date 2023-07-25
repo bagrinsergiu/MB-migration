@@ -830,6 +830,15 @@ class Layout extends LayoutUtils
         return json_encode($block);
     }
 
+    protected function event_calendar_layout (){
+
+    }
+
+    protected function event_layout_placeholder(){
+
+    }
+
+
     /**
      * @throws Exception
      */
