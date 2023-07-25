@@ -45,7 +45,7 @@ class MigrationPlatform
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
 
-        $this->buildPage = '';
+        $this->buildPage = 'home';
     }
 
     public function start(int $projectID_MB, int $projectID_Brizy = 0): bool
