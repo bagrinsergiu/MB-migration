@@ -66,6 +66,8 @@ class MigrationPlatform
     {
         $this->brizyApi = new BrizyAPI();
 
+        $this->cache->setClass($this->brizyApi, 'brizyApi');
+
         if ($projectID_Brizy == 0) {
             $this->projectID_Brizy = $this->brizyApi->createProject('analaiseProject', 4303835, 'id');
         } else {

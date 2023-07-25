@@ -18,6 +18,18 @@ class Anthem extends Layout
     private $jsonDecode;
 
     protected $layoutName;
+    /**
+     * @var VariableCache
+     */
+    public $cache;
+    /**
+     * @var array|string[]
+     */
+    private $textPosition;
+    /**
+     * @var DOMDocument
+     */
+    private $dom;
 
     /**
      * @throws Exception
@@ -37,7 +49,7 @@ class Anthem extends Layout
 
         $menuList = $this->cache->get('menuList');
 
-        if($menuList['create'] == false) {
+        if($menuList['create'] === false) {
             if ($this->createMenu($menuList)) {
                 Utils::log('Success create MENU', 1, $this->layoutName . "] [__construct");
                 $menuList['create'] = true;
