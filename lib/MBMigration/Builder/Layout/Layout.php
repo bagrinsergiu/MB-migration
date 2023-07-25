@@ -831,19 +831,70 @@ class Layout extends LayoutUtils
     }
 
     protected function list_media_layout(array $sectionData){
-        $this->sermon_layout_placeholder($sectionData);
+        return $this->sermon_layout_placeholder($sectionData);
     }
 
+    /**
+     * @throws Exception
+     */
     protected function sermon_layout_placeholder(array $sectionData) {
         $jsonDecode = $this->initData();
 
         $objBlock = new ItemSetter();
+        $objHead  = new ItemSetter();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $jsonDecode['dynamic']['sermon_layout_placeholder'];
 
-
         $objBlock->newItem($decoded['main']);
+        $objHead->newItem($decoded['head']);
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/color/bg')) {
+            $blockBg = $sectionData['settings']['sections']['color']['bg'];
+            $objBlock->item(0)->setting('bgColorPalette','');
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        }
+
+        $blockHead = false;
+        foreach ($sectionData['head'] as $headItem)
+        {
+            if($headItem['category'] !== 'text') { continue; }
+
+            $show_header = true;
+            $show_body = true;
+
+            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
+                $show_header = $sectionData['settings']['sections']['list']['show_header'];
+            }
+            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
+                $show_body = $sectionData['settings']['sections']['list']['show_body'];
+            }
+
+            if ($headItem['item_type'] === 'title' && $show_header) {
+                $blockHead = true;
+                $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])), 0);
+            }
+
+            if ($headItem['item_type'] === 'body' && $show_body) {
+                $blockHead = true;
+                $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])));
+            }
+        }
+
+        if($blockHead) {
+            $objBlock->item(0)->addItem($objHead->get(), 0);
+        }
+        $mainCollectionType = $this->cache->get('mainCollectionType');
+
+        if($blockHead) {
+            $objBlock->item()->item(1)->item()->setting('source', $mainCollectionType);
+        } else {
+            $objBlock->item()->item()->item()->setting('source', $mainCollectionType);
+        }
+
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
     }
 
     /**
