@@ -3,6 +3,7 @@
 namespace MBMigration;
 
 use Exception;
+use MBMigration\Builder\Checking;
 use MBMigration\Builder\ColorMapper;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Builder\PageBuilder;
@@ -34,6 +35,8 @@ class MigrationPlatform
      */
     private $finalSuccess;
     private $buildPage;
+
+    use checking;
 
     public function __construct(Config $config)
     {
@@ -89,6 +92,8 @@ class MigrationPlatform
         $this->cache->set('graphToken', $this->brizyApi->getGraphToken($this->projectID_Brizy));
 
         $this->QueryBuilder = new QueryBuilder($this->cache);
+
+        $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
 
         $this->getAllPage();
 
@@ -369,7 +374,7 @@ class MigrationPlatform
     {
         if ($this->pageCheck($slug)) {
             Utils::log('Request to create a new page: ' . $slug, 1, 'creteNewPage');
-            $this->QueryBuilder->CreateCollectionItem($this->cache->get('mainCollectionType'), $slug, $title);
+            $this->QueryBuilder->createCollectionItem($this->cache->get('mainCollectionType'), $slug, $title);
             $this->getAllPage();
         }
 
@@ -382,17 +387,6 @@ class MigrationPlatform
             return $mainCollectionItem;
         }
         return false;
-    }
-
-    private function pageCheck($slug): bool
-    {
-        $ListPages = $this->cache->get('ListPages');
-        foreach ($ListPages as $listSlug => $collectionItems) {
-            if ($listSlug == $slug) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

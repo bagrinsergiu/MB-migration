@@ -3,11 +3,13 @@
 namespace MBMigration\Builder\Layout;
 
 use Exception;
+use MBMigration\Builder\Checking;
 use MBMigration\Builder\ItemSetter;
 use MBMigration\Core\Utils;
 
 class Layout extends LayoutUtils
 {
+    use checking;
     /**
      * @throws Exception
      */
@@ -881,21 +883,63 @@ class Layout extends LayoutUtils
             }
         }
 
-        if($blockHead) {
-            $objBlock->item(0)->addItem($objHead->get(), 0);
-        }
         $mainCollectionType = $this->cache->get('mainCollectionType');
 
         if($blockHead) {
+            $objBlock->item(0)->addItem($objHead->get(), 0);
             $objBlock->item()->item(1)->item()->setting('source', $mainCollectionType);
         } else {
             $objBlock->item()->item()->item()->setting('source', $mainCollectionType);
         }
 
+        $slug = 'sermon-list';
+        $title = 'Sermon List';
+
+        $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
 
         $block = $this->replaceIdWithRandom($objBlock->get());
+
+        $this->createDetailPage($collectionItemsForDetailPage, $slug);
         return json_encode($block);
     }
+
+    protected function createCollectionItems($mainCollectionType, $slug, $title)
+    {
+        Utils::log('Create Detail Page: ' . $title, 1, $this->layoutName . "] [createDetailPage");
+        if($this->pageCheck($slug)) {
+            $QueryBuilder = $this->cache->getClass('QueryBuilder');
+            $createdCollectionItem = $QueryBuilder->createCollectionItem($mainCollectionType, $slug, $title);
+            return $createdCollectionItem['id'];
+        } else {
+            $ListPages = $this->cache->get('ListPages');
+            foreach ($ListPages as $listSlug => $collectionItems) {
+                if ($listSlug == $slug) {
+                    return $collectionItems;
+                }
+            }
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function createDetailPage($itemsID, $slug) {
+        $itemsData = [];
+        $jsonDecode = $this->initData();
+        $QueryBuilder = $this->cache->getClass('QueryBuilder');
+
+        $decoded = $jsonDecode['dynamic']['sermon_layout_placeholder'];
+
+        $itemsData['items'][] = $this->cache->get('menuBlock');
+        $itemsData['items'][] = json_decode($decoded['detail'], true);
+        $itemsData['items'][] = $this->cache->get('footerBlock');
+
+        $pageData = json_encode($itemsData);
+
+        $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+    }
+
+
 
     /**
      * @throws Exception
