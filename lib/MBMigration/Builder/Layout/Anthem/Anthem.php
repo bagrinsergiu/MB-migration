@@ -1428,20 +1428,24 @@ class Anthem extends Layout
         Utils::log('Create Footer', 1, $this->layoutName . "] [createFooter");
 
         $options = [];
+
         $objBlock = new ItemSetter();
-        $objIcon = new ItemSetter();
+        $objText  = new ItemSetter();
+        $objImage = new ItemSetter();
+        $objColunm = new ItemSetter();
+        $objIcon  = new ItemSetter();
 
         $sectionData = $this->cache->get('mainSection')['footer'];
 
-        $decoded = $this->jsonDecode['blocks']['footer']['main'];
-        $iconItem = $this->jsonDecode['blocks']['footer']['item'];
+        $decoded = $this->jsonDecode['blocks']['footer'];
 
-        $objBlock->newItem($decoded);
-        $objIcon->newItem($iconItem);
-
+        $objBlock->newItem($decoded['main']);
+        $objIcon->newItem($decoded['item']);
+        $objText->newItem($decoded['item-text']);
+        $objImage->newItem($decoded['item-image']);
+        $objColunm->newItem($decoded['item-empty']);
 
         $block = json_decode($decoded, true);
-        $blockIcon = json_decode($iconItem, true);
 
         if($this->checkArrayPath($sectionData, 'settings/color/subpalette')) {
 
@@ -1456,9 +1460,6 @@ class Anthem extends Layout
                 $itemsIcon = $this->getDataIconValue($item['content']);
                 if(!empty($itemsIcon)){
                     foreach ($itemsIcon as $itemIcon){
-                        $blockIcon['value']['linkExternal'] = $itemIcon['href'];
-
-                        $blockIcon['value']['name'] = $this->getIcon($itemIcon['icon']);
                         $objIcon->setting('linkExternal', $itemIcon['href']);
                         $objIcon->setting('name', $this->getIcon($itemIcon['icon']));
                         $objBlock->item(1)->item(0)->item(0)->item(0)->addItem($objIcon->get());
@@ -1466,9 +1467,24 @@ class Anthem extends Layout
                 }
 
                 $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
-                $objBlock->item(1)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                $objText->item()->item()->setText($this->replaceString($item['content'], $options));
             }
         }
+        $objBlock->item()->addItem($objText->get());
+
+        if($this->checkArrayPath($sectionData, 'settings/background/photo')) {
+            $objImage->item()->item()->setting('imageSrc', $sectionData['settings']['background']['photo']);
+            $objImage->item()->item()->setting('imageFileName', $sectionData['settings']['background']['filename']);
+            $objImage->item()->item()->setting('sizeType', 'custom');
+            $objImage->item()->item()->setting('size', 100);
+            $objImage->item()->item()->setting('width', 80);
+            $objImage->item()->item()->setting('widthSuffix', "%");
+            $objImage->item()->item()->setting('height', 100);
+            $objImage->item()->item()->setting('heightSuffix', "%");
+
+            $objBlock->item()->addItem($objImage->get());
+        }
+
         $block = $this->replaceIdWithRandom($objBlock->get());
         $this->cache->set('footerBlock', json_encode($block));
     }
