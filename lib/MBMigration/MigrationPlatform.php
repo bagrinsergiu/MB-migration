@@ -45,7 +45,7 @@ class MigrationPlatform
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
 
-        $this->buildPage = '';
+        $this->buildPage = 'home';
     }
 
     public function start(int $projectID_MB, int $projectID_Brizy = 0): bool
@@ -474,6 +474,22 @@ class MigrationPlatform
                         Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
                         $section['settings']['sections']['background']['photo'] = $result['name'];
                         $section['settings']['sections']['background']['filename'] = $result['filename'];
+                        Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
+                    }
+                } else {
+                    $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
+                }
+            }
+
+            if ($this->checkArrayPath($section, 'settings/background/photo')) {
+                if ($section['settings']['background']['photo'] != null) {
+                    Utils::log('Found background image', 1, 'uploadPicturesFromSections');
+                    $result = $this->brizyApi->createMedia($section['settings']['background']['photo'], $this->projectId);
+                    if ($result) {
+                        $result = json_decode($result['body'], true);
+                        Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
+                        $section['settings']['background']['photo'] = $result['name'];
+                        $section['settings']['background']['filename'] = $result['filename'];
                         Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
                     }
                 } else {
