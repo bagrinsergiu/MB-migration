@@ -122,7 +122,7 @@ class HtmlHandler
             } else {
                 $titleFontSize = $this->convertFontSize($fontHeaders['font_size']);
 
-                $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$titleFontSize brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing ";
+                $newClass = "$position brz-fss-lg-px brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$titleFontSize brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing ";
             }
 
             $paragraph->setAttribute('class', $newClass);

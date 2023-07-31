@@ -48,10 +48,14 @@ class LayoutUtils extends builderUtils
      */
     public function getUpperCase($option): string
     {
+        $upperCase = '';
         if (array_key_exists('upperCase', $option)) {
             $upperCase = $option['upperCase'];
         } else {
-            $upperCase = '';
+            $font = $this->getFonts('headers');
+            if($font['text_transform'] !== 'none'){
+                $upperCase = 'brz-capitalize-on';
+            }
         }
         return $upperCase;
     }
@@ -544,7 +548,7 @@ class LayoutUtils extends builderUtils
             'linkColor'     => $this->getLinkColor($option),
             'fontWeight'    => $this->getWeight($option),
             'upperCase'     => $this->getUpperCase($option),
-            'fontHeaders'   => $this->getFonts('sub_headers'),
+            'fontHeaders'   => $this->getFonts('headers'),
             'fontMain'      => $this->getFonts('main_text'),
             'color'         => $this->getColor($option),
         ];
@@ -908,6 +912,13 @@ class LayoutUtils extends builderUtils
             }
         }
         return false;
+    }
+
+    protected function fillingSetupFields(&$options){
+        $options = [
+            'title' => $this->getFonts('headers'),
+            'body' => $this->getFonts('main_text'),
+        ];
     }
 
     function convertHexColorToLowercase($hexColor) {
