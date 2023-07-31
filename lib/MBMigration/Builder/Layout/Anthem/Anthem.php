@@ -1440,6 +1440,7 @@ class Anthem extends Layout
         Utils::log('Create Footer', 1, $this->layoutName . "] [createFooter");
 
         $options = [];
+        $imageAdd = false;
 
         $objBlock = new ItemSetter();
         $objText  = new ItemSetter();
@@ -1482,9 +1483,9 @@ class Anthem extends Layout
                 $objText->item()->item()->setText($this->replaceString($item['content'], $options));
             }
         }
-        $objBlock->item()->addItem($objText->get());
 
         if($this->checkArrayPath($sectionData, 'settings/background/photo')) {
+            $imageAdd = true;
             $objImage->item()->item()->setting('imageSrc', $sectionData['settings']['background']['photo']);
             $objImage->item()->item()->setting('imageFileName', $sectionData['settings']['background']['filename']);
             $objImage->item()->item()->setting('sizeType', 'custom');
@@ -1493,7 +1494,13 @@ class Anthem extends Layout
             $objImage->item()->item()->setting('widthSuffix', "%");
             $objImage->item()->item()->setting('height', 100);
             $objImage->item()->item()->setting('heightSuffix', "%");
+        }
 
+        if(!$imageAdd){
+            $objText->setting('width', 100);
+            $objBlock->item()->addItem($objText->get());
+        } else {
+            $objBlock->item()->addItem($objText->get());
             $objBlock->item()->addItem($objImage->get());
         }
 
