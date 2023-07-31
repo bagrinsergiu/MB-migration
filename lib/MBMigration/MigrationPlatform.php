@@ -3,6 +3,7 @@
 namespace MBMigration;
 
 use Exception;
+use MBMigration\Builder\Checking;
 use MBMigration\Builder\ColorMapper;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Builder\PageBuilder;
@@ -35,6 +36,8 @@ class MigrationPlatform
     private $finalSuccess;
     private $buildPage;
 
+    use checking;
+
     public function __construct(Config $config)
     {
         $this->cache = new VariableCache();
@@ -45,7 +48,7 @@ class MigrationPlatform
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
 
-        $this->buildPage = '';
+        $this->buildPage = 'home';
     }
 
     public function start(int $projectID_MB, int $projectID_Brizy = 0): bool
@@ -65,6 +68,8 @@ class MigrationPlatform
     private function run(int $projectID_MB, int $projectID_Brizy = 0): void
     {
         $this->brizyApi = new BrizyAPI();
+
+        $this->cache->setClass($this->brizyApi, 'brizyApi');
 
         if ($projectID_Brizy == 0) {
             $this->projectID_Brizy = $this->brizyApi->createProject('analaiseProject', 4303835, 'id');
@@ -87,6 +92,8 @@ class MigrationPlatform
         $this->cache->set('graphToken', $this->brizyApi->getGraphToken($this->projectID_Brizy));
 
         $this->QueryBuilder = new QueryBuilder($this->cache);
+
+        $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
 
         $this->getAllPage();
 
@@ -367,7 +374,7 @@ class MigrationPlatform
     {
         if ($this->pageCheck($slug)) {
             Utils::log('Request to create a new page: ' . $slug, 1, 'creteNewPage');
-            $this->QueryBuilder->CreateCollectionItem($this->cache->get('mainCollectionType'), $slug, $title);
+            $this->QueryBuilder->createCollectionItem($this->cache->get('mainCollectionType'), $slug, $title);
             $this->getAllPage();
         }
 
@@ -380,17 +387,6 @@ class MigrationPlatform
             return $mainCollectionItem;
         }
         return false;
-    }
-
-    private function pageCheck($slug): bool
-    {
-        $ListPages = $this->cache->get('ListPages');
-        foreach ($ListPages as $listSlug => $collectionItems) {
-            if ($listSlug == $slug) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -474,6 +470,22 @@ class MigrationPlatform
                         Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
                         $section['settings']['sections']['background']['photo'] = $result['name'];
                         $section['settings']['sections']['background']['filename'] = $result['filename'];
+                        Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
+                    }
+                } else {
+                    $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
+                }
+            }
+
+            if ($this->checkArrayPath($section, 'settings/background/photo')) {
+                if ($section['settings']['background']['photo'] != null) {
+                    Utils::log('Found background image', 1, 'uploadPicturesFromSections');
+                    $result = $this->brizyApi->createMedia($section['settings']['background']['photo'], $this->projectId);
+                    if ($result) {
+                        $result = json_decode($result['body'], true);
+                        Utils::log('Upload image response: ' . json_encode($result), 1, 'uploadPicturesFromSections');
+                        $section['settings']['background']['photo'] = $result['name'];
+                        $section['settings']['background']['filename'] = $result['filename'];
                         Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'uploadPicturesFromSections');
                     }
                 } else {

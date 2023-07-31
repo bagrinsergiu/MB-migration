@@ -9,8 +9,11 @@ class VariableCache
     private $cache;
 
     public function __construct() {
-        $this->cache = array();
         Utils::log('Initialization', 4, 'Cache');
+
+        $this->cache = [];
+
+        $this->cache['OBJECTS'] = [];
     }
 
     /**
@@ -73,6 +76,16 @@ class VariableCache
             $expiration_time = time() + $expiration;
             $this->cache[$key . '_expiration'] = $expiration_time;
         }
+    }
+
+    public function setClass(object $class, $name): void
+    {
+        $this->set($name, $class, 'OBJECTS');
+    }
+
+    public function getClass(string $name): object
+    {
+        return $this->get($name, 'OBJECTS');
     }
 
     private function setKeyRecursive($section, $key, $value, &$array): void

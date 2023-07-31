@@ -208,6 +208,7 @@ class Anthem extends Layout
                     if (isset($item['settings']['used_fonts'])){
                         $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                     }
+
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left']);
 
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
@@ -658,6 +659,7 @@ class Anthem extends Layout
                             $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                         }
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center']);
+
                         $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
@@ -1010,6 +1012,7 @@ class Anthem extends Layout
                     $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                 }
                 $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center']);
+
                 $objHead->item(0)->item(0)->item(0)->setText($this->replaceString($headItem['content'], $options));
             }
 
@@ -1041,6 +1044,7 @@ class Anthem extends Layout
                         if (isset($item['settings']['used_fonts'])){
                             $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                         }
+
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center']);
                         $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
@@ -1133,6 +1137,7 @@ class Anthem extends Layout
                         if (isset($item['settings']['used_fonts'])){
                             $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                         }
+
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left']);
                         $objItem->setting('labelText', $this->replaceString($item['content'], $options)['text']);
                     }
@@ -1231,6 +1236,7 @@ class Anthem extends Layout
                 if (isset($item['settings']['used_fonts'])){
                     $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                 }
+
                 $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center']);
                 $objBlock->item(0)->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], $options)));
             }
@@ -1260,6 +1266,7 @@ class Anthem extends Layout
                         if (isset($item['settings']['used_fonts'])){
                             $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                         }
+
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center']);
                         $objItem->setting('labelText', $this->replaceString($item['content'], $options)['text']);
                     }

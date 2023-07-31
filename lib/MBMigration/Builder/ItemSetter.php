@@ -91,11 +91,18 @@ class ItemSetter
         }
         $this->begin();
     }
-    public function addItem(array $value): void
+    public function addItem(array $value, $position = null): void
     {
-        $value = $this->arrayToObject($value);
-        $this->item->value->items[] = $value;
-        $this->begin();
+        if($position !== null) {
+            $a_value[] = $this->arrayToObject($value);
+            $mainArray = $this->item->value->items;
+            array_splice($mainArray, $position, 0, $a_value);
+            $this->begin();
+        } else {
+            $value = $this->arrayToObject($value);
+            $this->item->value->items[] = $value;
+            $this->begin();
+        }
     }
 
     public function get()
