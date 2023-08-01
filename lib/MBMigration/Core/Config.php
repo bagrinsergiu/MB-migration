@@ -79,8 +79,6 @@ class Config
 
         self::$urlJsonKits      = $this->checkSettings('urlJsonKit');
 
-        self::$DBConnection     = $DBConnection['dbType']; // mysql|postgresql
-
         self::$nameMigration    = 'Migration';
         self::$endPointVersion  = '/2.0';
 
@@ -141,17 +139,13 @@ class Config
      */
     private function checkDBConnection($confConnection): void
     {
-        $requiredFields = ['dbType', 'dbHost', 'dbPort', 'dbName', 'dbUser', 'dbPass'];
+        $requiredFields = ['dbHost', 'dbPort', 'dbName', 'dbUser', 'dbPass'];
 
         foreach ($requiredFields as $field) {
             if (empty($confConnection[$field])) {
                 throw new Exception($field . " value is not set");
             }
         }
-
-        if ($confConnection['dbType'] !== 'mysql' && $confConnection['dbType'] !== 'postgresql') {
-            throw new Exception("The '" . $confConnection['dbType'] . "' value does not match the expected value. Specify one of these parameters mysql or postgresql. ");
-            }
     }
 
     /**

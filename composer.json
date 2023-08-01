@@ -7,11 +7,9 @@
       "gmostafa/php-graphql-client": "^1.13",
       "ext-dom": "*",
       "ext-pdo": "*",
-      "ext-mysqli": "*",
       "ext-fileinfo": "*",
       "ext-curl": "*",
       "ext-json": "*",
-      "ext-zip": "*",
       "ext-libxml": "*",
       "ext-mbstring": "*"
     },

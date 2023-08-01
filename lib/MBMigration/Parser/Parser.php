@@ -7,7 +7,7 @@ use MBMigration\Core\Utils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Layer\DataSource\DBConnector;
 use MBMigration\Builder\Fonts\FontsController;
-use MBMigration\Builder\utils\ArrayManipulator;
+use MBMigration\Builder\Utils\ArrayManipulator;
 
 class Parser
 {
