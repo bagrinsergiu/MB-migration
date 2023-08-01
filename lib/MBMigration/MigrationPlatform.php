@@ -161,7 +161,11 @@ class MigrationPlatform
         if($seccessWorkCompletion ) {$this->finalSuccess['status'] = 'success';}
         $this->finalSuccess['progress'] = $this->cache->get('Status');
         $this->finalSuccess['processTime'] = round($executionTime, 1);
-        //Utils::keepItClean();
+
+        if(!Config::$devMode) {
+            Utils::keepItClean();
+        }
+
         Utils::log('Work time: ' . $this->Time($executionTime) . ' (seconds: ' . round($executionTime, 1) . ')', 1, 'PROCESS');
         Utils::log('END', 1, "PROCESS");
     }
