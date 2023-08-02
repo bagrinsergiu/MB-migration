@@ -57,8 +57,9 @@ class PostgresSQL
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             Utils::MESSAGES_POOL($e->getMessage());
+            Utils::MESSAGES_POOL('MySql Request: ' . $sql);
             Utils::log("Query execution failed: " . $e->getMessage(), 2, 'PostgresSQL');
-            throw new Exception("Query execution failed: " . $e->getMessage());
+            throw new Exception("Query execution failed: " . $e->getMessage(). ' Request: '.$sql);
         }
     }
 
