@@ -10,6 +10,64 @@ class ContrastCalculate
         return $this->strip_unit($result) - 2.5;
     }
 
+    protected function hexToRgb($hex): array
+    {
+        $hex = str_replace('#', '', $hex);
+
+        if (strlen($hex) === 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+
+        $red = hexdec(substr($hex, 0, 2));
+        $green = hexdec(substr($hex, 2, 2));
+        $blue = hexdec(substr($hex, 4, 2));
+
+        return [$red, $green, $blue];
+    }
+
+    protected function getContrastingColor($color, $threshold = 50, $lightColor = '#ffffff', $darkColor = '#2a2a2a') {
+        $color = $this->hexToRgb($color);
+
+        $hsl = $this->rgbToHsl($color[0], $color[1], $color[2]);
+
+        if ($hsl[2] > $threshold / 100) {
+            return $darkColor;
+        } else {
+            return $lightColor;
+        }
+    }
+
+    protected function rgbToHsl($r, $g, $b): array
+    {
+        $r /= 255;
+        $g /= 255;
+        $b /= 255;
+
+        $max = max($r, $g, $b);
+        $min = min($r, $g, $b);
+
+        $h = 0;
+        $s = 0;
+        $l = ($max + $min) / 2;
+
+        if ($max !== $min) {
+            $diff = $max - $min;
+            $s = $diff / (1 - abs(2 * $l - 1));
+
+            if ($max === $r) {
+                $h = ($g - $b) / $diff + ($g < $b ? 6 : 0);
+            } elseif ($max === $g) {
+                $h = ($b - $r) / $diff + 2;
+            } else {
+                $h = ($r - $g) / $diff + 4;
+            }
+
+            $h /= 6;
+        }
+
+        return [$h, $s, $l];
+    }
+
     private function strip_unit($value) {
         return $value / ($value * 0 + 1);
     }
@@ -33,21 +91,6 @@ class ContrastCalculate
             }
         }
        return 0.2126*$a[0] + 0.7152*$a[1] + 0.0722*$a[2];
-    }
-
-    private function hexToRgb($hex): string
-    {
-        $hex = str_replace('#', '', $hex);
-
-        if (strlen($hex) === 3) {
-            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-        }
-
-        $red = hexdec(substr($hex, 0, 2));
-        $green = hexdec(substr($hex, 2, 2));
-        $blue = hexdec(substr($hex, 4, 2));
-
-        return "rgb($red, $green, $blue)";
     }
 
     private function lightness($color)
