@@ -4,6 +4,19 @@ namespace MBMigration\Builder\ColorMapper;
 
 class ContrastCalculate
 {
+
+    public function getContrastingColor($color, $threshold = 50, $lightColor = '#ffffff', $darkColor = '#2a2a2a') {
+        $color = $this->hexToRgb($color);
+
+        $hsl = $this->rgbToHsl($color[0], $color[1], $color[2]);
+
+        if ($hsl[2] > $threshold / 100) {
+            return $darkColor;
+        } else {
+            return $lightColor;
+        }
+    }
+
     protected function lumLight($color): float
     {
         $result = ($this->luminance($color) + $this->lightness($color)) / 2;
@@ -23,18 +36,6 @@ class ContrastCalculate
         $blue = hexdec(substr($hex, 4, 2));
 
         return [$red, $green, $blue];
-    }
-
-    protected function getContrastingColor($color, $threshold = 50, $lightColor = '#ffffff', $darkColor = '#2a2a2a') {
-        $color = $this->hexToRgb($color);
-
-        $hsl = $this->rgbToHsl($color[0], $color[1], $color[2]);
-
-        if ($hsl[2] > $threshold / 100) {
-            return $darkColor;
-        } else {
-            return $lightColor;
-        }
     }
 
     protected function rgbToHsl($r, $g, $b): array

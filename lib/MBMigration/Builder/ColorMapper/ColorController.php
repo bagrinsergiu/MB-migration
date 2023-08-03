@@ -18,6 +18,9 @@ class ColorController
                 return new DesaturateByPercent($colorData, $options);
             case "mixContrastingColor":
                 return new MixContrastingColor($colorData, $options);
+            case "getContrastingColor":
+                $contrast = new ContrastCalculate();
+                return $contrast->getContrastingColor($colorData);
             default:
                 throw new \Exception("Unknown Element");
         }
