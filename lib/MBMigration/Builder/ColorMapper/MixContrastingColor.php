@@ -5,7 +5,7 @@ namespace MBMigration\Builder\ColorMapper;
 class MixContrastingColor extends ContrastCalculate
 {
 
-    public function __construct($color1, $threshold = 50)
+    public function result($color1, $threshold = 50): array
     {
         $color1 = $this->hexToRgb($color1);
         $color2 = $this->hexToRgb($this->getContrastingColor($color1));
