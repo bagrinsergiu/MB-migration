@@ -70,7 +70,7 @@ class Parser
             'design'    => $designSite[0]['name'],
             'uuid'      => $settingSite[0]['uuid'],
             'parameter' => $settings,
-            'fonts'      => $this->getFonts($settings, $settingSite[0]['font_theme_uuid']),
+            'fonts'     => $this->getFonts($settings, $settingSite[0]['font_theme_uuid']),
             'favicon'   => $settingSite[0]['favicon']
         ];
     }

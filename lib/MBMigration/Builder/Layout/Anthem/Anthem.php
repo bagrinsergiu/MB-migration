@@ -1283,26 +1283,26 @@ class Anthem extends Layout
         return json_encode($block);
     }
 
-    protected function gallery_layout(array $sectionData)
-    {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
-        $this->cache->set('currentSectionData', $sectionData);
-
-        $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);
-
-        $decoded = $this->jsonDecode['blocks']['gallery-layout'];
-        $block = json_decode($decoded['main'], true);
-        $slide  = json_decode($decoded['item'], true);
-
-        foreach ($sectionData['items'] as $item){
-            $slide['value']['bgImageFileName'] = $item['imageFileName'];
-            $slide['value']['bgImageSrc']      = $item['content'];
-
-            $this->insertElementAtPosition($block, 'value/items', $slide);
-        }
-        $block = $this->replaceIdWithRandom($block);
-        return json_encode($block);
-    }
+//    protected function gallery_layout(array $sectionData)
+//    {
+//        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
+//        $this->cache->set('currentSectionData', $sectionData);
+//
+//        $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);
+//
+//        $decoded = $this->jsonDecode['blocks']['gallery-layout'];
+//        $block = json_decode($decoded['main'], true);
+//        $slide  = json_decode($decoded['item'], true);
+//
+//        foreach ($sectionData['items'] as $item){
+//            $slide['value']['bgImageFileName'] = $item['imageFileName'];
+//            $slide['value']['bgImageSrc']      = $item['content'];
+//
+//            $this->insertElementAtPosition($block, 'value/items', $slide);
+//        }
+//        $block = $this->replaceIdWithRandom($block);
+//        return json_encode($block);
+//    }
 
     protected function new_gallery_layout(array $sectionData)
     {
@@ -1508,20 +1508,29 @@ class Anthem extends Layout
         $this->cache->set('footerBlock', json_encode($block));
     }
 
+    /**
+     * @throws Exception
+     */
     public function callMethod($methodName, $params = null, $marker = '')
     {
-        $verifiedMethodName = $this->replaceInName($methodName);
-        if (method_exists($this, $verifiedMethodName)) {
-            if(!isset($params)){
-                $params = $this->jsonDecode;
-            }
-            Utils::log('Call method ' . $verifiedMethodName , 1, $this->layoutName . "] [callDynamicMethod");
-            $result = call_user_func_array(array($this, $verifiedMethodName), [$params]);
+        $elementName = $this->replaceInName($methodName);
+
+        if(!isset($params)){
+            $params = $this->jsonDecode;
+        }
+
+        if (method_exists($this, $elementName)) {
+            Utils::log('Call method ' . $elementName , 1, $this->layoutName . "] [callDynamicMethod");
+            $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
             return $result;
+        } else {
+            $result = ElementsController::getElement($elementName, $params);
+            if(!$result){
+                Utils::log('Method ' . $elementName . ' does not exist. Page: ' . $marker, 2, $this->layoutName . "] [callDynamicMethod");
+            }
+            return $result;
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist. Page: ' . $marker, 2, $this->layoutName . "] [callDynamicMethod");
-        return false;
     }
 
 }

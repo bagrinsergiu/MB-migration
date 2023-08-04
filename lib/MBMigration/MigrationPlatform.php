@@ -20,6 +20,10 @@ class MigrationPlatform
     protected $projectId;
     private $parser;
     private $QueryBuilder;
+
+    /**
+     * @var BrizyApi
+     */
     private $brizyApi;
     private $projectID_Brizy;
     private $startTime;
@@ -461,6 +465,9 @@ class MigrationPlatform
         return $url;
     }
 
+    /**
+     * @throws Exception
+     */
     private function uploadPicturesFromSections(array $sectionsItems): array
     {
         Utils::log('Start upload image', 1, 'uploadPicturesFromSections');
@@ -517,6 +524,9 @@ class MigrationPlatform
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function media(&$item, $section): void
     {
         Utils::log('Found new image', 1, 'media');
