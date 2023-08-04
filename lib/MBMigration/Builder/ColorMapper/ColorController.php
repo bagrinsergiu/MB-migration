@@ -11,13 +11,17 @@ class ColorController
     {
         switch ($methodName) {
             case "chooseLargerContrast":
-                return new ChooseLargerContrast($colorData);
+                $chooseLargerContrast = new ChooseLargerContrast();
+                return $chooseLargerContrast->result($colorData);
             case "chooseLesserContrast":
-                return new ChooseLesserContrast($colorData);
+                $chooseLesserContrast = new ChooseLesserContrast();
+                return $chooseLesserContrast->result($colorData);
             case "desaturateByPercent":
-                return new DesaturateByPercent($colorData, $options);
+                $desaturateByPercent = new DesaturateByPercent();
+                return $desaturateByPercent->result($colorData, $options);
             case "mixContrastingColor":
-                return new MixContrastingColor($colorData, $options);
+                $mixContrastingColor = new MixContrastingColor();
+                return $mixContrastingColor->result($colorData, $options);
             case "getContrastingColor":
                 $contrast = new ContrastCalculate();
                 return $contrast->getContrastingColor($colorData);
