@@ -55,8 +55,6 @@ class MigrationPlatform
     public function __construct(Config $config)
     {
         $this->cache = VariableCache::getInstance();
-        $this->cache->init();
-
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
         register_shutdown_function([$this->errorDump, 'handleFatalError']);
