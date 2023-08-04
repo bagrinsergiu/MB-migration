@@ -4,7 +4,7 @@ namespace MBMigration\Builder\ColorMapper;
 
 class ChooseLesserContrast extends ContrastCalculate
 {
-    public function __construct(array $colorData)
+    public function result(array $colorData)
     {
         $baseLumLight    = $this->lumLight($colorData[0]);
         $option1LumLight = $this->lumLight($colorData[1]);

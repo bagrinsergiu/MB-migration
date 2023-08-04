@@ -94,9 +94,22 @@ class ContrastCalculate
        return 0.2126*$a[0] + 0.7152*$a[1] + 0.0722*$a[2];
     }
 
-    private function lightness($color)
+    function lightness($hexColor): float
     {
-        // return $color;
+        $r = hexdec(substr($hexColor, 1, 2));
+        $g = hexdec(substr($hexColor, 3, 2));
+        $b = hexdec(substr($hexColor, 5, 2));
+
+        $r /= 255.0;
+        $g /= 255.0;
+        $b /= 255.0;
+
+        $max = max($r, $g, $b);
+        $min = min($r, $g, $b);
+
+        $lightness = ($max + $min) / 2;
+
+        return round($lightness * 100, 2);
     }
 
 }
