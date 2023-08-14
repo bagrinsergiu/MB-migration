@@ -90,11 +90,11 @@ class Anthem extends Layout
             $block['value']['items'][0]['value']['bgColorType'] = 'solid';
             $this->cache->set('flags', ['createdFirstSection'=> false, 'bgColorOpacity' => true]);
         } else {
-            $color = $this->cache->get('subpalette1','subpalette');
+            $color = $this->cache->get('nav-subpalette','subpalette');
             $block['value']['items'][0]['value']['bgColorHex'] = strtolower($color['bg']);
             $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['subMenuBgColorHex'] = strtolower($color['bg']);
-            $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['subMenuColorHex'] = strtolower($color['text']);
-            $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['colorHex'] = strtolower($color['text']);
+            $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['subMenuColorHex'] = strtolower($color['nav-text']);
+            $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['colorHex'] = strtolower($color['nav-text']);
             $block['value']['items'][0]['value']['bgColorOpacity'] = 1;
             $block['value']['items'][0]['value']['tempBgColorOpacity'] = 0;
             $block['value']['items'][0]['value']['bgColorType'] = 'ungrouped';
@@ -1401,7 +1401,7 @@ class Anthem extends Layout
                     $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
                 }
 
-                $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center']);
                 $objBlock->item(0)->item(1)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options ));
             }
 
