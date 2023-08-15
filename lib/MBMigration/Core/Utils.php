@@ -10,8 +10,10 @@ class Utils
     public static $MESSAGES_POOL;
     private static $projectID;
 
+    /**
+     * @var VariableCache
+     */
     protected static $cache;
-
 
     /**
      * @throws Exception
@@ -75,7 +77,7 @@ class Utils
         return $result;
     }
 
-    public static function init(VariableCache $cache = null): void
+    public static function init(VariableCache $cache): void
     {
         self::$cache = $cache;
         self::$MESSAGES_POOL = [];
@@ -189,10 +191,11 @@ class Utils
         }
 
         file_put_contents($dirToLog, $strlog, FILE_APPEND);
-
-        if($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
-            $dirToLog = self::$cache->get('log') . 'error.log';
-            file_put_contents($dirToLog, $strlog, FILE_APPEND);
+        if(!is_null(self::$cache)){
+            if($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
+                $dirToLog = self::$cache->get('log') . 'error.log';
+                file_put_contents($dirToLog, $strlog, FILE_APPEND);
+            }
         }
     }
 }
