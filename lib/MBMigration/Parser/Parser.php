@@ -5,6 +5,7 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Core\Utils;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\DebugBackTrace;
 use MBMigration\Layer\DataSource\DBConnector;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Utils\ArrayManipulator;
@@ -27,6 +28,8 @@ class Parser
      * @var mixed|null
      */
     private $container;
+
+    use DebugBackTrace;
 
     /**
      * @throws Exception
@@ -53,10 +56,15 @@ class Parser
      * @throws Exception
      * @throws GuzzleException
      */
-    public function getSite(): array
+    public function getSite()
     {
         Utils::log('Get site', 1, 'getSite');
         $settingSite = $this->db->requestArray("SELECT id, name, title, settings, uuid, design_uuid, favicon, palette_uuid, font_theme_uuid from sites WHERE id = " . $this->siteId);
+        if(empty($settingSite)){
+            Utils::MESSAGES_POOL(self::trace(0) . 'Message: MB project not found');
+            Utils::log('MB project not found', 3, 'getSite');
+            return false;
+        }
         $designSite = $this->db->requestArray("SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
 
         $settings = json_decode($settingSite[0]['settings'], true);
@@ -103,6 +111,7 @@ class Parser
 
     /**
      * @throws GuzzleException
+     * @throws Exception
      */
     function getDefaultFont($fontThemeUUID)
     {
@@ -122,6 +131,9 @@ class Parser
         return $fontStyle;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getMainSection(): array
     {
         Utils::log('Get main Section', 1, 'getMainSection');
@@ -154,6 +166,9 @@ class Parser
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     private function getPalettes($paletteUUID): ?array
     {
         $palette = null;
@@ -204,6 +219,9 @@ class Parser
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     private function getChildPages($parentId): array
     {
         Utils::log('Get child pages', 1, 'getChildPages');
@@ -229,6 +247,9 @@ class Parser
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getChildFromPages($parenId): array
     {
 
@@ -247,6 +268,9 @@ class Parser
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getSectionsPage($id): array
     {
         $result = [];
@@ -275,6 +299,9 @@ class Parser
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     private function getItemLink(int $itemId): string
     {
         Utils::log('Check link for item: '. $itemId, 1, 'getItemLink');
@@ -293,6 +320,7 @@ class Parser
 
     /**
      * @throws GuzzleException
+     * @throws Exception
      */
     public function getSectionsItems($sectionId, $assembly = false)
     {
