@@ -3,8 +3,10 @@
 namespace MBMigration;
 
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\Checking;
 use MBMigration\Builder\ColorMapper;
+use MBMigration\Builder\DebugBackTrace;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Builder\PageBuilder;
 use MBMigration\Core\Config;
@@ -18,8 +20,19 @@ class MigrationPlatform
 {
     protected $cache;
     protected $projectId;
+
+    /**
+     * @var Parser
+     */
     private $parser;
+    /**
+     * @var QueryBuilder
+     */
     private $QueryBuilder;
+
+    /**
+     * @var BrizyAPI
+     */
     private $brizyApi;
     private $projectID_Brizy;
     private $startTime;
@@ -37,6 +50,7 @@ class MigrationPlatform
     private $buildPage;
 
     use checking;
+    use DebugBackTrace;
 
     public function __construct(Config $config)
     {
@@ -58,12 +72,16 @@ class MigrationPlatform
         } catch (Exception $e) {
             Utils::MESSAGES_POOL($e->getMessage());
             return false;
+        } catch (GuzzleException $e) {
+            Utils::MESSAGES_POOL($e->getMessage());
+            return false;
         }
         return true;
     }
 
     /**
      * @throws Exception
+     * @throws GuzzleException
      */
     private function run(int $projectID_MB, int $projectID_Brizy = 0): void
     {
@@ -97,7 +115,9 @@ class MigrationPlatform
 
         $this->getAllPage();
 
-        $this->cache->set('settings', $this->parser->getSite());
+        $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0) . ' Message: Site not found');
+
+        $this->cache->set('settings', $settings);
 
         $this->checkDesign();
 
@@ -345,7 +365,7 @@ class MigrationPlatform
      */
     private function getAllPage(): void
     {
-        $collectionTypes = $this->QueryBuilder->getCollectionTypes();
+        $collectionTypes = $this->emptyCheck($this->QueryBuilder->getCollectionTypes(), self::trace(0) . ' Message: CollectionTypes not found');
 
         $foundCollectionTypes = [];
         $entities = [];
@@ -461,6 +481,9 @@ class MigrationPlatform
         return $url;
     }
 
+    /**
+     * @throws Exception
+     */
     private function uploadPicturesFromSections(array $sectionsItems): array
     {
         Utils::log('Start upload image', 1, 'uploadPicturesFromSections');
@@ -517,6 +540,9 @@ class MigrationPlatform
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function media(&$item, $section): void
     {
         Utils::log('Found new image', 1, 'media');
