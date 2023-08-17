@@ -136,9 +136,14 @@ class Config
 
     }
 
+    /**
+     * @throws Exception
+     */
     private function checkPath($path): string
     {
-        return is_dir($path) ? $path : sys_get_temp_dir();
+        $pathWrite = is_dir($path) ? $path : sys_get_temp_dir();
+        $this->checkAndDeleteFile($pathWrite);
+        return $pathWrite;
     }
 
     /**
@@ -229,6 +234,26 @@ class Config
             return $assets[$flag];
         } else {
             throw new Exception('Assets not set');
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    function checkAndDeleteFile($path) {
+
+        $testFile = $path . '/test_file.log';
+        $handle = fopen($testFile, 'w');
+
+        if ($handle === false) {
+            throw new Exception('Unable to create or write a file at the specified path.');
+        }
+
+        fwrite($handle, "test");
+        fclose($handle);
+
+        if (!unlink($testFile)) {
+            throw new Exception('The file was successfully verified and created, but failed to delete the file.');
         }
     }
 }
