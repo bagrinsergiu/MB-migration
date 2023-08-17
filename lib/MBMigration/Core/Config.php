@@ -243,7 +243,7 @@ class Config
     function checkAndDeleteFile($path) {
 
         $testFile = $path . '/test_file.log';
-        $handle = fopen($testFile, 'w');
+        $handle = @fopen($testFile, 'w');
 
         if ($handle === false) {
             throw new Exception('Unable to create or write a file at the specified path.');
