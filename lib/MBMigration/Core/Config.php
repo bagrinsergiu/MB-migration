@@ -41,6 +41,10 @@ class Config
      * @var mixed
      */
     public static $urlJsonKits;
+    /**
+     * @var mixed
+     */
+    public static $MBMediaStaging;
 
     public static $path;
     /**
@@ -59,13 +63,15 @@ class Config
     /**
      * @throws Exception
      */
-    public function __construct(string $cloud_host, string $path, string $token, array $DBConnection, array $settings = [])
+    public function __construct(string $cloud_host, string $path, string $token, array $settings)
     {
         $path = $this->checkPath($path);
 
-        $this->checkDBConnection($DBConnection);
-
         $this->setSettings($settings);
+
+        $this->checkRequiredKeys($settings);
+
+        $DBConnection = $this->checkDBConnection($settings['db']);
 
         self::$defaultSettings  = [
             'devMode'       => false,
@@ -77,7 +83,8 @@ class Config
         self::$debugMode        = (bool) $this->checkSettings('debugMode');
         self::$devMode          = (bool) $this->checkSettings('devMode');
 
-        self::$urlJsonKits      = $this->checkSettings('urlJsonKit');
+        self::$urlJsonKits      = $this->checkAssets('CloudUrlJsonKit');
+        self::$MBMediaStaging   = $this->checkAssets('MBMediaStaging');
 
         self::$nameMigration    = 'Migration';
         self::$endPointVersion  = '/2.0';
@@ -137,11 +144,26 @@ class Config
     /**
      * @throws Exception
      */
-    private function checkDBConnection($confConnection): void
+    private function checkDBConnection(array $confConnection): array
     {
         $requiredFields = ['dbHost', 'dbPort', 'dbName', 'dbUser', 'dbPass'];
 
         foreach ($requiredFields as $field) {
+            if (empty($confConnection[$field])) {
+                throw new Exception($field . " value is not set");
+            }
+        }
+        return $confConnection;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkRequiredKeys($confConnection): void
+    {
+        $requiredKeys = ['db', 'assets'];
+
+        foreach ($requiredKeys as $field) {
             if (empty($confConnection[$field])) {
                 throw new Exception($field . " value is not set");
             }
@@ -170,8 +192,14 @@ class Config
         return $token;
     }
 
+    /**
+     * @throws Exception
+     */
     private function setSettings(array $settings)
     {
+        if (empty($settings)) {
+            throw new Exception('Settings not set');
+        }
         self::$settings = $settings;
     }
 
@@ -185,5 +213,22 @@ class Config
             }
         }
         return false;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkAssets(string $flag)
+    {
+        $assets = self::$settings['assets'];
+
+        if(array_key_exists($flag, $assets)){
+            if (empty($assets[$flag])) {
+                throw new Exception('Assets is empty');
+            }
+            return $assets[$flag];
+        } else {
+            throw new Exception('Assets not set');
+        }
     }
 }

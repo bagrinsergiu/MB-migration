@@ -476,7 +476,7 @@ class MigrationPlatform
 
         $uuid = $this->cache->get('settings')['uuid'];
         $prefix = substr($uuid, 0, 2);
-        $url = "https://s3.amazonaws.com/media.cloversites.com/" . $prefix . '/' . $uuid . $folderload . $nameImage;
+        $url = Config::$MBMediaStaging . "/" . $prefix . '/' . $uuid . $folderload . $nameImage;
         Utils::log('Created url pictures: ' . $url . ' Type folder ' . $type, 1, 'getPisturesUrl');
         return $url;
     }
