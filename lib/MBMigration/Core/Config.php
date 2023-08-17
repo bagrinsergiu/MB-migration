@@ -83,7 +83,8 @@ class Config
         self::$debugMode        = (bool) $this->checkSettings('debugMode');
         self::$devMode          = (bool) $this->checkSettings('devMode');
 
-        self::$urlJsonKits      = $this->checkSettings('urlJsonKit');
+        self::$urlJsonKits      = $this->checkAssets('CloudUrlJsonKit');
+        self::$MBMediaStaging   = $this->checkAssets('MBMediaStaging');
 
         self::$nameMigration    = 'Migration';
         self::$endPointVersion  = '/2.0';
@@ -140,9 +141,6 @@ class Config
      */
     private function checkPath($path): string
     {
-        if(!is_dir($path)){
-            throw new Exception('Path not found');
-        }
         $pathWrite = is_dir($path) ? $path : sys_get_temp_dir();
         $this->checkAndDeleteFile($pathWrite);
         return $pathWrite;
@@ -245,7 +243,7 @@ class Config
     function checkAndDeleteFile($path) {
 
         $testFile = $path . '/test_file.log';
-        $handle = @fopen($testFile, 'w');
+        $handle = fopen($testFile, 'w');
 
         if ($handle === false) {
             throw new Exception('Unable to create or write a file at the specified path.');
