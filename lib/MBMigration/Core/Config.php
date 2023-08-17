@@ -83,8 +83,7 @@ class Config
         self::$debugMode        = (bool) $this->checkSettings('debugMode');
         self::$devMode          = (bool) $this->checkSettings('devMode');
 
-        self::$urlJsonKits      = $this->checkAssets('CloudUrlJsonKit');
-        self::$MBMediaStaging   = $this->checkAssets('MBMediaStaging');
+        self::$urlJsonKits      = $this->checkSettings('urlJsonKit');
 
         self::$nameMigration    = 'Migration';
         self::$endPointVersion  = '/2.0';
