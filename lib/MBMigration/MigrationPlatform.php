@@ -103,6 +103,7 @@ class MigrationPlatform
         $this->cache->set('container', $this->brizyApi->getProjectContainer($this->projectID_Brizy));
 
         $this->init($this->projectID_MB, $this->projectID_Brizy);
+        $this->checkDesign($this->parser->getDesignSite());
 
         $this->createProjectFolders();
 
@@ -118,8 +119,6 @@ class MigrationPlatform
         $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0) . ' Message: Site not found');
 
         $this->cache->set('settings', $settings);
-
-        $this->checkDesign();
 
         $parentPages = $this->parser->getParentPages();
 
@@ -691,8 +690,7 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function checkDesign() {
-        $designName = $this->cache->get('design', 'settings');
+    private function checkDesign($designName) {
         $designInDevelop = Config::$designInDevelop;
         $devMode= Config::$devMode;
         if(in_array($designName, $designInDevelop) && !$devMode) {
