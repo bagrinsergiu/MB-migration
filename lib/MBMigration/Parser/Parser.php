@@ -52,6 +52,23 @@ class Parser
         Utils::log('READY', 4, 'Parser Module');
     }
 
+
+    /**
+     * @throws Exception
+     */
+    public function getDesignSite()
+    {
+        Utils::log('Get Design', 1, 'getDesignSite');
+        $settingSite = $this->db->requestArray("SELECT design_uuid from sites WHERE id = " . $this->siteId);
+        if(empty($settingSite)){
+            Utils::MESSAGES_POOL(self::trace(0) . 'Message: MB project not found');
+            Utils::log('MB project not found', 3, 'getSite');
+            return false;
+        }
+        $designSite = $this->db->requestArray("SELECT name from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
+        return $designSite[0]['name'];
+    }
+
     /**
      * @throws Exception
      * @throws GuzzleException
