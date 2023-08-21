@@ -23,7 +23,8 @@ class PageBuilder
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
 
-        $workClass = __NAMESPACE__ . '\\Layout\\' . $design . '\\' . $design;
+        $workClass = __NAMESPACE__ . '\\Layout\\Theme\\' . $design . '\\' . $design;
+
         $_WorkClassTemplate = new $workClass($cache);
 
         if(!$defaultPage)

@@ -13,7 +13,7 @@ class Layout extends LayoutUtils
     /**
      * @throws Exception
      */
-    private function initData()
+    protected function initData()
     {
         Utils::log('initData!', 4, 'Main Layout');
         return $this->loadKit();

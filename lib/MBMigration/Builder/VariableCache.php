@@ -6,14 +6,19 @@ use MBMigration\Core\Utils;
 
 class VariableCache
 {
+    private static $instance = null;
     private $cache;
 
-    public function __construct() {
-        Utils::log('Initialization', 4, 'Cache');
+    private function __construct() {
 
-        $this->cache = [];
+    }
 
-        $this->cache['OBJECTS'] = [];
+    public static function getInstance() {
+        $subclass = static::class;
+        if (!isset(self::$instance[$subclass])) {
+            self::$instance[$subclass] = new static();
+        }
+        return self::$instance[$subclass];
     }
 
     /**
@@ -161,6 +166,15 @@ class VariableCache
                 $this->updateKeyRecursive($section, $key, $value, $v);
             }
         }
+    }
+
+    public function init()
+    {
+        Utils::log('Initialization', 4, 'Cache');
+
+        $this->cache = [];
+
+        $this->cache['OBJECTS'] = [];
     }
 
 }

@@ -7,6 +7,7 @@ use Exception;
 use InvalidArgumentException;
 use MBMigration\Builder\Utils\builderUtils;
 use MBMigration\Builder\Utils\HtmlHandler;
+use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
@@ -805,7 +806,7 @@ class LayoutUtils extends builderUtils
                 $createUrl .= '/globalBlocksKit.json';
             } else {
                 if ($layoutName !== '') {
-                    $createUrl .= '/' . $layoutName;
+                    $createUrl .= '/Theme/' . $layoutName;
                 }
                 if ($fileName !== '') {
                     $createUrl .= '/' . $fileName;
@@ -827,7 +828,7 @@ class LayoutUtils extends builderUtils
                 $file .= '/globalBlocksKit.json';
             } else {
                 if ($layoutName !== '') {
-                    $file .= '/' . $layoutName;
+                    $file .= '/Theme/' . $layoutName;
                 }
                 if ($fileName !== '') {
                     $file .= '/' . $fileName;
@@ -865,8 +866,9 @@ class LayoutUtils extends builderUtils
         return str_replace(' ', '%20', $url);
     }
 
-    private function getFonts($fontsType) {
-        $fonts = $this->cache->get('fonts', 'settings');
+    protected function getFonts($fontsType) {
+        $cache = VariableCache::getInstance();
+        $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {
             if ($font['name'] === $fontsType) {
                 return $font;
