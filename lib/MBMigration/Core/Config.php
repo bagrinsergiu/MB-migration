@@ -131,7 +131,7 @@ class Config
         ];
         
         self::$designInDevelop  = [
-            'Boulevard'
+            'Boulevard', 'Dusk', 'Aurora', 'Solstice', 'Tradition', 'Hope', 'August', 'Voyage', 'Zion', 'Boulevard', 'Ember', 'Bloom', 'Majesty', 'Serene'
         ];
 
     }
