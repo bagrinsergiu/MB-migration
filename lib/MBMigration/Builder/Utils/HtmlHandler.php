@@ -102,6 +102,15 @@ class HtmlHandler
                     }
                 }
 
+                if (array_key_exists('font-style', $p_style) && $p_style['font-style'] === 'italic') {
+                    $me = $dom->createElement('em');
+                    while ($paragraph->childNodes->length > 0) {
+                        $child = $paragraph->childNodes->item(0);
+                        $me->appendChild($child);
+                    }
+                    $paragraph->appendChild($me);
+                }
+
                 if (isset($fontColor) || isset($lineHeight)) {
                     $span = $dom->createElement('span');
                     $span->setAttribute('style', "color: $fontColor; opacity: 1;");
