@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Elements;
 
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -38,11 +38,11 @@ class ListLayout extends Element
 
         $options = [];
 
-        $objBlock = new ItemSetter();
-        $objItem = new ItemSetter();
-        $objHead = new ItemSetter();
-        $objImage = new ItemSetter();
-        $objRow = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objItem = new ItemBuilder();
+        $objHead = new ItemBuilder();
+        $objImage = new ItemBuilder();
+        $objRow = new ItemBuilder();
 
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);

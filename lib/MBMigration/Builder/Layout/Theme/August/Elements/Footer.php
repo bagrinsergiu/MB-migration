@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\August\Elements;
 
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Core\Utils;
 
 class Footer
@@ -15,11 +15,11 @@ class Footer
         $options = [];
         $imageAdd = false;
 
-        $objBlock = new ItemSetter();
-        $objText  = new ItemSetter();
-        $objImage = new ItemSetter();
-        $objColunm = new ItemSetter();
-        $objIcon  = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objText  = new ItemBuilder();
+        $objImage = new ItemBuilder();
+        $objColunm = new ItemBuilder();
+        $objIcon  = new ItemBuilder();
 
         $sectionData = $this->cache->get('mainSection')['footer'];
 

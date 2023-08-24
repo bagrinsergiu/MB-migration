@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Elements\DynamicElement;
 
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Elements\Element;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -33,8 +33,8 @@ class SermonLayoutPlaceholder extends Element
 
     protected function sermon_layout_placeholder(array $sectionData) {
 
-        $objBlock = new ItemSetter();
-        $objHead  = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objHead  = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['dynamic']['sermon_layout_placeholder'];

@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Elements;
 
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -41,9 +41,9 @@ class TabsLayout extends Element
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['tabs-layout'];
 
-        $objBlock = new ItemSetter();
-        $objItem = new ItemSetter();
-        $objRow = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objItem = new ItemBuilder();
+        $objRow = new ItemBuilder();
 
         $objBlock->newItem($decoded['main']);
         $objRow->newItem($decoded['row']);

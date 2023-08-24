@@ -32,7 +32,7 @@ class LayoutUtils extends builderUtils
             }
             $fontFamily = $option['mainFonts']['uuid'];
         } else {
-            $option['mainFonts'] = $this->getFonts('main_text');
+            $option['mainFonts'] = $this->getFonts($option);
             if ($option['mainFonts']['uuid'] === 'lato') {
                 $fontType = 'google';
             } else {
@@ -49,8 +49,8 @@ class LayoutUtils extends builderUtils
      */
     public function getUpperCase($option): string
     {
-        if (array_key_exists('upperCase', $option)) {
-            $upperCase = $option['upperCase'];
+        if (array_key_exists('text_transform', $option)) {
+            $upperCase = $option['text_transform'];
         } else {
             $upperCase = '';
         }
@@ -107,8 +107,8 @@ class LayoutUtils extends builderUtils
      */
     public function getFontSize($option): int
     {
-        if (array_key_exists('mainSize', $option)) {
-            $fontSize = $option['mainSize'];
+        if (array_key_exists('font_size', $option)) {
+            $fontSize = $this->convertFontSize($option['font_size']);
         } else {
             $fontSize = 16;
         }
@@ -135,8 +135,10 @@ class LayoutUtils extends builderUtils
      */
     public function getLetterSpacing($option)
     {
-        if (array_key_exists('letterSpacing', $option)) {
-            $letterSpacing = str_replace('.', '_', $option['letterSpacing']);
+        if (array_key_exists('letter_spacing', $option)) {
+
+            $trimmedString = substr($option['letter_spacing'], 0, -2);
+            $letterSpacing = str_replace('.', '_', $trimmedString);
         } else {
             $letterSpacing = '0_8';
         }
@@ -498,20 +500,20 @@ class LayoutUtils extends builderUtils
     protected function replaceString($htmlString, $option = []): array
     {
         $mainFonts = $this->mainFonts($option);
+        $fontMain  = $this->getFonts($option);
 
         $hOptions = [
             'sectionType'   => $this->getSectionType($option),
             'fontType'      => $mainFonts['fontType'],
             'fontFamily'    => $mainFonts['fontFamily'],
-            'letterSpacing' => $this->getLetterSpacing($option),
+            'letterSpacing' => $this->getLetterSpacing($fontMain),
             'position'      => $this->getPosition($option),
-            'fontSize'      => $this->getFontSize($option),
+            'fontSize'      => $this->getFontSize($fontMain),
             'mainColor'     => $this->getMainColor($option),
             'textColor'     => $this->getMainColor($option),
             'fontWeight'    => $this->getWeight($option),
-            'upperCase'     => $this->getUpperCase($option),
-            'fontHeaders'   => $this->getFonts('sub_headers'),
-            'fontMain'      => $this->getFonts('main_text'),
+            'upperCase'     => $this->getUpperCase($fontMain),
+            'fontMain'      => $fontMain,
             'color'         => $this->getColor($option),
         ];
 
@@ -866,7 +868,22 @@ class LayoutUtils extends builderUtils
         return str_replace(' ', '%20', $url);
     }
 
-    protected function getFonts($fontsType) {
+    protected function getFonts($option) {
+
+        if (array_key_exists('fontType', $option)) {
+            $fontsType = $option['fontType'];
+        } else {
+            $fontsType = 'body';
+        }
+
+        $fontRoute = ['title'=>'headers', 'body'=>'main_text'];
+        if(array_key_exists($fontsType, $fontRoute))
+        {
+            $fontsType = $fontRoute[$fontsType];
+        }else{
+            $fontsType = 'main_text';
+        }
+
         $cache = VariableCache::getInstance();
         $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {

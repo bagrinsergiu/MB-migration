@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Elements;
 
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -44,7 +44,7 @@ class ThreeHorizontalText extends Element
         $decoded = $this->jsonDecode['blocks']['three-horizontal-text'];
         $block = json_decode($decoded['main'], true);
 
-        $objBlock = new ItemSetter($decoded['main']);
+        $objBlock = new ItemBuilder($decoded['main']);
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];

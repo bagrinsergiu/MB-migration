@@ -4,7 +4,7 @@ namespace MBMigration\Builder;
 
 use stdClass;
 
-class ItemSetter
+class ItemBuilder
 {
     private $data;
     private $item;
@@ -26,7 +26,7 @@ class ItemSetter
         $this->begin();
     }
 
-    public function item(int $id = 0): ItemSetter
+    public function item(int $id = 0): ItemBuilder
     {
         if (isset($this->item->value->items[$id])) {
             $this->item = $this->item->value->items[$id];
@@ -68,7 +68,7 @@ class ItemSetter
         $this->begin();
     }
 
-    public function section(int $id): ItemSetter
+    public function section(int $id): ItemBuilder
     {
         if (isset($this->item->items[$id])) {
             $this->item = $this->item->items[$id];
@@ -117,7 +117,7 @@ class ItemSetter
         $this->item->value->$key = $value;
     }
 
-    private function begin(): ItemSetter
+    private function begin(): ItemBuilder
     {
         if (isset($this->data->value)) {
             $this->item = $this->data;

@@ -37,7 +37,6 @@ class HtmlHandler
         $mainColor      = $this->hexToRgb($this->option['mainColor']);
         $fontWeight     = $this->option['fontWeight'];
         $upperCase      = $this->option['upperCase'];
-        $fontHeaders    = $this->option['fontHeaders'];
         $fontMain       = $this->option['fontMain'];
         $textColor      = $this->option['textColor'];
         $color          = $this->option['color'];
@@ -127,7 +126,7 @@ class HtmlHandler
             if ($sectionType === 'brz-tp-lg-paragraph') {
                 $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$fontSize brz-fss-lg-px brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing";
             } else {
-                $titleFontSize = $this->convertFontSize($fontHeaders['font_size']);
+                $titleFontSize = $this->convertFontSize($fontMain['font_size']);
 
                 $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$titleFontSize brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing ";
             }

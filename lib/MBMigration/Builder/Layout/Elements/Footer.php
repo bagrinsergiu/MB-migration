@@ -3,8 +3,7 @@
 namespace MBMigration\Builder\Layout\Elements;
 
 use DOMException;
-use MBMigration\Builder\ItemSetter;
-use MBMigration\Builder\Layout\Anthem\Elements\ElementInterface;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -25,26 +24,26 @@ class Footer extends Element
     /**
      * @throws DOMException
      */
-    public function getElement(array $elementData = [])
+    public function getElement(array $elementData = []): bool
     {
-        $this->Footer();
+        return $this->Footer();
     }
 
     /**
      * @throws DOMException
      */
-    protected function Footer()
+    protected function Footer(): bool
     {
         Utils::log('Create Footer', 1, "] [createFooter");
 
         $options = [];
         $imageAdd = false;
 
-        $objBlock = new ItemSetter();
-        $objText  = new ItemSetter();
-        $objImage = new ItemSetter();
-        $objColum = new ItemSetter();
-        $objIcon  = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objText  = new ItemBuilder();
+        $objImage = new ItemBuilder();
+        $objColum = new ItemBuilder();
+        $objIcon  = new ItemBuilder();
 
         $sectionData = $this->cache->get('mainSection')['footer'];
 
@@ -59,7 +58,6 @@ class Footer extends Element
         $block = json_decode($decoded, true);
 
         if($this->checkArrayPath($sectionData, 'settings/color/subpalette')) {
-
             $block['value']['bgColorHex'] = strtolower($sectionData['settings']['color']['subpalette']['bg']);
             $objBlock->setting('bgColorPalette', '');
             $objBlock->setting('bgColorHex', $sectionData['settings']['color']['subpalette']['bg']);
@@ -104,6 +102,8 @@ class Footer extends Element
 
         $block = $this->replaceIdWithRandom($objBlock->get());
         $this->cache->set('footerBlock', json_encode($block));
+
+        return true;
     }
 
 }

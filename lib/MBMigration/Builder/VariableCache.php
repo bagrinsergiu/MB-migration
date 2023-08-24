@@ -9,9 +9,7 @@ class VariableCache
     private static $instance = null;
     private $cache;
 
-    private function __construct() {
-
-    }
+    private function __construct() {}
 
     public static function getInstance() {
         $subclass = static::class;

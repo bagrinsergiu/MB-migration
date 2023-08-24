@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Elements;
 
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -40,9 +40,9 @@ class AccordionLayout extends Element
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['accordion-layout'];
 
-        $objBlock = new ItemSetter();
-        $objItem = new ItemSetter();
-        $objList = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objItem = new ItemBuilder();
+        $objList = new ItemBuilder();
 
         $objBlock->newItem($decoded['main']);
         $objList->newItem($decoded['list']);

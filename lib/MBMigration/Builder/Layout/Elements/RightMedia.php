@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Elements;
 
 use DOMException;
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -36,7 +36,7 @@ class RightMedia extends Element
 
         $options = [];
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $decoded = $this->jsonDecode['blocks']['right-media']['main'];
 

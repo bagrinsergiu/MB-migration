@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Elements;
 
 use DOMException;
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -40,7 +40,7 @@ class TwoHorizontalText extends Element
         $decoded = $this->jsonDecode['blocks']['two-horizontal-text'];
         $block = json_decode($decoded['main'], true);
 
-        $objBlock = new ItemSetter($decoded['main']);
+        $objBlock = new ItemBuilder($decoded['main']);
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];

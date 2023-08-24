@@ -33,8 +33,7 @@ class ElementsController
         switch ($elementName) {
             case "footer":
                 $element = new Footer($jsonKitElements);
-                $element->getElement();
-                break;
+                return $element->getElement();
             case "head":
                 $element = new Head($jsonKitElements);
                 return $element->getElement($elementData);

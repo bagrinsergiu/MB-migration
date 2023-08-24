@@ -4,13 +4,14 @@ namespace MBMigration\Builder\Layout\Theme\Anthem;
 
 use DOMDocument;
 use Exception;
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\ElementsController;
 use MBMigration\Builder\Layout\Layout;
+use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
-class Anthem extends Layout
+class Anthem extends LayoutUtils
 {
     /**
      * @var mixed
@@ -18,11 +19,11 @@ class Anthem extends Layout
     protected $jsonDecode;
 
     protected $layoutName;
+
     /**
      * @var VariableCache
      */
     public $cache;
-
 
     /**
      * @throws Exception
@@ -66,17 +67,16 @@ class Anthem extends Layout
         }
 
         if (method_exists($this, $elementName)) {
-            Utils::log('Call method ' . $elementName , 1, $this->layoutName . "] [callDynamicMethod");
+            Utils::log('Call Element ' . $elementName , 1, $this->layoutName . "] [callMethod");
             $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
-            return $result;
         } else {
             $result = ElementsController::getElement($elementName, $this->jsonDecode, $params);
             if(!$result){
-                Utils::log('Method ' . $elementName . ' does not exist. Page: ' . $marker, 2, $this->layoutName . "] [callDynamicMethod");
+                Utils::log('Element ' . $elementName . ' does not exist. Page: ' . $marker, 2, $this->layoutName . "] [callMethod");
             }
-            return $result;
         }
+        return $result;
     }
 
 }

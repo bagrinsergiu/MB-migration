@@ -2,16 +2,17 @@
 
 namespace MBMigration\Builder\Layout\Elements;
 
-use MBMigration\Builder\Layout\Anthem\Elements\ElementInterface;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
-class Head extends Element implements ElementInterface
+class Head extends Element
 {
     /**
      * @var VariableCache
      */
     private $cache;
+
     /**
      * @var mixed
      */
@@ -31,47 +32,30 @@ class Head extends Element implements ElementInterface
     private function Menu($menuList): bool
     {
         Utils::log('Create block menu', 1, "] [createMenu");
+
         $this->cache->set('currentSectionData', $menuList);
-        $decoded = $this->jsonDecode['blocks']['menu'];
-        $block = json_decode($decoded['main'], true);
-        $lgoItem = $this->cache->get('header','mainSection');
-        foreach ($lgoItem['items'] as $item)
-        {
-            if ($item['category'] = 'photo')
-            {
-                $logo['imageSrc'] = $item['content'];
-                $logo['imageFileName'] = $item['imageFileName'];
-            }
-        }
-        $itemMenu = json_decode($decoded['item'], true);
+        $headItem = $this->cache->get('header','mainSection');
+        $section = $this->jsonDecode['blocks']['menu'];
 
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageSrc'] = $logo['imageSrc'];
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['imageFileName'] = $logo['imageFileName'];
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['menuSelected'] = $menuList['uid'];
+        $objBlock = new ItemBuilder();
+        $objBlock->newItem($section['main']);
 
-        $itemsMenu = $this->creatingMenuTree($menuList['list'], $itemMenu);
+        $this->setImageLogo($objBlock, $headItem);
 
-        if($this->checkArrayPath($lgoItem, 'settings/color/subpalette')) {
-            $block['value']['items'][0]['value']['bgColorHex'] = strtolower($lgoItem['color']);
-            $block['value']['items'][0]['value']['bgColorType'] = 'solid';
+        $this->creatingMenu($objBlock, $menuList, $section);
+
+        if($this->checkArrayPath($headItem, 'settings/color/subpalette')) {
+            $objBlock->item(0)->setting('bgColorPalette', '');
+            $objBlock->item(0)->setting('bgColorHex', $headItem['color']);
+            $objBlock->item(0)->setting('bgColorType', 'solid');
+
             $this->cache->set('flags', ['createdFirstSection'=> false, 'bgColorOpacity' => true]);
         } else {
-            $color = $this->cache->get('nav-subpalette','subpalette');
-            $block['value']['items'][0]['value']['bgColorHex'] = strtolower($color['bg']);
-            $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['subMenuBgColorHex'] = strtolower($color['bg']);
-            $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['subMenuColorHex'] = strtolower($color['nav-text']);
-            $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['colorHex'] = strtolower($color['nav-text']);
-            $block['value']['items'][0]['value']['bgColorOpacity'] = 1;
-            $block['value']['items'][0]['value']['tempBgColorOpacity'] = 0;
-            $block['value']['items'][0]['value']['bgColorType'] = 'ungrouped';
+            $this->setColorBackground($objBlock);
             $this->cache->set('flags', ['createdFirstSection' => false, 'bgColorOpacity' => true]);
         }
 
-
-        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][1]['value']['items'][0]['value']['items'] = $itemsMenu;
-
-
-        $block = $this->replaceIdWithRandom($block);
+        $block = $this->replaceIdWithRandom($objBlock->get());
         $this->cache->set('menuBlock', json_encode($block));
 
         return true;
@@ -101,5 +85,45 @@ class Head extends Element implements ElementInterface
             $treeMenu[] = $blockMenu;
         }
         return $treeMenu;
+    }
+
+    private function creatingMenu(ItemBuilder $objBlock, $menuList, $section): void
+    {
+        $itemMenu = json_decode($section['item'], true);
+        $itemsMenu = $this->creatingMenuTree($menuList['list'], $itemMenu);
+
+        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->addItem($itemsMenu);
+        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('menuSelected', $menuList['uid']);
+    }
+
+    private function setImageLogo(ItemBuilder $objBlock, $headItem): void
+    {
+        $imageLogo = [];
+
+        foreach ($headItem['items'] as $item) {
+            if ($item['category'] = 'photo') {
+                $imageLogo['imageSrc'] = $item['content'];
+                $imageLogo['imageFileName'] = $item['imageFileName'];
+            }
+        }
+
+        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageSrc', $imageLogo['imageSrc']);
+        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageFileName', $imageLogo['imageFileName']);
+    }
+
+    private function setColorBackground(ItemBuilder $objBlock)
+    {
+        $color = $this->cache->get('nav-subpalette','subpalette');
+
+        $objBlock->item(0)->setting('bgColorPalette', '');
+        $objBlock->item(0)->setting('bgColorHex', $color['bg']);
+        $objBlock->item(0)->setting('bgColorOpacity', 1);
+        $objBlock->item(0)->setting('tempBgColorOpacity', 1);
+        $objBlock->item(0)->setting('bgColorType', 'ungrouped');
+
+        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('subMenuBgColorHex', $color['bg']);
+        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('subMenuColorHex', $color['nav-text']);
+        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('colorHex', $color['nav-text']);
+
     }
 }

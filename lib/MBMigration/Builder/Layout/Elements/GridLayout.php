@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Elements;
 
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 
 class GridLayout extends Element
@@ -34,10 +34,10 @@ class GridLayout extends Element
     protected function GridLayout(array $sectionData) {
         Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
 
-        $objItem    = new ItemSetter();
-        $objBlock   = new ItemSetter();
-        $objHead    = new ItemSetter();
-        $objRow     = new ItemSetter();
+        $objItem    = new ItemBuilder();
+        $objBlock   = new ItemBuilder();
+        $objHead    = new ItemBuilder();
+        $objRow     = new ItemBuilder();
 
         $options = [];
 

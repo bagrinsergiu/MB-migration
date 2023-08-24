@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Bloom;
 
 use DOMDocument;
 use Exception;
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -398,8 +398,8 @@ class Bloom extends Layout
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
-        $objBlock = new ItemSetter($decoded['main']);
-        $objItem = new ItemSetter($decoded['item']);
+        $objBlock = new ItemBuilder($decoded['main']);
+        $objItem = new ItemBuilder($decoded['item']);
 
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);

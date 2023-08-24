@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Elements;
 
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -33,9 +33,9 @@ class ThreeTopMediaCircle extends Element
 
         $options = [];
 
-        $objBlock = new ItemSetter();
-        $objItem = new ItemSetter();
-        $objSpacer = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objItem = new ItemBuilder();
+        $objSpacer = new ItemBuilder();
 
         $objBlock->newItem($decoded['main']);
         $objItem->newItem($decoded['item']);

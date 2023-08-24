@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\August;
 
 use DOMDocument;
 use Exception;
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -52,7 +52,7 @@ class August extends Layout
         $lgoItem = $this->cache->get('header', 'mainSection');
         $decoded = $this->jsonDecode['blocks']['menu'];
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $objBlock->newItem($decoded['main']);
 
@@ -131,7 +131,7 @@ class August extends Layout
     {
         Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['left-media']['main'];
@@ -187,7 +187,7 @@ class August extends Layout
         Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
         $this->cache->set('currentSectionData', $sectionData);
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $decoded = $this->jsonDecode['blocks']['right-media']['main'];
 
@@ -228,7 +228,7 @@ class August extends Layout
     {
         Utils::log('Create full media', 1, $this->layoutName . "] [full_media");
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
 
@@ -305,7 +305,7 @@ class August extends Layout
     {
         Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['full-text'];
@@ -461,8 +461,8 @@ class August extends Layout
     {
         Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
 
-        $objItem = new ItemSetter();
-        $objBlock = new ItemSetter();
+        $objItem = new ItemBuilder();
+        $objBlock = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
@@ -659,9 +659,9 @@ class August extends Layout
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['three-top-media-circle'];
 
-        $objBlock = new ItemSetter();
-        $objItem = new ItemSetter();
-        $objSpacer = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objItem = new ItemBuilder();
+        $objSpacer = new ItemBuilder();
 
         $objBlock->newItem($decoded['main']);
         $objItem->newItem($decoded['item']);
@@ -740,8 +740,8 @@ class August extends Layout
         $sectionData = $this->cache->get('mainSection')['footer'];
         $decoded = $this->jsonDecode['blocks']['footer'];
 
-        $objBlock = new ItemSetter();
-        $objItem = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objItem = new ItemBuilder();
 
         $objBlock->newItem($decoded['main']);
         $objItem->newItem($decoded['item']);

@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Elements;
 
 use DOMException;
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -36,7 +36,7 @@ class FullMedia extends Element
     {
         Utils::log('Create full media', 1, "] [full_media");
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $options = [];
 

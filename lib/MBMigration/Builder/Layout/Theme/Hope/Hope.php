@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Hope;
 
 use DOMDocument;
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -335,7 +335,7 @@ class Hope  extends Layout
         Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
-        $objItem = new ItemSetter($decoded['item']);
+        $objItem = new ItemBuilder($decoded['item']);
 
         $block = json_decode($decoded['main'], true);
         $item  = json_decode($decoded['item'], true);
@@ -512,7 +512,7 @@ class Hope  extends Layout
 
     private function itemWrapper($content, $associative = false ){
         $decoded = $this->jsonDecode['global']['wrapper'];
-        $block = new ItemSetter($decoded);
+        $block = new ItemBuilder($decoded);
         $result = $block->item(0)->setting('text', $content)->get();
         if(!$associative){
             return $result;
