@@ -109,52 +109,6 @@ class HtmlHandler
             }
         }
 
-//        if($upperCase === 'uppercase') {
-//            $paragraphsInUpperCase = $dom->getElementsByTagName('p');
-//            foreach ($paragraphsInUpperCase as $node) {
-//
-//                $newParagraph = $dom->createElement('p');
-//
-//                $style = $node->getAttribute('style');
-//                if (!empty($style)) {
-//                    $newParagraph->setAttribute('style', $style);
-//                }
-//
-//                $newDoc->appendChild($newParagraph);
-//
-//                $textContent = '';
-//                $textAfterBr = '';
-//                $foundBr = false;
-//                foreach ($node->childNodes as $childNode) {
-//                    $contentArray = explode('<br>', $dom->saveHTML($childNode));
-//                    foreach ($contentArray as $content) {
-//                        if (!empty(trim($content))) {
-//                            // Создание нового тега <p> с сохранением параметров style
-//                            $newParagraph = $newDoc->createElement('p', strtoupper(trim($content)));
-//                            $style = $childNode->getAttribute('style');
-//                            if (!empty($style)) {
-//                                $newParagraph->setAttribute('style', $style);
-//                            }
-//
-//                            // Добавление нового параграфа в новый документ
-//                            $newDoc->appendChild($newParagraph);
-//                        }
-//                    }
-//
-//                if (!empty($textAfterBr)) {
-//                    $newParagraph = $newDoc->createElement('p', $textAfterBr);
-//                    $newDoc->appendChild($newParagraph);
-//                }
-//
-//                while ($node->firstChild) {
-//                    $node->removeChild($node->firstChild);
-//                }
-//                $newContentNode = $dom->createTextNode($textContent);
-//
-//                $node->appendChild($newContentNode);
-//            }
-//        }
-
         $paragraphs = $dom->getElementsByTagName('p');
 
         foreach ($paragraphs as $paragraph) {
