@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Utils;
 
 use DOMDocument;
+use DOMElement;
 
 class HtmlHandler
 {
@@ -48,12 +49,111 @@ class HtmlHandler
         $htmlString = $this->replaceDivWithParagraph($htmlString);
         @$dom->loadHTML($htmlString);
 
-        if($upperCase !== '' && $sectionType !== 'brz-tp-lg-paragraph') {
+
+        if ($upperCase === 'uppercase') {
             $paragraphsInUpperCase = $dom->getElementsByTagName('p');
+
+            $changes = array();
+
             foreach ($paragraphsInUpperCase as $node) {
-                $node->nodeValue = mb_strtoupper($node->nodeValue, 'utf-8');
+                $newChanges = array();
+                $textContent = '';
+                $textAfterBr = '';
+
+                foreach ($node->childNodes as $childNode) {
+                    if ($childNode instanceof DOMElement && $childNode->tagName === 'br') {
+                        $newChanges[] = array(
+                            'type' => 'newParagraph',
+                            'content' => strtoupper(trim($textContent)),
+                            'style' => $node->getAttribute('style')
+                        );
+
+                        $textContent = '';
+                    } else {
+                        $textContent .= $dom->saveHTML($childNode);
+                    }
+                }
+
+                if (!empty(trim($textContent))) {
+                    $newChanges[] = array(
+                        'type' => 'newParagraph',
+                        'content' => strtoupper(trim($textContent)),
+                        'style' => $node->getAttribute('style')
+                    );
+                }
+
+                if (!empty(trim($textAfterBr))) {
+                    $newChanges[] = array(
+                        'type' => 'newParagraph',
+                        'content' => strtoupper(trim($textAfterBr)),
+                        'style' => $node->getAttribute('style')
+                    );
+                }
+
+                $changes[] = array(
+                    'node' => $node,
+                    'changes' => $newChanges
+                );
+            }
+
+            foreach ($changes as $change) {
+                $node = $change['node'];
+                foreach ($change['changes'] as $changeInfo) {
+                    $newParagraph = $dom->createElement('p', $changeInfo['content']);
+                    if (!empty($changeInfo['style'])) {
+                        $newParagraph->setAttribute('style', $changeInfo['style']);
+                    }
+                    $node->parentNode->insertBefore($newParagraph, $node);
+                }
+                $node->parentNode->removeChild($node);
             }
         }
+
+//        if($upperCase === 'uppercase') {
+//            $paragraphsInUpperCase = $dom->getElementsByTagName('p');
+//            foreach ($paragraphsInUpperCase as $node) {
+//
+//                $newParagraph = $dom->createElement('p');
+//
+//                $style = $node->getAttribute('style');
+//                if (!empty($style)) {
+//                    $newParagraph->setAttribute('style', $style);
+//                }
+//
+//                $newDoc->appendChild($newParagraph);
+//
+//                $textContent = '';
+//                $textAfterBr = '';
+//                $foundBr = false;
+//                foreach ($node->childNodes as $childNode) {
+//                    $contentArray = explode('<br>', $dom->saveHTML($childNode));
+//                    foreach ($contentArray as $content) {
+//                        if (!empty(trim($content))) {
+//                            // Создание нового тега <p> с сохранением параметров style
+//                            $newParagraph = $newDoc->createElement('p', strtoupper(trim($content)));
+//                            $style = $childNode->getAttribute('style');
+//                            if (!empty($style)) {
+//                                $newParagraph->setAttribute('style', $style);
+//                            }
+//
+//                            // Добавление нового параграфа в новый документ
+//                            $newDoc->appendChild($newParagraph);
+//                        }
+//                    }
+//
+//                if (!empty($textAfterBr)) {
+//                    $newParagraph = $newDoc->createElement('p', $textAfterBr);
+//                    $newDoc->appendChild($newParagraph);
+//                }
+//
+//                while ($node->firstChild) {
+//                    $node->removeChild($node->firstChild);
+//                }
+//                $newContentNode = $dom->createTextNode($textContent);
+//
+//                $node->appendChild($newContentNode);
+//            }
+//        }
 
         $paragraphs = $dom->getElementsByTagName('p');
 
@@ -78,7 +178,7 @@ class HtmlHandler
                     $p_style[$value[0]] = $value[1];
                 }
 
-                if (array_key_exists('font-size', $p_style)) {
+                if (array_key_exists('font-size', $p_style) && $sectionType !== 'brz-tp-lg-paragraph') {
                     $fontSize = $this->convertFontSize($p_style['font-size']);
                 }
 
