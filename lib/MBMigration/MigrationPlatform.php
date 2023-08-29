@@ -65,7 +65,7 @@ class MigrationPlatform
         $this->buildPage = '';
     }
 
-    public function start(int $projectID_MB, int $projectID_Brizy = 0): bool
+    public function start(string $projectID_MB, int $projectID_Brizy = 0): bool
     {
         try {
             $this->run($projectID_MB, $projectID_Brizy);
@@ -83,7 +83,7 @@ class MigrationPlatform
      * @throws Exception
      * @throws GuzzleException
      */
-    private function run(int $projectID_MB, int $projectID_Brizy = 0): void
+    private function run(string $projectUUID_MB, int $projectID_Brizy = 0): void
     {
         $this->brizyApi = new BrizyAPI();
 
@@ -94,15 +94,14 @@ class MigrationPlatform
         } else {
             $this->projectID_Brizy = $projectID_Brizy;
         }
-        $this->projectID_MB = $projectID_MB;
 
-        $this->projectId = $projectID_MB . '_' . $this->projectID_Brizy . '_';
+        $this->projectId = $projectUUID_MB . '_' . $this->projectID_Brizy . '_';
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
 
         $this->cache->set('container', $this->brizyApi->getProjectContainer($this->projectID_Brizy));
 
-        $this->init($this->projectID_MB, $this->projectID_Brizy);
+        $this->init($projectUUID_MB, $this->projectID_Brizy);
         $this->checkDesign($this->parser->getDesignSite());
 
         $this->createProjectFolders();
@@ -151,7 +150,7 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function init(int $projectID_MB, int $projectID_Brizy): void
+    private function init(string $projectUUID_MB, int $projectID_Brizy): void
     {
         Utils::log('-------------------------------------------------------------------------------------- []', 4, '');
         Utils::log('Start Process!', 4, 'MIGRATION');
@@ -164,6 +163,8 @@ class MigrationPlatform
         Utils::log('Migration ID: ' . $this->migrationID, 4, 'MIGRATION');
 
         $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
+
+        $projectID_MB = Parser::getIdByUUID($projectUUID_MB);
 
         $this->cache->set('projectId_MB', $projectID_MB);
         $this->cache->set('projectId_Brizy', $projectID_Brizy);
