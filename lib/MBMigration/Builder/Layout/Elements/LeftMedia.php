@@ -19,14 +19,14 @@ class LeftMedia extends Element
         $this->jsonDecode = $jsonKitElements;
     }
 
-    /**
-     * @throws DOMException
-     */
     public function getElement(array $elementData = [])
     {
         return $this->LeftMedia($elementData);
     }
 
+    /**
+     * @throws DOMException
+     */
     protected function LeftMedia(array $sectionData)
     {
         Utils::log('Create bloc', 1, "] [left_media");
@@ -41,42 +41,11 @@ class LeftMedia extends Element
 
         $objBlock->item(0)->setting('bgColorPalette','');
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        $options = array_merge($options, ['bgColor' => $blockBg]);
+        $this->setOptionsForTextColor($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
-            $textColor = $sectionData['settings']['color']['text'];
-
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-
-            $options = array_merge($options, ['textColor' => $textColor]);
-        }
-
-        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            Utils::log('Set background', 1, $this->layoutName . "] [left_media");
-
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') && $sectionData['settings']['sections']['background']['filename'] !== ''){
-                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-            }
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/photo') && $sectionData['settings']['sections']['background']['photo'] !== '') {
-                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-            }
-
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
-                $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-                if ($opacity <= 0.3) {
-                    $options = array_merge($options, ['textColor' => '#000000']);
-                }
-                if($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode') && $sectionData['settings']['sections']['background']['fadeMode'] !== 'none') {
-                    $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-                }
-                $objBlock->item(0)->setting('bgColorType', 'none');
-            }
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
         foreach ($sectionData['items'] as $item) {
             if($item['category'] == 'photo' && $item['content'] !== '') {
@@ -94,18 +63,18 @@ class LeftMedia extends Element
                 }
             }
             if($item['category'] == 'text') {
-                if($item['item_type']=='title') {
-                    if (isset($item['settings']['used_fonts'])){
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left', 'upperCase' => 'brz-capitalize-on']);
+                if($item['item_type']=='title' && $this->showHeader($sectionData)) {
+
+                    $this->setOptionsForUsedFonts($item, $options);
+
+                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
 
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
-                if($item['item_type']=='body') {
-                    if (isset($item['settings']['used_fonts'])){
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
+                if($item['item_type']=='body' && $this->showBody($sectionData)) {
+
+                    $this->setOptionsForUsedFonts($item, $options);
+
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
 
                     $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));

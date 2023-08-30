@@ -66,18 +66,20 @@ class TwoHorizontalText extends Element
             if($item['group'] == 0){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+
+                        $this->setOptionsForUsedFonts($item, $options);
+
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
+
                         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                         $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
                     }
                     if($item['item_type']=='body'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
+
+                        $this->setOptionsForUsedFonts($item, $options);
+
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+
                         $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                         $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
                     }
@@ -86,16 +88,16 @@ class TwoHorizontalText extends Element
             if($item['group'] == 1){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+
+                        $this->setOptionsForUsedFonts($item, $options);
+
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
                         $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
+
+                        $this->setOptionsForUsedFonts($item, $options);
+
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                         $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }

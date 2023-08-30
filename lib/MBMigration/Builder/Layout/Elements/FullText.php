@@ -67,7 +67,7 @@ class FullText extends Element
 
                     $this->setOptionsForUsedFonts($item, $options);
 
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left']);
+                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                     $objBlock->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {

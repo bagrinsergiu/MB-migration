@@ -46,32 +46,13 @@ class FullMedia extends Element
 
         $objBlock->newItem($decoded);
 
-        $objBlock->item(0)->setting('bgColorPalette','');
-        $objBlock->item(0)->setting('bgAttachment','none');
-        $objBlock->item(0)->setting('bgColorOpacity', 1);
+        $this->backgroundParallax($objBlock, $sectionData);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
-            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
-                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
-                $objBlock->item(0)->setting('bgAttachment','fixed');
-            }
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/photo') &&
-            $this->checkArrayPath($sectionData, 'settings/sections/background/filename'))
-        {
-            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-        }
-
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
-            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
-        }
+        $this->setOptionsForTextColor($sectionData, $options);
 
         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText('<p></p>');
         $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('<p></p>');
@@ -79,29 +60,18 @@ class FullMedia extends Element
         foreach ($sectionData['items'] as $item) {
             if($item['category'] == 'text') {
 
-                $show_header = true;
-                $show_body = true;
+                if($item['item_type']=='title' && $this->showHeader($sectionData)) {
+                    $this->setOptionsForUsedFonts($item, $options);
+                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
 
-                if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
-                    $show_header = $sectionData['settings']['sections']['text']['show_header'];
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
-                if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
-                    $show_body = $sectionData['settings']['sections']['text']['show_body'];
-                }
+                if($item['item_type']=='body' && $this->showBody($sectionData)) {
 
-                if($item['item_type']=='title' && $show_header) {
-                    if (isset($item['settings']['used_fonts'])){
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
+                    $this->setOptionsForUsedFonts($item, $options);
+                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
 
-                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg]));
-                }
-                if($item['item_type']=='body' && $show_body) {
-
-                    if (isset($item['settings']['used_fonts'])){
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
-                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bgColor' => $blockBg]));
+                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
             }
             if($item['category'] == 'photo' && $item['content'] !== '') {
