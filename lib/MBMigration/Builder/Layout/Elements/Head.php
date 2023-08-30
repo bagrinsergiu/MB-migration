@@ -92,8 +92,8 @@ class Head extends Element
         $itemMenu = json_decode($section['item'], true);
         $itemsMenu = $this->creatingMenuTree($menuList['list'], $itemMenu);
 
-        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->addItem($itemsMenu);
-        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('menuSelected', $menuList['uid']);
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->addItem($itemsMenu);
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('menuSelected', $menuList['uid']);
     }
 
     private function setImageLogo(ItemBuilder $objBlock, $headItem): void
@@ -121,9 +121,9 @@ class Head extends Element
         $objBlock->item(0)->setting('tempBgColorOpacity', 1);
         $objBlock->item(0)->setting('bgColorType', 'ungrouped');
 
-        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('subMenuBgColorHex', $color['bg']);
-        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('subMenuColorHex', $color['nav-text']);
-        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('colorHex', $color['nav-text']);
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuBgColorHex', $color['sub-bg']);
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuColorHex', $color['nav-text']);
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('colorHex', $color['sub-text']);
 
     }
 }
