@@ -72,14 +72,17 @@ class Parser
      */
     public static function getIdByUUID($projectUUID_MB)
     {
+
         self::checkUUID($projectUUID_MB);
 
         Utils::log('Get id by uuId', 1, 'getIdByUUID');
+
         $db = new DBConnector();
         $settingSite = $db->requestArray("SELECT id from sites WHERE uuid = '" . $projectUUID_MB . "'");
         if(empty($settingSite)){
             Utils::MESSAGES_POOL(self::trace(0) . 'Message: MB project not found');
             Utils::log('MB project not found', 3, 'getSite');
+
             throw new Exception("MB project not found with uuid: $projectUUID_MB");
         }
         return $settingSite[0]['id'];
