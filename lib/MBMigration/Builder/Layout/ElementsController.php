@@ -52,10 +52,10 @@ class ElementsController
             case "right_media":
                 $element = new RightMedia($jsonKitElements);
                 return $element->getElement($elementData);
-            case "grid_Layout":
+            case "grid_layout":
                 $element = new GridLayout($jsonKitElements);
                 return $element->getElement($elementData);
-            case "list_Layout":
+            case "list_layout":
                 $element = new ListLayout($jsonKitElements);
                 return $element->getElement($elementData);
             case "tabs_layout":
