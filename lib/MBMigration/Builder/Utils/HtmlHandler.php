@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Utils;
 
 use DOMDocument;
+use DOMElement;
 
 class HtmlHandler
 {
@@ -14,6 +15,10 @@ class HtmlHandler
      * @var mixed
      */
     private $option;
+    /**
+     * @var DOMDocument
+     */
+    private $dom;
 
     public function __construct($htmlString, $option)
     {
@@ -37,26 +42,38 @@ class HtmlHandler
         $mainColor      = $this->hexToRgb($this->option['mainColor']);
         $fontWeight     = $this->option['fontWeight'];
         $upperCase      = $this->option['upperCase'];
-        $fontHeaders    = $this->option['fontHeaders'];
         $fontMain       = $this->option['fontMain'];
         $textColor      = $this->option['textColor'];
         $color          = $this->option['color'];
 
         //$htmlString = str_replace('&nbsp;', '', $htmlString);
 
-        $dom = new DOMDocument();
+        $this->dom = new DOMDocument();
 
         $htmlString = $this->replaceDivWithParagraph($htmlString);
-        @$dom->loadHTML($htmlString);
+        @$this->dom->loadHTML($htmlString);
 
-        if($upperCase !== '' && $sectionType !== 'brz-tp-lg-paragraph') {
-            $paragraphsInUpperCase = $dom->getElementsByTagName('p');
+
+        if ($upperCase === 'uppercase') {
+            $paragraphsInUpperCase = $this->dom->getElementsByTagName('p');
+
+            $changes = [];
+
             foreach ($paragraphsInUpperCase as $node) {
-                $node->nodeValue = mb_strtoupper($node->nodeValue, 'utf-8');
+                $newDoc = new DOMDocument();
+                $this->processNode($node, $newDoc);
+
+                $parent = $node->parentNode;
+                foreach ($newDoc->childNodes as $newChild) {
+                    $importedNode = $this->dom->importNode($newChild, true);
+                    $parent->insertBefore($importedNode, $node);
+                }
+                $parent->removeChild($node);
             }
         }
 
-        $paragraphs = $dom->getElementsByTagName('p');
+
+        $paragraphs = $this->dom->getElementsByTagName('p');
 
         foreach ($paragraphs as $paragraph) {
 
@@ -79,7 +96,7 @@ class HtmlHandler
                     $p_style[$value[0]] = $value[1];
                 }
 
-                if (array_key_exists('font-size', $p_style)) {
+                if (array_key_exists('font-size', $p_style) && $sectionType !== 'brz-tp-lg-paragraph') {
                     $fontSize = $this->convertFontSize($p_style['font-size']);
                 }
 
@@ -102,8 +119,17 @@ class HtmlHandler
                     }
                 }
 
+                if (array_key_exists('font-style', $p_style) && $p_style['font-style'] === 'italic') {
+                    $me = $this->dom->createElement('em');
+                    while ($paragraph->childNodes->length > 0) {
+                        $child = $paragraph->childNodes->item(0);
+                        $me->appendChild($child);
+                    }
+                    $paragraph->appendChild($me);
+                }
+
                 if (isset($fontColor) || isset($lineHeight)) {
-                    $span = $dom->createElement('span');
+                    $span = $this->dom->createElement('span');
                     $span->setAttribute('style', "color: $fontColor; opacity: 1;");
 
                     while ($paragraph->childNodes->length > 0) {
@@ -118,7 +144,7 @@ class HtmlHandler
             if ($sectionType === 'brz-tp-lg-paragraph') {
                 $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$fontSize brz-fss-lg-px brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing";
             } else {
-                $titleFontSize = $this->convertFontSize($fontHeaders['font_size']);
+                $titleFontSize = $this->convertFontSize($fontMain['font_size']);
 
                 $newClass = "$sectionType $position brz-tp-lg-empty brz-ff-$fontFamily brz-ft-$fontType brz-fs-lg-$titleFontSize brz-fw-lg-$fontWeight brz-ls-lg-$letterSpacing ";
             }
@@ -208,7 +234,7 @@ class HtmlHandler
 
         }
         $this->option = [];
-        $result = preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $dom->saveHTML());
+        $result = preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $this->dom->saveHTML());
         return $result;
     }
 
@@ -323,6 +349,40 @@ class HtmlHandler
         $blue = hexdec(substr($hex, 4, 2));
 
         return "rgb($red, $green, $blue)";
+    }
+
+    /**
+     * @throws \DOMException
+     */
+    private function processNode($node, DOMDocument $newDoc)
+    {
+        $textContent = '';
+
+        foreach ($node->childNodes as $childNode) {
+            if ($childNode instanceof DOMElement && $childNode->tagName === 'br') {
+                $newParagraph = $newDoc->createElement('p', strtoupper(trim($textContent)));
+                $style = $node->getAttribute('style');
+                if (!empty($style)) {
+                    $newParagraph->setAttribute('style', $style);
+                }
+                $newDoc->appendChild($newParagraph);
+
+                $textContent = '';
+            } elseif ($childNode instanceof DOMElement && $childNode->tagName === 'span') {
+                $this->processNode($childNode, $newDoc);
+            } else {
+                $textContent .= preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $this->dom->saveHTML($childNode));
+            }
+        }
+
+        if (!empty(trim($textContent))) {
+            $newParagraph = $newDoc->createElement('p', strtoupper(trim($textContent)));
+            $style = $node->getAttribute('style');
+            if (!empty($style)) {
+                $newParagraph->setAttribute('style', $style);
+            }
+            $newDoc->appendChild($newParagraph);
+        }
     }
 
 }

@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout;
 
 use Exception;
 use MBMigration\Builder\Checking;
-use MBMigration\Builder\ItemSetter;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Core\Utils;
 
 class Layout extends LayoutUtils
@@ -13,7 +13,7 @@ class Layout extends LayoutUtils
     /**
      * @throws Exception
      */
-    private function initData()
+    protected function initData()
     {
         Utils::log('initData!', 4, 'Main Layout');
         return $this->loadKit();
@@ -27,7 +27,7 @@ class Layout extends LayoutUtils
         $jsonDecode = $this->initData();
         Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $jsonDecode['blocks']['full-text'];
@@ -102,7 +102,7 @@ class Layout extends LayoutUtils
         $jsonGlobal = $this->initData();
         Utils::log('Create full media', 1, $this->layoutName . "] [full_media");
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
 
@@ -185,7 +185,7 @@ class Layout extends LayoutUtils
 
         Utils::log('Create full media', 1, $this->layoutName . "] [top_media");
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $options = [];
 
@@ -279,7 +279,7 @@ class Layout extends LayoutUtils
         $jsonDecode = $this->initData();
         Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $jsonDecode['blocks']['left-media']['main'];
@@ -339,7 +339,7 @@ class Layout extends LayoutUtils
         Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
         $this->cache->set('currentSectionData', $sectionData);
 
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $decoded =  $jsonDecode['blocks']['right-media']['main'];
 
@@ -393,7 +393,7 @@ class Layout extends LayoutUtils
         $decoded = $jsonDecode['blocks']['two-horizontal-text'];
         $block = json_decode($decoded['main'], true);
 
-        $objBlock = new ItemSetter($decoded['main']);
+        $objBlock = new ItemBuilder($decoded['main']);
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
@@ -483,7 +483,7 @@ class Layout extends LayoutUtils
         $decoded = $jsonDecode['blocks']['three-horizontal-text'];
         $block = json_decode($decoded['main'], true);
 
-        $objBlock = new ItemSetter($decoded['main']);
+        $objBlock = new ItemBuilder($decoded['main']);
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
@@ -589,7 +589,7 @@ class Layout extends LayoutUtils
         $decoded = $jsonDecode['blocks']['three-horizontal-text'];
         $block = json_decode($decoded['main'], true);
 
-        $objBlock = new ItemSetter($decoded['main']);
+        $objBlock = new ItemBuilder($decoded['main']);
 
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
@@ -733,11 +733,11 @@ class Layout extends LayoutUtils
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $jsonDecode['blocks']['list-layout'];
 
-        $objBlock = new ItemSetter();
-        $objItem = new ItemSetter();
-        $objHead = new ItemSetter();
-        $objImage = new ItemSetter();
-        $objRow = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objItem = new ItemBuilder();
+        $objHead = new ItemBuilder();
+        $objImage = new ItemBuilder();
+        $objRow = new ItemBuilder();
 
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);
@@ -832,6 +832,9 @@ class Layout extends LayoutUtils
         return json_encode($block);
     }
 
+    /**
+     * @throws Exception
+     */
     protected function list_media_layout(array $sectionData){
         return $this->sermon_layout_placeholder($sectionData);
     }
@@ -842,8 +845,8 @@ class Layout extends LayoutUtils
     protected function sermon_layout_placeholder(array $sectionData) {
         $jsonDecode = $this->initData();
 
-        $objBlock = new ItemSetter();
-        $objHead  = new ItemSetter();
+        $objBlock = new ItemBuilder();
+        $objHead  = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $jsonDecode['dynamic']['sermon_layout_placeholder'];
@@ -948,7 +951,7 @@ class Layout extends LayoutUtils
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--richText'];
-        $block = new ItemSetter($decoded);
+        $block = new ItemBuilder($decoded);
         $block->item(0)->setText($content);
         $result = $block->get();
         if (!empty($settings)) {
@@ -969,7 +972,7 @@ class Layout extends LayoutUtils
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--image'];
-        $block = new ItemSetter($decoded);
+        $block = new ItemBuilder($decoded);
         $result = $block->item(0)->setting('text', $content)->get();
         if (!$associative) {
             return $result;
@@ -984,7 +987,7 @@ class Layout extends LayoutUtils
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--icon'];
-        $block = new ItemSetter($decoded);
+        $block = new ItemBuilder($decoded);
         $result = $block->item(0)->setting('text', $content)->get();
         if (!$associative) {
             return $result;
@@ -999,7 +1002,7 @@ class Layout extends LayoutUtils
     {
         $jsonDecode = $this->initData();
         Utils::log('Create bloc', 1, $this->layoutName . "] [full_text (parallaxScroll)");
-        $objBlock = new ItemSetter();
+        $objBlock = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $jsonDecode['blocks']['full-text'];

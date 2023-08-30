@@ -3,58 +3,109 @@
 namespace MBMigration\Builder;
 
 use MBMigration\Core\Utils;
+use MBMigration\Builder\ColorMapper\ColorController;
 
 class ColorMapper
 {
+    /**
+     * @throws \Exception
+     */
     private function Anthem (array $colorKit): array
     {
         $magicColors = [
-            'color7' => $this->chooseLargerContrast($colorKit['color1'],$colorKit['color4'],$colorKit['color5']),
-            'color8' => $this->chooseLargerContrast($colorKit['color5'],$colorKit['color4'],$colorKit['color1']),
-            'color9' => $this->chooseLargerContrast($colorKit['color3'],$colorKit['color4'],$colorKit['color1']),
-            'colorA' => $this->chooseLargerContrast($colorKit['color2'],$colorKit['color3'],$colorKit['color1'])
+            'color7' => ColorController::result('chooseLargerContrast', [$colorKit['color1'], $colorKit['color4'], $colorKit['color5']]),
+            'color8' => ColorController::result('chooseLargerContrast', [$colorKit['color5'], $colorKit['color4'], $colorKit['color1']]),
+            'color9' => ColorController::result('chooseLargerContrast', [$colorKit['color3'], $colorKit['color4'], $colorKit['color1']]),
+            'colorA' => ColorController::result('chooseLargerContrast', [$colorKit['color2'], $colorKit['color3'], $colorKit['color1']])
         ];
 
         $colorKit = array_merge($colorKit, $magicColors);
 
-        return [
+        $result = [
             'subpalette1' => [
                 'bg'                => $colorKit['color1'],
                 'accent'            => $colorKit['color7'],
-                'text'              => $this->getContrastingColor($colorKit['color1']),
-                'header'            => $colorKit['color6'],
-                'link'              => $colorKit['color7'],
+                'text'              => ColorController::result('desaturateByPercent', $colorKit['color7'], 50),
+                'header'            => $colorKit['color7'],
+                'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color7'],
-                'btn-text'          => $colorKit['color3']
+                'btn-text'          => ColorController::result('getContrastingColor', $colorKit['color7']),
+                'gal-btn'           => ColorController::result('getContrastingColor', $colorKit['color3']),
+                'input-border'      => $colorKit['color7'],
+                'input-unselected'  => $colorKit['color7'],
+                'input-selected'    => $colorKit['color7'],
+                'tab-border'        => $colorKit['color7'],
+                'tab-text'          => $colorKit['color7'],
+                'tab-text-active'   => $colorKit['color6'],
+                'accordion-border'  => $colorKit['color7'],
+                'accordion-control' => $colorKit['color6']
             ],
             'subpalette2' => [
                 'bg'                => $colorKit['color5'],
                 'accent'            => $colorKit['color8'],
-                'text'              => $this->getContrastingColor($colorKit['color5']),
+                'text'              => ColorController::result('desaturateByPercent', $colorKit['color8'],50),
                 'header'            => $colorKit['color8'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color2'],
-                'btn-text'          => $colorKit['color8']
+                'btn-text'          => ColorController::result('getContrastingColor', $colorKit['color2']),
+                'gal-btn'           => ColorController::result('getContrastingColor', $colorKit['color1']),
+                'input-border'      => $colorKit['color2'],
+                'input-unselected'  => $colorKit['color2'],
+                'input-selected'    => $colorKit['color2'],
+                'tab-border'        => $colorKit['color8'],
+                'tab-text'          => $colorKit['color8'],
+                'tab-text-active'   => $colorKit['color6'],
+                'accordion-border'  => $colorKit['color8'],
+                'accordion-control' => $colorKit['color6']
             ],
             'subpalette3' => [
                 'bg'                => $colorKit['color2'],
                 'accent'            => $colorKit['colorA'],
-                'text'              => $this->getContrastingColor($colorKit['color2']),
+                'text'              => ColorController::result('desaturateByPercent', $colorKit['colorA'],50),
                 'header'            => $colorKit['colorA'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['colorA'],
-                'btn-text'          => $colorKit['color2']
+                'btn-text'          => $colorKit['color2'],
+                'gal-btn'           => ColorController::result('getContrastingColor', $colorKit['color2']),
+                'input-border'      => $colorKit['colorA'],
+                'input-unselected'  => $colorKit['colorA'],
+                'input-selected'    => $colorKit['colorA'],
+                'tab-border'        => $colorKit['colorA'],
+                'tab-text'          => $colorKit['colorA'],
+                'tab-text-active'   => $colorKit['color6'],
+                'accordion-border'  => $colorKit['colorA'],
+                'accordion-control' => $colorKit['color6']
             ],
             'subpalette4' => [
                 'bg'                => $colorKit['color3'],
                 'accent'            => $colorKit['color9'],
-                'text'              => $this->getContrastingColor($colorKit['color3']),
+                'text'              => ColorController::result('desaturateByPercent', $colorKit['color9'],50),
                 'header'            => $colorKit['color9'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color2'],
-                'btn-text'          => $colorKit['color2']
+                'btn-text'          => ColorController::result('getContrastingColor', $colorKit['color2']),
+                'gal-btn'           => ColorController::result('getContrastingColor', $colorKit['color3']),
+                'input-border'      => $colorKit['color2'],
+                'input-unselected'  => $colorKit['color2'],
+                'input-selected'    => $colorKit['color2'],
+                'tab-border'        => $colorKit['color9'],
+                'tab-text'          => $colorKit['color9'],
+                'tab-text-active'   => $colorKit['color6'],
+                'accordion-border'  => $colorKit['color9'],
+                'accordion-control' => $colorKit['color6']
+            ],
+            'nav-subpalette' => [
+                'bg'                => $colorKit['color1'],
+                'nav-bg'            => $colorKit['color1'],
+                'sub-bg'            => $colorKit['color3'],
+                'nav-text'          => ColorController::result('mixContrastingColor', $colorKit['color1'],24),
+                'sub-text'          => ColorController::result('mixContrastingColor', $colorKit['color3'],24),
+                'nav-acc'           => ColorController::result('mixContrastingColor', $colorKit['color1'],0),
+                'sub-acc'           => ColorController::result('mixContrastingColor', $colorKit['color3'],0)
             ]
         ];
+
+        return $result;
     }
 
     private function August (array $colorKit): array
@@ -690,43 +741,101 @@ class ColorMapper
         ];
     }
 
-    private function chooseLargerContrast($color1, $color2, $color3): string
-    {
-        $brightness1 = $this->calculateBrightness($color1);
-        $brightness2 = $this->calculateBrightness($color2);
-        $brightness3 = $this->calculateBrightness($color3);
+//    private function chooseLargerContrast($color1, $color2, $color3): string
+//    {
+//        $brightness1 = $this->calculateBrightness($color1);
+//        $brightness2 = $this->calculateBrightness($color2);
+//        $brightness3 = $this->calculateBrightness($color3);
+//
+//        if ($brightness1 >= $brightness2 && $brightness1 >= $brightness3) {
+//            return $color1;
+//        } elseif ($brightness2 >= $brightness1 && $brightness2 >= $brightness3) {
+//            return $color2;
+//        } else {
+//            return $color3;
+//        }
+//    }
 
-        if ($brightness1 >= $brightness2 && $brightness1 >= $brightness3) {
-            return $color1;
-        } elseif ($brightness2 >= $brightness1 && $brightness2 >= $brightness3) {
-            return $color2;
+//    private function chooseLesserContrast($color1, $color2, $color3): string
+//    {
+//        $brightness1 = $this->calculateBrightness($color1);
+//        $brightness2 = $this->calculateBrightness($color2);
+//        $brightness3 = $this->calculateBrightness($color3);
+//
+//        if ($brightness1 <= $brightness2 && $brightness1 <= $brightness3) {
+//            return $color1;
+//        } elseif ($brightness2 <= $brightness1 && $brightness2 <= $brightness3) {
+//            return $color2;
+//        } else {
+//            return $color3;
+//        }
+//    }
+
+//    private function calculateBrightness($color)
+//    {
+//        $red = hexdec(substr($color, 1, 2));
+//        $green = hexdec(substr($color, 3, 2));
+//        $blue = hexdec(substr($color, 5, 2));
+//        return ($red * 299 + $green * 587 + $blue * 114) / 1000;
+//    }
+
+
+
+    function strip_unit($value) {
+        return $value / ($value * 0 + 1);
+    }
+
+    function luminance($color) {
+        return (color_luminance($color) + .05) * 100;
+    }
+
+    function color_luminance($color) {
+        $rgb = hexToRGB($color);
+
+        $a = array($rgb[0]/255, $rgb[1]/255, $rgb[2]/255);
+
+        foreach($a as $k => $v) {
+            if ($v <= 0.03928) {
+                $a[$k] = $v/12.92;
+            } else {
+                $a[$k] = pow((($v+0.055)/1.055), 2.4);
+            }
+        }
+
+        $luminance = 0.2126*$a[0] + 0.7152*$a[1] + 0.0722*$a[2];
+        return $luminance;
+    }
+
+    function chooseLargerContrast($base, $option1, $option2) {
+        $baseLumLight = lumLight($base);
+        $option1LumLight = lumLight($option1);
+        $option2LumLight = lumLight($option2);
+
+        $option1Contrast = abs($baseLumLight - $option1LumLight);
+        $option2Contrast = abs($baseLumLight - $option2LumLight);
+
+        if ($option1Contrast > $option2Contrast) {
+            return $option1;
         } else {
-            return $color3;
+            return $option2;
         }
     }
 
-    private function chooseLesserContrast($color1, $color2, $color3): string
-    {
-        $brightness1 = $this->calculateBrightness($color1);
-        $brightness2 = $this->calculateBrightness($color2);
-        $brightness3 = $this->calculateBrightness($color3);
+    function chooseLesserContrast($base, $option1, $option2) {
+        $baseLumLight = lumLight($base);
+        $option1LumLight = lumLight($option1);
+        $option2LumLight = lumLight($option2);
 
-        if ($brightness1 <= $brightness2 && $brightness1 <= $brightness3) {
-            return $color1;
-        } elseif ($brightness2 <= $brightness1 && $brightness2 <= $brightness3) {
-            return $color2;
+        $option1Contrast = abs($baseLumLight - $option1LumLight);
+        $option2Contrast = abs($baseLumLight - $option2LumLight);
+
+        if ($option1Contrast > $option2Contrast) {
+            return $option2;
         } else {
-            return $color3;
+            return $option1;
         }
     }
 
-    private function calculateBrightness($color)
-    {
-        $red = hexdec(substr($color, 1, 2));
-        $green = hexdec(substr($color, 3, 2));
-        $blue = hexdec(substr($color, 5, 2));
-        return ($red * 299 + $green * 587 + $blue * 114) / 1000;
-    }
 
     private function darken($color, $amount): string
     {

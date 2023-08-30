@@ -31,6 +31,9 @@ class PostgresSQL
             $this->connection = new PDO(
                 "pgsql:host=$dbHost;port=$dbPort;dbname=$dbName;user=$dbUser;password=$dbPass;keepalives_idle=1"
             );
+
+            $this->connection->setAttribute(PDO::ATTR_TIMEOUT, 20);
+
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             Utils::log('Connection success', 4, 'PostgresSQL');
         } catch (PDOException $e) {
@@ -52,6 +55,7 @@ class PostgresSQL
         }
         try {
             $statement = $this->connection->query($sql);
+            Utils::MESSAGES_POOL('success Request: ' . $sql);
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             Utils::MESSAGES_POOL($e->getMessage());

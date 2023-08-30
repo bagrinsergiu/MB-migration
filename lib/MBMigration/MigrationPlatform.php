@@ -31,13 +31,12 @@ class MigrationPlatform
     private $QueryBuilder;
 
     /**
-     * @var BrizyAPI
+     * @var BrizyApi
      */
     private $brizyApi;
     private $projectID_Brizy;
     private $startTime;
     private $graphApiBrizy;
-    private $projectID_MB;
     private $migrationID;
     /**
      * @var ErrorDump
@@ -54,7 +53,9 @@ class MigrationPlatform
 
     public function __construct(Config $config)
     {
-        $this->cache = new VariableCache();
+        $this->cache = VariableCache::getInstance();
+        $this->cache->init();
+
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
         register_shutdown_function([$this->errorDump, 'handleFatalError']);
