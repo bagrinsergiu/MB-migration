@@ -47,8 +47,6 @@ class Parser
         $this->manipulator      = new ArrayManipulator();
         $this->fontsController  = new FontsController($this->container, $cache);
 
-
-
         Utils::log('READY', 4, 'Parser Module');
     }
 
@@ -67,6 +65,38 @@ class Parser
         }
         $designSite = $this->db->requestArray("SELECT name from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
         return $designSite[0]['name'];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function getIdByUUID($projectUUID_MB)
+    {
+        self::checkUUID($projectUUID_MB);
+
+        Utils::log('Get id by uuId', 1, 'getIdByUUID');
+        $db = new DBConnector();
+        $settingSite = $db->requestArray("SELECT id from sites WHERE uuid = '" . $projectUUID_MB . "'");
+        if(empty($settingSite)){
+            Utils::MESSAGES_POOL(self::trace(0) . 'Message: MB project not found');
+            Utils::log('MB project not found', 3, 'getSite');
+            throw new Exception("MB project not found with uuid: $projectUUID_MB");
+        }
+        return $settingSite[0]['id'];
+    }
+
+    /**
+     * @throws Exception
+     */
+    private static function checkUUID($uuid)
+    {
+        Utils::log('Unique id check', 1, 'checkUUID');
+        $uuidPattern = '/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/';
+
+        if (!preg_match($uuidPattern, $uuid)) {
+            Utils::MESSAGES_POOL(self::trace(0) . "Invalid UUID: $uuid");
+            throw new Exception("Invalid UUID: $uuid");
+        }
     }
 
     /**
