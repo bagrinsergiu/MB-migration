@@ -4,70 +4,60 @@ namespace MBMigration\Builder\ColorMapper;
 
 class DesaturateByPercent
 {
-    function result($hexColor, $percentage): string
+    function result($colorHex, $percent): string
     {
-        // Убедимся, что процент увеличения находится в диапазоне от 0 до 100
-        $percentage = max(0, min(100, $percentage));
+        $percent = max(0, min(100, $percent));
 
-        // Преобразуем HEX-цвет в формат RGB
-        $r = hexdec(substr($hexColor, 1, 2));
-        $g = hexdec(substr($hexColor, 3, 2));
-        $b = hexdec(substr($hexColor, 5, 2));
+        $colorHex = ltrim($colorHex, '#');
+        $colorRgb = sscanf($colorHex, "%02x%02x%02x");
 
-        // Преобразуем RGB в значения HSL
+        list($r, $g, $b) = $colorRgb;
         $r /= 255;
         $g /= 255;
         $b /= 255;
 
         $max = max($r, $g, $b);
         $min = min($r, $g, $b);
-        $delta = $max - $min;
-
+        $h = 0;
+        $s = 0;
         $l = ($max + $min) / 2;
 
-        // Если максимальное и минимальное значения совпадают, значит, цвет серый, и светлоту менять не нужно
-        if ($delta === 0) {
-            return $hexColor;
+        if ($max !== $min) {
+            $d = $max - $min;
+            $s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
+
+            switch ($max) {
+                case $r:
+                    $h = ($g - $b) / $d + ($g < $b ? 6 : 0);
+                    break;
+                case $g:
+                    $h = ($b - $r) / $d + 2;
+                    break;
+                case $b:
+                    $h = ($r - $g) / $d + 4;
+                    break;
+            }
+            $h /= 6;
         }
 
-        // Вычисляем насыщенность (Saturation) и оттенок (Hue)
-        $s = $l > 0.5 ? $delta / (2 - $max - $min) : $delta / ($max + $min);
-        switch ($max) {
-            case $r:
-                $h = ($g - $b) / $delta + ($g < $b ? 6 : 0);
-                break;
-            case $g:
-                $h = ($b - $r) / $delta + 2;
-                break;
-            default: // $max == $b
-                $h = ($r - $g) / $delta + 4;
-                break;
-        }
-        $h /= 6;
+        $s -= $s * ($percent / 100);
 
-        // Изменяем светлоту (Lightness) на заданный процент
-        $l += $percentage / 100;
+        $s = max(0, min(1, $s));
 
-        // Гарантируем, что светлота остается в пределах от 0 до 1
-        $l = max(0, min(1, $l));
-
-        // Преобразуем HSL обратно в RGB
         if ($s === 0) {
             $r = $g = $b = $l;
         } else {
-            $t2 = $l < 0.5 ? $l * (1 + $s) : ($l + $s) - ($s * $l);
-            $t1 = 2 * $l - $t2;
 
-            $r = $this->hueToRgb($t1, $t2, $r + 1/3);
-            $g = $this->hueToRgb($t1, $t2, $g);
-            $b = $this->hueToRgb($t1, $t2, $b - 1/3);
+            $q = $l < 0.5 ? $l * (1 + $s) : $l + $s - $l * $s;
+            $p = 2 * $l - $q;
+            $r = $this->hueToRgb($p, $q, $h + 1 / 3);
+            $g = $this->hueToRgb($p, $q, $h);
+            $b = $this->hueToRgb($p, $q, $h - 1 / 3);
         }
 
-        // Преобразуем RGB обратно в HEX
         $r = round($r * 255);
         $g = round($g * 255);
         $b = round($b * 255);
-
         return sprintf("#%02x%02x%02x", $r, $g, $b);
     }
 
