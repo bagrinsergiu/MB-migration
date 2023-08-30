@@ -15,6 +15,10 @@ class HtmlHandler
      * @var mixed
      */
     private $option;
+    /**
+     * @var DOMDocument
+     */
+    private $dom;
 
     public function __construct($htmlString, $option)
     {
@@ -44,72 +48,32 @@ class HtmlHandler
 
         //$htmlString = str_replace('&nbsp;', '', $htmlString);
 
-        $dom = new DOMDocument();
+        $this->dom = new DOMDocument();
 
         $htmlString = $this->replaceDivWithParagraph($htmlString);
-        @$dom->loadHTML($htmlString);
+        @$this->dom->loadHTML($htmlString);
 
 
         if ($upperCase === 'uppercase') {
-            $paragraphsInUpperCase = $dom->getElementsByTagName('p');
+            $paragraphsInUpperCase = $this->dom->getElementsByTagName('p');
 
-            $changes = array();
+            $changes = [];
 
             foreach ($paragraphsInUpperCase as $node) {
-                $newChanges = array();
-                $textContent = '';
-                $textAfterBr = '';
+                $newDoc = new DOMDocument();
+                $this->processNode($node, $newDoc);
 
-                foreach ($node->childNodes as $childNode) {
-                    if ($childNode instanceof DOMElement && $childNode->tagName === 'br') {
-                        $newChanges[] = array(
-                            'type' => 'newParagraph',
-                            'content' => strtoupper(trim($textContent)),
-                            'style' => $node->getAttribute('style')
-                        );
-
-                        $textContent = '';
-                    } else {
-                        $textContent .= $dom->saveHTML($childNode);
-                    }
+                $parent = $node->parentNode;
+                foreach ($newDoc->childNodes as $newChild) {
+                    $importedNode = $this->dom->importNode($newChild, true);
+                    $parent->insertBefore($importedNode, $node);
                 }
-
-                if (!empty(trim($textContent))) {
-                    $newChanges[] = array(
-                        'type' => 'newParagraph',
-                        'content' => strtoupper(trim($textContent)),
-                        'style' => $node->getAttribute('style')
-                    );
-                }
-
-                if (!empty(trim($textAfterBr))) {
-                    $newChanges[] = array(
-                        'type' => 'newParagraph',
-                        'content' => strtoupper(trim($textAfterBr)),
-                        'style' => $node->getAttribute('style')
-                    );
-                }
-
-                $changes[] = array(
-                    'node' => $node,
-                    'changes' => $newChanges
-                );
-            }
-
-            foreach ($changes as $change) {
-                $node = $change['node'];
-                foreach ($change['changes'] as $changeInfo) {
-                    $newParagraph = $dom->createElement('p', $changeInfo['content']);
-                    if (!empty($changeInfo['style'])) {
-                        $newParagraph->setAttribute('style', $changeInfo['style']);
-                    }
-                    $node->parentNode->insertBefore($newParagraph, $node);
-                }
-                $node->parentNode->removeChild($node);
+                $parent->removeChild($node);
             }
         }
 
-        $paragraphs = $dom->getElementsByTagName('p');
+
+        $paragraphs = $this->dom->getElementsByTagName('p');
 
         foreach ($paragraphs as $paragraph) {
 
@@ -156,7 +120,7 @@ class HtmlHandler
                 }
 
                 if (array_key_exists('font-style', $p_style) && $p_style['font-style'] === 'italic') {
-                    $me = $dom->createElement('em');
+                    $me = $this->dom->createElement('em');
                     while ($paragraph->childNodes->length > 0) {
                         $child = $paragraph->childNodes->item(0);
                         $me->appendChild($child);
@@ -165,7 +129,7 @@ class HtmlHandler
                 }
 
                 if (isset($fontColor) || isset($lineHeight)) {
-                    $span = $dom->createElement('span');
+                    $span = $this->dom->createElement('span');
                     $span->setAttribute('style', "color: $fontColor; opacity: 1;");
 
                     while ($paragraph->childNodes->length > 0) {
@@ -270,7 +234,7 @@ class HtmlHandler
 
         }
         $this->option = [];
-        $result = preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $dom->saveHTML());
+        $result = preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $this->dom->saveHTML());
         return $result;
     }
 
@@ -385,6 +349,40 @@ class HtmlHandler
         $blue = hexdec(substr($hex, 4, 2));
 
         return "rgb($red, $green, $blue)";
+    }
+
+    /**
+     * @throws \DOMException
+     */
+    private function processNode($node, DOMDocument $newDoc)
+    {
+        $textContent = '';
+
+        foreach ($node->childNodes as $childNode) {
+            if ($childNode instanceof DOMElement && $childNode->tagName === 'br') {
+                $newParagraph = $newDoc->createElement('p', strtoupper(trim($textContent)));
+                $style = $node->getAttribute('style');
+                if (!empty($style)) {
+                    $newParagraph->setAttribute('style', $style);
+                }
+                $newDoc->appendChild($newParagraph);
+
+                $textContent = '';
+            } elseif ($childNode instanceof DOMElement && $childNode->tagName === 'span') {
+                $this->processNode($childNode, $newDoc);
+            } else {
+                $textContent .= preg_replace('/<(\/?)html>|<(\/?)body>|<!.*?>/i', '', $this->dom->saveHTML($childNode));
+            }
+        }
+
+        if (!empty(trim($textContent))) {
+            $newParagraph = $newDoc->createElement('p', strtoupper(trim($textContent)));
+            $style = $node->getAttribute('style');
+            if (!empty($style)) {
+                $newParagraph->setAttribute('style', $style);
+            }
+            $newDoc->appendChild($newParagraph);
+        }
     }
 
 }
