@@ -137,12 +137,26 @@ class LayoutUtils extends builderUtils
     {
         if (array_key_exists('letter_spacing', $option)) {
 
-            $trimmedString = substr($option['letter_spacing'], 0, -2);
-            $letterSpacing = str_replace('.', '_', $trimmedString);
+            $trimmedString = $this->convertFontSize($option['letter_spacing'], false);
+            $letterSpacing = $this->transformNumber($trimmedString);
         } else {
             $letterSpacing = '0_8';
         }
         return $letterSpacing;
+    }
+
+    public function transformNumber($number) {
+
+        $parts = explode('.', $number);
+        if (count($parts) > 1) {
+            $parts[1] = substr($parts[1], 0, 1);
+        }
+
+        if ($parts[0] === '-') {
+            $parts[0] = 'm_';
+        }
+
+        return implode('_', $parts);
     }
 
     /**
@@ -204,7 +218,7 @@ class LayoutUtils extends builderUtils
         return $value * $unitFactors[$originalUnit];
     }
 
-    function convertFontSize($fontSize): string
+    function convertFontSize($fontSize, $round = true): string
     {
         preg_match('/(\d+(\.\d+)?)\s*([a-z]{2})/', $fontSize, $matches);
 
@@ -227,7 +241,11 @@ class LayoutUtils extends builderUtils
             } elseif ($unit === 'in') {
                 $size *= 96;
             }
-            $result = round($size);
+            if($round){
+                $result = round($size);
+            } else {
+                $result = $size;
+            }
         } else {
             $result = (float) $matches[1];
         }
@@ -876,7 +894,7 @@ class LayoutUtils extends builderUtils
             $fontsType = 'body';
         }
 
-        $fontRoute = ['title'=>'headers', 'body'=>'main_text'];
+        $fontRoute = ['title'=>'sub_headers', 'body'=>'main_text'];
         if(array_key_exists($fontsType, $fontRoute))
         {
             $fontsType = $fontRoute[$fontsType];
