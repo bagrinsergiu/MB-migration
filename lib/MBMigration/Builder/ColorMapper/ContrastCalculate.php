@@ -5,8 +5,15 @@ namespace MBMigration\Builder\ColorMapper;
 class ContrastCalculate
 {
 
+    /**
+     * @throws \Exception
+     */
     public function getContrastingColor($color, $threshold = 50, $lightColor = '#ffffff', $darkColor = '#2a2a2a') {
-        $color = $this->hexToRgb($color);
+
+        if(!is_array($color))
+        {
+            $color = $this->hexToRgb($color);
+        }
 
         $hsl = $this->rgbToHsl($color[0], $color[1], $color[2]);
 
@@ -23,6 +30,7 @@ class ContrastCalculate
 
         return $lightness;
     }
+
     private function hexToHSL($hex): array
     {
         $hex = ltrim($hex, '#');
@@ -65,7 +73,10 @@ class ContrastCalculate
     }
 
 
-    protected function hexToRgb($hex): ?array
+    /**
+     * @throws \Exception
+     */
+    protected function hexToRgb(string $hex): array
     {
         $hex = preg_replace('/[^0-9A-Fa-f]/', '', $hex);
 
