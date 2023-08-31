@@ -19,23 +19,65 @@ class ContrastCalculate
 
     protected function lumLight($color): float
     {
-        $result = ($this->luminance($color) + $this->lightness($color)) / 2;
-        return $this->strip_unit($result) - 2.5;
+        list($hue, $saturation, $lightness) = $this->hexToHSL($color);
+
+        return $lightness;
     }
-
-    protected function hexToRgb($hex): array
+    private function hexToHSL($hex): array
     {
-        $hex = str_replace('#', '', $hex);
+        $hex = ltrim($hex, '#');
 
-        if (strlen($hex) === 3) {
-            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        list($r, $g, $b) = sscanf($hex, "%02x%02x%02x");
+
+        $r /= 255;
+        $g /= 255;
+        $b /= 255;
+
+        $max = max($r, $g, $b);
+        $min = min($r, $g, $b);
+
+        $lightness = ($max + $min) / 2;
+
+        if ($max == $min) {
+            $saturation = 0;
+        } else {
+            $delta = $max - $min;
+            $saturation = $delta / (1 - abs(2 * $lightness - 1));
         }
 
-        $red = hexdec(substr($hex, 0, 2));
-        $green = hexdec(substr($hex, 2, 2));
-        $blue = hexdec(substr($hex, 4, 2));
+        if ($max == $r) {
+            $hue = 60 * fmod((($g - $b) / $delta), 6);
+        } elseif ($max == $g) {
+            $hue = 60 * ((($b - $r) / $delta) + 2);
+        } elseif ($max == $b) {
+            $hue = 60 * ((($r - $g) / $delta) + 4);
+        }
 
-        return [$red, $green, $blue];
+        if ($hue < 0) {
+            $hue += 360;
+        }
+
+        $hue = round($hue);
+        $saturation = round($saturation * 100);
+        $lightness = round($lightness * 100);
+
+        return array($hue, $saturation, $lightness);
+    }
+
+
+    protected function hexToRgb($hex): ?array
+    {
+        $hex = preg_replace('/[^0-9A-Fa-f]/', '', $hex);
+
+        if (strlen($hex) !== 6) {
+            return [0, 0, 0];
+        }
+
+        $redValue = hexdec(substr($hex, 0, 2));
+        $greenValue = hexdec(substr($hex, 2, 2));
+        $blueValue = hexdec(substr($hex, 4, 2));
+
+        return [$redValue, $greenValue, $blueValue];
     }
 
     protected function rgbToHsl($r, $g, $b): array
@@ -80,7 +122,7 @@ class ContrastCalculate
 
     private function color_luminance($color): float
     {
-        $rgb = $this->hexToRGB($color);
+        $rgb = $this->hexToRgb($color);
 
         $a = [$rgb[0]/255, $rgb[1]/255, $rgb[2]/255];
 
