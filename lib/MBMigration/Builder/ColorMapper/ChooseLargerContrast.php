@@ -6,9 +6,9 @@ class ChooseLargerContrast extends ContrastCalculate
 {
     public function result(array $colorData)
     {
-        $baseLumLight    = $this->lumLight($colorData[0]);
-        $option1LumLight = $this->lumLight($colorData[1]);
-        $option2LumLight = $this->lumLight($colorData[2]);
+        $baseLumLight    = $this->lumLight('#e1d7d2');
+        $option1LumLight = $this->lumLight('#f2ece4');
+        $option2LumLight = $this->lumLight('#dadbdf');
 
         $option1Contrast = abs($baseLumLight - $option1LumLight);
         $option2Contrast = abs($baseLumLight - $option2LumLight);
