@@ -27,6 +27,28 @@ class BrizyAPI extends Utils
     /**
      * @throws Exception
      */
+    public function getProjectMetadata($projectId){
+
+        $url = $this->createUrlAPI('projects') . '/' . $projectId;
+
+        $result = $this->httpClient('GET', $url);
+
+        $result = json_decode($result['body'], true);
+
+        if (!is_array($result)) {
+            return null;
+        }
+        if($result['metadata'] === null){
+            return null;
+        }
+
+        return json_decode($result['metadata'], true);
+
+    }
+
+    /**
+     * @throws Exception
+     */
     public function getWorkspaces($name = null)
     {
         $result = $this->httpClient('GET', $this->createUrlAPI('workspaces'), ['page' => 1, 'count' => 100]);
@@ -49,6 +71,9 @@ class BrizyAPI extends Utils
         return false;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getProject($workspacesID, $filtre = null)
     {
         $param = [

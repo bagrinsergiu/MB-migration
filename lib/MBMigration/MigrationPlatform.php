@@ -90,6 +90,8 @@ class MigrationPlatform
 
         $this->cache->setClass($this->brizyApi, 'brizyApi');
 
+        $this->projectMetadata($projectID_Brizy);
+
         if ($projectID_Brizy == 0) {
             $this->projectID_Brizy = $this->brizyApi->createProject('analaiseProject', 4303835, 'id');
         } else {
@@ -706,5 +708,14 @@ class MigrationPlatform
             return json_encode($this->finalSuccess);
         }
         return json_encode($this->errorDump->getAllErrors());
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function projectMetadata(int $projectID_Brizy): void
+    {
+        $metadata = $this->brizyApi->getProjectMetadata($projectID_Brizy);
+        $this->cache->set('metadata', $metadata);
     }
 }
