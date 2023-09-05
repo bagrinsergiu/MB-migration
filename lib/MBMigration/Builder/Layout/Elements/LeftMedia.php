@@ -29,7 +29,7 @@ class LeftMedia extends Element
      */
     protected function LeftMedia(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "] [left_media");
+        Utils::log('Create bloc', 1, "left_media");
         $options = [];
         $objBlock = new ItemBuilder();
 
@@ -41,10 +41,9 @@ class LeftMedia extends Element
 
         $objBlock->item(0)->setting('bgColorPalette','');
 
+        $this->defaultOptionsForElement($sectionData, $options);
         $this->backgroundColor($objBlock, $sectionData, $options);
-
         $this->setOptionsForTextColor($sectionData, $options);
-
         $this->backgroundColor($objBlock, $sectionData, $options);
 
         foreach ($sectionData['items'] as $item) {
@@ -66,16 +65,16 @@ class LeftMedia extends Element
                 if($item['item_type']=='title' && $this->showHeader($sectionData)) {
 
                     $this->setOptionsForUsedFonts($item, $options);
-
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                    $this->defaultTextPosition($item, $options);
+                    $this->textType($item, $options);
 
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if($item['item_type']=='body' && $this->showBody($sectionData)) {
 
                     $this->setOptionsForUsedFonts($item, $options);
-
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                    $this->defaultTextPosition($item, $options);
+                    $this->textType($item, $options);
 
                     $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                 }

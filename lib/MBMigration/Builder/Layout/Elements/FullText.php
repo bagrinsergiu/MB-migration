@@ -39,7 +39,7 @@ class FullText extends Element
      */
     protected function FullText(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "] [full_text");
+        Utils::log('Create bloc', 1, "full_text");
 
         $options = [];
         $objBlock = new ItemBuilder();
@@ -49,6 +49,8 @@ class FullText extends Element
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
         $objBlock->newItem($decoded['main']);
+
+        $this->defaultOptionsForElement($sectionData, $options);
 
         $this->backgroundParallax($objBlock, $sectionData);
 
@@ -66,6 +68,7 @@ class FullText extends Element
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
 
                     $this->setOptionsForUsedFonts($item, $options);
+                    $this->defaultTextPosition($item, $options);
 
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                     $objBlock->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
@@ -73,6 +76,7 @@ class FullText extends Element
                 if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
 
                     $this->setOptionsForUsedFonts($item, $options);
+                    $this->defaultTextPosition($item, $options);
 
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                     $objBlock->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));

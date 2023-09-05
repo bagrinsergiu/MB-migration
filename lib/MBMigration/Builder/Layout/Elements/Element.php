@@ -24,10 +24,17 @@ abstract class Element extends Layout
         if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
-            $options = array_merge($options, ['bgColor' => $blockBg]);
+        } else {
+            $defaultPalette = $this->cache->get('subpalette', 'parameter');
+            $blockBg = $defaultPalette['subpalette1']['bg'];
+            $objBlock->item(0)->setting('bgColorHex', $blockBg);
         }
+        $options = array_merge($options, ['bgColor' => $blockBg]);
     }
 
+/**
+ *
+ */
     protected function setOptionsForTextColor(array $sectionData, array &$options)
     {
         if($this->checkArrayPath($sectionData, 'settings/color/text')) {
@@ -36,6 +43,9 @@ abstract class Element extends Layout
         }
     }
 
+/**
+ *
+*/
     protected function backgroundImages(ItemBuilder $objBlock, array $sectionData, array &$options)
     {
         if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
@@ -57,6 +67,9 @@ abstract class Element extends Layout
         }
     }
 
+/**
+ *
+ */
     protected function setOptionsForUsedFonts(array $item, array &$options)
     {
         if (isset($item['settings']['used_fonts'])){
@@ -65,11 +78,81 @@ abstract class Element extends Layout
         $options = array_merge($options, ['fontType' => $item['item_type']]);
     }
 
-    protected function showHeader($sectionData)
+    protected function defaultOptionsForElement($element, &$options)
+    {
+       if(!empty($element['options'])){
+           $positionOption = [];
+
+           $options = json_decode($element['options'], true);
+
+           if(!empty($options['title'])){
+               $positionOption = ['title' => $options['title']];
+           }
+
+           if(!empty($options['body'])){
+                $positionOption = ['body' => $options['body']];
+           }
+
+           $options = array_merge($options, ['defTextPosition' => $positionOption]);
+       }
+    }
+
+/**
+ *
+*/
+    protected function defaultTextPosition($element, &$options)
+    {
+        if(!empty($element['item_type']) && !empty($options['defTextPosition'])){
+
+            switch ($element['item_type']){
+                case "title":
+                case "accordion_title":
+                    $mainPosition = $options['defTextPosition']['title'];
+                    break;
+                case "body":
+                case "accordion_body":
+                    $mainPosition = $options['defTextPosition']['body'];
+                    break;
+                default:
+                    $mainPosition = 'brz-text-lg-left';
+            }
+            $options = array_merge($options, ['mainPosition' => $mainPosition]);
+        }
+    }
+
+
+/**
+*
+*/
+    protected function textType($item, &$options, $type = 'detect')
+    {
+        if(!empty($item['fontType']) && $type == 'detect'){
+            switch ($item['fontType']){
+                case "title":
+                case "accordion_title":
+                    $sectionType = 'brz-tp-lg-heading1';
+                    break;
+                case "body":
+                case "accordion_body":
+                    $sectionType = 'brz-tp-lg-paragraph';
+                    break;
+                default:
+                    $sectionType = 'brz-tp-lg-paragraph';
+            }
+        } elseif ($type == 'title') {
+            $sectionType = 'brz-tp-lg-heading1';
+        } else {
+            $sectionType = 'brz-tp-lg-paragraph';
+        }
+        $options = array_merge($options, ['sectionType' => $sectionType]);
+    }
+
+    protected function showHeader($sectionData, $options = 'text')
     {
         $show_header = true;
-        if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
-            $show_header = $sectionData['settings']['sections']['text']['show_header'];
+        $path = "settings/sections/$options/show_header";
+        if($this->checkArrayPath($sectionData, $path)){
+            $show_header = $sectionData['settings']['sections'][$options]['show_header'];
         }
         return $show_header;
     }

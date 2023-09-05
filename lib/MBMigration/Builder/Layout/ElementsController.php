@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout;
 
 use Exception;
+use MBMigration\Builder\Layout\Elements\DynamicElement\GridMediaLayout;
 use MBMigration\Builder\Layout\Elements\Head;
 use MBMigration\Builder\Layout\Elements\Footer;
 use MBMigration\Builder\Layout\Elements\TopMedia;
@@ -66,6 +67,9 @@ class ElementsController
                 return $element->getElement($elementData);
             case "accordion_layout":
                 $element = new AccordionLayout($jsonKitElements);
+                return $element->getElement($elementData);
+            case "grid_media_layout":
+                $element = new GridMediaLayout($jsonKitElements);
                 return $element->getElement($elementData);
             case "right_media_circle":
                 $element = new RightMediaCircle($jsonKitElements);

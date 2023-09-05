@@ -42,24 +42,15 @@ class TwoHorizontalText extends Element
 
         $objBlock = new ItemBuilder($decoded['main']);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->defaultOptionsForElement($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
-            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        $options = array_merge($options, ['bgColor' => $blockBg]);
+        $this->setOptionsForTextColor($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
-            $textColor = $sectionData['settings']['color']['text'];
+        $this->backgroundParallax($objBlock, $sectionData);
 
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-
-            $options = array_merge($options, ['textColor' => $textColor]);
-        }
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
         foreach ($sectionData['items'] as $item) {
 
@@ -68,21 +59,17 @@ class TwoHorizontalText extends Element
                     if($item['item_type']=='title'){
 
                         $this->setOptionsForUsedFonts($item, $options);
-
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
+                        $this->defaultTextPosition($item, $options);
 
                         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
-                    }
+                           }
                     if($item['item_type']=='body'){
 
                         $this->setOptionsForUsedFonts($item, $options);
-
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $this->defaultTextPosition($item, $options);
 
                         $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
-                    }
+                         }
                 }
             }
             if($item['group'] == 1){
@@ -90,15 +77,15 @@ class TwoHorizontalText extends Element
                     if($item['item_type']=='title'){
 
                         $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
 
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
                         $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
 
                         $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
 
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                         $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }

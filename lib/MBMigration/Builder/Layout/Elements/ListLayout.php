@@ -32,7 +32,7 @@ class ListLayout extends Element
      * @throws \DOMException
      */
     protected function ListLayout(array $sectionData) {
-        Utils::log('Create bloc', 1, "] [list_layout");
+        Utils::log('Create bloc', 1, "list_layout");
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['list-layout'];
 
@@ -51,53 +51,39 @@ class ListLayout extends Element
         $objBlock->item(0)->setting('bgColorPalette', '');
         $objBlock->item(0)->setting('colorPalette', '');
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
-            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
-                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
-                $objBlock->item(0)->setting('bgAttachment','fixed');
-                $objBlock->item(0)->setting('bgColorOpacity', 0);
-            }
-        }
+        $this->defaultOptionsForElement($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        $options = array_merge($options, ['bgColor' => $blockBg]);
+        $this->setOptionsForTextColor($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
-            $textColor = $sectionData['settings']['color']['text'];
+        $this->backgroundParallax($objBlock, $sectionData);
 
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
-            $options = array_merge($options, ['textColor' => $textColor]);
-        }
-
-
-        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            Utils::log('Set background', 1, "] [list_layout");
-
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
-                $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
-                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-            }
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
-                if ($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode')) {
-                    if ($sectionData['settings']['sections']['background']['fadeMode'] !== 'none'){
-                        $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-                        if ($opacity <= 0.3) {
-                            $options = array_merge($options, ['textColor' => '#000000']);
-                        }
-                        $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-                    } else {
-                        $objBlock->item(0)->setting('bgColorOpacity', 1);
-                    }
-                }
-                $objBlock->item(0)->setting('bgColorType', 'none');
-            }
-        }
+//        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
+//            Utils::log('Set background', 1, "] [list_layout");
+//
+//            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
+//                $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
+//                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+//                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+//            }
+//            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
+//                if ($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode')) {
+//                    if ($sectionData['settings']['sections']['background']['fadeMode'] !== 'none'){
+//                        $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
+//                        if ($opacity <= 0.3) {
+//                            $options = array_merge($options, ['textColor' => '#000000']);
+//                        }
+//                        $objBlock->item(0)->setting('bgColorOpacity', $opacity);
+//                    } else {
+//                        $objBlock->item(0)->setting('bgColorOpacity', 1);
+//                    }
+//                }
+//                $objBlock->item(0)->setting('bgColorType', 'none');
+//            }
+//        }
 
         $blockHead = false;
         foreach ($sectionData['head'] as $headItem)

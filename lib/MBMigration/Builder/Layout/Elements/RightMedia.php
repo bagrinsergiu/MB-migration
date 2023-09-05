@@ -31,7 +31,7 @@ class RightMedia extends Element
      */
     protected function RightMedia(array $sectionData)
     {
-        Utils::log('Create bloc', 1,  "] [right_media");
+        Utils::log('Create bloc', 1,  "right_media");
         $this->cache->set('currentSectionData', $sectionData);
 
         $options = [];
@@ -45,42 +45,38 @@ class RightMedia extends Element
         $objBlock->item(0)->setting('bgColorPalette', '');
         $objBlock->item(0)->setting('bgColorOpacity', 1);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->defaultOptionsForElement($sectionData, $options);
 
-        $options = array_merge($options, ['bgColor' => $blockBg]);
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
-            $textColor = $sectionData['settings']['color']['text'];
+        $this->setOptionsForTextColor($sectionData, $options);
 
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        $this->backgroundParallax($objBlock, $sectionData);
 
-            $options = array_merge($options, ['textColor' => $textColor]);
-        }
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            Utils::log('Set background', 1, "] [right_media");
 
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
-                $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
-                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-            }
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
-                if ($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode')) {
-                    if ($sectionData['settings']['sections']['background']['fadeMode'] !== 'none'){
-                        $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-                        if ($opacity <= 0.3) {
-                            $options = array_merge($options, ['textColor' => '#000000']);
-                        }
-                        $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-                    }
-                }
-                $objBlock->item(0)->setting('bgColorType', 'none');
-            }
-        }
+//        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
+//            Utils::log('Set background', 1, "] [right_media");
+//
+//            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
+//                $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
+//                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+//                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+//            }
+//            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
+//                if ($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode')) {
+//                    if ($sectionData['settings']['sections']['background']['fadeMode'] !== 'none'){
+//                        $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
+//                        if ($opacity <= 0.3) {
+//                            $options = array_merge($options, ['textColor' => '#000000']);
+//                        }
+//                        $objBlock->item(0)->setting('bgColorOpacity', $opacity);
+//                    }
+//                }
+//                $objBlock->item(0)->setting('bgColorType', 'none');
+//            }
+//        }
 
         foreach ($sectionData['items'] as $item) {
             if($item['category'] == 'photo' && $item['content'] !== '') {
@@ -100,20 +96,14 @@ class RightMedia extends Element
 
             if($item['category'] == 'text') {
                 if($item['item_type']=='title') {
-                    if (isset($item['settings']['used_fonts'])){
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
-
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-right', 'upperCase' => 'brz-capitalize-on']);
+                    $this->setOptionsForUsedFonts($item, $options);
+                    $this->defaultTextPosition($item, $options);
 
                     $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if($item['item_type']=='body') {
-                    if (isset($item['settings']['used_fonts'])){
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
-
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-right']);
+                    $this->setOptionsForUsedFonts($item, $options);
+                    $this->defaultTextPosition($item, $options);
 
                     $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                 }

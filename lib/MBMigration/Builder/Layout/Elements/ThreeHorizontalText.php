@@ -35,76 +35,57 @@ class ThreeHorizontalText extends Element
      */
     protected function ThreeHorizontalText($sectionData)
     {
-        Utils::log('Create full media', 1, "] [three-horizontal-text");
+        Utils::log('Create full media', 1, "three-horizontal-text");
 
         $options = [];
 
         $this->cache->set('currentSectionData', $sectionData);
 
         $decoded = $this->jsonDecode['blocks']['three-horizontal-text'];
-        $block = json_decode($decoded['main'], true);
 
         $objBlock = new ItemBuilder($decoded['main']);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        } else {
-            $defaultPalette = $this->cache->get('subpalette', 'parameter');
-            $blockBg = $defaultPalette['subpalette1']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->defaultOptionsForElement($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
-            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        $options = array_merge($options, ['bgColor' => $blockBg]);
+        $this->setOptionsForTextColor($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
-            $textColor = $sectionData['settings']['color']['text'];
+        $this->backgroundParallax($objBlock, $sectionData);
 
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
-            $options = array_merge($options, ['textColor' => $textColor]);
-        }
 
         foreach ($sectionData['items'] as $item) {
 
             if($item['group'] == 0){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
                         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
                     }
                     if($item['item_type']=='body'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
                         $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
-                        $block['value']['items'][0]['value']['items'][0]['value']['items'][0]['value']['items'][2]['value']['items'][0]['value']['text'] = $this->replaceString($item['content'], $options);
                     }
                 }
             }
             if($item['group'] == 1){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
                         $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
                         $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }
@@ -112,17 +93,15 @@ class ThreeHorizontalText extends Element
             if($item['group'] == 2){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
                         $objBlock->item(0)->item(0)->item(2)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
                         $objBlock->item(0)->item(0)->item(2)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }

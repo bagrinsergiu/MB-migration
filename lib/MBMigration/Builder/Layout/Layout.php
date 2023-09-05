@@ -926,12 +926,16 @@ class Layout extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function createDetailPage($itemsID, $slug) {
+    protected function createDetailPage($itemsID, $slug, string $elementName) {
         $itemsData = [];
         $jsonDecode = $this->initData();
         $QueryBuilder = $this->cache->getClass('QueryBuilder');
 
-        $decoded = $jsonDecode['dynamic']['sermon_layout_placeholder'];
+        if($this->checkArrayPath($jsonDecode, "dynamic/$elementName")){
+            $decoded = $jsonDecode['dynamic']['$elementName'];
+        } else {
+            throw new Exception('Element not found');
+        }
 
         $itemsData['items'][] = $this->cache->get('menuBlock');
         $itemsData['items'][] = json_decode($decoded['detail'], true);
