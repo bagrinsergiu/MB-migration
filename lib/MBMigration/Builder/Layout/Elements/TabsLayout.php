@@ -34,7 +34,7 @@ class TabsLayout extends Element
      * @throws \Exception
      */
     protected function TabsLayout(array $sectionData) {
-        Utils::log('Create bloc', 1, "] [tabs_layout");
+        Utils::log('Create bloc', 1, "tabs_layout");
 
         $options = [];
 
@@ -51,38 +51,15 @@ class TabsLayout extends Element
         $objBlock->item(0)->setting('bgColorPalette', '');
         $objBlock->item(0)->setting('colorPalette', '');
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $objRow->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
-            $objRow->item(0)->setting('navIcon', 'filled');
-        }
+        $this->defaultOptionsForElement($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
-            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
-                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
-                $objBlock->item(0)->setting('bgAttachment','fixed');
-                $objBlock->item(0)->setting('bgColorOpacity', 0);
-            }
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->setOptionsForTextColor($sectionData, $options);
 
-        $options = array_merge($options, ['bgColor' => $blockBg]);
+        $this->backgroundParallax($objBlock, $sectionData);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            $background = $this->getKeyRecursive('background', 'sections', $sectionData);
-
-            if(isset($background['photo']) && isset($background['filename'])) {
-                $objBlock->item(0)->setting('bgImageSrc', $background['photo']);
-                $objBlock->item(0)->setting('bgImageFileName', $background['filename']);
-            }
-            if(isset($background['opacity']) ) {
-                $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($background['opacity']));
-                $objBlock->item(0)->setting('tempBgColorOpacity', $this->colorOpacity($background['opacity']));
-            }
-        }
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
         $blockHead = false;
 
@@ -102,19 +79,19 @@ class TabsLayout extends Element
 
             if ($headItem['item_type'] === 'title' && $show_header) {
                 $blockHead = true;
-                if (isset($item['settings']['used_fonts'])){
-                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                }
-                $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+
+                $this->setOptionsForUsedFonts($sectionData, $options);
+                $this->defaultTextPosition($sectionData, $options);
+
                 $objBlock->item(0)->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], $options)));
             }
 
             if ($headItem['item_type'] === 'body' && $show_body) {
                 $blockHead = true;
-                if (isset($item['settings']['used_fonts'])){
-                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                }
-                $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
+
+                $this->setOptionsForUsedFonts($sectionData, $options);
+                $this->defaultTextPosition($sectionData, $options);
+
                 $objBlock->item(0)->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], $options)));
             }
         }
@@ -131,18 +108,17 @@ class TabsLayout extends Element
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'tab_title') {
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
+                        $this->setOptionsForUsedFonts($sectionData, $options);
+                        $this->defaultTextPosition($sectionData, $options);
+
                         $objItem->setting('labelText', $this->replaceString($item['content'], $options)['text']);
                     }
 
                     if ($item['item_type'] === 'tab_body') {
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
+
+                        $this->setOptionsForUsedFonts($sectionData, $options);
+                        $this->defaultTextPosition($sectionData, $options);
+
                         $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }
@@ -150,7 +126,7 @@ class TabsLayout extends Element
             }
 
             $objRow->item(0)->addItem($objItem->get());
-            $objRow->item(0)->setting('contentBgColorHex', $blockBg);
+//            $objRow->item(0)->setting('contentBgColorHex', $blockBg);
         }
         $objBlock->item(0)->addItem($objRow->get());
         $block = $this->replaceIdWithRandom($objBlock->get());

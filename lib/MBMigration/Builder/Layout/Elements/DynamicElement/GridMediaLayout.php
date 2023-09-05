@@ -5,16 +5,19 @@ namespace MBMigration\Builder\Layout\Elements\DynamicElement;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Elements\Element;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
-class SermonLayoutPlaceholder extends Element
+class GridMediaLayout extends Element
 {
 
     /**
-     * @var VariableCache
+     * @var VariableCache|mixed
      */
-    protected $cache;
+    private $cache;
     private $jsonDecode;
+    /**
+     * @var DetailPage
+     */
+    private $detailPage;
 
     public function __construct($jsonKitElements)
     {
@@ -24,14 +27,18 @@ class SermonLayoutPlaceholder extends Element
 
     /**
      * @throws \DOMException
-     * @throws \Exception
      */
     public function getElement(array $elementData = [])
     {
-        return $this->sermon_layout_placeholder($elementData);
+        return $this->GridMediaLayout($elementData);
     }
 
-    protected function sermon_layout_placeholder(array $sectionData) {
+    /**
+     * @throws \DOMException
+     * @throws \Exception
+     */
+    private function GridMediaLayout(array $sectionData)
+    {
 
         $slug = 'sermon-list';
         $title = 'Sermon List';
@@ -94,23 +101,6 @@ class SermonLayoutPlaceholder extends Element
 
         $this->createDetailPage($collectionItemsForDetailPage, $slug, 'sermon_layout_placeholder');
         return json_encode($block);
-    }
-
-    protected function createCollectionItems($mainCollectionType, $slug, $title)
-    {
-        Utils::log('Create Detail Page: ' . $title, 1, "] [createDetailPage");
-        if($this->pageCheck($slug)) {
-            $QueryBuilder = $this->cache->getClass('QueryBuilder');
-            $createdCollectionItem = $QueryBuilder->createCollectionItem($mainCollectionType, $slug, $title);
-            return $createdCollectionItem['id'];
-        } else {
-            $ListPages = $this->cache->get('ListPages');
-            foreach ($ListPages as $listSlug => $collectionItems) {
-                if ($listSlug == $slug) {
-                    return $collectionItems;
-                }
-            }
-        }
     }
 
 }

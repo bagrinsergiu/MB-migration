@@ -49,47 +49,30 @@ class GridLayout extends Element
         $objHead->newItem($decoded['head']);
         $objRow->newItem($decoded['row']);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-            $options = array_merge($options, ['bgColor' => $blockBg]);
-        }
-
-        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
-            $textColor = $sectionData['settings']['color']['text'];
-            $options = array_merge($options, ['textColor' => $textColor]);
-        }
+        $this->defaultOptionsForElement($sectionData, $options);
+        $this->backgroundColor($objBlock, $sectionData, $options);
+        $this->setOptionsForTextColor($sectionData, $options);
 
         $objBlock->item(0)->setting('bgColorPalette', '');
         foreach ( $sectionData['head'] as $head){
             if ($head['category'] == 'text') {
 
-                $show_header = true;
-                $show_body = true;
+                if ($head['item_type'] === 'title' && $this->showHeader($head)) {
 
-                if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                    $show_header = $sectionData['settings']['sections']['list']['show_header'];
-                }
-                if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                    $show_body = $sectionData['settings']['sections']['list']['show_body'];
-                }
-
-                if ($head['item_type'] === 'title' && $show_header) {
-
-                    if (isset($item['settings']['used_fonts'])) {
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
+                    $this->defaultOptionsForElement($head, $options);
+                    $this->defaultTextPosition($head, $options);
+                    $this->textType($head, $options);
 
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center']);
                     $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($head['content'], $options)));
 
                 }
 
-                if ($head['item_type'] === 'body' && $show_body) {
+                if ($head['item_type'] === 'body' && $this->showBody($head)) {
 
-                    if (isset($item['settings']['used_fonts'])) {
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
+                    $this->defaultOptionsForElement($head, $options);
+                    $this->defaultTextPosition($head, $options);
+                    $this->textType($head, $options);
 
                     $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
                     $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($head['content'], $options)));
@@ -98,11 +81,7 @@ class GridLayout extends Element
         }
         $objBlock->item()->addItem($objHead->get());
 
-        if(!empty($sectionData['settings']['sections']['background'])) {
-            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
-        }
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
         foreach ($sectionData['items'] as $section)
         {
@@ -130,11 +109,12 @@ class GridLayout extends Element
                             }
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
-                                    if (isset($item['settings']['used_fonts'])){
-                                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                                    }
-                                    $objItem->item(1)->item(0)->setText($this->replaceString($sectionItem['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bgColor' => $blockBg]));
-                                    $objItem->item(1)->item(0)->setting('typographyFontSize', 27);
+
+                                    $this->defaultOptionsForElement($section, $options);
+                                    $this->defaultTextPosition($section, $options);
+                                    $this->textType($section, $options, 'title');
+
+                                    $objItem->item(1)->item(0)->setText($this->replaceString($sectionItem['content'], $options));
                                 }
                             }
                         }
@@ -152,27 +132,21 @@ class GridLayout extends Element
                 }
                 if ($section['category'] == 'text') {
 
-                    $show_header = true;
-                    $show_body = true;
+                    if ($section['item_type'] == 'title' && $this->showHeader($section)) {
 
-                    if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                        $show_header = $sectionData['settings']['sections']['list']['show_header'];
-                    }
-                    if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                        $show_body = $sectionData['settings']['sections']['list']['show_body'];
-                    }
+                        $this->setOptionsForUsedFonts($section, $options);
+                        $this->defaultTextPosition($section, $options);
+                        $this->textType($section, $options);
 
-                    if ($section['item_type'] == 'title' && $show_header) {
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])));
+                        $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], $options)));
                     }
-                    if ($section['item_type'] == 'body' && $show_body) {
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bgColor' => $blockBg])));
+                    if ($section['item_type'] == 'body' && $this->showBody($section)) {
+
+                        $this->setOptionsForUsedFonts($section, $options);
+                        $this->defaultTextPosition($section, $options);
+                        $this->textType($section, $options);
+
+                        $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], $options)));
                     }
                 }
             }

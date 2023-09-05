@@ -34,7 +34,7 @@ class TopMedia extends Element
      */
     protected function TopMedia(array $sectionData)
     {
-        Utils::log('Create full media', 1, "] [top_media");
+        Utils::log('Create full media', 1, "top_media");
 
         $objBlock = new ItemBuilder();
 
@@ -50,28 +50,15 @@ class TopMedia extends Element
         $objBlock->item(0)->setting('bgAttachment','none');
         $objBlock->item(0)->setting('bgColorOpacity', 1);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
-            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
-                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
-                $objBlock->item(0)->setting('bgAttachment','fixed');
-            }
-        }
+        $this->defaultOptionsForElement($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/photo') &&
-            $this->checkArrayPath($sectionData, 'settings/sections/background/filename'))
-        {
-            $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-            $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-        }
+        $this->setOptionsForTextColor($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')){
-            $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']));
-        }
+        $this->backgroundParallax($objBlock, $sectionData);
+
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
         $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setText('<p></p>');
         $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText('<p></p>');
@@ -90,18 +77,17 @@ class TopMedia extends Element
                 }
 
                 if($item['item_type']=='title' && $show_header) {
-                    if (isset($item['settings']['used_fonts'])){
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
+                    $this->setOptionsForUsedFonts($item, $options);
+                    $this->defaultTextPosition($item, $options);
 
-                    $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg]));
+                    $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if($item['item_type']=='body' && $show_body) {
 
-                    if (isset($item['settings']['used_fonts'])){
-                        $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                    }
-                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], [ 'sectionType' => 'brz-tp-lg-paragraph', 'bgColor' => $blockBg]));
+                    $this->setOptionsForUsedFonts($item, $options);
+                    $this->defaultTextPosition($item, $options);
+
+                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
             }
             if($item['category'] == 'photo' && $item['content'] !== '') {

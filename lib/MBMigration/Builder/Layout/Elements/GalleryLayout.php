@@ -30,7 +30,7 @@ class GalleryLayout extends Element
 
     protected function gallery_layout(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "] [gallery_layout");
+        Utils::log('Create bloc', 1, "gallery_layout");
         $this->cache->set('currentSectionData', $sectionData);
 
         $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);

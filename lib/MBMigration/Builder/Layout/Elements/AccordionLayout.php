@@ -33,7 +33,7 @@ class AccordionLayout extends Element
      * @throws \DOMException
      */
     protected function AccordionLayout(array $sectionData) {
-        Utils::log('Create bloc', 1, "] [grid_layout");
+        Utils::log('Create bloc', 1, "Accordion_layout");
 
         $options = [];
 
@@ -50,41 +50,13 @@ class AccordionLayout extends Element
         $objBlock->item(0)->setting('bgColorPalette', '');
         $objBlock->item(0)->setting('colorPalette', '');
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $objList->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
-            $objList->item(0)->setting('navIcon', 'filled');
-        }
+        $this->defaultOptionsForElement($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
-            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
-                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
-                $objBlock->item(0)->setting('bgAttachment','fixed');
-            }
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $objBlock->item(0)->setting('bgColorHex', $sectionData['settings']['color']['bg']);
-        }
+        $this->backgroundParallax($objBlock, $sectionData);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            $background = $this->getKeyRecursive('background', 'sections', $sectionData);
-
-            if(isset($background['photo']) && isset($background['filename'])) {
-                $objBlock->item(0)->setting('bgImageSrc', $background['photo']);
-                $objBlock->item(0)->setting('bgImageFileName', $background['filename']);
-            }
-            if(isset($background['opacity']) ) {
-                $objBlock->item(0)->setting('bgColorOpacity', $this->colorOpacity($background['opacity']));
-                $objBlock->item(0)->setting('tempBgColorOpacity', $this->colorOpacity($background['opacity']));
-            }
-        }
-
-        $blockHead = false;
-
-
-        if($blockHead) {
-            //$objBlock->item(0)->addItem($objHead->get());
-        }
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
         foreach ($sectionData['items'] as $section) {
 
@@ -98,17 +70,18 @@ class AccordionLayout extends Element
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'accordion_title') {
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left', 'upperCase' => 'brz-capitalize-on']);
+
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
+                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left']);
                         $objItem->setting('labelText', $this->replaceString($item['content'], $options)['text']);
                     }
 
                     if ($item['item_type'] === 'accordion_body') {
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
+
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
 
                         $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
                         $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));

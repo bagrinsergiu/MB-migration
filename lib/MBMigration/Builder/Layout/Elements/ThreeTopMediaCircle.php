@@ -20,14 +20,20 @@ class ThreeTopMediaCircle extends Element
         $this->jsonDecode = $jsonKitElements;
     }
 
+    /**
+     * @throws \DOMException
+     */
     public function getElement(array $elementData)
     {
         return $this->three_top_media_circle($elementData);
     }
 
+    /**
+     * @throws \DOMException
+     */
     protected function three_top_media_circle(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [three_top_media_circle");
+        Utils::log('Create bloc', 1, "three_top_media_circle");
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['three-top-media-circle'];
 
@@ -44,46 +50,16 @@ class ThreeTopMediaCircle extends Element
         $objBlock->item(0)->setting('bgAttachment', 'none');
         $objBlock->item(0)->setting('bgColorPalette', '');
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
-            if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
-                $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
-                $objBlock->item(0)->setting('bgAttachment','fixed');
-                $objBlock->item(0)->setting('bgColorOpacity', 0);
-            }
-        }
+        $this->defaultOptionsForElement($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
-            $blockBg = $sectionData['settings']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
-        $options = array_merge($options, ['bgColor' => $blockBg]);
+        $this->setOptionsForTextColor($sectionData, $options);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/text')) {
-            $textColor = $sectionData['settings']['color']['text'];
+        $this->backgroundParallax($objBlock, $sectionData);
 
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
+        $this->backgroundImages($objBlock, $sectionData, $options);
 
-            $options = array_merge($options, ['textColor' => $textColor]);
-        }
-
-        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            Utils::log('Set background', 1, $this->layoutName . "] [three_top_media_circle");
-
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
-                $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
-                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-            }
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
-                $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-//                if ($opacity <= 0.3) {
-//                   // $options = array_merge($options, ['textColor' => '#000000']);
-//                }
-                $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-                $objBlock->item(0)->setting('bgColorType', 'none');
-            }
-        }
 
         foreach ($sectionData['items'] as $item)
         {
@@ -94,19 +70,16 @@ class ThreeTopMediaCircle extends Element
             }
 
             if ($item['item_type'] === 'title') {
-                if (isset($item['settings']['used_fonts'])){
-                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                }
+                $this->setOptionsForUsedFonts($item, $options);
+                $this->defaultTextPosition($item, $options);
 
-                $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
                 $objBlock->item(0)->item(1)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options ));
             }
 
             if ($item['item_type'] === 'body') {
-                if (isset($item['settings']['used_fonts'])){
-                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                }
-                $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
+                $this->setOptionsForUsedFonts($item, $options);
+                $this->defaultTextPosition($item, $options);
+
                 $objBlock->item(0)->item(1)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
             }
         }

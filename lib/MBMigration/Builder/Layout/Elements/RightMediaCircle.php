@@ -32,7 +32,7 @@ class RightMediaCircle extends Element
      * @throws \DOMException
      */
     protected function RightMediaCircle(array $sectionData) {
-        Utils::log('Create bloc', 1,  "] [right_media_circle");
+        Utils::log('Create bloc', 1,  "right_media_circle");
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);

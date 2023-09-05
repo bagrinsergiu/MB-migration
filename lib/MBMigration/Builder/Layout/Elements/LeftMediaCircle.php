@@ -33,7 +33,7 @@ class LeftMediaCircle extends Element
      */
     protected function LeftMediaCircle(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "] [left_media_circle");
+        Utils::log('Create bloc', 1, "left_media_circle");
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);

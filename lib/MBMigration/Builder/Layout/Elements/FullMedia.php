@@ -34,7 +34,7 @@ class FullMedia extends Element
      */
     protected function FullMedia(array $sectionData)
     {
-        Utils::log('Create full media', 1, "] [full_media");
+        Utils::log('Create full media', 1, "full_media");
 
         $objBlock = new ItemBuilder();
 
@@ -45,6 +45,8 @@ class FullMedia extends Element
         $decoded = $this->jsonDecode['blocks']['full-media']['main'];
 
         $objBlock->newItem($decoded);
+
+        $this->defaultOptionsForElement($sectionData, $options);
 
         $this->backgroundParallax($objBlock, $sectionData);
 
@@ -61,16 +63,19 @@ class FullMedia extends Element
             if($item['category'] == 'text') {
 
                 if($item['item_type']=='title' && $this->showHeader($sectionData)) {
-                    $this->setOptionsForUsedFonts($item, $options);
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
 
+                    $this->setOptionsForUsedFonts($item, $options);
+                    $this->defaultTextPosition($item, $options);
+
+                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
                     $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if($item['item_type']=='body' && $this->showBody($sectionData)) {
 
                     $this->setOptionsForUsedFonts($item, $options);
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
+                    $this->defaultTextPosition($item, $options);
 
+                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
                     $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
             }
