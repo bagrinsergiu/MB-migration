@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Elements;
 
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Layout;
+use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
 abstract class Element extends Layout

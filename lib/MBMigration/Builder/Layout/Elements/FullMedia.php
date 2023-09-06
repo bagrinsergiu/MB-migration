@@ -12,7 +12,7 @@ class FullMedia extends Element
     /**
      * @var VariableCache
      */
-    private $cache;
+    protected $cache;
     private $jsonDecode;
 
     public function __construct($jsonKitElements)

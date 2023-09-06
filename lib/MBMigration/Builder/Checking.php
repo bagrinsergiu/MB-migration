@@ -8,7 +8,8 @@ trait Checking {
 
     protected function pageCheck($slug): bool
     {
-        $ListPages = $this->cache->get('ListPages');
+        $cache = VariableCache::getInstance();
+        $ListPages = $cache->get('ListPages');
         foreach ($ListPages as $listSlug => $collectionItems) {
             if ($listSlug == $slug) {
                 return false;

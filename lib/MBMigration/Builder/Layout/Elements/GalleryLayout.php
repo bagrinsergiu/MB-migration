@@ -10,7 +10,7 @@ class GalleryLayout extends Element
     /**
      * @var VariableCache
      */
-    private $cache;
+    protected $cache;
 
     private $jsonDecode;
 
