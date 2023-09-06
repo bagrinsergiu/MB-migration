@@ -12,12 +12,8 @@ class GridMediaLayout extends Element
     /**
      * @var VariableCache|mixed
      */
-    private $cache;
+    protected $cache;
     private $jsonDecode;
-    /**
-     * @var DetailPage
-     */
-    private $detailPage;
 
     public function __construct($jsonKitElements)
     {

@@ -9,7 +9,7 @@ use MBMigration\Core\Utils;
 
 class RightMedia extends Element
 {
-    private $cache;
+    protected $cache;
     private $jsonDecode;
 
     public function __construct($jsonKitElements)

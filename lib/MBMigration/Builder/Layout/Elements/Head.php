@@ -11,7 +11,7 @@ class Head extends Element
     /**
      * @var VariableCache
      */
-    private $cache;
+    protected $cache;
 
     /**
      * @var mixed

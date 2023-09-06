@@ -10,7 +10,7 @@ use MBMigration\Core\Utils;
 class LeftMedia extends Element
 {
 
-    private $cache;
+    protected $cache;
     private $jsonDecode;
 
     public function __construct($jsonKitElements)

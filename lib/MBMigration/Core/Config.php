@@ -232,9 +232,8 @@ class Config
                 throw new Exception('Assets is empty');
             }
             return $assets[$flag];
-        } else {
-            throw new Exception('Assets not set');
         }
+        return false;
     }
 
     /**
