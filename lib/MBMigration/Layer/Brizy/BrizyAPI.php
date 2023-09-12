@@ -299,21 +299,26 @@ class BrizyAPI extends Utils
     /**
      * @throws GuzzleException
      */
-    public function createLinksBetweenProjects()
+    public function setMetaDate()
     {
-        Utils::log('Create links between projects', 1, "createFonts");
+        Utils::log('Check metaDate settings', 1, "createFonts");
+        if (Config::$metaData) {
 
-        $projectId_MB = Utils::$cache->get('projectId_MB');
+            Utils::log('Create links between projects', 1, "createFonts");
 
-        $metadata['site_id']        = $projectId_MB;
-        $metadata['secret']         = Utils::$cache->get('projectSecret');
-        $metadata['MBAccountID']    = Utils::$cache->get('accountID_MB');
-        $metadata['MBVisitorID']    = null;
-        $metadata['MBThemeName']    = Utils::$cache->get('design', 'settings');
+            $projectId_MB = Utils::$cache->get('projectId_MB');
+            $projectId_Brizy = Utils::$cache->get('projectId_Brizy');
 
-        $url = $this->createUrlAPI('projects') . '/' . $projectId_MB;
+            $metadata['site_id']     = $projectId_MB;
+            $metadata['secret']      = Config::$metaData['secret'];
+            $metadata['MBAccountID'] = Config::$metaData['MBAccountID'];
+            $metadata['MBVisitorID'] = Config::$metaData['MBVisitorID'];
+            $metadata['MBThemeName'] = Utils::$cache->get('design', 'settings');
 
-        $this->request('PATCH', $url, [ 'form_params' => ['metadata' => json_encode($metadata) ]]);
+            $url = $this->createUrlAPI('projects') . '/' . $projectId_Brizy;
+
+            $this->request('PATCH', $url, ['form_params' => ['metadata' => json_encode($metadata)]]);
+        }
     }
 
     protected function generateCharID(int $length = 32): string

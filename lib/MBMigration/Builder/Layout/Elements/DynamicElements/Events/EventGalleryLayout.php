@@ -1,49 +1,36 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Elements\DynamicElement;
+namespace MBMigration\Builder\Layout\Elements\DynamicElements\Events;
 
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Elements\Element;
-use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Layout\Elements\DynamicElements\DynamicElement;
 
-class GridMediaLayout extends Element
+class EventGalleryLayout extends DynamicElement
 {
-
-    /**
-     * @var VariableCache|mixed
-     */
-    protected $cache;
-    private $jsonDecode;
-
-    public function __construct($jsonKitElements)
-    {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
-    }
 
     /**
      * @throws \DOMException
      */
-    public function getElement(array $elementData = [])
+    public function getElement(array $elementData)
     {
-        return $this->GridMediaLayout($elementData);
+        return $this->Gallery($elementData);
     }
 
     /**
      * @throws \DOMException
      * @throws \Exception
      */
-    private function GridMediaLayout(array $sectionData)
+    private function Gallery($sectionData)
     {
-
-        $slug = 'sermon-list';
-        $title = 'Sermon List';
+        $slug = 'event-gallery';
+        $title = 'Event Gallery';
+        $elementName = 'EventGalleryLayout';
 
         $objBlock = new ItemBuilder();
         $objHead  = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
-        $decoded = $this->jsonDecode['dynamic']['sermon_layout_placeholder'];
+        $decoded = $this->jsonDecode['dynamic'][$elementName];
 
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);
@@ -95,8 +82,7 @@ class GridMediaLayout extends Element
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
-        $this->createDetailPage($collectionItemsForDetailPage, $slug, 'sermon_layout_placeholder');
+        $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName);
         return json_encode($block);
     }
-
 }

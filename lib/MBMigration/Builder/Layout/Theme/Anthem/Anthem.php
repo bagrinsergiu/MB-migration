@@ -58,13 +58,9 @@ class Anthem extends LayoutUtils
     /**
      * @throws Exception
      */
-    public function callMethod($methodName, $params = null, $marker = '')
+    public function callMethod($methodName, $params = [], $marker = '')
     {
         $elementName = $this->replaceInName($methodName);
-
-        if(!isset($params)){
-            $params = $this->jsonDecode;
-        }
 
         if (method_exists($this, $elementName)) {
             Utils::log('Call Element ' . $elementName , 1, $this->layoutName . "] [callMethod");

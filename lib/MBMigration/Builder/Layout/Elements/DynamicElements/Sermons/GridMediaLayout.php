@@ -1,46 +1,39 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Elements\DynamicElement;
+namespace MBMigration\Builder\Layout\Elements\DynamicElements\Sermons;
 
 use MBMigration\Builder\ItemBuilder;
+use MBMigration\Builder\Layout\Elements\DynamicElements\DynamicElement;
 use MBMigration\Builder\Layout\Elements\Element;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
-class SermonLayoutPlaceholder extends Element
+class GridMediaLayout extends DynamicElement
 {
 
     /**
-     * @var VariableCache
+     * @throws \DOMException
      */
-    protected $cache;
-    private $jsonDecode;
-
-    public function __construct($jsonKitElements)
+    public function getElement(array $elementData = [])
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
+        return $this->GridMediaLayout($elementData);
     }
 
     /**
      * @throws \DOMException
      * @throws \Exception
      */
-    public function getElement(array $elementData = [])
+    private function GridMediaLayout(array $sectionData)
     {
-        return $this->sermon_layout_placeholder($elementData);
-    }
 
-    protected function sermon_layout_placeholder(array $sectionData) {
-
-        $slug = 'sermon-list';
-        $title = 'Sermon List';
+        $slug = 'sermon-grid';
+        $title = 'Sermon Grid';
+        $elementName = 'GridMediaLayout';
 
         $objBlock = new ItemBuilder();
         $objHead  = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
-        $decoded = $this->jsonDecode['dynamic']['sermon_layout_placeholder'];
+        $decoded = $this->jsonDecode['dynamic'][$elementName];
 
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);
@@ -92,25 +85,8 @@ class SermonLayoutPlaceholder extends Element
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
-        $this->createDetailPage($collectionItemsForDetailPage, $slug, 'sermon_layout_placeholder');
+        $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName);
         return json_encode($block);
-    }
-
-    protected function createCollectionItems($mainCollectionType, $slug, $title)
-    {
-        Utils::log('Create Detail Page: ' . $title, 1, "] [createDetailPage");
-        if($this->pageCheck($slug)) {
-            $QueryBuilder = $this->cache->getClass('QueryBuilder');
-            $createdCollectionItem = $QueryBuilder->createCollectionItem($mainCollectionType, $slug, $title);
-            return $createdCollectionItem['id'];
-        } else {
-            $ListPages = $this->cache->get('ListPages');
-            foreach ($ListPages as $listSlug => $collectionItems) {
-                if ($listSlug == $slug) {
-                    return $collectionItems;
-                }
-            }
-        }
     }
 
 }

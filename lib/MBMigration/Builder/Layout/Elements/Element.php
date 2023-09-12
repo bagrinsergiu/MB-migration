@@ -2,13 +2,27 @@
 
 namespace MBMigration\Builder\Layout\Elements;
 
+use Exception;
+use MBMigration\Builder\Checking;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Layout;
+use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
-abstract class Element extends Layout
+abstract class Element extends LayoutUtils
 {
+
+    use checking;
+    /**
+     * @throws Exception
+     */
+    protected function initData()
+    {
+        Utils::log('initData!', 4, 'Main Layout');
+        return $this->loadKit();
+    }
+
     protected function backgroundParallax(ItemBuilder $objBlock, array $sectionData)
     {
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
@@ -157,6 +171,7 @@ abstract class Element extends Layout
         }
         return $show_header;
     }
+
     protected function showBody($sectionData)
     {
         $show_header = true;
@@ -164,6 +179,79 @@ abstract class Element extends Layout
             $show_header = $sectionData['settings']['sections']['text']['show_body'];
         }
         return $show_header;
+    }
+
+    protected function createCollectionItems($mainCollectionType, $slug, $title)
+    {
+        Utils::log('Create Detail Page: ' . $title, 1, $this->layoutName . "] [createDetailPage");
+        if($this->pageCheck($slug)) {
+            $QueryBuilder = $this->cache->getClass('QueryBuilder');
+            $createdCollectionItem = $QueryBuilder->createCollectionItem($mainCollectionType, $slug, $title);
+            return $createdCollectionItem['id'];
+        } else {
+            $ListPages = $this->cache->get('ListPages');
+            foreach ($ListPages as $listSlug => $collectionItems) {
+                if ($listSlug == $slug) {
+                    return $collectionItems;
+                }
+            }
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function createDetailPage($itemsID, $slug, string $elementName) {
+        $itemsData = [];
+        $jsonDecode = $this->initData();
+        $QueryBuilder = $this->cache->getClass('QueryBuilder');
+
+        if($this->checkArrayPath($jsonDecode, "dynamic/$elementName")){
+            $decoded = $jsonDecode['dynamic']['$elementName'];
+        } else {
+            throw new Exception('Element not found');
+        }
+
+        $itemsData['items'][] = $this->cache->get('menuBlock');
+        $itemsData['items'][] = json_decode($decoded['detail'], true);
+        $itemsData['items'][] = $this->cache->get('footerBlock');
+
+        $pageData = json_encode($itemsData);
+
+        $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+    }
+
+    protected function insertItemInArray(array $array, array $item, $index): array
+    {
+        if ($index >= 0 && $index <= count($array)) {
+            $left = array_slice($array, 0, $index);
+            $right = array_slice($array, $index);
+            $result = array_merge($left, [$item], $right);
+        } else {
+            $result = array_merge($array, [$item]);
+        }
+        return $result;
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function itemWrapperRichText($content, array $settings = [], $associative = false)
+    {
+        $jsonDecode = $this->initData();
+        $decoded = $jsonDecode['global']['wrapper--richText'];
+        $block = new ItemBuilder($decoded);
+        $block->item(0)->setText($content);
+        $result = $block->get();
+        if (!empty($settings)) {
+            foreach ($settings as $key => $value) {
+                $block->item(0)->setting($key, $value);
+            }
+        }
+        if (!$associative) {
+            return $result;
+        }
+        return json_decode(json_encode($result), true);
     }
 
 }

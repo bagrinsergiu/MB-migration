@@ -3,12 +3,20 @@
 namespace MBMigration\Builder\Layout;
 
 use Exception;
-use MBMigration\Builder\Layout\Elements\DynamicElement\GridMediaLayout;
-use MBMigration\Builder\Layout\Elements\Head;
+use MBMigration\Builder\Layout\Elements\AccordionLayout;
+use MBMigration\Builder\Layout\Elements\DynamicElements\Events\EventCalendarLayout;
+use MBMigration\Builder\Layout\Elements\DynamicElements\Events\EventGalleryLayout;
+use MBMigration\Builder\Layout\Elements\DynamicElements\Events\EventGridLayout;
+use MBMigration\Builder\Layout\Elements\DynamicElements\Events\EventListLayout;
+use MBMigration\Builder\Layout\Elements\DynamicElements\Forms\Form;
+use MBMigration\Builder\Layout\Elements\DynamicElements\Sermons\GridMediaLayout;
+use MBMigration\Builder\Layout\Elements\DynamicElements\Sermons\ListMediaLayout;
+use MBMigration\Builder\Layout\Elements\DynamicElements\Sermons\SermonLayoutPlaceholder;
 use MBMigration\Builder\Layout\Elements\Footer;
-use MBMigration\Builder\Layout\Elements\TopMedia;
-use MBMigration\Builder\Layout\Elements\FullText;
+use MBMigration\Builder\Layout\Elements\FourHorizontalText;
 use MBMigration\Builder\Layout\Elements\FullMedia;
+use MBMigration\Builder\Layout\Elements\FullText;
+use MBMigration\Builder\Layout\Elements\Head;
 use MBMigration\Builder\Layout\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Elements\RightMedia;
 use MBMigration\Builder\Layout\Elements\TabsLayout;
@@ -16,20 +24,42 @@ use MBMigration\Builder\Layout\Elements\GridLayout;
 use MBMigration\Builder\Layout\Elements\ListLayout;
 use MBMigration\Builder\Layout\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Elements\LeftMediaCircle;
-use MBMigration\Builder\Layout\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Elements\RightMediaCircle;
-use MBMigration\Builder\Layout\Elements\TwoHorizontalText;
-use MBMigration\Builder\Layout\Elements\FourHorizontalText;
 use MBMigration\Builder\Layout\Elements\ThreeHorizontalText;
 use MBMigration\Builder\Layout\Elements\ThreeTopMediaCircle;
-use MBMigration\Builder\Layout\Elements\DynamicElement\SermonLayoutPlaceholder;
+use MBMigration\Builder\Layout\Elements\TopMedia;
+use MBMigration\Builder\Layout\Elements\TwoHorizontalText;
 
 class ElementsController
 {
+
     /**
-     * @throws Exception
+     * @throws \DOMException
      */
     public static function getElement($elementName, $jsonKitElements, array $elementData = [])
+    {
+        $element = self::switchGlobalElements($elementName, $jsonKitElements, $elementData);
+        if ($element) {
+            return true;
+        }
+
+        $element = self::switchElements($elementName, $jsonKitElements, $elementData);
+        if ($element) {
+            return $element;
+        }
+
+        $element = self::switchDynamicElements($elementName, $jsonKitElements, $elementData);
+        if ($element) {
+            return $element;
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws \DOMException
+     */
+    private static function switchGlobalElements($elementName, $jsonKitElements, $elementData): bool
     {
         switch ($elementName) {
             case "footer":
@@ -38,6 +68,17 @@ class ElementsController
             case "head":
                 $element = new Head($jsonKitElements);
                 return $element->getElement($elementData);
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * @throws \DOMException
+     * @throws Exception
+     */
+    private static function switchElements($elementName, $jsonKitElements, $elementData){
+        switch ($elementName) {
             case "top_media":
                 $element = new TopMedia($jsonKitElements);
                 return $element->getElement($elementData);
@@ -89,8 +130,45 @@ class ElementsController
             case "three_top_media_circle":
                 $element = new ThreeTopMediaCircle($jsonKitElements);
                 return $element->getElement($elementData);
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * @throws \DOMException
+     * @throws Exception
+     */
+    private static function switchDynamicElements($elementName, $jsonKitElements, $elementData){
+        switch ($elementName) {
+            case "full_width_form":
+                $element = new Form(['element_form_type' => 'full_width']);
+                return $element->getElement($elementData);
+            case "right_form_with_text":
+                $element = new Form(['element_form_type' => 'right']);
+                return $element->getElement($elementData);
+            case "left_form_with_text":
+                $element = new Form(['element_form_type' => 'left']);
+                return $element->getElement($elementData);
+
             case "list_media_layout":
-                $element = new SermonLayoutPlaceholder($jsonKitElements);
+                $element = new ListMediaLayout();
+                return $element->getElement($elementData);
+            case "grid_media_layout":
+                $element = new GridMediaLayout();
+                return $element->getElement($elementData);
+
+            case "event_calendar_layout":
+                $element = new EventCalendarLayout();
+                return $element->getElement($elementData);
+            case "event_list_layout":
+                $element = new EventListLayout();
+                return $element->getElement($elementData);
+            case "event_tile_layout":
+                $element = new EventGridLayout();
+                return $element->getElement($elementData);
+            case "event_gallery_layout":
+                $element = new EventGalleryLayout();
                 return $element->getElement($elementData);
             default:
                 return false;
