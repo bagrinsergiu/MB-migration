@@ -63,7 +63,7 @@ class MigrationPlatform
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
 
-        $this->buildPage = '';
+        $this->buildPage = 'video';
     }
 
     public function start(string $projectID_MB, int $projectID_Brizy = 0): bool
@@ -122,6 +122,8 @@ class MigrationPlatform
 
         $this->cache->set('settings', $settings);
 
+        $this->brizyApi->setMetaDate();
+
         $parentPages = $this->parser->getParentPages();
 
         if (empty($parentPages)) {
@@ -152,6 +154,7 @@ class MigrationPlatform
 
     /**
      * @throws Exception
+     * @throws GuzzleException
      */
     private function init(string $projectUUID_MB, int $projectID_Brizy): void
     {

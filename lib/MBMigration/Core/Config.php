@@ -34,6 +34,11 @@ class Config
     private static $cloud_host;
 
     /**
+     * @var array
+     */
+    public static $metaData;
+
+    /**
      * @var bool
      */
     public static $devMode;
@@ -60,6 +65,7 @@ class Config
      */
     private static $defaultSettings;
 
+
     /**
      * @throws Exception
      */
@@ -82,6 +88,8 @@ class Config
 
         self::$debugMode        = (bool) $this->checkSettings('debugMode');
         self::$devMode          = (bool) $this->checkSettings('devMode');
+
+        self::$metaData         = $this->checkMetadata('metaData');
 
         self::$urlJsonKits      = $this->checkAssets('CloudUrlJsonKit');
         self::$MBMediaStaging   = $this->checkAssets('MBMediaStaging');
@@ -254,5 +262,25 @@ class Config
         if (!unlink($testFile)) {
             throw new Exception('The file was successfully verified and created, but failed to delete the file.');
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkMetadata()
+    {
+       $metaData = self::$settings['metaData'];
+       if(!empty($metaData)){
+           $requiredFields = ['secret', 'MBAccountID', 'MBVisitorID'];
+
+           foreach ($requiredFields as $field) {
+               if (empty($metaData[$field])) {
+                   throw new Exception($field . " value is not set");
+               }
+           }
+           return $metaData;
+       }
+       return false;
+
     }
 }
