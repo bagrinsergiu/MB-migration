@@ -185,6 +185,7 @@ class BrizyAPI extends Utils
         }
         $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
         $mime_type = mime_content_type($pathToFileName);
+        Utils::log('Mime type image; ' . $mime_type, 1, 'createMedia');
         if ($this->getFileExtension($mime_type)) {
             $file_contents = file_get_contents($pathToFileName);
             if (!$file_contents) {

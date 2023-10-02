@@ -1,22 +1,22 @@
 <?php
 
-namespace MBMigration\Builder;
+namespace MBMigration\Builder\ColorMapper;
 
 use MBMigration\Core\Utils;
-use MBMigration\Builder\ColorMapper\ColorController;
+use MBMigration\Builder\ColorMapper\ColorControllerSCSS;
 
 class ColorMapper
 {
     /**
      * @throws \Exception
      */
-    private function Anthem (array $colorKit): array
+    public function Anthem (array $colorKit): array
     {
         $magicColors = [
-            'color7' => ColorController::result('chooseLargerContrast', [$colorKit['color1'], $colorKit['color4'], $colorKit['color5']]),
-            'color8' => ColorController::result('chooseLargerContrast', [$colorKit['color5'], $colorKit['color4'], $colorKit['color1']]),
-            'color9' => ColorController::result('chooseLargerContrast', [$colorKit['color3'], $colorKit['color4'], $colorKit['color1']]),
-            'colorA' => ColorController::result('chooseLargerContrast', [$colorKit['color2'], $colorKit['color3'], $colorKit['color1']])
+            'color7' => ColorControllerSCSS::result('chooseLargerContrast', [$colorKit['color1'], $colorKit['color4'], $colorKit['color5']]),
+            'color8' => ColorControllerSCSS::result('chooseLargerContrast', [$colorKit['color5'], $colorKit['color4'], $colorKit['color1']]),
+            'color9' => ColorControllerSCSS::result('chooseLargerContrast', [$colorKit['color3'], $colorKit['color4'], $colorKit['color1']]),
+            'colorA' => ColorControllerSCSS::result('chooseLargerContrast', [$colorKit['color2'], $colorKit['color3'], $colorKit['color1']])
         ];
 
         $colorKit = array_merge($colorKit, $magicColors);
@@ -25,12 +25,12 @@ class ColorMapper
             'subpalette1' => [
                 'bg'                => $colorKit['color1'],
                 'accent'            => $colorKit['color7'],
-                'text'              => ColorController::result('desaturateByPercent', $colorKit['color7'], 50),
+                'text'              => ColorControllerSCSS::result('desaturateByPercent', $colorKit['color7'], 50),
                 'header'            => $colorKit['color7'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color7'],
-                'btn-text'          => ColorController::result('getContrastingColor', $colorKit['color7']),
-                'gal-btn'           => ColorController::result('getContrastingColor', $colorKit['color3']),
+                'btn-text'          => ColorControllerSCSS::result('getContrastingColor', $colorKit['color7']),
+                'gal-btn'           => ColorControllerSCSS::result('getContrastingColor', $colorKit['color3']),
                 'input-border'      => $colorKit['color7'],
                 'input-unselected'  => $colorKit['color7'],
                 'input-selected'    => $colorKit['color7'],
@@ -43,12 +43,12 @@ class ColorMapper
             'subpalette2' => [
                 'bg'                => $colorKit['color5'],
                 'accent'            => $colorKit['color8'],
-                'text'              => ColorController::result('desaturateByPercent', $colorKit['color8'],50),
+                'text'              => ColorControllerSCSS::result('desaturateByPercent', $colorKit['color8'],50),
                 'header'            => $colorKit['color8'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color2'],
-                'btn-text'          => ColorController::result('getContrastingColor', $colorKit['color2']),
-                'gal-btn'           => ColorController::result('getContrastingColor', $colorKit['color1']),
+                'btn-text'          => ColorControllerSCSS::result('getContrastingColor', $colorKit['color2']),
+                'gal-btn'           => ColorControllerSCSS::result('getContrastingColor', $colorKit['color1']),
                 'input-border'      => $colorKit['color2'],
                 'input-unselected'  => $colorKit['color2'],
                 'input-selected'    => $colorKit['color2'],
@@ -61,12 +61,12 @@ class ColorMapper
             'subpalette3' => [
                 'bg'                => $colorKit['color2'],
                 'accent'            => $colorKit['colorA'],
-                'text'              => ColorController::result('desaturateByPercent', $colorKit['colorA'],50),
+                'text'              => ColorControllerSCSS::result('desaturateByPercent', $colorKit['colorA'],50),
                 'header'            => $colorKit['colorA'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['colorA'],
                 'btn-text'          => $colorKit['color2'],
-                'gal-btn'           => ColorController::result('getContrastingColor', $colorKit['color2']),
+                'gal-btn'           => ColorControllerSCSS::result('getContrastingColor', $colorKit['color2']),
                 'input-border'      => $colorKit['colorA'],
                 'input-unselected'  => $colorKit['colorA'],
                 'input-selected'    => $colorKit['colorA'],
@@ -79,12 +79,12 @@ class ColorMapper
             'subpalette4' => [
                 'bg'                => $colorKit['color3'],
                 'accent'            => $colorKit['color9'],
-                'text'              => ColorController::result('desaturateByPercent', $colorKit['color9'],50),
+                'text'              => ColorControllerSCSS::result('desaturateByPercent', $colorKit['color9'],50),
                 'header'            => $colorKit['color9'],
                 'link'              => $colorKit['color6'],
                 'btn'               => $colorKit['color2'],
-                'btn-text'          => ColorController::result('getContrastingColor', $colorKit['color2']),
-                'gal-btn'           => ColorController::result('getContrastingColor', $colorKit['color3']),
+                'btn-text'          => ColorControllerSCSS::result('getContrastingColor', $colorKit['color2']),
+                'gal-btn'           => ColorControllerSCSS::result('getContrastingColor', $colorKit['color3']),
                 'input-border'      => $colorKit['color2'],
                 'input-unselected'  => $colorKit['color2'],
                 'input-selected'    => $colorKit['color2'],
@@ -98,10 +98,10 @@ class ColorMapper
                 'bg'                => $colorKit['color1'],
                 'nav-bg'            => $colorKit['color1'],
                 'sub-bg'            => $colorKit['color3'],
-                'nav-text'          => ColorController::result('mixContrastingColor', $colorKit['color1'],24),
-                'sub-text'          => ColorController::result('mixContrastingColor', $colorKit['color3'],24),
-                'nav-acc'           => ColorController::result('mixContrastingColor', $colorKit['color1'],0),
-                'sub-acc'           => ColorController::result('mixContrastingColor', $colorKit['color3'],0)
+                'nav-text'          => ColorControllerSCSS::result('mixContrastingColor', $colorKit['color1'],24),
+                'sub-text'          => ColorControllerSCSS::result('mixContrastingColor', $colorKit['color3'],24),
+                'nav-acc'           => ColorControllerSCSS::result('mixContrastingColor', $colorKit['color1'],0),
+                'sub-acc'           => ColorControllerSCSS::result('mixContrastingColor', $colorKit['color3'],0)
             ]
         ];
 

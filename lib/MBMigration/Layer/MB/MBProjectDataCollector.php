@@ -1,16 +1,16 @@
 <?php
-namespace MBMigration\Parser;
+namespace MBMigration\Layer\MB;
 
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
-use MBMigration\Core\Utils;
-use MBMigration\Builder\VariableCache;
 use MBMigration\Builder\DebugBackTrace;
-use MBMigration\Layer\DataSource\DBConnector;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Utils\ArrayManipulator;
+use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Utils;
+use MBMigration\Layer\DataSource\DBConnector;
 
-class Parser
+class MBProjectDataCollector
 {
     private $db;
     private $siteId;
@@ -117,6 +117,9 @@ class Parser
         }
         $designSite = $this->db->requestArray("SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
 
+        $domainSite = $this->db->requestArray("SELECT domain_name from domains WHERE site_id = $this->siteId");
+
+
         $settings = json_decode($settingSite[0]['settings'], true);
         if(!array_key_exists('palette', $settings)){
             $settings['palette'] = $this->getPalettes($settingSite[0]['palette_uuid']);
@@ -125,6 +128,7 @@ class Parser
         return [
             'name'      => $settingSite[0]['name'],
             'title'     => $settingSite[0]['title'],
+            'domain'    => $domainSite[0]['domain_name'],
             'design'    => $designSite[0]['name'],
             'uuid'      => $settingSite[0]['uuid'],
             'parameter' => $settings,
@@ -142,8 +146,9 @@ class Parser
         if(array_key_exists('theme', $settings)){
             $addedFonts = [];
             foreach ($settings['theme'] as &$font) {
-                $settingSite = $this->db->request("SELECT name from fonts WHERE id = " . $font['font_id']);
+                $settingSite = $this->db->request("SELECT name, family from fonts WHERE id = " . $font['font_id']);
                 $font['fontName'] = $settingSite[0]['name'];
+                $font['fontFamily'] = $this->transLiterationFontFamily($settingSite[0]['family']);
 
                 if(in_array($font['font_id'], $addedFonts)) {
                     $font['uuid'] = $addedFonts[$font['font_id']];
@@ -168,8 +173,9 @@ class Parser
         $fontStyle = $this->db->request("select display_name, name, font_id, font_size, text_transform, letter_spacing, position, bold, italic FROM font_theme_styles WHERE font_theme_id IN(SELECT id from font_themes WHERE uuid = '$fontThemeUUID') ORDER BY position");
         $addedFonts = [];
         foreach ($fontStyle as &$font) {
-            $fontName = $this->db->request("SELECT name from fonts WHERE id = " . $font['font_id']);
+            $fontName = $this->db->request("SELECT name, family from fonts WHERE id = " . $font['font_id']);
             $font['fontName'] = $fontName[0]['name'];
+            $font['fontFamily'] = $this->transLiterationFontFamily($fontName[0]['family']);
 
             if(array_key_exists($font['font_id'], $addedFonts)) {
                 $font['uuid'] = $addedFonts[$font['font_id']];
@@ -197,7 +203,7 @@ class Parser
             foreach ($requestItemsFromMainSection as $itemsFromMainSections)
             {
                 $item[] = [
-                    'id'        => $itemsFromMainSections['id'],
+                    'sectionId' => $itemsFromMainSections['id'],
                     'category'  => $itemsFromMainSections['category'],
                     'position'  => $itemsFromMainSections['order_by'],
                     'settings'  => json_decode($itemsFromMainSections['settings'], true),
@@ -207,6 +213,7 @@ class Parser
             $settings = json_decode($mainSection['settings'], true);
 
             $result[$mainSection['category']] = [
+                'sectionId'     => $mainSection['id'],
                 'typeSection'   => "main",
                 'category'      => $requestItemsFromMainSection[0]['category'],
                 'settings'      => $settings,
@@ -238,6 +245,9 @@ class Parser
         return $palette;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getParentPages(): array
     {
         Utils::log('Get parent pages', 1, 'getParentPages');
@@ -287,9 +297,9 @@ class Parser
                     'name'           => $pageSite['name'],
                     'collection'     => '',
                     'position'       => $pageSite['position'],
-                    'landing'       => $pageSite['landing'],
+                    'landing'        => $pageSite['landing'],
                     'parentSettings' => $pageSite['settings'],
-                    'child'         => $this->getChildPages($pageSite['id'])
+                    'child'          => $this->getChildPages($pageSite['id'])
                 ];
                 $this->cache->update('Total', '++', 'Status');
             }
@@ -302,7 +312,6 @@ class Parser
      */
     public function getChildFromPages($parenId): array
     {
-
         Utils::log('Get child from pages', 1, 'getChildFromPages');
         $result = [];
 
@@ -311,7 +320,7 @@ class Parser
         foreach($pagesSite as $pageSite)
         {
             $result[] = [
-                'id'    => $pageSite['id'],
+                'id'        => $pageSite['id'],
                 'position'  => $pageSite['position']
             ];
         }
@@ -324,6 +333,7 @@ class Parser
     public function getSectionsPage($id): array
     {
         $result = [];
+        $i = 0;
         $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = " . $id . " ORDER BY position asc");
         foreach ($requestSections as $pageSections)
         {
@@ -341,10 +351,12 @@ class Parser
                 'typeSection'    => $typeSectionLayoutUuid[0]['name'],
                 'position'       => $pageSections['position'],
                 'settings'       => [
-                    'sections' => $settings,
-                    'layout'   => json_decode($typeSectionLayoutUuid[0]['settings'], true)
+                    'pagePosition'  => $i,
+                    'sections'      => $settings,
+                    'layout'        => json_decode($typeSectionLayoutUuid[0]['settings'], true)
                 ]
             ];
+            $i++;
         }
         return $result;
     }
@@ -398,7 +410,14 @@ class Parser
                                 continue 2;
                             }
                         }
-                        $uploadedFont[] = ['fontName' => $fontName, 'uuid' => $this->fontsController->upLoadFonts($fontName)];
+
+                        $settingSite = $this->db->request("SELECT family from fonts WHERE name = '$fontName'" );
+                        $uploadedFont[] = [
+                            'fontName' => $fontName,
+                            'fontFamily' => $this->transLiterationFontFamily($settingSite[0]['family']),
+                            'uuid' => $this->fontsController->upLoadFonts($fontName)
+                        ];
+
                         $defaultFont = array_merge($defaultFont, $uploadedFont);
                         $this->cache->set('fonts', $defaultFont, 'settings');
                         $settings['used_fonts'] = $uploadedFont;
@@ -422,7 +441,7 @@ class Parser
 
         if($assembly)
         {
-            return $this->assemblySection($sectionId['id']);
+            return $this->assemblySection($sectionId['id'], $sectionId['category']);
         }
 
         return $result;
@@ -451,9 +470,18 @@ class Parser
         return $randomString;
     }
 
-    private function assemblySection($id): array
+    private function assemblySection($id, $section): array
     {
-        return $this->manipulator->groupArrayByParentId($this->cache->get($id, 'Sections'));
+        return $this->manipulator->groupArrayByParentId($this->cache->get($id, 'Sections'), $section);
+    }
+
+    private function transLiterationFontFamily($family): string
+    {
+        $inputString = str_replace(["'", ' '], ['','_'], $family);
+
+        $inputString = str_replace(',', '', $inputString);
+
+        return strtolower($inputString);
     }
 
 }

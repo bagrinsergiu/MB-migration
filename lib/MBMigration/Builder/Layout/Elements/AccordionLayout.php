@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Elements;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class AccordionLayout extends Element
 {
@@ -47,8 +48,7 @@ class AccordionLayout extends Element
         $objBlock->newItem($decoded['main']);
         $objList->newItem($decoded['list']);
 
-        $objBlock->item(0)->setting('bgColorPalette', '');
-        $objBlock->item(0)->setting('colorPalette', '');
+        $this->generalParameters($objBlock, $options, $sectionData);
 
         $this->defaultOptionsForElement($sectionData, $options);
 
@@ -70,24 +70,15 @@ class AccordionLayout extends Element
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'accordion_title') {
-
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-left']);
-                        $objItem->setting('labelText', $this->replaceString($item['content'], $options)['text']);
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objItem->setting('labelText', $richText);
                     }
 
                     if ($item['item_type'] === 'accordion_body') {
-
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
-                        $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objItem->item(0)->item(0)->setText($richText);
                     }
                 }
-
             }
             $objList->item(0)->addItem($objItem->get());
         }

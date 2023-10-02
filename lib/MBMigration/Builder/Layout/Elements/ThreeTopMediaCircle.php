@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Elements;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class ThreeTopMediaCircle extends Element
 {
@@ -50,7 +51,9 @@ class ThreeTopMediaCircle extends Element
         $objBlock->item(0)->setting('bgAttachment', 'none');
         $objBlock->item(0)->setting('bgColorPalette', '');
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->defaultOptionsForElement($decoded, $options);
 
         $this->backgroundColor($objBlock, $sectionData, $options);
 
@@ -59,7 +62,6 @@ class ThreeTopMediaCircle extends Element
         $this->backgroundParallax($objBlock, $sectionData);
 
         $this->backgroundImages($objBlock, $sectionData, $options);
-
 
         foreach ($sectionData['items'] as $item)
         {
@@ -70,17 +72,13 @@ class ThreeTopMediaCircle extends Element
             }
 
             if ($item['item_type'] === 'title') {
-                $this->setOptionsForUsedFonts($item, $options);
-                $this->defaultTextPosition($item, $options);
-
-                $objBlock->item(0)->item(1)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options ));
+                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                $objBlock->item(0)->item(1)->item(0)->item(0)->item(0)->setText($richText);
             }
 
             if ($item['item_type'] === 'body') {
-                $this->setOptionsForUsedFonts($item, $options);
-                $this->defaultTextPosition($item, $options);
-
-                $objBlock->item(0)->item(1)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                $objBlock->item(0)->item(1)->item(0)->item(2)->item(0)->setText($richText);
             }
         }
         $objBlock->item(0)->item(0)->addItem($objSpacer->get());

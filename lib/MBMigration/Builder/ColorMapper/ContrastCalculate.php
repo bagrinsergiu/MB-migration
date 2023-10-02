@@ -8,7 +8,7 @@ class ContrastCalculate
     /**
      * @throws \Exception
      */
-    public function getContrastingColor($color, $threshold = 50, $lightColor = '#ffffff', $darkColor = '#2a2a2a') {
+       public function getContrastingColor($color, $threshold = 50, $lightColor = '#ffffff', $darkColor = '#2a2a2a') {
 
         if(!is_array($color))
         {

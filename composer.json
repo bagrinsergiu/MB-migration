@@ -11,7 +11,10 @@
       "ext-curl": "*",
       "ext-json": "*",
       "ext-libxml": "*",
-      "ext-mbstring": "*"
+      "ext-mbstring": "*",
+      "leafo/scssphp": "^0.8.4",
+      "scssphp/scssphp": "^1.11",
+      "zoon/puphpeteer": "1.6.0"
     },
     "autoload": {
       "psr-0": {

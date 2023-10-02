@@ -26,31 +26,23 @@ class Utils
         return $value;
     }
 
-    public static function MESSAGES_POOL($message, $key = '')
+    public static function MESSAGES_POOL($message, $key = '', $section = '' )
     {
-        $tmpMessage = [];
+        if (empty($section)) {
+            $section = 'MAIN_MESSAGE';
+        }
 
-        if($key === '') {
-            if(!empty(Utils::$MESSAGES_POOL) && is_array(Utils::$MESSAGES_POOL))  {
-                $tmpMessage[] = $message;
-                $tmpMessage = array_merge($tmpMessage, Utils::$MESSAGES_POOL);
-                Utils::$MESSAGES_POOL = $tmpMessage;
-            } else if (!empty(Utils::$MESSAGES_POOL) && !is_array(Utils::$MESSAGES_POOL))  {
-                $tmpMessage[] = $message;
-                $MESSAGES_POOL[] = Utils::$MESSAGES_POOL;
-                Utils::$MESSAGES_POOL = array_merge($tmpMessage, $MESSAGES_POOL);
-            } else {
-                Utils::$MESSAGES_POOL = [];
-                $array_message[] = $message;
-                Utils::$MESSAGES_POOL = array_merge(Utils::$MESSAGES_POOL, $array_message );
-            }
+        if (!isset(Utils::$MESSAGES_POOL[$section]) || !is_array(Utils::$MESSAGES_POOL[$section])) {
+            Utils::$MESSAGES_POOL[$section] = [];
+        }
+
+        if (empty($key)) {
+            array_unshift(Utils::$MESSAGES_POOL[$section], $message);
         } else {
-            if(array_key_exists($key, Utils::$MESSAGES_POOL)){
-                $tmpMessage[]  = $message;
-                $tmpMessage[]  = Utils::$MESSAGES_POOL[$key];
-                Utils::$MESSAGES_POOL[$key] = $tmpMessage;
+            if (isset(Utils::$MESSAGES_POOL[$section][$key]) && is_array(Utils::$MESSAGES_POOL[$section][$key])) {
+                array_unshift(Utils::$MESSAGES_POOL[$section][$key], $message);
             } else {
-                Utils::$MESSAGES_POOL[$key] = $message;
+                Utils::$MESSAGES_POOL[$section][$key] = [$message];
             }
         }
     }
@@ -159,42 +151,44 @@ class Utils
 
     private static function writeLogToFile(array $param): void
     {
-        $typeMessageArray = ["DEBUG", "INFO", "WARNING", "CRITICAL", "PROCESS", "ERROR", "SUCCESSFULLY", "ErrorDump"];
+        $line = '';
         $project_id = '';
         $dirToDumpLog = null;
-        if(isset(self::$cache))
-        {
+        $typeMessageArray = ["DEBUG", "INFO", "WARNING", "CRITICAL", "PROCESS", "ERROR", "SUCCESSFULLY", "ErrorDump"];
+
+        if (isset(self::$cache)) {
             $project_id = "[UMID: " . self::$cache->get('migrationID') . "] ";
             $dirToDumpLog = self::$cache->get('log', 'ProjectFolders');
         }
-        $line = '';
 
         if (is_array($param['message'])) {
             $message = json_encode($param['message']);
         } else {
             $message = $param['message'];
         }
+
         if ($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
             $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
             $caller = $backtrace[1];
             $line = ' (' . basename($caller['file']) . ':' . $caller['line'] . ') ';
         }
-        $strlog = "[" . date('Y-m-d H:i:s') . "] " . $project_id . "[" . $typeMessageArray[$param['type']] . "]" . $line . ": [" . $param['callFunction'] . "] " . $message . "\n";
+
+        $strLog = "[" . date('Y-m-d H:i:s') . "] " . $project_id . "[" . $typeMessageArray[$param['type']] . "]" . $line . ": [" . $param['callFunction'] . "] " . $message . "\n";
 
         $prefix = date("Y-m-d");
 
         self::createDirectoryIfNeeded(Config::$pathLogFile);
         $dirToLog = Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
 
-        if ($dirToDumpLog !== null){
-            file_put_contents($dirToDumpLog . 'process.log', $strlog, FILE_APPEND);
+        if ($dirToDumpLog !== null) {
+            file_put_contents($dirToDumpLog . 'process.log', $strLog, FILE_APPEND);
         }
 
-        file_put_contents($dirToLog, $strlog, FILE_APPEND);
-        if(!is_null(self::$cache)){
+        file_put_contents($dirToLog, $strLog, FILE_APPEND);
+        if(!is_null(self::$cache)) {
             if($param['type'] == 0 or $param['type'] == 2 or $param['type'] == 3 or $param['type'] == 5) {
                 $dirToLog = self::$cache->get('log') . 'error.log';
-                file_put_contents($dirToLog, $strlog, FILE_APPEND);
+                file_put_contents($dirToLog, $strLog, FILE_APPEND);
             }
         }
     }

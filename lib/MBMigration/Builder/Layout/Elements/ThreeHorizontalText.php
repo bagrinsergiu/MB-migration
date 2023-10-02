@@ -45,7 +45,9 @@ class ThreeHorizontalText extends Element
 
         $objBlock = new ItemBuilder($decoded['main']);
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->defaultOptionsForElement($decoded, $options);
 
         $this->backgroundColor($objBlock, $sectionData, $options);
 

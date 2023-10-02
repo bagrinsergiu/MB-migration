@@ -41,22 +41,27 @@ class ArrayManipulator
         return $this->array;
     }
 
-    public function groupArrayByParentId($list): array
+    public function groupArrayByParentId($list, $section): array
     {
         $result = [];
         $parents = [];
-        foreach ($list as $item) {
-            if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'list') {
-                $parents[$item["id"]] = $item;
-                $parents[$item["id"]]["item"] = [];
-            } else if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'accordion') {
-                $parents[$item["id"]] = $item;
-                $parents[$item["id"]]["item"] = [];
-            } else if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'tab') {
-                $parents[$item["id"]] = $item;
-                $parents[$item["id"]]["item"] = [];
+        if($section !== 'gallery'){
+
+            foreach ($list as $item) {
+                if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'list') {
+                    $parents[$item["id"]] = $item;
+                    $parents[$item["id"]]["item"] = [];
+                } else if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'accordion') {
+                    $parents[$item["id"]] = $item;
+                    $parents[$item["id"]]["item"] = [];
+                } else if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'tab') {
+                    $parents[$item["id"]] = $item;
+                    $parents[$item["id"]]["item"] = [];
+                }
             }
         }
+
+
 
          if(!empty($parents)){
             foreach ($parents as &$parent) {

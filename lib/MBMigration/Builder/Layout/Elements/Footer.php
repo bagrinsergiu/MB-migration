@@ -6,6 +6,7 @@ use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class Footer extends Element
 {
@@ -36,7 +37,10 @@ class Footer extends Element
     {
         Utils::log('Create Footer', 1, "] [createFooter");
 
+        $sectionData = $this->cache->get('mainSection')['footer'];
+
         $options = [];
+
         $imageAdd = false;
 
         $objBlock = new ItemBuilder();
@@ -45,40 +49,20 @@ class Footer extends Element
         $objColum = new ItemBuilder();
         $objIcon  = new ItemBuilder();
 
-        $sectionData = $this->cache->get('mainSection')['footer'];
-
         $decoded = $this->jsonDecode['blocks']['footer'];
 
         $objBlock->newItem($decoded['main']);
-        $objIcon->newItem($decoded['item']);
         $objText->newItem($decoded['item-text']);
         $objImage->newItem($decoded['item-image']);
         $objColum->newItem($decoded['item-empty']);
 
-        $block = json_decode($decoded, true);
+        $this->generalParameters($objBlock, $options, $sectionData);
 
-        if($this->checkArrayPath($sectionData, 'settings/color/subpalette')) {
-            $block['value']['bgColorHex'] = strtolower($sectionData['settings']['color']['subpalette']['bg']);
-            $objBlock->setting('bgColorPalette', '');
-            $objBlock->setting('bgColorHex', $sectionData['settings']['color']['subpalette']['bg']);
-            $options = array_merge($options, ['color' => $sectionData['settings']['color']['subpalette']]);
-        }
+        $color = $this->cache->get('nav-subpalette','subpalette');
 
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'text') {
-                $itemsIcon = $this->getDataIconValue($item['content']);
-                if(!empty($itemsIcon)){
-                    foreach ($itemsIcon as $itemIcon){
-                        $objIcon->setting('linkExternal', $itemIcon['href']);
-                        $objIcon->setting('name', $this->getIcon($itemIcon['icon']));
-                        $objBlock->item(1)->item(0)->item(0)->item(0)->addItem($objIcon->get());
-                    }
-                }
+        $objBlock->setting('bgColorHex', JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']));
 
-                $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
-                $objText->item()->item()->setText($this->replaceString($item['content'], $options));
-            }
-        }
+        $options = array_merge($options, ['textColor' => $color['sub-text']]);
 
         if($this->checkArrayPath($sectionData, 'settings/background/photo')) {
             $imageAdd = true;
@@ -92,13 +76,46 @@ class Footer extends Element
             $objImage->item()->item()->setting('heightSuffix', "%");
         }
 
-        if(!$imageAdd){
-            $objText->setting('width', 100);
-            $objBlock->item()->addItem($objText->get());
-        } else {
-            $objBlock->item()->addItem($objText->get());
-            $objBlock->item()->addItem($objImage->get());
+        foreach ($sectionData['items'] as $item) {
+            $setText = false;
+
+            if ($item['category'] == 'text') {
+                $setText = true;
+                $this->setOptionsForUsedFonts($item, $options);
+                $this->defaultTextPosition($item, $options);
+
+                $richText = JS::RichText($item['sectionId'], $options['currentPageURL'], $options['fontsFamily']);
+
+                $objText->item()->item()->setText($richText);
+
+                if(!$imageAdd){
+                    $objText->setting('width', 100);
+                    $objBlock->item()->addItem($objText->get());
+                } else {
+                    $objBlock->item()->addItem($objText->get());
+                    $objBlock->item()->addItem($objImage->get());
+                }
+            }
+
+            $itemsIcon = $this->getDataIconValue($item['content']);
+
+            if(!empty($itemsIcon)){
+                foreach ($itemsIcon as $itemIcon){
+                    $objIcon->newItem($decoded['item']);
+                    $objIcon->setting('linkExternal', $itemIcon['href']);
+                    $objIcon->setting('name', $this->getIcon($itemIcon['icon']));
+                    $objColum->item()->addItem($objIcon->get());
+                }
+
+                if($setText){
+                    $objBlock->item(1)->item()->addItem($objColum->get());
+                } else {
+                    $objBlock->item()->item()->addItem($objColum->get());
+                }
+            }
         }
+
+
 
         $block = $this->replaceIdWithRandom($objBlock->get());
         $this->cache->set('footerBlock', json_encode($block));

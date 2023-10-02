@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder;
 
+use MBMigration\Builder\Utils\JsonRepairer;
 use MBMigration\Core\Utils;
 
 class VariableCache
@@ -163,6 +164,20 @@ class VariableCache
             if (is_array($v)) {
                 $this->updateKeyRecursive($section, $key, $value, $v);
             }
+        }
+    }
+
+    public function LOAD_DATA($data)
+    {
+        if (is_string($data)) {
+
+            $decodedData = json_decode($data, true);
+            if ($decodedData === null && json_last_error() !== JSON_ERROR_NONE) {
+                throw new \InvalidArgumentException('Invalid JSON data');
+            }
+            $this->cache = $decodedData;
+        } elseif (is_array($data)) {
+            $this->cache = $data;
         }
     }
 

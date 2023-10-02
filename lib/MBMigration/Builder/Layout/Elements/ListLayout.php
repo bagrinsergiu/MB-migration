@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Elements;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class ListLayout extends Element
 {
@@ -48,10 +49,9 @@ class ListLayout extends Element
         $objHead->newItem($decoded['head']);
         $objImage->newItem($decoded['image']);
 
-        $objBlock->item(0)->setting('bgColorPalette', '');
-        $objBlock->item(0)->setting('colorPalette', '');
+        $this->generalParameters($objBlock, $options, $sectionData);
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->defaultOptionsForElement($decoded, $options);
 
         $this->backgroundColor($objBlock, $sectionData, $options);
 
@@ -90,32 +90,20 @@ class ListLayout extends Element
         {
             if($headItem['category'] !== 'text') { continue; }
 
-            $show_header = true;
-            $show_body = true;
-
-            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                $show_header = $sectionData['settings']['sections']['list']['show_header'];
-            }
-            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                $show_body = $sectionData['settings']['sections']['list']['show_body'];
-            }
-
-            if ($headItem['item_type'] === 'title' && $show_header) {
+            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
-                if (isset($item['settings']['used_fonts'])){
-                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                }
-                $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
-                $objHead->item(0)->item(0)->item(0)->setText($this->replaceString($headItem['content'], $options));
+
+                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
+
+                $objHead->item(0)->item(0)->item(0)->setText($richText);
             }
 
-            if ($headItem['item_type'] === 'body' && $show_body) {
+            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
                 $blockHead = true;
-                if (isset($item['settings']['used_fonts'])){
-                    $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                }
-                $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
-                $objHead->item(0)->item(2)->item(0)->setText($this->replaceString($headItem['content'], $options));
+
+                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
+
+                $objHead->item(0)->item(2)->item(0)->setText($richText);
             }
         }
 
@@ -134,19 +122,13 @@ class ListLayout extends Element
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'title') {
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center', 'upperCase' => 'brz-capitalize-on']);
-                        $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objItem->item(0)->item(0)->setText($richText);
                     }
 
                     if ($item['item_type'] === 'body') {
-                        if (isset($item['settings']['used_fonts'])){
-                            $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
-                        }
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
-                        $objItem->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objItem->item(2)->item(0)->setText($richText);
                     }
                 }
             }

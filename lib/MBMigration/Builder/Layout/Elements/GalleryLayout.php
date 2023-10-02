@@ -40,10 +40,14 @@ class GalleryLayout extends Element
         $slide  = json_decode($decoded['item'], true);
 
         foreach ($sectionData['items'] as $item){
-            $slide['value']['bgImageFileName'] = $item['imageFileName'];
-            $slide['value']['bgImageSrc']      = $item['content'];
+                if(!$item['uploadStatus']) {
+                    continue;
+                }
 
-            $this->insertElementAtPosition($block, 'value/items', $slide);
+                $slide['value']['bgImageFileName'] = $item['imageFileName'];
+                $slide['value']['bgImageSrc']      = $item['content'];
+
+                $this->insertElementAtPosition($block, 'value/items', $slide);
         }
         $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
