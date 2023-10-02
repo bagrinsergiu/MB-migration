@@ -5,16 +5,16 @@ namespace MBMigration;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\Checking;
-use MBMigration\Builder\ColorMapper;
+use MBMigration\Builder\ColorMapper\ColorMapper;
 use MBMigration\Builder\DebugBackTrace;
-use MBMigration\Builder\VariableCache;
 use MBMigration\Builder\PageBuilder;
+use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
 use MBMigration\Core\ErrorDump;
 use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
-use MBMigration\Parser\Parser;
+use MBMigration\Layer\MB\MBProjectDataCollector;
 
 class MigrationPlatform
 {
@@ -22,7 +22,7 @@ class MigrationPlatform
     protected $projectId;
 
     /**
-     * @var Parser
+     * @var MBProjectDataCollector
      */
     private $parser;
     /**
@@ -51,7 +51,7 @@ class MigrationPlatform
     use checking;
     use DebugBackTrace;
 
-    public function __construct(Config $config)
+    public function __construct(Config $config, $buildPage = '')
     {
         $this->cache = VariableCache::getInstance();
         $this->cache->init();
@@ -63,7 +63,7 @@ class MigrationPlatform
         $setConfig = $config;
         $this->finalSuccess['status'] = 'start';
 
-        $this->buildPage = 'video';
+        $this->buildPage = $buildPage;
     }
 
     public function start(string $projectID_MB, int $projectID_Brizy = 0): bool
@@ -170,21 +170,23 @@ class MigrationPlatform
 
         $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
 
-        $projectID_MB = Parser::getIdByUUID($projectUUID_MB);
+        $projectID_MB = MBProjectDataCollector::getIdByUUID($projectUUID_MB);
 
         $this->cache->set('projectId_MB', $projectID_MB);
         $this->cache->set('projectId_Brizy', $projectID_Brizy);
-        $this->cache->set('Status', ['Total' => 0, 'Current' => 0]);
+        $this->cache->set('Status', ['Total' => 0, 'Success' => 0]);
 
-        $this->parser = new Parser($this->cache);
+        $this->parser = new MBProjectDataCollector($this->cache);
     }
 
-    private function logFinalProcess(float $startTime, bool $seccessWorkCompletion = true): void
+    private function logFinalProcess(float $startTime, bool $successWorkCompletion = true): void
     {
         $endTime = microtime(true);
         $executionTime = ($endTime - $startTime);
         $this->finalSuccess['UMID'] = $this->migrationID;
-        if($seccessWorkCompletion ) {$this->finalSuccess['status'] = 'success';}
+        if($successWorkCompletion ) {
+            $this->finalSuccess['status'] = 'success';
+        }
         $this->finalSuccess['progress'] = $this->cache->get('Status');
         $this->finalSuccess['processTime'] = round($executionTime, 1);
 
@@ -223,6 +225,10 @@ class MigrationPlatform
         $this->cache->set('tookPage', $pages);
 
         $preparedSectionOfThePage = $this->getItemsFromPage($pages);
+        if(!$preparedSectionOfThePage) {
+            return;
+        }
+
         $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
         $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
 
@@ -296,6 +302,9 @@ class MigrationPlatform
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     private function createMenuStructure(): void
     {
         Utils::log('Create menu structure', 1, 'createMenuStructure');
@@ -530,6 +539,9 @@ class MigrationPlatform
         return $sectionsItems;
     }
 
+    /**
+     * @throws Exception
+     */
     private function checkItemForMediaFiles(&$section, $typeSection = ''): void
     {
         foreach ($section as &$item) {
@@ -559,6 +571,7 @@ class MigrationPlatform
                 if ($result['status'] == 201) {
                     $result = json_decode($result['body'], true);
                     Utils::log('Upload image response: ' . json_encode($result), 1, 'media');
+                    $item['uploadStatus'] = true;
                     $item['imageFileName'] = $result['filename'];
                     $item['content'] = $result['name'];
                     Utils::log('Success upload image fileName: ' . $result['filename'] . ' srcName: ' . $result['name'], 1, 'media');
@@ -569,6 +582,7 @@ class MigrationPlatform
                 Utils::log('Bad response: ' . json_encode($result), 3, 'media');
             }
         } else {
+            $item['uploadStatus'] = false;
             Utils::log('The structure of the image is damaged', 3, 'media');
         }
     }
@@ -690,7 +704,7 @@ class MigrationPlatform
         $colorKit = $this->colorPalette();
         $design = $this->cache->get('design', 'settings');
         $this->cache->set('subpalette', [], 'parameter');
-        $subPalette = $colorMapper->getPalette($design, $colorKit);
+        $subPalette = $colorMapper->getPalette('Anthem', $colorKit);
         $this->cache->update('subpalette', $subPalette, 'parameter');
     }
 
@@ -708,6 +722,7 @@ class MigrationPlatform
     public function getLogs():string
     {
         if($this->finalSuccess['status'] === 'success'){
+            Utils::log(json_encode($this->errorDump->getDetailsMessage()), 0, 'DetailsMessage');
             return json_encode($this->finalSuccess);
         }
         return json_encode($this->errorDump->getAllErrors());

@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Elements;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class Head extends Element
 {
@@ -33,6 +34,8 @@ class Head extends Element
     {
         Utils::log('Create block menu', 1, "] [createMenu");
 
+        $options = [];
+
         $this->cache->set('currentSectionData', $menuList);
         $headItem = $this->cache->get('header','mainSection');
         $section = $this->jsonDecode['blocks']['menu'];
@@ -44,16 +47,11 @@ class Head extends Element
 
         $this->creatingMenu($objBlock, $menuList, $section);
 
-        if($this->checkArrayPath($headItem, 'settings/color/subpalette')) {
-            $objBlock->item(0)->setting('bgColorPalette', '');
-            $objBlock->item(0)->setting('bgColorHex', $headItem['color']);
-            $objBlock->item(0)->setting('bgColorType', 'solid');
+        $this->generalParameters($objBlock, $options, $headItem);
 
-            $this->cache->set('flags', ['createdFirstSection'=> false, 'bgColorOpacity' => true]);
-        } else {
-            $this->setColorBackground($objBlock);
-            $this->cache->set('flags', ['createdFirstSection' => false, 'bgColorOpacity' => true]);
-        }
+        $this->setColorBackground($objBlock, $options);
+
+        $this->cache->set('flags', ['createdFirstSection' => false, 'bgColorOpacity' => true]);
 
         $block = $this->replaceIdWithRandom($objBlock->get());
         $this->cache->set('menuBlock', json_encode($block));
@@ -111,19 +109,29 @@ class Head extends Element
         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageFileName', $imageLogo['imageFileName']);
     }
 
-    private function setColorBackground(ItemBuilder $objBlock)
+    private function setColorBackground(ItemBuilder $objBlock, $options)
     {
-        $color = $this->cache->get('nav-subpalette','subpalette');
+        $color = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
+
+        $objBlock->item(0)->setting('bgColorHex', $color); // maim bg
+        $objBlock->item(0)->setting('colorHex', '#000000');
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('colorHex','#000000' ); // main text
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('menuBgColorHex','#ffffff' ); // main text
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverColorHex','#323232' ); // main text
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuColorHex', "#000000"); //sub menu text
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuBgColorHex', '#ababab'); //sub menu bg
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverSubMenuColorHex', '#d5d5d5'); //sub menu bg
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverSubMenuBgColorHex', '#838383'); //sub menu bg
+
 
         $objBlock->item(0)->setting('bgColorPalette', '');
-        $objBlock->item(0)->setting('bgColorHex', $color['bg']);
+
         $objBlock->item(0)->setting('bgColorOpacity', 1);
         $objBlock->item(0)->setting('tempBgColorOpacity', 1);
         $objBlock->item(0)->setting('bgColorType', 'ungrouped');
 
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuBgColorHex', $color['sub-bg']);
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuColorHex', $color['nav-text']);
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('colorHex', $color['sub-text']);
+
+
 
     }
 }

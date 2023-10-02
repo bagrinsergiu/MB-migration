@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Elements;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class FullText extends Element
 {
@@ -42,15 +43,18 @@ class FullText extends Element
         Utils::log('Create bloc', 1, "full_text");
 
         $options = [];
+
         $objBlock = new ItemBuilder();
+        $objLine = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
 
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
         $objBlock->newItem($decoded['main']);
+        $objLine->newItem($decoded['line']);
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->generalParameters($objBlock, $options, $sectionData);
 
         $this->backgroundParallax($objBlock, $sectionData);
 
@@ -67,23 +71,17 @@ class FullText extends Element
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
 
-                    $this->setOptionsForUsedFonts($item, $options);
-                    $this->defaultTextPosition($item, $options);
+                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                    $objBlock->item(0)->item(0)->item(0)->setText($richText);
 
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
-                    $objBlock->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
 
-                    $this->setOptionsForUsedFonts($item, $options);
-                    $this->defaultTextPosition($item, $options);
-
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-left']);
-                    $objBlock->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                    $objBlock->item(0)->item(1)->item(0)->setText($richText);
                 }
             }
         }
-
         return json_encode($this->replaceIdWithRandom($objBlock->get()));
     }
 }

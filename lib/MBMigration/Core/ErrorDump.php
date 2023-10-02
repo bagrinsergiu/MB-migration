@@ -50,8 +50,6 @@ class ErrorDump
             'details_message' => Utils::$MESSAGES_POOL,
             'cache' => $this->cache->getCache()
         ];
-
-
     }
 
     /**
@@ -135,6 +133,13 @@ class ErrorDump
             return $this->getDump();
         }
         return $this->errors;
+    }
+
+    public function getDetailsMessage(): array
+    {
+        return [
+            'details_message' => Utils::$MESSAGES_POOL,
+        ];
     }
 
     public function getDump(): array

@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Elements;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class GridLayout extends Element
 {
@@ -49,33 +50,26 @@ class GridLayout extends Element
         $objHead->newItem($decoded['head']);
         $objRow->newItem($decoded['row']);
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->defaultOptionsForElement($decoded, $options);
         $this->backgroundColor($objBlock, $sectionData, $options);
+        $this->backgroundImages($objBlock, $sectionData, $options);
         $this->setOptionsForTextColor($sectionData, $options);
 
         $objBlock->item(0)->setting('bgColorPalette', '');
-        foreach ( $sectionData['head'] as $head){
+        foreach ($sectionData['head'] as $head){
             if ($head['category'] == 'text') {
 
-                if ($head['item_type'] === 'title' && $this->showHeader($head)) {
+                if ($head['item_type'] === 'title' && $this->showHeader($sectionData)) {
 
-                    $this->defaultOptionsForElement($head, $options);
-                    $this->defaultTextPosition($head, $options);
-                    $this->textType($head, $options);
-
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1', 'mainPosition'=>'brz-text-lg-center']);
-                    $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($head['content'], $options)));
-
+                    $richText = JS::RichText($head['id'], $options['currentPageURL']);
+                    $objHead->item()->addItem($this->itemWrapperRichText($richText));
                 }
 
-                if ($head['item_type'] === 'body' && $this->showBody($head)) {
-
-                    $this->defaultOptionsForElement($head, $options);
-                    $this->defaultTextPosition($head, $options);
-                    $this->textType($head, $options);
-
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
-                    $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($head['content'], $options)));
+                if ($head['item_type'] === 'body' && $this->showBody($sectionData)) {
+                    $richText = JS::RichText($head['id'], $options['currentPageURL']);
+                    $objHead->item()->addItem($this->itemWrapperRichText($richText));
                 }
             }
         }
@@ -109,12 +103,8 @@ class GridLayout extends Element
                             }
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
-
-                                    $this->defaultOptionsForElement($section, $options);
-                                    $this->defaultTextPosition($section, $options);
-                                    $this->textType($section, $options, 'title');
-
-                                    $objItem->item(1)->item(0)->setText($this->replaceString($sectionItem['content'], $options));
+                                    $richText = JS::RichText($sectionItem['id'], $options['currentPageURL'], $options['fontsFamily']);
+                                    $objItem->item(1)->item(0)->setText($richText);
                                 }
                             }
                         }
@@ -133,20 +123,12 @@ class GridLayout extends Element
                 if ($section['category'] == 'text') {
 
                     if ($section['item_type'] == 'title' && $this->showHeader($section)) {
-
-                        $this->setOptionsForUsedFonts($section, $options);
-                        $this->defaultTextPosition($section, $options);
-                        $this->textType($section, $options);
-
-                        $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], $options)));
+                        $richText = JS::RichText($section['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objItem->addItem($this->itemWrapperRichText($richText));
                     }
                     if ($section['item_type'] == 'body' && $this->showBody($section)) {
-
-                        $this->setOptionsForUsedFonts($section, $options);
-                        $this->defaultTextPosition($section, $options);
-                        $this->textType($section, $options);
-
-                        $objItem->addItem($this->itemWrapperRichText($this->replaceString($section['content'], $options)));
+                        $richText = JS::RichText($section['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objItem->addItem($this->itemWrapperRichText($richText));
                     }
                 }
             }

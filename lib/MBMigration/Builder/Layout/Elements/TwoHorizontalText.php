@@ -35,14 +35,17 @@ class TwoHorizontalText extends Element
     protected function TwoHorizontalText($sectionData)
     {
         Utils::log('Create full media', 1, "] [two-horizontal-text");
+
         $options = [];
+
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['two-horizontal-text'];
-        $block = json_decode($decoded['main'], true);
 
         $objBlock = new ItemBuilder($decoded['main']);
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->defaultOptionsForElement($decoded, $options);
 
         $this->backgroundColor($objBlock, $sectionData, $options);
 
@@ -53,45 +56,35 @@ class TwoHorizontalText extends Element
         $this->backgroundImages($objBlock, $sectionData, $options);
 
         foreach ($sectionData['items'] as $item) {
-
-            if($item['group'] == 0){
+            if($item['group'] == 0) {
                 if($item['category'] == 'text') {
-                    if($item['item_type']=='title'){
-
+                    if($item['item_type']=='title') {
                         $this->setOptionsForUsedFonts($item, $options);
                         $this->defaultTextPosition($item, $options);
-
                         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
-                           }
-                    if($item['item_type']=='body'){
-
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-
-                        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
-                         }
-                }
-            }
-            if($item['group'] == 1){
-                if($item['category'] == 'text') {
-                    if($item['item_type']=='title'){
-
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-
-                        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
-
                         $this->setOptionsForUsedFonts($item, $options);
                         $this->defaultTextPosition($item, $options);
+                        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                }
+            }
 
+            if($item['group'] == 1) {
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='title') {
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+                        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    }
+                    if($item['item_type']=='body') {
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
                         $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }
-
             }
-
         }
 
         $block = $this->replaceIdWithRandom($objBlock->get());

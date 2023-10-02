@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Elements;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class FourHorizontalText extends Element
 {
@@ -44,6 +45,8 @@ class FourHorizontalText extends Element
 
         $objBlock = new ItemBuilder($decoded['main']);
 
+        $this->generalParameters($objBlock, $options, $sectionData);
+
         $this->defaultOptionsForElement($sectionData, $options);
 
         $this->backgroundColor($objBlock, $sectionData, $options);
@@ -55,65 +58,49 @@ class FourHorizontalText extends Element
         foreach ($sectionData['items'] as $item) {
             if($item['group'] == 0){
                 if($item['category'] == 'text') {
-                    if($item['item_type']=='title'){
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1']);
-                        $objBlock->item()->item()->item()->item()->item()->setText($this->replaceString($item['content'], $options));
+                    if($item['item_type']=='title') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objBlock->item()->item()->item()->item()->item()->setText($richText);
                     }
-                    if($item['item_type']=='body'){
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph']);
-                        $objBlock->item()->item()->item()->item(2)->item()->setText($this->replaceString($item['content'], $options));
+                    if($item['item_type']=='body') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objBlock->item()->item()->item()->item(2)->item()->setText($richText);
                     }
                 }
             }
             if($item['group'] == 1){
                 if($item['category'] == 'text') {
-                    if($item['item_type']=='title'){
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1']);
-                        $objBlock->item()->item()->item(1)->item()->item()->setText($this->replaceString($item['content'], $options));
+                    if($item['item_type']=='title') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objBlock->item()->item()->item(1)->item()->item()->setText($richText);
                     }
-                    if($item['item_type']=='body'){
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph']);
-                        $objBlock->item()->item()->item(1)->item(2)->item()->setText($this->replaceString($item['content'], $options));
+                    if($item['item_type']=='body') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objBlock->item()->item()->item(1)->item(2)->item()->setText($richText);
                     }
                 }
             }
             if($item['group'] == 2){
                 if($item['category'] == 'text') {
-                    if($item['item_type']=='title'){
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1']);
-                        $objBlock->item()->item()->item(2)->item()->item()->setText($this->replaceString($item['content'], $options));
+                    if($item['item_type']=='title') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objBlock->item()->item()->item(2)->item()->item()->setText($richText);
                     }
-                    if($item['item_type']=='body'){
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph']);
-                        $objBlock->item()->item()->item(2)->item(2)->item()->setText($this->replaceString($item['content'], $options));
+                    if($item['item_type']=='body') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objBlock->item()->item()->item(2)->item(2)->item()->setText($richText);
                     }
                 }
             }
             if($item['group'] == 3){
                 if($item['category'] == 'text') {
-                    if($item['item_type']=='title'){
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-heading1']);
-                        $objBlock->item()->item()->item(3)->item()->item()->setText($this->replaceString($item['content'], $options));
+                    if($item['item_type']=='title') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objBlock->item()->item()->item(3)->item()->item()->setText($richText);
                     }
-                    if($item['item_type']=='body'){
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph']);
-                        $objBlock->item()->item()->item(3)->item(2)->item()->setText($this->replaceString($item['content'], $options));
+                    if($item['item_type']=='body') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objBlock->item()->item()->item(3)->item(2)->item()->setText($richText);
                     }
                 }
             }

@@ -252,23 +252,93 @@ class LayoutUtils extends builderUtils
         return $result;
     }
 
-    protected function getDataIconValue($html): array
+    protected function getDataIconValue(&$html): array
     {
         $dom = new DOMDocument();
         $dom->loadHTML($html);
         $links = $dom->getElementsByTagName('a');
         $result = [];
         foreach ($links as $link) {
+
+            $href = $link->getAttribute('href');
+            $hostName = $this->extractDomainName($href);
             $spans = $link->getElementsByTagName('span');
             foreach ($spans as $span) {
                 if ($span->hasAttribute('data-icon')) {
                     $icon = $span->getAttribute('data-icon');
-                    $href = $link->getAttribute('href');
-                    $result[] = [ 'icon' => $icon, 'href' => $href];
+                    $iconNameBrizy = $this->checkExistIcon($icon, $hostName);
+                    $result[] = [ 'icon' => $iconNameBrizy, 'href' => $href];
+                } else if ($span->hasAttribute('data-socialicon')) {
+                    $icon = $span->getAttribute('data-socialicon');
+                    $iconNameBrizy = $this->checkExistIcon($icon, $hostName);
+                    $result[] = [ 'icon' => $iconNameBrizy, 'href' => $href];
+                }  else {
+                    Utils::log('Icons Attribute not found', 3, "replaceTitleTag");
                 }
             }
         }
+
+        $resultHtml = $dom->saveHTML();
+        $replace = [
+            '&acirc;',
+            '&nbsp;',
+            '&amp;',
+            '&quot;',
+            '&#128;',
+            '&#129;',
+            '&#130;',
+            '&#135;',
+            '&#138;',
+            '&icirc;'
+        ];
+
+        $html = str_replace($replace, '', $resultHtml);
         return $result;
+    }
+    private function recursiveRemove($string, $toRemove) {
+
+        if (is_array($toRemove)) {
+            foreach ($toRemove as $item) {
+                $string = $this->recursiveRemove($string, $item);
+            }
+            return $string;
+        } else {
+
+            return str_replace($toRemove, '', $string);
+        }
+    }
+
+    private function checkExistIcon($icon, $hostName){
+
+        $result = 'twitter';
+
+        if($icon === $hostName){
+            $result = $icon;
+        } else if ($this->getIcon($icon) !== false) {
+            $result = $icon;
+        } else if ($this->getIcon($hostName) !== false) {
+            $result = $hostName;
+        } else {
+            Utils::log('icons were not found', 3, "replaceTitleTag");
+        }
+        return $result;
+    }
+
+    protected function extractDomainName($url) {
+
+        $urlParts = parse_url($url);
+
+        $domain = isset($urlParts['host']) ? $urlParts['host'] : '';
+
+        $parts = explode('.', $domain);
+
+        if($parts[0] === 'www')
+        {
+            $domain = $parts[1];
+        } else {
+            $domain = $parts[0];
+        }
+        return $domain;
     }
 
     protected function clearHtmlTag($str): string
@@ -581,7 +651,7 @@ class LayoutUtils extends builderUtils
      */
     protected function replaceTitleTag($html, $options = [], $type = '', $position = ''): array
     {
-        Utils::log('Replace Title Tag ', 1, $this->layoutName . "] [replaceTitleTag");
+        Utils::log('Replace Title Tag ', 1,  "] [replaceTitleTag");
         if(empty($html))
             return [
                 'text' => ''
@@ -696,7 +766,7 @@ class LayoutUtils extends builderUtils
      */
     protected function replaceParagraphs($html, $type = '', $position = '', $options = []): array
     {
-        Utils::log('Replace Paragraph', 1, $this->layoutName . "] [replaceParagraphs");
+        Utils::log('Replace Paragraph', 1,  "] [replaceParagraphs");
         if(empty($html)){
             return [ 'text' => '' ];
         }
@@ -819,7 +889,7 @@ class LayoutUtils extends builderUtils
     protected function loadKit($layoutName = '', $fileName = ''){
 
         if(Config::$urlJsonKits && !Config::$devMode) {
-            Utils::log('Download json BlocksKit', 1, $this->layoutName . "] [loadKit");
+            Utils::log('Download json BlocksKit', 1, "] [loadKit");
             $createUrl = Config::$urlJsonKits . '/Layout';
 
             if($fileName === '' && $layoutName === '' ) {
@@ -836,13 +906,13 @@ class LayoutUtils extends builderUtils
             }
             $url = $this->validateAndFixURL($createUrl);
             if(!$url) {
-                Utils::log('Bad Url: ' . $createUrl, 3, $this->layoutName . "] [loadKit");
+                Utils::log('Bad Url: ' . $createUrl, 3, "] [loadKit");
                 throw new Exception("Bad Url: loadKit");
             }
             return $this->loadJsonFromUrl($url);
 
         } else {
-            Utils::log('Open file json BlocksKit', 1, $this->layoutName . "] [loadKit");
+            Utils::log('Open file json BlocksKit', 1, "] [loadKit");
             $file = __DIR__;
             if($fileName === '' && $layoutName === '' ) {
                 $file .= '/globalBlocksKit.json';
@@ -860,14 +930,14 @@ class LayoutUtils extends builderUtils
                 $fileContent = file_get_contents($file);
 
                 if (empty($fileContent)) {
-                    Utils::log('File ' . $file . ' empty', 2, $this->layoutName . "] [loadKit");
+                    Utils::log('File ' . $file . ' empty', 2, "] [loadKit");
                     throw new Exception('File ' . $file . ' empty');
                 }
-                Utils::log('File exist: ' . $file, 1, $this->layoutName . "] [loadKit");
+                Utils::log('File exist: ' . $file, 1, "] [loadKit");
                 return json_decode($fileContent, true);
 
             } else {
-                Utils::log('File does not exist. Path: ' . $file, 2, $this->layoutName . "] [loadKit");
+                Utils::log('File does not exist. Path: ' . $file, 2,  "] [loadKit");
                 throw new Exception('File does not exist. Path: ' . $file);
             }
         }

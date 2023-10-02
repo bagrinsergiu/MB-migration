@@ -6,6 +6,7 @@ use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class FullMedia extends Element
 {
@@ -43,10 +44,13 @@ class FullMedia extends Element
         $this->cache->set('currentSectionData', $sectionData);
 
         $decoded = $this->jsonDecode['blocks']['full-media']['main'];
+        $general = $this->jsonDecode['blocks']['full-media'];
 
         $objBlock->newItem($decoded);
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->defaultOptionsForElement($general, $options);
 
         $this->backgroundParallax($objBlock, $sectionData);
 
@@ -64,19 +68,13 @@ class FullMedia extends Element
 
                 if($item['item_type']=='title' && $this->showHeader($sectionData)) {
 
-                    $this->setOptionsForUsedFonts($item, $options);
-                    $this->defaultTextPosition($item, $options);
-
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
-                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($richText);
                 }
                 if($item['item_type']=='body' && $this->showBody($sectionData)) {
 
-                    $this->setOptionsForUsedFonts($item, $options);
-                    $this->defaultTextPosition($item, $options);
-
-                    $options = array_merge($options, ['sectionType' => 'brz-tp-lg-paragraph', 'mainPosition'=>'brz-text-lg-center']);
-                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($richText);
                 }
             }
             if($item['category'] == 'photo' && $item['content'] !== '') {

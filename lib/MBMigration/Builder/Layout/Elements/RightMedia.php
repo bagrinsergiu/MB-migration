@@ -6,6 +6,7 @@ use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class RightMedia extends Element
 {
@@ -39,13 +40,16 @@ class RightMedia extends Element
         $objBlock = new ItemBuilder();
 
         $decoded = $this->jsonDecode['blocks']['right-media']['main'];
+        $general = $this->jsonDecode['blocks']['right-media'];
 
         $objBlock->newItem($decoded);
 
         $objBlock->item(0)->setting('bgColorPalette', '');
         $objBlock->item(0)->setting('bgColorOpacity', 1);
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->defaultOptionsForElement($general, $options);
 
         $this->backgroundColor($objBlock, $sectionData, $options);
 
@@ -95,17 +99,15 @@ class RightMedia extends Element
             }
 
             if($item['category'] == 'text') {
-                if($item['item_type']=='title') {
-                    $this->setOptionsForUsedFonts($item, $options);
-                    $this->defaultTextPosition($item, $options);
+                if($item['item_type']=='title' && $this->showHeader($sectionData)) {
 
-                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($richText);
                 }
-                if($item['item_type']=='body') {
-                    $this->setOptionsForUsedFonts($item, $options);
-                    $this->defaultTextPosition($item, $options);
+                if($item['item_type']=='body' && $this->showBody($sectionData)) {
 
-                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($richText);
                 }
             }
         }

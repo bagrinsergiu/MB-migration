@@ -293,7 +293,7 @@ class HtmlHandler
         $href->setAttribute('data-href', $dataHref);
         $href->setAttribute('class', 'link--external');
 
-        if(!empty($color)){
+        if(!empty($color['link'])&& !empty($color)){
             $color = $this->hexToRgb($color['link']);
             $href->setAttribute('style', "color: $color; opacity: 1;");
         }

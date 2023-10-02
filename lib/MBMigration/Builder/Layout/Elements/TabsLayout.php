@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Elements;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class TabsLayout extends Element
 {
@@ -48,10 +49,9 @@ class TabsLayout extends Element
         $objBlock->newItem($decoded['main']);
         $objRow->newItem($decoded['row']);
 
-        $objBlock->item(0)->setting('bgColorPalette', '');
-        $objBlock->item(0)->setting('colorPalette', '');
+        $this->generalParameters($objBlock, $options, $sectionData);
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->defaultOptionsForElement($decoded, $options);
 
         $this->backgroundColor($objBlock, $sectionData, $options);
 
@@ -65,34 +65,18 @@ class TabsLayout extends Element
 
         foreach ($sectionData['head'] as $headItem)
         {
-            if($headItem['category'] !== 'text') { continue; }
-
-            $show_header = true;
-            $show_body = true;
-
-            if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
-                $show_header = $sectionData['settings']['sections']['text']['show_header'];
-            }
-            if($this->checkArrayPath($sectionData, 'settings/sections/text/show_header')){
-                $show_body = $sectionData['settings']['sections']['text']['show_body'];
-            }
-
-            if ($headItem['item_type'] === 'title' && $show_header) {
+            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
 
-                $this->setOptionsForUsedFonts($sectionData, $options);
-                $this->defaultTextPosition($sectionData, $options);
-
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], $options)));
+                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
+                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
             }
 
-            if ($headItem['item_type'] === 'body' && $show_body) {
+            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
                 $blockHead = true;
 
-                $this->setOptionsForUsedFonts($sectionData, $options);
-                $this->defaultTextPosition($sectionData, $options);
-
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], $options)));
+                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
+                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
             }
         }
 
@@ -108,25 +92,19 @@ class TabsLayout extends Element
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'tab_title') {
-                        $this->setOptionsForUsedFonts($sectionData, $options);
-                        $this->defaultTextPosition($sectionData, $options);
-
-                        $objItem->setting('labelText', $this->replaceString($item['content'], $options)['text']);
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objItem->setting('labelText', $richText);
                     }
 
                     if ($item['item_type'] === 'tab_body') {
-
-                        $this->setOptionsForUsedFonts($sectionData, $options);
-                        $this->defaultTextPosition($sectionData, $options);
-
-                        $objItem->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objItem->item(0)->item(0)->setText($richText);
                     }
                 }
 
             }
 
             $objRow->item(0)->addItem($objItem->get());
-//            $objRow->item(0)->setting('contentBgColorHex', $blockBg);
         }
         $objBlock->item(0)->addItem($objRow->get());
         $block = $this->replaceIdWithRandom($objBlock->get());

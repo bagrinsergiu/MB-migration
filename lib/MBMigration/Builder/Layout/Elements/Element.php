@@ -5,10 +5,10 @@ namespace MBMigration\Builder\Layout\Elements;
 use Exception;
 use MBMigration\Builder\Checking;
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 abstract class Element extends LayoutUtils
 {
@@ -36,7 +36,12 @@ abstract class Element extends LayoutUtils
 
     protected function backgroundColor(ItemBuilder $objBlock, array $sectionData, &$options)
     {
-        if($this->checkArrayPath($sectionData, 'settings/color/bg')) {
+
+        $color = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
+
+        if($color){
+            $objBlock->item(0)->setting('bgColorHex', $color);
+        } else if ($this->checkArrayPath($sectionData, 'settings/color/bg')) {
             $blockBg = $sectionData['settings']['color']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
         } else {
@@ -44,6 +49,32 @@ abstract class Element extends LayoutUtils
             $blockBg = $defaultPalette['subpalette1']['bg'];
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
         }
+
+        if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
+
+            $fadeMode = $sectionData['settings']['sections']['background']['fadeMode'];
+            $blendMode = $sectionData['settings']['sections']['background']['blendMode'];
+            $photoOption = $sectionData['settings']['sections']['background']['photoOption'];
+
+            $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
+            if ($opacity <= 0.3) {
+                $options = array_merge($options, ['textColor' => '#000000']);
+            }
+            if(!$fadeMode == 'none' && !$blendMode == 'none'){
+                $objBlock->item(0)->setting('bgColorOpacity', $opacity);
+                $objBlock->item(0)->setting('bgColorType', 'none');
+            } else if ($photoOption == 'parallax-scroll' or $photoOption == 'parallax-fixed') {
+                $objBlock->item(0)->setting('bgColorOpacity', $opacity);
+                $objBlock->item(0)->setting('bgColorType', 'none');
+            }  else if ($photoOption == 'fill') {
+                $objBlock->item(0)->setting('bgColorOpacity', 1);
+                $objBlock->item(0)->setting('bgColorType', 'none');
+            } else {
+                $objBlock->item(0)->setting('bgColorOpacity', 1);
+                $objBlock->item(0)->setting('bgColorType', 'none');
+            }
+        }
+
         $options = array_merge($options, ['bgColor' => $blockBg]);
     }
 
@@ -71,14 +102,6 @@ abstract class Element extends LayoutUtils
                 $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
                 $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
             }
-            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
-                $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-                if ($opacity <= 0.3) {
-                    $options = array_merge($options, ['textColor' => '#000000']);
-                }
-                $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-                $objBlock->item(0)->setting('bgColorType', 'none');
-            }
         }
     }
 
@@ -93,23 +116,31 @@ abstract class Element extends LayoutUtils
         $options = array_merge($options, ['fontType' => $item['item_type']]);
     }
 
+/**
+ *
+ */
+    protected function getFontsFamily(): array
+    {
+        $fontFamily = [];
+        $cache = VariableCache::getInstance();
+        $fonts = $cache->get('fonts', 'settings');
+        foreach ($fonts as $font) {
+            $fontFamily[$font['fontFamily']] = $font['uuid'];
+        }
+        return $fontFamily;
+    }
+
+/**
+ *
+ */
     protected function defaultOptionsForElement($element, &$options)
     {
-       if(!empty($element['options'])){
-           $positionOption = [];
-
-           $options = json_decode($element['options'], true);
-
-           if(!empty($options['title'])){
-               $positionOption = ['title' => $options['title']];
-           }
-
-           if(!empty($options['body'])){
-                $positionOption = ['body' => $options['body']];
-           }
-
-           $options = array_merge($options, ['defTextPosition' => $positionOption]);
-       }
+           $loadOptions = json_decode($element['options'], true);
+               $positionOption = [
+                   'title' => $loadOptions['title']['textPosition'],
+                   'body' => $loadOptions['body']['textPosition']
+               ];
+           $options = array_merge($options, ['textPosition' => $positionOption]);
     }
 
 /**
@@ -117,16 +148,15 @@ abstract class Element extends LayoutUtils
 */
     protected function defaultTextPosition($element, &$options)
     {
-        if(!empty($element['item_type']) && !empty($options['defTextPosition'])){
-
+        if(!empty($options['textPosition'])){
             switch ($element['item_type']){
                 case "title":
                 case "accordion_title":
-                    $mainPosition = $options['defTextPosition']['title'];
+                    $mainPosition = $options['textPosition']['title'];
                     break;
                 case "body":
                 case "accordion_body":
-                    $mainPosition = $options['defTextPosition']['body'];
+                    $mainPosition = $options['textPosition']['body'];
                     break;
                 default:
                     $mainPosition = 'brz-text-lg-left';
@@ -162,12 +192,13 @@ abstract class Element extends LayoutUtils
         $options = array_merge($options, ['sectionType' => $sectionType]);
     }
 
-    protected function showHeader($sectionData, $options = 'text')
+    protected function showHeader($sectionData)
     {
         $show_header = true;
-        $path = "settings/sections/$options/show_header";
+        $sectionCategory = $sectionData['category'];
+        $path = "settings/sections/" . $sectionCategory . "/show_header";
         if($this->checkArrayPath($sectionData, $path)){
-            $show_header = $sectionData['settings']['sections'][$options]['show_header'];
+            $show_header = $sectionData['settings']['sections'][$sectionCategory]['show_header'];
         }
         return $show_header;
     }
@@ -175,8 +206,9 @@ abstract class Element extends LayoutUtils
     protected function showBody($sectionData)
     {
         $show_header = true;
-        if($this->checkArrayPath($sectionData, 'settings/sections/text/show_body')){
-            $show_header = $sectionData['settings']['sections']['text']['show_body'];
+        $sectionCategory = $sectionData['category'];
+        if($this->checkArrayPath($sectionData, "settings/sections/" . $sectionCategory . "/show_body")){
+            $show_header = $sectionData['settings']['sections'][$sectionCategory]['show_body'];
         }
         return $show_header;
     }
@@ -220,6 +252,28 @@ abstract class Element extends LayoutUtils
 
         $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
     }
+
+    protected function generalParameters($objBlock, &$options, $sectionData)
+    {
+        $options = [
+            'position' => $sectionData['settings']['pagePosition'],
+            'currentPageURL' => $this->cache->get('CurrentPageURL'),
+            'sectionID' => $sectionData['sectionId'],
+            'fontsFamily' => $this->getFontsFamily()
+        ];
+
+        $padding = JS::StylesPaddingExtractor($options['sectionID'], $options['currentPageURL']);
+
+        if(!empty($padding)){
+            $objBlock->item(0)->setting('bgColorPalette', '');
+            $objBlock->item(0)->setting('colorPalette', '');
+            $objBlock->item(0)->setting('paddingBottom', $padding['padding-bottom']);
+            $objBlock->item(0)->setting('paddingTop', $padding['padding-top']);
+            $objBlock->item(0)->setting('paddingLeft', $padding['padding-left']);
+            $objBlock->item(0)->setting('paddingRight', $padding['padding-right']);
+        }
+    }
+
 
     protected function insertItemInArray(array $array, array $item, $index): array
     {

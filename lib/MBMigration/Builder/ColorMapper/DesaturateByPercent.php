@@ -4,7 +4,7 @@ namespace MBMigration\Builder\ColorMapper;
 
 class DesaturateByPercent
 {
-    function result($colorHex, $percent): string
+    public function result($colorHex, $percent): string
     {
         $percent = max(0, min(100, $percent));
 

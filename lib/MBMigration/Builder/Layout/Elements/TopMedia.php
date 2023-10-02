@@ -43,6 +43,7 @@ class TopMedia extends Element
         $this->cache->set('currentSectionData', $sectionData);
 
         $decoded = $this->jsonDecode['blocks']['top_media']['main'];
+        $general = $this->jsonDecode['blocks']['top_media'];
 
         $objBlock->newItem($decoded);
 
@@ -50,7 +51,9 @@ class TopMedia extends Element
         $objBlock->item(0)->setting('bgAttachment','none');
         $objBlock->item(0)->setting('bgColorOpacity', 1);
 
-        $this->defaultOptionsForElement($sectionData, $options);
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->defaultOptionsForElement($general, $options);
 
         $this->backgroundColor($objBlock, $sectionData, $options);
 
