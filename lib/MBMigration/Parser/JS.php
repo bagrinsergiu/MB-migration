@@ -135,6 +135,10 @@ class JS
             Utils::MESSAGES_POOL('success', $blockID, 'JS:RUN');
             return $RichText['text'];
         }
+        if(!empty($RichText['embeds'])) {
+            Utils::MESSAGES_POOL('success', $blockID, 'JS:RUN');
+            return $RichText['embeds'];
+        }
         return '';
     }
 
@@ -147,7 +151,14 @@ class JS
         try {
             Utils::log('style parse from page', 1, "getStylesFromSection");
             $puppeteer = new Puppeteer();
-            $browser = $puppeteer->launch(["headless" => "new"]);
+            $browser = $puppeteer->launch([
+                "headless" => "new",
+                'args' =>
+                    [
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--disable-dev-shm-usage',
+                    ]]);
 
             $page = $browser->newPage();
 
