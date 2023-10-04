@@ -9,7 +9,7 @@ class JSCode
 
     public static function StylesExtractor(array $DATA)
     {
-        $requiredParameters = ['selector', 'blockIndex', 'styleProperties'];
+        $requiredParameters = ['selector', 'styleProperties'];
 
         $dataCheck = self::checkParameters($DATA, $requiredParameters);
 
@@ -25,6 +25,15 @@ class JSCode
         $DATA_R['data'] = addslashes(json_encode($DATA_R['data']));
 
         return self::loadSampleAndReplacePlaceholderInCode('richText', $DATA_R);
+    }
+
+    public static function ExtractStyleFromMenu(array $DATA)
+    {
+        $requiredParameters = ['selector', 'families'];
+
+        $dataCheck = self::checkParameters($DATA, $requiredParameters);
+
+        return self::loadSampleAndReplacePlaceholderInCode('getMenuStyle', $dataCheck);
     }
 
     private static function checkParameters(array $confConnection, array $requiredParameters)

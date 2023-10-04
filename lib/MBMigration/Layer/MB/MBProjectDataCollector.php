@@ -34,10 +34,10 @@ class MBProjectDataCollector
     /**
      * @throws Exception
      */
-    public function __construct(VariableCache $cache)
+    public function __construct()
     {
         Utils::log('Initialization', 4, 'Parser Module');
-        $this->cache            = $cache;
+        $this->cache            = VariableCache::getInstance();
 
         $this->siteId           = $this->cache->get('projectId_MB');
         $this->projectId        = $this->cache->get('projectId_Brizy');
@@ -45,7 +45,7 @@ class MBProjectDataCollector
 
         $this->db               = new DBConnector();
         $this->manipulator      = new ArrayManipulator();
-        $this->fontsController  = new FontsController($this->container, $cache);
+        $this->fontsController  = new FontsController($this->container);
 
         Utils::log('READY', 4, 'Parser Module');
     }
@@ -364,6 +364,15 @@ class MBProjectDataCollector
     /**
      * @throws Exception
      */
+    public function getAllProjectsID(){
+        $request = 'SELECT id, uuid FROM "public"."sites" WHERE ("setup_step" = \'final\') AND ("site_type" = \'user\') AND ("directory_name" IS NOT NULL) AND ("archived_at" IS NULL) AND ("design_uuid" = \'8405e015-b796-4e14-896f-7991da379e77\')';
+
+        return $this->db->request($request);
+    }
+
+    /**
+     * @throws Exception
+     */
     private function getItemLink(int $itemId): string
     {
         Utils::log('Check link for item: '. $itemId, 1, 'getItemLink');
@@ -441,7 +450,7 @@ class MBProjectDataCollector
 
         if($assembly)
         {
-            return $this->assemblySection($sectionId['id'], $sectionId['category']);
+            $result = $this->assemblySection($sectionId['id'], $sectionId['category']);
         }
 
         return $result;

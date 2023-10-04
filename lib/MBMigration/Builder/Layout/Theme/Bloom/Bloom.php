@@ -5,7 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Bloom;
 use DOMDocument;
 use Exception;
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\ElementsController;
+use MBMigration\Builder\Layout\AnthemElementsController;
 use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -42,7 +42,7 @@ class Bloom extends Layout
         $menuList = $this->cache->get('menuList');
 
         if($menuList['create'] === false) {
-            $headElement = ElementsController::getElement('head', $this->jsonDecode, $menuList);
+            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, $menuList);
             if ($headElement) {
                 Utils::log('Success create MENU', 1, $this->layoutName . "] [__construct");
                 $menuList['create'] = true;
@@ -53,7 +53,7 @@ class Bloom extends Layout
             }
         }
 
-        ElementsController::getElement('footer', $this->jsonDecode);
+        AnthemElementsController::getElement('footer', $this->jsonDecode);
     }
 
     /**
@@ -68,7 +68,7 @@ class Bloom extends Layout
             $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
         } else {
-            $result = ElementsController::getElement($elementName, $this->jsonDecode, $params);
+            $result = AnthemElementsController::getElement($elementName, $this->jsonDecode, $params);
             if(!$result){
                 Utils::log('Element ' . $elementName . ' does not exist. Page: ' . $marker, 2, $this->layoutName . "] [callMethod");
             }

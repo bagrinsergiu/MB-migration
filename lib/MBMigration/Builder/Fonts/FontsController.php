@@ -28,11 +28,11 @@ class FontsController extends builderUtils
     /**
      * @throws \Exception
      */
-    public function __construct($projectId, VariableCache $cache){
+    public function __construct($projectId){
         $this->BrizyApi = new BrizyAPI();
         $this->getFontsMap();
         $this->projectId = $projectId;
-        $this->cache = $cache;
+        $this->cache = VariableCache::getInstance();
         $this->layoutName = 'FontsController';
     }
 

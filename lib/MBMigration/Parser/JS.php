@@ -17,20 +17,19 @@ class JS
         Utils::log('Styles Extractor', 1, "StylesExtractor");
         $data = [
             'selector' => '[data-id="' . $sectionID . '"]',
-            'blockIndex' => 0,
-            'styleProperties' => json_encode(['background-color'])
+            'styleProperties' => json_encode(['background-color', 'opacity'])
         ];
 
         if (!empty($styleProperties)) {
             $data['styleProperties'] = json_encode($styleProperties);
         }
 
-        self::$CODE  = JSCode::StylesExtractor($data);
-        self::$url = $pageUrl;
+        self::$CODE = JSCode::StylesExtractor($data);
+        self::$url  = $pageUrl;
 
         $Color = self::Run($sectionID);
 
-        return self::convertColor($Color['background-color']);
+        return self::convertColor($Color['style']['background-color']);
     }
 
     public static function StylesPaddingExtractor(int $sectionID, $pageUrl, array $styleProperties = []): array
@@ -39,7 +38,7 @@ class JS
 
         $result = ['padding-bottom' => 15, 'padding-top' => 15,'padding-left' => 0,'padding-right' => 0];
 
-        $properties = ['padding-bottom', 'padding-top','padding-left','padding-right'];
+        $properties = ['padding-bottom', 'padding-top', 'padding-left', 'padding-right'];
 
         $data = [
             'selector' => '[data-id="' . $sectionID . '"]',
@@ -55,13 +54,51 @@ class JS
 
         $padding = self::Run($sectionID);
 
-        foreach ($properties as $key) {
-            if(array_key_exists($key, $padding)) {
-               $result[$key] = trim($padding[$key], 'px');
+        if(!empty($padding['error']))
+        {
+            Utils::MESSAGES_POOL($padding['error'], $sectionID, 'JS:RUN [error]');
+        }
+        if(!empty($padding['style'])) {
+            Utils::MESSAGES_POOL('success', $sectionID, 'JS:RUN');
+
+            $style = $padding['style'];
+
+            foreach ($properties as $key) {
+                if(array_key_exists($key, $style)) {
+                    $result[$key] = trim($style[$key], 'px');
+                }
             }
         }
+
         return $result;
     }
+
+    public static function stylesMenuExtractor(int $sectionID, $pageUrl, array $fontFamilies)
+    {
+
+        Utils::log('Styles Extractor From Menu', 1, "StylesExtractor");
+
+        $data = [
+            'selector' => '[data-id="' . $sectionID . '"]',
+            'families' => json_encode($fontFamilies)
+        ];
+
+        self::$CODE  = JSCode::ExtractStyleFromMenu($data);
+        self::$url = $pageUrl;
+
+        $result = self::Run($sectionID);
+
+        if(!empty($result['warns']))
+        {
+            Utils::MESSAGES_POOL($result['warns'], $sectionID, 'JS:RUN [error]');
+        }
+        if(!empty($result['menu'])) {
+            Utils::MESSAGES_POOL('success', $sectionID, 'JS:RUN');
+            return $result['menu'];
+        }
+        return [];
+    }
+
 
     public static function RichText($blockID, $pageUrl, $fontFamilies = [])
     {

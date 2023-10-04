@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Elements;
+namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Utils\PathSlugExtractor;
@@ -121,17 +121,17 @@ class Head extends Element
 
     private function setColorBackground(ItemBuilder $objBlock, $options)
     {
-//        $color = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
-//
-//        $objBlock->item(0)->setting('bgColorHex', $color); // maim bg
-//        $objBlock->item(0)->setting('colorHex', '#000000');
-//        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('colorHex','#000000' ); // main text
-//        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('menuBgColorHex','#ffffff' ); // main text
-//        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverColorHex','#323232' ); // main text
-//        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuColorHex', "#000000"); //sub menu text
-//        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuBgColorHex', '#ababab'); //sub menu bg
-//        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverSubMenuColorHex', '#d5d5d5'); //sub menu bg
-//        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverSubMenuBgColorHex', '#838383'); //sub menu bg
+        $color = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
+
+        $objBlock->item(0)->setting('bgColorHex', $color); // maim bg
+        $objBlock->item(0)->setting('colorHex', '#000000');
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('colorHex','#000000' ); // main text
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('menuBgColorHex','#ffffff' ); // main text
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverColorHex','#323232' ); // main text
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuColorHex', "#000000"); //sub menu text
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuBgColorHex', '#ababab'); //sub menu bg
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverSubMenuColorHex', '#d5d5d5'); //sub menu bg
+        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverSubMenuBgColorHex', '#838383'); //sub menu bg
 
 
         $objBlock->item(0)->setting('bgColorPalette', '');
@@ -148,5 +148,6 @@ class Head extends Element
         foreach ($result as $key => $value) {
             $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting($key, $value);
         }
+
     }
 }

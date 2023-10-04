@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Elements;
+namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use DOMException;
 use MBMigration\Builder\ItemBuilder;
@@ -100,10 +100,12 @@ class RightMedia extends Element
 
             if($item['category'] == 'text') {
                 if($item['item_type']=='title' && $this->showHeader($sectionData)) {
+
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
                     $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($richText);
                 }
                 if($item['item_type']=='body' && $this->showBody($sectionData)) {
+
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
                     $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($richText);
                 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Elements;
+namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;

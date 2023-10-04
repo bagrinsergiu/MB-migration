@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Elements;
+namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use Exception;
 use MBMigration\Builder\Checking;
@@ -57,24 +57,25 @@ abstract class Element extends LayoutUtils
             $photoOption = $sectionData['settings']['sections']['background']['photoOption'];
 
             $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-
-            if($fadeMode === 'none' && $blendMode === 'none' && $photoOption == 'fill') {
+            if ($opacity <= 0.3) {
+                $options = array_merge($options, ['textColor' => '#000000']);
+            }
+            if(!$fadeMode == 'none' && !$blendMode == 'none'){
                 $objBlock->item(0)->setting('bgColorOpacity', $opacity);
                 $objBlock->item(0)->setting('bgColorType', 'none');
             } else if ($photoOption == 'parallax-scroll' or $photoOption == 'parallax-fixed') {
                 $objBlock->item(0)->setting('bgColorOpacity', $opacity);
                 $objBlock->item(0)->setting('bgColorType', 'none');
-            } else if ($photoOption == 'fill') {
+            }  else if ($photoOption == 'fill') {
                 $objBlock->item(0)->setting('bgColorOpacity', 1);
                 $objBlock->item(0)->setting('bgColorType', 'none');
             } else {
                 $objBlock->item(0)->setting('bgColorOpacity', 1);
                 $objBlock->item(0)->setting('bgColorType', 'none');
             }
-        } else {
-            $objBlock->item(0)->setting('bgColorOpacity', 1);
-            $objBlock->item(0)->setting('bgColorType', 'none');
         }
+
+        $options = array_merge($options, ['bgColor' => $blockBg]);
     }
 
 /**

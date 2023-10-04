@@ -1,11 +1,10 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Elements;
+namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class ThreeHorizontalText extends Element
 {
@@ -64,36 +63,48 @@ class ThreeHorizontalText extends Element
             if($item['group'] == 0){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($richText);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
+                        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($richText);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
+                        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }
             }
             if($item['group'] == 1){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($richText);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
+                        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($richText);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
+                        $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }
             }
             if($item['group'] == 2){
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title'){
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objBlock->item(0)->item(0)->item(2)->item(0)->item(0)->setText($richText);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
+                        $objBlock->item(0)->item(0)->item(2)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                     if($item['item_type']=='body'){
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objBlock->item(0)->item(0)->item(2)->item(2)->item(0)->setText($richText);
+                        $this->setOptionsForUsedFonts($item, $options);
+                        $this->defaultTextPosition($item, $options);
+
+                        $objBlock->item(0)->item(0)->item(2)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                     }
                 }
             }
@@ -102,4 +113,5 @@ class ThreeHorizontalText extends Element
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
+
 }

@@ -15,6 +15,7 @@ use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
+use MBMigration\Parser\JS;
 
 class MigrationPlatform
 {
@@ -68,14 +69,18 @@ class MigrationPlatform
 
     public function start(string $projectID_MB, int $projectID_Brizy = 0): bool
     {
-        try {
-            $this->run($projectID_MB, $projectID_Brizy);
-        } catch (Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage());
-            return false;
-        } catch (GuzzleException $e) {
-            Utils::MESSAGES_POOL($e->getMessage());
-            return false;
+        if ($projectID_MB == 'sample') {
+            Utils::MESSAGES_POOL(json_encode(JS::RichText(8152825, 'https://www.crosspointcoc.org/')));
+        } else {
+            try {
+                $this->run($projectID_MB, $projectID_Brizy);
+            } catch (Exception $e) {
+                Utils::MESSAGES_POOL($e->getMessage());
+                return false;
+            } catch (GuzzleException $e) {
+                Utils::MESSAGES_POOL($e->getMessage());
+                return false;
+            }
         }
         return true;
     }
@@ -90,10 +95,12 @@ class MigrationPlatform
 
         $this->cache->setClass($this->brizyApi, 'brizyApi');
 
-        $this->projectMetadata($projectID_Brizy);
+//        $this->projectMetadata($projectID_Brizy);
+
+        $projectID_MB = MBProjectDataCollector::getIdByUUID($projectUUID_MB);
 
         if ($projectID_Brizy == 0) {
-            $this->projectID_Brizy = $this->brizyApi->createProject('analaiseProject', 4303835, 'id');
+            $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:' . $projectID_MB, 4352671, 'id');
         } else {
             $this->projectID_Brizy = $projectID_Brizy;
         }
@@ -440,9 +447,9 @@ class MigrationPlatform
             Utils::log('Start Builder | create default Page', 4, 'RunPageBuilder');
         }
 
-        $PageBuilder = new PageBuilder($preparedSectionOfThePage, $this->cache, $defaultPage);
+        $PageBuilder = new PageBuilder();
 
-        if ($PageBuilder) {
+        if ($PageBuilder->run($preparedSectionOfThePage)) {
             Utils::log('Page created successfully!', 1, 'PageBuilder');
         }
     }
@@ -736,4 +743,15 @@ class MigrationPlatform
         $metadata = $this->brizyApi->getProjectMetadata($projectID_Brizy);
         $this->cache->set('metadata', $metadata);
     }
+
+    /**
+     * @throws Exception
+     */
+    public function createBrizyProject($projectID_MB)
+    {
+        $brizyApi = new BrizyAPI();
+        $this->projectID_Brizy = $brizyApi->createProject('Project_id:' . $projectID_MB, 4352671, 'id');
+        return $this->projectID_Brizy;
+    }
+
 }

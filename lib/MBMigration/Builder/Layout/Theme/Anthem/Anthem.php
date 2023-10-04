@@ -2,12 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem;
 
-use DOMDocument;
 use Exception;
-use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\ElementsController;
-use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\Layout\LayoutUtils;
+use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
@@ -28,11 +26,11 @@ class Anthem extends LayoutUtils
     /**
      * @throws Exception
      */
-    public function __construct(VariableCache $cache)
+    public function __construct()
     {
         $this->layoutName = 'Anthem';
 
-        $this->cache = $cache;
+        $this->cache = VariableCache::getInstance();
 
         Utils::log('Connected!', 4, $this->layoutName . ' Builder');
 
@@ -53,6 +51,56 @@ class Anthem extends LayoutUtils
         }
 
         ElementsController::getElement('footer', $this->jsonDecode);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function build($preparedSectionOfThePage): bool
+    {
+        $QueryBuilder = $this->cache->getClass('QueryBuilder');
+
+        $itemsID = $this->cache->get('currentPageOnWork');
+        $slug = $this->cache->get('tookPage')['slug'];
+
+        $url = PathSlugExtractor::getFullUrl($slug);
+
+        $this->cache->set('CurrentPageURL', $url);
+
+        $itemsData = [];
+        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'),true);
+
+        Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
+        $this->cache->update('createdFirstSection',false, 'flags');
+        $this->cache->update('Success', '++', 'Status');
+
+        foreach ($preparedSectionOfThePage as $section)
+        {
+            $blockData = $this->callMethod($section['typeSection'], $section, $slug);
+
+            if($blockData === true) {
+                $itemsData['items'][] = json_decode($this->cache->get('callMethodResult'));
+            } else {
+                if (!empty($blockData) && $blockData !== "null") {
+                    $decodeBlock = json_decode($blockData, true);
+                    $itemsData['items'][] = $decodeBlock;
+                } else {
+                    Utils::log('CallMethod return null. input data: ' . json_encode($section) . ' | Slug: '.$slug, 2, 'PageBuilder');
+                }
+            }
+        }
+
+        $itemsData['items'][] = json_decode($this->cache->get('footerBlock'),true);
+
+        $pageData = json_encode($itemsData);
+
+        Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
+
+
+        $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+
+        Utils::log('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
+        return true;
     }
 
     /**
