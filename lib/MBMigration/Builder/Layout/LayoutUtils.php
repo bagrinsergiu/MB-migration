@@ -390,6 +390,7 @@ class LayoutUtils extends builderUtils
             'instagram' => 'logo-instagram',
             'youtube'   => 'logo-youtube',
             'twitter'   => 'logo-twitter',
+            'vimeo'     => 'logo-vimeo'
         ];
         if(array_key_exists($iconName, $icon)){
             return $icon[$iconName];

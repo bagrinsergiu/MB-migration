@@ -1,12 +1,11 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Elements;
+namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class TopMedia extends Element
 {
@@ -81,12 +80,17 @@ class TopMedia extends Element
                 }
 
                 if($item['item_type']=='title' && $show_header) {
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setText($richText);
+                    $this->setOptionsForUsedFonts($item, $options);
+                    $this->defaultTextPosition($item, $options);
+
+                    $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
                 if($item['item_type']=='body' && $show_body) {
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($richText);
+
+                    $this->setOptionsForUsedFonts($item, $options);
+                    $this->defaultTextPosition($item, $options);
+
+                    $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
                 }
             }
             if($item['category'] == 'photo' && $item['content'] !== '') {

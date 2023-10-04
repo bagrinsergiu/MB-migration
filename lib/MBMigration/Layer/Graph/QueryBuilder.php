@@ -20,9 +20,9 @@ class QueryBuilder
     private  $session;
     private  $cache;
 
-    public function __construct(VariableCache $cache)
+    public function __construct()
     {
-        $this->cache = $cache;
+        $this->cache = VariableCache::getInstance();
 
         if(Config::$graphqlToken && Config::$devMode) {
             $this->session = Config::$graphqlToken;

@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Elements;
+namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
@@ -92,13 +92,17 @@ class ListLayout extends Element
 
             if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
+
                 $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
+
                 $objHead->item(0)->item(0)->item(0)->setText($richText);
             }
 
             if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
                 $blockHead = true;
+
                 $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
+
                 $objHead->item(0)->item(2)->item(0)->setText($richText);
             }
         }
