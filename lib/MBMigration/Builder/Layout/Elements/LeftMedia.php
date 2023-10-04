@@ -70,6 +70,7 @@ class LeftMedia extends Element
                 if($item['item_type']=='title' && $this->showHeader($sectionData)) {
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($richText);
+
                 }
                 if($item['item_type']=='body' && $this->showBody($sectionData)) {
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
