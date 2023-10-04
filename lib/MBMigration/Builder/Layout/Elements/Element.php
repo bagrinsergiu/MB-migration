@@ -56,7 +56,7 @@ abstract class Element extends LayoutUtils
             $blendMode = $sectionData['settings']['sections']['background']['blendMode'];
             $photoOption = $sectionData['settings']['sections']['background']['photoOption'];
 
-            $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
+            $opacity = $sectionData['settings']['sections']['background']['opacity'];
 
             if($fadeMode === 'none' && $blendMode === 'none' && $photoOption == 'fill') {
                 $objBlock->item(0)->setting('bgColorOpacity', $opacity);
@@ -293,6 +293,27 @@ abstract class Element extends LayoutUtils
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--richText'];
+        $block = new ItemBuilder($decoded);
+        $block->item(0)->setText($content);
+        $result = $block->get();
+        if (!empty($settings)) {
+            foreach ($settings as $key => $value) {
+                $block->item(0)->setting($key, $value);
+            }
+        }
+        if (!$associative) {
+            return $result;
+        }
+        return json_decode(json_encode($result), true);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function embedCode($content, array $settings = [], $associative = false)
+    {
+        $jsonDecode = $this->initData();
+        $decoded = $jsonDecode['global']['wrapper--embedCode'];
         $block = new ItemBuilder($decoded);
         $block->item(0)->setText($content);
         $result = $block->get();

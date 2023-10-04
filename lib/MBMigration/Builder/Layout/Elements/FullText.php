@@ -73,17 +73,22 @@ class FullText extends Element
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
 
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                    $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
 
-//                    $objBlock->item(0)->item(0)->item(0)->addItem($this->itemWrapperRichText($richText), 0);
-                    $objBlock->item(0)->item(0)->item(0)->setText($richText);
+//                    $objBlock->item(0)->item(0)->item(0)->setText($richText);
 
                 }
+            }
+        }
+        foreach ($sectionData['items'] as $item) {
+            if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
 
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-//                    $objBlock->item(0)->item(0)->item(0)->addItem($this->itemWrapperRichText($richText), 1);
 
-                    $objBlock->item(0)->item(1)->item(0)->setText($richText);
+                    $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+
+//                    $objBlock->item(0)->item(1)->item(0)->setText($richText);
                 }
             }
         }
