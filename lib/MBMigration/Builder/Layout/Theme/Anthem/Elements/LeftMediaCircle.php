@@ -32,6 +32,7 @@ class LeftMediaCircle extends Element
 
     /**
      * @throws DOMException
+     * @throws \Exception
      */
     protected function LeftMediaCircle(array $sectionData)
     {
@@ -58,6 +59,10 @@ class LeftMediaCircle extends Element
                 if($item['item_type']=='title' && $this->showHeader($sectionData) ){
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($richText);
+
+                    $objBlock->item()->item()->item(1)->item()->addItem($this->itemWrapperRichText($richText));
+                    $objBlock->item()->item()->item(1)->item()->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+
                 }
                 if($item['item_type']=='body'&& $this->showHeader($sectionData) ){
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);

@@ -63,30 +63,60 @@ class FullText extends Element
 
         $this->backgroundImages($objBlock, $sectionData, $options);
 
-        $this->setOptionsForTextColor($sectionData, $options);
+        $this->backgroundVideo($objBlock, $sectionData);
 
-        $objBlock->item(0)->item(0)->item(0)->setText('<p></p>');
-        $objBlock->item(0)->item(2)->item(0)->setText('<p></p>');
+        $this->setOptionsForTextColor($sectionData, $options);
 
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
-
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-
-//                    $objBlock->item(0)->item(0)->item(0)->addItem($this->itemWrapperRichText($richText), 0);
-                    $objBlock->item(0)->item(0)->item(0)->setText($richText);
-
-                }
-                if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
-
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-//                    $objBlock->item(0)->item(0)->item(0)->addItem($this->itemWrapperRichText($richText), 1);
-
-                    $objBlock->item(0)->item(1)->item(0)->setText($richText);
+                    $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                    $objBlock->item(0)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
                 }
             }
         }
+
+        foreach ($sectionData['items'] as $item) {
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
+                    $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                }
+            }
+        }
+
+        if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
+
+           $buttonOptions = [
+                'linkExternal'=> $sectionData['settings']['sections']['donations']['url'],
+                'text'=>  $sectionData['settings']['sections']['donations']['text']
+            ];
+            $position = $sectionData['settings']['sections']['donations']['alignment'];
+
+            $objBlock->item(0)->addItem($this->button($buttonOptions, $position));
+        }
+
         return json_encode($this->replaceIdWithRandom($objBlock->get()));
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function textCreation($itemID, $content, $options, $objBlock)
+    {
+        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
+        if(!is_array($richText)) {
+            $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+        } else {
+            if(!empty($richText['text'])) {
+                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText['text']));
+            }
+
+            if(!empty($richText['embeds']['persist'])) {
+                $result = $this->findEmbeddedPasteDivs($content);
+                foreach ($result as $item) {
+                    $objBlock->item(0)->addItem($this->embedCode($item));
+                }
+            }
+        }
     }
 }

@@ -3,9 +3,6 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use MBMigration\Builder\ItemBuilder;
-
-
-use MBMigration\Builder\Layout\Elements\Element;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 use MBMigration\Parser\JS;
@@ -25,11 +22,17 @@ class AccordionLayout extends Element
         $this->jsonDecode = $jsonKitElements;
     }
 
+    /**
+     * @throws \DOMException
+     */
     public function getElement(array $elementData = [])
     {
         return $this->AccordionLayout($elementData);
     }
 
+    /**
+     * @throws \DOMException
+     */
     protected function AccordionLayout(array $sectionData) {
         Utils::log('Create bloc', 1, "Accordion_layout");
 
@@ -55,6 +58,19 @@ class AccordionLayout extends Element
 
         $this->backgroundImages($objBlock, $sectionData, $options);
 
+        foreach ($sectionData['head'] as $headItem) {
+            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
+                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
+                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+            }
+        }
+        foreach ($sectionData['head'] as $headItem) {
+            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
+                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
+                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+            }
+        }
+
         foreach ($sectionData['items'] as $section) {
 
             $objItem->newItem($decoded['item']);
@@ -79,6 +95,7 @@ class AccordionLayout extends Element
             }
             $objList->item(0)->addItem($objItem->get());
         }
+        $objList->item(0)->setting('bgColorHex', $options['bgColor']);
         $objBlock->item(0)->addItem($objList->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);

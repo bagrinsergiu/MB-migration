@@ -112,33 +112,26 @@ class Head extends Element
             if ($item['category'] = 'photo') {
                 $imageLogo['imageSrc'] = $item['content'];
                 $imageLogo['imageFileName'] = $item['imageFileName'];
+                $imageLogo['imageWidth'] = $item['settings']['image']['width'];
+                $imageLogo['imageHeight'] = $item['settings']['image']['height'];
             }
         }
 
+        if(!empty($imageLogo['imageWidth']) && !empty($imageLogo['imageHeight']) )
+        {
+            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageHeight', $imageLogo['imageHeight']);
+            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageWidth', $imageLogo['imageWidth']);
+        }
         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageSrc', $imageLogo['imageSrc']);
         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageFileName', $imageLogo['imageFileName']);
+
     }
 
     private function setColorBackground(ItemBuilder $objBlock, $options)
     {
         $color = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
-
-        $objBlock->item(0)->setting('bgColorHex', $color); // maim bg
-        $objBlock->item(0)->setting('colorHex', '#000000');
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('colorHex','#000000' ); // main text
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('menuBgColorHex','#ffffff' ); // main text
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverColorHex','#323232' ); // main text
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuColorHex', "#000000"); //sub menu text
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('subMenuBgColorHex', '#ababab'); //sub menu bg
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverSubMenuColorHex', '#d5d5d5'); //sub menu bg
-        $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('hoverSubMenuBgColorHex', '#838383'); //sub menu bg
-
-
-        $objBlock->item(0)->setting('bgColorPalette', '');
-
-        $objBlock->item(0)->setting('bgColorOpacity', 1);
-        $objBlock->item(0)->setting('tempBgColorOpacity', 1);
-        $objBlock->item(0)->setting('bgColorType', 'ungrouped');
+        $objBlock->item(0)->setting('bgColorHex', $color['background-color']);
+        $objBlock->item(0)->setting('bgColorOpacity', $color['opacity']);
     }
 
     private function setParseOptions(ItemBuilder $objBlock, $options)
@@ -148,6 +141,5 @@ class Head extends Element
         foreach ($result as $key => $value) {
             $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting($key, $value);
         }
-
     }
 }

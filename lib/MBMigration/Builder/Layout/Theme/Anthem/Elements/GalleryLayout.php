@@ -39,9 +39,22 @@ class GalleryLayout extends Element
         $block = json_decode($decoded['main'], true);
         $slide  = json_decode($decoded['item'], true);
 
+        if($sectionData['settings']['sections']['gallery']['transition'] !== 'Slide') {
+            $block['value']['sliderTransition'] = 'off';
+        } else {
+            $block['value']['sliderAutoPlay'] = 'on';
+        }
+        $block['value']['bgSize'] = 'contain';
+
         foreach ($sectionData['items'] as $item){
                 if(!$item['uploadStatus']) {
                     continue;
+                }
+
+                if(!empty($sectionData['settings']['sections']['gallery']['max_width']) &&
+                    !empty($sectionData['settings']['sections']['gallery']['max_height'])){
+                    $slide['value']['bgImageHeight']    = $sectionData['settings']['sections']['gallery']['max_height'];
+                    $slide['value']['bgImageWidth']     = $sectionData['settings']['sections']['gallery']['max_width'];
                 }
 
                 $slide['value']['bgImageFileName'] = $item['imageFileName'];

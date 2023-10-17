@@ -36,15 +36,18 @@ class Utils
             Utils::$MESSAGES_POOL[$section] = [];
         }
 
+        $messageArray = Utils::$MESSAGES_POOL[$section];
+
         if (empty($key)) {
-            array_unshift(Utils::$MESSAGES_POOL[$section], $message);
+            array_unshift($messageArray, $message);
         } else {
-            if (isset(Utils::$MESSAGES_POOL[$section][$key]) && is_array(Utils::$MESSAGES_POOL[$section][$key])) {
-                array_unshift(Utils::$MESSAGES_POOL[$section][$key], $message);
+            if (isset($messageArray[$key]) && is_array($messageArray[$key])) {
+                array_unshift($messageArray[$key], $message);
             } else {
-                Utils::$MESSAGES_POOL[$section][$key] = [$message];
+                $messageArray[$key] = [$message];
             }
         }
+        Utils::$MESSAGES_POOL[$section] = $messageArray;
     }
 
     public static function findKeyPath($array, $searchKey, $path = '', &$result = [], &$i = 0)

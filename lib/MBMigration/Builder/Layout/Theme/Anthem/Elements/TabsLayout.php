@@ -37,7 +37,7 @@ class TabsLayout extends Element
     protected function TabsLayout(array $sectionData) {
         Utils::log('Create bloc', 1, "tabs_layout");
 
-        $options = [];
+        $options = ['elementType' => 'tabs_layout'];
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['tabs-layout'];
@@ -62,19 +62,14 @@ class TabsLayout extends Element
         $this->backgroundImages($objBlock, $sectionData, $options);
 
         $blockHead = false;
-
-        foreach ($sectionData['head'] as $headItem)
-        {
+        foreach ($sectionData['head'] as $headItem) {
             if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                $blockHead = true;
-
                 $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
                 $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
             }
-
+        }
+        foreach ($sectionData['head'] as $headItem) {
             if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
-                $blockHead = true;
-
                 $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
                 $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
             }
@@ -85,6 +80,7 @@ class TabsLayout extends Element
             $objItem->newItem($decoded['item']);
 
             foreach ($section['item'] as $item) {
+
                 if ($item['category'] === 'photo') {
                     //$objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
                     //$objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
@@ -106,6 +102,8 @@ class TabsLayout extends Element
 
             $objRow->item(0)->addItem($objItem->get());
         }
+        $objRow->item(0)->setting('contentBgColorHex', $options['bgColor']);
+        $objRow->item(0)->setting('bgColorHex', $options['bgColor']);
         $objBlock->item(0)->addItem($objRow->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);

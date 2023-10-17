@@ -7,12 +7,12 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElem
 class Form extends DynamicElement
 {
 
-    public function getElement(array $elementData): bool
+    public function getElement(array $elementData)
     {
         return $this->form();
     }
 
-    private function form(): bool
+    private function form()
     {
         return true;
     }

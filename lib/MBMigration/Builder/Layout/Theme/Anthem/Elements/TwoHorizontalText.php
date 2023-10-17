@@ -6,6 +6,7 @@ use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
 class TwoHorizontalText extends Element
 {
@@ -31,6 +32,7 @@ class TwoHorizontalText extends Element
 
     /**
      * @throws DOMException
+     * @throws \Exception
      */
     protected function TwoHorizontalText($sectionData)
     {
@@ -56,32 +58,42 @@ class TwoHorizontalText extends Element
         $this->backgroundImages($objBlock, $sectionData, $options);
 
         foreach ($sectionData['items'] as $item) {
-            if($item['group'] == 0) {
-                if($item['category'] == 'text') {
-                    if($item['item_type']=='title') {
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
-                    }
-                    if($item['item_type']=='body'){
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $objBlock->item(0)->item(0)->item(0)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+            if ($item['group'] == 0) {
+                if ($item['category'] == 'text') {
+                    if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
+                        $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                        $objBlock->item()->item()->item()->addItem(
+                            $this->wrapperLine(['borderColorHex' => $options['borderColorHex']])
+                        );
                     }
                 }
             }
+        }
+        foreach ($sectionData['items'] as $item) {
+            if ($item['group'] == 0) {
+                if ($item['category'] == 'text') {
+                    if ($item['item_type'] == 'body' && $this->showBody($sectionData)) {
+                        $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                    }
+                }
+            }
+        }
 
+        foreach ($sectionData['items'] as $item) {
             if($item['group'] == 1) {
                 if($item['category'] == 'text') {
-                    if($item['item_type']=='title') {
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($this->replaceString($item['content'], $options));
+                    if($item['item_type']=='title' && $this->showHeader($sectionData)) {
+                        $this->textCreation($item['id'], $item['content'], $options, $objBlock, 1);
+                        $objBlock->item()->item()->item(1)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
                     }
-                    if($item['item_type']=='body') {
-                        $this->setOptionsForUsedFonts($item, $options);
-                        $this->defaultTextPosition($item, $options);
-                        $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($this->replaceString($item['content'], $options));
+                }
+            }
+        }
+        foreach ($sectionData['items'] as $item) {
+            if($item['group'] == 1) {
+                if($item['category'] == 'text') {
+                    if($item['item_type']=='body' && $this->showBody($sectionData)) {
+                        $this->textCreation($item['id'], $item['content'], $options, $objBlock, 1);
                     }
                 }
             }
@@ -90,4 +102,27 @@ class TwoHorizontalText extends Element
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
+
+    /**
+     * @throws \Exception
+     */
+    private function textCreation($itemID, $content, $options, $objBlock, $setId = 0)
+    {
+        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
+        if(!is_array($richText)) {
+            $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
+        } else {
+            if(!empty($richText['text'])) {
+                $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
+            }
+
+            if(!empty($richText['embeds']['persist'])) {
+                $result = $this->findEmbeddedPasteDivs($content);
+                foreach ($result as $item) {
+                    $objBlock->item(0)->item(0)->item($setId)->addItem($this->embedCode($item));
+                }
+            }
+        }
+    }
+
 }

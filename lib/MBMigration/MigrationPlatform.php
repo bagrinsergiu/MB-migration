@@ -8,6 +8,7 @@ use MBMigration\Builder\Checking;
 use MBMigration\Builder\ColorMapper\ColorMapper;
 use MBMigration\Builder\DebugBackTrace;
 use MBMigration\Builder\PageBuilder;
+use MBMigration\Builder\Utils\TextTools;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
 use MBMigration\Core\ErrorDump;
@@ -332,15 +333,26 @@ class MigrationPlatform
     private function transformToBrizyMenu(array $parentMenu): array
     {
         $mainMenu = [];
-        foreach ($parentMenu as $item) {
+        $textTransform = '';
 
+        $settingsTextTransform = $this->cache->get('fonts', 'settings');
+        foreach ($settingsTextTransform as $itemTextTransform){
+            if ($itemTextTransform['name'] === 'main_nav') {
+                $textTransform = $itemTextTransform['text_transform'];
+            }
+        }
+
+        foreach ($parentMenu as $item) {
+            if($item['hidden'] === true) {
+                continue;
+            }
             $settings = json_decode($item['parentSettings'], true);
             if (array_key_exists('external_url', $settings)) {
                 $mainMenu[] = [
                     'id' => '',
                     "items" => $this->transformToBrizyMenu($item['child']),
                     "isNewTab" => false,
-                    "label" => $item['name'],
+                    "label" => TextTools::transformText($item['name'], $textTransform),
                     "type" => "custom_link",
                     'url' => $settings['external_url'],
                     "uid" => $this->getNameHash(),
@@ -351,7 +363,7 @@ class MigrationPlatform
                     "id" => $item['collection'],
                     "items" => $this->transformToBrizyMenu($item['child']),
                     "isNewTab" => false,
-                    "label" => $item['name'],
+                    "label" => TextTools::transformText($item['name'], $textTransform),
                     "uid" => $this->getNameHash()
                 ];
             }
@@ -438,6 +450,15 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
+    private function renameSlug($itemsID, $slug){
+        $res = $this->QueryBuilder->updateCollectionItem($itemsID, $slug);
+        Utils::log('Page name is Rename', 1, 'renameSlug');
+        return $res;
+    }
+
+    /**
+     * @throws Exception
+     */
     private function runPageBuilder($preparedSectionOfThePage, $defaultPage = false): void
     {
 
@@ -457,15 +478,30 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function createBlankPages(array &$parentPages): void
+    private function createBlankPages(array &$parentPages, $mainLevel = true): void
     {
         Utils::log('Start created pages', 1, 'createBlankPages');
+        $i = 0;
         foreach ($parentPages as &$pages) {
-            if (!empty($pages['child'])) {
-                $this->createBlankPages($pages['child']);
-            }
+
+            $projectPages = $this->brizyApi->getAllProjectPages();
+
             if ($pages['landing'] == true) {
-                $newPage = $this->creteNewPage($pages['slug'], $pages['name']);
+                if($i != 0 || !$mainLevel) {
+                    if(!array_key_exists($pages['slug'] , $projectPages['listPages'])) {
+                        $newPage = $this->creteNewPage($pages['slug'], $pages['name']);
+                    } else {
+                        $newPage = $projectPages['listPages'][$pages['slug']];
+                    }
+                } else {
+                    if(!array_key_exists($pages['slug'], $projectPages['listPages'])) {
+                        $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug']);
+                        $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
+                    } else {
+                        $newPage = $projectPages['listPages'][$pages['slug']];
+                    }
+                }
+
                 if (!$newPage) {
                     Utils::log('Failed created pages | ID: ' . $pages['id'] . ' | Name page: ' . $pages['name'] . ' | Slug: ' . $pages['slug'], 2, 'createBlankPages');
                 } else {
@@ -475,6 +511,10 @@ class MigrationPlatform
             } else {
                 $pages['collection'] = $pages['child'][0]['collection'];
             }
+            if (!empty($pages['child'])) {
+                $this->createBlankPages($pages['child'], false);
+            }
+            $i++;
         }
         $this->cache->set('menuList', [
             'id' => null,
