@@ -25,7 +25,7 @@ class JS
         }
 
         self::$CODE = JSCode::StylesExtractor($data);
-        self::$url  = $pageUrl;
+        self::$url = $pageUrl;
 
         $Color = self::Run($sectionID);
 
@@ -36,7 +36,7 @@ class JS
     {
         Utils::log('Styles Extractor', 1, "StylesExtractor");
 
-        $result = ['padding-bottom' => 15, 'padding-top' => 15,'padding-left' => 0,'padding-right' => 0];
+        $result = ['padding-bottom' => 15, 'padding-top' => 15, 'padding-left' => 0, 'padding-right' => 0];
 
         $properties = ['padding-bottom', 'padding-top', 'padding-left', 'padding-right'];
 
@@ -49,22 +49,21 @@ class JS
             $data['styleProperties'] = json_encode($styleProperties);
         }
 
-        self::$CODE  = JSCode::StylesExtractor($data);
+        self::$CODE = JSCode::StylesExtractor($data);
         self::$url = $pageUrl;
 
         $padding = self::Run($sectionID);
 
-        if(!empty($padding['error']))
-        {
+        if (!empty($padding['error'])) {
             Utils::MESSAGES_POOL($padding['error'], $sectionID, 'JS:RUN [error]');
         }
-        if(!empty($padding['style'])) {
+        if (!empty($padding['style'])) {
             Utils::MESSAGES_POOL('success', $sectionID, 'JS:RUN');
 
             $style = $padding['style'];
 
             foreach ($properties as $key) {
-                if(array_key_exists($key, $style)) {
+                if (array_key_exists($key, $style)) {
                     $result[$key] = trim($style[$key], 'px');
                 }
             }
@@ -83,16 +82,15 @@ class JS
             'families' => json_encode($fontFamilies)
         ];
 
-        self::$CODE  = JSCode::ExtractStyleFromMenu($data);
+        self::$CODE = JSCode::ExtractStyleFromMenu($data);
         self::$url = $pageUrl;
 
         $result = self::Run($sectionID);
 
-        if(!empty($result['warns']))
-        {
+        if (!empty($result['warns'])) {
             Utils::MESSAGES_POOL($result['warns'], $sectionID, 'JS:RUN [error]');
         }
-        if(!empty($result['menu'])) {
+        if (!empty($result['menu'])) {
             Utils::MESSAGES_POOL('success', $sectionID, 'JS:RUN');
             return $result['menu'];
         }
@@ -118,24 +116,22 @@ class JS
             $data['data']['families'] = $fontFamilies;
         }
 
-        self::$CODE  = JSCode::RichText($data);
-        self::$url =  $pageUrl;
+        self::$CODE = JSCode::RichText($data);
+        self::$url = $pageUrl;
 
         $RichText = self::Run($blockID);
 
-        if(!empty($RichText['warns']))
-        {
+        if (!empty($RichText['warns'])) {
             Utils::MESSAGES_POOL($RichText['warns'], $blockID, 'JS:RUN [warns]');
         }
-        if(!empty($RichText['error']))
-        {
+        if (!empty($RichText['error'])) {
             Utils::MESSAGES_POOL($RichText['error'], $blockID, 'JS:RUN [error]');
         }
-        if(!empty($RichText['text'])) {
+        if (!empty($RichText['text'])) {
             Utils::MESSAGES_POOL('success', $blockID, 'JS:RUN');
             return $RichText['text'];
         }
-        if(!empty($RichText['embeds'])) {
+        if (!empty($RichText['embeds'])) {
             Utils::MESSAGES_POOL('success', $blockID, 'JS:RUN');
             return $RichText['embeds'];
         }
@@ -158,6 +154,13 @@ class JS
                         '--no-sandbox',
                         '--disable-setuid-sandbox',
                         '--disable-dev-shm-usage',
+                        '--aggressive-cache-discard',
+                        '--disable-cache',
+                        '--disable-application-cache',
+                        '--disable-offline-load-stale-cache',
+                        '--disable-gpu-shader-disk-cache',
+                        '--media-cache-size=0',
+                        '--disk-cache-size=0',
                     ]]);
 
             $page = $browser->newPage();
@@ -177,7 +180,8 @@ class JS
         }
     }
 
-    private static function convertColor($color) {
+    private static function convertColor($color)
+    {
 
         if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
             return $color;
