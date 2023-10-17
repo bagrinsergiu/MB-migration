@@ -252,7 +252,7 @@ class MBProjectDataCollector
     {
         Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
-        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings, landing FROM pages WHERE site_id = " . $this->siteId . " AND hidden = 'false' AND parent_id IS NULL ORDER BY parent_id ASC, position");
+        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings, landing, hidden FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, position");
 
         if (empty($requestPageSite)) {
             Utils::log('MB project pages not found', 2, 'getParentPages');
@@ -262,19 +262,19 @@ class MBProjectDataCollector
 
         foreach ($requestPageSite as $pageSite) {
             $result[] = [
-                'id' => $pageSite['id'],
-                'slug' => $pageSite['slug'],
-                'name' => $pageSite['name'],
-                'collection' => '',
-                'position' => $pageSite['position'],
-                'landing' => $pageSite['landing'],
+                'id'             => $pageSite['id'],
+                'slug'           => $pageSite['slug'],
+                'name'           => $pageSite['name'],
+                'collection'     => '',
+                'position'       => $pageSite['position'],
+                'landing'        => $pageSite['landing'],
+                'hidden'         => $pageSite['hidden'],
                 'parentSettings' => $pageSite['settings'],
-                'child' => $this->getChildPages($pageSite['id'])
+                'child'          => $this->getChildPages($pageSite['id'])
             ];
             $this->cache->update('Total', '++', 'Status');
         }
 
-        $result[0]['slug'] = 'home';
         $this->cache->set('ParentPages', $result);
         return $result;
     }

@@ -15,9 +15,11 @@ class JS
     {
 
         Utils::log('Styles Extractor', 1, "StylesExtractor");
+        $properties = ['background-color', 'opacity', 'border-bottom-color'];
+        $result = ['background-color' => '#ffffff', 'opacity' => 1];
         $data = [
             'selector' => '[data-id="' . $sectionID . '"]',
-            'styleProperties' => json_encode(['background-color', 'opacity'])
+            'styleProperties' => json_encode($properties)
         ];
 
         if (!empty($styleProperties)) {
@@ -27,9 +29,15 @@ class JS
         self::$CODE = JSCode::StylesExtractor($data);
         self::$url  = $pageUrl;
 
-        $Color = self::Run($sectionID);
+        $returned = self::Run($sectionID);
+        $style = $returned['style'];
+        foreach ($properties as $key) {
+            if(array_key_exists($key, $style)) {
+                $result[$key] = self::convertColor(trim($style[$key], 'px'));
+            }
+        }
 
-        return self::convertColor($Color['style']['background-color']);
+        return $result;
     }
 
     public static function StylesPaddingExtractor(int $sectionID, $pageUrl, array $styleProperties = []): array
@@ -123,23 +131,26 @@ class JS
 
         $RichText = self::Run($blockID);
 
-        if(!empty($RichText['warns']))
-        {
+        if(!empty($RichText['warns'])) {
             Utils::MESSAGES_POOL($RichText['warns'], $blockID, 'JS:RUN [warns]');
         }
-        if(!empty($RichText['error']))
-        {
+
+        if(!empty($RichText['error'])) {
             Utils::MESSAGES_POOL($RichText['error'], $blockID, 'JS:RUN [error]');
-        }
-        if(!empty($RichText['text'])) {
+        } else {
             Utils::MESSAGES_POOL('success', $blockID, 'JS:RUN');
+        }
+
+        if(!empty($RichText['text']) && (empty($RichText['embeds']) && empty($RichText['icons']) && empty($RichText['buttons']))) {
             return $RichText['text'];
+        } else {
+            return [
+                'text'      => $RichText['text'],
+                'embeds'    => $RichText['embeds'],
+                'icons'     => $RichText['icons'],
+                'buttons'   => $RichText['buttons']
+            ];
         }
-        if(!empty($RichText['embeds'])) {
-            Utils::MESSAGES_POOL('success', $blockID, 'JS:RUN');
-            return $RichText['embeds'];
-        }
-        return '';
     }
 
     private static function Run($id)
@@ -190,14 +201,13 @@ class JS
             return sprintf("#%02X%02X%02X", $r, $g, $b);
         }
 
-        preg_match_all('/\d+/', $color, $matches);
-
-        if (count($matches[0]) !== 3) {
-            return false;
+        if (preg_match_all('/\d+/', $color, $matches)) {
+            if (count($matches[0]) !== 3) {
+                return $color;
+            }
+            list($r, $g, $b) = $matches[0];
+            return sprintf("#%02X%02X%02X", $r, $g, $b);
         }
-
-        list($r, $g, $b) = $matches[0];
-
-        return sprintf("#%02X%02X%02X", $r, $g, $b);
+        return $color;
     }
 }
