@@ -32,7 +32,6 @@ class Footer extends Element
 
     /**
      * @throws DOMException
-     * @throws \Exception
      */
     protected function Footer(): bool
     {
