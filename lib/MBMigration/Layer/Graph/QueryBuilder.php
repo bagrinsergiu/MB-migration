@@ -20,18 +20,11 @@ class QueryBuilder
     private  $session;
     private  $cache;
 
-    public function __construct()
+    public function __construct($endpoint, $token)
     {
         $this->cache = VariableCache::getInstance();
-
-        if(Config::$graphqlToken && Config::$devMode) {
-            $this->session = Config::$graphqlToken;
-        } else {
-            $this->session = $this->cache->get('graphToken');
-        }
-
-        $this->brizy_cms_api_url = $this->cache->get('GraphApi_Brizy');
-
+        $this->session=$token;
+        $this->brizy_cms_api_url = $endpoint;
         $this->setProject();
 
     }

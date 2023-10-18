@@ -1,13 +1,18 @@
 <?php
+
 namespace MBMigration\Builder;
 
+use MBMigration\Browser\Browser;
+use MBMigration\Builder\Layout\Common\KitLoader;
+use MBMigration\Builder\Layout\Theme\Voyage\ElementFactory;
+use MBMigration\Builder\Layout\Theme\Voyage\Voyage;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
 class PageBuilder
 {
-    private  $cache;
+    private $cache;
 
     /**
      * @throws \Exception
@@ -27,36 +32,77 @@ class PageBuilder
 
         $this->cache->set('CurrentPageURL', $url);
 
-        $workClass = __NAMESPACE__ . '\\Layout\\Theme\\' . $design . '\\' . $design;
+        $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
 
-        $_WorkClassTemplate = new $workClass();
+        if ($design == 'Voyage') {
 
-        if($_WorkClassTemplate->build($preparedSectionOfThePage)) {
-            Utils::log('Success Build Page : ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
+            $menu = $this->cache->get('menuList');
+
+            $layoutBasePath = dirname(__FILE__)."/Layout";
+
+            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
+            $headItem = $this->cache->get('header', 'mainSection');
+            $footerItem = $this->cache->get('footer', 'mainSection');
+            $fonts = $this->cache->get('fonts', 'settings');
+            foreach ($fonts as $font) {
+                if($font['name'] === 'primary'){
+                    $fontFamily['Default'] = $font['uuid'];
+                } else {
+                    $fontFamily[$font['fontFamily']] = $font['uuid'];
+                }
+            }
+            file_put_contents("fonts.json",json_encode($fontFamily));
+
+            $browser = Browser::instance($layoutBasePath);
+            $browserPage = $browser->openPage($url,$design);
+            $blockFactory = ElementFactory::instance($brizyKit, $browserPage);
+
+            $_WorkClassTemplate = new Voyage($url, $brizyKit, $menu, $headItem, $footerItem, 'lato',[], $blockFactory, $browser);
+            $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
+
+            $pageData = json_encode($brizySections);
+            $queryBuilder = $this->cache->getClass('QueryBuilder');
+            $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+
+            Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
             $this->sendStatus();
+
             return true;
         } else {
-            Utils::log('Fail Build Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
-            return false;
+            $_WorkClassTemplate = new $workClass();
+            if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
+                Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+                $this->sendStatus();
+
+                return true;
+            } else {
+                Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+
+                return false;
+            }
         }
+
+
     }
 
     private function saveLayoutJson(string $pageData, string $pageName): void
     {
-        $mainFolder = $this->cache->get('page','ProjectFolders');
-        if(!is_dir($mainFolder)) {
+        $mainFolder = $this->cache->get('page', 'ProjectFolders');
+        if (!is_dir($mainFolder)) {
             mkdir($mainFolder, 0777, true);
         }
         $json = json_encode($pageData);
-        $fileFolder =  $mainFolder . '/' . $pageName . '.json';
+        $fileFolder = $mainFolder.'/'.$pageName.'.json';
         file_put_contents($fileFolder, $json);
-        Utils::log('Created json dump, page: '. $pageName, 1, 'saveLayoutJson' );
+        Utils::log('Created json dump, page: '.$pageName, 1, 'saveLayoutJson');
     }
 
     private function sendStatus(): void
     {
-        if(Config::$devMode !== true){return;}
-        echo json_encode($this->cache->get('Status')) . "\n";
+        if (Config::$devMode !== true) {
+            return;
+        }
+        echo json_encode($this->cache->get('Status'))."\n";
     }
 
 }
