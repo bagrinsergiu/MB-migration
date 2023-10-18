@@ -145,7 +145,7 @@ class MigrationPlatform
         $mainSection = $this->parser->getMainSection();
         $this->updateColorSection($mainSection);
         Utils::log('Upload Logo menu', 1, 'createMenu');
-        $mainSection = $this->uploadPicturesFromSections($mainSection);
+        //$mainSection = $this->uploadPicturesFromSections($mainSection);
         $this->cache->set('mainSection', $mainSection);
 
         $this->createBlankPages($parentPages);
@@ -237,7 +237,7 @@ class MigrationPlatform
             return;
         }
 
-        $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
+        //$preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
         $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
 
         $collectionItem = $this->getCollectionItem($pages['slug']);

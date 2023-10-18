@@ -112,17 +112,10 @@ class JS
             'data' => [
                 'selector' => '[data-id="' . $blockID . '"]',
                 'attributes' => ["font-size", "font-family", "font-weight", "text-align", "letter-spacing", "text-transform"],
-                'families' => [
-                    "proxima_nova_proxima_nova_regular_sans-serif" => "uid1111",
-                    "helvetica_neue_helveticaneue_helvetica_arial_sans-serif" => "uid2222"
-                ],
+                'families' => $fontFamilies,
                 'defaultFontFamily' => 'helvetica_neue_helveticaneue_helvetica_arial_sans-serif'
             ]
         ];
-
-        if (!empty($fontFamilies)) {
-            $data['data']['families'] = $fontFamilies;
-        }
 
         self::$CODE = JSCode::RichText($data);
         self::$url = $pageUrl;

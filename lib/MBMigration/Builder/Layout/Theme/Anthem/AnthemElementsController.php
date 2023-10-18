@@ -64,9 +64,11 @@ class AnthemElementsController
         switch ($elementName) {
             case "footer":
                 $element = new Footer($jsonKitElements);
+
                 return $element->getElement();
             case "head":
                 $element = new Head($jsonKitElements);
+
                 return $element->getElement($elementData);
             default:
                 return false;
@@ -77,98 +79,94 @@ class AnthemElementsController
      * @throws \DOMException
      * @throws Exception
      */
-    private static function switchElements($elementName, $jsonKitElements, $elementData){
+    private static function switchElements($elementName, $jsonKitElements, $elementData)
+    {
+        $element = null;
         switch ($elementName) {
             case "top_media":
-                $element = new TopMedia($jsonKitElements);
-                return $element->getElement($elementData);
+                return (new TopMedia($jsonKitElements))->getElement($elementData);
             case "full_text":
                 $element = new FullText($jsonKitElements);
-                return $element->getElement($elementData);
             case "full_media":
                 $element = new FullMedia($jsonKitElements);
-                return $element->getElement($elementData);
             case "left_media":
                 $element = new LeftMedia($jsonKitElements);
-                return $element->getElement($elementData);
             case "right_media":
                 $element = new RightMedia($jsonKitElements);
-                return $element->getElement($elementData);
             case "grid_layout":
                 $element = new GridLayout($jsonKitElements);
-                return $element->getElement($elementData);
             case "list_layout":
                 $element = new ListLayout($jsonKitElements);
-                return $element->getElement($elementData);
             case "tabs_layout":
                 $element = new TabsLayout($jsonKitElements);
-                return $element->getElement($elementData);
             case "gallery_layout":
                 $element = new GalleryLayout($jsonKitElements);
-                return $element->getElement($elementData);
             case "accordion_layout":
                 $element = new AccordionLayout($jsonKitElements);
-                return $element->getElement($elementData);
             case "grid_media_layout":
                 $element = new GridMediaLayout($jsonKitElements);
-                return $element->getElement($elementData);
             case "right_media_circle":
                 $element = new RightMediaCircle($jsonKitElements);
-                return $element->getElement($elementData);
             case "left_media_circle":
                 $element = new LeftMediaCircle($jsonKitElements);
-                return $element->getElement($elementData);
             case "two_horizontal_text":
                 $element = new TwoHorizontalText($jsonKitElements);
-                return $element->getElement($elementData);
             case "three_horizontal_text":
                 $element = new ThreeHorizontalText($jsonKitElements);
-                return $element->getElement($elementData);
             case "four_horizontal_text":
                 $element = new FourHorizontalText($jsonKitElements);
-                return $element->getElement($elementData);
             case "three_top_media_circle":
                 $element = new ThreeTopMediaCircle($jsonKitElements);
-                return $element->getElement($elementData);
-            default:
-                return false;
         }
+
+        return null;
+
     }
 
     /**
      * @throws \DOMException
      * @throws Exception
      */
-    private static function switchDynamicElements($elementName, $jsonKitElements, $elementData){
+    private static function switchDynamicElements($elementName, $jsonKitElements, $elementData)
+    {
         switch ($elementName) {
             case "full_width_form":
                 $element = new Form(['element_form_type' => 'full_width']);
+
                 return $element->getElement($elementData);
             case "right_form_with_text":
                 $element = new Form(['element_form_type' => 'right']);
+
                 return $element->getElement($elementData);
             case "left_form_with_text":
                 $element = new Form(['element_form_type' => 'left']);
+
                 return $element->getElement($elementData);
 
             case "list_media_layout":
                 $element = new ListMediaLayout();
+
                 return $element->getElement($elementData);
             case "grid_media_layout":
                 $element = new GridMediaLayout();
+
                 return $element->getElement($elementData);
 
             case "event_calendar_layout":
                 $element = new EventCalendarLayout();
+
                 return $element->getElement($elementData);
             case "event_list_layout":
                 $element = new EventListLayout();
+
                 return $element->getElement($elementData);
             case "event_tile_layout":
                 $element = new EventGridLayout();
+
                 return $element->getElement($elementData);
             case "event_gallery_layout":
                 $element = new EventGalleryLayout();
+
                 return $element->getElement($elementData);
             default:
                 return false;

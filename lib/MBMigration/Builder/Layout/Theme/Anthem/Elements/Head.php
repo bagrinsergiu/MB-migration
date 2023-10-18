@@ -29,10 +29,10 @@ class Head extends Element
 
     public function getElement(array $elementData = []): bool
     {
-        return $this->Menu($elementData);
+        return $this->Head($elementData);
     }
 
-    private function Menu($menuList): bool
+    private function Head($menuList, $browserBlockData): bool
     {
         Utils::log('Create block menu', 1, "] [createMenu");
 
@@ -49,7 +49,7 @@ class Head extends Element
         $objBlock = new ItemBuilder();
         $objBlock->newItem($section['main']);
 
-        $this->setImageLogo($objBlock, $headItem);
+        $this->setImageLogo($objBlock, $browserBlockData['image']);
 
         $this->creatingMenu($objBlock, $menuList, $section);
 

@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem;
 
 use Exception;
+use MBMigration\Browser\Browser;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
