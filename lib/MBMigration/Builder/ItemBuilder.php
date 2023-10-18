@@ -91,6 +91,24 @@ class ItemBuilder
         }
         $this->begin();
     }
+
+    public function setCode($value): void
+    {
+        $this->content = $value;
+
+        if (is_array($value)) {
+            $this->addParameter('text', $this->textContent('text'));
+        } else {
+            if (isset($this->item->value->text)) {
+                $this->item->value->text = $value;
+            } else {
+                $this->addParameter('code', $value);
+            }
+        }
+        $this->begin();
+    }
+
+
     public function addItem(array $value, $position = null): void
     {
         if($position !== null) {

@@ -60,7 +60,6 @@ class GridLayout extends Element
         $objBlock->item(0)->setting('bgColorPalette', '');
         foreach ($sectionData['head'] as $head){
             if ($head['category'] == 'text') {
-
                 if ($head['item_type'] === 'title' && $this->showHeader($sectionData)) {
 
                     $richText = JS::RichText($head['id'], $options['currentPageURL']);

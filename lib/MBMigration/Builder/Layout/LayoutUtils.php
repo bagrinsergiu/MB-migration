@@ -272,7 +272,15 @@ class LayoutUtils extends builderUtils
                     $icon = $span->getAttribute('data-socialicon');
                     $iconNameBrizy = $this->checkExistIcon($icon, $hostName);
                     $result[] = [ 'icon' => $iconNameBrizy, 'href' => $href];
-                }  else {
+                } else if ($span->getAttribute('class')) {
+                    $class = $span->getAttribute('class');
+                    if (strpos($class, 'socialIconSymbol') !== false) {
+                        $icon = $span->nodeValue;
+                        $iconNameBrizy = $this->checkExistIcon($icon, $hostName);
+                        $result[] = ['icon' => $iconNameBrizy, 'href' => $href];
+                    }
+                }
+                else {
                     Utils::log('Icons Attribute not found', 3, "replaceTitleTag");
                 }
             }
@@ -295,6 +303,13 @@ class LayoutUtils extends builderUtils
         $html = str_replace($replace, '', $resultHtml);
         return $result;
     }
+
+    protected function getIcoNameByUrl($url): string
+    {
+        $hostName = $this->extractDomainName($url);
+        return $this->checkExistIcon($hostName, false);
+    }
+
     private function recursiveRemove($string, $toRemove) {
 
         if (is_array($toRemove)) {
@@ -308,37 +323,73 @@ class LayoutUtils extends builderUtils
         }
     }
 
-    private function checkExistIcon($icon, $hostName){
+    private function checkExistIcon($name, $hostName): string
+    {
+        $result = 'round-dollar';
 
-        $result = 'twitter';
+        if($hostName === false){
+            $icoName = $this->getIcon($name);
+            if(!$icoName){
+                Utils::log('icons were not found: ' . $name, 3, "checkExistIcon");
+                return $result;
+            }
+            return $icoName;
+        }
 
-        if($icon === $hostName){
-            $result = $icon;
-        } else if ($this->getIcon($icon) !== false) {
-            $result = $icon;
+        if($name === $hostName){
+            $result = $name;
+        } else if ($this->getIcon($name) !== false) {
+            $result = $name;
         } else if ($this->getIcon($hostName) !== false) {
             $result = $hostName;
         } else {
-            Utils::log('icons were not found', 3, "replaceTitleTag");
+            Utils::log('icons were not found', 3, "checkExistIcon");
         }
+
         return $result;
     }
 
     protected function extractDomainName($url) {
 
+        if($this->isEmailLink($url))
+        {
+            return 'mail';
+        }
+
         $urlParts = parse_url($url);
 
         $domain = isset($urlParts['host']) ? $urlParts['host'] : '';
 
-        $parts = explode('.', $domain);
-
-        if($parts[0] === 'www')
-        {
-            $domain = $parts[1];
-        } else {
-            $domain = $parts[0];
+        if (strpos($domain, 'www.') === 0) {
+            $domain = substr($domain, 4);
+        } elseif (strpos($domain, 'https://') === 0) {
+            $domain = substr($domain, 8);
+            if (strpos($domain, 'www.') === 0) {
+                $domain = substr($domain, 4);
+            }
+        } elseif (strpos($domain, 'http://') === 0) {
+            $domain = substr($domain, 7);
+            if (strpos($domain, 'www.') === 0) {
+                $domain = substr($domain, 4);
+            }
         }
-        return $domain;
+
+        $parts = explode('.', $domain);
+        return $parts[count($parts) - 2];
+    }
+
+    protected function isEmailLink($url): bool
+    {
+        if (strpos($url, 'mailto:') === 0) {
+            return true;
+        }
+
+        $emailPattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
+        if(preg_match($emailPattern, $url)){
+            return true;
+        }
+
+        return false;
     }
 
     protected function clearHtmlTag($str): string
@@ -390,7 +441,9 @@ class LayoutUtils extends builderUtils
             'instagram' => 'logo-instagram',
             'youtube'   => 'logo-youtube',
             'twitter'   => 'logo-twitter',
-            'vimeo'     => 'logo-vimeo'
+            'vimeo'     => 'logo-vimeo',
+            'mail'      => 'email-85',
+            'apple'     => 'apple'
         ];
         if(array_key_exists($iconName, $icon)){
             return $icon[$iconName];

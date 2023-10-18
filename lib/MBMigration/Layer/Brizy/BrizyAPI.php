@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 
@@ -14,6 +15,14 @@ class BrizyAPI extends Utils
     private $projectToken;
     private $nameFolder;
     private $containerID;
+    /**
+     * @var VariableCache|mixed
+     */
+    protected $cacheBR;
+    /**
+     * @var mixed|object|null
+     */
+    private $QueryBuilder;
 
     /**
      * @throws Exception
@@ -22,6 +31,7 @@ class BrizyAPI extends Utils
     {
         Utils::log('Initialization', 4, 'BrizyAPI');
         $this->projectToken = $this->check(Config::$mainToken, 'Config not initialized');
+        $this->cacheBR = VariableCache::getInstance();
     }
 
     /**
@@ -461,6 +471,34 @@ class BrizyAPI extends Utils
         }
 
         return $result[$filter];
+    }
+
+    public function getAllProjectPages(): array
+    {
+        Utils::log('Get All Pages from projects', 1, 'getAllProjectPages');
+        $result = [];
+        $this->QueryBuilder = $this->cacheBR->getClass('QueryBuilder');
+
+        $collectionTypes = $this->QueryBuilder->getCollectionTypes();
+
+        $foundCollectionTypes = [];
+        $entities = [];
+
+        foreach ($collectionTypes as $collectionType) {
+            if ($collectionType['slug'] == 'page') {
+                $foundCollectionTypes[$collectionType['slug']] = $collectionType['id'];
+                $result['mainCollectionType'] =  $collectionType['id'];
+            }
+        }
+
+        $collectionItems = $this->QueryBuilder->getCollectionItems($foundCollectionTypes);
+
+        foreach ($collectionItems['page']['collection'] as $entity) {
+            $entities[$entity['slug']] = $entity['id'];
+        }
+        $result['listPages'] = $entities;
+
+        return $result;
     }
 
     /**

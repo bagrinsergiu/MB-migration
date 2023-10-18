@@ -31,8 +31,10 @@ class ListLayout extends Element
 
     /**
      * @throws \DOMException
+     * @throws \Exception
      */
-    protected function ListLayout(array $sectionData) {
+    protected function ListLayout(array $sectionData)
+    {
         Utils::log('Create bloc', 1, "list_layout");
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['list-layout'];
@@ -86,56 +88,84 @@ class ListLayout extends Element
 //        }
 
         $blockHead = false;
-        foreach ($sectionData['head'] as $headItem)
-        {
-            if($headItem['category'] !== 'text') { continue; }
+        foreach ($sectionData['head'] as $headItem) {
+            if ($headItem['category'] !== 'text') {
+                continue;
+            }
 
             if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
-
                 $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
 
-                $objHead->item(0)->item(0)->item(0)->setText($richText);
+                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+                $objBlock->item(0)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+
+//                $objHead->item(0)->item(0)->item(0)->setText($richText);
             }
 
             if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
                 $blockHead = true;
-
                 $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-
-                $objHead->item(0)->item(2)->item(0)->setText($richText);
+                $objHead->item()->item()->addItem($this->itemWrapperRichText($richText));
             }
         }
 
-        if($blockHead) {
+        if ($blockHead) {
             $objBlock->item(0)->addItem($objHead->get());
+        }
+
+        if ($this->checkArrayPath($sectionData, 'settings/sections/list/photo_position')) {
+            $options['photoPosition'] = $sectionData['settings']['sections']['list']['photo_position'];
         }
 
         foreach ($sectionData['items'] as $section) {
             $objRow->newItem($decoded['row']);
             $objItem->newItem($decoded['item']);
+
             foreach ($section['item'] as $item) {
                 if ($item['category'] === 'photo') {
                     $objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
                     $objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
-                    $objRow->addItem($objImage->get());
-                }
-                if ($item['category'] === 'text') {
-                    if ($item['item_type'] === 'title') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->item(0)->item(0)->setText($richText);
+
+                    if ($item['link'] != '') {
+                        $objImage->item(0)->item(0)->setting('linkType', 'external');
+                        $objImage->item(0)->item(0)->setting('linkExternal', $item['link']);
                     }
 
-                    if ($item['item_type'] === 'body') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->item(2)->item(0)->setText($richText);
+                    if (empty($options['photoPosition'])) {
+                        $objRow->addItem($objImage->get());
                     }
                 }
             }
+
+            foreach ($section['item'] as $item) {
+                if ($item['category'] === 'text') {
+                    if ($item['item_type'] === 'title') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        //$objItem->item(0)->item(0)->setText($richText);
+                        $objItem->addItem($this->itemWrapperRichText($richText));
+                        $objItem->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+                    }
+                }
+            }
+
+            foreach ($section['item'] as $item) {
+                if ($item['category'] === 'text') {
+                    if ($item['item_type'] === 'body') {
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        $objItem->addItem($this->itemWrapperRichText($richText));
+                    }
+                }
+            }
+
             $objRow->addItem($objItem->get());
+            if (!empty($options['photoPosition'])) {
+                $objRow->addItem($objImage->get());
+            }
             $objBlock->item(0)->addItem($objRow->get());
         }
         $block = $this->replaceIdWithRandom($objBlock->get());
+
         return json_encode($block);
     }
 }

@@ -44,10 +44,10 @@ class Footer extends Element
         $imageAdd = false;
 
         $objBlock = new ItemBuilder();
-        $objText  = new ItemBuilder();
+        $objText = new ItemBuilder();
         $objImage = new ItemBuilder();
         $objColum = new ItemBuilder();
-        $objIcon  = new ItemBuilder();
+        $objIcon = new ItemBuilder();
 
         $decoded = $this->jsonDecode['blocks']['footer'];
 
@@ -58,13 +58,13 @@ class Footer extends Element
 
         $this->generalParameters($objBlock, $options, $sectionData);
 
-        $color = $this->cache->get('nav-subpalette','subpalette');
-
-        $objBlock->setting('bgColorHex', JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']));
+        $color = $this->cache->get('nav-subpalette', 'subpalette');
+        $style = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
+        $objBlock->setting('bgColorHex', $style['background-color']);
 
         $options = array_merge($options, ['textColor' => $color['sub-text']]);
 
-        if($this->checkArrayPath($sectionData, 'settings/background/photo')) {
+        if ($this->checkArrayPath($sectionData, 'settings/background/photo')) {
             $imageAdd = true;
             $objImage->item()->item()->setting('imageSrc', $sectionData['settings']['background']['photo']);
             $objImage->item()->item()->setting('imageFileName', $sectionData['settings']['background']['filename']);
@@ -77,50 +77,68 @@ class Footer extends Element
         }
 
         foreach ($sectionData['items'] as $item) {
-            $setText = false;
-
             if ($item['category'] == 'text') {
-                $setText = true;
                 $this->setOptionsForUsedFonts($item, $options);
                 $this->defaultTextPosition($item, $options);
 
                 $richText = JS::RichText($item['sectionId'], $options['currentPageURL'], $options['fontsFamily']);
 
-                $objText->item()->item()->setText($richText);
-
-                if(!$imageAdd){
-                    $objText->setting('width', 100);
-                    $objBlock->item()->addItem($objText->get());
+                if (!is_array($richText)) {
+                    $objBlock->item(0)->addItem(
+                        $this->wrapperColumn($this->itemWrapperRichText($richText))
+                    );
                 } else {
-                    $objBlock->item()->addItem($objText->get());
-                    $objBlock->item()->addItem($objImage->get());
-                }
-            }
+                    if (!empty($richText['icons'])) {
 
-            $itemsIcon = $this->getDataIconValue($item['content']);
+                        $TopWrapperIcon = [];
+                        $BottomWrapperIcon = [];
 
-            if(!empty($itemsIcon)){
-                foreach ($itemsIcon as $itemIcon){
-                    $objIcon->newItem($decoded['item']);
-                    $objIcon->setting('linkExternal', $itemIcon['href']);
-                    $objIcon->setting('name', $this->getIcon($itemIcon['icon']));
-                    $objColum->item()->addItem($objIcon->get());
-                }
+                        foreach ($richText['icons'] as $itemIcon) {
+                            if ($itemIcon['position'] === 'top') {
+                                $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                            }
 
-                if($setText){
-                    $objBlock->item(1)->item()->addItem($objColum->get());
-                } else {
-                    $objBlock->item()->item()->addItem($objColum->get());
+                            if ($itemIcon['position'] === 'bottom') {
+                                $BottomWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                            }
+                        }
+
+                        if (!empty($TopWrapperIcon)) {
+                            foreach ($TopWrapperIcon as $topItem) {
+                                $objBlock->item(0)->addItem($this->wrapperColumn($topItem));
+                            }
+                        }
+                        if (!empty($richText['text'])) {
+                            $objBlock->item(0)->addItem(
+                                $this->wrapperColumn($this->itemWrapperRichText($richText['text']))
+                            );
+                        }
+                        if (!empty($BottomWrapperIcon)) {
+
+                            foreach ($BottomWrapperIcon as $bottomItem) {
+                                $objBlock->item(0)->addItem($this->wrapperColumn($bottomItem));
+                            }
+                        }
+                    }
                 }
             }
         }
-
-
 
         $block = $this->replaceIdWithRandom($objBlock->get());
         $this->cache->set('footerBlock', json_encode($block));
 
         return true;
+    }
+
+    private function iconColumnCreation($IconItems, $objIcon, $objColum, $decoded)
+    {
+        foreach ($IconItems as $item) {
+            $iconName = $this->getDataIconValue($item['content']);
+            $objIcon->newItem($decoded['item']);
+            $objIcon->setting('linkExternal', $item['href']);
+            $objIcon->setting('name', $this->getIcon($iconName['icon']));
+            $objColum->item()->addItem($objIcon->get());
+        }
     }
 
 }

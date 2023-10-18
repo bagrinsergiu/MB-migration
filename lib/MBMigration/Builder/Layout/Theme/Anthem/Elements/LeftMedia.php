@@ -25,6 +25,10 @@ class LeftMedia extends Element
         return $this->LeftMedia($elementData);
     }
 
+    /**
+     * @throws DOMException
+     * @throws \Exception
+     */
     protected function LeftMedia(array $sectionData)
     {
         Utils::log('Create bloc', 1, "left_media");
@@ -63,14 +67,21 @@ class LeftMedia extends Element
                     $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternal', $item['link']);
                 }
             }
+        }
+        foreach ($sectionData['items'] as $item) {
             if($item['category'] == 'text') {
                 if($item['item_type']=='title' && $this->showHeader($sectionData)) {
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($richText);
+                    $objBlock->item()->item()->item(1)->addItem($this->itemWrapperRichText($richText));
+                    $objBlock->item()->item()->item(1)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
                 }
+            }
+        }
+        foreach ($sectionData['items'] as $item) {
+            if($item['category'] == 'text') {
                 if($item['item_type']=='body' && $this->showBody($sectionData)) {
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objBlock->item(0)->item(0)->item(1)->item(2)->item(0)->setText($richText);
+                    $objBlock->item(0)->item(0)->item(1)->addItem($this->itemWrapperRichText($richText));
                 }
             }
         }
