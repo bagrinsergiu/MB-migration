@@ -10,7 +10,7 @@ use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 use MBMigration\Parser\JS;
 
-class TabsLayout extends AbstractElement
+class RightMediaOverlap extends AbstractElement
 {
     public function transformToItem(ElementDataInterface $data): array
     {

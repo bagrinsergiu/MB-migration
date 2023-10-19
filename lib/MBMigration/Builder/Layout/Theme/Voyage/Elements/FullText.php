@@ -2,119 +2,83 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\ElementDataInterface;
 
-class FullText extends Element
+class FullText extends AbstractElement
 {
-    /**
-     * @var VariableCache
-     */
-    protected $cache;
-    private $jsonDecode;
-
-    /**
-     * @var array
-     */
-    protected $sectionData;
-
-    public function __construct($jsonKitElements)
+    public function transformToItem(ElementDataInterface $data): BrizyComponent
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
+        $mbSection = $data->getMbSection();
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizySectionLine = new BrizyComponent(json_decode($this->brizyKit['line'], true));
+
+        foreach ($mbSection['items'] as $mbSectionItem) {
+
+            switch ($mbSectionItem['category']) {
+                case 'text':
+                    $this->handleTextItem($mbSectionItem, $brizySection);
+                    break;
+                case 'photo':
+                    $this->handlePhotoItem($mbSectionItem, $brizySection);
+                    break;
+
+            }
+        }
+
+        return $brizySection;
     }
 
-    /**
-     * @throws \DOMException
-     */
-    public function getElement(array $elementData = [])
+    private function handleTextItem($mbSectionItem, $brizySection)
     {
-        $this->sectionData = $elementData;
-        return $this->FullText($elementData);
+        if ($this->canShowHeader($mbSectionItem) && $mbSectionItem['item_type'] === 'title') {
+
+            $richTextBrowserData = $this->browserPage->runScript('richText.js', [
+                'selector' => '[data-id="'.$mbSectionItem['id'].'"]',
+                'attributes' => json_encode([
+                    "font-size",
+                    "font-family",
+                    "font-weight",
+                    "text-align",
+                    "letter-spacing",
+                    "text-transform",
+                ]),
+                //'families' => $fontFamilies,
+                'defaultFontFamily' => 'helvetica_neue_helveticaneue_helvetica_arial_sans-serif',
+            ]);
+
+        }
+
+
+        if ($this->canShowBody($mbSectionItem)) {
+
+        }
     }
 
-    /**
-     * @throws \DOMException
-     * @throws \Exception
-     */
-    protected function FullText(array $sectionData)
+    private function handlePhotoItem($mbSectionItem, $brizySection)
     {
-        Utils::log('Create bloc', 1, "full_text");
 
-        $options = [];
-
-        $objBlock = new ItemBuilder();
-        $objLine = new ItemBuilder();
-
-        $this->cache->set('currentSectionData', $sectionData);
-
-        $decoded = $this->jsonDecode['blocks']['full-text'];
-
-        $objBlock->newItem($decoded['main']);
-        $objLine->newItem($decoded['line']);
-
-        $this->generalParameters($objBlock, $options, $sectionData);
-
-        $this->backgroundParallax($objBlock, $sectionData);
-
-        $this->backgroundColor($objBlock, $sectionData, $options);
-
-        $this->backgroundImages($objBlock, $sectionData, $options);
-
-        $this->backgroundVideo($objBlock, $sectionData);
-
-        $this->setOptionsForTextColor($sectionData, $options);
-
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'text') {
-                if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                    $this->textCreation($item['id'], $item['content'], $options, $objBlock);
-                }
-            }
-        }
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'text') {
-                if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
-                    $this->textCreation($item['id'], $item['content'], $options, $objBlock);
-                }
-            }
-        }
-
-        if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
-
-           $buttonOptions = [
-                'linkExternal'=> $sectionData['settings']['sections']['donations']['url'],
-                'text'=>  $sectionData['settings']['sections']['donations']['text']
-            ];
-            $position = $sectionData['settings']['sections']['donations']['alignment'];
-
-            $objBlock->item(0)->addItem($this->button($buttonOptions, $position));
-        }
-
-        return json_encode($this->replaceIdWithRandom($objBlock->get()));
     }
 
-    /**
-     * @throws \Exception
-     */
-    private function textCreation($itemID, $content, $options, $objBlock)
-    {
-        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
-        if(!is_array($richText)) {
-            $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
-        } else {
-            if(!empty($richText['text'])) {
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText['text']));
-            }
 
-            if(!empty($richText['embeds']['persist'])) {
-                $result = $this->findEmbeddedPasteDivs($content);
-                foreach ($result as $item) {
-                    $objBlock->item(0)->addItem($this->embedCode($item));
-                }
-            }
-        }
+    private function getPattingStyles($sectionId): array
+    {
+        return [];
+    }
+
+    private function getBackgroundStyles($sectionId): array
+    {
+        return [];
+    }
+
+    private function getBackgroundImages($sectionId): array
+    {
+        return [];
+    }
+
+    private function getBackgroundVideo($sectionId): array
+    {
+        return [];
     }
 }

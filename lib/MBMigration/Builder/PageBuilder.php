@@ -2,7 +2,10 @@
 
 namespace MBMigration\Builder;
 
+use MBMigration\Browser\Browser;
 use MBMigration\Builder\Layout\Common\KitLoader;
+use MBMigration\Builder\Layout\Theme\Voyage\ElementFactory;
+use MBMigration\Builder\Layout\Theme\Voyage\Voyage;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
@@ -31,25 +34,45 @@ class PageBuilder
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
 
-        if ($design == 'Aurora') {
-            $layoutBasePath = dirname(__FILE__)."/Layout";
-            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-            $menu = $this->cache->get('menuList');
-            $_WorkClassTemplate = new $workClass($brizyKit,$menu);
-        } else {
-            $_WorkClassTemplate = new $workClass();
-        }
+        if ($design == 'Voyage') {
 
-        if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
+            $menu = $this->cache->get('menuList');
+
+            $layoutBasePath = dirname(__FILE__)."/Layout";
+
+            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
+            $headItem = $this->cache->get('header', 'mainSection');
+            $footerItem = $this->cache->get('footer', 'mainSection');
+            $browser = Browser::instance();
+            $browserPage = $browser->openPage($url);
+            $blockFactory = ElementFactory::instance($brizyKit, $browserPage);
+            $_WorkClassTemplate = new Voyage($url, $brizyKit, $menu, $headItem, $footerItem, $blockFactory, $browser);
+            $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
+
+            $pageData = json_encode($brizySections);
+            $queryBuilder = $this->cache->getClass('QueryBuilder');
+            $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+
             Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
             $this->sendStatus();
 
             return true;
-        } else {
-            Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
 
-            return false;
+        } else {
+            $_WorkClassTemplate = new $workClass();
+            if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
+                Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+                $this->sendStatus();
+
+                return true;
+            } else {
+                Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+
+                return false;
+            }
         }
+
+
     }
 
     private function saveLayoutJson(string $pageData, string $pageName): void

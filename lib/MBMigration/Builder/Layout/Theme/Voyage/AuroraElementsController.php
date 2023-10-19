@@ -3,35 +3,36 @@
 namespace MBMigration\Builder\Layout\Theme\Voyage;
 
 use Exception;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\DynamicElements\Events\EventCalendarLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\DynamicElements\Events\EventGalleryLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\DynamicElements\Events\EventGridLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\DynamicElements\Events\EventListLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\DynamicElements\Forms\Form;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\DynamicElements\Sermons\GridMediaLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\DynamicElements\Sermons\ListMediaLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\Footer;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\FourHorizontalText;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullMedia;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullText;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\GalleryLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\GridLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\Head;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMedia;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMediaCircle;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMedia;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMediaCircle;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\TabsLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\ThreeHorizontalText;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\ThreeTopMediaCircle;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\TopMedia;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\TwoHorizontalText;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\AccordionLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\DynamicElements\Events\EventCalendarLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\DynamicElements\Events\EventGalleryLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\DynamicElements\Events\EventGridLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\DynamicElements\Events\EventListLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\DynamicElements\Forms\Form;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\DynamicElements\Sermons\GridMediaLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\DynamicElements\Sermons\ListMediaLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\Footer;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\FourHorizontalText;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\FullMedia;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\FullText;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\GalleryLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\GridLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\Head;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\LeftMedia;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\LeftMediaCircle;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\ListLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\RightMedia;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\RightMediaCircle;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\TabsLayout;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\ThreeHorizontalText;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\ThreeTopMediaCircle;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\TopMedia;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\TwoHorizontalText;
 
 
-class VoyageElementsController
+class AuroraElementsController
 {
+
     /**
      * @throws \DOMException
      */

@@ -2,14 +2,16 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
-use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Browser\BrowserPageInterface;
 
-interface ElementInterface
+interface ElementDataInterface
 {
     /**
      * Returns and Brizy fully build section ready to be inserted in page data.
      *
      * @return array
      */
-    public function transformToItem(ElementDataInterface $data): BrizyComponent;
+    public function getMbSection(): array;
+
+    public function getMenu(): array;
 }

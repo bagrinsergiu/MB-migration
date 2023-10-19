@@ -49,7 +49,7 @@ class Head extends Element
         $objBlock = new ItemBuilder();
         $objBlock->newItem($section['main']);
 
-        $this->setImageLogo($objBlock, $browserBlockData['image']);
+        $this->setImageLogo($objBlock, $headItem);
 
         $this->creatingMenu($objBlock, $menuList, $section);
 
@@ -82,6 +82,7 @@ class Head extends Element
                 $blockMenu['value']['url'] = $item['slug'];
             }
             $blockMenu['value']['items'] = $this->creatingMenuTree($item['child'], $blockMenu);
+
             if($item['landing'] == false){
                 $blockMenu['value']['url'] = $blockMenu['value']['items'][0]['value']['url'];
             }

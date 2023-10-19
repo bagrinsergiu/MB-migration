@@ -5,11 +5,15 @@ namespace MBMigration\Browser;
 use MBMigration\Core\Utils;
 use Nesk\Puphpeteer\Puppeteer;
 
-class Browser
+class Browser implements BrowserInterface
 {
-    private Puppeteer $puppeteer;
+    /**
+     * @var Puppeteer
+     */
+    private $browser;
+    private $scriptPath;
 
-    static public function instance($pageUrl)
+    static public function instance($scriptPath)
     {
         static $instance = null;
 
@@ -17,44 +21,41 @@ class Browser
             return $instance;
         }
 
-        return $instance = new self($pageUrl);
+        return $instance = new self($scriptPath);
     }
 
-    private function __construct()
+    private function __construct($scriptPath)
     {
-        try {
-            $this->puppeteer = new Puppeteer();
-            $this->puppeteer->launch([
-                "headless" => "new",
-                'args' =>
-                    [
-                        '--no-sandbox',
-                        '--disable-setuid-sandbox',
-                        '--disable-dev-shm-usage',
-                        '--aggressive-cache-discard',
-                        '--disable-cache',
-                        '--disable-application-cache',
-                        '--disable-offline-load-stale-cache',
-                        '--disable-gpu-shader-disk-cache',
-                        '--media-cache-size=0',
-                        '--disk-cache-size=0',
-                    ],
-            ]);
-        } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'browser', 'JS:RUN');
-
-            return '';
-        }
+        $puppeteer = new Puppeteer();
+        $this->browser = $puppeteer->launch([
+            "headless" => "new",
+            'args' =>
+                [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--aggressive-cache-discard',
+                    '--disable-cache',
+                    '--disable-application-cache',
+                    '--disable-offline-load-stale-cache',
+                    '--disable-gpu-shader-disk-cache',
+                    '--media-cache-size=0',
+                    '--disk-cache-size=0',
+                ],
+        ]);
+        $this->scriptPath = $scriptPath;
     }
 
-    public function runScripts($pageUrl, $jsScript, $params)
+    public function openPage($url): BrowserPageInterface
     {
-        $this->puppeteer->newPage();
-        $this->puppeteer->goto($pageUrl);
+        $page = $this->browser->newPage();
+        $page->goto($url);
+
+        return new BrowserPage($page, $this->scriptPath);
     }
 
-    public function __destruct()
+    function __destruct()
     {
-        $this->puppeteer->close();
+        $this->browser->close();
     }
 }
