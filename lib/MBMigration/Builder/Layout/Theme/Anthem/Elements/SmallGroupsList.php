@@ -7,7 +7,7 @@ use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 use MBMigration\Parser\JS;
 
-class FullText extends Element
+class SmallGroupsList extends Element
 {
     /**
      * @var VariableCache
@@ -32,16 +32,16 @@ class FullText extends Element
     public function getElement(array $elementData = [])
     {
         $this->sectionData = $elementData;
-        return $this->FullText($elementData);
+        return $this->SmallGroupsList($elementData);
     }
 
     /**
      * @throws \DOMException
      * @throws \Exception
      */
-    protected function FullText(array $sectionData)
+    protected function SmallGroupsList(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "full_text");
+        Utils::log('Create bloc', 1, "small-groups-list");
 
         $options = [];
 
@@ -50,7 +50,7 @@ class FullText extends Element
 
         $this->cache->set('currentSectionData', $sectionData);
 
-        $decoded = $this->jsonDecode['blocks']['full-text'];
+        $decoded = $this->jsonDecode['blocks']['small-groups-list'];
 
         $objBlock->newItem($decoded['main']);
         $objLine->newItem($decoded['line']);
@@ -86,7 +86,7 @@ class FullText extends Element
 
         if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
 
-           $buttonOptions = [
+            $buttonOptions = [
                 'linkExternal'=> $sectionData['settings']['sections']['donations']['url'],
                 'text'=>  $sectionData['settings']['sections']['donations']['text']
             ];
@@ -103,57 +103,20 @@ class FullText extends Element
      */
     private function textCreation($itemID, $content, $options, $objBlock)
     {
-        $multiElement = [];
-
         $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
-
         if(!is_array($richText)) {
             $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
         } else {
-            if(!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'top') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                    }
-                }
-            }
-
             if(!empty($richText['text'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'top') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['text'])) {
-                $multiElement[] = $this->itemWrapperRichText($richText['text']);
+                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText['text']));
             }
 
             if(!empty($richText['embeds']['persist'])) {
                 $result = $this->findEmbeddedPasteDivs($content);
                 foreach ($result as $item) {
-                    $multiElement[] = $this->embedCode($item);
+                    $objBlock->item(0)->addItem($this->embedCode($item));
                 }
             }
-
-            if(!empty($richText['button'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'bottom') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'bottom') {
-                        $multiElement[] = $this->wrapperColumn($multiElement, true);
-                    }
-                }
-            }
-
-            $objBlock->item(0)->addItem($this->wrapperColumn($multiElement, true));
         }
     }
 }

@@ -66,52 +66,8 @@ class FullMedia extends Element
             if ($item['category'] == 'text') {
                 if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
 
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
 
-                    if (!is_array($richText)) {
-                        $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
-                    } else {
-                        $WrapperText = [];
-                        $TopWrapperIcon = [];
-                        $BottomWrapperIcon = [];
-
-                        if (!empty($richText['text'])) {
-                            $WrapperText[] = $this->itemWrapperRichText($richText['text']);
-                        }
-
-                        if (!empty($richText['embeds']['persist'])) {
-                            $result = $this->findEmbeddedPasteDivs($item['content']);
-                            foreach ($result as $embedContent) {
-                                $WrapperText[] = $this->embedCode($embedContent);
-                            }
-                        }
-
-                        if (!empty($richText['icons'])) {
-                            foreach ($richText['icons'] as $itemIcon) {
-                                if ($itemIcon['position'] === 'top') {
-                                    $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                                }
-
-                                if ($itemIcon['position'] === 'bottom') {
-                                    $BottomWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                                }
-                            }
-                        }
-
-                        if (!empty($TopWrapperIcon)) {
-                            foreach ($TopWrapperIcon as $topItem) {
-                                $objBlock->item()->item()->item()->addItem($this->wrapperColumn($topItem));
-                            }
-                        }
-                        if (!empty($richText['text'])) {
-                            $objBlock->item()->item()->item()->addItem($this->wrapperColumn($this->itemWrapperRichText($richText['text'])));
-                        }
-                        if (!empty($BottomWrapperIcon)) {
-                            foreach ($BottomWrapperIcon as $bottomItem) {
-                                $objBlock->item()->item()->item()->addItem($bottomItem);
-                            }
-                        }
-                    }
                     $objBlock->item()->item()->item()->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
                 }
             }
@@ -120,67 +76,7 @@ class FullMedia extends Element
         foreach ($sectionData['items'] as $item) {
             if($item['item_type']=='body' && $this->showBody($sectionData)) {
 
-                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-
-                if(!is_array($richText)) {
-                    $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
-                } else {
-                    $WrapperText = [];
-                    $TopWrapperIcon = [];
-                    $BottomWrapperIcon = [];
-                    $TopWrapperButton = [];
-                    $BottomWrapperButton = [];
-
-                    if(!empty($richText['text'])) {
-                        $WrapperText[] = $this->itemWrapperRichText($richText['text']);
-                    }
-
-                    if(!empty($richText['embeds']['persist'])) {
-                        $result = $this->findEmbeddedPasteDivs($item['content']);
-                        foreach ($result as $embedContent) {
-                            $WrapperText[] = $this->embedCode($embedContent);
-                        }
-                    }
-
-                    if (!empty($richText['icons'])) {
-                        foreach ($richText['icons'] as $itemIcon) {
-                            if ($itemIcon['position'] === 'top') {
-                                $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                            }
-                        }
-                    }
-
-                    if (!empty($richText['buttons'])) {
-                        foreach ($richText['buttons'] as $itemButton) {
-                            if ($itemButton['position'] === 'top') {
-                                $TopWrapperIcon[] = $this->button($itemButton['items'], $itemButton['align']);
-                            }
-                        }
-                    }
-
-                    if (!empty($TopWrapperIcon)) {
-                        foreach ($TopWrapperIcon as $topItem) {
-                            $objBlock->item()->item()->item()->addItem($this->wrapperColumn($topItem));
-                        }
-                    }
-
-                    if (!empty($TopWrapperButton)) {
-                        foreach ($TopWrapperButton as $topItemButton) {
-                            $objBlock->item()->item()->item()->addItem($topItemButton);
-                        }
-                    }
-
-                    if (!empty($WrapperText)) {
-                        foreach ($WrapperText as $text) {
-                            $objBlock->item()->item()->item()->addItem($this->wrapperColumn($this->itemWrapperRichText($text)));
-                        }
-                    }
-                    if (!empty($BottomWrapperIcon)) {
-                        foreach ($BottomWrapperIcon as $bottomItem) {
-                            $objBlock->item()->item()->item()->addItem($bottomItem);
-                        }
-                    }
-                }
+                $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
             }
         }
             
@@ -203,5 +99,61 @@ class FullMedia extends Element
         
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
+    }
+
+
+    /**
+     * @throws \Exception
+     */
+    private function richTextCreator($objBlock, $item, $currentPageURL, $fontsFamily) {
+        $multiElement = [];
+
+        $richText = JS::RichText($item['id'], $currentPageURL, $fontsFamily);
+
+        if (!is_array($richText)) {
+            $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
+        } else {
+            if (!empty($richText['icons'])) {
+                foreach ($richText['icons'] as $itemIcon) {
+                    if ($itemIcon['position'] === 'top') {
+                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                    }
+                }
+            }
+
+            if(!empty($richText['button'])) {
+                foreach ($richText['button'] as $itemButton) {
+                    if ($itemButton['position'] === 'top') {
+                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
+                    }
+                }
+            }
+
+            if (!empty($richText['text'])) {
+                $multiElement[] = $this->itemWrapperRichText($richText['text']);
+            }
+
+            if (!empty($richText['embeds'])) {
+                $multiElement[] = $this->embedCode($item['content']);
+            }
+
+            if (!empty($richText['icons'])) {
+                foreach ($richText['icons'] as $itemIcon) {
+                    if ($itemIcon['position'] === 'bottom') {
+                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                    }
+                }
+            }
+
+            if(!empty($richText['button'])) {
+                foreach ($richText['button'] as $itemButton) {
+                    if ($itemButton['position'] === 'bottom') {
+                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
+                    }
+                }
+            }
+
+            $objBlock->item()->item()->item()->addItem($this->wrapperColumn($multiElement, true));
+        }
     }
 }

@@ -141,7 +141,7 @@ class MBProjectDataCollector
      * @throws Exception
      * @throws GuzzleException
      */
-    public function getFonts($settings, $fontThemeUUID): array
+    public function getFonts($settings, $fontThemeUUID, $migrationDefaultFonts = 'poppins'): array
     {
         if(array_key_exists('theme', $settings)){
             $addedFonts = [];
@@ -158,9 +158,12 @@ class MBProjectDataCollector
                 $font['uuid'] = $this->fontsController->upLoadFonts($settingSite[0]['name']);
                 $addedFonts[$font['font_id']] = $font['uuid'];
             }
+
+            $this->primaryDefaultFonts($settings['theme'], $migrationDefaultFonts);
+
             return $settings['theme'];
         } else {
-            return $this->getDefaultFont($fontThemeUUID);
+            return $this->getDefaultFont($fontThemeUUID, $migrationDefaultFonts);
         }
     }
 
@@ -168,7 +171,7 @@ class MBProjectDataCollector
      * @throws GuzzleException
      * @throws Exception
      */
-    function getDefaultFont($fontThemeUUID)
+    public function getDefaultFont($fontThemeUUID, $migrationDefaultFonts)
     {
         $fontStyle = $this->db->request("select display_name, name, font_id, font_size, text_transform, letter_spacing, position, bold, italic FROM font_theme_styles WHERE font_theme_id IN(SELECT id from font_themes WHERE uuid = '$fontThemeUUID') ORDER BY position");
         $addedFonts = [];
@@ -184,8 +187,23 @@ class MBProjectDataCollector
             $font['uuid'] = $this->fontsController->upLoadFonts($fontName[0]['name']);
             $addedFonts[$font['font_id']] = $font['uuid'];
         }
+        $this->primaryDefaultFonts($fontStyle, $migrationDefaultFonts);
+
         return $fontStyle;
     }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function primaryDefaultFonts(&$fontStyle, $name) {
+        $fontStyle[] =  [
+            'name' => 'primary',
+            'fontName' => $name,
+            'fontFamily' => $this->transLiterationFontFamily($name),
+            'uuid' => $this->fontsController->upLoadFonts($name),
+        ];
+    }
+
 
     /**
      * @throws Exception

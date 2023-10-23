@@ -15,6 +15,14 @@ class JSCode
 
         return self::loadSampleAndReplacePlaceholderInCode('StylesExtractor', $dataCheck);
     }
+    public static function ImageStyles(array $DATA)
+    {
+        $requiredParameters = ['selector'];
+
+        $dataCheck = self::checkParameters($DATA, $requiredParameters);
+
+        return self::loadSampleAndReplacePlaceholderInCode('getImageStyle', $dataCheck);
+    }
 
     public static function RichText(array $DATA)
     {
