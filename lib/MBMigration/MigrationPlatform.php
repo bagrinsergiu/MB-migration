@@ -350,7 +350,7 @@ class MigrationPlatform
             if (array_key_exists('external_url', $settings)) {
                 $mainMenu[] = [
                     'id' => '',
-                    "items" => $this->transformToBrizyMenu($item['child']),
+                    "items" => [], // $this->transformToBrizyMenu($item['child']),
                     "isNewTab" => false,
                     "label" => TextTools::transformText($item['name'], $textTransform),
                     "type" => "custom_link",
@@ -359,9 +359,12 @@ class MigrationPlatform
                     "description" => ""
                 ];
             } else {
+                if(empty($item['collection'])){
+                    $item['collection'] = $item['child'][0]['collection'];
+                }
                 $mainMenu[] = [
                     "id" => $item['collection'],
-                    "items" => $this->transformToBrizyMenu($item['child']),
+                    "items" => [], // $this->transformToBrizyMenu($item['child']),
                     "isNewTab" => false,
                     "label" => TextTools::transformText($item['name'], $textTransform),
                     "uid" => $this->getNameHash()

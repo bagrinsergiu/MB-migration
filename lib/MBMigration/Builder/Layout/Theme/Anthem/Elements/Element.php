@@ -332,17 +332,19 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function wrapperColumn(array $element, $multi = false)
+    protected function wrapperColumn(array $element = [], $multi = false)
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--column'];
         $block = new ItemBuilder($decoded['main']);
-        if ($multi) {
-            foreach ($element as $item) {
-                $block->addItem($item);
+        if(!empty($element)) {
+            if ($multi) {
+                    foreach ($element as $item) {
+                        $block->addItem($item);
+                    }
+            } else {
+                $block->addItem($element);
             }
-        } else {
-            $block->addItem($element);
         }
         $result = $block->get();
         return json_decode(json_encode($result), true);
@@ -373,12 +375,23 @@ abstract class Element extends LayoutUtils
         return json_decode(json_encode($result), true);
     }
 
-    protected function wrapperRow(array $element)
+    /**
+     * @throws Exception
+     */
+    protected function wrapperRow(array $element = [], $multi = false)
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--row'];
         $block = new ItemBuilder($decoded['main']);
-        $block->addItem($element);
+        if(!empty($element)) {
+            if ($multi) {
+                foreach ($element as $item) {
+                    $block->addItem($item);
+                }
+            } else {
+                $block->addItem($element);
+            }
+        }
         $result = $block->get();
         return json_decode(json_encode($result), true);
     }
@@ -419,8 +432,10 @@ abstract class Element extends LayoutUtils
         return json_decode(json_encode($result), true);
     }
 
-    function findEmbeddedPasteDivs($html): array
+    public function findEmbeddedPasteDivs($html): array
     {
+        $html = $this->styleIframes($html);
+
         $result = [];
 
         $dom = new DOMDocument();
@@ -439,6 +454,22 @@ abstract class Element extends LayoutUtils
         }
 
         return $result;
+    }
+
+    private function styleIframes($html) {
+        $dom = new DOMDocument();
+        $dom->loadHTML($html);
+
+        $iframes = $dom->getElementsByTagName('iframe');
+
+        foreach ($iframes as $iframe) {
+            $width = $iframe->getAttribute('width');
+            $height = $iframe->getAttribute('height');
+
+            $iframe->setAttribute('style', "max-width: {$width}px; max-height: {$height}px; width: 100%;");
+        }
+
+        return $dom->saveHTML();
     }
 
 }

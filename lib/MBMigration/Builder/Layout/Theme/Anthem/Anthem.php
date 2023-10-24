@@ -69,6 +69,8 @@ class Anthem extends LayoutUtils
         $itemsData = [];
         $itemsData['items'][] = json_decode($this->cache->get('menuBlock'),true);
 
+        $parentPages = $this->cache->get('menuList');
+
         Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
         $this->cache->update('createdFirstSection',false, 'flags');
         $this->cache->update('Success', '++', 'Status');
