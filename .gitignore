@@ -1,3 +1,4 @@
 /vendor/*
 /sample/*
 .idea
+**/node_modules/
