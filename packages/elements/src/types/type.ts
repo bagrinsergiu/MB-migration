@@ -15,5 +15,5 @@ export interface OutputData {
 
 export interface ElementModel {
   type: string;
-  value: Record<string, Literal>;
+  value: Record<string, Literal | Array<ElementModel | string>>;
 }

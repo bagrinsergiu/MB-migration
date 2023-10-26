@@ -1,3 +1,4 @@
+import { createWrapperModel } from "@/Models/Wrapper";
 import { stylesToClasses } from "@/Text/models/Text";
 import { removeAllButtons } from "@/Text/utils/buttons";
 import { removeAllStylesFromHTML } from "@/Text/utils/dom/removeAllStylesFromHTML";
@@ -78,13 +79,21 @@ export const getText = (data: Entry): Output => {
     styles: getTypographyStyles(node)
   };
 
-  elements.push({
-    type: "Text",
-    value: {
-      _id: uuid(),
-      text: toBuilderText(dataText)
-    }
-  });
+  elements.push(
+    createWrapperModel({
+      _styles: ["wrapper", "wrapper--richText"],
+      items: [
+        {
+          type: "RichText",
+          value: {
+            _id: uuid(),
+            _styles: ["richText"],
+            text: toBuilderText(dataText)
+          }
+        }
+      ]
+    })
+  );
 
   return createData({ data: elements });
 };
