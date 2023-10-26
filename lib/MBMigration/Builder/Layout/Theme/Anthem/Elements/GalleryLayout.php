@@ -44,7 +44,6 @@ class GalleryLayout extends Element
         } else {
             $block['value']['sliderAutoPlay'] = 'on';
         }
-        $block['value']['bgSize'] = 'contain';
 
         foreach ($sectionData['items'] as $item){
                 if(!$item['uploadStatus']) {
@@ -53,17 +52,17 @@ class GalleryLayout extends Element
 
                 if(!empty($sectionData['settings']['sections']['gallery']['max_width']) &&
                     !empty($sectionData['settings']['sections']['gallery']['max_height'])){
-                    $slide['value']['bgImageHeight']    = $sectionData['settings']['sections']['gallery']['max_height'];
-                    $slide['value']['bgImageWidth']     = $sectionData['settings']['sections']['gallery']['max_width'];
+                    $slide['value']['bgImageWidth']  = $sectionData['settings']['sections']['gallery']['max_width'];
+                    $slide['value']['bgImageHeight'] = $sectionData['settings']['sections']['gallery']['max_height'];
                 }
 
-                $slide['value']['bgImageFileName'] = $item['imageFileName'];
+                $slide['value']['bgSize']          = 'contain';
                 $slide['value']['bgImageSrc']      = $item['content'];
+                $slide['value']['bgImageFileName'] = $item['imageFileName'];
 
                 $this->insertElementAtPosition($block, 'value/items', $slide);
         }
         $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
-
 }

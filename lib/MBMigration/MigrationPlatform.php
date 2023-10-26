@@ -350,21 +350,24 @@ class MigrationPlatform
             if (array_key_exists('external_url', $settings)) {
                 $mainMenu[] = [
                     'id' => '',
-                    "items" => $this->transformToBrizyMenu($item['child']),
+                    "items" =>  $this->transformToBrizyMenu($item['child']),
                     "isNewTab" => false,
                     "label" => TextTools::transformText($item['name'], $textTransform),
                     "type" => "custom_link",
                     'url' => $settings['external_url'],
-                    "uid" => $this->getNameHash(),
+                    "uid" => Utils::getNameHash(),
                     "description" => ""
                 ];
             } else {
+                if(empty($item['collection'])){
+                    $item['collection'] = $item['child'][0]['collection'];
+                }
                 $mainMenu[] = [
                     "id" => $item['collection'],
                     "items" => $this->transformToBrizyMenu($item['child']),
                     "isNewTab" => false,
                     "label" => TextTools::transformText($item['name'], $textTransform),
-                    "uid" => $this->getNameHash()
+                    "uid" => Utils::getNameHash()
                 ];
             }
         }
@@ -677,23 +680,6 @@ class MigrationPlatform
             }
         }
         return $result;
-    }
-
-    private function getNameHash($data = ''): string
-    {
-        $to_hash = $this->generateCharID() . $data;
-        $newHash = hash('sha256', $to_hash);
-        return substr($newHash, 0, 32);
-    }
-
-    private function generateCharID($length = 32): string
-    {
-        $characters = 'abcdefghijklmnopqrstuvwxyz';
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
-        }
-        return $randomString;
     }
 
     private function createProjectFolders(): void

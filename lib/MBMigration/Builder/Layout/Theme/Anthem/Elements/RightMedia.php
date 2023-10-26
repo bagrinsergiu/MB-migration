@@ -33,7 +33,7 @@ class RightMedia extends Element
      */
     protected function RightMedia(array $sectionData)
     {
-        Utils::log('Create bloc', 1,  "right_media");
+        Utils::log('Create bloc', 1, "right_media");
         $this->cache->set('currentSectionData', $sectionData);
 
         $options = [];
@@ -60,37 +60,23 @@ class RightMedia extends Element
 
         $this->backgroundImages($objBlock, $sectionData, $options);
 
-
-//        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-//            Utils::log('Set background', 1, "] [right_media");
-//
-//            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
-//                $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
-//                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-//                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-//            }
-//            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
-//                if ($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode')) {
-//                    if ($sectionData['settings']['sections']['background']['fadeMode'] !== 'none'){
-//                        $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-//                        if ($opacity <= 0.3) {
-//                            $options = array_merge($options, ['textColor' => '#000000']);
-//                        }
-//                        $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-//                    }
-//                }
-//                $objBlock->item(0)->setting('bgColorType', 'none');
-//            }
-//        }
-
         foreach ($sectionData['items'] as $item) {
-            if($item['category'] == 'photo' && $item['content'] !== '') {
-                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageSrc',$item['content']);
-                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageFileName',$item['imageFileName']);
+            if ($item['category'] == 'photo' && $item['content'] !== '') {
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageSrc', $item['content']);
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting(
+                    'imageFileName',
+                    $item['imageFileName']
+                );
 
-                if($this->checkArrayPath($item, 'settings/image')) {
-                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageWidth', $item['settings']['image']['width']);
-                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('imageHeight', $item['settings']['image']['height']);
+                if ($this->checkArrayPath($item, 'settings/image')) {
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting(
+                        'imageWidth',
+                        $item['settings']['image']['width']
+                    );
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting(
+                        'imageHeight',
+                        $item['settings']['image']['height']
+                    );
                 }
 
                 if ($item['link'] != '') {
@@ -101,24 +87,80 @@ class RightMedia extends Element
         }
 
         foreach ($sectionData['items'] as $item) {
-            if($item['category'] == 'text') {
-                if($item['item_type']=='title' && $this->showHeader($sectionData)) {
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
+
+                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
+
                     $objBlock->item()->item()->item()->addItem($this->wrapperLine());
                 }
             }
         }
         foreach ($sectionData['items'] as $item) {
-            if($item['category'] == 'text') {
-                if($item['item_type']=='body' && $this->showBody($sectionData)) {
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objBlock->item(0)->item(0)->item(0)->addItem($this->itemWrapperRichText($richText));
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] == 'body' && $this->showBody($sectionData)) {
+                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
                 }
             }
         }
         $block = $this->replaceIdWithRandom($objBlock->get());
+
         return json_encode($block);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function richTextCreator($objBlock, $item, $currentPageURL, $fontsFamily) {
+        $multiElement = [];
+
+        $richText = JS::RichText($item['id'], $currentPageURL, $fontsFamily);
+
+        if (!is_array($richText)) {
+            $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
+        } else {
+            if (!empty($richText['icons'])) {
+                foreach ($richText['icons'] as $itemIcon) {
+                    if ($itemIcon['position'] === 'top') {
+                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                    }
+                }
+            }
+
+            if(!empty($richText['button'])) {
+                foreach ($richText['button'] as $itemButton) {
+                    if ($itemButton['position'] === 'top') {
+                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
+                    }
+                }
+            }
+
+            if (!empty($richText['text'])) {
+                $multiElement[] = $this->itemWrapperRichText($richText['text']);
+            }
+
+            if (!empty($richText['embeds'])) {
+                $multiElement[] = $this->embedCode($item['content']);
+            }
+
+            if (!empty($richText['icons'])) {
+                foreach ($richText['icons'] as $itemIcon) {
+                    if ($itemIcon['position'] === 'bottom') {
+                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                    }
+                }
+            }
+
+            if(!empty($richText['button'])) {
+                foreach ($richText['button'] as $itemButton) {
+                    if ($itemButton['position'] === 'bottom') {
+                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
+                    }
+                }
+            }
+
+            $objBlock->item()->item()->item()->addItem($this->wrapperColumn($multiElement, true));
+        }
     }
 
 }

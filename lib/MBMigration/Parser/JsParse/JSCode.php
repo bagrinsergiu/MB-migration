@@ -15,6 +15,14 @@ class JSCode
 
         return self::loadSampleAndReplacePlaceholderInCode('StylesExtractor', $dataCheck);
     }
+    public static function ImageStyles(array $DATA)
+    {
+        $requiredParameters = ['selector'];
+
+        $dataCheck = self::checkParameters($DATA, $requiredParameters);
+
+        return self::loadSampleAndReplacePlaceholderInCode('getImageStyle', $dataCheck);
+    }
 
     public static function RichText(array $DATA)
     {
@@ -24,7 +32,7 @@ class JSCode
 
         $DATA_R['data'] = addslashes(json_encode($DATA_R['data']));
 
-        return self::loadSampleAndReplacePlaceholderInCode('richText', $DATA_R);
+        return self::loadSampleAndReplacePlaceholderInCode('getText', $DATA_R);
     }
 
     public static function ExtractStyleFromMenu(array $DATA)

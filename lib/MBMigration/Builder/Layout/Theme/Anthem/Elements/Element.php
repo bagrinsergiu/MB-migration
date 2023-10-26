@@ -47,7 +47,7 @@ abstract class Element extends LayoutUtils
         }
     }
 
-    protected function backgroundColor(ItemBuilder $objBlock, array $sectionData, &$options)
+    protected function backgroundColor(ItemBuilder $objBlock, array $sectionData = [], &$options)
     {
         $style = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
 
@@ -108,7 +108,11 @@ abstract class Element extends LayoutUtils
         $cache = VariableCache::getInstance();
         $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {
-            $fontFamily[$font['fontFamily']] = $font['uuid'];
+            if($font['name'] === 'primary'){
+                $fontFamily['Default'] = $font['uuid'];
+            } else {
+                $fontFamily[$font['fontFamily']] = $font['uuid'];
+            }
         }
         return $fontFamily;
     }
@@ -236,7 +240,7 @@ abstract class Element extends LayoutUtils
         $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
     }
 
-    protected function generalParameters($objBlock, &$options, $sectionData)
+    protected function generalParameters($objBlock, &$options, $sectionData, $primary = [])
     {
         $options = [
             'position' => $sectionData['settings']['pagePosition'],
@@ -246,6 +250,10 @@ abstract class Element extends LayoutUtils
         ];
 
         $padding = JS::StylesPaddingExtractor($options['sectionID'], $options['currentPageURL']);
+
+        foreach ($primary as $key => $value) {
+            $padding = array_merge($padding, [$key => $value]);
+        }
 
         if(!empty($padding)){
             $objBlock->item(0)->setting('bgColorPalette', '');
@@ -324,12 +332,20 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function wrapperColumn(array $element)
+    protected function wrapperColumn(array $element = [], $multi = false)
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--column'];
         $block = new ItemBuilder($decoded['main']);
-        $block->addItem($element);
+        if(!empty($element)) {
+            if ($multi) {
+                    foreach ($element as $item) {
+                        $block->addItem($item);
+                    }
+            } else {
+                $block->addItem($element);
+            }
+        }
         $result = $block->get();
         return json_decode(json_encode($result), true);
     }
@@ -359,12 +375,23 @@ abstract class Element extends LayoutUtils
         return json_decode(json_encode($result), true);
     }
 
-    protected function wrapperRow(array $element)
+    /**
+     * @throws Exception
+     */
+    protected function wrapperRow(array $element = [], $multi = false)
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--row'];
         $block = new ItemBuilder($decoded['main']);
-        $block->addItem($element);
+        if(!empty($element)) {
+            if ($multi) {
+                foreach ($element as $item) {
+                    $block->addItem($item);
+                }
+            } else {
+                $block->addItem($element);
+            }
+        }
         $result = $block->get();
         return json_decode(json_encode($result), true);
     }
@@ -377,19 +404,28 @@ abstract class Element extends LayoutUtils
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--icon'];
         $objColum = new ItemBuilder($decoded['main']);
-        $objIcon = new ItemBuilder();
 
         foreach ($items as $settings) {
+            $objIcon = new ItemBuilder();
             $objIcon->newItem($decoded['item']);
 
-            $objIcon->setting('name', $this->getIcoNameByUrl($settings['linkExternal']));
+            $objIcon->setting('name', $this->getIcoNameByUrl($settings['linkExternal'], $settings['iconCode']));
             $objIcon->setting('customSize', 26);
 
             foreach ($settings as $key => $value) {
+                if($key ==='iconCode') { continue; }
+
+                if($key === 'bgColorHex'){
+                    $objIcon->setting('padding', 10);
+                    $objIcon->setting('bgColorOpacity', 1);
+                    $objIcon->setting('borderRadiusType', 'custom');
+                    $objIcon->setting('paddingSuffix', '%');
+                    $objIcon->setting('borderRadius', 11);
+                }
                 $objIcon->setting($key, $value);
             }
-
-            $objColum->item()->addItem($objIcon->get());
+            $objIcon = $objIcon->get();
+            $objColum->addItem($objIcon);
         }
         $objColum->setting('horizontalAlign', $aline);
 
@@ -397,8 +433,10 @@ abstract class Element extends LayoutUtils
         return json_decode(json_encode($result), true);
     }
 
-    function findEmbeddedPasteDivs($html): array
+    public function findEmbeddedPasteDivs($html): array
     {
+        $html = $this->styleIframes($html);
+
         $result = [];
 
         $dom = new DOMDocument();
@@ -417,6 +455,24 @@ abstract class Element extends LayoutUtils
         }
 
         return $result;
+    }
+
+    private function styleIframes($html) {
+        $dom = new DOMDocument();
+        $dom->loadHTML($html);
+
+        $iframes = $dom->getElementsByTagName('iframe');
+
+        foreach ($iframes as $iframe) {
+            $width = $iframe->getAttribute('width');
+            $height = $iframe->getAttribute('height');
+
+            if (!empty($width) && !empty($height)) {
+                $iframe->setAttribute('style', "max-width: {$width}px; max-height: {$height}px; width: 100%;");
+            }
+        }
+
+        return $dom->saveHTML();
     }
 
 }

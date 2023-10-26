@@ -304,10 +304,10 @@ class LayoutUtils extends builderUtils
         return $result;
     }
 
-    protected function getIcoNameByUrl($url): string
+    protected function getIcoNameByUrl($url, $iconCode): string
     {
         $hostName = $this->extractDomainName($url);
-        return $this->checkExistIcon($hostName, false);
+        return $this->checkExistIcon($hostName, $iconCode, false);
     }
 
     private function recursiveRemove($string, $toRemove) {
@@ -323,15 +323,20 @@ class LayoutUtils extends builderUtils
         }
     }
 
-    private function checkExistIcon($name, $hostName): string
+    private function checkExistIcon($name, $iconCode, $hostName = true): string
     {
-        $result = 'round-dollar';
+        $result = 'logo-rss';
 
         if($hostName === false){
             $icoName = $this->getIcon($name);
             if(!$icoName){
-                Utils::log('icons were not found: ' . $name, 3, "checkExistIcon");
-                return $result;
+                $icoName = $this->getIcon($iconCode);
+                if(!$icoName){
+                    Utils::log('icons were not found: ' . $name, 3, "checkExistIcon");
+                    return $result;
+                }
+            } else{
+                $icoName = $this->getIcon($iconCode);
             }
             return $icoName;
         }
@@ -443,7 +448,9 @@ class LayoutUtils extends builderUtils
             'twitter'   => 'logo-twitter',
             'vimeo'     => 'logo-vimeo',
             'mail'      => 'email-85',
-            'apple'     => 'apple'
+            'apple'     => 'apple',
+            58624     => 'logo-instagram',
+            58407     => 'logo-facebook',
         ];
         if(array_key_exists($iconName, $icon)){
             return $icon[$iconName];

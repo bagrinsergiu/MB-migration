@@ -18,8 +18,8 @@ class JS
         $properties = ['background-color', 'opacity', 'border-bottom-color'];
         $result = ['background-color' => '#ffffff', 'opacity' => 1];
         $data = [
-            'selector' => '[data-id="' . $sectionID . '"]',
-            'styleProperties' => json_encode($properties)
+            'selector' => '[data-id="'.$sectionID.'"]',
+            'styleProperties' => json_encode($properties),
         ];
 
         if (!empty($styleProperties)) {
@@ -32,12 +32,31 @@ class JS
         $returned = self::Run($sectionID);
         $style = $returned['style'];
         foreach ($properties as $key) {
-            if(array_key_exists($key, $style)) {
+            if (array_key_exists($key, $style)) {
                 $result[$key] = self::convertColor(trim($style[$key], 'px'));
             }
         }
 
         return $result;
+    }
+
+    public static function imageStylesExtractor(int $sectionID, $pageUrl)
+    {
+        Utils::log('Image Styles Extractor', 1, "StylesExtractor");
+        $data = [
+            'selector' => '[data-id="'.$sectionID.'"]',
+        ];
+
+        self::$CODE = JSCode::ImageStyles($data);
+        self::$url = $pageUrl;
+
+        $returned = self::Run($sectionID);
+
+        if (!empty($returned[0]['width'])) {
+            return $returned[0]['width'];
+        }
+
+        return 360;
     }
 
     public static function StylesPaddingExtractor(int $sectionID, $pageUrl, array $styleProperties = []): array
@@ -49,8 +68,8 @@ class JS
         $properties = ['padding-bottom', 'padding-top', 'padding-left', 'padding-right'];
 
         $data = [
-            'selector' => '[data-id="' . $sectionID . '"]',
-            'styleProperties' => json_encode($properties)
+            'selector' => '[data-id="'.$sectionID.'"]',
+            'styleProperties' => json_encode($properties),
         ];
 
         if (!empty($styleProperties)) {
@@ -86,8 +105,8 @@ class JS
         Utils::log('Styles Extractor From Menu', 1, "StylesExtractor");
 
         $data = [
-            'selector' => '[data-id="' . $sectionID . '"]',
-            'families' => json_encode($fontFamilies)
+            'selector' => '[data-id="'.$sectionID.'"]',
+            'families' => json_encode($fontFamilies),
         ];
 
         self::$CODE = JSCode::ExtractStyleFromMenu($data);
@@ -100,53 +119,67 @@ class JS
         }
         if (!empty($result['menu'])) {
             Utils::MESSAGES_POOL('success', $sectionID, 'JS:RUN');
+
             return $result['menu'];
         }
+
         return [];
     }
 
 
     public static function RichText($blockID, $pageUrl, $fontFamilies = [])
     {
+        $DefaultFontFamilies = null;
+        $kitFontFamilies = [];
+
+        foreach ($fontFamilies as $key => $value) {
+            if ($key === 'Default') {
+                $DefaultFontFamilies = $value;
+            } else {
+                $kitFontFamilies[$key] = $value;
+            }
+        }
+
         $data = [
             'data' => [
-                'selector' => '[data-id="' . $blockID . '"]',
-                'attributes' => ["font-size", "font-family", "font-weight", "text-align", "letter-spacing", "text-transform"],
-                'families' => [
-                    "proxima_nova_proxima_nova_regular_sans-serif" => "uid1111",
-                    "helvetica_neue_helveticaneue_helvetica_arial_sans-serif" => "uid2222"
+                'selector' => '[data-id="'.$blockID.'"]',
+                'attributes' => [
+                    "font-size",
+                    "font-family",
+                    "font-weight",
+                    "text-align",
+                    "letter-spacing",
+                    "text-transform",
+                    "line-height",
                 ],
-                'defaultFontFamily' => 'helvetica_neue_helveticaneue_helvetica_arial_sans-serif'
-            ]
+                'families' => $kitFontFamilies,
+                'defaultFontFamily' => $DefaultFontFamilies,
+            ],
         ];
-
-        if (!empty($fontFamilies)) {
-            $data['data']['families'] = $fontFamilies;
-        }
 
         self::$CODE = JSCode::RichText($data);
         self::$url = $pageUrl;
 
         $RichText = self::Run($blockID);
 
-        if(!empty($RichText['warns'])) {
+        if (!empty($RichText['warns'])) {
             Utils::MESSAGES_POOL($RichText['warns'], $blockID, 'JS:RUN [warns]');
         }
 
-        if(!empty($RichText['error'])) {
+        if (!empty($RichText['error'])) {
             Utils::MESSAGES_POOL($RichText['error'], $blockID, 'JS:RUN [error]');
         } else {
             Utils::MESSAGES_POOL('success', $blockID, 'JS:RUN');
         }
 
-        if(!empty($RichText['text']) && (empty($RichText['embeds']) && empty($RichText['icons']) && empty($RichText['buttons']))) {
+        if (!empty($RichText['text']) && (empty($RichText['embeds']) && empty($RichText['icons']) && empty($RichText['buttons']))) {
             return $RichText['text'];
         } else {
             return [
-                'text'      => $RichText['text'],
-                'embeds'    => $RichText['embeds'],
-                'icons'     => $RichText['icons'],
-                'buttons'   => $RichText['buttons']
+                'text' => $RichText['text'],
+                'embeds' => $RichText['embeds'],
+                'icons' => $RichText['icons'],
+                'buttons' => $RichText['buttons'],
             ];
         }
     }
@@ -155,6 +188,7 @@ class JS
     {
         if (empty(self::$CODE)) {
             Utils::MESSAGES_POOL('JS:CODE is empty', $id, 'JS:RUN');
+
             return '';
         }
         try {
@@ -174,7 +208,8 @@ class JS
                         '--disable-gpu-shader-disk-cache',
                         '--media-cache-size=0',
                         '--disk-cache-size=0',
-                    ]]);
+                    ],
+            ]);
 
             $page = $browser->newPage();
 
@@ -189,6 +224,7 @@ class JS
             return json_decode($result, true);
         } catch (\Exception $e) {
             Utils::MESSAGES_POOL($e->getMessage(), $id, 'JS:RUN');
+
             return '';
         }
     }
@@ -204,6 +240,7 @@ class JS
             $r = $matches[1];
             $g = $matches[2];
             $b = $matches[3];
+
             return sprintf("#%02X%02X%02X", $r, $g, $b);
         }
 
@@ -212,8 +249,10 @@ class JS
                 return $color;
             }
             list($r, $g, $b) = $matches[0];
+
             return sprintf("#%02X%02X%02X", $r, $g, $b);
         }
+
         return $color;
     }
 }

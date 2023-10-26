@@ -49,13 +49,13 @@ class Head extends Element
         $objBlock = new ItemBuilder();
         $objBlock->newItem($section['main']);
 
-        $this->setImageLogo($objBlock, $headItem);
-
         $this->creatingMenu($objBlock, $menuList, $section);
 
-        $this->generalParameters($objBlock, $options, $headItem);
+        $this->generalParameters($objBlock, $options, $headItem, ['padding-top' => 10]);
 
         $options['currentPageURL'] = $url;
+
+        $this->setImageLogo($objBlock, $headItem, $options);
 
         $this->setColorBackground($objBlock, $options);
 
@@ -104,12 +104,18 @@ class Head extends Element
         $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting('menuSelected', $menuList['uid']);
     }
 
-    private function setImageLogo(ItemBuilder $objBlock, $headItem): void
+    private function setImageLogo(ItemBuilder $objBlock, $headItem, $options): void
     {
         $imageLogo = [];
 
         foreach ($headItem['items'] as $item) {
             if ($item['category'] = 'photo') {
+                $imagesStyle = JS::imageStylesExtractor($options['sectionID'], $options['currentPageURL']);
+
+                if(!empty($imagesStyle)){
+                    $imageLogo['width'] = $imagesStyle;
+                }
+
                 $imageLogo['imageSrc'] = $item['content'];
                 $imageLogo['imageFileName'] = $item['imageFileName'];
                 $imageLogo['imageWidth'] = $item['settings']['image']['width'];
@@ -122,6 +128,12 @@ class Head extends Element
             $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageHeight', $imageLogo['imageHeight']);
             $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageWidth', $imageLogo['imageWidth']);
         }
+        if(!empty($imageLogo['width']))
+        {
+            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('width', $imageLogo['width']);
+        }
+        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('horizontalAlign', 'center');
+        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileHorizontalAlign', 'center');
         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageSrc', $imageLogo['imageSrc']);
         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageFileName', $imageLogo['imageFileName']);
 
@@ -137,7 +149,7 @@ class Head extends Element
     private function setParseOptions(ItemBuilder $objBlock, $options)
     {
         $result = JS::stylesMenuExtractor($options['sectionID'], $options['currentPageURL'], $options['fontsFamily']);
-
+        $this->cache->set('menuStyles', $result);
         foreach ($result as $key => $value) {
             $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting($key, $value);
         }

@@ -263,7 +263,7 @@ class BrizyAPI extends Utils
             ],
             [
                 'name'=>'uid',
-                'contents' => $this->generateCharID(36)
+                'contents' => self::generateCharID(36)
             ],
             [
                 'name'=>'container',
@@ -294,7 +294,7 @@ class BrizyAPI extends Utils
         $newData['weights'] = $data['weights'];
         $newData['type']    = $data['type'];
         $newData['id']      = $data['uid'];
-        $newData['brizyId'] = $this->generateCharID(36);
+        $newData['brizyId'] = self::generateCharID(36);
 
         $projectData['fonts']['upload']['data'][] = $newData;
         $url = $this->createPrivatUrlAPI('projects') . '/'. $containerID;
@@ -330,16 +330,6 @@ class BrizyAPI extends Utils
 
             $this->request('PATCH', $url, ['form_params' => ['metadata' => json_encode($metadata)]]);
         }
-    }
-
-    protected function generateCharID(int $length = 32): string
-    {
-        $characters = 'abcdefghijklmnopqrstuvwxyz';
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
-        }
-        return $randomString;
     }
 
     private function getExtensionFromFileString($fileString)
@@ -541,12 +531,6 @@ class BrizyAPI extends Utils
         return Config::$urlAPI . Config::$endPointApi[$endPoint];
     }
 
-    public function getNameHash($data, int $length = 32): string
-    {
-        $to_hash = $this->generateUniqueID() . $data;
-        $newHash = hash('sha256', $to_hash);
-        return substr($newHash, 0, $length);
-    }
 
     private function generateUniqueID(): string
     {

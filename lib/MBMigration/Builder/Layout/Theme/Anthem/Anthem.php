@@ -4,6 +4,8 @@ namespace MBMigration\Builder\Layout\Theme\Anthem;
 
 use Exception;
 use MBMigration\Builder\Layout\LayoutUtils;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Items\SubMenu;
+use MBMigration\Builder\Utils\FamilyTreeMenu;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -30,6 +32,8 @@ class Anthem extends LayoutUtils
         $this->layoutName = 'Anthem';
 
         $this->cache = VariableCache::getInstance();
+
+        ThemePreProcess::treeMenu();
 
         Utils::log('Connected!', 4, $this->layoutName . ' Builder');
 
@@ -69,6 +73,12 @@ class Anthem extends LayoutUtils
         $itemsData = [];
         $itemsData['items'][] = json_decode($this->cache->get('menuBlock'),true);
 
+        $parentPages = $this->cache->get('menuList');
+
+        $resultFind = FamilyTreeMenu::findChildrenByChildId($parentPages['list'], $itemsID);
+        if(!empty($resultFind)) {
+            $itemsData['items'][] = AnthemElementsController::getElement('SubMenu', $this->jsonDecode, $resultFind);
+        }
         Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
         $this->cache->update('createdFirstSection',false, 'flags');
         $this->cache->update('Success', '++', 'Status');

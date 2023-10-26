@@ -63,30 +63,6 @@ class ListLayout extends Element
 
         $this->backgroundImages($objBlock, $sectionData, $options);
 
-//        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-//            Utils::log('Set background', 1, "] [list_layout");
-//
-//            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
-//                $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
-//                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-//                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-//            }
-//            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
-//                if ($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode')) {
-//                    if ($sectionData['settings']['sections']['background']['fadeMode'] !== 'none'){
-//                        $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-//                        if ($opacity <= 0.3) {
-//                            $options = array_merge($options, ['textColor' => '#000000']);
-//                        }
-//                        $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-//                    } else {
-//                        $objBlock->item(0)->setting('bgColorOpacity', 1);
-//                    }
-//                }
-//                $objBlock->item(0)->setting('bgColorType', 'none');
-//            }
-//        }
-
         $blockHead = false;
         foreach ($sectionData['head'] as $headItem) {
             if ($headItem['category'] !== 'text') {
@@ -132,7 +108,7 @@ class ListLayout extends Element
                         $objImage->item(0)->item(0)->setting('linkExternal', $item['link']);
                     }
 
-                    if (empty($options['photoPosition'])) {
+                    if (empty($options['photoPosition']) || $options['photoPosition'] === 'left') {
                         $objRow->addItem($objImage->get());
                     }
                 }
@@ -142,9 +118,57 @@ class ListLayout extends Element
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'title') {
                         $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        //$objItem->item(0)->item(0)->setText($richText);
-                        $objItem->addItem($this->itemWrapperRichText($richText));
+//                        $objItem->item(0)->item(0)->setText($richText);
+//                        $objItem->addItem($this->itemWrapperRichText($richText));
+
+                        $WrapperText = [];
+                        $TopWrapperIcon = [];
+                        $BottomWrapperIcon = [];
+                        $TopWrapperButton = [];
+                        $BottomWrapperButton = [];
+
+                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+                        if(!is_array($richText)) {
+                            $objItem->addItem($this->itemWrapperRichText($richText));
+                        } else {
+                            if(!empty($richText['text'])) {
+                                $WrapperText[] = $this->itemWrapperRichText($richText['text']);
+                            }
+                            if(!empty($richText['embeds'])) {
+                                $WrapperText[] = $this->embedCode($item['content']);
+                            }
+                            if(!empty($richText['icons'])) {
+                                foreach ($richText['icons'] as $itemIcon) {
+                                    if ($itemIcon['position'] === 'top') {
+                                        $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                                    }
+                                    if ($itemIcon['position'] === 'bottom') {
+                                        $BottomWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!empty($TopWrapperIcon)) {
+                            foreach ($TopWrapperIcon as $topItem) {
+                                $objItem->addItem($this->wrapperColumn($topItem));
+                            }
+                        }
+
+                        if (!empty($WrapperText)) {
+                            foreach ($WrapperText as $text) {
+                                $objItem->addItem($this->wrapperColumn($text));
+                            }
+                        }
+
+                        if (!empty($BottomWrapperIcon)) {
+                            foreach ($BottomWrapperIcon as $bottomItem) {
+                                $objItem->addItem($this->wrapperColumn($bottomItem));
+                            }
+                        }
+
                         $objItem->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+
                     }
                 }
             }
@@ -152,14 +176,58 @@ class ListLayout extends Element
             foreach ($section['item'] as $item) {
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'body') {
+
+                        $WrapperText = [];
+                        $TopWrapperIcon = [];
+                        $BottomWrapperIcon = [];
+                        $TopWrapperButton = [];
+                        $BottomWrapperButton = [];
+
                         $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->addItem($this->itemWrapperRichText($richText));
+                        if(!is_array($richText)) {
+                            $objItem->addItem($this->itemWrapperRichText($richText));
+                        } else {
+                            if(!empty($richText['text'])) {
+                                $WrapperText[] = $this->itemWrapperRichText($richText['text']);
+                            }
+                            if(!empty($richText['embeds'])) {
+                                $WrapperText[] = $this->embedCode($item['content']);
+                            }
+                            if(!empty($richText['icons'])) {
+                                foreach ($richText['icons'] as $itemIcon) {
+                                    if ($itemIcon['position'] === 'top') {
+                                        $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                                    }
+                                    if ($itemIcon['position'] === 'bottom') {
+                                        $BottomWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!empty($TopWrapperIcon)) {
+                            foreach ($TopWrapperIcon as $topItem) {
+                                $objItem->addItem($this->wrapperColumn($topItem));
+                            }
+                        }
+
+                        if (!empty($WrapperText)) {
+                            foreach ($WrapperText as $topItem) {
+                                $objItem->addItem($topItem);
+                            }
+                        }
+
+                        if (!empty($BottomWrapperIcon)) {
+                            foreach ($BottomWrapperIcon as $bottomItem) {
+                                $objItem->addItem($this->wrapperColumn($bottomItem));
+                            }
+                        }
                     }
                 }
             }
 
             $objRow->addItem($objItem->get());
-            if (!empty($options['photoPosition'])) {
+            if (!empty($options['photoPosition']) && $options['photoPosition'] === 'right') {
                 $objRow->addItem($objImage->get());
             }
             $objBlock->item(0)->addItem($objRow->get());
