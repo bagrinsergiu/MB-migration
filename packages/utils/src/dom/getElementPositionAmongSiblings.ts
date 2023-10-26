@@ -1,7 +1,6 @@
 import { findNearestBlockParent } from "./findNearestBlockParent";
 import { MValue } from "@/types";
 
-
 export function getElementPositionAmongSiblings(
   element: Element,
   root: Element

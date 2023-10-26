@@ -13,7 +13,8 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "utils": "*"
+    "utils": "*",
+    "elements": "*"
   },
   "devDependencies": {
     "config": "*",

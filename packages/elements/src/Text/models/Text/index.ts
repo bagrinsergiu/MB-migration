@@ -1,5 +1,5 @@
-import { getLetterSpacing } from "../../utils/getLetterSpacing";
-import { getLineHeight } from "../../utils/getLineHeight";
+import { getLetterSpacing } from "@/Text/utils/styles/getLetterSpacing";
+import { getLineHeight } from "@/Text/utils/styles/getLineHeight";
 import { Literal } from "utils";
 import * as Num from "utils/src/reader/number";
 
@@ -43,8 +43,9 @@ export const stylesToClasses = (
         classes.push(`brz-ls-lg-${letterSpacing}`);
         break;
       case "line-height":
-        const fontSize = styles["font-size"].replace("px", "");
-        const lineHeight = getLineHeight(value, fontSize);
+        const fs = `${styles["font-size"]}`;
+        const fontSize = fs.replace("px", "");
+        const lineHeight = getLineHeight(`${value}`, fontSize);
         classes.push(`brz-lh-lg-${lineHeight}`);
         break;
 

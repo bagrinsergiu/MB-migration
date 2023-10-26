@@ -9,7 +9,10 @@
     "tsc": "tsc --noEmit"
   },
   "devDependencies": {
-    "fp-utilities": "^1.1.4",
     "config": "*"
+  },
+  "dependencies": {
+    "nanoid": "^5.0.2",
+    "fp-utilities": "^1.1.4"
   }
 }
