@@ -30,5 +30,6 @@ export const getData = (): Data => {
 };
 
 const data = getData();
+const output = styleExtractor(data);
 
-styleExtractor(data);
+export default output;

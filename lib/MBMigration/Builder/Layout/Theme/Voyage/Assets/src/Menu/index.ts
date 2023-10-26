@@ -1,5 +1,5 @@
-import { Entry, Output } from "elements/src/types/type";
 import { getModel } from "./model/getModel";
+import { Entry, Output } from "elements/src/types/type";
 import { createData, getData } from "elements/src/utils/getData";
 import { rgbToHex } from "utils/src/color/rgbaToHex";
 import { prefixed } from "utils/src/models/prefixed";
@@ -128,8 +128,7 @@ const run = (data: Entry): Output => {
     });
   }
 
-  const subNav =
-    header.querySelector(".sub-navigation") ?? undefined;
+  const subNav = header.querySelector(".sub-navigation") ?? undefined;
 
   const navData = {
     nav: nav,
@@ -144,4 +143,6 @@ const run = (data: Entry): Output => {
 
 const data = getData();
 
-run(data);
+const output = run(data);
+
+export default output;
