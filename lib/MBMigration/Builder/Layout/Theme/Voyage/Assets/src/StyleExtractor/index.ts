@@ -1,7 +1,7 @@
 import { styleExtractor, Data } from "elements/src/StyleExtractor";
 import { Entry } from "elements/src/types/type";
 
-export const getData = (): Data => {
+const getData = (): Data => {
   try {
     return {
       selector: "{{selector}}",

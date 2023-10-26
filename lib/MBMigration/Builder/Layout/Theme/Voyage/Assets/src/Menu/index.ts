@@ -6,6 +6,7 @@ import { prefixed } from "utils/src/models/prefixed";
 
 interface NavData {
   nav: Element;
+  header: Element;
   subNav?: Element;
   selector: string;
   families: Record<string, string>;
@@ -52,7 +53,7 @@ const getMenuV = (data: NavData) => {
 };
 
 const getSubMenuV = (data: Required<NavData>) => {
-  const { subNav: ul, selector } = data;
+  const { subNav: ul, header, selector } = data;
 
   let v = {};
 
@@ -78,7 +79,7 @@ const getSubMenuV = (data: Required<NavData>) => {
     defaultFamily: data.defaultFamily
   });
   const submenuTypography = prefixed(typography, "subMenu");
-  const baseStyle = window.getComputedStyle(ul);
+  const baseStyle = window.getComputedStyle(header);
   const bgColor = rgbToHex(baseStyle.backgroundColor) ?? "#ffffff";
 
   return {
@@ -131,6 +132,7 @@ const run = (data: Entry): Output => {
   const subNav = header.querySelector(".sub-navigation") ?? undefined;
 
   const navData = {
+    header,
     nav: nav,
     subNav: subNav,
     selector: data.selector,
@@ -142,7 +144,6 @@ const run = (data: Entry): Output => {
 };
 
 const data = getData();
-
 const output = run(data);
 
 export default output;
