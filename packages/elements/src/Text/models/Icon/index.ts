@@ -1,7 +1,7 @@
 import { rgbToHex } from "utils/src/color/rgbaToHex";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
-export function getIconModel(style: Record<string, string>, node: HTMLElement) {
+export function getIconModel(style: Record<string, string>, node: Element) {
   const parentElement = node.parentElement;
   const isLink = parentElement?.tagName === "A" || node.tagName === "A";
   const parentBgColor = parentElement

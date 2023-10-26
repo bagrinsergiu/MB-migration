@@ -4,12 +4,12 @@
   "version": "1.0.0",
   "workspaces": [
     "packages/*",
-    "lib/MBMigration/Builder/Layout/Theme/Voyage/assets",
-    "lib/MBMigration/Builder/Layout/Theme/Anthem/assets"
+    "lib/MBMigration/Builder/Layout/Theme/Voyage/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Anthem/Assets"
   ],
   "scripts": {
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
     "tsc": "turbo run tsc",
     "prettier-check": "turbo run prettier-check",
     "check-all": "npm run prettier-check && npm run lint && npm run tsc"
