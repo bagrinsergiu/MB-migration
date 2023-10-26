@@ -7,6 +7,7 @@ import { removeAllIcons } from "@/Text/utils/icons";
 import { copyParentColorToChild } from "@/Text/utils/styles/copyParentColorToChild";
 import { getTypographyStyles } from "@/Text/utils/styles/getTypographyStyles";
 import { ElementModel, Entry, Output } from "@/types/type";
+import { createData } from "@/utils/getData";
 import { Literal } from "utils";
 import { uuid } from "utils/src/uuid";
 
@@ -85,7 +86,5 @@ export const getText = (data: Entry): Output => {
     }
   });
 
-  return JSON.stringify({
-    data: elements
-  });
+  return createData({ data: elements });
 };

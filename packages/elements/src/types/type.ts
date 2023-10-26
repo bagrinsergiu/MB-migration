@@ -1,4 +1,3 @@
-import { Data, styleExtractor } from "elements/src/StyleExtractor";
 import { Literal } from "utils";
 
 export interface Entry {

@@ -1,3 +1,4 @@
+import { textAlign } from "@/Text/utils/common";
 import { getLetterSpacing } from "@/Text/utils/styles/getLetterSpacing";
 import { getLineHeight } from "@/Text/utils/styles/getLineHeight";
 import { Literal } from "utils";
@@ -24,9 +25,6 @@ export const stylesToClasses = (
           .toLocaleLowerCase();
 
         if (!families[fontFamily]) {
-          warns[fontFamily] = {
-            message: `Font family not found ${fontFamily}`
-          };
           classes.push(`brz-ff-${defaultFamily}`, "brz-ft-upload");
           break;
         }

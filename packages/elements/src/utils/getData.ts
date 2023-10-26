@@ -2,11 +2,20 @@ import { Entry, Output, OutputData } from "@/types/type";
 
 export const getData = (): Entry => {
   try {
-    return {
-      selector: "{{selector}}",
-      families: JSON.parse("{{families}}"),
-      defaultFamily: "{{defaultFamily}}"
-    };
+    return window.isDev
+      ? {
+          selector: `[data-id='${16630131}']`,
+          families: {
+            "proxima_nova_proxima_nova_regular_sans-serif": "uid1111",
+            "helvetica_neue_helveticaneue_helvetica_arial_sans-serif": "uid2222"
+          },
+          defaultFamily: "lato"
+        }
+      : {
+          selector: "{{selector}}",
+          families: JSON.parse("{{families}}"),
+          defaultFamily: "{{defaultFamily}}"
+        };
   } catch (e) {
     const familyMock = {
       lato: "uid_for_lato",
