@@ -32,7 +32,7 @@ class JSCode
 
         $DATA_R['data'] = addslashes(json_encode($DATA_R['data']));
 
-        return self::loadSampleAndReplacePlaceholderInCode('richText', $DATA_R);
+        return self::loadSampleAndReplacePlaceholderInCode('getText', $DATA_R);
     }
 
     public static function ExtractStyleFromMenu(array $DATA)

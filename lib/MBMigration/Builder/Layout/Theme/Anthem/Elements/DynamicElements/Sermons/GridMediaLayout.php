@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermo
 
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElement;
+use MBMigration\Parser\JS;
 
 class GridMediaLayout extends DynamicElement
 {
@@ -22,7 +23,7 @@ class GridMediaLayout extends DynamicElement
      */
     private function GridMediaLayout(array $sectionData)
     {
-
+        $options = [];
         $slug = 'sermon-grid';
         $title = 'Sermon Grid';
         $elementName = 'GridMediaLayout';
@@ -36,33 +37,22 @@ class GridMediaLayout extends DynamicElement
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/color/bg')) {
-            $blockBg = $sectionData['settings']['sections']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorPalette','');
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->backgroundColor($objBlock, $sectionData, $options);
 
         $blockHead = false;
         foreach ($sectionData['head'] as $headItem)
         {
             if($headItem['category'] !== 'text') { continue; }
 
-            $show_header = true;
-            $show_body = true;
-
-            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                $show_header = $sectionData['settings']['sections']['list']['show_header'];
-            }
-            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                $show_body = $sectionData['settings']['sections']['list']['show_body'];
-            }
-
-            if ($headItem['item_type'] === 'title' && $show_header) {
+            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
-                $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])), 0);
+                $this->textCreation($headItem['id'], $item['content'], $options, $objBlock);
+                $objBlock->item()->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
             }
 
-            if ($headItem['item_type'] === 'body' && $show_body) {
+            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
                 $blockHead = true;
                 $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])));
             }
@@ -85,6 +75,62 @@ class GridMediaLayout extends DynamicElement
 
         $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName);
         return json_encode($block);
+    }
+
+    private function textCreation($itemID, $content, $options, $objBlock)
+    {
+        $multiElement = [];
+
+        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
+
+        if(!is_array($richText)) {
+            $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+        } else {
+            if(!empty($richText['icons'])) {
+                foreach ($richText['icons'] as $itemIcon) {
+                    if ($itemIcon['position'] === 'top') {
+                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                    }
+                }
+            }
+
+            if(!empty($richText['text'])) {
+                foreach ($richText['button'] as $itemButton) {
+                    if ($itemButton['position'] === 'top') {
+                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
+                    }
+                }
+            }
+
+            if(!empty($richText['text'])) {
+                $multiElement[] = $this->itemWrapperRichText($richText['text']);
+            }
+
+            if(!empty($richText['embeds']['persist'])) {
+                $result = $this->findEmbeddedPasteDivs($content);
+                foreach ($result as $item) {
+                    $multiElement[] = $this->embedCode($item);
+                }
+            }
+
+            if(!empty($richText['button'])) {
+                foreach ($richText['button'] as $itemButton) {
+                    if ($itemButton['position'] === 'bottom') {
+                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
+                    }
+                }
+            }
+
+            if(!empty($richText['icons'])) {
+                foreach ($richText['icons'] as $itemIcon) {
+                    if ($itemIcon['position'] === 'bottom') {
+                        $multiElement[] = $this->wrapperColumn($multiElement, true);
+                    }
+                }
+            }
+
+            $objBlock->item(0)->addItem($this->wrapperColumn($multiElement, true));
+        }
     }
 
 }

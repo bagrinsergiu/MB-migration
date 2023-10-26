@@ -47,7 +47,7 @@ abstract class Element extends LayoutUtils
         }
     }
 
-    protected function backgroundColor(ItemBuilder $objBlock, array $sectionData, &$options)
+    protected function backgroundColor(ItemBuilder $objBlock, array $sectionData = [], &$options)
     {
         $style = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
 
@@ -417,6 +417,7 @@ abstract class Element extends LayoutUtils
 
                 if($key === 'bgColorHex'){
                     $objIcon->setting('padding', 10);
+                    $objIcon->setting('bgColorOpacity', 1);
                     $objIcon->setting('borderRadiusType', 'custom');
                     $objIcon->setting('paddingSuffix', '%');
                     $objIcon->setting('borderRadius', 11);
@@ -466,7 +467,9 @@ abstract class Element extends LayoutUtils
             $width = $iframe->getAttribute('width');
             $height = $iframe->getAttribute('height');
 
-            $iframe->setAttribute('style', "max-width: {$width}px; max-height: {$height}px; width: 100%;");
+            if (!empty($width) && !empty($height)) {
+                $iframe->setAttribute('style', "max-width: {$width}px; max-height: {$height}px; width: 100%;");
+            }
         }
 
         return $dom->saveHTML();

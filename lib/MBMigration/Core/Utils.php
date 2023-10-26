@@ -195,4 +195,22 @@ class Utils
             }
         }
     }
+
+    public static function getNameHash($data = ''): string
+    {
+        $to_hash = self::generateCharID(32) . $data;
+        $newHash = hash('sha256', $to_hash);
+        return substr($newHash, 0, 32);
+    }
+
+    public static function generateCharID($length): string
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyz';
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $randomString;
+    }
+
 }

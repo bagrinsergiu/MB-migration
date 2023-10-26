@@ -149,7 +149,7 @@ class Head extends Element
     private function setParseOptions(ItemBuilder $objBlock, $options)
     {
         $result = JS::stylesMenuExtractor($options['sectionID'], $options['currentPageURL'], $options['fontsFamily']);
-
+        $this->cache->set('menuStyles', $result);
         foreach ($result as $key => $value) {
             $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting($key, $value);
         }

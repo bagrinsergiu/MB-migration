@@ -18,6 +18,7 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullText;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\GridLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Head;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Items\SubMenu;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftMediaCircle;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\ListLayout;
@@ -45,6 +46,11 @@ class AnthemElementsController
         }
 
         $element = self::switchElements($elementName, $jsonKitElements, $elementData);
+        if ($element) {
+            return $element;
+        }
+
+        $element = self::switchItems($elementName, $jsonKitElements, $elementData);
         if ($element) {
             return $element;
         }
@@ -204,6 +210,23 @@ class AnthemElementsController
             case "event_gallery_layout":
                 $element = new EventGalleryLayout();
 
+                return $element->getElement($elementData);
+            default:
+                return false;
+        }
+    }
+
+    private static function switchItems($elementName, $jsonKitElements, array $elementData)
+    {
+        switch ($elementName) {
+            case "SubMenu":
+                $element = new SubMenu($jsonKitElements);
+                return $element->getElement($elementData);
+            case "item-image":
+                $element = new ItemImage($jsonKitElements);
+                return $element->getElement($elementData);
+            case "item-empty":
+                $element = new ItemEmpty($jsonKitElements);
                 return $element->getElement($elementData);
             default:
                 return false;

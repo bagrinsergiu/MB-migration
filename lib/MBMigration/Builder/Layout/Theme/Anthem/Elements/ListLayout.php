@@ -108,7 +108,7 @@ class ListLayout extends Element
                         $objImage->item(0)->item(0)->setting('linkExternal', $item['link']);
                     }
 
-                    if (empty($options['photoPosition'])) {
+                    if (empty($options['photoPosition']) || $options['photoPosition'] === 'left') {
                         $objRow->addItem($objImage->get());
                     }
                 }
@@ -227,7 +227,7 @@ class ListLayout extends Element
             }
 
             $objRow->addItem($objItem->get());
-            if (!empty($options['photoPosition'])) {
+            if (!empty($options['photoPosition']) && $options['photoPosition'] === 'right') {
                 $objRow->addItem($objImage->get());
             }
             $objBlock->item(0)->addItem($objRow->get());
