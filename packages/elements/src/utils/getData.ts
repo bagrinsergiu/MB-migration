@@ -37,5 +37,5 @@ export const getData = (): Entry => {
 };
 
 export const createData = (output: OutputData): Output => {
-  return JSON.stringify(output);
+  return output;
 };

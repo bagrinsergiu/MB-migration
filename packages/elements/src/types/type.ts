@@ -6,12 +6,15 @@ export interface Entry {
   defaultFamily: string;
 }
 
-export type Output = string;
-
 export interface OutputData {
   data: unknown;
   warns?: Record<string, Record<string, string>>;
 }
+
+export type Output = {
+  data: unknown;
+  warns?: Record<string, Record<string, string>>;
+};
 
 export interface ElementModel {
   type: string;
