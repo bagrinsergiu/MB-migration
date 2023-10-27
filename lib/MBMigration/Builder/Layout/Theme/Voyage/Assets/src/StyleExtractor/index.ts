@@ -4,10 +4,10 @@ import { Entry } from "elements/src/types/type";
 const getData = (): Data => {
   try {
     return {
-      selector: "{{selector}}",
-      families: JSON.parse("{{families}}"),
-      styleProperties: JSON.parse("{{styleProperties}}"),
-      defaultFamily: "{{defaultFamily}}"
+      selector: SELECTOR,
+      families: FAMILIES,
+      styleProperties: STYLE_PROPERTIES,
+      defaultFamily: DEFAULT_FAMILY
     };
   } catch (e) {
     const familyMock = {

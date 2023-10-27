@@ -143,6 +143,8 @@ const run = (data: Entry): Output => {
   return createData({ data: getNavStyles(navData), warns });
 };
 
+// For development
+// window.isDev = true;
 const data = getData();
 const output = run(data);
 

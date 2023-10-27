@@ -12,9 +12,9 @@ export const getData = (): Entry => {
           defaultFamily: "lato"
         }
       : {
-          selector: "{{selector}}",
-          families: JSON.parse("{{families}}"),
-          defaultFamily: "{{defaultFamily}}"
+          selector: SELECTOR,
+          families: FAMILIES,
+          defaultFamily: DEFAULT_FAMILY
         };
   } catch (e) {
     const familyMock = {
