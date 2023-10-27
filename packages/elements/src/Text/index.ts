@@ -43,17 +43,17 @@ export const getText = (data: Entry): Output => {
   let node = document.querySelector(data.selector);
 
   if (!node) {
-    return JSON.stringify({
+    return {
       error: `Element with selector ${data.selector} not found`
-    });
+    };
   }
 
   node = node.children[0];
 
   if (!node) {
-    return JSON.stringify({
+    return {
       error: `Element with selector ${data.selector} has no wrapper`
-    });
+    };
   }
 
   const elements: Array<ElementModel> = [];

@@ -13,9 +13,9 @@ export const styleExtractor = (data: Data): Output => {
   const element = document.querySelector(selector);
 
   if (!element) {
-    return JSON.stringify({
+    return {
       error: `Element with selector ${selector} not found`
-    });
+    };
   }
 
   const computedStyles = getNodeStyle(element);

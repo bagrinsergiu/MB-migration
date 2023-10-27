@@ -1,7 +1,7 @@
 import { getModel } from "./model/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData, getData } from "elements/src/utils/getData";
-import { rgbToHex } from "utils/src/color/rgbaToHex";
+import { parseColorString } from "utils/src/color/parseColorString";
 import { prefixed } from "utils/src/models/prefixed";
 
 interface NavData {
@@ -80,7 +80,7 @@ const getSubMenuV = (data: Required<NavData>) => {
   });
   const submenuTypography = prefixed(typography, "subMenu");
   const baseStyle = window.getComputedStyle(header);
-  const bgColor = rgbToHex(baseStyle.backgroundColor) ?? "#ffffff";
+  const bgColor = parseColorString(baseStyle.backgroundColor) ?? { hex: "#ffffff", opacity: 1 };
 
   return {
     ...submenuTypography,
@@ -105,28 +105,25 @@ const run = (data: Entry): Output => {
   const node = document.querySelector(data.selector);
 
   if (!node) {
-    return JSON.stringify({
+    return {
       error: `Element with selector ${data.selector} not found`,
-      warns: warns
-    });
+    };
   }
 
   const header = node;
 
   if (!header) {
-    return JSON.stringify({
+    return {
       error: `Element with selector ${data.selector} has no header`,
-      warns
-    });
+    }
   }
 
   const nav = header.querySelector("#main-navigation");
 
   if (!nav) {
-    return JSON.stringify({
+    return {
       error: `Element with selector ${data.selector} has no nav`,
-      warns
-    });
+    };
   }
 
   const subNav = header.querySelector(".sub-navigation") ?? undefined;

@@ -1,4 +1,4 @@
-import { rgbToHex } from "utils/src/color/rgbaToHex";
+import { parseColorString } from "utils/src/color/parseColorString";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { toCamelCase } from "utils/src/text/toCamelCase";
 
@@ -66,8 +66,8 @@ export const getModel = (data: Model) => {
         break;
       }
       case "colorHex": {
-        const toHex = rgbToHex(styles["color"]);
-        dic[toCamelCase(key)] = toHex ?? "#000000";
+        const toHex = parseColorString(styles["color"]);
+        dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
         break;
       }
       case "colorOpacity": {

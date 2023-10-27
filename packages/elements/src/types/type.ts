@@ -11,10 +11,16 @@ export interface OutputData {
   warns?: Record<string, Record<string, string>>;
 }
 
-export type Output = {
+interface Data {
   data: unknown;
   warns?: Record<string, Record<string, string>>;
-};
+}
+
+interface Error {
+  error: string;
+}
+
+export type Output = Data | Error;
 
 export interface ElementModel {
   type: string;
