@@ -62,12 +62,12 @@ class GridLayout extends Element
             if ($head['category'] == 'text') {
                 if ($head['item_type'] === 'title' && $this->showHeader($sectionData)) {
 
-                    $richText = JS::RichText($head['id'], $options['currentPageURL']);
+                    $richText = JS::RichText($head['id'], $options['currentPageURL'], $options['fontsFamily']);
                     $objHead->item()->addItem($this->itemWrapperRichText($richText));
                 }
 
                 if ($head['item_type'] === 'body' && $this->showBody($sectionData)) {
-                    $richText = JS::RichText($head['id'], $options['currentPageURL']);
+                    $richText = JS::RichText($head['id'], $options['currentPageURL'], $options['fontsFamily']);
                     $objHead->item()->addItem($this->itemWrapperRichText($richText));
                 }
             }

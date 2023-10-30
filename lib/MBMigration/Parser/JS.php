@@ -11,16 +11,23 @@ class JS
     private static $CODE;
     private static $url;
 
-    public static function StylesColorExtractor(int $sectionID, $pageUrl, array $styleProperties = [])
+    public static function StylesColorExtractor($sectionID, $pageUrl, array $styleProperties = [])
     {
-
         Utils::log('Styles Extractor', 1, "StylesExtractor");
         $properties = ['background-color', 'opacity', 'border-bottom-color'];
         $result = ['background-color' => '#ffffff', 'opacity' => 1];
+
+        if(is_array($sectionID)){
+            $selector = '[data-id="'.$sectionID[0].'"] .' . $sectionID[1];
+        } else {
+            $selector = '[data-id="'.$sectionID.'"]';
+        }
         $data = [
-            'selector' => '[data-id="'.$sectionID.'"]',
+            'selector' => $selector,
             'styleProperties' => json_encode($properties),
         ];
+
+
 
         if (!empty($styleProperties)) {
             $data['styleProperties'] = json_encode($styleProperties);
@@ -30,6 +37,11 @@ class JS
         self::$url = $pageUrl;
 
         $returned = self::Run($sectionID);
+
+        if(!empty($returned['error'])){
+            return false;
+        }
+
         $style = $returned['style'];
         foreach ($properties as $key) {
             if (array_key_exists($key, $style)) {

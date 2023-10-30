@@ -512,7 +512,9 @@ class MigrationPlatform
                     $pages['collection'] = $newPage;
                 }
             } else {
-                $pages['collection'] = $pages['child'][0]['collection'];
+                if (!empty($pages['child'])) {
+                    $pages['collection'] = $pages['child'][0]['collection'];
+                }
             }
             if (!empty($pages['child'])) {
                 $this->createBlankPages($pages['child'], false);

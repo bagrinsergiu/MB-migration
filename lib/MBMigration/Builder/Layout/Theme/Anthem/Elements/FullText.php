@@ -118,8 +118,8 @@ class FullText extends Element
                 }
             }
 
-            if(!empty($richText['text'])) {
-                foreach ($richText['button'] as $itemButton) {
+            if(!empty($richText['buttons'])) {
+                foreach ($richText['buttons'] as $itemButton) {
                     if ($itemButton['position'] === 'top') {
                         $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
                     }
@@ -137,8 +137,8 @@ class FullText extends Element
                 }
             }
 
-            if(!empty($richText['button'])) {
-                foreach ($richText['button'] as $itemButton) {
+            if(!empty($richText['buttons'])) {
+                foreach ($richText['buttons'] as $itemButton) {
                     if ($itemButton['position'] === 'bottom') {
                         $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
                     }
@@ -149,6 +149,14 @@ class FullText extends Element
                 foreach ($richText['icons'] as $itemIcon) {
                     if ($itemIcon['position'] === 'bottom') {
                         $multiElement[] = $this->wrapperColumn($multiElement, true);
+                    }
+                }
+            }
+
+            if(!empty($richText['buttons'])) {
+                foreach ($richText['buttons'] as $itemButton) {
+                    if ($itemButton['position'] === 'bottom') {
+                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
                     }
                 }
             }

@@ -106,22 +106,91 @@ class TwoHorizontalText extends Element
     /**
      * @throws \Exception
      */
+//    private function textCreation($itemID, $content, $options, $objBlock, $setId = 0)
+//    {
+//        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
+//        if(!is_array($richText)) {
+//            $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
+//        } else {
+//            if(!empty($richText['text'])) {
+//                $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
+//            }
+//
+//            if(!empty($richText['embeds']['persist'])) {
+//                $result = $this->findEmbeddedPasteDivs($content);
+//                foreach ($result as $item) {
+//                    $objBlock->item(0)->item(0)->item($setId)->addItem($this->embedCode($item));
+//                }
+//            }
+//        }
+//    }
+
+    /**
+     * @throws \Exception
+     */
     private function textCreation($itemID, $content, $options, $objBlock, $setId = 0)
     {
+        $multiElement = [];
+
         $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
+
         if(!is_array($richText)) {
             $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
         } else {
+            if(!empty($richText['icons'])) {
+                foreach ($richText['icons'] as $itemIcon) {
+                    if ($itemIcon['position'] === 'top') {
+                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+                    }
+                }
+            }
+
+            if(!empty($richText['buttons'])) {
+                foreach ($richText['buttons'] as $itemButton) {
+                    if ($itemButton['position'] === 'top') {
+                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
+                    }
+                }
+            }
+
             if(!empty($richText['text'])) {
-                $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
+                $multiElement[] = $this->itemWrapperRichText($richText['text']);
             }
 
             if(!empty($richText['embeds']['persist'])) {
                 $result = $this->findEmbeddedPasteDivs($content);
                 foreach ($result as $item) {
-                    $objBlock->item(0)->item(0)->item($setId)->addItem($this->embedCode($item));
+                    $multiElement[] = $this->embedCode($item);
                 }
             }
+
+            if(!empty($richText['buttons'])) {
+                foreach ($richText['buttons'] as $itemButton) {
+                    if ($itemButton['position'] === 'middle') {
+                        foreach ($itemButton['items'] as $item) {
+                            $multiElement[] = $this->button($item, $itemButton['align']);
+                        }
+                    }
+                }
+            }
+
+            if(!empty($richText['icons'])) {
+                foreach ($richText['icons'] as $itemIcon) {
+                    if ($itemIcon['position'] === 'bottom') {
+                        $multiElement[] = $this->wrapperColumn($multiElement, true);
+                    }
+                }
+            }
+
+            if(!empty($richText['buttons'])) {
+                foreach ($richText['button'] as $itemButton) {
+                    if ($itemButton['position'] === 'bottom') {
+                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
+                    }
+                }
+            }
+
+            $objBlock->item(0)->item(0)->item($setId)->addItem($this->wrapperColumn($multiElement, true));
         }
     }
 

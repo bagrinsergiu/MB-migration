@@ -57,8 +57,8 @@ abstract class Element extends LayoutUtils
             $options['borderColorHex'] = $style['border-bottom-color'];
         }
 
-        $objBlock->item(0)->setting('bgColorOpacity', $style['opacity']);
-        $objBlock->item(0)->setting('bgColorType', 'none');
+        $objBlock->item(0)->setting('bgColorOpacity', $this->convertToNumeric($style['opacity']));
+        $objBlock->item(0)->setting('bgColorType', 'solid');
     }
 
 /**
@@ -473,6 +473,18 @@ abstract class Element extends LayoutUtils
         }
 
         return $dom->saveHTML();
+    }
+
+    private function convertToNumeric($input) {
+        if (is_numeric($input)) {
+            if (strpos($input, '.') !== false) {
+                return (float) $input;
+            } else {
+                return (int) $input;
+            }
+        } else {
+            return $input;
+        }
     }
 
 }

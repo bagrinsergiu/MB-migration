@@ -307,7 +307,8 @@ class LayoutUtils extends builderUtils
     protected function getIcoNameByUrl($url, $iconCode): string
     {
         $hostName = $this->extractDomainName($url);
-        return $this->checkExistIcon($hostName, $iconCode, false);
+        $result = $this->checkExistIcon($hostName, $iconCode, false);
+        return $result;
     }
 
     private function recursiveRemove($string, $toRemove) {
@@ -449,6 +450,7 @@ class LayoutUtils extends builderUtils
             'vimeo'     => 'logo-vimeo',
             'mail'      => 'email-85',
             'apple'     => 'apple',
+            57380      => 'email-85',
             58624     => 'logo-instagram',
             58407     => 'logo-facebook',
         ];
