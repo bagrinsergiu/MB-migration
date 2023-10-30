@@ -36,62 +36,54 @@ export class Stack {
   }
 }
 
-const extractElements = [iconSelector, buttonSelector, embedSelector];
-
 interface Container {
   container: Element;
   destroy: () => void;
 }
 
 export const getContainerStackWithNodes = (node: Element): Container => {
-  const artifacts = node.querySelectorAll(extractElements.join(","));
   const container = document.createElement("div");
   const stack = new Stack();
+  let appendNewText = false;
 
-  if (artifacts.length > 0) {
-    let appendNewText = false;
+  node.childNodes.forEach((node) => {
+    const _node = node.cloneNode(true);
+    const containerOfNode = document.createElement("div");
+    containerOfNode.append(_node);
 
-    node.childNodes.forEach((node) => {
-      const _node = node.cloneNode(true);
-      const containerOfNode = document.createElement("div");
-      containerOfNode.append(_node);
-
-      if (_node instanceof HTMLElement) {
-        if (containerOfNode.querySelector(iconSelector)) {
-          appendNewText = true;
-          stack.append(_node, { type: "icon" });
-          return;
-        }
-        if (containerOfNode.querySelector(buttonSelector)) {
-          appendNewText = true;
-          stack.append(_node, { type: "button" });
-          return;
-        }
-        if (containerOfNode.querySelector(embedSelector)) {
-          appendNewText = true;
-          stack.append(_node, { type: "embed" });
-          return;
-        }
-
-        if (appendNewText) {
-          appendNewText = false;
-          stack.append(_node, { type: "text" });
-        } else {
-          stack.set(_node, { type: "text" });
-        }
-      } else {
-        stack.append(_node, { type: "text" });
+    if (_node instanceof HTMLElement) {
+      if (containerOfNode.querySelector(iconSelector)) {
+        appendNewText = true;
+        stack.append(_node, { type: "icon" });
+        return;
       }
-    });
+      if (containerOfNode.querySelector(buttonSelector)) {
+        appendNewText = true;
+        stack.append(_node, { type: "button" });
+        return;
+      }
+      if (containerOfNode.querySelector(embedSelector)) {
+        appendNewText = true;
+        stack.append(_node, { type: "embed" });
+        return;
+      }
 
-    const allElements = stack.getAll();
+      if (appendNewText) {
+        appendNewText = false;
+        stack.append(_node, { type: "text" });
+      } else {
+        stack.set(_node, { type: "text" });
+      }
+    } else {
+      stack.append(_node, { type: "text" });
+    }
+  });
 
-    allElements.forEach((node) => {
-      container.append(node);
-    });
-  } else {
-    container.innerHTML = node.innerHTML;
-  }
+  const allElements = stack.getAll();
+
+  allElements.forEach((node) => {
+    container.append(node);
+  });
 
   node.parentElement?.append(container);
 
