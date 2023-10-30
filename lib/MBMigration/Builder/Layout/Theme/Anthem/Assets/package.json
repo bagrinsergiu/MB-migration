@@ -1,19 +1,19 @@
 {
   "name": "anthem",
   "version": "1.0.0",
-  "type": "commonjs",
-  "main": "src/index.ts",
-  "types": "src/types.ts",
+  "type": "module",
   "scripts": {
     "lint": "eslint --ext .ts ./src",
     "tsc": "tsc --noEmit",
     "start": "npm run build -- --watch",
+    "dev": "npm start",
     "build": "npm run clean && node bin/index.js",
     "build:prod": "npm run build -- --production",
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "utils": "*"
+    "utils": "*",
+    "elements": "*"
   },
   "devDependencies": {
     "config": "*",

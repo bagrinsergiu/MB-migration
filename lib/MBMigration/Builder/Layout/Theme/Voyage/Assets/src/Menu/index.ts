@@ -84,8 +84,8 @@ const getSubMenuV = (data: Required<NavData>) => {
 
   return {
     ...submenuTypography,
-    subMenuBgColorOpacity: 1,
-    subMenuBgColorHex: bgColor
+    subMenuBgColorOpacity: bgColor.opacity,
+    subMenuBgColorHex: bgColor.hex
   };
 };
 
