@@ -5,28 +5,28 @@ export function removeStylesExceptFontWeightAndColor(
   htmlString: string
 ): string {
   // Create a temporary element
-  var tempElement = document.createElement("div");
+  const tempElement = document.createElement("div");
 
   // Set the HTML content of the temporary element
   tempElement.innerHTML = htmlString;
 
   // Find elements with inline styles
-  var elementsWithStyles = tempElement.querySelectorAll("[style]");
+  const elementsWithStyles = tempElement.querySelectorAll("[style]");
 
   // Iterate through elements with styles
   elementsWithStyles.forEach(function (element) {
     // Get the inline style attribute
-    var styleAttribute = element.getAttribute("style") ?? "";
+    const styleAttribute = element.getAttribute("style") ?? "";
 
     // Split the inline style into individual properties
-    var styleProperties = styleAttribute.split(";");
+    const styleProperties = styleAttribute.split(";");
 
     // Initialize a new style string to retain only font-weight and color
-    var newStyle = "";
+    let newStyle = "";
 
     // Iterate through the style properties
-    for (var i = 0; i < styleProperties.length; i++) {
-      var property = styleProperties[i].trim();
+    for (let i = 0; i < styleProperties.length; i++) {
+      const property = styleProperties[i].trim();
 
       // Check if the property is font-weight or color
       if (property.startsWith("font-weight") || property.startsWith("color")) {

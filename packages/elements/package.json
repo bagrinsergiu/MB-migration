@@ -8,8 +8,10 @@
     "prettier-check": "prettier --check \"./src/**/*.{ts,tsx}\"",
     "tsc": "tsc --noEmit"
   },
+  "dependencies": {
+    "fp-utilities": "^1.1.4"
+  },
   "devDependencies": {
-    "fp-utilities": "^1.1.4",
     "config": "*"
   }
 }
