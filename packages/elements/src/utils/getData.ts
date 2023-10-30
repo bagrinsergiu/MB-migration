@@ -4,7 +4,7 @@ export const getData = (): Entry => {
   try {
     return window.isDev
       ? {
-          selector: `[data-id='${4242415}']`,
+          selector: `[data-id='${4341579}']`,
           families: {
             "proxima_nova_proxima_nova_regular_sans-serif": "uid1111",
             "helvetica_neue_helveticaneue_helvetica_arial_sans-serif": "uid2222"

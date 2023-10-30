@@ -17,11 +17,11 @@ export function getIconModel(node: Element): Array<ElementModel> {
     const iconNode = isIconText ? node : parentNode;
     const style = getNodeStyle(iconNode);
     const model = getModel(icon);
-    const group = groups.get(parentElement) ?? { items: [] };
+    const group = groups.get(parentElement) ?? { value: { items: [] } };
 
     const wrapperModel = createCloneableModel({
       _styles: ["wrapper-clone", "wrapper-clone--icon"],
-      items: [...group.items, model],
+      items: [...group.value.items, model],
       horizontalAlign: textAlign[style["text-align"]]
     });
 

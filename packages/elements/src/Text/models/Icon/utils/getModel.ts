@@ -15,7 +15,10 @@ const codeToBuilderMap: Record<string, string> = {
   apple: "apple",
   57380: "email-85",
   58624: "logo-instagram",
-  58407: "logo-facebook"
+  58407: "logo-facebook",
+  57895: "logo-facebook",
+  57936: "note-03",
+  58009: "logo-youtube"
 };
 
 export function getModel(node: Element): ElementModel {
