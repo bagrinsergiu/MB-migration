@@ -8,12 +8,12 @@ import { createData } from "@/utils/getData";
 
 type TextModel = ElementModel | EmbedModel;
 
-export const getText = (data: Entry): Output => {
-  let node = document.querySelector(data.selector);
+export const getText = (entry: Entry): Output => {
+  let node = document.querySelector(entry.selector);
 
   if (!node) {
     return {
-      error: `Element with selector ${data.selector} not found`
+      error: `Element with selector ${entry.selector} not found`
     };
   }
 
@@ -21,11 +21,11 @@ export const getText = (data: Entry): Output => {
 
   if (!node) {
     return {
-      error: `Element with selector ${data.selector} has no wrapper`
+      error: `Element with selector ${entry.selector} has no wrapper`
     };
   }
 
-  const elements: Array<TextModel> = [];
+  const data: Array<TextModel> = [];
 
   const { container, destroy } = getContainerStackWithNodes(node);
   const containerChildren = Array.from(container.children);
@@ -34,23 +34,23 @@ export const getText = (data: Entry): Output => {
     if (node instanceof HTMLElement) {
       switch (node.dataset.type) {
         case "text": {
-          const model = getTextModel({ ...data, node });
-          elements.push(model);
+          const model = getTextModel({ ...entry, node });
+          data.push(model);
           break;
         }
         case "button": {
           const models = getButtonModel(node);
-          elements.push(...models);
+          data.push(...models);
           break;
         }
         case "embed": {
           const models = getEmbedModel(node);
-          elements.push(...models);
+          data.push(...models);
           break;
         }
         case "icon": {
           const models = getIconModel(node);
-          elements.push(...models);
+          data.push(...models);
           break;
         }
       }
@@ -59,5 +59,5 @@ export const getText = (data: Entry): Output => {
 
   destroy();
 
-  return createData({ data: elements });
+  return createData({ data });
 };

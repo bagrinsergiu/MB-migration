@@ -2,6 +2,8 @@ import { Entry, Output, OutputData } from "@/types/type";
 
 export const getData = (): Entry => {
   try {
+    // For development
+    // window.isDev = true;
     return window.isDev
       ? {
           selector: `[data-id='${4341579}']`,

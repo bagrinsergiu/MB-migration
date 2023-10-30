@@ -101,24 +101,13 @@ const getSubMenuV = (data: Required<NavData>) => {
   };
 };
 
-const getNavStyles = (data: NavData) => {
-  const { subNav } = data;
-  let menuV = getMenuV(data);
-
-  if (subNav) {
-    const _v = getSubMenuV({ ...data, subNav });
-    menuV = { ...menuV, ..._v };
-  }
-
-  return menuV;
-};
-
-const run = (data: Entry): Output => {
-  const node = document.querySelector(data.selector);
+const run = (entry: Entry): Output => {
+  const { selector, families, defaultFamily } = entry;
+  const node = document.querySelector(selector);
 
   if (!node) {
     return {
-      error: `Element with selector ${data.selector} not found`
+      error: `Element with selector ${entry.selector} not found`
     };
   }
 
@@ -126,7 +115,7 @@ const run = (data: Entry): Output => {
 
   if (!header) {
     return {
-      error: `Element with selector ${data.selector} has no header`
+      error: `Element with selector ${entry.selector} has no header`
     };
   }
 
@@ -134,23 +123,23 @@ const run = (data: Entry): Output => {
 
   if (!nav) {
     return {
-      error: `Element with selector ${data.selector} has no nav`
+      error: `Element with selector ${entry.selector} has no nav`
     };
   }
 
   const subNav = header.querySelector("#selected-sub-navigation") ?? undefined;
+  let data = getMenuV({ nav, selector, families, defaultFamily });
 
-  const dataText = {
-    nav: nav,
-    subNav: subNav,
-    selector: data.selector,
-    families: data.families,
-    defaultFamily: data.defaultFamily
-  };
+  if (subNav) {
+    const _v = getSubMenuV({ nav, subNav, selector, families, defaultFamily });
+    data = { ...data, ..._v };
+  }
 
-  return createData({ data: getNavStyles(dataText) });
+  return createData({ data: data });
 };
 
+// For development
+// window.isDev = true;
 const data = getData();
 const output = run(data);
 

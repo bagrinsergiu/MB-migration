@@ -7,9 +7,9 @@ export interface Data extends Entry {
   styleProperties: Array<string>;
 }
 
-export const styleExtractor = (data: Data): Output => {
-  const { selector, styleProperties } = data;
-  const styles: Record<string, Literal> = {};
+export const styleExtractor = (entry: Data): Output => {
+  const { selector, styleProperties } = entry;
+  const data: Record<string, Literal> = {};
   const element = document.querySelector(selector);
 
   if (!element) {
@@ -21,8 +21,8 @@ export const styleExtractor = (data: Data): Output => {
   const computedStyles = getNodeStyle(element);
 
   styleProperties.forEach((styleName) => {
-    styles[styleName] = computedStyles[styleName];
+    data[styleName] = computedStyles[styleName];
   });
 
-  return createData({ data: styles });
+  return createData({ data });
 };
