@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "name": "mb-migration",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "lib/MBMigration/Builder/Layout/Theme/Voyage/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Anthem/Assets"
+  ],
+  "scripts": {
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "tsc": "turbo run tsc",
+    "prettier-check": "turbo run prettier-check",
+    "check-all": "npm run prettier-check && npm run lint && npm run tsc",
+    "build": "turbo build",
+    "build:prod": "turbo build -- --production"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.16"
+  }
+}
