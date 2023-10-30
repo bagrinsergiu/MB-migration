@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@nesk/puphpeteer": "^2.0.0",
+    "@nesk/rialto": "^1.4.0",
+    "@zoon/puphpeteer": "github:zoonru/puphpeteer",
+    "lodash": "^4.17.21",
+    "puppeteer": "^21.3.1"
+  }
+}
