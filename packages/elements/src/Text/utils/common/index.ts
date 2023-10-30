@@ -1,3 +1,7 @@
+import { mPipe } from "fp-utilities";
+import * as Obj from "utils/src/reader/object";
+import * as Str from "utils/src/reader/string";
+
 export const allowedTags = [
   "P",
   "H1",
@@ -45,3 +49,10 @@ export function shouldExtractElement(
 
   return isAllowed;
 }
+
+export const iconSelector =
+  "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"]";
+export const buttonSelector = ".sites-button";
+export const embedSelector = ".embedded-paste";
+
+export const getHref = mPipe(Obj.readKey("href"), Str.read);

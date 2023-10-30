@@ -1,22 +1,34 @@
-import { parseColorString } from "utils/src/color/parseColorString";
+import { getModel } from "./utils/getModel";
+import { createCloneableModel } from "@/Models/Cloneable";
+import { buttonSelector, textAlign } from "@/Text/utils/common";
+import { ElementModel } from "@/types/type";
+import { findNearestBlockParent } from "utils/src/dom/findNearestBlockParent";
+import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
-export function getButtonModel(style: Record<string, string>, node: Element) {
-  const isLink = node.tagName === "A";
-  const color = parseColorString(style.color);
-  const bgColor = parseColorString(style["background-color"]);
-  const opacity = +style.opacity;
+export function getButtonModel(node: Element): Array<ElementModel> {
+  const buttons = node.querySelectorAll(buttonSelector);
+  const groups = new Map();
 
-  return {
-    bgColorHex: bgColor?.hex ?? "#ffffff",
-    bgColorOpacity: isNaN(opacity) ? bgColor?.opacity ?? 1 : opacity,
-    bgColorType: "solid",
-    colorHex: color?.hex ?? "#ffffff",
-    colorOpacity: color?.opacity ?? 1,
-    text: "text" in node ? node.text : undefined,
-    ...(isLink && {
-      linkExternal: "href" in node ? node.href : "",
-      linkType: "external",
-      linkExternalBlank: "on"
-    })
-  };
+  buttons.forEach((button) => {
+    const parentElement = findNearestBlockParent(button);
+    const style = getNodeStyle(button);
+    const model = getModel(button);
+    const group = groups.get(parentElement) ?? { items: [] };
+
+    const wrapperModel = createCloneableModel({
+      _styles: ["wrapper-clone", "wrapper-clone--button"],
+      items: [...group.items, model],
+      horizontalAlign: textAlign[style["text-align"]]
+    });
+
+    groups.set(parentElement, wrapperModel);
+  });
+
+  const models: Array<ElementModel> = [];
+
+  groups.forEach((model) => {
+    models.push(model);
+  });
+
+  return models;
 }

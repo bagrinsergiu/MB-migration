@@ -26,3 +26,7 @@ export interface ElementModel {
   type: string;
   value: Record<string, Literal | Array<ElementModel | string>>;
 }
+
+export interface EmbedModel {
+  type: "EmbedCode";
+}

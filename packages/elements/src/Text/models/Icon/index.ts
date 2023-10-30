@@ -1,28 +1,38 @@
-import { parseColorString } from "utils/src/color/parseColorString";
+import { getModel } from "./utils/getModel";
+import { createCloneableModel } from "@/Models/Cloneable";
+import { iconSelector, textAlign } from "@/Text/utils/common";
+import { ElementModel } from "@/types/type";
+import { findNearestBlockParent } from "utils/src/dom/findNearestBlockParent";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
+import { getParentElementOfTextNode } from "utils/src/dom/getParentElementOfTextNode";
 
-export function getIconModel(style: Record<string, string>, node: Element) {
-  const parentElement = node.parentElement;
-  const isLink = parentElement?.tagName === "A" || node.tagName === "A";
-  const parentBgColor = parentElement
-    ? parseColorString(getNodeStyle(parentElement)["background-color"])
-    : undefined;
-  const parentHref =
-    parentElement && "href" in parentElement ? parentElement.href : "";
-  const opacity = +style.opacity;
-  const color = parseColorString(style.color);
+export function getIconModel(node: Element): Array<ElementModel> {
+  const icons = node.querySelectorAll(iconSelector);
+  const groups = new Map();
 
-  return {
-    colorHex: color?.hex ?? "#ffffff",
-    colorOpacity: isNaN(opacity) ? color?.opacity ?? 1 : opacity,
-    ...(isLink && {
-      linkExternal: parentHref ?? ("href" in node ? node.href : ""),
-      linkType: "external",
-      linkExternalBlank: "on",
-      ...(parentBgColor && {
-        bgColorHex: parentBgColor.hex,
-        bgColorOpacity: parentBgColor.opacity
-      })
-    })
-  };
+  icons.forEach((icon) => {
+    const parentElement = findNearestBlockParent(icon);
+    const parentNode = getParentElementOfTextNode(node);
+    const isIconText = parentNode.nodeName === "#text";
+    const iconNode = isIconText ? node : parentNode;
+    const style = getNodeStyle(iconNode);
+    const model = getModel(icon);
+    const group = groups.get(parentElement) ?? { items: [] };
+
+    const wrapperModel = createCloneableModel({
+      _styles: ["wrapper-clone", "wrapper-clone--icon"],
+      items: [...group.items, model],
+      horizontalAlign: textAlign[style["text-align"]]
+    });
+
+    groups.set(parentElement, wrapperModel);
+  });
+
+  const models: Array<ElementModel> = [];
+
+  groups.forEach((model) => {
+    models.push(model);
+  });
+
+  return models;
 }

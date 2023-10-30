@@ -1,56 +1,57 @@
-import { textAlign } from "@/Text/utils/common";
-import { getLetterSpacing } from "@/Text/utils/styles/getLetterSpacing";
-import { getLineHeight } from "@/Text/utils/styles/getLineHeight";
-import { Literal } from "utils";
-import * as Num from "utils/src/reader/number";
+import { stylesToClasses } from "./utils/stylesToClasses";
+import { createWrapperModel } from "@/Models/Wrapper";
+import { removeAllStylesFromHTML } from "@/Text/utils/dom/removeAllStylesFromHTML";
+import { transformDivsToParagraphs } from "@/Text/utils/dom/transformDivsToParagraphs";
+import { copyParentColorToChild } from "@/Text/utils/styles/copyParentColorToChild";
+import { getTypographyStyles } from "@/Text/utils/styles/getTypographyStyles";
+import { ElementModel } from "@/types/type";
+import { uuid } from "utils/src/uuid";
 
-export const stylesToClasses = (
-  styles: Record<string, Literal>,
-  families: Record<string, string>,
-  defaultFamily: string
-): Array<string> => {
-  const classes: Array<string> = [];
+interface Data {
+  node: Element;
+  families: Record<string, string>;
+  defaultFamily: string;
+}
 
-  Object.entries(styles).forEach(([key, value]) => {
-    switch (key) {
-      case "font-size": {
-        const size = Math.round(Num.readInt(value) ?? 1);
-        classes.push(`brz-fs-lg-${size}`);
-        break;
-      }
-      case "font-family":
-        const fontFamily = `${value}`
-          .replace(/['"\,]/g, "")
-          .replace(/\s/g, "_")
-          .toLocaleLowerCase();
+export const getTextModel = (data: Data): ElementModel => {
+  let { node, families, defaultFamily } = data;
 
-        if (!families[fontFamily]) {
-          classes.push(`brz-ff-${defaultFamily}`, "brz-ft-upload");
-          break;
-        }
-        classes.push(`brz-ff-${families[fontFamily]}`, "brz-ft-upload");
-        break;
-      case "font-weight":
-        classes.push(`brz-fw-lg-${value}`);
-        break;
-      case "text-align":
-        classes.push(`brz-text-lg-${textAlign[value] || "left"}`);
-        break;
-      case "letter-spacing":
-        const letterSpacing = getLetterSpacing(`${value}`);
-        classes.push(`brz-ls-lg-${letterSpacing}`);
-        break;
-      case "line-height":
-        const fs = `${styles["font-size"]}`;
-        const fontSize = fs.replace("px", "");
-        const lineHeight = getLineHeight(`${value}`, fontSize);
-        classes.push(`brz-lh-lg-${lineHeight}`);
-        break;
+  // Transform all inside div to P
+  node = transformDivsToParagraphs(node);
 
-      default:
-        break;
+  // Copy Parent Color to Child, from <p> to <span>
+  node = copyParentColorToChild(node);
+
+  // Remove all inline styles like background-color, positions.. etc.
+  node = removeAllStylesFromHTML(node);
+
+  // Get all ours style for Builder [font-family, font-size, line-height, .etc]
+  const styles = getTypographyStyles(node);
+
+  // Transform all styles to className font-size: 20 to .brz-fs-20
+  styles.map((style) => {
+    const classes = stylesToClasses(style.styles, families, defaultFamily);
+    const styleNode = node.querySelector(`[data-uid='${style.uid}']`);
+
+    if (styleNode) {
+      styleNode.classList.add(...classes);
+      styleNode.removeAttribute("data-uid");
     }
   });
 
-  return classes;
+  const text = node.innerHTML;
+
+  return createWrapperModel({
+    _styles: ["wrapper", "wrapper--richText"],
+    items: [
+      {
+        type: "RichText",
+        value: {
+          _id: uuid(),
+          _styles: ["richText"],
+          text: text
+        }
+      }
+    ]
+  });
 };

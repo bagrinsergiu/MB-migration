@@ -6,6 +6,7 @@
     "lint": "eslint --ext .ts ./src",
     "tsc": "tsc --noEmit",
     "start": "npm run build -- --watch",
+    "dev": "npm start",
     "build": "npm run clean && node bin/index.js",
     "build:prod": "npm run build -- --production",
     "clean": "rimraf dist"
