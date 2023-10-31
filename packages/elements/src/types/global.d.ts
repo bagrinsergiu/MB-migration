@@ -1,13 +1,10 @@
-declare const SELECTOR: string;
-declare const FAMILIES: Record<string, string>;
-declare const DEFAULT_FAMILY: string;
+export {};
 
 declare global {
-  namespace NodeJS {
-    interface Global {
-      isDev?: boolean;
-    }
-  }
+  const SELECTOR: string;
+  const FAMILIES: Record<string, string>;
+  const DEFAULT_FAMILY: string;
+
   interface Window {
     isDev?: boolean;
   }

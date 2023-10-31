@@ -1,10 +1,10 @@
+import { ElementModel, EmbedModel, Entry, Output } from "../types/type";
+import { createData } from "../utils/getData";
+import { getButtonModel } from "./models/Button";
+import { getEmbedModel } from "./models/Embed";
+import { getIconModel } from "./models/Icon";
 import { getTextModel } from "./models/Text";
-import { getButtonModel } from "@/Text/models/Button";
-import { getEmbedModel } from "@/Text/models/Embed";
-import { getIconModel } from "@/Text/models/Icon";
-import { getContainerStackWithNodes } from "@/Text/utils/dom/getContainerStackWithNodes";
-import { ElementModel, EmbedModel, Entry, Output } from "@/types/type";
-import { createData } from "@/utils/getData";
+import { getContainerStackWithNodes } from "./utils/dom/getContainerStackWithNodes";
 
 type TextModel = ElementModel | EmbedModel;
 

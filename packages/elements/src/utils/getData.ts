@@ -1,4 +1,4 @@
-import { Entry, Output, OutputData } from "@/types/type";
+import { Entry, Output, OutputData } from "../types/type";
 
 export const getData = (): Entry => {
   try {

@@ -1,10 +1,10 @@
+import { createWrapperModel } from "../../../Models/Wrapper";
+import { ElementModel } from "../../../types/type";
+import { removeAllStylesFromHTML } from "../../utils/dom/removeAllStylesFromHTML";
+import { transformDivsToParagraphs } from "../../utils/dom/transformDivsToParagraphs";
+import { copyParentColorToChild } from "../../utils/styles/copyParentColorToChild";
+import { getTypographyStyles } from "../../utils/styles/getTypographyStyles";
 import { stylesToClasses } from "./utils/stylesToClasses";
-import { createWrapperModel } from "@/Models/Wrapper";
-import { removeAllStylesFromHTML } from "@/Text/utils/dom/removeAllStylesFromHTML";
-import { transformDivsToParagraphs } from "@/Text/utils/dom/transformDivsToParagraphs";
-import { copyParentColorToChild } from "@/Text/utils/styles/copyParentColorToChild";
-import { getTypographyStyles } from "@/Text/utils/styles/getTypographyStyles";
-import { ElementModel } from "@/types/type";
 import { uuid } from "utils/src/uuid";
 
 interface Data {
@@ -14,7 +14,8 @@ interface Data {
 }
 
 export const getTextModel = (data: Data): ElementModel => {
-  let { node, families, defaultFamily } = data;
+  const { node: _node, families, defaultFamily } = data;
+  let node = _node;
 
   // Transform all inside div to P
   node = transformDivsToParagraphs(node);

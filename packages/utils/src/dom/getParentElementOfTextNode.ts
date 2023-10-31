@@ -1,4 +1,4 @@
-import { MValue } from "@/types";
+import { MValue } from "../types";
 
 export function getParentElementOfTextNode(node: Element): MValue<Element> {
   if (node.nodeType === Node.TEXT_NODE) {

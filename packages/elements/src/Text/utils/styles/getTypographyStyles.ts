@@ -1,5 +1,5 @@
+import { extractedAttributes } from "../common";
 import { extractParentElementsWithStyles } from "../dom/extractParentElementsWithStyles";
-import { extractedAttributes } from "@/Text/utils/common";
 import { Literal } from "utils";
 
 interface Output {

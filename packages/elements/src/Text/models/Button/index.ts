@@ -1,7 +1,7 @@
+import { createCloneableModel } from "../../../Models/Cloneable";
+import { ElementModel } from "../../../types/type";
+import { buttonSelector, textAlign } from "../../utils/common";
 import { getModel } from "./utils/getModel";
-import { createCloneableModel } from "@/Models/Cloneable";
-import { buttonSelector, textAlign } from "@/Text/utils/common";
-import { ElementModel } from "@/types/type";
 import { findNearestBlockParent } from "utils/src/dom/findNearestBlockParent";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 

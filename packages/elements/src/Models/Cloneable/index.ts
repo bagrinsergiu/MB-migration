@@ -1,4 +1,4 @@
-import { ElementModel } from "@/types/type";
+import { ElementModel } from "../../types/type";
 import { uuid } from "utils/src/uuid";
 
 interface Data {
@@ -11,6 +11,6 @@ export const createCloneableModel = (data: Data): ElementModel => {
   const { _styles, items, ...value } = data;
   return {
     type: "Cloneable",
-    value: { _id: uuid(), items, ...value }
+    value: { _id: uuid(), _styles, items, ...value }
   };
 };

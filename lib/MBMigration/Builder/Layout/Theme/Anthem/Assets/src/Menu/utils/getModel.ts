@@ -29,9 +29,9 @@ export const getModel = (data: Model) => {
   Object.keys(v).forEach((key) => {
     switch (key) {
       case "font-family": {
-        const value: string = styles[key];
+        const value = `${styles[key]}`;
         const fontFamily = value
-          .replace(/['"\,]/g, "")
+          .replace(/['"\,]/g, "") // eslint-disable-line
           .replace(/\s/g, "_")
           .toLocaleLowerCase();
 
@@ -47,7 +47,7 @@ export const getModel = (data: Model) => {
         break;
       }
       case "line-height": {
-        const value = parseInt(styles[key]);
+        const value = parseInt(`${styles[key]}`);
         if (isNaN(value)) {
           dic[toCamelCase(key)] = 1;
         } else {
@@ -56,7 +56,7 @@ export const getModel = (data: Model) => {
         break;
       }
       case "font-size": {
-        dic[toCamelCase(key)] = parseInt(styles[key]);
+        dic[toCamelCase(key)] = parseInt(`${styles[key]}`);
         break;
       }
       case "letter-spacing": {
@@ -65,13 +65,13 @@ export const getModel = (data: Model) => {
           dic[toCamelCase(key)] = 0;
         } else {
           // Remove 'px' and any extra whitespace
-          const letterSpacingValue = value.replace(/px/g, "").trim();
+          const letterSpacingValue = `${value}`.replace(/px/g, "").trim();
           dic[toCamelCase(key)] = +letterSpacingValue;
         }
         break;
       }
       case "colorHex": {
-        const toHex = parseColorString(styles["color"]);
+        const toHex = parseColorString(`${styles["color"]}`);
         dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
         break;
       }
