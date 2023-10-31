@@ -1,7 +1,7 @@
+import { createCloneableModel } from "../../../Models/Cloneable";
+import { ElementModel } from "../../../types/type";
+import { iconSelector, textAlign } from "../../utils/common";
 import { getModel } from "./utils/getModel";
-import { createCloneableModel } from "@/Models/Cloneable";
-import { iconSelector, textAlign } from "@/Text/utils/common";
-import { ElementModel } from "@/types/type";
 import { findNearestBlockParent } from "utils/src/dom/findNearestBlockParent";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { getParentElementOfTextNode } from "utils/src/dom/getParentElementOfTextNode";
@@ -13,9 +13,9 @@ export function getIconModel(node: Element): Array<ElementModel> {
   icons.forEach((icon) => {
     const parentElement = findNearestBlockParent(icon);
     const parentNode = getParentElementOfTextNode(node);
-    const isIconText = parentNode.nodeName === "#text";
+    const isIconText = parentNode?.nodeName === "#text";
     const iconNode = isIconText ? node : parentNode;
-    const style = getNodeStyle(iconNode);
+    const style = iconNode ? getNodeStyle(iconNode) : {};
     const model = getModel(icon);
     const group = groups.get(parentElement) ?? { value: { items: [] } };
 

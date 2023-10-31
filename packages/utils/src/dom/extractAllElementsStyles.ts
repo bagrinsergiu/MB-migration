@@ -1,6 +1,6 @@
+import { Literal } from "../types";
 import { getNodeStyle } from "./getNodeStyle";
 import { recursiveGetNodes } from "./recursiveGetNodes";
-import { Literal } from "@/types";
 
 export function extractAllElementsStyles(
   node: Element

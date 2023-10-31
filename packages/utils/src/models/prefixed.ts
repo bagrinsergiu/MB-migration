@@ -1,4 +1,4 @@
-import { capitalize } from "@/text/capitalize";
+import { capitalize } from "../text/capitalize";
 
 export const prefixed = <T extends Record<string, unknown>>(
   v: T,

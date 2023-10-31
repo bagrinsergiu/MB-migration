@@ -1,8 +1,5 @@
-import {
-  exceptExtractingStyle,
-  shouldExtractElement
-} from "@/Text/utils/common";
-import { mergeStyles } from "@/Text/utils/styles/mergeStyles";
+import { exceptExtractingStyle, shouldExtractElement } from "../common";
+import { mergeStyles } from "../styles/mergeStyles";
 import { Literal } from "utils";
 
 interface Output {
@@ -26,7 +23,7 @@ export function extractParentElementsWithStyles(node: Element): Array<Output> {
   }
 
   for (let i = 0; i < node.childNodes.length; i++) {
-    let child = node.childNodes[i];
+    const child = node.childNodes[i];
     result = result.concat(extractParentElementsWithStyles(child as Element));
   }
 

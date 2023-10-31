@@ -1,8 +1,4 @@
-import {
-  buttonSelector,
-  embedSelector,
-  iconSelector
-} from "@/Text/utils/common";
+import { buttonSelector, embedSelector, iconSelector } from "../common";
 
 export class Stack {
   collection: Array<Element> = [];

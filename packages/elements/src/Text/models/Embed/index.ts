@@ -1,5 +1,5 @@
-import { embedSelector } from "@/Text/utils/common";
-import { EmbedModel } from "@/types/type";
+import { EmbedModel } from "../../../types/type";
+import { embedSelector } from "../../utils/common";
 
 export function getEmbedModel(node: Element): Array<EmbedModel> {
   const embeds = node.querySelectorAll(embedSelector);

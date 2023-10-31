@@ -1,4 +1,4 @@
-import { MValue } from "@/types";
+import { MValue } from "../types";
 
 export function findNearestBlockParent(element: Element): MValue<Element> {
   if (!element.parentElement) {

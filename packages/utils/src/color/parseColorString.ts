@@ -1,4 +1,4 @@
-import { MValue } from "@/types";
+import { MValue } from "../types";
 
 interface Color {
   hex: string;
