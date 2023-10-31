@@ -50,9 +50,6 @@ export function removeAllStylesFromHTML(node: Element) {
   const elementsWithStyles = node.querySelectorAll(
     allowedTags.join(",") + "[style]"
   );
-  const elementsWithClasses = node.querySelectorAll(
-    allowedTags.join(",") + "[class]"
-  );
 
   // Remove the "style" attribute from each element
   elementsWithStyles.forEach(function (element) {

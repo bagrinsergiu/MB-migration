@@ -1,6 +1,6 @@
-import { textAlign } from "@/Text/utils/common";
-import { getLetterSpacing } from "@/Text/utils/styles/getLetterSpacing";
-import { getLineHeight } from "@/Text/utils/styles/getLineHeight";
+import { textAlign } from "../../../utils/common";
+import { getLetterSpacing } from "../../../utils/styles/getLetterSpacing";
+import { getLineHeight } from "../../../utils/styles/getLineHeight";
 import { Literal } from "utils";
 import * as Num from "utils/src/reader/number";
 
@@ -18,9 +18,9 @@ export const stylesToClasses = (
         classes.push(`brz-fs-lg-${size}`);
         break;
       }
-      case "font-family":
+      case "font-family": {
         const fontFamily = `${value}`
-          .replace(/['"\,]/g, "")
+          .replace(/['"\,]/g, "") // eslint-disable-line
           .replace(/\s/g, "_")
           .toLocaleLowerCase();
 
@@ -30,23 +30,27 @@ export const stylesToClasses = (
         }
         classes.push(`brz-ff-${families[fontFamily]}`, "brz-ft-upload");
         break;
-      case "font-weight":
+      }
+      case "font-weight": {
         classes.push(`brz-fw-lg-${value}`);
         break;
-      case "text-align":
+      }
+      case "text-align": {
         classes.push(`brz-text-lg-${textAlign[value] || "left"}`);
         break;
-      case "letter-spacing":
+      }
+      case "letter-spacing": {
         const letterSpacing = getLetterSpacing(`${value}`);
         classes.push(`brz-ls-lg-${letterSpacing}`);
         break;
-      case "line-height":
+      }
+      case "line-height": {
         const fs = `${styles["font-size"]}`;
         const fontSize = fs.replace("px", "");
         const lineHeight = getLineHeight(`${value}`, fontSize);
         classes.push(`brz-lh-lg-${lineHeight}`);
         break;
-
+      }
       default:
         break;
     }

@@ -11,7 +11,7 @@ interface NavData {
   families: Record<string, string>;
   defaultFamily: string;
 }
-let warns: Record<string, Record<string, string>> = {};
+const warns: Record<string, Record<string, string>> = {};
 
 const getMenuV = (data: NavData) => {
   const { nav, selector } = data;
@@ -57,13 +57,12 @@ const getSubMenuV = (data: Required<NavData>) => {
   const { subNav, selector } = data;
 
   const ul = subNav.children[0];
-  let v = {};
 
   if (!ul) {
     warns["submenu"] = {
       message: `Navigation don't have ul in ${selector}`
     };
-    return v;
+    return;
   }
 
   const li = ul.querySelector("li");
@@ -71,7 +70,7 @@ const getSubMenuV = (data: Required<NavData>) => {
     warns["submenu li"] = {
       message: `Navigation don't have ul > li in ${selector}`
     };
-    return v;
+    return;
   }
 
   const link = ul.querySelector("li > a");
@@ -79,7 +78,7 @@ const getSubMenuV = (data: Required<NavData>) => {
     warns["submenu li a"] = {
       message: `Navigation don't have ul > li > a in ${selector}`
     };
-    return v;
+    return;
   }
 
   const typography = getModel({

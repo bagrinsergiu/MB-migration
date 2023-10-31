@@ -1,9 +1,12 @@
-import { Entry, Output } from "@/types/type";
-import { createData } from "@/utils/getData";
+import { Output } from "../types/type";
+import { createData } from "../utils/getData";
 import { Literal } from "utils";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
-export interface Data extends Entry {
+export interface Data {
+  selector: string;
+  families: Record<string, string>;
+  defaultFamily: string;
   styleProperties: Array<string>;
 }
 

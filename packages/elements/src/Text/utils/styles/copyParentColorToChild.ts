@@ -1,4 +1,4 @@
-import { extractedAttributes } from "@/Text/utils/common";
+import { extractedAttributes } from "../common";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
 const attributes = extractedAttributes;
@@ -32,7 +32,7 @@ export function copyColorStyleToTextNodes(element: Element): void {
 
       if (!parentStyle?.color) {
         const parentOFParentStyle = getNodeStyle(parentOfParent);
-        parentElement.style.color = parentOFParentStyle.color;
+        parentElement.style.color = `${parentOFParentStyle.color}`;
       }
       if (!parentStyle?.fontWeight && parentOfParent.style?.fontWeight) {
         parentElement.style.fontWeight = parentOfParent.style.fontWeight;

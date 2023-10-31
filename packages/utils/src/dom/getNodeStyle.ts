@@ -1,4 +1,4 @@
-import { Literal } from "@/types";
+import { Literal } from "../types";
 
 export const getNodeStyle = (
   node: HTMLElement | Element
