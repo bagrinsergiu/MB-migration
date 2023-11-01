@@ -47,17 +47,11 @@ abstract class Element extends LayoutUtils
         }
     }
 
-    protected function backgroundColor(ItemBuilder $objBlock, array $sectionData = [], &$options)
+    protected function backgroundColor(ItemBuilder $objBlock, array $sectionData)
     {
-        $style = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
+        $objBlock->item(0)->setting('bgColorHex', $sectionData['style']['background-color']);
 
-        $objBlock->item(0)->setting('bgColorHex', $style['background-color']);
-        $options['bgColor'] = $style['background-color'];
-        if(!empty($style['border-bottom-color'])) {
-            $options['borderColorHex'] = $style['border-bottom-color'];
-        }
-
-        $objBlock->item(0)->setting('bgColorOpacity', $this->convertToNumeric($style['opacity']));
+        $objBlock->item(0)->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity']));
         $objBlock->item(0)->setting('bgColorType', 'solid');
     }
 
@@ -75,7 +69,7 @@ abstract class Element extends LayoutUtils
 /**
  *
 */
-    protected function backgroundImages(ItemBuilder $objBlock, array $sectionData, array &$options)
+    protected function backgroundImages(ItemBuilder $objBlock, array $sectionData)
     {
         if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
             Utils::log('Set background Images', 1, "backgroundImages");
@@ -242,6 +236,8 @@ abstract class Element extends LayoutUtils
 
     protected function generalParameters($objBlock, &$options, $sectionData, $primary = [])
     {
+        $padding = $sectionData['style'];
+
         $options = [
             'position' => $sectionData['settings']['pagePosition'],
             'currentPageURL' => $this->cache->get('CurrentPageURL'),
@@ -249,19 +245,26 @@ abstract class Element extends LayoutUtils
             'fontsFamily' => $this->getFontsFamily()
         ];
 
-        $padding = JS::StylesPaddingExtractor($options['sectionID'], $options['currentPageURL']);
-
         foreach ($primary as $key => $value) {
-            $padding = array_merge($padding, [$key => $value]);
+            $padding[$key] = $value;
         }
 
         if(!empty($padding)){
             $objBlock->item(0)->setting('bgColorPalette', '');
             $objBlock->item(0)->setting('colorPalette', '');
-            $objBlock->item(0)->setting('paddingBottom', $padding['padding-bottom']);
-            $objBlock->item(0)->setting('paddingTop', $padding['padding-top']);
-            $objBlock->item(0)->setting('paddingLeft', $padding['padding-left']);
-            $objBlock->item(0)->setting('paddingRight', $padding['padding-right']);
+
+            if(!empty($padding['padding-bottom'])) {
+                $objBlock->item(0)->setting('paddingBottom', $padding['padding-bottom']);
+            }
+            if(!empty($padding['padding-top'])) {
+                $objBlock->item(0)->setting('paddingTop', $padding['padding-top']);
+            }
+            if(!empty($padding['padding-left'])) {
+                $objBlock->item(0)->setting('paddingLeft', $padding['padding-left']);
+            }
+            if(!empty($padding['padding-right'])) {
+                $objBlock->item(0)->setting('paddingRight', $padding['padding-right']);
+            }
         }
     }
 
@@ -485,6 +488,33 @@ abstract class Element extends LayoutUtils
         } else {
             return $input;
         }
+    }
+
+    private function convertColor($color): string
+    {
+
+        if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
+            return $color;
+        }
+
+        if (preg_match('/rgba\((\d+), (\d+), (\d+), ([0-9]*\.?[0-9]+)\)/', $color, $matches)) {
+            $r = $matches[1];
+            $g = $matches[2];
+            $b = $matches[3];
+
+            return sprintf("#%02X%02X%02X", $r, $g, $b);
+        }
+
+        if (preg_match_all('/\d+/', $color, $matches)) {
+            if (count($matches[0]) !== 3) {
+                return $color;
+            }
+            list($r, $g, $b) = $matches[0];
+
+            return sprintf("#%02X%02X%02X", $r, $g, $b);
+        }
+
+        return $color;
     }
 
 }

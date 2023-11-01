@@ -1,6 +1,7 @@
 <?php
 namespace MBMigration\Builder;
 
+use MBMigration\Browser\Browser;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
@@ -25,11 +26,15 @@ class PageBuilder
 
         $url = PathSlugExtractor::getFullUrl($slug);
 
+        $dir = dirname(__FILE__)."/Layout/Theme";
+        $browser = Browser::instance($dir);
+        $browserPage = $browser->openPage($url, $design);
+
         $this->cache->set('CurrentPageURL', $url);
 
         $workClass = __NAMESPACE__ . '\\Layout\\Theme\\' . $design . '\\' . $design;
 
-        $_WorkClassTemplate = new $workClass();
+        $_WorkClassTemplate = new $workClass($browserPage);
 
         if($_WorkClassTemplate->build($preparedSectionOfThePage)) {
             Utils::log('Success Build Page : ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
