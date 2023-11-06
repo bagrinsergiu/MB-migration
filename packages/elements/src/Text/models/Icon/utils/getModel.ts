@@ -21,7 +21,12 @@ const codeToBuilderMap: Record<string, string> = {
   58407: "logo-facebook",
   57895: "logo-facebook",
   57936: "note-03",
-  58009: "logo-youtube"
+  58009: "logo-youtube",
+  57993: "logo-vimeo",
+  57990: "logo-twitter",
+  58112: "logo-instagram",
+  58521: "logo-youtube",
+  58503: "logo-twitter"
 };
 const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
 const getBgColor = mPipe(
