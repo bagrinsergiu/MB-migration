@@ -23,11 +23,11 @@ export const getTextModel = (data: Data): ElementModel => {
   // Copy Parent Color to Child, from <p> to <span>
   node = copyParentColorToChild(node);
 
-  // Remove all inline styles like background-color, positions.. etc.
-  node = removeAllStylesFromHTML(node);
-
   // Get all ours style for Builder [font-family, font-size, line-height, .etc]
   const styles = getTypographyStyles(node);
+
+  // Remove all inline styles like background-color, positions.. etc.
+  node = removeAllStylesFromHTML(node);
 
   // Transform all styles to className font-size: 20 to .brz-fs-20
   styles.map((style) => {
