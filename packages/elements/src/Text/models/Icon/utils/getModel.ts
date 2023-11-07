@@ -56,6 +56,7 @@ export function getModel(node: Element): ElementModel {
       _styles: ["icon"],
       colorHex: color?.hex ?? "#ffffff",
       colorOpacity: isNaN(opacity) ? color?.opacity ?? 1 : opacity,
+      ...(color !== undefined && { colorPalette: "" }),
       name: iconCode
         ? codeToBuilderMap[iconCode] ?? "favourite-31"
         : "favourite-31",
@@ -65,7 +66,8 @@ export function getModel(node: Element): ElementModel {
         linkExternalBlank: "on",
         ...(parentBgColor && {
           bgColorHex: parentBgColor.hex,
-          bgColorOpacity: parentBgColor.opacity
+          bgColorOpacity: parentBgColor.opacity,
+          bgColorPalette: ""
         })
       })
     }
