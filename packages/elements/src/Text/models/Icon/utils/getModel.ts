@@ -26,7 +26,9 @@ const codeToBuilderMap: Record<string, string> = {
   57990: "logo-twitter",
   58112: "logo-instagram",
   58521: "logo-youtube",
-  58503: "logo-twitter"
+  58503: "logo-twitter",
+  57892: "email-85",
+  57686: "pin-3"
 };
 const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
 const getBgColor = mPipe(
