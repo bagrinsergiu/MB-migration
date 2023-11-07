@@ -49,7 +49,7 @@ class TwoHorizontalText extends Element
 
         $this->defaultOptionsForElement($decoded, $options);
 
-        $this->backgroundColor($objBlock, $sectionData, $options);
+        $this->backgroundColor($objBlock, $sectionData);
 
         $this->setOptionsForTextColor($sectionData, $options);
 
@@ -61,7 +61,7 @@ class TwoHorizontalText extends Element
             if ($item['group'] == 0) {
                 if ($item['category'] == 'text') {
                     if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                        $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                        $this->textCreation($item, $objBlock);
                         $objBlock->item()->item()->item()->addItem(
                             $this->wrapperLine(['borderColorHex' => $options['borderColorHex']])
                         );
@@ -73,7 +73,7 @@ class TwoHorizontalText extends Element
             if ($item['group'] == 0) {
                 if ($item['category'] == 'text') {
                     if ($item['item_type'] == 'body' && $this->showBody($sectionData)) {
-                        $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                        $this->textCreation($item, $objBlock);
                     }
                 }
             }
@@ -83,7 +83,7 @@ class TwoHorizontalText extends Element
             if($item['group'] == 1) {
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title' && $this->showHeader($sectionData)) {
-                        $this->textCreation($item['id'], $item['content'], $options, $objBlock, 1);
+                        $this->textCreation($item, $objBlock, 1);
                         $objBlock->item()->item()->item(1)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
                     }
                 }
@@ -93,7 +93,7 @@ class TwoHorizontalText extends Element
             if($item['group'] == 1) {
                 if($item['category'] == 'text') {
                     if($item['item_type']=='body' && $this->showBody($sectionData)) {
-                        $this->textCreation($item['id'], $item['content'], $options, $objBlock, 1);
+                        $this->textCreation($item, $objBlock, 1);
                     }
                 }
             }
@@ -128,69 +128,25 @@ class TwoHorizontalText extends Element
     /**
      * @throws \Exception
      */
-    private function textCreation($itemID, $content, $options, $objBlock, $setId = 0)
+    private function textCreation($sectionData, $objBlock, $setId = 0)
     {
-        $multiElement = [];
-
-        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
-
-        if(!is_array($richText)) {
-            $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
-        } else {
-            if(!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'top') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['buttons'])) {
-                foreach ($richText['buttons'] as $itemButton) {
-                    if ($itemButton['position'] === 'top') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['text'])) {
-                $multiElement[] = $this->itemWrapperRichText($richText['text']);
-            }
-
-            if(!empty($richText['embeds']['persist'])) {
-                $result = $this->findEmbeddedPasteDivs($content);
-                foreach ($result as $item) {
-                    $multiElement[] = $this->embedCode($item);
-                }
-            }
-
-            if(!empty($richText['buttons'])) {
-                foreach ($richText['buttons'] as $itemButton) {
-                    if ($itemButton['position'] === 'middle') {
-                        foreach ($itemButton['items'] as $item) {
-                            $multiElement[] = $this->button($item, $itemButton['align']);
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(!empty($embedCode)){
+                            $objBlock->item(0)->item(0)->item($setId)->addItem($this->embedCode($embedCode[$i]));
                         }
+                        $i++;
                     }
-                }
+                    break;
+                case 'Cloneable':
+                case 'Wrapper':
+                    $objBlock->item(0)->item(0)->item($setId)->addItem($textItem);
+                    break;
             }
-
-            if(!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'bottom') {
-                        $multiElement[] = $this->wrapperColumn($multiElement, true);
-                    }
-                }
-            }
-
-            if(!empty($richText['buttons'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'bottom') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            $objBlock->item(0)->item(0)->item($setId)->addItem($this->wrapperColumn($multiElement, true));
         }
     }
 

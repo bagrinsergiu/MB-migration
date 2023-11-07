@@ -90,7 +90,7 @@ class RightMedia extends Element
             if ($item['category'] == 'text') {
                 if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
 
-                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
+                    $this->textCreation($item, $objBlock);
 
                     $objBlock->item()->item()->item()->addItem($this->wrapperLine());
                 }
@@ -99,7 +99,7 @@ class RightMedia extends Element
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] == 'body' && $this->showBody($sectionData)) {
-                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
+                    $this->textCreation($item, $objBlock);
                 }
             }
         }
@@ -108,58 +108,10 @@ class RightMedia extends Element
         return json_encode($block);
     }
 
-    /**
-     * @throws \Exception
-     */
-    private function richTextCreator($objBlock, $item, $currentPageURL, $fontsFamily) {
-        $multiElement = [];
-
-        $richText = JS::RichText($item['id'], $currentPageURL, $fontsFamily);
-
-        if (!is_array($richText)) {
-            $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
-        } else {
-            if (!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'top') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['button'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'top') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            if (!empty($richText['text'])) {
-                $multiElement[] = $this->itemWrapperRichText($richText['text']);
-            }
-
-            if (!empty($richText['embeds'])) {
-                $multiElement[] = $this->embedCode($item['content']);
-            }
-
-            if (!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'bottom') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['button'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'bottom') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            $objBlock->item()->item()->item()->addItem($this->wrapperColumn($multiElement, true));
+    private function textCreation($richText, $objBlock)
+    {
+        foreach ($richText['brzElement'] as $item) {
+            $objBlock->item()->item()->item()->addItem($item);
         }
     }
 

@@ -66,7 +66,7 @@ class FullMedia extends Element
             if ($item['category'] == 'text') {
                 if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
 
-                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
+                    $this->textCreation($item, $objBlock);
 
                     $objBlock->item()->item()->item()->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
                 }
@@ -75,8 +75,7 @@ class FullMedia extends Element
         
         foreach ($sectionData['items'] as $item) {
             if($item['item_type']=='body' && $this->showBody($sectionData)) {
-
-                $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
+                $this->textCreation($item, $objBlock);
             }
         }
             
@@ -88,10 +87,10 @@ class FullMedia extends Element
                 ];
 
                 if (!empty($item['link'])) {
-                    $imageOptions = [
+                    $imageOptions = array_merge($imageOptions, [
                         'linkType' => 'external',
                         'linkExternal' => $item['link']
-                    ];
+                    ]);
                 }
                 $objBlock->item()->item()->item()->addItem($this->wrapperImage($imageOptions, $blockImage));
             }
@@ -105,55 +104,25 @@ class FullMedia extends Element
     /**
      * @throws \Exception
      */
-    private function richTextCreator($objBlock, $item, $currentPageURL, $fontsFamily) {
-        $multiElement = [];
-
-        $richText = JS::RichText($item['id'], $currentPageURL, $fontsFamily);
-
-        if (!is_array($richText)) {
-            $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
-        } else {
-            if (!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'top') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+    private function textCreation($sectionData, $objBlock)
+    {
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(!empty($embedCode)){
+                            $objBlock->item()->item()->item()->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
                     }
-                }
+                    break;
+                case 'Cloneable':
+                case 'Wrapper':
+                    $objBlock->item()->item()->item()->addItem($textItem);
+                    break;
             }
-
-            if(!empty($richText['button'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'top') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            if (!empty($richText['text'])) {
-                $multiElement[] = $this->itemWrapperRichText($richText['text']);
-            }
-
-            if (!empty($richText['embeds'])) {
-                $multiElement[] = $this->embedCode($item['content']);
-            }
-
-            if (!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'bottom') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['button'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'bottom') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            $objBlock->item()->item()->item()->addItem($this->wrapperColumn($multiElement, true));
         }
     }
 }

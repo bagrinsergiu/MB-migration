@@ -78,6 +78,8 @@ abstract class Element extends LayoutUtils
                 $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
                 $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
                 $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+                $objBlock->item(0)->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity_div']['opacity']));
+
             }
         }
     }
@@ -368,8 +370,33 @@ abstract class Element extends LayoutUtils
         return json_decode(json_encode($result), true);
     }
 
-    protected function wrapperImage(array $element, $wrapper)
+    /**
+     * @throws Exception
+     */
+    protected function wrapperForm(array $options = [])
     {
+        $jsonDecode = $this->initData();
+        $decoded = $jsonDecode['global'];
+        $objForm = new ItemBuilder($decoded['wrapper--form']['main']);
+        if(!empty($options)){
+            foreach ($options as $key => $value) {
+                $objForm->item()->setting($key, $value);
+            }
+        }
+        $result = $objForm->get();
+
+        return json_decode(json_encode($result), true);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function wrapperImage(array $element, $wrapper = null)
+    {
+        if(!empty($wrapper)){
+            $jsonDecode = $this->initData();
+            $wrapper = $jsonDecode['global']['wrapper--image']['main'];
+        }
         $block = new ItemBuilder($wrapper);
         foreach ($element as $key => $value) {
             $block->item()->setting($key, $value);

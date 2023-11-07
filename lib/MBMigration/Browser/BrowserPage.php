@@ -24,7 +24,9 @@ class BrowserPage implements BrowserPageInterface
             ->parameters(array_keys($params))
             ->body($this->getScriptBody($jsScript));
 
-        return $this->page->tryCatch->evaluate($jsFunction);
+        $result = $this->page->tryCatch->evaluate($jsFunction);
+
+        return $result;
     }
 
     private function getScriptBody($jsScript)

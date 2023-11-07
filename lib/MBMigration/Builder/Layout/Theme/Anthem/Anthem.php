@@ -32,17 +32,24 @@ class Anthem extends LayoutUtils
      * @var array
      */
     private $fontFamily;
+    /**
+     * @var mixed
+     */
+    private $browser;
 
     /**
      * @throws Exception
      */
-    public function __construct($browser)
+    public function __construct($browserPage, $browser)
     {
         $this->layoutName = 'Anthem';
 
         $this->cache = VariableCache::getInstance();
         
-        $this->browserPage = $browser;
+        $this->browserPage = $browserPage;
+        $this->browser = $browser;
+
+        $this->fontFamily = $this->getFontsFamily();
 
         ThemePreProcess::treeMenu();
 
@@ -63,6 +70,9 @@ class Anthem extends LayoutUtils
                 throw new Exception('Failed create MENU');
             }
         }
+        $MainSectionData = $this->cache->get('mainSection');
+        $this->ExtractDataFromPage($MainSectionData, $this->browserPage, 'sectionId');
+        $this->cache->set('mainSection', $MainSectionData);
 
         AnthemElementsController::getElement('footer', $this->jsonDecode);
     }
@@ -81,7 +91,7 @@ class Anthem extends LayoutUtils
 
         $this->cache->set('CurrentPageURL', $url);
 
-        $this->fontFamily = $this->getFontsFamily();
+
 
         $parsDataFromPage = [];
 
@@ -99,6 +109,7 @@ class Anthem extends LayoutUtils
         Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
         $this->cache->update('createdFirstSection',false, 'flags');
         $this->cache->update('Success', '++', 'Status');
+//        $this->browser->close();
 
         foreach ($preparedSectionOfThePage as $section)
         {
@@ -149,17 +160,24 @@ class Anthem extends LayoutUtils
         return $result;
     }
 
-    private function ExtractDataFromPage(&$preparedSectionOfThePage, $browserPage)
+    private function ExtractDataFromPage(&$SectionPage, $browserPage, $nameSectionId = 'id' )
     {
-        foreach ($preparedSectionOfThePage as &$section) {
+        foreach ($SectionPage as &$section) {
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
-            $section['style'] = array_merge($section['style'], $this->ExtractStyleSectionOpacity($browserPage, $section['sectionId']));
+            $section['style']['opacity_div'] = $this->ExtractStyleSectionOpacity($browserPage, $section['sectionId']);
             if(!empty($section['items'])) {
                 foreach ($section['items'] as &$item) {
                     if($item['category'] === 'text') {
-                        $item['brzElement'] = $this->ExtractTextContent($browserPage, $item['id']);
+                        $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
                     } else if ($item['category'] === 'list') {
                         $this->ExtractItemContent($item['item'], $browserPage);
+                    }
+                }
+            }
+            if(!empty($section['head'])) {
+                foreach ($section['head'] as &$item) {
+                    if($item['category'] === 'text') {
+                        $item['brzElement'] = $this->ExtractTextContent($browserPage, $item['id']);
                     }
                 }
             }
@@ -200,7 +218,7 @@ class Anthem extends LayoutUtils
                     'padding-right'
                 ],
                 'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+                'DEFAULT_FAMILY' => $this->fontFamily['Default']
             ]
         );
 

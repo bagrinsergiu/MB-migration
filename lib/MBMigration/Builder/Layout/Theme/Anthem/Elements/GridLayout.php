@@ -58,24 +58,34 @@ class GridLayout extends Element
         $this->setOptionsForTextColor($sectionData, $options);
 
         $objBlock->item(0)->setting('bgColorPalette', '');
-        foreach ($sectionData['head'] as $head){
-            if ($head['category'] == 'text') {
-                if ($head['item_type'] === 'title' && $this->showHeader($sectionData)) {
 
-                    $richText = JS::RichText($head['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objHead->item()->addItem($this->itemWrapperRichText($richText));
-                }
+        foreach ($sectionData['head'] as $headItem) {
+            if ($headItem['category'] === 'text') {
+                if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
+                    $blockHead = true;
+                    foreach ($headItem['brzElement'] as $item) {
+                        $objHead->item(0)->addItem($item);
+                    }
+                    $objHead->item(0)->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['borderColorHex']]));
 
-                if ($head['item_type'] === 'body' && $this->showBody($sectionData)) {
-                    $richText = JS::RichText($head['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objHead->item()->addItem($this->itemWrapperRichText($richText));
                 }
             }
         }
-        $objBlock->item()->addItem($objHead->get());
 
-        $this->backgroundImages($objBlock, $sectionData, $options);
+        foreach ($sectionData['head'] as $headItem) {
+            if ($headItem['category'] === 'text') {
+                if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
+                    $blockHead = true;
+                    foreach ($headItem['brzElement'] as $item) {
+                        $objHead->item()->addItem($item);
+                    }
+                }
+            }
+        }
 
+        if ($blockHead) {
+            $objBlock->item(0)->addItem($objHead->get());
+        }
 
         if(count($sectionData['items']) <= 2){
             $objItem->newItem($decoded['item']);
@@ -109,8 +119,9 @@ class GridLayout extends Element
                             }
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
-                                    $richText = JS::RichText($sectionItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                                    $objItem->item(1)->item(0)->setText($richText);
+                                    foreach ($sectionItem['brzElement'] as $item) {
+                                        $objItem->item(1)->addItem($item);
+                                    }
                                 }
                             }
                         }
@@ -127,14 +138,19 @@ class GridLayout extends Element
                     }
                 }
                 if ($section['category'] == 'text') {
-
                     if ($section['item_type'] == 'title' && $this->showHeader($section)) {
-                        $richText = JS::RichText($section['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->addItem($this->itemWrapperRichText($richText));
+                        if ($section['item_type'] == 'title') {
+                            foreach ($section['brzElement'] as $item) {
+                                $objItem->addItem($item);
+                            }
+                        }
                     }
                     if ($section['item_type'] == 'body' && $this->showBody($section)) {
-                        $richText = JS::RichText($section['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->addItem($this->itemWrapperRichText($richText));
+                        if ($section['item_type'] == 'body') {
+                            foreach ($section['brzElement'] as $item) {
+                                $objItem->addItem($item);
+                            }
+                        }
                     }
                 }
             }

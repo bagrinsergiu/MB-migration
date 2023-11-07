@@ -52,13 +52,13 @@ class Browser implements BrowserInterface
     public function openPage($url, $theme): BrowserPageInterface
     {
         $page = $this->browser->newPage();
-        $page->goto($url);
+        $page->goto($url, ['timeout' => 60000]);
 
         return new BrowserPage($page, $this->scriptPath."/".$theme."/Assets/dist");
     }
 
-    function __destruct()
-    {
-        $this->browser->close();
-    }
+//    function __destruct()
+//    {
+//        $this->browser->close();
+//    }
 }

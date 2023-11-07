@@ -101,10 +101,25 @@ class FullText extends Element
     /**
      * @throws \Exception
      */
-    private function textCreation($richText, $objBlock)
+    private function textCreation($sectionData, $objBlock)
     {
-        foreach ($richText['brzElement'] as $item) {
-            $objBlock->item(0)->addItem($item);
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(is_array($embedCode)){
+                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                case 'Wrapper':
+                    $objBlock->item(0)->addItem($textItem);
+                    break;
+            }
         }
     }
 }
