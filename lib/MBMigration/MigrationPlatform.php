@@ -157,7 +157,7 @@ class MigrationPlatform
         Utils::log('Upload Logo menu', 1, 'createMenu');
         $mainSection = $this->uploadPicturesFromSections($mainSection);
         $this->cache->set('mainSection', $mainSection);
-        file_put_contents('mainSection.json',json_encode($mainSection));
+        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
         $this->createBlankPages($parentPages);
         $this->createMenuStructure();
 
@@ -253,7 +253,7 @@ class MigrationPlatform
 
         $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
         $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
-        file_put_contents('preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
+        file_put_contents(JSON_PATH.'/preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
         $collectionItem = $this->getCollectionItem($page['slug']);
         if (!$collectionItem) {
             $newPage = $this->creteNewPage($page['slug'], $page['name']);
@@ -373,7 +373,7 @@ class MigrationPlatform
 
         $this->cache->add('menuList', $result);
         $parentPages = $this->cache->get('menuList');
-        file_put_contents('menuList.json',json_encode($parentPages));
+        file_put_contents(JSON_PATH.'/menuList.json',json_encode($parentPages));
     }
 
     private function transformToBrizyMenu(array $parentMenu): array

@@ -9,6 +9,7 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementData;
 use MBMigration\Builder\Layout\Common\ElementDataInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\MBElementFactoryInterface;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Builder\Layout\ElementsController;
@@ -113,7 +114,13 @@ class Voyage extends LayoutUtils implements ThemeInterface
     {
         $brizyPage = new BrizyComponent(['value' => ['items' => []]]);
 
-        $elementContext = ElementData::instance($this->mbHeadSection, $brizyPage, $this->mbMenu, $this->families, $this->defaultFamily);
+        $elementContext = ElementData::instance(
+            $this->mbHeadSection,
+            $brizyPage,
+            $this->mbMenu,
+            $this->families,
+            $this->defaultFamily
+        );
         $brizyPage->getValue()->add_items([
                 $this->elementFactory->getElement('head')->transformToItem($elementContext),
             ]
@@ -124,11 +131,19 @@ class Voyage extends LayoutUtils implements ThemeInterface
             $elementName = $mbPageSection['typeSection'];
             try {
                 $element = $this->elementFactory->getElement($elementName);
-                $elementContext = ElementData::instance($mbPageSection, $brizyPage, [], $this->families, $this->defaultFamily);
+                $elementContext = ElementData::instance(
+                    $mbPageSection,
+                    $brizyPage,
+                    [],
+                    $this->families,
+                    $this->defaultFamily
+                );
                 $brizyComponent = $element->transformToItem($elementContext);
                 $brizyPage->getValue()->add_items([$brizyComponent]);
 
             } catch (ElementNotFound $e) {
+                continue;
+            } catch (BrowserScriptException $e) {
                 continue;
             }
         }
@@ -136,7 +151,15 @@ class Voyage extends LayoutUtils implements ThemeInterface
         $brizyPage->getValue()->add_items(
             [
                 $this->elementFactory->getElement('footer')
-                    ->transformToItem(ElementData::instance($this->mbFooterSection, $brizyPage,[], $this->families, $this->defaultFamily)),
+                    ->transformToItem(
+                        ElementData::instance(
+                            $this->mbFooterSection,
+                            $brizyPage,
+                            [],
+                            $this->families,
+                            $this->defaultFamily
+                        )
+                    ),
             ]
         );
 

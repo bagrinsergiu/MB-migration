@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 trait RichTextAble
 {
@@ -75,6 +76,10 @@ trait RichTextAble
             'FAMILIES' => $families,
             'DEFAULT_FAMILY' => $defaultFont,
         ]);
+
+        if(isset($richTextBrowserData['error'])) {
+            throw new BrowserScriptException($richTextBrowserData['error']);
+        }
 
         foreach ($richTextBrowserData['data'] as $textItem) {
             switch ($textItem['type']) {

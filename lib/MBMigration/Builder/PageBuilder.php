@@ -51,13 +51,13 @@ class PageBuilder
                     $fontFamily[$font['fontFamily']] = $font['uuid'];
                 }
             }
-            file_put_contents("fonts.json",json_encode($fontFamily));
+            file_put_contents(JSON_PATH."/fonts.json",json_encode($fontFamily));
 
             $browser = Browser::instance($layoutBasePath);
             $browserPage = $browser->openPage($url,$design);
             $blockFactory = ElementFactory::instance($brizyKit, $browserPage);
 
-            $_WorkClassTemplate = new Voyage($url, $brizyKit, $menu, $headItem, $footerItem, 'lato',[], $blockFactory, $browser);
+            $_WorkClassTemplate = new Voyage($url, $brizyKit, $menu, $headItem, $footerItem, $fontFamily, 'lato', $blockFactory, $browser);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
             $pageData = json_encode($brizySections);

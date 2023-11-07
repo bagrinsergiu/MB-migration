@@ -97,20 +97,20 @@ class ElementFactory implements MBElementFactoryInterface
 //                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $this->browserPage);
 //            case 'event-calendar-layout':
 //                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $this->browserPage);
-////            case 'list-media-layout':
-////                return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $this->browserPage);
+            case 'list-media-layout':
+                return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $this->browserPage);
 //            case 'gallery-layout':
 //                return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $this->browserPage);
             case 'right-media-overlap':
                 return new RightMediaOverlap($this->blockKit['blocks']['right-media-overlap'], $this->browserPage);
             case 'left-media-overlap':
                 return new LeftMediaOverlap($this->blockKit['blocks']['left-media-overlap'], $this->browserPage);
-//            case 'left-media':
-//                return new LeftMedia($this->blockKit['blocks']['left-media'], $this->browserPage);
+            case 'left-media':
+                return new LeftMedia($this->blockKit['blocks']['left-media'], $this->browserPage);
             case 'right-media':
                 return new RightMedia($this->blockKit['blocks']['right-media'], $this->browserPage);
             case 'grid-media-layout':
-                return new GridMediaLayout($this->blockKit['blocks']['right-media'], $this->browserPage);
+                return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $this->browserPage);
 
 //            case 'list-layout':
 //                return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);

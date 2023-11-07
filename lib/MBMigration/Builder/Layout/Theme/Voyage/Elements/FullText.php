@@ -16,6 +16,7 @@ class FullText extends AbstractElement
     public function transformToItem(ElementDataInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizySection->getValue()->set_marginTop(0);
         $brizySection->getItemValueWithDepth(0)->set_items([]);
 
         $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
