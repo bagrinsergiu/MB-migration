@@ -30,10 +30,16 @@ export const getModel = (node: Element): ElementModel => {
       _id: uuid(),
       _styles: ["button"],
       bgColorHex: bgColor?.hex ?? "#ffffff",
+      ...(bgColor !== undefined && {
+        bgColorPalette: ""
+      }),
       bgColorOpacity: isNaN(opacity) ? bgColor?.opacity ?? 1 : opacity,
       bgColorType: "solid",
       colorHex: color?.hex ?? "#ffffff",
       colorOpacity: color?.opacity ?? 1,
+      ...(color !== undefined && {
+        colorPalette: ""
+      }),
       text: getText(node),
       ...(isLink && {
         linkExternal: getHref(node),

@@ -21,7 +21,12 @@ const codeToBuilderMap: Record<string, string> = {
   58407: "logo-facebook",
   57895: "logo-facebook",
   57936: "note-03",
-  58009: "logo-youtube"
+  58009: "logo-youtube",
+  57993: "logo-vimeo",
+  57990: "logo-twitter",
+  58112: "logo-instagram",
+  58521: "logo-youtube",
+  58503: "logo-twitter"
 };
 const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
 const getBgColor = mPipe(
@@ -51,6 +56,7 @@ export function getModel(node: Element): ElementModel {
       _styles: ["icon"],
       colorHex: color?.hex ?? "#ffffff",
       colorOpacity: isNaN(opacity) ? color?.opacity ?? 1 : opacity,
+      ...(color !== undefined && { colorPalette: "" }),
       name: iconCode
         ? codeToBuilderMap[iconCode] ?? "favourite-31"
         : "favourite-31",
@@ -60,7 +66,8 @@ export function getModel(node: Element): ElementModel {
         linkExternalBlank: "on",
         ...(parentBgColor && {
           bgColorHex: parentBgColor.hex,
-          bgColorOpacity: parentBgColor.opacity
+          bgColorOpacity: parentBgColor.opacity,
+          bgColorPalette: ""
         })
       })
     }

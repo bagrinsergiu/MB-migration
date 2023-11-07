@@ -30,6 +30,10 @@ class PageBuilder
 
         $url = PathSlugExtractor::getFullUrl($slug);
 
+        $dir = dirname(__FILE__)."/Layout/Theme";
+        $browser = Browser::instance($dir);
+        $browserPage = $browser->openPage($url, $design);
+
         $this->cache->set('CurrentPageURL', $url);
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
@@ -45,19 +49,29 @@ class PageBuilder
             $footerItem = $this->cache->get('footer', 'mainSection');
             $fonts = $this->cache->get('fonts', 'settings');
             foreach ($fonts as $font) {
-                if($font['name'] === 'primary'){
+                if ($font['name'] === 'primary') {
                     $fontFamily['Default'] = $font['uuid'];
                 } else {
                     $fontFamily[$font['fontFamily']] = $font['uuid'];
                 }
             }
-            file_put_contents(JSON_PATH."/fonts.json",json_encode($fontFamily));
+            file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
 
             $browser = Browser::instance($layoutBasePath);
-            $browserPage = $browser->openPage($url,$design);
+            $browserPage = $browser->openPage($url, $design);
             $blockFactory = ElementFactory::instance($brizyKit, $browserPage);
 
-            $_WorkClassTemplate = new Voyage($url, $brizyKit, $menu, $headItem, $footerItem, $fontFamily, 'lato', $blockFactory, $browser);
+            $_WorkClassTemplate = new Voyage(
+                $url,
+                $brizyKit,
+                $menu,
+                $headItem,
+                $footerItem,
+                $fontFamily,
+                'lato',
+                $blockFactory,
+                $browser
+            );
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
             $pageData = json_encode($brizySections);
@@ -69,7 +83,7 @@ class PageBuilder
 
             return true;
         } else {
-            $_WorkClassTemplate = new $workClass();
+            $_WorkClassTemplate = new $workClass($browserPage);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                 Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
                 $this->sendStatus();
