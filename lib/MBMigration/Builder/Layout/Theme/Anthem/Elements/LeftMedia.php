@@ -71,7 +71,8 @@ class LeftMedia extends Element
         foreach ($sectionData['items'] as $item) {
             if($item['category'] == 'text') {
                 if($item['item_type']=='title' && $this->showHeader($sectionData)) {
-                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
+
+                    $this->textCreation($item, $objBlock);
 
                     $objBlock->item()->item()->item(1)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
                 }
@@ -80,7 +81,7 @@ class LeftMedia extends Element
         foreach ($sectionData['items'] as $item) {
             if($item['category'] == 'text') {
                 if($item['item_type']=='body' && $this->showBody($sectionData)) {
-                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
+                    $this->textCreation($item, $objBlock);
                 }
             }
         }
@@ -88,42 +89,10 @@ class LeftMedia extends Element
         return json_encode($block);
     }
 
-    /**
-     * @throws \Exception
-     */
-    private function richTextCreator($objBlock, $item, $currentPageURL, $fontsFamily)
+    private function textCreation($richText, $objBlock)
     {
-        $multiElement = [];
-
-        $richText = JS::RichText($item['id'], $currentPageURL, $fontsFamily);
-
-        if (!is_array($richText)) {
-            $objBlock->item()->item()->item(1)->addItem($this->itemWrapperRichText($richText));
-        } else {
-            if (!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'top') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                    }
-                }
-            }
-
-            if (!empty($richText['text'])) {
-                $multiElement[] = $this->itemWrapperRichText($richText['text']);
-            }
-
-            if (!empty($richText['embeds'])) {
-                $multiElement[] = $this->embedCode($item['content']);
-            }
-
-            if (!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'bottom') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                    }
-                }
-            }
-            $objBlock->item()->item()->item(1)->addItem($this->wrapperColumn($multiElement, true));
+        foreach ($richText['brzElement'] as $item) {
+            $objBlock->item()->item()->item(1)->addItem($item);
         }
     }
 }

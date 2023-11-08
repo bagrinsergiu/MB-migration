@@ -224,6 +224,14 @@ class MigrationPlatform
     private function launch($parentPages): void
     {
         foreach ($parentPages as $page) {
+            if($pages['hidden']){ continue; }
+
+            if(!empty($pages['parentSettings'])){
+               $settings =  json_decode($pages['parentSettings'], true);
+               if(array_key_exists('external_url', $settings)){
+                   continue;
+               }
+            }
 
             if (!empty($page['child'])) {
                 $this->launch($page['child']);

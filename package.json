@@ -5,7 +5,8 @@
   "workspaces": [
     "packages/*",
     "lib/MBMigration/Builder/Layout/Theme/Voyage/Assets",
-    "lib/MBMigration/Builder/Layout/Theme/Anthem/Assets"
+    "lib/MBMigration/Builder/Layout/Theme/Anthem/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Solstice/Assets"
   ],
   "scripts": {
     "lint": "turbo run lint",
