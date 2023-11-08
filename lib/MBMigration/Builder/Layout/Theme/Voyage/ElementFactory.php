@@ -99,8 +99,8 @@ class ElementFactory implements MBElementFactoryInterface
 //                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $this->browserPage);
             case 'list-media-layout':
                 return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $this->browserPage);
-//            case 'gallery-layout':
-//                return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $this->browserPage);
+            case 'gallery-layout':
+                return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $this->browserPage);
             case 'right-media-overlap':
                 return new RightMediaOverlap($this->blockKit['blocks']['right-media-overlap'], $this->browserPage);
             case 'left-media-overlap':

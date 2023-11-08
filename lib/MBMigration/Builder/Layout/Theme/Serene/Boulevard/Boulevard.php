@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Boulevard;
+namespace MBMigration\Builder\Layout\Theme\Serene\Boulevard;
 
 use DOMDocument;
 use Exception;

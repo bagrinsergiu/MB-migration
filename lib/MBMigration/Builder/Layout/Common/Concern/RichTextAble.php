@@ -107,6 +107,4 @@ trait RichTextAble
     ) {
         return $brizySection;
     }
-
-
 }

@@ -85,7 +85,12 @@ trait SectionStylesAble
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgImageSrc($background['photo'])
                     ->set_bgColorOpacity($background['opacity'])
-                    ->set_bgColorHex($mbSectionItem['settings']['color']['bg']);
+                    ->set_bgColorHex($backgroundColorHex);
+                //->set_bgColorHex($mbSectionItem['settings']['color']['bg']);
+
+                if (isset($background['photoOption'])) {
+                    $brizySection->getValue(0)->set_bgAttachment('animated');
+                }
             }
 
             // video bg

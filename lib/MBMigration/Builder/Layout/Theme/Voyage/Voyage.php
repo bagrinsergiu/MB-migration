@@ -141,9 +141,7 @@ class Voyage extends LayoutUtils implements ThemeInterface
                 $brizyComponent = $element->transformToItem($elementContext);
                 $brizyPage->getValue()->add_items([$brizyComponent]);
 
-            } catch (ElementNotFound $e) {
-                continue;
-            } catch (BrowserScriptException $e) {
+            } catch (ElementNotFound|BrowserScriptException $e) {
                 continue;
             }
         }
