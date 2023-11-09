@@ -20,29 +20,32 @@ class GalleryLayout extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($brizySection);
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        //$brizySection->getValue()->set_marginType('ungrouped');
-
         $slideJson = json_decode($this->brizyKit['slide'], true);
 
         $brizySectionItems = [];
         foreach ($data->getMbSection()['items'] as $mbItem) {
             $brizySectionItem = new BrizyComponent($slideJson);
-            $brizySectionItem->getValue()
+            $brizyComponentValue = $brizySectionItem->getItemValueWithDepth(0,0);
+            $brizyComponentValue
                 ->set_marginTop(0)
                 ->set_marginBottom(0)
                 ->set_imageSrc($mbItem['content'])
                 ->set_imageFileName($mbItem['imageFileName'])
                 ->set_imageExtension($mbItem['settings']['slide']['extension']);
 
-//            $brizySectionItem->getValue(0)
-//                    ->set_bgImageFileName($mbItem['imageFileName'])
-//                    ->set_bgImageSrc($mbItem['content']);
+                if(isset($mbItem['settings']['slide']['slide_width'])) {
+                    $brizyComponentValue->set_width($mbItem['settings']['slide']['slide_width']);
+                    $brizyComponentValue->set_widthSuffix('px');
+                }
+                if(isset($mbItem['settings']['slide']['slide_height'])) {
+                    $brizyComponentValue->set_height($mbItem['settings']['slide']['slide_height']);
+                    $brizyComponentValue->set_heightSuffix('px');
+                }
 
             $brizySectionItems[] = $brizySectionItem;
         }
 
         $brizySection->getValue()->set_items($brizySectionItems);
-
         return $brizySection;
     }
 

@@ -9,6 +9,37 @@ use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 trait RichTextAble
 {
+
+    /**
+     * Process and add all items the same brizy section
+     */
+    protected function handleRichTextHead(ElementDataInterface $data, BrowserPage $browserPage): BrizyComponent
+    {
+        $mbSectionItem = $data->getMbSection();
+        $brizySection = $data->getBrizySection();
+
+        $showHeader = $mbSectionItem['settings']['sections']['text']['show_header'] ?? true;
+        $showBody = $mbSectionItem['settings']['sections']['text']['show_body'] ?? true;
+
+        foreach ((array)$mbSectionItem['head'] as $mbSectionItem) {
+
+            if ($mbSectionItem['item_type'] == 'title' && !$showHeader) {
+                continue;
+            }
+            if ($mbSectionItem['item_type'] == 'body' && !$showBody) {
+                continue;
+            }
+
+            $elementContext = $data->instanceWithMBSection($mbSectionItem);
+            $this->handleRichTextItem(
+                $elementContext,
+                $browserPage
+            );
+        }
+
+        return $brizySection;
+    }
+
     /**
      * Process and add all items the same brizy section
      */
@@ -53,6 +84,7 @@ trait RichTextAble
             case 'photo':
                 $brizySection = $this->handlePhotoItem(
                     $mbSectionItem['sectionId'] ?? $mbSectionItem['id'],
+                    $mbSectionItem,
                     $brizySection,
                     $browserPage,
                     $families,
@@ -77,7 +109,7 @@ trait RichTextAble
             'DEFAULT_FAMILY' => $defaultFont,
         ]);
 
-        if(isset($richTextBrowserData['error'])) {
+        if (isset($richTextBrowserData['error'])) {
             throw new BrowserScriptException($richTextBrowserData['error']);
         }
 
@@ -99,12 +131,33 @@ trait RichTextAble
     }
 
     private function handlePhotoItem(
+        $mbSectionItemId,
         $mbSectionItem,
         BrizyComponent $brizySection,
         BrowserPage $browserPage,
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
-        return $brizySection;
+
+        $imageJson = json_decode(
+            '{"type": "Image","value": {"_styles": ["image"],"linkSource": "page","linkType": "page","_id": "gigddbxjpastzrjijvdwoqbwsbgqykqtjpro","_version": 2,"imageSrc": "","imageFileName": "","imageExtension": "","imageWidth": 100,"imageHeight": 75,"widthSuffix": "%","heightSuffix": "%","mobileHeight": null,"mobileHeightSuffix": null,"mobileWidth": null,"mobileWidthSuffix": null,"tabletHeight": null,"tabletHeightSuffix": null,"tabletWidth": null,"tabletWidthSuffix": null}}',
+            true
+        );
+
+        $brizyImage = new BrizyComponent($imageJson);
+
+        if (!empty($mbSectionItem['content'])) {
+            $brizyImage->getValue()
+                ->set_imageFileName($mbSectionItem['imageFileName'])
+                ->set_imageSrc($mbSectionItem['content'])
+                ->set_width($mbSectionItem['settings']['image']['width'])
+                ->set_height($mbSectionItem['settings']['image']['height'])
+                ->set_imageWidth($mbSectionItem['settings']['image']['width'])
+                ->set_imageHeight($mbSectionItem['settings']['image']['height'])
+                ->set_widthSuffix('px')
+                ->set_heightSuffix('px');
+        }
+
+        return $brizySection->getValue()->add_items([$brizyImage]);
     }
 }

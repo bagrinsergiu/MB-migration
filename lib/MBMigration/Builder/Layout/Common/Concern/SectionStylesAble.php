@@ -11,6 +11,47 @@ use MBMigration\Builder\Utils\ColorConverter;
 
 trait SectionStylesAble
 {
+    protected function obtainSectionStyles(ElementDataInterface $data, BrowserPage $browserPage): array
+    {
+        $mbSectionItem = $data->getMbSection();
+        $families = $data->getFontFamilies();
+        $defaultFont = $data->getDefaultFontFamily();
+
+        $sectionStyles = $browserPage->evaluateScript(
+            'StyleExtractor.js',
+            [
+                'SELECTOR' => '[data-id="'.($mbSectionItem['sectionId']??$mbSectionItem['id']).'"]',
+                'STYLE_PROPERTIES' => [
+                    'background-color',
+                    'opacity',
+                    'border-bottom-color',
+                    'padding-top',
+                    'padding-bottom',
+                    'padding-right',
+                    'padding-left',
+                    'margin-top',
+                    'margin-bottom',
+                    'margin-left',
+                    'margin-right',
+                ],
+                'FAMILIES' => $families,
+                'DEFAULT_FAMILY' => $defaultFont,
+            ]
+        );
+
+        if (isset($sectionStyles['error'])) {
+            throw new BrowserScriptException($sectionStyles['error']);
+        }
+
+        if (isset($sectionWrapperStyles['error'])) {
+            throw new BrowserScriptException($sectionWrapperStyles['error']);
+        }
+
+        $sectionStyles = $sectionStyles['data'];
+
+        return $sectionStyles;
+    }
+
     protected function handleSectionStyles(ElementDataInterface $data, BrowserPage $browserPage): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
@@ -68,40 +109,7 @@ trait SectionStylesAble
         $sectionStyles = $sectionStyles['data'];
         $sectionWrapperStyles = $sectionWrapperStyles['data'];
 
-        $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
-
-        $brizySection->getValue()
-            ->set_bgColorHex($backgroundColorHex)
-            ->set_bgColorType('solid')
-            ->set_bgColorOpacity($sectionStyles['opacity']);
-
-        // try to set the image background
-        if (isset($mbSectionItem['settings']['sections']['background'])) {
-            $background = $mbSectionItem['settings']['sections']['background'];
-
-            // image bg
-            if (isset($background['filename']) && isset($background['photo'])) {
-                $brizySection->getValue(0)
-                    ->set_bgImageFileName($background['filename'])
-                    ->set_bgImageSrc($background['photo'])
-                    ->set_bgColorOpacity($background['opacity'])
-                    ->set_bgColorHex($backgroundColorHex);
-                //->set_bgColorHex($mbSectionItem['settings']['color']['bg']);
-
-                if (isset($background['photoOption'])) {
-                    $brizySection->getValue(0)->set_bgAttachment('animated');
-                }
-            }
-
-            // video bg
-            if (isset($background['video'])) {
-                $videoBackground = $background['video'];
-                $brizySection->getItemValueWithDepth(0)
-                    ->set_media('video')
-                    ->set_bgVideoType('url')
-                    ->set_bgVideo($videoBackground);
-            }
-        }
+        $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles);
 
         // reset padding top for first section as in brizy there is no need for that padding.
         if (!is_null($pagePosition) && $pagePosition == 0) {
@@ -123,5 +131,54 @@ trait SectionStylesAble
         return $brizySection;
     }
 
+    private function hasImageBackground($mbSectionItem) {
+        return isset($mbSectionItem['settings']['sections']['background']['photo']);
+    }
 
+    private function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles)
+    {
+        if ($brizySection->getType() == 'Section') {
+            return;
+        }
+
+        $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
+        $brizySection->getValue()
+            ->set_bgColorHex($backgroundColorHex)
+            ->set_bgColorType('solid')
+            ->set_bgColorOpacity($sectionStyles['opacity']);
+
+        // try to set the image background
+        if ($this->hasImageBackground($mbSectionItem)) {
+            $background = $mbSectionItem['settings']['sections']['background'];
+
+            // image bg
+            if (isset($background['filename']) && isset($background['photo'])) {
+                $brizySection->getValue()
+                    ->set_bgImageFileName($background['filename'])
+                    ->set_bgImageSrc($background['photo'])
+                    ->set_bgColorOpacity(0)
+                    ->set_bgColorHex($backgroundColorHex);
+
+                if (isset($background['photoOption'])) {
+                    switch ($background['photoOption']) {
+                        case 'parallax-scroll':
+                            $brizySection->getValue(0)->set_bgAttachment('animated');
+                            break;
+                        case 'fill':
+
+                            break;
+                    }
+                }
+            }
+
+            // video bg
+            if (isset($background['video'])) {
+                $videoBackground = $background['video'];
+                $brizySection->getItemValueWithDepth(0)
+                    ->set_media('video')
+                    ->set_bgVideoType('url')
+                    ->set_bgVideo($videoBackground);
+            }
+        }
+    }
 }

@@ -69,10 +69,10 @@ class ElementFactory implements MBElementFactoryInterface
                 return new Footer($this->blockKit['blocks']['footer'], $this->browserPage);
             case 'head':
                 return new Head($this->blockKit['blocks']['menu'], $this->browserPage);
-//            case 'accordion-layout':
-//                return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $this->browserPage);
-//            case 'tabs-layout':
-//                return new TabsLayout($this->blockKit['blocks']['tabs-layout'], $this->browserPage);
+            case 'accordion-layout':
+                return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $this->browserPage);
+            case 'tabs-layout':
+                return new TabsLayout($this->blockKit['blocks']['tabs-layout'], $this->browserPage);
 //            case 'prayer-list':
 //                return new PrayerList($this->blockKit['blocks']['prayer-list'], $this->browserPage);
 //            case 'prayer-form':
@@ -89,14 +89,14 @@ class ElementFactory implements MBElementFactoryInterface
 //                return new LeftFormWithText($this->blockKit['blocks']['left-form-with-text'], $this->browserPage);
 //            case 'full-width-form':
 //                return new FullWidthForm($this->blockKit['blocks']['full-width-form'], $this->browserPage);
-//            case 'event-list-layout':
-//                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $this->browserPage);
+            case 'event-list-layout':
+                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $this->browserPage);
 //            case 'event-gallery-layout':
 //                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $this->browserPage);
 //            case 'event-tile-layout':
 //                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $this->browserPage);
-//            case 'event-calendar-layout':
-//                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $this->browserPage);
+            case 'event-calendar-layout':
+                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $this->browserPage);
             case 'list-media-layout':
                 return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $this->browserPage);
             case 'gallery-layout':
@@ -112,10 +112,10 @@ class ElementFactory implements MBElementFactoryInterface
             case 'grid-media-layout':
                 return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $this->browserPage);
 
-//            case 'list-layout':
-//                return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);
-//            case 'grid-layout':
-//                return new GridLayout($this->blockKit['blocks']['grid-layout'], $this->browserPage);
+            case 'list-layout':
+                return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);
+            case 'grid-layout':
+                return new GridLayout($this->blockKit['blocks']['grid-layout'], $this->browserPage);
             case 'full-text':
                 return new FullText($this->blockKit['blocks']['full-text'], $this->browserPage);
 //            case 'full-media':
