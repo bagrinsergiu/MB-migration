@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Solstice;
 
 use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\MBElementFactoryInterface;
@@ -34,34 +35,8 @@ use MBMigration\Builder\Layout\Theme\Solstice\Elements\SmallGroupsGrid;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\SmallGroupsList;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\TabsLayout;
 
-class ElementFactory implements MBElementFactoryInterface
+class ElementFactory extends AbstractThemeElementFactory
 {
-    /**
-     * @var array
-     */
-    private $blockKit;
-    /**
-     * @var BrowserPageInterface
-     */
-    private $browserPage;
-
-    static public function instance($blockKit, BrowserPageInterface $browserPage): MBElementFactoryInterface
-    {
-        static $instance = null;
-
-        if ($instance) {
-            return $instance;
-        }
-
-        return $instance = new self($blockKit, $browserPage);
-    }
-
-    protected function __construct($blockKit, BrowserPageInterface $browserPage)
-    {
-        $this->blockKit = $blockKit;
-        $this->browserPage = $browserPage;
-    }
-
     public function getElement($name): ElementInterface
     {
         switch ($name) {
@@ -111,7 +86,6 @@ class ElementFactory implements MBElementFactoryInterface
                 return new RightMedia($this->blockKit['blocks']['right-media'], $this->browserPage);
             case 'grid-media-layout':
                 return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $this->browserPage);
-
 //            case 'list-layout':
 //                return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);
 //            case 'grid-layout':

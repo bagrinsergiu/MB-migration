@@ -65,7 +65,7 @@ class PageBuilder
                     $fontFamily[$font['fontFamily']] = $font['uuid'];
                 }
             }
-            file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
+//            file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
 
             $_WorkClassTemplate = new Voyage(
                 $url,
@@ -95,10 +95,8 @@ class PageBuilder
             $layoutBasePath = dirname(__FILE__)."/Layout";
 
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-            $headItem = [];
-            $footerItem = [];
-            ////$headItem = $this->cache->get('header', 'mainSection');
-            //$footerItem = $this->cache->get('footer', 'mainSection');
+            $headItem = $this->cache->get('header', 'mainSection');
+            $footerItem = $this->cache->get('footer', 'mainSection');
 
             $browser = Browser::instance($layoutBasePath);
             $browserPage = $browser->openPage($url, $design);

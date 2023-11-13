@@ -5,6 +5,8 @@ namespace MBMigration\Builder\Layout\Theme\Solstice;
 use DOMDocument;
 use MBMigration\Browser\BrowserInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\BrizyComponent\BrizyComponentPage;
+use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Common\ElementData;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
@@ -107,21 +109,19 @@ class Solstice
      * @return void
      * @throws \Exception
      */
-    public function transformBlocks(array $mbPageSections): BrizyComponent
+    public function transformBlocks(array $mbPageSections): BrizyPage
     {
-        $brizyPage = new BrizyComponent(['value' => ['items' => []]]);
+        $brizyPage = new BrizyPage;
+        $brizyComponent = new BrizyComponentPage(['value' => ['items' => []]]);
 
         $elementContext = ElementData::instance(
             $this->mbHeadSection,
-            $brizyPage,
+            $brizyComponent,
             $this->mbMenu,
             $this->families,
             $this->defaultFamily
         );
-        $brizyPage->getValue()->add_items([
-                $this->elementFactory->getElement('head')->transformToItem($elementContext),
-            ]
-        );
+        $brizyPage->addItem($this->elementFactory->getElement('head')->transformToItem($elementContext));
 
 
         foreach ($mbPageSections as $mbPageSection) {
@@ -130,32 +130,30 @@ class Solstice
                 $element = $this->elementFactory->getElement($elementName);
                 $elementContext = ElementData::instance(
                     $mbPageSection,
-                    $brizyPage,
+                    $brizyComponent,
                     [],
                     $this->families,
                     $this->defaultFamily
                 );
                 $brizyComponent = $element->transformToItem($elementContext);
-                $brizyPage->getValue()->add_items([$brizyComponent]);
+                $brizyPage->addItem($brizyComponent);
 
             } catch (ElementNotFound|BrowserScriptException $e) {
                 continue;
             }
         }
 
-        $brizyPage->getValue()->add_items(
-            [
+        $brizyPage->addItem(
                 $this->elementFactory->getElement('footer')
                     ->transformToItem(
                         ElementData::instance(
                             $this->mbFooterSection,
-                            $brizyPage,
+                            $brizyComponent,
                             [],
                             $this->families,
                             $this->defaultFamily
                         )
-                    ),
-            ]
+                    )
         );
 
         return $brizyPage;
