@@ -2,66 +2,28 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage;
 
-use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
-use MBMigration\Builder\Layout\Common\MBElementFactoryInterface;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventCalendarLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventGalleryLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventListLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventTileLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Footer;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullText;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullWidthForm;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GridLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Head;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftFormWithText;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListMediaLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\LivestreamLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\PrayerForm;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\PrayerList;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightFormWithText;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMediaOverlap;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\SmallGroupsGrid;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\SmallGroupsList;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\TabsLayout;
 
-class ElementFactory implements MBElementFactoryInterface
+class ElementFactory  extends AbstractThemeElementFactory
 {
-    /**
-     * @var array
-     */
-    private $blockKit;
-    /**
-     * @var BrowserPageInterface
-     */
-    private $browserPage;
-
-    static public function instance($blockKit, BrowserPageInterface $browserPage): MBElementFactoryInterface
-    {
-        static $instance = null;
-
-        if ($instance) {
-            return $instance;
-        }
-
-        return $instance = new self($blockKit, $browserPage);
-    }
-
-    protected function __construct($blockKit, BrowserPageInterface $browserPage)
-    {
-        $this->blockKit = $blockKit;
-        $this->browserPage = $browserPage;
-    }
-
     public function getElement($name): ElementInterface
     {
         switch ($name) {

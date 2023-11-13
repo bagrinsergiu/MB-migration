@@ -10,7 +10,7 @@ use MBMigration\Builder\Layout\Common\ElementData;
 use MBMigration\Builder\Layout\Common\ElementDataInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
-use MBMigration\Builder\Layout\Common\MBElementFactoryInterface;
+use MBMigration\Builder\Layout\Common\ThemeElementFactoryInterface;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Builder\Layout\ElementsController;
 use MBMigration\Builder\Layout\LayoutUtils;
@@ -40,7 +40,7 @@ class Voyage extends LayoutUtils implements ThemeInterface
     private $mbMenu;
 
     /**
-     * @var MBElementFactoryInterface
+     * @var ThemeElementFactoryInterface
      */
     private $elementFactory;
 
@@ -86,7 +86,7 @@ class Voyage extends LayoutUtils implements ThemeInterface
         array $mbFooterSection,
         array $families,
         string $defaultFamily,
-        MBElementFactoryInterface $elementFactory,
+        ThemeElementFactoryInterface $elementFactory,
         BrowserInterface $browser
     ) {
         $this->layoutName = 'Voyage';

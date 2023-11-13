@@ -2,29 +2,29 @@
 
 namespace MBMigration\Builder\Layout\Theme\Aurora;
 
-use MBMigration\Builder\Layout\Common\MBElementFactoryInterface;
-use MBMigration\Builder\Layout\Theme\Aurora\Elements\Footer;
-use MBMigration\Builder\Layout\Theme\Aurora\Elements\Head;
+use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
+use MBMigration\Builder\Layout\Common\ElementInterface;
+use MBMigration\Builder\Layout\Common\ThemeElementFactoryInterface;
 
-class ElementFactory implements MBElementFactoryInterface
+class ElementFactory extends AbstractThemeElementFactory
 {
-    private $blockKitPath = "";
-
-    public function loadBrizyBlockKit($kitPath)
+    static public function instance($blockKit, BrowserPageInterface $browserPage): ThemeElementFactoryInterface
     {
-        $this->blockKitPath = $kitPath;
+        static $instance = null;
+
+        if ($instance) {
+            return $instance;
+        }
+
+        return $instance = new self($blockKit, $browserPage);
     }
 
-    public function getElement($name, $mbElementData)
+    public function getElement($name): ElementInterface
     {
         switch ($name) {
-            case "footer":
-                $element = new Footer($jsonKitElements);
-                return $element->getElement();
-            case "head":
-                $element = new Head($jsonKitElements);
             default:
-                return false;
+                throw new ElementNotFound("The Element [{$name}] was not found.");
         }
     }
 

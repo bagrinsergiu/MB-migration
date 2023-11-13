@@ -3,6 +3,7 @@
 namespace MBMigration\Builder;
 
 use MBMigration\Browser\Browser;
+use MBMigration\Builder\Layout\Common\LayoutElementFactory;
 use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Layout\Common\KitLoader;
 use MBMigration\Builder\Layout\Theme\Voyage\ElementFactory;
@@ -41,13 +42,16 @@ class PageBuilder
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
 
+
+        $layoutBasePath = dirname(__FILE__)."/Layout";
+        $browser = Browser::instance($layoutBasePath);
+        $browserPage = $browser->openPage($url, $design);
+        $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
+        $layoutElementFactory = new LayoutElementFactory($brizyKit,$browserPage);
+        $themeElementFactory = $layoutElementFactory->getFactory($design);
+
         if ($design == 'Voyage') {
-
             $menu = $this->cache->get('menuList');
-
-            $layoutBasePath = dirname(__FILE__)."/Layout";
-
-            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $headItem = $this->cache->get('header', 'mainSection');
             $footerItem = $this->cache->get('footer', 'mainSection');
             $fonts = $this->cache->get('fonts', 'settings');
@@ -60,10 +64,6 @@ class PageBuilder
             }
             file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
 
-            $browser = Browser::instance($layoutBasePath);
-            $browserPage = $browser->openPage($url, $design);
-            $blockFactory = ElementFactory::instance($brizyKit, $browserPage);
-
             $_WorkClassTemplate = new Voyage(
                 $url,
                 $brizyKit,
@@ -72,7 +72,7 @@ class PageBuilder
                 $footerItem,
                 $fontFamily,
                 'lato',
-                $blockFactory,
+                $themeElementFactory,
                 $browser
             );
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
@@ -119,7 +119,9 @@ class PageBuilder
         if (Config::$devMode !== true) {
             return;
         }
-        echo "=> Current Page: {$pageName} | Status: " . json_encode($this->cache->get('Status'))."| Time: $executeTime \n";
+        echo "=> Current Page: {$pageName} | Status: ".json_encode(
+                $this->cache->get('Status')
+            )."| Time: $executeTime \n";
     }
 
 }
