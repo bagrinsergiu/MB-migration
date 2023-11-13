@@ -44,19 +44,30 @@ class GridLayout extends AbstractElement
                     ->set_paddingTop((int)$styles['margin-top'])
                     ->set_paddingBottom((int)$styles['margin-bottom'])
                     ->set_paddingRight((int)$styles['margin-right'])
-                    ->set_paddingLeft((int)$styles['margin-left'])
-                   ;
+                    ->set_paddingLeft((int)$styles['margin-left']);
 
                 foreach ($item['item'] as $mbItem) {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
-                        $brizySectionItem
+                        $brizySectionItem->getItemWithDepth(0)
                     );
                     $this->handleRichTextItem($elementContext, $this->browserPage);
+
+                    switch ($mbItem['category']) {
+                        case 'photo':
+                            $brizySectionItem->getItemValueWithDepth(0,0)
+                                ->set_widthSuffix('%')
+                                ->set_heightSuffix('%')
+                                ->set_width(100)
+                                ->set_height(100);
+                            break;
+                    }
                 }
 
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
             }
+
+
             $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
         }
 

@@ -43,20 +43,29 @@ class ListLayout extends AbstractElement
                 ->set_paddingLeft((int)$styles['margin-left']);
 
             foreach ($item['item'] as $mbItem) {
+                $photoPositionIndex = $photoPosition == 'left' ? 0 : 1;
                 if ($mbItem['item_type'] == 'title' || $mbItem['item_type'] == 'body') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
-                        $brizySectionItem->getItemWithDepth($photoPosition=='left'?1:0)
+                        $brizySectionItem->getItemWithDepth($photoPosition == 'left' ? 1 : 0)
                     );
                 }
                 if ($mbItem['category'] == 'photo') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
-                        $brizySectionItem->getItemWithDepth($photoPosition=='left'?0:1)
+                        $brizySectionItem->getItemWithDepth($photoPositionIndex, 0)
                     );
                 }
 
                 $this->handleRichTextItem($elementContext, $this->browserPage);
+
+//                if ($mbItem['category'] == 'photo') {
+//                    $brizySectionItem->getItemValueWithDepth($photoPositionIndex, 0, 0)
+//                        ->set_widthSuffix('%')
+//                        ->set_heightSuffix('%')
+//                        ->set_width(100)
+//                        ->set_height(80);
+//                }
             }
 
             $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionItem]);
