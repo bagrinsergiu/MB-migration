@@ -73,7 +73,6 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new RightMedia($this->blockKit['blocks']['right-media'], $this->browserPage);
             case 'grid-media-layout':
                 return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $this->browserPage);
-
             case 'list-layout':
                 return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);
             case 'grid-layout':

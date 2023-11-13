@@ -39,7 +39,7 @@ final class ElementData implements ElementDataInterface
      */
     static public function instance(
         array $mbSection,
-        BrizyComponent $brizyComponent,
+        BrizyComponent $brizyComponent = null,
         array $menu = [],
         array $fontFamilies = [],
         string $defaultFontFamily = ''
@@ -84,8 +84,8 @@ final class ElementData implements ElementDataInterface
 
     public function __construct(
         array $section,
-        BrizyComponent $brizyComponent,
-        array $menu,
+        BrizyComponent $brizyComponent = null,
+        array $menu = [],
         array $fontFamily = [],
         string $defaultFontFamilies = ''
     ) {
