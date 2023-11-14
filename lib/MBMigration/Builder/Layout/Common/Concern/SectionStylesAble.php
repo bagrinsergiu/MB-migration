@@ -8,6 +8,7 @@ use MBMigration\Builder\BrizyComponent\BrizyComponentValue;
 use MBMigration\Builder\Layout\Common\ElementDataInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\NumberProcessor;
 
 trait SectionStylesAble
 {
@@ -20,7 +21,7 @@ trait SectionStylesAble
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.($mbSectionItem['sectionId']??$mbSectionItem['id']).'"]',
+                'SELECTOR' => '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"]',
                 'STYLE_PROPERTIES' => [
                     'background-color',
                     'opacity',
@@ -82,21 +83,40 @@ trait SectionStylesAble
             ]
         );
 
-        $sectionWrapperStyles = $browserPage->evaluateScript('StyleExtractor.js', [
-            'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"]>.content-wrapper',
-            'STYLE_PROPERTIES' => [
-                'padding-top',
-                'padding-bottom',
-                'padding-right',
-                'padding-left',
-                'margin-top',
-                'margin-bottom',
-                'margin-left',
-                'margin-right',
-            ],
-            'FAMILIES' => [],
-            'DEFAULT_FAMILY' => 'helvetica_neue_helveticaneue_helvetica_arial_sans-serif',
-        ]);
+        $sectionWrapperStyles = $browserPage->evaluateScript(
+            'StyleExtractor.js',
+            [
+                'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"]>.content-wrapper',
+                'STYLE_PROPERTIES' => [
+                    'padding-top',
+                    'padding-bottom',
+                    'padding-right',
+                    'padding-left',
+                    'margin-top',
+                    'margin-bottom',
+                    'margin-left',
+                    'margin-right',
+                ],
+                'FAMILIES' => $families,
+                'DEFAULT_FAMILY' => $defaultFont,
+            ]
+        );
+
+        if (array_key_exists('background', $mbSectionItem['settings']['sections'])) {
+            $resultingSectionStyles = $browserPage->evaluateScript(
+                'StyleExtractor.js',
+                [
+                    'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"] .bg-opacity',
+                    'STYLE_PROPERTIES' => [
+                        'opacity',
+                    ],
+                    'FAMILIES' => $families,
+                    'DEFAULT_FAMILY' => $defaultFont,
+                ]
+            );
+
+            $sectionStyles['data']['opacity'] = $resultingSectionStyles['data']['opacity'];
+        }
 
         if (isset($sectionStyles['error'])) {
             throw new BrowserScriptException($sectionStyles['error']);
@@ -126,12 +146,14 @@ trait SectionStylesAble
             ->set_marginRight((int)$sectionStyles['margin-right'] + (int)$sectionWrapperStyles['margin-right'])
             ->set_marginTop((int)$sectionStyles['margin-top'] + (int)$sectionWrapperStyles['margin-top'])
             ->set_marginBottom((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom'])
+            ->set_bgColorOpacity(NumberProcessor::convertToNumeric($sectionStyles['opacity']))
             ->set_bgColorPalette('');
 
         return $brizySection;
     }
 
-    private function hasImageBackground($mbSectionItem) {
+    private function hasImageBackground($mbSectionItem)
+    {
         return isset($mbSectionItem['settings']['sections']['background']['photo']);
     }
 

@@ -157,7 +157,7 @@ class MigrationPlatform
         Utils::log('Upload Logo menu', 1, 'createMenu');
         $mainSection = $this->uploadPicturesFromSections($mainSection);
         $this->cache->set('mainSection', $mainSection);
-        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
+//        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
         $this->createBlankPages($parentPages);
         $this->createMenuStructure();
 
@@ -224,10 +224,10 @@ class MigrationPlatform
     private function launch($parentPages): void
     {
         foreach ($parentPages as $page) {
-            if($pages['hidden']){ continue; }
+            if($page['hidden']){ continue; }
 
-            if(!empty($pages['parentSettings'])){
-               $settings =  json_decode($pages['parentSettings'], true);
+            if(!empty($page['parentSettings'])){
+               $settings =  json_decode($page['parentSettings'], true);
                if(array_key_exists('external_url', $settings)){
                    continue;
                }
@@ -261,7 +261,7 @@ class MigrationPlatform
 
         $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
         $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
-        file_put_contents(JSON_PATH.'/preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
+//        file_put_contents(JSON_PATH.'/preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
         $collectionItem = $this->getCollectionItem($page['slug']);
         if (!$collectionItem) {
             $newPage = $this->creteNewPage($page['slug'], $page['name']);
@@ -380,8 +380,8 @@ class MigrationPlatform
 
 
         $this->cache->add('menuList', $result);
-        $parentPages = $this->cache->get('menuList');
-        file_put_contents(JSON_PATH.'/menuList.json',json_encode($parentPages));
+//        $parentPages = $this->cache->get('menuList');
+//        file_put_contents(JSON_PATH.'/menuList.json',json_encode($parentPages));
     }
 
     private function transformToBrizyMenu(array $parentMenu): array
@@ -397,8 +397,10 @@ class MigrationPlatform
         }
 
         foreach ($parentMenu as $item) {
-            if ($item['hidden'] === true) {
-                continue;
+            if (isset($item['hidden'])) {
+                if($item['hidden']){
+                    continue;
+                }
             }
             $settings = json_decode($item['parentSettings'], true);
             if (array_key_exists('external_url', $settings)) {
