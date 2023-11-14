@@ -14,7 +14,8 @@ final class KitLoader
     public function loadKit($theme)
     {
         //$globalKit = json_decode(file_get_contents($this->getGlobalLayoutPath()), true);
-        $themeKit = json_decode(file_get_contents($this->getThemeLayoutPath($theme)), true);
+        $fileGetContents = file_get_contents($this->getThemeLayoutPath($theme));
+        $themeKit = json_decode($fileGetContents, true);
 
         return $themeKit;
 

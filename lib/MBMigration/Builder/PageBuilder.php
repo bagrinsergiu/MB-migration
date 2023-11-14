@@ -46,6 +46,7 @@ class PageBuilder
         $layoutBasePath = dirname(__FILE__)."/Layout";
         $browser = Browser::instance($layoutBasePath);
         $browserPage = $browser->openPage($url, $design);
+        file_put_contents(JSON_PATH."/htmlPage.html", file_get_contents($url));
         $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
         $layoutElementFactory = new LayoutElementFactory($brizyKit,$browserPage);
         $themeElementFactory = $layoutElementFactory->getFactory($design);
@@ -65,7 +66,7 @@ class PageBuilder
             file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
 
             $_WorkClassTemplate = new Voyage(
-                $url,
+                $browserPage,
                 $brizyKit,
                 $menu,
                 $headItem,

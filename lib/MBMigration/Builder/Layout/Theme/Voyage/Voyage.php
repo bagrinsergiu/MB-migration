@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Voyage;
 use Exception;
 use MBMigration\Browser\Browser;
 use MBMigration\Browser\BrowserInterface;
+use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\Layout\Common\ElementData;
@@ -51,10 +52,6 @@ class Voyage extends LayoutUtils implements ThemeInterface
      */
     private $browser;
     /**
-     * @var string
-     */
-    private $mbPageUrl;
-    /**
      * @var array
      */
     private $mbHeadSection;
@@ -80,7 +77,7 @@ class Voyage extends LayoutUtils implements ThemeInterface
      * @throws Exception
      */
     public function __construct(
-        string $mbPageUrl,
+        BrowserPage $browserPage,
         array $brizyKit,
         array $mbMenu,
         array $mbHeadSection,
@@ -95,13 +92,12 @@ class Voyage extends LayoutUtils implements ThemeInterface
         $this->mbMenu = $mbMenu;
         $this->elementFactory = $elementFactory;
         $this->browser = $browser;
-        $this->mbPageUrl = $mbPageUrl;
         $this->mbHeadSection = $mbHeadSection;
         $this->mbFooterSection = $mbFooterSection;
 
-        $this->browserPage = $this->browser->openPage($this->mbPageUrl, $this->layoutName);
         $this->families = $families;
         $this->defaultFamily = $defaultFamily;
+        $this->browserPage = $browserPage;
     }
 
     /**

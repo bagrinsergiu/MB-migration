@@ -43,4 +43,24 @@ abstract class AbstractElement implements ElementInterface
         return true;
     }
 
+    protected function sortItems($items)
+    {
+        $groupColum = array_column($items, 'group');
+        $orderByColumn = array_column($items, 'order_by');
+
+        if (count($groupColum) == 0 || count($orderByColumn) == 0) {
+            return $items;
+        }
+
+        array_multisort(
+            $groupColum,
+            SORT_ASC,
+            array_column($items, 'order_by'),
+            SORT_ASC,
+            $items
+        );
+
+        return $items;
+    }
+
 }

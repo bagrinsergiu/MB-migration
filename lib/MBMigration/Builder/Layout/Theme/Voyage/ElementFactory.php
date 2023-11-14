@@ -9,6 +9,7 @@ use MBMigration\Builder\Layout\Theme\Voyage\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventCalendarLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Footer;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullText;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GridLayout;
@@ -79,8 +80,8 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new GridLayout($this->blockKit['blocks']['grid-layout'], $this->browserPage);
             case 'full-text':
                 return new FullText($this->blockKit['blocks']['full-text'], $this->browserPage);
-//            case 'full-media':
-//                return new FullMedia($this->blockKit['blocks']['full-media'], $this->browserPage);
+            case 'full-media':
+                return new FullMedia($this->blockKit['blocks']['full-media'], $this->browserPage);
             default:
                 throw new ElementNotFound("The Element [{$name}] was not found.");
         }

@@ -4,6 +4,8 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 
 use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\BrizyComponent\BrizyImageComponent;
+use MBMigration\Builder\BrizyComponent\BrizyWrapperComponent;
 use MBMigration\Builder\Layout\Common\ElementDataInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
@@ -48,8 +50,11 @@ trait RichTextAble
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
 
-        foreach ((array)$mbSectionItem['items'] as $mbSectionItem) {
-            $elementContext = $data->instanceWithMBSection($mbSectionItem);
+        // sort items
+        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+
+        foreach ((array)$mbSectionItem['items'] as $mbItem) {
+            $elementContext = $data->instanceWithMBSection($mbItem);
             $this->handleRichTextItem(
                 $elementContext,
                 $browserPage
@@ -82,14 +87,22 @@ trait RichTextAble
                 );
                 break;
             case 'photo':
-                $brizySection = $this->handlePhotoItem(
+                $imageTarget = $brizySection;
+                if ($brizySection->getType() != 'Wrapper') {
+                    $imageTarget = new BrizyWrapperComponent('wrapper-image');
+                    $brizySection->getValue()->add_items([$imageTarget]);
+                }
+
+                $this->handlePhotoItem(
                     $mbSectionItem['sectionId'] ?? $mbSectionItem['id'],
                     $mbSectionItem,
-                    $brizySection,
+                    $imageTarget,
                     $browserPage,
                     $families,
                     $default_fonts
                 );
+
+
                 break;
         }
 
@@ -139,12 +152,7 @@ trait RichTextAble
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
 
-        $imageJson = json_decode(
-            '{"type": "Image","value": {"_styles": ["image"],"linkSource": "page","linkType": "page","_id": "gigddbxjpastzrjijvdwoqbwsbgqykqtjpro","_version": 2,"imageSrc": "","imageFileName": "","imageExtension": "","imageWidth": 100,"imageHeight": 75,"widthSuffix": "%","heightSuffix": "%","mobileHeight": null,"mobileHeightSuffix": null,"mobileWidth": null,"mobileWidthSuffix": null,"tabletHeight": null,"tabletHeightSuffix": null,"tabletWidth": null,"tabletWidthSuffix": null}}',
-            true
-        );
-
-        $brizyImage = new BrizyComponent($imageJson);
+        $brizyImage = new BrizyImageComponent();
 
         if (!empty($mbSectionItem['content'])) {
             $brizyImage->getValue()
