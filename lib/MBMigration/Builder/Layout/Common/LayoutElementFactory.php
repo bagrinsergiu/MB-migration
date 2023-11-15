@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Common;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Layer\Graph\QueryBuilder;
 
 class LayoutElementFactory implements LayoutElementFactoryInterface
 {
@@ -17,11 +18,16 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
     private $browserPage;
 
     static $instances = [];
+    /**
+     * @var QueryBuilder
+     */
+    private $queryBuilder;
 
-    public function __construct($blockKit, BrowserPageInterface $browserPage)
+    public function __construct($blockKit, BrowserPageInterface $browserPage, QueryBuilder $queryBuilder)
     {
         $this->blockKit = $blockKit;
         $this->browserPage = $browserPage;
+        $this->queryBuilder = $queryBuilder;
     }
 
     public function getFactory($design): ThemeElementFactoryInterface
@@ -33,15 +39,15 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
         switch ($design) {
             case 'Voyage':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Voyage\ElementFactory(
-                    $this->blockKit, $this->browserPage
+                    $this->blockKit, $this->browserPage,$this->queryBuilder
                 );
             case 'Aurora':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Aurora\ElementFactory(
-                    $this->blockKit, $this->browserPage
+                    $this->blockKit, $this->browserPage, $this->queryBuilder
                 );
             case 'Solstice':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Solstice\ElementFactory(
-                    $this->blockKit, $this->browserPage
+                    $this->blockKit, $this->browserPage, $this->queryBuilder
                 );
             default:
                 throw new ElementNotFound("The Element [{$design}] was not found.");

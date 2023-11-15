@@ -11,5 +11,5 @@ interface ElementInterface
      *
      * @return array
      */
-    public function transformToItem(ElementDataInterface $data): BrizyComponent;
+    public function transformToItem(ElementContextInterface $data): BrizyComponent;
 }

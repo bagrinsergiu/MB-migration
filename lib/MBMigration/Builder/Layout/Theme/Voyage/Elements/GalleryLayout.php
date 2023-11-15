@@ -6,21 +6,30 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class GalleryLayout extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
 
-    public function transformToItem(ElementDataInterface $data): BrizyComponent
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
         $elementContext = $data->instanceWithBrizyComponent($brizySection);
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
+
+        $arrows = $mbSection['settings']['sections']['gallery']['arrows'] ?? true;
+        $markers = $mbSection['settings']['sections']['gallery']['markers'] ?? true;
+        $autoplay = $mbSection['settings']['sections']['gallery']['autoplay'] ?? true;
+
+        $brizySection->getValue()->set_sliderDots($markers?"arrow":"none");
+        $brizySection->getValue()->set_sliderArrows($arrows?"dots":"none");
+        $brizySection->getValue()->set_sliderAutoPlay($autoplay?"on":"off");
 
         $brizySectionItems = [];
         foreach ($data->getMbSection()['items'] as $mbItem) {

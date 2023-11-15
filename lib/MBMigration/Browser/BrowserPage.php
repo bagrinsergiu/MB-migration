@@ -29,6 +29,16 @@ class BrowserPage implements BrowserPageInterface
         return $result;
     }
 
+    /**
+     * @return mixed
+     */
+    public function triggerEvent($eventNameMethod,$elementSelector)
+    {
+        $this->page->tryCatch->querySelectorAll($elementSelector)->$eventNameMethod();
+
+        return $this->page;
+    }
+
     private function getScriptBody($jsScript)
     {
         if (!file_exists($this->scriptPath."/".$jsScript)) {

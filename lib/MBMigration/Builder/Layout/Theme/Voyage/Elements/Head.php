@@ -5,7 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\Cacheable;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class Head extends AbstractElement
@@ -13,7 +13,7 @@ class Head extends AbstractElement
     const CACHE_KEY = 'head';
     use Cacheable;
 
-    public function transformToItem(ElementDataInterface $data): BrizyComponent
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
 
@@ -112,12 +112,12 @@ class Head extends AbstractElement
 
 
     /**
-     * @param ElementDataInterface $data
+     * @param ElementContextInterface $data
      * @param BrizyComponent $component
      * @return BrizyComponent
      */
     private function buildMenuItemsAndSetTheMenuUid(
-        ElementDataInterface $data,
+        ElementContextInterface $data,
         BrizyComponent $component,
         $headStyles
     ): BrizyComponent {
@@ -125,16 +125,17 @@ class Head extends AbstractElement
         $brizyComponent = new BrizyComponent($menuItemKit);
         $menuItems = $this->createMenu($brizyComponent, $data->getMenu());
         $menuComponentValue = $component->getItemValueWithDepth(0, 0, 1, 0, 0);
-        $menuComponentValue
-            ->set('items', $menuItems)
-            ->set_menuSelected($data->getMenu()['uid']);
-        $menuComponentValue->set_subMenuBgColorPalette('');
+        $menuComponentValue->set('items', $menuItems)
+            ->set_menuSelected($data->getMenu()['uid'])
+            ->set_subMenuBgColorPalette('')
+            ->set_colorOpacity(1)
+            ->set_tempColorOpacity(1)
+            ->set_colorPalette('');
         // apply menu styles
         foreach ($headStyles['menu'] as $field => $value) {
             $method = "set_{$field}";
             $menuComponentValue->$method($value);
         }
-
 
         return $component;
     }
@@ -147,7 +148,6 @@ class Head extends AbstractElement
                 'SELECTOR' => '[data-id="'.$sectionId.'"]',
                 'FAMILIES' => [],
                 'DEFAULT_FAMILY' => 'lato',
-
             ]
         );
 

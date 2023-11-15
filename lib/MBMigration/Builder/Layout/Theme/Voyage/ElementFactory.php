@@ -7,6 +7,7 @@ use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventCalendarLayout;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventGridLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullMedia;
@@ -19,8 +20,10 @@ use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListMediaLayout;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\PrayerForm;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMediaOverlap;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\SmallGroupsList;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\TabsLayout;
 
 class ElementFactory  extends AbstractThemeElementFactory
@@ -38,12 +41,12 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new TabsLayout($this->blockKit['blocks']['tabs-layout'], $this->browserPage);
 //            case 'prayer-list':
 //                return new PrayerList($this->blockKit['blocks']['prayer-list'], $this->browserPage);
-//            case 'prayer-form':
-//                return new PrayerForm($this->blockKit['blocks']['prayer-form'], $this->browserPage);
+            case 'prayer-form':
+                return new PrayerForm($this->blockKit['blocks']['prayer-form'], $this->browserPage);
 //            case 'livestream-layout':
 //                return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $this->browserPage);
-//            case 'small-groups-list':
-//                return new SmallGroupsList($this->blockKit['blocks']['small-groups-list'], $this->browserPage);
+            case 'small-groups-list':
+                return new SmallGroupsList($this->blockKit['blocks']['small-groups-list'], $this->browserPage);
 //            case 'small-groups-grid':
 //                return new SmallGroupsGrid($this->blockKit['blocks']['small-groups-grid'], $this->browserPage);
 //            case 'right-form-with-text':
@@ -53,15 +56,15 @@ class ElementFactory  extends AbstractThemeElementFactory
 //            case 'full-width-form':
 //                return new FullWidthForm($this->blockKit['blocks']['full-width-form'], $this->browserPage);
             case 'event-list-layout':
-                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $this->browserPage);
+                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $this->browserPage, $this->getQueryBuilder());
+            case 'event-grid-layout':
+                return new EventGridLayout($this->blockKit['blocks']['event-grid-layout'], $this->browserPage, $this->getQueryBuilder());
 //            case 'event-gallery-layout':
 //                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $this->browserPage);
 //            case 'event-tile-layout':
 //                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $this->browserPage);
             case 'event-calendar-layout':
                 return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $this->browserPage);
-            case 'list-media-layout':
-                return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $this->browserPage);
             case 'gallery-layout':
                 return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $this->browserPage);
             case 'right-media-overlap':
@@ -73,7 +76,9 @@ class ElementFactory  extends AbstractThemeElementFactory
             case 'right-media':
                 return new RightMedia($this->blockKit['blocks']['right-media'], $this->browserPage);
             case 'grid-media-layout':
-                return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $this->browserPage);
+                return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $this->browserPage, $this->getQueryBuilder());
+            case 'list-media-layout':
+                return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $this->browserPage, $this->getQueryBuilder());
             case 'list-layout':
                 return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);
             case 'grid-layout':

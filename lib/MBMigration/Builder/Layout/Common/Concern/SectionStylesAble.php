@@ -5,14 +5,14 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyComponentValue;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
 
 trait SectionStylesAble
 {
-    protected function obtainSectionStyles(ElementDataInterface $data, BrowserPage $browserPage): array
+    protected function obtainSectionStyles(ElementContextInterface $data, BrowserPage $browserPage): array
     {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -53,7 +53,7 @@ trait SectionStylesAble
         return $sectionStyles;
     }
 
-    protected function handleSectionStyles(ElementDataInterface $data, BrowserPage $browserPage): BrizyComponent
+    protected function handleSectionStyles(ElementContextInterface $data, BrowserPage $browserPage): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -76,7 +76,7 @@ trait SectionStylesAble
                     'margin-top',
                     'margin-bottom',
                     'margin-left',
-                    'margin-right',
+                    'margin-right'
                 ],
                 'FAMILIES' => $families,
                 'DEFAULT_FAMILY' => $defaultFont,
@@ -102,7 +102,7 @@ trait SectionStylesAble
             ]
         );
 
-        if (array_key_exists('background', $mbSectionItem['settings']['sections'])) {
+        if (isset($mbSectionItem['settings']['sections']['background'])) {
             $resultingSectionStyles = $browserPage->evaluateScript(
                 'StyleExtractor.js',
                 [

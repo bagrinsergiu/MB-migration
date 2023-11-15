@@ -8,9 +8,10 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyComponentPage;
 use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\ElementData;
+use MBMigration\Builder\Layout\Common\ElementContext;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Layout\Common\ThemeContextInterface;
 use MBMigration\Builder\Layout\Common\ThemeElementFactoryInterface;
 use MBMigration\Builder\Layout\Layout;
 use MBMigration\Builder\VariableCache;
@@ -18,87 +19,22 @@ use MBMigration\Core\Utils;
 
 class Solstice
 {
-    private $brizyKit;
-
-    /**
-     * @var mixed
-     */
-    protected $jsonDecode;
-
-    protected $layoutName;
-
     /**
      * @var VariableCache
      */
     public $cache;
 
     /**
-     * @var array
+     * @var ThemeContextInterface
      */
-    private $mbMenu;
-
-    /**
-     * @var ThemeElementFactoryInterface
-     */
-    private $elementFactory;
-
-    private $browserPageData;
-    /**
-     * @var BrowserInterface
-     */
-    private $browser;
-    /**
-     * @var string
-     */
-    private $mbPageUrl;
-    /**
-     * @var array
-     */
-    private $mbHeadSection;
-    /**
-     * @var array
-     */
-    private $mbFooterSection;
-
-    /**
-     * @var \MBMigration\Browser\BrowserPageInterface
-     */
-    private $browserPage;
-    /**
-     * @var array
-     */
-    private $families;
-    /**
-     * @var string
-     */
-    private $defaultFamily;
+    private $themeContext;
 
     /**
      * @throws Exception
      */
-    public function __construct(
-        string $mbPageUrl,
-        array $brizyKit,
-        array $mbMenu,
-        array $mbHeadSection,
-        array $mbFooterSection,
-        array $families,
-        string $defaultFamily,
-        ThemeElementFactoryInterface $elementFactory,
-        BrowserInterface $browser
-    ) {
-        $this->layoutName = 'Solstice';
-        $this->brizyKit = $brizyKit;
-        $this->mbMenu = $mbMenu;
-        $this->elementFactory = $elementFactory;
-        $this->browser = $browser;
-        $this->mbPageUrl = $mbPageUrl;
-        $this->mbHeadSection = $mbHeadSection;
-        $this->mbFooterSection = $mbFooterSection;
-
-        $this->browserPage = $this->browser->openPage($this->mbPageUrl, $this->layoutName);
-        $this->families = $families;
-        $this->defaultFamily = $defaultFamily;
+    public function __construct(ThemeContextInterface $themeContext)
+    {
+        $this->themeContext = $themeContext;
     }
 
     /**
@@ -112,51 +48,54 @@ class Solstice
     public function transformBlocks(array $mbPageSections): BrizyPage
     {
         $brizyPage = new BrizyPage;
-        $brizyComponent = new BrizyComponentPage(['value' => ['items' => []]]);
+        $brizyComponent = new BrizyComponent(['value' => ['items' => []]]);
+        $elementFactory = $this->themeContext->getElementFactory();
 
-        $elementContext = ElementData::instance(
-            $this->mbHeadSection,
+        $elementContext = ElementContext::instance(
+            $this->themeContext,
+            $this->themeContext->getMbHeadSection(),
             $brizyComponent,
-            $this->mbMenu,
-            $this->families,
-            $this->defaultFamily
+            $this->themeContext->getMbMenu(),
+            $this->themeContext->getFamilies(),
+            $this->themeContext->getDefaultFamily()
         );
-        $brizyPage->addItem($this->elementFactory->getElement('head')->transformToItem($elementContext));
 
+        $brizyPage->addItem($elementFactory->getElement('head')->transformToItem($elementContext));
 
         foreach ($mbPageSections as $mbPageSection) {
             $elementName = $mbPageSection['typeSection'];
             try {
-                $element = $this->elementFactory->getElement($elementName);
-                $elementContext = ElementData::instance(
+                $element = $elementFactory->getElement($elementName);
+                $elementContext = ElementContext::instance(
+                    $this->themeContext,
                     $mbPageSection,
                     $brizyComponent,
-                    [],
-                    $this->families,
-                    $this->defaultFamily
+                    $this->themeContext->getMbMenu(),
+                    $this->themeContext->getFamilies(),
+                    $this->themeContext->getDefaultFamily()
                 );
-                $brizyComponent = $element->transformToItem($elementContext);
-                $brizyPage->addItem($brizyComponent);
 
+                $brizySection = $element->transformToItem($elementContext);
+                $brizyPage->addItem($brizySection);
             } catch (ElementNotFound|BrowserScriptException $e) {
                 continue;
             }
         }
 
         $brizyPage->addItem(
-                $this->elementFactory->getElement('footer')
-                    ->transformToItem(
-                        ElementData::instance(
-                            $this->mbFooterSection,
-                            $brizyComponent,
-                            [],
-                            $this->families,
-                            $this->defaultFamily
-                        )
+            $elementFactory->getElement('footer')
+                ->transformToItem(
+                    ElementContext::instance(
+                        $this->themeContext,
+                        $this->themeContext->getMbFooterSection(),
+                        $brizyComponent,
+                        $this->themeContext->getMbMenu(),
+                        $this->themeContext->getFamilies(),
+                        $this->themeContext->getDefaultFamily()
                     )
+                )
         );
 
         return $brizyPage;
     }
-
 }

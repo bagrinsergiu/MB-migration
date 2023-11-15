@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 
 trait Cacheable
 {
-    static private $cache = [];
+    static protected $cache = [];
 
     /**
      * @param string $key
@@ -17,7 +17,7 @@ trait Cacheable
             return self::$cache[$key];
         }
 
-        return $callback();
+        return self::$cache[$key] = $callback();
     }
 
     public function invalidateCache($key): void

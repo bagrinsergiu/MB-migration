@@ -6,7 +6,7 @@ use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyImageComponent;
 use MBMigration\Builder\BrizyComponent\BrizyWrapperComponent;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrizyKitNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
@@ -16,7 +16,7 @@ trait DanationsAble
     /**
      * Process and add all items the same brizy section
      */
-    protected function handleDonations(ElementDataInterface $data, BrowserPage $browserPage, array $brizyKit): BrizyComponent
+    protected function handleDonations(ElementContextInterface $data, BrowserPage $browserPage, array $brizyKit): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = $data->getBrizySection();

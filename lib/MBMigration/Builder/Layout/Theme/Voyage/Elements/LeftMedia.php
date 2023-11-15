@@ -7,8 +7,8 @@ use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementData;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContext;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class LeftMedia extends AbstractElement
 {
@@ -16,7 +16,7 @@ class LeftMedia extends AbstractElement
     use SectionStylesAble;
     use DanationsAble;
 
-    public function transformToItem(ElementDataInterface $data): BrizyComponent
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));

@@ -6,7 +6,7 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 class GalleryLayout extends AbstractElement
@@ -18,7 +18,7 @@ class GalleryLayout extends AbstractElement
      * @throws BrowserScriptException
      * @throws \Exception
      */
-    public function transformToItem(ElementDataInterface $data): BrizyComponent
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 

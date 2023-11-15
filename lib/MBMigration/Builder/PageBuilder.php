@@ -4,6 +4,7 @@ namespace MBMigration\Builder;
 
 use MBMigration\Browser\Browser;
 use MBMigration\Builder\Layout\Common\LayoutElementFactory;
+use MBMigration\Builder\Layout\Common\ThemeContext;
 use MBMigration\Builder\Layout\Theme\Solstice\Solstice;
 use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Layout\Common\KitLoader;
@@ -28,6 +29,7 @@ class PageBuilder
     public function run($preparedSectionOfThePage): bool
     {
         $itemsID = $this->cache->get('currentPageOnWork');
+        $mainCollectionType = $this->cache->get('mainCollectionType');
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
 
@@ -35,50 +37,54 @@ class PageBuilder
 
         $url = PathSlugExtractor::getFullUrl($slug);
 
-        $dir = dirname(__FILE__)."/Layout/Theme";
         ExecutionTimer::start();
         set_time_limit(1200);
-        $browser = Browser::instance($dir);
-        $browserPage = $browser->openPage($url, $design);
-        echo $slug;
+
         $this->cache->set('CurrentPageURL', $url);
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
 
-
         $layoutBasePath = dirname(__FILE__)."/Layout";
         $browser = Browser::instance($layoutBasePath);
         $browserPage = $browser->openPage($url, $design);
+        $queryBuilder = $this->cache->getClass('QueryBuilder');
+
         file_put_contents(JSON_PATH."/htmlPage.html", file_get_contents($url));
+
         $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-        $layoutElementFactory = new LayoutElementFactory($brizyKit,$browserPage);
+        $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder);
         $themeElementFactory = $layoutElementFactory->getFactory($design);
+        $menu = $this->cache->get('menuList');
+        $headItem = $this->cache->get('header', 'mainSection');
+        $footerItem = $this->cache->get('footer', 'mainSection');
+        $fonts = $this->cache->get('fonts', 'settings');
+        foreach ($fonts as $font) {
+            if ($font['name'] === 'primary') {
+                $fontFamily['Default'] = $font['uuid'];
+            } else {
+                $fontFamily[$font['fontFamily']] = $font['uuid'];
+            }
+        }
+        //file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
+
+        $themeContext = new ThemeContext(
+            $design,
+            $browserPage,
+            $brizyKit,
+            $menu,
+            $headItem,
+            $footerItem,
+            $fontFamily,
+            'lato',
+            $themeElementFactory,
+            $mainCollectionType,
+            $itemsID
+        );
+
 
         if ($design == 'Voyage') {
-            $menu = $this->cache->get('menuList');
-            $headItem = $this->cache->get('header', 'mainSection');
-            $footerItem = $this->cache->get('footer', 'mainSection');
-            $fonts = $this->cache->get('fonts', 'settings');
-            foreach ($fonts as $font) {
-                if ($font['name'] === 'primary') {
-                    $fontFamily['Default'] = $font['uuid'];
-                } else {
-                    $fontFamily[$font['fontFamily']] = $font['uuid'];
-                }
-            }
-//            file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
 
-            $_WorkClassTemplate = new Voyage(
-                $browserPage,
-                $brizyKit,
-                $menu,
-                $headItem,
-                $footerItem,
-                $fontFamily,
-                'lato',
-                $themeElementFactory,
-                $browser
-            );
+            $_WorkClassTemplate = new Voyage($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
             $pageData = json_encode($brizySections);
@@ -86,33 +92,12 @@ class PageBuilder
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
 
             Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
-            $this->sendStatus();
+            $this->sendStatus($slug, ExecutionTimer::stop());
 
             return true;
         } elseif ($design == 'Solstice') {
 
-            $menu = $this->cache->get('menuList');
-
-            $layoutBasePath = dirname(__FILE__)."/Layout";
-
-            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-            $headItem = $this->cache->get('header', 'mainSection');
-            $footerItem = $this->cache->get('footer', 'mainSection');
-
-            $browser = Browser::instance($layoutBasePath);
-            $browserPage = $browser->openPage($url, $design);
-
-            $_WorkClassTemplate = new Solstice(
-                $url,
-                $brizyKit,
-                $menu,
-                $headItem,
-                $footerItem,
-                $fontFamily['kit'],
-                $fontFamily['Default'],
-                $themeElementFactory,
-                $browser
-            );
+            $_WorkClassTemplate = new Solstice($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
             $pageData = json_encode($brizySections);
@@ -136,8 +121,6 @@ class PageBuilder
                 return false;
             }
         }
-
-
     }
 
     private function saveLayoutJson(string $pageData, string $pageName): void
@@ -168,12 +151,13 @@ class PageBuilder
         $cache = VariableCache::getInstance();
         $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {
-            if($font['name'] === 'primary'){
+            if ($font['name'] === 'primary') {
                 $fontFamily['Default'] = $font['uuid'];
             } else {
                 $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
             }
         }
+
         return $fontFamily;
     }
 

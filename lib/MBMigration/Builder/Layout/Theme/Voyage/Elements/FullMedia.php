@@ -7,7 +7,7 @@ use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class FullMedia extends AbstractElement
 {
@@ -15,7 +15,7 @@ class FullMedia extends AbstractElement
     use SectionStylesAble;
     use DanationsAble;
 
-    public function transformToItem(ElementDataInterface $data): BrizyComponent
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -70,9 +70,13 @@ class FullMedia extends AbstractElement
             ->set_tempMarginLeft(0)
             ->set_marginLeftSuffix("px")
             ->set_tempMarginLeftSuffix("px");
-         $brizySection->getItemValueWithDepth(0, 0,0)
-            ->set_height(35)
-            ->set_heightSuffix('%');
+
+        $image = $brizySection->getItemValueWithDepth(0, 0, 0);
+
+        $image->set_width(100)->set_widthSuffix('%')
+            ->set_height('')
+            ->set_heightSuffix('');
+
         return $brizySection;
     }
 

@@ -7,7 +7,7 @@ use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class FullText extends AbstractElement
 {
@@ -15,7 +15,7 @@ class FullText extends AbstractElement
     use SectionStylesAble;
     use DanationsAble;
 
-    public function transformToItem(ElementDataInterface $data): BrizyComponent
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -27,8 +27,6 @@ class FullText extends AbstractElement
         $this->handleSectionStyles($elementContext, $this->browserPage);
         $this->handleRichTextItems($elementContext, $this->browserPage);
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
-
-
 
         return $brizySection;
     }

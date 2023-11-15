@@ -7,8 +7,8 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementData;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContext;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class RightMediaOverlap extends AbstractElement
@@ -16,7 +16,7 @@ class RightMediaOverlap extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
-    public function transformToItem(ElementDataInterface $data): BrizyComponent
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
