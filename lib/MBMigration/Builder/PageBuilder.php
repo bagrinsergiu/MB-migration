@@ -50,32 +50,31 @@ class PageBuilder
         $browserPage = $browser->openPage($url, $design);
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
-        file_put_contents(JSON_PATH."/htmlPage.html", file_get_contents($url));
-
-        $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-        $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder);
-        $themeElementFactory = $layoutElementFactory->getFactory($design);
-        $menu = $this->cache->get('menuList');
-        $headItem = $this->cache->get('header', 'mainSection');
-        $footerItem = $this->cache->get('footer', 'mainSection');
-        //file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
-        $themeContext = new ThemeContext(
-            $design,
-            $browserPage,
-            $brizyKit,
-            $menu,
-            $headItem,
-            $footerItem,
-            $fontFamily['kit'],
-            $fontFamily['Default'],
-            $themeElementFactory,
-            $mainCollectionType,
-            $itemsID
-        );
-
+//        file_put_contents(JSON_PATH."/htmlPage.html", file_get_contents($url));
+        if ($design !== 'Anthem') {
+            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
+            $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder);
+            $themeElementFactory = $layoutElementFactory->getFactory($design);
+            $menu = $this->cache->get('menuList');
+            $headItem = $this->cache->get('header', 'mainSection');
+            $footerItem = $this->cache->get('footer', 'mainSection');
+//            file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
+            $themeContext = new ThemeContext(
+                $design,
+                $browserPage,
+                $brizyKit,
+                $menu,
+                $headItem,
+                $footerItem,
+                $fontFamily['kit'],
+                $fontFamily['Default'],
+                $themeElementFactory,
+                $mainCollectionType,
+                $itemsID
+            );
+        }
 
         if ($design == 'Voyage') {
-
             $_WorkClassTemplate = new Voyage($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
@@ -88,7 +87,6 @@ class PageBuilder
 
             return true;
         } elseif ($design == 'Solstice') {
-
             $_WorkClassTemplate = new Solstice($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 

@@ -92,7 +92,12 @@ class LeftMedia extends Element
 
                     $this->textCreation($item, $objBlock);
 
-                    $objBlock->item()->item()->item(1)->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '']));
+                    $objBlock->item()->item()->item(1)->addItem(
+                        $this->wrapperLine(
+                            [
+                                'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                            ]
+                        ));
                 }
             }
         }

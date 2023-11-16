@@ -147,7 +147,7 @@ class ErrorDump
     {
         return [
             'details_message' => Utils::$MESSAGES_POOL,
-            'cache' => $this->cache->getCache()
+//            'cache' => $this->cache->getCache()
         ];
     }
 
