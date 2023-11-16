@@ -59,17 +59,17 @@ class Anthem extends LayoutUtils
 
         $menuList = $this->cache->get('menuList');
 
-        if ($menuList['create'] === false) {
-            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, $menuList);
-            if ($headElement) {
-                Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
-                $menuList['create'] = true;
-                $this->cache->set('menuList', $menuList);
-            } else {
-                Utils::log("Failed create MENU", 2, $this->layoutName."] [__construct");
-                throw new Exception('Failed create MENU');
-            }
-        }
+//        if ($menuList['create'] === false) {
+//           // $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, [ 'menu' => $menuList, 'activePage' => '' ]);
+//            if ($headElement) {
+//                Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
+//                $menuList['create'] = true;
+//                $this->cache->set('menuList', $menuList);
+//            } else {
+//                Utils::log("Failed create MENU", 2, $this->layoutName."] [__construct");
+//                throw new Exception('Failed create MENU');
+//            }
+//        }
         $MainSectionData = $this->cache->get('mainSection');
         $this->ExtractDataFromPage($MainSectionData, $this->browserPage, 'sectionId');
         $this->cache->set('mainSection', $MainSectionData);
@@ -86,24 +86,38 @@ class Anthem extends LayoutUtils
 
         $itemsID = $this->cache->get('currentPageOnWork');
         $slug = $this->cache->get('tookPage')['slug'];
+        $parentPages = $this->cache->get('menuList');
 
+        $resultFind = FamilyTreeMenu::findParentByChildSlug($parentPages['list'], $slug);
+        if (!empty($resultFind)) {
+            $activeParentPage = $resultFind['slug'];
+        } else {
+            $activeParentPage = $slug;
+        }
         $url = PathSlugExtractor::getFullUrl($slug);
 
         $this->cache->set('CurrentPageURL', $url);
 
-
-        $parsDataFromPage = [];
-
         $this->ExtractDataFromPage($preparedSectionOfThePage, $this->browserPage);
 
-        $itemsData = [];
-        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
+        $menuList = $this->cache->get('menuList');
 
-        $parentPages = $this->cache->get('menuList');
+        $headElement = AnthemElementsController::getElement(
+            'head',
+            $this->jsonDecode,
+            ['menu' => $menuList, 'activePage' => $activeParentPage]
+        );
+
+        $itemsData['items'][] = $headElement;
+//        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
 
         $resultFind = FamilyTreeMenu::findChildrenByChildId($parentPages['list'], $itemsID);
         if (!empty($resultFind)) {
-            $itemsData['items'][] = AnthemElementsController::getElement('SubMenu', $this->jsonDecode, $resultFind);
+            $itemsData['items'][] = AnthemElementsController::getElement(
+                'SubMenu',
+                $this->jsonDecode,
+                ['menu' => $resultFind, 'activePage' => $slug]
+            );
         }
         Utils::log('Current Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
         $this->cache->update('createdFirstSection', false, 'flags');
@@ -172,7 +186,10 @@ class Anthem extends LayoutUtils
     {
         foreach ($SectionPage as &$section) {
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
-            $section['style']['opacity_div'] = $this->ExtractStyleSectionOpacity($browserPage, $section['sectionId']) ?? [];
+            $section['style']['opacity_div'] = $this->ExtractStyleSectionOpacity(
+                $browserPage,
+                $section['sectionId']
+            ) ?? [];
             $section['style']['body'] = $this->ExtractStylePage($browserPage);
             if (!empty($section['items'])) {
                 foreach ($section['items'] as &$item) {

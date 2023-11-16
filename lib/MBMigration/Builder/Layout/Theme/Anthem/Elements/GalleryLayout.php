@@ -30,6 +30,10 @@ class GalleryLayout extends Element
 
     protected function gallery_layout(array $sectionData)
     {
+        $bodyBgColor = '#ffffff';
+        $rotatorSpeed = 5;
+
+
         Utils::log('Create bloc', 1, "gallery_layout");
         $this->cache->set('currentSectionData', $sectionData);
 
@@ -43,11 +47,11 @@ class GalleryLayout extends Element
             $block['value']['sliderTransition'] = 'off';
         } else {
             $block['value']['sliderAutoPlay'] = 'on';
-            $block['value']['sliderAutoPlaySpeed'] = 3;
+            $block['value']['sliderAutoPlaySpeed'] = $rotatorSpeed;
         }
-        $bodyBgColor = '#ffffff';
+
         if(!empty($sectionData['style']['body']['background-color'])) {
-            $bodyBgColor = $sectionData['style']['body']['background-color'] ?? '#ffffff';
+            $bodyBgColor = $sectionData['style']['body']['background-color'];
         }
 
         foreach ($sectionData['items'] as $item){
