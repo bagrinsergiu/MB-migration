@@ -45,13 +45,14 @@ class PageBuilder
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
 
-
-        $layoutBasePath = dirname(__FILE__)."/Layout";
-        $browser = Browser::instance($layoutBasePath);
-        $browserPage = $browser->openPage($url, $design);
-        $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-        $layoutElementFactory = new LayoutElementFactory($brizyKit,$browserPage);
-        $themeElementFactory = $layoutElementFactory->getFactory($design);
+        if ($design != 'Anthem') {
+            $layoutBasePath = dirname(__FILE__)."/Layout";
+            $browser = Browser::instance($layoutBasePath);
+            $browserPage = $browser->openPage($url, $design);
+            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
+            $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage);
+            $themeElementFactory = $layoutElementFactory->getFactory($design);
+        }
 
         if ($design == 'Voyage') {
             $menu = $this->cache->get('menuList');

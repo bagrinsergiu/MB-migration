@@ -113,8 +113,22 @@ class GridLayout extends Element
                                 $objItem->setting('bgImageFileName', $sectionItem['imageFileName']);
 
                                 if ($sectionItem['link'] != '') {
+
+                                    $urlComponents = parse_url($sectionItem['link']);
+
+                                    if(!empty($urlComponents['host'])) {
+                                        $slash = '';
+                                    } else {
+                                        $slash = '/';
+                                    }
+                                    if($sectionItem['new_window']){
+                                        $sectionItem['new_window'] = 'on';
+                                    } else {
+                                        $sectionItem['new_window'] = 'off';
+                                    }
                                     $objItem->setting('linkType', 'external');
-                                    $objItem->setting('linkExternal', '/' . $sectionItem['link']);
+                                    $objItem->setting('linkExternal', $slash . $sectionItem['link']);
+                                    $objItem->setting('linkExternalBlank', $sectionItem['new_window']);
                                 }
                             }
                             if ($sectionItem['category'] == 'text') {

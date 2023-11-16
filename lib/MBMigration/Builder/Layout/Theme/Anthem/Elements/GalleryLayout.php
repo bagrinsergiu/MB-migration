@@ -43,6 +43,11 @@ class GalleryLayout extends Element
             $block['value']['sliderTransition'] = 'off';
         } else {
             $block['value']['sliderAutoPlay'] = 'on';
+            $block['value']['sliderAutoPlaySpeed'] = 3;
+        }
+        $bodyBgColor = '#ffffff';
+        if(!empty($sectionData['style']['body']['background-color'])) {
+            $bodyBgColor = $sectionData['style']['body']['background-color'] ?? '#ffffff';
         }
 
         foreach ($sectionData['items'] as $item){
@@ -59,6 +64,8 @@ class GalleryLayout extends Element
                 $slide['value']['bgSize']          = 'contain';
                 $slide['value']['bgImageSrc']      = $item['content'];
                 $slide['value']['bgImageFileName'] = $item['imageFileName'];
+                $slide['value']['customCSS'] = 'element{background:' . $bodyBgColor . '}';
+
 
                 $this->insertElementAtPosition($block, 'value/items', $slide);
         }

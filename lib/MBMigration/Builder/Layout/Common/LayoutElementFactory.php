@@ -24,6 +24,9 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
         $this->browserPage = $browserPage;
     }
 
+    /**
+     * @throws ElementNotFound
+     */
     public function getFactory($design): ThemeElementFactoryInterface
     {
         if ($instance = $this->loadFromCache($design)) {
