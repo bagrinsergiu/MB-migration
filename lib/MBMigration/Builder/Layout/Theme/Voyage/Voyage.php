@@ -3,13 +3,26 @@
 namespace MBMigration\Builder\Layout\Theme\Voyage;
 
 use Exception;
+use MBMigration\Browser\Browser;
+use MBMigration\Browser\BrowserInterface;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\BrizyComponent\BrizyPage;
+use MBMigration\Builder\Layout\Common\ElementData;
+use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Layout\Common\ThemeElementFactoryInterface;
+use MBMigration\Builder\Layout\Common\ThemeInterface;
+use MBMigration\Builder\Layout\ElementsController;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
-class Voyage extends LayoutUtils
+class Voyage extends LayoutUtils implements ThemeInterface
 {
+    private $brizyKit;
+
     /**
      * @var mixed
      */
@@ -23,103 +36,127 @@ class Voyage extends LayoutUtils
     public $cache;
 
     /**
+     * @var array
+     */
+    private $mbMenu;
+
+    /**
+     * @var ThemeElementFactoryInterface
+     */
+    private $elementFactory;
+
+    private $browserPageData;
+    /**
+     * @var BrowserInterface
+     */
+    private $browser;
+    /**
+     * @var string
+     */
+    private $mbPageUrl;
+    /**
+     * @var array
+     */
+    private $mbHeadSection;
+    /**
+     * @var array
+     */
+    private $mbFooterSection;
+
+    /**
+     * @var \MBMigration\Browser\BrowserPageInterface
+     */
+    private $browserPage;
+    /**
+     * @var array
+     */
+    private $families;
+    /**
+     * @var string
+     */
+    private $defaultFamily;
+
+    /**
      * @throws Exception
      */
-    public function __construct()
-    {
+    public function __construct(
+        string $mbPageUrl,
+        array $brizyKit,
+        array $mbMenu,
+        array $mbHeadSection,
+        array $mbFooterSection,
+        array $families,
+        string $defaultFamily,
+        ThemeElementFactoryInterface $elementFactory,
+        BrowserInterface $browser
+    ) {
         $this->layoutName = 'Voyage';
+        $this->brizyKit = $brizyKit;
+        $this->mbMenu = $mbMenu;
+        $this->elementFactory = $elementFactory;
+        $this->browser = $browser;
+        $this->mbPageUrl = $mbPageUrl;
+        $this->mbHeadSection = $mbHeadSection;
+        $this->mbFooterSection = $mbFooterSection;
 
-        $this->cache = VariableCache::getInstance();
-
-        Utils::log('Connected!', 4, $this->layoutName . ' Builder');
-
-        $this->jsonDecode = $this->loadKit($this->layoutName);
-
-        $menuList = $this->cache->get('menuList');
-
-        if($menuList['create'] === false) {
-            $headElement = VoyageElementsController::getElement('head', $this->jsonDecode, $menuList);
-            if ($headElement) {
-                Utils::log('Success create MENU', 1, $this->layoutName . "] [__construct");
-                $menuList['create'] = true;
-                $this->cache->set('menuList', $menuList);
-            } else {
-                Utils::log("Failed create MENU", 2, $this->layoutName . "] [__construct");
-                throw new Exception('Failed create MENU');
-            }
-        }
-
-        VoyageElementsController::getElement('footer', $this->jsonDecode);
+        $this->browserPage = $this->browser->openPage($this->mbPageUrl, $this->layoutName);
+        $this->families = $families;
+        $this->defaultFamily = $defaultFamily;
     }
 
     /**
-     * @throws Exception
+     * Pass all MB sections here.
+     *
+     * This method should return brizy sections
+     *
+     * @return void
      */
-    public function build($preparedSectionOfThePage): bool
+    public function transformBlocks(array $mbPageSections): BrizyPage
     {
-        $QueryBuilder = $this->cache->getClass('QueryBuilder');
+        $brizyPage = new BrizyPage;
+        $brizyComponent = new BrizyComponent(['value' => ['items' => []]]);
 
-        $itemsID = $this->cache->get('currentPageOnWork');
-        $slug = $this->cache->get('tookPage')['slug'];
+        $elementContext = ElementData::instance(
+            $this->mbHeadSection,
+            $brizyComponent,
+            $this->mbMenu,
+            $this->families,
+            $this->defaultFamily
+        );
+        $brizyPage->addItem($this->elementFactory->getElement('head')->transformToItem($elementContext));
 
-        $url = PathSlugExtractor::getFullUrl($slug);
+        foreach ($mbPageSections as $mbPageSection) {
+            $elementName = $mbPageSection['typeSection'];
+            try {
+                $element = $this->elementFactory->getElement($elementName);
+                $elementContext = ElementData::instance(
+                    $mbPageSection,
+                    $brizyComponent,
+                    [],
+                    $this->families,
+                    $this->defaultFamily
+                );
+                $brizySection = $element->transformToItem($elementContext);
+                $brizyPage->addItem($brizySection);
 
-        $this->cache->set('CurrentPageURL', $url);
-
-        $itemsData = [];
-        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'),true);
-
-        Utils::log('Current Page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
-        $this->cache->update('createdFirstSection',false, 'flags');
-        $this->cache->update('Success', '++', 'Status');
-
-        foreach ($preparedSectionOfThePage as $section)
-        {
-            $blockData = $this->callMethod($section['typeSection'], $section, $slug);
-
-            if($blockData === true) {
-                $itemsData['items'][] = json_decode($this->cache->get('callMethodResult'));
-            } else {
-                if (!empty($blockData) && $blockData !== "null") {
-                    $decodeBlock = json_decode($blockData, true);
-                    $itemsData['items'][] = $decodeBlock;
-                } else {
-                    Utils::log('CallMethod return null. input data: ' . json_encode($section) . ' | Slug: '.$slug, 2, 'PageBuilder');
-                }
+            } catch (ElementNotFound|BrowserScriptException $e) {
+                continue;
             }
         }
 
-        $itemsData['items'][] = json_decode($this->cache->get('footerBlock'),true);
+        $brizyPage->addItem(
+            $this->elementFactory->getElement('footer')
+                ->transformToItem(
+                    ElementData::instance(
+                        $this->mbFooterSection,
+                        $brizyComponent,
+                        [],
+                        $this->families,
+                        $this->defaultFamily
+                    )
+                )
+        );
 
-        $pageData = json_encode($itemsData);
-
-        Utils::log('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
-
-
-        $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
-
-        Utils::log('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug, 1, 'PageBuilder');
-        return true;
+        return $brizyPage;
     }
-
-    /**
-     * @throws Exception
-     */
-    public function callMethod($methodName, $params = [], $marker = '')
-    {
-        $elementName = $this->replaceInName($methodName);
-
-        if (method_exists($this, $elementName)) {
-            Utils::log('Call Element ' . $elementName , 1, $this->layoutName . "] [callMethod");
-            $result = call_user_func_array(array($this, $elementName), [$params]);
-            $this->cache->set('callMethodResult', $result);
-        } else {
-            $result = VoyageElementsController::getElement($elementName, $this->jsonDecode, $params);
-            if(!$result){
-                Utils::log('Element ' . $elementName . ' does not exist. Page: ' . $marker, 2, $this->layoutName . "] [callMethod");
-            }
-        }
-        return $result;
-    }
-
 }

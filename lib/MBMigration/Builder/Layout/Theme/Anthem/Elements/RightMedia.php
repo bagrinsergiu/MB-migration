@@ -67,6 +67,9 @@ class RightMedia extends Element
                     'imageFileName',
                     $item['imageFileName']
                 );
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('mobileSize', 100);
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('mobileSizeSuffix', '%');
+
 
                 if ($this->checkArrayPath($item, 'settings/image')) {
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting(
@@ -80,8 +83,28 @@ class RightMedia extends Element
                 }
 
                 if ($item['link'] != '') {
+
+                    $urlComponents = parse_url($item['link']);
+
+                    if (!empty($urlComponents['host'])) {
+                        $slash = '';
+                    } else {
+                        $slash = '/';
+                    }
+                    if ($item['new_window']) {
+                        $sectionItem['new_window'] = 'on';
+                    } else {
+                        $sectionItem['new_window'] = 'off';
+                    }
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkType', 'external');
-                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkExternal', $item['link']);
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting(
+                        'linkExternal',
+                        $slash.$item['link']
+                    );
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting(
+                        'linkExternalBlank',
+                        $sectionItem['new_window']
+                    );
                 }
             }
         }

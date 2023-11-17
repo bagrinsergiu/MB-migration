@@ -243,7 +243,6 @@ class JS
 
     private static function convertColor($color)
     {
-
         if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
             return $color;
         }

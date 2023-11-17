@@ -2,55 +2,51 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
-use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
+use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
+use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\ElementDataInterface;
 
-class GalleryLayout extends Element
+class GalleryLayout extends AbstractElement
 {
-    /**
-     * @var VariableCache
-     */
-    protected $cache;
+    use RichTextAble;
+    use SectionStylesAble;
 
-    private $jsonDecode;
-
-    public function __construct($jsonKitElements)
+    public function transformToItem(ElementDataInterface $data): BrizyComponent
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
-    }
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
-    /**
-     * @throws \Exception
-     */
-    public function getElement($elementData)
-    {
-        return $this->gallery_layout($elementData);
-    }
+        $elementContext = $data->instanceWithBrizyComponent($brizySection);
+        $this->handleSectionStyles($elementContext, $this->browserPage);
 
-    protected function gallery_layout(array $sectionData)
-    {
-        Utils::log('Create bloc', 1, "gallery_layout");
-        $this->cache->set('currentSectionData', $sectionData);
+        $slideJson = json_decode($this->brizyKit['slide'], true);
 
-        $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);
+        $brizySectionItems = [];
+        foreach ($data->getMbSection()['items'] as $mbItem) {
+            $brizySectionItem = new BrizyComponent($slideJson);
+            $brizyComponentValue = $brizySectionItem->getItemValueWithDepth(0,0);
+            $brizyComponentValue
+                ->set_marginTop(0)
+                ->set_marginBottom(0)
+                ->set_imageSrc($mbItem['content'])
+                ->set_imageFileName($mbItem['imageFileName'])
+                ->set_imageExtension($mbItem['settings']['slide']['extension']);
 
-        $decoded = $this->jsonDecode['blocks']['gallery-layout'];
-        $block = json_decode($decoded['main'], true);
-        $slide  = json_decode($decoded['item'], true);
-
-        foreach ($sectionData['items'] as $item){
-                if(!$item['uploadStatus']) {
-                    continue;
+                if(isset($mbItem['settings']['slide']['slide_width'])) {
+                    $brizyComponentValue->set_width($mbItem['settings']['slide']['slide_width']);
+                    $brizyComponentValue->set_widthSuffix('px');
+                }
+                if(isset($mbItem['settings']['slide']['slide_height'])) {
+                    $brizyComponentValue->set_height($mbItem['settings']['slide']['slide_height']);
+                    $brizyComponentValue->set_heightSuffix('px');
                 }
 
-                $slide['value']['bgImageFileName'] = $item['imageFileName'];
-                $slide['value']['bgImageSrc']      = $item['content'];
-
-                $this->insertElementAtPosition($block, 'value/items', $slide);
+            $brizySectionItems[] = $brizySectionItem;
         }
-        $block = $this->replaceIdWithRandom($block);
-        return json_encode($block);
+
+        $brizySection->getValue()->set_items($brizySectionItems);
+        return $brizySection;
     }
 
 }

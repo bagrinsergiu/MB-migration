@@ -20,6 +20,10 @@ class Head extends Element
      * @var mixed
      */
     private $jsonDecode;
+    /**
+     * @var mixed
+     */
+    private $activePage;
 
     public function __construct($jsonKitElements)
     {
@@ -27,19 +31,22 @@ class Head extends Element
         $this->jsonDecode = $jsonKitElements;
     }
 
-    public function getElement(array $elementData = []): bool
+    public function getElement(array $elementData = [])
     {
-        return $this->Menu($elementData);
+        $this->activePage = $elementData['activePage'];
+        $result = $this->Menu($elementData['menu']);
+
+        return $result;
     }
 
-    private function Menu($menuList): bool
+    private function Menu($menuList)
     {
         Utils::log('Create block menu', 1, "] [createMenu");
 
         $options = [];
 
         $this->cache->set('currentSectionData', $menuList);
-        $headItem = $this->cache->get('header','mainSection');
+        $headItem = $this->cache->get('header', 'mainSection');
         $section = $this->jsonDecode['blocks']['menu'];
 
         $treePages = $this->cache->get('ParentPages');
@@ -49,9 +56,17 @@ class Head extends Element
         $objBlock = new ItemBuilder();
         $objBlock->newItem($section['main']);
 
-        $this->creatingMenu($objBlock, $menuList, $section);
+        $this->creatingMenu($objBlock, $menuList, $section, $this->activePage);
 
-        $this->generalParameters($objBlock, $options, $headItem, ['padding-top' => 10]);
+        $this->generalParameters(
+            $objBlock,
+            $options,
+            $headItem,
+            [
+                'padding-top' => -15,
+                'padding-left' => -20,
+            ]
+        );
 
         $options['currentPageURL'] = $url;
 
@@ -66,23 +81,27 @@ class Head extends Element
         $block = $this->replaceIdWithRandom($objBlock->get());
         $this->cache->set('menuBlock', json_encode($block));
 
-        return true;
+        return json_decode(json_encode($block), true);
     }
 
     private function creatingMenuTree($menuList, $blockMenu): array
     {
         $treeMenu = [];
-        foreach ($menuList as $item)
-        {
+        foreach ($menuList as $item) {
             $blockMenu['value']['itemId'] = $item['collection'];
             $blockMenu['value']['title'] = $item['name'];
-            if($item['slug'] == 'home') {
+            if ($item['slug'] == 'home') {
                 $blockMenu['value']['url'] = '/';
             } else {
                 $blockMenu['value']['url'] = $item['slug'];
             }
+            if ($item['slug'] === $this->activePage) {
+                $blockMenu['value']['current'] = true;
+            } else {
+                $blockMenu['value']['current'] = false;
+            }
             $blockMenu['value']['items'] = $this->creatingMenuTree($item['child'], $blockMenu);
-            if($item['landing'] == false){
+            if ($item['landing'] == false) {
                 $blockMenu['value']['url'] = $blockMenu['value']['items'][0]['value']['url'];
             }
 
@@ -92,6 +111,7 @@ class Head extends Element
 
             $treeMenu[] = $blockMenu;
         }
+
         return $treeMenu;
     }
 
@@ -112,7 +132,7 @@ class Head extends Element
             if ($item['category'] = 'photo') {
                 $imagesStyle = JS::imageStylesExtractor($options['sectionID'], $options['currentPageURL']);
 
-                if(!empty($imagesStyle)){
+                if (!empty($imagesStyle)) {
                     $imageLogo['width'] = $imagesStyle;
                 }
 
@@ -123,17 +143,21 @@ class Head extends Element
             }
         }
 
-        if(!empty($imageLogo['imageWidth']) && !empty($imageLogo['imageHeight']) )
-        {
+        if (!empty($imageLogo['imageWidth']) && !empty($imageLogo['imageHeight'])) {
             $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageHeight', $imageLogo['imageHeight']);
             $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageWidth', $imageLogo['imageWidth']);
         }
-        if(!empty($imageLogo['width']))
-        {
+        if (!empty($imageLogo['width'])) {
             $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('width', $imageLogo['width']);
         }
         $objBlock->item(0)->item(0)->item(0)->item(0)->setting('horizontalAlign', 'center');
-        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileHorizontalAlign', 'center');
+        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileHorizontalAlign', 'left');
+
+        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginLeft', -15);
+        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginTop', -10);
+        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginLeftSuffix', 'px');
+        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginTopSuffix', 'px');
+
         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageSrc', $imageLogo['imageSrc']);
         $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageFileName', $imageLogo['imageFileName']);
 
