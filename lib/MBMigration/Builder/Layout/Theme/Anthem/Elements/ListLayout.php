@@ -122,7 +122,7 @@ class ListLayout extends Element
                         foreach ($item['brzElement'] as $element) {
                             $objItem->addItem($element);
                         }
-                        $objItem->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['borderColorHex']]));
+                        $objItem->addItem($this->wrapperLine(['borderColorHex' => $options['border']['border-bottom-color'] ?? '']));
                     }
                 }
             }

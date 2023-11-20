@@ -29,7 +29,7 @@ class BrowserPage implements BrowserPageInterface
         return $result;
     }
 
-    private function getScriptBody($jsScript)
+    private function getScriptBody($jsScript): string
     {
         if (!file_exists($this->scriptPath."/".$jsScript)) {
             throw new \Exception($this->scriptPath."/".$jsScript." not found.");
@@ -37,6 +37,15 @@ class BrowserPage implements BrowserPageInterface
 
         $code = file_get_contents($this->scriptPath."/".$jsScript)." return output.default; ";
         return $code;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function triggerEvent($eventNameMethod, $elementSelector): void
+    {
+        $method = '$';
+        $this->page->tryCatch->$method($elementSelector)->$eventNameMethod();
     }
 }
 

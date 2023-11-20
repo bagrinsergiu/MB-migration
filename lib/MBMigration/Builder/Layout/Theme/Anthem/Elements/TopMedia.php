@@ -97,7 +97,7 @@ class TopMedia extends Element
             if ($item['category'] == 'text') {
                 if ($item['item_type'] == 'body' && $this->showBody($sectionData)) {
                     $this->textCreation($item, $objBlock);
-                    $objBlock->item()->item()->item()->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+                    $objBlock->item()->item()->item()->addItem($this->wrapperLine(['borderColorHex' => $options['border']['border-bottom-color'] ?? '']));
                 }
             }
         }

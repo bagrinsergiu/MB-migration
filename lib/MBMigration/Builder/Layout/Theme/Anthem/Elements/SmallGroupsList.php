@@ -71,7 +71,7 @@ class SmallGroupsList extends Element
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
                     $this->textCreation($item['id'], $item['content'], $options, $objBlock);
-                    $objBlock->item(0)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+                    $objBlock->item(0)->addItem($this->wrapperLine(['borderColorHex' => $options['border']['border-bottom-color'] ?? '']));
                 }
             }
         }

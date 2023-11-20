@@ -63,7 +63,7 @@ class TwoHorizontalText extends Element
                     if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
                         $this->textCreation($item, $objBlock);
                         $objBlock->item()->item()->item()->addItem(
-                            $this->wrapperLine(['borderColorHex' => $options['borderColorHex']])
+                            $this->wrapperLine(['borderColorHex' => $options['border']['border-bottom-color'] ?? ''])
                         );
                     }
                 }
@@ -84,7 +84,7 @@ class TwoHorizontalText extends Element
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title' && $this->showHeader($sectionData)) {
                         $this->textCreation($item, $objBlock, 1);
-                        $objBlock->item()->item()->item(1)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+                        $objBlock->item()->item()->item(1)->addItem($this->wrapperLine(['borderColorHex' => $options['border']['border-bottom-color'] ?? '']));
                     }
                 }
             }
