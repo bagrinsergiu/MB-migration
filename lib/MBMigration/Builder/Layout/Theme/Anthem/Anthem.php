@@ -204,7 +204,7 @@ class Anthem extends LayoutUtils
                         }
 
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
-                        $hoverColor = $this->ExtractHoverColor($browserPage, '[data-id="71702"] .socialIconSymbol');
+//                        $hoverColor = $this->ExtractHoverColor($browserPage, '[data-id="71702"] .socialIconSymbol');
                     } else {
                         if ($item['category'] === 'list') {
                             $this->ExtractItemContent($item['item'], $browserPage);

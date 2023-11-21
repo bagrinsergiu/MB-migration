@@ -115,7 +115,11 @@ class RightMedia extends Element
 
                     $this->textCreation($item, $objBlock);
 
-                    $objBlock->item()->item()->item()->addItem($this->wrapperLine(['borderColorHex' => $options['border']['border-bottom-color'] ?? '']));
+                    $objBlock->item()->item()->item()->addItem($this->wrapperLine(
+                        [
+                            'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '',
+                        ]
+                    ));
                 }
             }
         }

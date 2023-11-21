@@ -72,7 +72,7 @@ class ListLayout extends Element
                     foreach ($headItem['brzElement'] as $item) {
                         $objHead->item()->addItem($item);
                     }
-                    $objHead->item()->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['borderColorHex']]));
+                    $objHead->item()->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']]));
                 }
             }
         }
@@ -122,7 +122,7 @@ class ListLayout extends Element
                         foreach ($item['brzElement'] as $element) {
                             $objItem->addItem($element);
                         }
-                        $objItem->addItem($this->wrapperLine(['borderColorHex' => $options['border']['border-bottom-color'] ?? '']));
+                        $objItem->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '']));
                     }
                 }
             }

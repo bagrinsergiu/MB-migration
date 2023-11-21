@@ -355,11 +355,23 @@ abstract class Element extends LayoutUtils
         return json_decode(json_encode($result), true);
     }
 
+    /**
+     * @throws Exception
+     */
     protected function wrapperLine(array $options = [])
     {
+        $defOptions = [
+            'borderColorPalette' => '',
+            'borderColorHex' => '#000000',
+            'borderColorOpacity' => 1,
+        ];
+
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global'];
         $line = new ItemBuilder($decoded['wrapper--line']);
+
+        $options = array_merge($defOptions, $options);
+
         if(!empty($options)){
             foreach ($options as $key => $value) {
                 $line->item()->setting($key, $value);

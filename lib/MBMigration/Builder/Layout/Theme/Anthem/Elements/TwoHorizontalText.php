@@ -63,7 +63,11 @@ class TwoHorizontalText extends Element
                     if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
                         $this->textCreation($item, $objBlock);
                         $objBlock->item()->item()->item()->addItem(
-                            $this->wrapperLine(['borderColorHex' => $options['border']['border-bottom-color'] ?? ''])
+                            $this->wrapperLine(
+                                [
+                                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                                ]
+                            )
                         );
                     }
                 }

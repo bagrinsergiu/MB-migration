@@ -75,7 +75,7 @@ class FullMedia extends Element
                         ->addItem(
                             $this->wrapperLine(
                                 [
-                                    'borderColorHex' => $options['border']['border-bottom-color'] ?? '',
+                                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '',
                                 ]
                             )
                         );
