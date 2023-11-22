@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem;
 
 use Exception;
 use MBMigration\Browser\Browser;
+use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Items\SubMenu;
 use MBMigration\Builder\Utils\FamilyTreeMenu;
@@ -194,10 +195,29 @@ class Anthem extends LayoutUtils
             if (!empty($section['items'])) {
                 foreach ($section['items'] as &$item) {
                     if ($item['category'] === 'text') {
+
+                        if ($item['item_type'] == 'title'){
+                            $section['style']['border'] = $this->ExtractBorderColorFromItem(
+                                $browserPage,
+                                $item['id']
+                            ) ?? [];
+                        }
+
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
+//                        $hoverColor = $this->ExtractHoverColor($browserPage, '[data-id="71702"] .socialIconSymbol');
                     } else {
                         if ($item['category'] === 'list') {
                             $this->ExtractItemContent($item['item'], $browserPage);
+
+                            foreach ($item['item'] as $listItem) {
+                                if ($item['item_type'] == 'title'){
+                                    $section['style']['border'] = $this->ExtractBorderColorFromItem(
+                                        $browserPage,
+                                        $listItem['sectionId']
+                                    ) ?? [];
+                                }
+                            }
+
                         }
                     }
                 }
@@ -206,6 +226,13 @@ class Anthem extends LayoutUtils
                 foreach ($section['head'] as &$item) {
                     if ($item['category'] === 'text') {
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item['id']);
+
+                        if ($item['item_type'] == 'title'){
+                            $section['style']['border'] = $this->ExtractBorderColorFromItem(
+                                $browserPage,
+                                $item['id']
+                            ) ?? [];
+                        }
                     }
                 }
             }
@@ -238,13 +265,58 @@ class Anthem extends LayoutUtils
                 'STYLE_PROPERTIES' => [
                     'background-color',
                     'opacity',
-                    'border-bottom-color',
                     'padding-top',
                     'padding-bottom',
                     'margin-top',
                     'margin-bottom',
                     'padding-left',
                     'padding-right',
+                ],
+                'FAMILIES' => $this->fontFamily['kit'],
+                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+            ]
+        );
+
+        foreach ($sectionStyles['data'] as $key => $value) {
+            $style[$key] = $this->convertColor(trim($value, 'px'));
+        }
+
+        return $style;
+    }
+
+
+    private function ExtractHoverColor(BrowserPage $browserPage, $selector): array
+    {
+        $style = [];
+        $browserPage->triggerEvent('hover', $selector);
+        $sectionStyles = $browserPage->evaluateScript(
+            'StyleExtractor.js',
+            [
+                'SELECTOR' => $selector,
+                'STYLE_PROPERTIES' => [
+                    'color'
+                ],
+                'FAMILIES' => $this->fontFamily['kit'],
+                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+            ]
+        );
+
+        foreach ($sectionStyles['data'] as $key => $value) {
+            $style[$key] = $this->convertColor(trim($value, 'px'));
+        }
+
+        return $style;
+    }
+
+    private function ExtractBorderColorFromItem($browserPage, int $sectionId): array
+    {
+        $style = [];
+        $sectionStyles = $browserPage->evaluateScript(
+            'StyleExtractor.js',
+            [
+                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'STYLE_PROPERTIES' => [
+                    'border-bottom-color',
                 ],
                 'FAMILIES' => $this->fontFamily['kit'],
                 'DEFAULT_FAMILY' => $this->fontFamily['Default'],

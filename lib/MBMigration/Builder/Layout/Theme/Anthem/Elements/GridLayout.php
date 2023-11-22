@@ -66,7 +66,7 @@ class GridLayout extends Element
                     foreach ($headItem['brzElement'] as $item) {
                         $objHead->item(0)->addItem($item);
                     }
-                    $objHead->item(0)->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['borderColorHex']]));
+                    $objHead->item(0)->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '']));
 
                 }
             }

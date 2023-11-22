@@ -166,7 +166,9 @@ class Head extends Element
     private function setColorBackground(ItemBuilder $objBlock, $options)
     {
         $color = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
-        $objBlock->item(0)->setting('bgColorHex', $color['background-color']);
+        $objBlock->item(0)->setting('paddingType', 'grouped');
+        $objBlock->item(0)->setting('padding', 10);
+        $objBlock->item(0)->setting('paddingType', 'grouped');
         $objBlock->item(0)->setting('bgColorOpacity', $color['opacity']);
     }
 

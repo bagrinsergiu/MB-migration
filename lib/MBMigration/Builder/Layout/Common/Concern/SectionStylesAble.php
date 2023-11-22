@@ -83,6 +83,7 @@ trait SectionStylesAble
             ]
         );
 
+
         $sectionWrapperStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
