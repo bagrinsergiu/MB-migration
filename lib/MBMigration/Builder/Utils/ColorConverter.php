@@ -13,16 +13,29 @@ final class ColorConverter
     {
         // get the values
         preg_match_all("/([\\d.]+)/", $rgba, $matches);
+        $fromRGB = self::fromRGB($matches[1][0], $matches[1][1], $matches[1][2]);
+        return $fromRGB;
+    }
 
-        // output
-        $hex = sprintf(
-            "#%02X%02X%02X",
-            $matches[1][2], // blue
-            $matches[1][1], // green
-            $matches[1][0] // red
-        );
+    static private function fromRGB($R, $G, $B)
+    {
 
-        return $hex;
+        $R = dechex($R);
+        if (strlen($R) < 2) {
+            $R = '0'.$R;
+        }
+
+        $G = dechex($G);
+        if (strlen($G) < 2) {
+            $G = '0'.$G;
+        }
+
+        $B = dechex($B);
+        if (strlen($B) < 2) {
+            $B = '0'.$B;
+        }
+
+        return '#'.$R.$G.$B;
     }
 
     /**
@@ -35,6 +48,6 @@ final class ColorConverter
         // get the values
         preg_match_all("/([\\d.]+)/", $rgba, $matches);
 
-        return sprintf("%.2f",(float)$matches[1][3]);
+        return sprintf("%.2f", (float)$matches[1][3]);
     }
 }
