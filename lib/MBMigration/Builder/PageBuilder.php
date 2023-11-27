@@ -5,6 +5,7 @@ namespace MBMigration\Builder;
 use MBMigration\Browser\Browser;
 use MBMigration\Builder\Layout\Common\LayoutElementFactory;
 use MBMigration\Builder\Layout\Common\ThemeContext;
+use MBMigration\Builder\Layout\Theme\Bloom\Bloom;
 use MBMigration\Builder\Layout\Theme\Solstice\Solstice;
 use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Layout\Common\KitLoader;
@@ -82,7 +83,19 @@ class PageBuilder
         );
 
 
-        if ($design == 'Voyage') {
+        if ($design == 'Bloom') {
+            $_WorkClassTemplate = new Bloom($themeContext);
+            $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
+
+            $pageData = json_encode($brizySections);
+            $queryBuilder = $this->cache->getClass('QueryBuilder');
+            $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+
+            Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+            $this->sendStatus($slug, ExecutionTimer::stop());
+
+            return true;
+        } elseif ($design == 'Voyage') {
 
             $_WorkClassTemplate = new Voyage($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);

@@ -6,7 +6,8 @@
     "packages/*",
     "lib/MBMigration/Builder/Layout/Theme/Voyage/Assets",
     "lib/MBMigration/Builder/Layout/Theme/Anthem/Assets",
-    "lib/MBMigration/Builder/Layout/Theme/Solstice/Assets"
+    "lib/MBMigration/Builder/Layout/Theme/Solstice/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Bloom/Assets"
   ],
   "scripts": {
     "lint": "turbo run lint",

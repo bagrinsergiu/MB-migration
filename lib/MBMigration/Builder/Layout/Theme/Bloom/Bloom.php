@@ -4,76 +4,94 @@ namespace MBMigration\Builder\Layout\Theme\Bloom;
 
 use DOMDocument;
 use Exception;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\AnthemElementsController;
+use MBMigration\Builder\Layout\Common\ElementContext;
+use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Layout\Common\ThemeContextInterface;
+use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Builder\Layout\Layout;
+use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
-class Bloom extends Layout
+class Bloom extends LayoutUtils implements ThemeInterface
 {
-    /**
-     * @var mixed
-     */
-    private $jsonDecode;
-    /**
-     * @var VariableCache
-     */
-    private $cache;
-    /**
-     * @var string
-     */
-    private $layoutName;
 
     /**
-     * @throws \DOMException
-     * @throws Exception
+     * @var ThemeContextInterface
      */
-    public function __construct(VariableCache $cache)
-    {
-        $this->layoutName = 'Bloom';
-
-        $this->cache = $cache;
-
-        Utils::log('Connected!', 4, $this->layoutName . ' Builder');
-
-        $this->jsonDecode = $this->loadKit($this->layoutName);
-
-        $menuList = $this->cache->get('menuList');
-
-        if($menuList['create'] === false) {
-            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, $menuList);
-            if ($headElement) {
-                Utils::log('Success create MENU', 1, $this->layoutName . "] [__construct");
-                $menuList['create'] = true;
-                $this->cache->set('menuList', $menuList);
-            } else {
-                Utils::log("Failed create MENU", 2, $this->layoutName . "] [__construct");
-                throw new Exception('Failed create MENU');
-            }
-        }
-
-        AnthemElementsController::getElement('footer', $this->jsonDecode);
-    }
+    private $themeContext;
 
     /**
      * @throws Exception
      */
-    public function callMethod($methodName, $params = [], $marker = '')
+    public function __construct(ThemeContextInterface $themeContext)
     {
-        $elementName = $this->replaceInName($methodName);
-
-        if (method_exists($this, $elementName)) {
-            Utils::log('Call Element ' . $elementName , 1, $this->layoutName . "] [callMethod");
-            $result = call_user_func_array(array($this, $elementName), [$params]);
-            $this->cache->set('callMethodResult', $result);
-        } else {
-            $result = AnthemElementsController::getElement($elementName, $this->jsonDecode, $params);
-            if(!$result){
-                Utils::log('Element ' . $elementName . ' does not exist. Page: ' . $marker, 2, $this->layoutName . "] [callMethod");
-            }
-        }
-        return $result;
+        $this->themeContext = $themeContext;
     }
 
+    /**
+     * Pass all MB sections here.
+     *
+     * This method should return brizy sections
+     *
+     * @return void
+     */
+    public function transformBlocks(array $mbPageSections): BrizyPage
+    {
+        $brizyPage = new BrizyPage;
+        $brizyComponent = new BrizyComponent(['value' => ['items' => []]]);
+        $elementFactory = $this->themeContext->getElementFactory();
+
+        $elementContext = ElementContext::instance(
+            $this->themeContext,
+            $this->themeContext->getMbHeadSection(),
+            $brizyComponent,
+            $this->themeContext->getMbMenu(),
+            $this->themeContext->getFamilies(),
+            $this->themeContext->getDefaultFamily()
+        );
+
+        $brizyPage->addItem($elementFactory->getElement('head')->transformToItem($elementContext));
+
+        foreach ($mbPageSections as $mbPageSection) {
+            $elementName = $mbPageSection['typeSection'];
+            try {
+                $element = $elementFactory->getElement($elementName);
+                $elementContext = ElementContext::instance(
+                    $this->themeContext,
+                    $mbPageSection,
+                    $brizyComponent,
+                    $this->themeContext->getMbMenu(),
+                    $this->themeContext->getFamilies(),
+                    $this->themeContext->getDefaultFamily()
+                );
+
+                $brizySection = $element->transformToItem($elementContext);
+                $brizyPage->addItem($brizySection);
+            } catch (ElementNotFound|BrowserScriptException $e) {
+                continue;
+            }
+        }
+
+        $brizyPage->addItem(
+            $elementFactory->getElement('footer')
+                ->transformToItem(
+                    ElementContext::instance(
+                        $this->themeContext,
+                        $this->themeContext->getMbFooterSection(),
+                        $brizyComponent,
+                        $this->themeContext->getMbMenu(),
+                        $this->themeContext->getFamilies(),
+                        $this->themeContext->getDefaultFamily()
+                    )
+                )
+        );
+
+        return $brizyPage;
+    }
 }
