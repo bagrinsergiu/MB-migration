@@ -65,7 +65,7 @@ class LeftMediaCircle extends Element
 
                     $objBlock->item()->item()->item(1)->item()->addItem($this->itemWrapperRichText($richText));
                     $objBlock->item()->item()->item(1)->item()->addItem(
-                        $this->wrapperLine(['borderColorHex' => $options['borderColorHex']])
+                        $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''])
                     );
 
                 }

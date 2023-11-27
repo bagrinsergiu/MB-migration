@@ -62,9 +62,27 @@ class LeftMedia extends Element
                     $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageHeight', $item['settings']['image']['height']);
                 }
 
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('mobileSize', 100);
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('mobileSizeSuffix','%');
+
                 if ($item['link'] != '') {
+
+                    $urlComponents = parse_url($item['link']);
+
+                    if(!empty($urlComponents['host'])) {
+                        $slash = '';
+                    } else {
+                        $slash = '/';
+                    }
+                    if($item['new_window']){
+                        $sectionItem['new_window'] = 'on';
+                    } else {
+                        $sectionItem['new_window'] = 'off';
+                    }
+
                     $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkType', 'external');
-                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternal', $item['link']);
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternal', $slash . $item['link']);
+                    $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternalBlank', $sectionItem['new_window']);
                 }
             }
         }
@@ -74,7 +92,7 @@ class LeftMedia extends Element
 
                     $this->textCreation($item, $objBlock);
 
-                    $objBlock->item()->item()->item(1)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+                    $objBlock->item()->item()->item(1)->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '']));
                 }
             }
         }

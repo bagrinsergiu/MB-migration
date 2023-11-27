@@ -12,7 +12,7 @@ class NumberProcessor
                 return (int) $input;
             }
         } else {
-            return $input;
+            return 1;
         }
     }
 

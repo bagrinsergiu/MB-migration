@@ -403,16 +403,17 @@ class MigrationPlatform
                 }
             }
             $settings = json_decode($item['parentSettings'], true);
+
             if (array_key_exists('external_url', $settings)) {
                 $mainMenu[] = [
                     'id' => '',
-                    "items" =>  $this->transformToBrizyMenu($item['child']),
-                    "isNewTab" => false,
+                    "uid" => Utils::getNameHash(),
+                    "isNewTab" => $this->checkOpenInNewTab($settings),
                     "label" => TextTools::transformText($item['name'], $textTransform),
                     "type" => "custom_link",
                     'url' => $settings['external_url'],
-                    "uid" => Utils::getNameHash(),
                     "description" => "",
+                    "items" =>  $this->transformToBrizyMenu($item['child']),
                 ];
             } else {
                 if(empty($item['collection'])){
@@ -420,15 +421,24 @@ class MigrationPlatform
                 }
                 $mainMenu[] = [
                     "id" => $item['collection'],
-                    "items" => $this->transformToBrizyMenu($item['child']),
-                    "isNewTab" => false,
-                    "label" => TextTools::transformText($item['name'], $textTransform),
                     "uid" => Utils::getNameHash(),
+                    "isNewTab" => $this->checkOpenInNewTab($settings),
+                    "label" => TextTools::transformText($item['name'], $textTransform),
+                    "items" => $this->transformToBrizyMenu($item['child']),
                 ];
             }
         }
 
         return $mainMenu;
+    }
+
+    private function checkOpenInNewTab($settings): bool
+    {
+        if (array_key_exists('new_window', $settings)) {
+            return $settings['new_window'];
+        } else {
+            return false;
+        }
     }
 
     private function getColorFromPalette(string $color)

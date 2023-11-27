@@ -25,7 +25,7 @@ class SubMenu extends Element
         $this->jsonDecode = $jsonKitElements;
     }
 
-    public function getElement(array $elementsData = [])
+    public function getElement(array $elementData = [])
     {
         $textTransform = '';
 
@@ -47,9 +47,49 @@ class SubMenu extends Element
         }
 
 
-        foreach ($elementsData as $element){
+        foreach ($elementData['menu'] as $element){
 
             $objItem->newItem($item);
+
+            $objItem->setting('colorOpacity', 0.8);
+            $objItem->setting('hoverColorOpacity', 1);
+
+            if($element['slug'] === $elementData['activePage']) {
+                $objItem->setting('tabsState', "normal");
+                $objItem->setting('fillType', "filled");
+                $objItem->setting('paddingTB', 2);
+
+                $objItem->setting('paddingRLSuffix', "px");
+                $objItem->setting('paddingTBSuffix', "px");
+
+                $objItem->setting('hoverBorderBottomWidth', 2);
+                $objItem->setting('hoverBorderWidth', 2);
+                $objItem->setting('hoverBorderWidthType', "ungrouped");
+                $objItem->setting('hoverBorderTopWidth', 0);
+                $objItem->setting('hoverBorderRightWidth', 0);
+                $objItem->setting('hoverBorderBottomWidth', 2);
+                $objItem->setting('hoverBorderLeftWidth', 0);
+                $objItem->setting('hoverBorderStyle', 'solid');
+                $objItem->setting('hoverBorderColorOpacity', 1);
+                $objItem->setting('hoverBorderColorHex', '#ffffff');
+                $objItem->setting('hoverBgColorPalette', '');
+                $objItem->setting('hoverBorderColorPalette', '');
+
+                $objItem->setting('borderRadius', 2);
+                $objItem->setting('borderWidth', 2);
+
+                $objItem->setting('borderStyle', "solid");
+                $objItem->setting('borderWidthType', "ungrouped");
+                $objItem->setting('borderTopWidth', 0);
+                $objItem->setting('borderRightWidth', 0);
+                $objItem->setting('borderBottomWidth', 2);
+                $objItem->setting('borderLeftWidth', 0);
+
+                $objItem->setting('borderRadiusType', 'square');
+                $objItem->setting('borderColorHex', '#ffffff');
+                $objItem->setting('borderColorOpacity', 0.8);
+            }
+
 
             $objItem->setting('text', TextTools::transformText($element['name'], $textTransform));
             $objItem->setting('linkExternal', $element['slug']);

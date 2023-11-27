@@ -44,6 +44,7 @@ class PageBuilder
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
 
+
         $layoutBasePath = dirname(__FILE__)."/Layout";
         $browser = Browser::instance($layoutBasePath);
         $browserPage = $browser->openPage($url, $design);
@@ -66,7 +67,6 @@ class PageBuilder
             }
         }
         //file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
-
         $themeContext = new ThemeContext(
             $design,
             $browserPage,

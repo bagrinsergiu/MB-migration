@@ -57,7 +57,7 @@ class NavMenuBuilder
                 $mainMenu[] = [
                     'id' => '',
                     "items" => [],
-                    "isNewTab" => false,
+                    "isNewTab" => $this->checkOpenInNewTab($settings),
                     "label" => TextTools::transformText($item['name'], $textTransform),
                     "type" => "custom_link",
                     'url' => $settings['external_url'],
@@ -71,13 +71,22 @@ class NavMenuBuilder
                 $mainMenu[] = [
                     "id" => $item['collection'],
                     "items" => [],
-                    "isNewTab" => false,
+                    "isNewTab" => $this->checkOpenInNewTab($settings),
                     "label" => TextTools::transformText($item['name'], $textTransform),
                     "uid" => Utils::getNameHash()
                 ];
             }
         }
         return $mainMenu;
+    }
+
+    private function checkOpenInNewTab($settings): bool
+    {
+        if (array_key_exists('new_window', $settings)) {
+            return $settings['new_window'];
+        } else {
+            return false;
+        }
     }
 
 }

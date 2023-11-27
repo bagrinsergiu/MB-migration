@@ -68,7 +68,17 @@ class FullMedia extends Element
 
                     $this->textCreation($item, $objBlock);
 
-                    $objBlock->item()->item()->item()->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+                    $objBlock
+                        ->item()
+                        ->item()
+                        ->item()
+                        ->addItem(
+                            $this->wrapperLine(
+                                [
+                                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '',
+                                ]
+                            )
+                        );
                 }
             }
         }

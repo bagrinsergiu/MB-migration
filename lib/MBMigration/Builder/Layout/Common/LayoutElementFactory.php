@@ -30,6 +30,9 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
         $this->queryBuilder = $queryBuilder;
     }
 
+    /**
+     * @throws ElementNotFound
+     */
     public function getFactory($design): ThemeElementFactoryInterface
     {
         if ($instance = $this->loadFromCache($design)) {
