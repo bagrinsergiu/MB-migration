@@ -5,7 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\Cacheable;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementDataInterface;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class Head extends AbstractElement
@@ -13,7 +13,7 @@ class Head extends AbstractElement
     const CACHE_KEY = 'head';
     use Cacheable;
 
-    public function transformToItem(ElementDataInterface $data): BrizyComponent
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
 
@@ -112,12 +112,12 @@ class Head extends AbstractElement
 
 
     /**
-     * @param ElementDataInterface $data
+     * @param ElementContextInterface $data
      * @param BrizyComponent $component
      * @return BrizyComponent
      */
     private function buildMenuItemsAndSetTheMenuUid(
-        ElementDataInterface $data,
+        ElementContextInterface $data,
         BrizyComponent $component,
         $headStyles
     ): BrizyComponent {
@@ -134,7 +134,6 @@ class Head extends AbstractElement
             $method = "set_{$field}";
             $menuComponentValue->$method($value);
         }
-
 
         return $component;
     }

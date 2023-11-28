@@ -79,48 +79,51 @@ class Config
 
         $DBConnection = $this->checkDBConnection($settings['db']);
 
-        self::$defaultSettings  = [
-            'devMode'       => false,
-            'debugMode'     => true,
-            'urlJsonKit'    => false,
-            'graphqlToken'  => false
+        self::$defaultSettings = [
+            'devMode' => false,
+            'debugMode' => false,
+            'urlJsonKit' => false,
+            'graphqlToken' => false,
+            'DMode_Option' => [
+                'log_SqlQuery' => false,
+            ],
         ];
 
-        self::$debugMode        = (bool) $this->checkSettings('debugMode');
-        self::$devMode          = (bool) $this->checkSettings('devMode');
+        self::$debugMode = (bool)$this->checkSettings('debugMode');
+        self::$devMode = (bool)$this->checkSettings('devMode');
 
-        self::$metaData         = $this->checkMetadata('metaData');
+        self::$metaData = $this->checkMetadata('metaData');
 
-        self::$urlJsonKits      = $this->checkAssets('CloudUrlJsonKit');
-        self::$MBMediaStaging   = $this->checkAssets('MBMediaStaging');
+        self::$urlJsonKits = $this->checkAssets('CloudUrlJsonKit');
+        self::$MBMediaStaging = $this->checkAssets('MBMediaStaging');
 
-        self::$nameMigration    = 'Migration';
-        self::$endPointVersion  = '/2.0';
+        self::$nameMigration = 'Migration';
+        self::$endPointVersion = '/2.0';
 
-        self::$cloud_host       = $this->checkURL($cloud_host);
+        self::$cloud_host = $this->checkURL($cloud_host);
 
-        self::$mainToken        = $this->checkToken($token);
-        self::$graphqlToken     = $this->checkSettings('graphqlToken');
+        self::$mainToken = $this->checkToken($token);
+        self::$graphqlToken = $this->checkSettings('graphqlToken');
 
-        self::$urlAPI           = self::$cloud_host . '/api';
-        self::$urlProjectAPI    = self::$cloud_host . '/projects/{project}';
-        self::$urlGetApiToken   = self::$cloud_host . '/api/projects/{project}/token';
-        self::$urlGraphqlAPI    = self::$cloud_host . '/graphql/{ProjectId}';
+        self::$urlAPI = self::$cloud_host.'/api';
+        self::$urlProjectAPI = self::$cloud_host.'/projects/{project}';
+        self::$urlGetApiToken = self::$cloud_host.'/api/projects/{project}/token';
+        self::$urlGraphqlAPI = self::$cloud_host.'/graphql/{ProjectId}';
 
-        self::$path             = $path;
-        self::$pathTmp          = $path . '/mb_tmp/';
-        self::$pathLogFile      = $path . '/mb_log/{{PREFIX}}.log';
+        self::$path = $path;
+        self::$pathTmp = $path.'/mb_tmp/';
+        self::$pathLogFile = $path.'/mb_log/{{PREFIX}}.log';
 
-        self::$endPointApi      = [
-            'team_members'  => '/team_members',
-            'menus/create'  => '/menus/create',
-            'workspaces'    => '/workspaces',
-            'projects'      => '/projects',
-            'users'         => '/users',
-            'pages'         => '/pages',
-            'media'         => '/media',
-            'fonts'         => '/fonts',
-            'menu'          => '/menus'
+        self::$endPointApi = [
+            'team_members' => '/team_members',
+            'menus/create' => '/menus/create',
+            'workspaces' => '/workspaces',
+            'projects' => '/projects',
+            'users' => '/users',
+            'pages' => '/pages',
+            'media' => '/media',
+            'fonts' => '/fonts',
+            'menu' => '/menus',
         ];
 
         self::$configPostgreSQL = [
@@ -128,20 +131,46 @@ class Config
             'dbPort' => $DBConnection['dbPort'],
             'dbName' => $DBConnection['dbName'],
             'dbUser' => $DBConnection['dbUser'],
-            'dbPass' => $DBConnection['dbPass']
+            'dbPass' => $DBConnection['dbPass'],
         ];
 
-        self::$configMySQL      = [
+        self::$configMySQL = [
             'dbHost' => $DBConnection['dbHost'],
             'dbName' => $DBConnection['dbName'],
             'dbUser' => $DBConnection['dbUser'],
-            'dbPass' => $DBConnection['dbPass']
-        ];
-        
-        self::$designInDevelop  = [
-            'Boulevard', 'Dusk', 'Aurora', 'Solstice', 'Tradition', 'Hope', 'August', 'Voyage', 'Zion', 'Boulevard', 'Ember', 'Bloom', 'Majesty', 'Serene'
+            'dbPass' => $DBConnection['dbPass'],
         ];
 
+        self::$designInDevelop = [
+            'Boulevard',
+            'Dusk',
+            'Aurora',
+            'Solstice',
+            'Tradition',
+            'Hope',
+            'August',
+            'Voyage',
+            'Zion',
+            'Boulevard',
+            'Ember',
+            'Bloom',
+            'Majesty',
+            'Serene',
+        ];
+
+    }
+
+    public static function getDevOptions($optionsName = '')
+    {
+        if (!empty($optionsName)) {
+            if (!array_key_exists($optionsName, self::$defaultSettings['DMode_Option'])) {
+                return false;
+            }
+
+            return self::$defaultSettings['DMode_Option'][$optionsName];
+        }
+
+        return self::$defaultSettings['DMode_Option'];
     }
 
     /**
@@ -151,6 +180,7 @@ class Config
     {
         $pathWrite = is_dir($path) ? $path : sys_get_temp_dir();
         $this->checkAndDeleteFile($pathWrite);
+
         return $pathWrite;
     }
 
@@ -163,9 +193,10 @@ class Config
 
         foreach ($requiredFields as $field) {
             if (empty($confConnection[$field])) {
-                throw new Exception($field . " value is not set");
+                throw new Exception($field." value is not set");
             }
         }
+
         return $confConnection;
     }
 
@@ -178,7 +209,7 @@ class Config
 
         foreach ($requiredKeys as $field) {
             if (empty($confConnection[$field])) {
-                throw new Exception($field . " value is not set");
+                throw new Exception($field." value is not set");
             }
         }
     }
@@ -186,7 +217,8 @@ class Config
     /**
      * @throws Exception
      */
-    private function checkURL($url) {
+    private function checkURL($url)
+    {
         if (!empty($url)) {
             return $url;
         } else {
@@ -202,6 +234,7 @@ class Config
         if (empty($token)) {
             throw new Exception("Token not set");
         }
+
         return $token;
     }
 
@@ -218,13 +251,14 @@ class Config
 
     private function checkSettings(string $flag)
     {
-        if(array_key_exists($flag, self::$settings)){
+        if (array_key_exists($flag, self::$settings)) {
             return self::$settings[$flag];
         } else {
-            if(array_key_exists($flag, self::$defaultSettings)){
+            if (array_key_exists($flag, self::$defaultSettings)) {
                 return self::$defaultSettings[$flag];
             }
         }
+
         return false;
     }
 
@@ -235,21 +269,23 @@ class Config
     {
         $assets = self::$settings['assets'];
 
-        if(array_key_exists($flag, $assets)){
+        if (array_key_exists($flag, $assets)) {
             if (empty($assets[$flag])) {
                 throw new Exception('Assets is empty');
             }
+
             return $assets[$flag];
         }
+
         return false;
     }
 
     /**
      * @throws Exception
      */
-    function checkAndDeleteFile($path) {
-
-        $testFile = $path . '/test_file.log';
+    function checkAndDeleteFile($path)
+    {
+        $testFile = $path.'/test_file.log';
         $handle = @fopen($testFile, 'w');
 
         if ($handle === false) {
@@ -269,18 +305,19 @@ class Config
      */
     private function checkMetadata()
     {
-       $metaData = self::$settings['metaData'];
-       if(!empty($metaData)){
-           $requiredFields = ['secret', 'MBAccountID', 'MBVisitorID'];
+        $metaData = self::$settings['metaData'];
+        if (!empty($metaData)) {
+            $requiredFields = ['secret', 'MBAccountID', 'MBVisitorID'];
 
-           foreach ($requiredFields as $field) {
-               if (empty($metaData[$field])) {
-                   throw new Exception($field . " value is not set");
-               }
-           }
-           return $metaData;
-       }
-       return false;
+            foreach ($requiredFields as $field) {
+                if (empty($metaData[$field])) {
+                    throw new Exception($field." value is not set");
+                }
+            }
 
+            return $metaData;
+        }
+
+        return false;
     }
 }

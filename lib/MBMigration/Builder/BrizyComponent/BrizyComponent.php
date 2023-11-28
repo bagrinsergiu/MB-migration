@@ -4,14 +4,15 @@ namespace MBMigration\Builder\BrizyComponent;
 
 class BrizyComponent implements \JsonSerializable
 {
-    private $type;
-    private $value;
-    private $blockId;
+    protected $type;
+    protected $value;
+    protected $blockId;
 
     public function __construct($data)
     {
-        if(!is_array($data))
+        if (!is_array($data)) {
             throw new \Exception('Wrong data format provided for BrizyComponent');
+        }
 
         $this->type = $data['type'] ?? '';
         $this->value = new BrizyComponentValue($data['value'] ?? []);

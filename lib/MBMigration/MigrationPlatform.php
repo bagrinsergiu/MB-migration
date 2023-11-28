@@ -76,7 +76,7 @@ class MigrationPlatform
             try {
                 $this->run($projectID_MB, $projectID_Brizy);
             } catch (Exception $e) {
-                Utils::MESSAGES_POOL($e->getMessage());
+               Utils::MESSAGES_POOL($e->getMessage());
 
                 return false;
             } catch (GuzzleException $e) {

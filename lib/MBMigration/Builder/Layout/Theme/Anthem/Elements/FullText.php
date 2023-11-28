@@ -71,7 +71,11 @@ class FullText extends Element
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
                     $this->textCreation($item, $objBlock);
-                    $objBlock->item(0)->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '']));
+                    $objBlock->item(0)->addItem($this->wrapperLine(
+                        [
+                            'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                        ]
+                    ));
                 }
             }
         }

@@ -29,6 +29,7 @@ class BrowserPage implements BrowserPageInterface
         return $result;
     }
 
+
     private function getScriptBody($jsScript): string
     {
         if (!file_exists($this->scriptPath."/".$jsScript)) {

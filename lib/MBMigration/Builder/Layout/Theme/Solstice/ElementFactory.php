@@ -25,6 +25,7 @@ use MBMigration\Builder\Layout\Theme\Solstice\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\LeftMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\ListLayout;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\ListMediaLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\ThreeTopMedia;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\LivestreamLayout;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\PrayerForm;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\PrayerList;
@@ -86,14 +87,17 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new RightMedia($this->blockKit['blocks']['right-media'], $this->browserPage);
             case 'grid-media-layout':
                 return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $this->browserPage);
-//            case 'list-layout':
-//                return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);
-//            case 'grid-layout':
-//                return new GridLayout($this->blockKit['blocks']['grid-layout'], $this->browserPage);
+            case 'three-top-media':
+                return new ThreeTopMedia($this->blockKit['blocks']['three-top-media'], $this->browserPage);
+            case 'list-layout':
+                return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);
+            case 'grid-layout':
+                return new GridLayout($this->blockKit['blocks']['grid-layout'], $this->browserPage);
             case 'full-text':
                 return new FullText($this->blockKit['blocks']['full-text'], $this->browserPage);
-//            case 'full-media':
-//                return new FullMedia($this->blockKit['blocks']['full-media'], $this->browserPage);
+            case 'full-media':
+            case 'top-media':
+                return new FullMedia($this->blockKit['blocks']['full-media'], $this->browserPage);
             default:
                 throw new ElementNotFound("The Element [{$name}] was not found.");
         }

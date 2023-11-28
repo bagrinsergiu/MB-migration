@@ -5,7 +5,7 @@ namespace MBMigration\Builder\Layout\Common;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-final class ElementData implements ElementDataInterface
+final class ElementContext implements ElementContextInterface
 {
     /**
      * @var array
@@ -30,6 +30,13 @@ final class ElementData implements ElementDataInterface
      */
     private $brizyComponent;
 
+    private $brizyCollectionType;
+    private $brizyCollectionItem;
+    /**
+     * @var ThemeContextInterface
+     */
+    private $themeContext;
+
     /**
      * @param $mbSection
      * @param $browserData
@@ -38,18 +45,27 @@ final class ElementData implements ElementDataInterface
      * @return self
      */
     static public function instance(
+        ThemeContextInterface $themeContext,
         array $mbSection,
         BrizyComponent $brizyComponent = null,
         array $menu = [],
         array $fontFamilies = [],
         string $defaultFontFamily = ''
     ): self {
-        return new self($mbSection, $brizyComponent, $menu, $fontFamilies, $defaultFontFamily);
+        return new self(
+            $themeContext,
+            $mbSection,
+            $brizyComponent,
+            $menu,
+            $fontFamilies,
+            $defaultFontFamily
+        );
     }
 
-    public function instanceWithBrizyComponent(BrizyComponent $brizyComponent): ElementDataInterface
+    public function instanceWithBrizyComponent(BrizyComponent $brizyComponent): ElementContextInterface
     {
         return new self(
+            $this->themeContext,
             $this->getMbSection(),
             $brizyComponent,
             $this->getMenu(),
@@ -58,9 +74,10 @@ final class ElementData implements ElementDataInterface
         );
     }
 
-    public function instanceWithMBSection($mbSection): ElementDataInterface
+    public function instanceWithMBSection($mbSection): ElementContextInterface
     {
         return new self(
+            $this->themeContext,
             $mbSection,
             $this->getBrizySection(),
             $this->getMenu(),
@@ -72,8 +89,9 @@ final class ElementData implements ElementDataInterface
     public function instanceWithBrizyComponentAndMBSection(
         $mbSection,
         BrizyComponent $brizyComponent
-    ): ElementDataInterface {
+    ): ElementContextInterface {
         return new self(
+            $this->themeContext,
             $mbSection,
             $brizyComponent,
             $this->getMenu(),
@@ -83,6 +101,7 @@ final class ElementData implements ElementDataInterface
     }
 
     public function __construct(
+        ThemeContextInterface $themeContext,
         array $section,
         BrizyComponent $brizyComponent = null,
         array $menu = [],
@@ -94,6 +113,7 @@ final class ElementData implements ElementDataInterface
         $this->menu = $menu;
         $this->fontFamilies = $fontFamily;
         $this->defaultFontFamily = $defaultFontFamilies;
+        $this->themeContext = $themeContext;
     }
 
     public function getMbSection(): array
@@ -128,5 +148,10 @@ final class ElementData implements ElementDataInterface
     public function getBrizySection(): BrizyComponent
     {
         return $this->brizyComponent;
+    }
+
+    public function getThemeContext(): ThemeContextInterface
+    {
+        return $this->themeContext;
     }
 }

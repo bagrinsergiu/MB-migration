@@ -137,16 +137,17 @@ class ErrorDump
 
     public function getDetailsMessage(): array
     {
-        return [
+        $details = [
             'details_message' => Utils::$MESSAGES_POOL,
         ];
+        return $details;
     }
 
     public function getDump(): array
     {
         return [
             'details_message' => Utils::$MESSAGES_POOL,
-            'cache' => $this->cache->getCache()
+//            'cache' => $this->cache->getCache()
         ];
     }
 
