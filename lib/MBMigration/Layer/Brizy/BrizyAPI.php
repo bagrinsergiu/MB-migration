@@ -143,20 +143,20 @@ class BrizyAPI extends Utils
         $result = $this->httpClient('GET', $this->createUrlApiProject($projectid));
         if ($result['status'] > 200) {
             Utils::log('Response: ' . json_encode($result), 2, $nameFunction);
-            Utils::$MESSAGES_POOL = 'Response: ' . json_encode($result);
+            Utils::MESSAGES_POOL('Response: ' . json_encode($result), 'error');
             throw new Exception('Bad Response from Brizy');
         }
         $resultDecode = json_decode($result['body'], true);
 
         if (!is_array($resultDecode)) {
             Utils::log('Bad Response', 2, $nameFunction);
-            Utils::$MESSAGES_POOL = 'Bad Response from Brizy' . json_encode($result);
+            Utils::MESSAGES_POOL('Bad Response from Brizy' . json_encode($result), 'error');
             throw new Exception('Bad Response from Brizy');
         }
         if (array_key_exists('code', $result)) {
             if ($resultDecode['code'] == 500) {
                 Utils::log('Error getting token', 5, $nameFunction);
-                Utils::$MESSAGES_POOL = 'Getting token' . json_encode($result);
+                Utils::MESSAGES_POOL('Getting token' . json_encode($result), 'error');
                 throw new Exception('getting token');
             }
         }
@@ -710,7 +710,7 @@ class BrizyAPI extends Utils
 
                 Utils::log(json_encode(['status' => $statusCode, 'body' => $body]), 3, $nameFunction);
                 if ($statusCode > 200) {
-                    Utils::$MESSAGES_POOL = "Error: RequestException status Code:  $statusCode Response: " . json_encode($body);
+                    Utils::MESSAGES_POOL("Error: RequestException status Code:  $statusCode Response: " . json_encode($body), 'error');
                     throw new Exception("Error: RequestException status Code:  $statusCode Response $body");
                 }
                 throw new Exception("Error: RequestException Message: " . json_encode(['status' => $statusCode, 'body' => $body]));
@@ -720,7 +720,7 @@ class BrizyAPI extends Utils
                 return ['status' => false, 'body' => 'Request timed out.'];
             }
         } catch (GuzzleException $e) {
-            Utils::$MESSAGES_POOL = "Error: GuzzleException Message:" . json_encode($e->getMessage());
+            Utils::MESSAGES_POOL("Error: GuzzleException Message:" . json_encode($e->getMessage()), 'error');
             Utils::log(json_encode(['status' => false, 'body' => $e->getMessage()]), 3, $nameFunction);
             throw new Exception("Error: GuzzleException Message:  $statusCode Response $body");
         }

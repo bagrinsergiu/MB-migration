@@ -13,11 +13,13 @@ use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\ThemeContextInterface;
 use MBMigration\Builder\Layout\Common\ThemeElementFactoryInterface;
+use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Builder\Layout\Layout;
+use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
-class Solstice
+class Solstice extends LayoutUtils implements ThemeInterface
 {
     /**
      * @var VariableCache
@@ -78,6 +80,7 @@ class Solstice
                 $brizySection = $element->transformToItem($elementContext);
                 $brizyPage->addItem($brizySection);
             } catch (ElementNotFound|BrowserScriptException $e) {
+                Utils::MESSAGES_POOL($e->getMessage());
                 continue;
             }
         }

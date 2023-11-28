@@ -7,7 +7,7 @@ use MBMigration\Builder\VariableCache;
 
 class Utils
 {
-    public static $MESSAGES_POOL;
+    public static $MESSAGES_POOL = [];
     private static $projectID;
 
     /**
@@ -32,16 +32,20 @@ class Utils
             $section = 'MAIN_MESSAGE';
         }
 
-        if (!isset(Utils::$MESSAGES_POOL[$section]) || !is_array(Utils::$MESSAGES_POOL[$section])) {
+        if (!array_key_exists($section, Utils::$MESSAGES_POOL)) {
             Utils::$MESSAGES_POOL[$section] = [];
         }
 
-        $messageArray = Utils::$MESSAGES_POOL[$section];
+        $messageArray = &Utils::$MESSAGES_POOL[$section];
+
+        if (!is_array($messageArray)) {
+            $messageArray = [];
+        }
 
         if (empty($key)) {
             array_unshift($messageArray, $message);
         } else {
-            if (isset($messageArray[$key]) && is_array($messageArray[$key])) {
+            if (array_key_exists($key, $messageArray) && is_array($messageArray[$key])) {
                 array_unshift($messageArray[$key], $message);
             } else {
                 $messageArray[$key] = [$message];
@@ -75,7 +79,6 @@ class Utils
     public static function init(VariableCache $cache): void
     {
         self::$cache = $cache;
-        self::$MESSAGES_POOL = [];
         self::$projectID = $cache->get('projectId_Brizy');
     }
 
