@@ -135,7 +135,6 @@ class Head extends AbstractElement
             $menuComponentValue->$method($value);
         }
 
-
         return $component;
     }
 

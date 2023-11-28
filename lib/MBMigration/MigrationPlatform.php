@@ -76,7 +76,7 @@ class MigrationPlatform
             try {
                 $this->run($projectID_MB, $projectID_Brizy);
             } catch (Exception $e) {
-                Utils::MESSAGES_POOL($e->getMessage());
+               Utils::MESSAGES_POOL($e->getMessage());
 
                 return false;
             } catch (GuzzleException $e) {
@@ -261,7 +261,7 @@ class MigrationPlatform
 
         $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
         $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
-        file_put_contents(JSON_PATH.'/preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
+//        file_put_contents(JSON_PATH.'/preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
         $collectionItem = $this->getCollectionItem($page['slug']);
         if (!$collectionItem) {
             $newPage = $this->creteNewPage($page['slug'], $page['name']);

@@ -58,14 +58,6 @@ class PageBuilder
         $menu = $this->cache->get('menuList');
         $headItem = $this->cache->get('header', 'mainSection');
         $footerItem = $this->cache->get('footer', 'mainSection');
-        $fonts = $this->cache->get('fonts', 'settings');
-        foreach ($fonts as $font) {
-            if ($font['name'] === 'primary') {
-                $fontFamily['Default'] = $font['uuid'];
-            } else {
-                $fontFamily[$font['fontFamily']] = $font['uuid'];
-            }
-        }
         //file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
         $themeContext = new ThemeContext(
             $design,
@@ -74,8 +66,8 @@ class PageBuilder
             $menu,
             $headItem,
             $footerItem,
-            $fontFamily,
-            'lato',
+            $fontFamily['kit'],
+            $fontFamily['Default'],
             $themeElementFactory,
             $mainCollectionType,
             $itemsID

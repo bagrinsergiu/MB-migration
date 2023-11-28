@@ -137,9 +137,10 @@ class ErrorDump
 
     public function getDetailsMessage(): array
     {
-        return [
+        $details = [
             'details_message' => Utils::$MESSAGES_POOL,
         ];
+        return $details;
     }
 
     public function getDump(): array

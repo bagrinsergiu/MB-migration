@@ -54,7 +54,7 @@ class Browser implements BrowserInterface
         $page = $this->browser->newPage();
         $page->goto($url, ['timeout' => 60000]);
 
-        return new BrowserPage($page, $this->scriptPath."/".$theme."/Assets/dist");
+        return new BrowserPage($page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
     }
 
 //    function __destruct()
