@@ -26,23 +26,6 @@ class FullMedia extends AbstractElement
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
 
-//        $mbSection['items'] = $this->sortItems($mbSection['items']);
-//
-//        foreach ($mbSection['items'] as $mbItem) {
-//                if ($mbItem['category'] == 'text') {
-//                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-//                        $mbItem,
-//                        $brizySection->getItemWithDepth(0)
-//                    );
-//                }
-//                if ($mbItem['category'] == 'photo') {
-//                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-//                        $mbItem,
-//                        $brizySection->getItemWithDepth(0,0)
-//                    );
-//                }
-//                $this->handleRichTextItem($elementContext, $this->browserPage);
-//            }
         $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
         $this->handleRichTextItems($elementContext, $this->browserPage);
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
