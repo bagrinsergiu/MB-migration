@@ -52,6 +52,10 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Solstice\ElementFactory(
                     $this->blockKit, $this->browserPage, $this->queryBuilder
                 );
+            case 'Majesty':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Majesty\ElementFactory(
+                    $this->blockKit, $this->browserPage, $this->queryBuilder
+                );
             default:
                 throw new ElementNotFound("The Element [{$design}] was not found.");
         }
