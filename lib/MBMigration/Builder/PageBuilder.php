@@ -3,8 +3,10 @@
 namespace MBMigration\Builder;
 
 use MBMigration\Browser\Browser;
+use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\LayoutElementFactory;
 use MBMigration\Builder\Layout\Common\ThemeContext;
+use MBMigration\Builder\Layout\Theme\Majesty\Majesty;
 use MBMigration\Builder\Layout\Theme\Solstice\Solstice;
 use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Layout\Common\KitLoader;
@@ -26,6 +28,10 @@ class PageBuilder
         $this->cache = VariableCache::getInstance();
     }
 
+    /**
+     * @throws ElementNotFound
+     * @throws \Exception
+     */
     public function run($preparedSectionOfThePage): bool
     {
         $itemsID = $this->cache->get('currentPageOnWork');
@@ -88,6 +94,18 @@ class PageBuilder
             return true;
         } elseif ($design == 'Solstice') {
             $_WorkClassTemplate = new Solstice($themeContext);
+            $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
+
+            $pageData = json_encode($brizySections);
+            $queryBuilder = $this->cache->getClass('QueryBuilder');
+            $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+
+            Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+            $this->sendStatus($slug, ExecutionTimer::stop());
+
+            return true;
+        } elseif ($design == 'Majesty') {
+            $_WorkClassTemplate = new Majesty($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
             $pageData = json_encode($brizySections);
