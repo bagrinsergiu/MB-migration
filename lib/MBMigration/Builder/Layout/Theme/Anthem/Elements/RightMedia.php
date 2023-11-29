@@ -67,6 +67,9 @@ class RightMedia extends Element
                     'imageFileName',
                     $item['imageFileName']
                 );
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('mobileSize', 100);
+                $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('mobileSizeSuffix', '%');
+
 
                 if ($this->checkArrayPath($item, 'settings/image')) {
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting(
@@ -80,8 +83,28 @@ class RightMedia extends Element
                 }
 
                 if ($item['link'] != '') {
+
+                    $urlComponents = parse_url($item['link']);
+
+                    if (!empty($urlComponents['host'])) {
+                        $slash = '';
+                    } else {
+                        $slash = '/';
+                    }
+                    if ($item['new_window']) {
+                        $sectionItem['new_window'] = 'on';
+                    } else {
+                        $sectionItem['new_window'] = 'off';
+                    }
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkType', 'external');
-                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting('linkExternal', $item['link']);
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting(
+                        'linkExternal',
+                        $slash.$item['link']
+                    );
+                    $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setting(
+                        'linkExternalBlank',
+                        $sectionItem['new_window']
+                    );
                 }
             }
         }
@@ -90,16 +113,20 @@ class RightMedia extends Element
             if ($item['category'] == 'text') {
                 if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
 
-                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
+                    $this->textCreation($item, $objBlock);
 
-                    $objBlock->item()->item()->item()->addItem($this->wrapperLine());
+                    $objBlock->item()->item()->item()->addItem($this->wrapperLine(
+                        [
+                            'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '',
+                        ]
+                    ));
                 }
             }
         }
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] == 'body' && $this->showBody($sectionData)) {
-                    $this->richTextCreator($objBlock, $item, $options['currentPageURL'], $options['fontsFamily']);
+                    $this->textCreation($item, $objBlock);
                 }
             }
         }
@@ -108,58 +135,10 @@ class RightMedia extends Element
         return json_encode($block);
     }
 
-    /**
-     * @throws \Exception
-     */
-    private function richTextCreator($objBlock, $item, $currentPageURL, $fontsFamily) {
-        $multiElement = [];
-
-        $richText = JS::RichText($item['id'], $currentPageURL, $fontsFamily);
-
-        if (!is_array($richText)) {
-            $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
-        } else {
-            if (!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'top') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['button'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'top') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            if (!empty($richText['text'])) {
-                $multiElement[] = $this->itemWrapperRichText($richText['text']);
-            }
-
-            if (!empty($richText['embeds'])) {
-                $multiElement[] = $this->embedCode($item['content']);
-            }
-
-            if (!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'bottom') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['button'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'bottom') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            $objBlock->item()->item()->item()->addItem($this->wrapperColumn($multiElement, true));
+    private function textCreation($richText, $objBlock)
+    {
+        foreach ($richText['brzElement'] as $item) {
+            $objBlock->item()->item()->item()->addItem($item);
         }
     }
 

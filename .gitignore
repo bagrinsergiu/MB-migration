@@ -1,3 +1,6 @@
 /vendor/*
 /sample/*
 .idea
+**/node_modules/
+.turbo
+/mbaaa

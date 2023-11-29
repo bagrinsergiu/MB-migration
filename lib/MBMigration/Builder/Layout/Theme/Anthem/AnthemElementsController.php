@@ -42,7 +42,7 @@ class AnthemElementsController
     {
         $element = self::switchGlobalElements($elementName, $jsonKitElements, $elementData);
         if ($element) {
-            return true;
+            return $element;
         }
 
         $element = self::switchElements($elementName, $jsonKitElements, $elementData);
@@ -66,7 +66,7 @@ class AnthemElementsController
     /**
      * @throws \DOMException
      */
-    private static function switchGlobalElements($elementName, $jsonKitElements, $elementData): bool
+    private static function switchGlobalElements($elementName, $jsonKitElements, $elementData)
     {
         switch ($elementName) {
             case "footer":

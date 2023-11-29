@@ -38,7 +38,7 @@ class PostgresSQL
             Utils::log('Connection success', 4, 'PostgresSQL');
         } catch (PDOException $e) {
             Utils::MESSAGES_POOL($e->getMessage(), 'error', 'PostgresSQL');
-            throw new Exception("Database connection failed: " . $e->getMessage());
+            throw new Exception("Database connection failed: ".$e->getMessage());
         }
         Utils::log('READY', 4, 'PostgresSQL Module');
     }
@@ -55,13 +55,17 @@ class PostgresSQL
         }
         try {
             $statement = $this->connection->query($sql);
-            Utils::MESSAGES_POOL('success Request: ' . json_encode($sql) , 'Request', 'PostgresSQL');
+
+            if (Config::getDevOptions('log_SqlQuery')) {
+                Utils::MESSAGES_POOL('success Request: '.json_encode($sql), 'Request', 'PostgresSQL');
+            }
+
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             Utils::MESSAGES_POOL($e->getMessage(), 'error', 'PostgresSQL');
-            Utils::MESSAGES_POOL('MySql Request: ' . json_encode($sql), 'Failed Request', 'PostgresSQL');
-            Utils::log("Query execution : " . $e->getMessage(), 2, 'PostgresSQL');
-            throw new Exception("Query execution failed: " . $e->getMessage(). ' Request: '.json_encode($sql));
+            Utils::MESSAGES_POOL('MySql Request: '.json_encode($sql), 'Failed Request', 'PostgresSQL');
+            Utils::log("Query execution : ".$e->getMessage(), 2, 'PostgresSQL');
+            throw new Exception("Query execution failed: ".$e->getMessage().' Request: '.json_encode($sql));
         }
     }
 
@@ -70,7 +74,7 @@ class PostgresSQL
      */
     public function requestArray($sql)
     {
-       return $this->request($sql);
+        return $this->request($sql);
     }
 
 }

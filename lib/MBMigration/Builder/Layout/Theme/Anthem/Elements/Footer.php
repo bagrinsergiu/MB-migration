@@ -63,8 +63,6 @@ class Footer extends Element
         $style = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
         $objBlock->setting('bgColorHex', $style['background-color']);
 
-        $options = array_merge($options, ['textColor' => $color['sub-text']]);
-
         if ($this->checkArrayPath($sectionData, 'settings/background/photo')) {
             $imageAdd = true;
             $objImage->item()->item()->setting('imageSrc', $sectionData['settings']['background']['photo']);
@@ -82,46 +80,7 @@ class Footer extends Element
                 $this->setOptionsForUsedFonts($item, $options);
                 $this->defaultTextPosition($item, $options);
 
-                $richText = JS::RichText($item['sectionId'], $options['currentPageURL'], $options['fontsFamily']);
-
-                if (!is_array($richText)) {
-                    $objBlock->item(0)->addItem(
-                        $this->wrapperColumn($this->itemWrapperRichText($richText))
-                    );
-                } else {
-                    if (!empty($richText['icons'])) {
-
-                        $TopWrapperIcon = [];
-                        $BottomWrapperIcon = [];
-
-                        foreach ($richText['icons'] as $itemIcon) {
-                            if ($itemIcon['position'] === 'top') {
-                                $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                            }
-
-                            if ($itemIcon['position'] === 'bottom') {
-                                $BottomWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                            }
-                        }
-
-                        if (!empty($TopWrapperIcon)) {
-                            foreach ($TopWrapperIcon as $topItem) {
-                                $objBlock->item(0)->addItem($this->wrapperColumn($topItem));
-                            }
-                        }
-                        if (!empty($richText['text'])) {
-                            $objBlock->item(0)->addItem(
-                                $this->wrapperColumn($this->itemWrapperRichText($richText['text']))
-                            );
-                        }
-                        if (!empty($BottomWrapperIcon)) {
-
-                            foreach ($BottomWrapperIcon as $bottomItem) {
-                                $objBlock->item(0)->addItem($this->wrapperColumn($bottomItem));
-                            }
-                        }
-                    }
-                }
+                $this->textCreation($item, $objBlock);
             }
         }
 
@@ -139,6 +98,31 @@ class Footer extends Element
             $objIcon->setting('linkExternal', $item['href']);
             $objIcon->setting('name', $this->getIcon($iconName['icon']));
             $objColum->item()->addItem($objIcon->get());
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function textCreation($sectionData, $objBlock)
+    {
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if (!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if (is_array($embedCode)) {
+                            $objBlock->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                case 'Wrapper':
+                    $objBlock->addItem($textItem);
+                    break;
+            }
         }
     }
 

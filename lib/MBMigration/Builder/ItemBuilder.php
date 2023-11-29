@@ -109,16 +109,21 @@ class ItemBuilder
     }
 
 
-    public function addItem(array $value, $position = null): void
+    public function addItem($value, $position = null): void
     {
-        if($position !== null) {
-            $a_value[] = $this->arrayToObject($value);
+        if ($position !== null) {
+            $a_value = [$this->arrayToObject($value)];
             $mainArray = $this->item->value->items;
-            array_splice($mainArray, $position, 0, $a_value);
-            $this->begin();
+            if (is_array($mainArray)) {
+                array_splice($mainArray, $position, 0, $a_value);
+                $this->begin();
+            } else {
+                $mainArray = [$this->arrayToObject($value)];
+                $this->item->value->items = $mainArray;
+                $this->begin();
+            }
         } else {
-            $value = $this->arrayToObject($value);
-            $this->item->value->items[] = $value;
+            $this->item->value->items[] = $this->arrayToObject($value);
             $this->begin();
         }
     }

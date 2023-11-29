@@ -1,4 +1,5 @@
 <?php
+
 namespace MBMigration\Layer\MB;
 
 use Exception;
@@ -37,15 +38,15 @@ class MBProjectDataCollector
     public function __construct()
     {
         Utils::log('Initialization', 4, 'Parser Module');
-        $this->cache            = VariableCache::getInstance();
+        $this->cache = VariableCache::getInstance();
 
-        $this->siteId           = $this->cache->get('projectId_MB');
-        $this->projectId        = $this->cache->get('projectId_Brizy');
-        $this->container        = $this->cache->get('container');
+        $this->siteId = $this->cache->get('projectId_MB');
+        $this->projectId = $this->cache->get('projectId_Brizy');
+        $this->container = $this->cache->get('container');
 
-        $this->db               = new DBConnector();
-        $this->manipulator      = new ArrayManipulator();
-        $this->fontsController  = new FontsController($this->container);
+        $this->db = new DBConnector();
+        $this->manipulator = new ArrayManipulator();
+        $this->fontsController = new FontsController($this->container);
 
         Utils::log('READY', 4, 'Parser Module');
     }
@@ -57,13 +58,17 @@ class MBProjectDataCollector
     public function getDesignSite()
     {
         Utils::log('Get Design', 1, 'getDesignSite');
-        $settingSite = $this->db->requestArray("SELECT design_uuid from sites WHERE id = " . $this->siteId);
-        if(empty($settingSite)){
-            Utils::MESSAGES_POOL(self::trace(0) . 'Message: MB project not found');
+        $settingSite = $this->db->requestArray("SELECT design_uuid from sites WHERE id = ".$this->siteId);
+        if (empty($settingSite)) {
+            Utils::MESSAGES_POOL(self::trace(0).'Message: MB project not found');
             Utils::log('MB project not found', 3, 'getSite');
+
             return false;
         }
-        $designSite = $this->db->requestArray("SELECT name from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
+        $designSite = $this->db->requestArray(
+            "SELECT name from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'"
+        );
+
         return $designSite[0]['name'];
     }
 
@@ -78,13 +83,14 @@ class MBProjectDataCollector
         Utils::log('Get id by uuId', 1, 'getIdByUUID');
 
         $db = new DBConnector();
-        $settingSite = $db->requestArray("SELECT id from sites WHERE uuid = '" . $projectUUID_MB . "'");
-        if(empty($settingSite)){
-            Utils::MESSAGES_POOL(self::trace(0) . 'Message: MB project not found');
+        $settingSite = $db->requestArray("SELECT id from sites WHERE uuid = '".$projectUUID_MB."'");
+        if (empty($settingSite)) {
+            Utils::MESSAGES_POOL(self::trace(0).'Message: MB project not found');
             Utils::log('MB project not found', 3, 'getSite');
 
             throw new Exception("MB project not found with uuid: $projectUUID_MB");
         }
+
         return $settingSite[0]['id'];
     }
 
@@ -97,7 +103,7 @@ class MBProjectDataCollector
         $uuidPattern = '/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/';
 
         if (!preg_match($uuidPattern, $uuid)) {
-            Utils::MESSAGES_POOL(self::trace(0) . "Invalid UUID: $uuid");
+            Utils::MESSAGES_POOL(self::trace(0)."Invalid UUID: $uuid");
             throw new Exception("Invalid UUID: $uuid");
         }
     }
@@ -109,31 +115,36 @@ class MBProjectDataCollector
     public function getSite()
     {
         Utils::log('Get site', 1, 'getSite');
-        $settingSite = $this->db->requestArray("SELECT id, name, title, settings, uuid, design_uuid, favicon, palette_uuid, font_theme_uuid from sites WHERE id = " . $this->siteId);
-        if(empty($settingSite)){
-            Utils::MESSAGES_POOL(self::trace(0) . 'Message: MB project not found');
+        $settingSite = $this->db->requestArray(
+            "SELECT id, name, title, settings, uuid, design_uuid, favicon, palette_uuid, font_theme_uuid from sites WHERE id = ".$this->siteId
+        );
+        if (empty($settingSite)) {
+            Utils::MESSAGES_POOL(self::trace(0).'Message: MB project not found');
             Utils::log('MB project not found', 3, 'getSite');
+
             return false;
         }
-        $designSite = $this->db->requestArray("SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'");
+        $designSite = $this->db->requestArray(
+            "SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'"
+        );
 
         $domainSite = $this->db->requestArray("SELECT domain_name from domains WHERE site_id = $this->siteId");
 
 
         $settings = json_decode($settingSite[0]['settings'], true);
-        if(!array_key_exists('palette', $settings)){
+        if (!array_key_exists('palette', $settings)) {
             $settings['palette'] = $this->getPalettes($settingSite[0]['palette_uuid']);
         }
 
         return [
-            'name'      => $settingSite[0]['name'],
-            'title'     => $settingSite[0]['title'],
-            'domain'    => $domainSite[0]['domain_name'],
-            'design'    => $designSite[0]['name'],
-            'uuid'      => $settingSite[0]['uuid'],
+            'name' => $settingSite[0]['name'],
+            'title' => $settingSite[0]['title'],
+            'domain' => $domainSite[0]['domain_name'],
+            'design' => $designSite[0]['name'],
+            'uuid' => $settingSite[0]['uuid'],
             'parameter' => $settings,
-            'fonts'     => $this->getFonts($settings, $settingSite[0]['font_theme_uuid']),
-            'favicon'   => $settingSite[0]['favicon']
+            'fonts' => $this->getFonts($settings, $settingSite[0]['font_theme_uuid']),
+            'favicon' => $settingSite[0]['favicon'],
         ];
     }
 
@@ -143,14 +154,14 @@ class MBProjectDataCollector
      */
     public function getFonts($settings, $fontThemeUUID, $migrationDefaultFonts = 'poppins'): array
     {
-        if(array_key_exists('theme', $settings)){
+        if (array_key_exists('theme', $settings)) {
             $addedFonts = [];
             foreach ($settings['theme'] as &$font) {
-                $settingSite = $this->db->request("SELECT name, family from fonts WHERE id = " . $font['font_id']);
+                $settingSite = $this->db->request("SELECT name, family from fonts WHERE id = ".$font['font_id']);
                 $font['fontName'] = $settingSite[0]['name'];
                 $font['fontFamily'] = $this->transLiterationFontFamily($settingSite[0]['family']);
 
-                if(in_array($font['font_id'], $addedFonts)) {
+                if (in_array($font['font_id'], $addedFonts)) {
                     $font['uuid'] = $addedFonts[$font['font_id']];
                     continue;
                 }
@@ -173,14 +184,16 @@ class MBProjectDataCollector
      */
     public function getDefaultFont($fontThemeUUID, $migrationDefaultFonts)
     {
-        $fontStyle = $this->db->request("select display_name, name, font_id, font_size, text_transform, letter_spacing, position, bold, italic FROM font_theme_styles WHERE font_theme_id IN(SELECT id from font_themes WHERE uuid = '$fontThemeUUID') ORDER BY position");
+        $fontStyle = $this->db->request(
+            "select display_name, name, font_id, font_size, text_transform, letter_spacing, position, bold, italic FROM font_theme_styles WHERE font_theme_id IN(SELECT id from font_themes WHERE uuid = '$fontThemeUUID') ORDER BY position"
+        );
         $addedFonts = [];
         foreach ($fontStyle as &$font) {
-            $fontName = $this->db->request("SELECT name, family from fonts WHERE id = " . $font['font_id']);
+            $fontName = $this->db->request("SELECT name, family from fonts WHERE id = ".$font['font_id']);
             $font['fontName'] = $fontName[0]['name'];
             $font['fontFamily'] = $this->transLiterationFontFamily($fontName[0]['family']);
 
-            if(array_key_exists($font['font_id'], $addedFonts)) {
+            if (array_key_exists($font['font_id'], $addedFonts)) {
                 $font['uuid'] = $addedFonts[$font['font_id']];
                 continue;
             }
@@ -195,8 +208,9 @@ class MBProjectDataCollector
     /**
      * @throws GuzzleException
      */
-    public function primaryDefaultFonts(&$fontStyle, $name) {
-        $fontStyle[] =  [
+    public function primaryDefaultFonts(&$fontStyle, $name)
+    {
+        $fontStyle[] = [
             'name' => 'primary',
             'fontName' => $name,
             'fontFamily' => $this->transLiterationFontFamily($name),
@@ -212,32 +226,35 @@ class MBProjectDataCollector
     {
         Utils::log('Get main Section', 1, 'getMainSection');
         $result = [];
-        $requestMainSections = $this->db->request("SELECT * FROM sections WHERE site_id =  " . $this->siteId . " and (page_id isnull or page_id = 0) ORDER BY position");
+        $requestMainSections = $this->db->request(
+            "SELECT * FROM sections WHERE site_id =  ".$this->siteId." and (page_id isnull or page_id = 0) ORDER BY position"
+        );
 
-        foreach($requestMainSections as $mainSection)
-        {
-            $requestItemsFromMainSection = $this->db->request("SELECT * FROM items WHERE section_id =  " . $mainSection['id']);
+        foreach ($requestMainSections as $mainSection) {
+            $requestItemsFromMainSection = $this->db->request(
+                "SELECT * FROM items WHERE section_id =  ".$mainSection['id']
+            );
             $item = [];
-            foreach ($requestItemsFromMainSection as $itemsFromMainSections)
-            {
+            foreach ($requestItemsFromMainSection as $itemsFromMainSections) {
                 $item[] = [
                     'sectionId' => $itemsFromMainSections['id'],
-                    'category'  => $itemsFromMainSections['category'],
-                    'position'  => $itemsFromMainSections['order_by'],
-                    'settings'  => json_decode($itemsFromMainSections['settings'], true),
-                    'content'   => $itemsFromMainSections['content']
+                    'category' => $itemsFromMainSections['category'],
+                    'position' => $itemsFromMainSections['order_by'],
+                    'settings' => json_decode($itemsFromMainSections['settings'], true),
+                    'content' => $itemsFromMainSections['content'],
                 ];
             }
             $settings = json_decode($mainSection['settings'], true);
 
             $result[$mainSection['category']] = [
-                'sectionId'     => $mainSection['id'],
-                'typeSection'   => "main",
-                'category'      => $requestItemsFromMainSection[0]['category'],
-                'settings'      => $settings,
-                'items'         => $item,
+                'sectionId' => $mainSection['id'],
+                'typeSection' => "main",
+                'category' => $requestItemsFromMainSection[0]['category'],
+                'settings' => $settings,
+                'items' => $item,
             ];
         }
+
         return $result;
     }
 
@@ -248,18 +265,21 @@ class MBProjectDataCollector
     {
         $palette = null;
 
-        if($paletteUUID === null ){
+        if ($paletteUUID === null) {
             return $palette;
         }
 
         $palettes = $this->db->requestArray("SELECT id from palettes WHERE uuid = '$paletteUUID'");
-        $colorsKit = $this->db->requestArray("SELECT * from colors WHERE palette_id = '".$palettes[0]['id']."' ORDER BY position");
-        foreach ($colorsKit as $color){
+        $colorsKit = $this->db->requestArray(
+            "SELECT * from colors WHERE palette_id = '".$palettes[0]['id']."' ORDER BY position"
+        );
+        foreach ($colorsKit as $color) {
             $palette[] = [
                 'tag' => $color['tag'],
-                'color' => $color['color']
+                'color' => $color['color'],
             ];
         }
+
         return $palette;
     }
 
@@ -270,7 +290,9 @@ class MBProjectDataCollector
     {
         Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
-        $requestPageSite = $this->db->request("SELECT id, slug, name, position, settings, landing, hidden FROM pages WHERE site_id = " . $this->siteId . " AND parent_id IS NULL ORDER BY parent_id ASC, position");
+        $requestPageSite = $this->db->request(
+            "SELECT id, slug, name, position, settings, landing, hidden FROM pages WHERE site_id = ".$this->siteId." AND parent_id IS NULL ORDER BY parent_id ASC, position"
+        );
 
         if (empty($requestPageSite)) {
             Utils::log('MB project pages not found', 2, 'getParentPages');
@@ -280,20 +302,21 @@ class MBProjectDataCollector
 
         foreach ($requestPageSite as $pageSite) {
             $result[] = [
-                'id'             => $pageSite['id'],
-                'slug'           => $pageSite['slug'],
-                'name'           => $pageSite['name'],
-                'collection'     => '',
-                'position'       => $pageSite['position'],
-                'landing'        => $pageSite['landing'],
-                'hidden'         => $pageSite['hidden'],
+                'id' => $pageSite['id'],
+                'slug' => $pageSite['slug'],
+                'name' => $pageSite['name'],
+                'collection' => '',
+                'position' => $pageSite['position'],
+                'landing' => $pageSite['landing'],
+                'hidden' => $pageSite['hidden'],
                 'parentSettings' => $pageSite['settings'],
-                'child'          => $this->getChildPages($pageSite['id'])
+                'child' => $this->getChildPages($pageSite['id']),
             ];
             $this->cache->update('Total', '++', 'Status');
         }
 
         $this->cache->set('ParentPages', $result);
+
         return $result;
     }
 
@@ -305,23 +328,26 @@ class MBProjectDataCollector
         Utils::log('Get child pages', 1, 'getChildPages');
         $result = [];
 
-        $pagesSite = $this->db->request("SELECT id, slug, name, position, settings, hidden, landing FROM pages WHERE site_id = " . $this->siteId . " AND hidden = 'false' AND  parent_id = " . $parentId . " ORDER BY position asc");
+        $pagesSite = $this->db->request(
+            "SELECT id, slug, name, position, settings, hidden, landing FROM pages WHERE site_id = ".$this->siteId." AND hidden = 'false' AND  parent_id = ".$parentId." ORDER BY position asc"
+        );
 
-        foreach($pagesSite as $pageSite) {
+        foreach ($pagesSite as $pageSite) {
             if ($pageSite['hidden'] === false) {
                 $result[] = [
-                    'id'             => $pageSite['id'],
-                    'slug'           => $pageSite['slug'],
-                    'name'           => $pageSite['name'],
-                    'collection'     => '',
-                    'position'       => $pageSite['position'],
-                    'landing'        => $pageSite['landing'],
+                    'id' => $pageSite['id'],
+                    'slug' => $pageSite['slug'],
+                    'name' => $pageSite['name'],
+                    'collection' => '',
+                    'position' => $pageSite['position'],
+                    'landing' => $pageSite['landing'],
                     'parentSettings' => $pageSite['settings'],
-                    'child'          => $this->getChildPages($pageSite['id'])
+                    'child' => $this->getChildPages($pageSite['id']),
                 ];
                 $this->cache->update('Total', '++', 'Status');
             }
         }
+
         return $result;
     }
 
@@ -333,15 +359,17 @@ class MBProjectDataCollector
         Utils::log('Get child from pages', 1, 'getChildFromPages');
         $result = [];
 
-        $pagesSite = $this->db->request("SELECT id, position FROM pages WHERE site_id = " . $this->siteId . " and parent_id = " . $parenId . " ORDER BY position asc");
+        $pagesSite = $this->db->request(
+            "SELECT id, position FROM pages WHERE site_id = ".$this->siteId." and parent_id = ".$parenId." ORDER BY position asc"
+        );
 
-        foreach($pagesSite as $pageSite)
-        {
+        foreach ($pagesSite as $pageSite) {
             $result[] = [
-                'id'        => $pageSite['id'],
-                'position'  => $pageSite['position']
+                'id' => $pageSite['id'],
+                'position' => $pageSite['position'],
             ];
         }
+
         return $result;
     }
 
@@ -352,37 +380,42 @@ class MBProjectDataCollector
     {
         $result = [];
         $i = 0;
-        $requestSections = $this->db->request("SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = " . $id . " ORDER BY position asc");
-        foreach ($requestSections as $pageSections)
-        {
-            $typeSectionLayoutUuid = $this->db->requestArray("SELECT name, category, settings FROM section_layouts WHERE uuid  = '" . $pageSections['section_layout_uuid'] . "'");
+        $requestSections = $this->db->request(
+            "SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = ".$id." ORDER BY position asc"
+        );
+        foreach ($requestSections as $pageSections) {
+            $typeSectionLayoutUuid = $this->db->requestArray(
+                "SELECT name, category, settings FROM section_layouts WHERE uuid  = '".$pageSections['section_layout_uuid']."'"
+            );
             $settings = json_decode($pageSections['settings'], true);
 
-            if(!array_key_exists( 'color', $settings)) {
+            if (!array_key_exists('color', $settings)) {
                 $settings['color'] = $this->cache->get('subpalette', 'parameter')['subpalette1'];
             }
 
             $result[] = [
-                'id'             => $pageSections['id'],
+                'id' => $pageSections['id'],
                 'categoryLayout' => $typeSectionLayoutUuid[0]['category'],
-                'category'       => $pageSections['category'],
-                'typeSection'    => $typeSectionLayoutUuid[0]['name'],
-                'position'       => $pageSections['position'],
-                'settings'       => [
-                    'pagePosition'  => $i,
-                    'sections'      => $settings,
-                    'layout'        => json_decode($typeSectionLayoutUuid[0]['settings'], true)
-                ]
+                'category' => $pageSections['category'],
+                'typeSection' => $typeSectionLayoutUuid[0]['name'],
+                'position' => $pageSections['position'],
+                'settings' => [
+                    'pagePosition' => $i,
+                    'sections' => $settings,
+                    'layout' => json_decode($typeSectionLayoutUuid[0]['settings'], true),
+                ],
             ];
             $i++;
         }
+
         return $result;
     }
 
     /**
      * @throws Exception
      */
-    public function getAllProjectsID(){
+    public function getAllProjectsID()
+    {
         $request = 'SELECT id, uuid FROM "public"."sites" WHERE ("setup_step" = \'final\') AND ("site_type" = \'user\') AND ("directory_name" IS NOT NULL) AND ("archived_at" IS NULL) AND ("design_uuid" = \'8405e015-b796-4e14-896f-7991da379e77\')';
 
         return $this->db->request($request);
@@ -391,20 +424,42 @@ class MBProjectDataCollector
     /**
      * @throws Exception
      */
-    private function getItemLink(int $itemId): string
+    private function getItemLink(int $itemId): array
     {
-        Utils::log('Check link for item: '. $itemId, 1, 'getItemLink');
-        $requestLinkIdToPages = $this->db->request("SELECT * FROM links WHERE item_id  = " . $itemId);
-        if(!empty($requestLinkIdToPages)){
-            if(!is_null($requestLinkIdToPages[0]['page_id'])) {
-                $requestItemLink = $this->db->request("SELECT slug FROM pages WHERE id  = " . $requestLinkIdToPages[0]['page_id']);
-                Utils::log('Get link for item: '. $requestItemLink[0]['slug'], 1, 'getItemLink');
-                return $requestItemLink[0]['slug'];
-            } else if ($requestLinkIdToPages[0]['category'] === 'link') {
-                return $requestLinkIdToPages[0]['detail'];
+        Utils::log('Check link for item: '.$itemId, 1, 'getItemLink');
+        $requestLinkIdToPages = $this->db->request("SELECT * FROM links WHERE item_id  = ".$itemId);
+        if (!empty($requestLinkIdToPages)) {
+            if (!is_null($requestLinkIdToPages[0]['page_id'])) {
+                $requestItemLink = $this->db->request(
+                    "SELECT slug FROM pages WHERE id  = ".$requestLinkIdToPages[0]['page_id']
+                );
+                Utils::log('Get link for item: '.$requestItemLink[0]['slug'], 1, 'getItemLink');
+                return [
+                    'detail' => $requestItemLink[0]['slug'],
+                    'new_window' => false,
+                ];
+            } else {
+                if ($requestLinkIdToPages[0]['category'] === 'link') {
+                    $newWindow = false;
+                    if (!empty($requestLinkIdToPages[0]['settings'])) {
+                        $settings = json_decode($requestLinkIdToPages[0]['settings'], true);
+                        if (!empty($settings['new_window'])) {
+                            $newWindow = $settings['new_window'];
+                        }
+                    }
+
+                    return [
+                        'detail' => $requestLinkIdToPages[0]['detail'],
+                        'new_window' => $newWindow,
+                    ];
+                }
             }
         }
-        return '';
+
+        return [
+            'detail' => '',
+            'new_window' => false,
+        ];
     }
 
     /**
@@ -414,15 +469,21 @@ class MBProjectDataCollector
     public function getSectionsItems($sectionId, $assembly = false)
     {
         $result = [];
-        if($this->cache->exist($sectionId['id']))
-        {
-            Utils::log('Get item from cache | Section id: '. $sectionId['id'], 1, 'getSectionsItems');
+        if ($this->cache->exist($sectionId['id'])) {
+            Utils::log('Get item from cache | Section id: '.$sectionId['id'], 1, 'getSectionsItems');
+
             return $this->cache->get($sectionId['id'], 'Sections');
         }
 
-        $requestItemsFromSection = $this->db->request('SELECT * FROM items WHERE "group" is not null and section_id = ' . $sectionId['id'] . ' ORDER BY parent_id DESC, order_by');
-        foreach($requestItemsFromSection as $sectionsItems) {
-            Utils::log('Get item | id: ' . $sectionsItems['id'] . ' from section id: ' . $sectionId['id'], 1, 'getSectionsItems');
+        $requestItemsFromSection = $this->db->request(
+            'SELECT * FROM items WHERE "group" is not null and section_id = '.$sectionId['id'].' ORDER BY parent_id DESC, order_by'
+        );
+        foreach ($requestItemsFromSection as $sectionsItems) {
+            Utils::log(
+                'Get item | id: '.$sectionsItems['id'].' from section id: '.$sectionId['id'],
+                1,
+                'getSectionsItems'
+            );
             $settings = '';
             $uploadedFont = [];
             if ($this->isJsonString($sectionsItems['settings'])) {
@@ -438,11 +499,11 @@ class MBProjectDataCollector
                             }
                         }
 
-                        $settingSite = $this->db->request("SELECT family from fonts WHERE name = '$fontName'" );
+                        $settingSite = $this->db->request("SELECT family from fonts WHERE name = '$fontName'");
                         $uploadedFont[] = [
                             'fontName' => $fontName,
                             'fontFamily' => $this->transLiterationFontFamily($settingSite[0]['family']),
-                            'uuid' => $this->fontsController->upLoadFonts($fontName)
+                            'uuid' => $this->fontsController->upLoadFonts($fontName),
                         ];
 
                         $defaultFont = array_merge($defaultFont, $uploadedFont);
@@ -451,23 +512,23 @@ class MBProjectDataCollector
                     }
                 }
             }
-
+            $link = $this->getItemLink($sectionsItems['id']);
             $result[] = [
-                'id'        => $sectionsItems['id'],
-                'category'  => $sectionsItems['category'],
+                'id' => $sectionsItems['id'],
+                'category' => $sectionsItems['category'],
                 'item_type' => $sectionsItems['item_type'],
-                'order_by'  => $sectionsItems['order_by'],
-                'group'     => $sectionsItems['group'],
+                'order_by' => $sectionsItems['order_by'],
+                'group' => $sectionsItems['group'],
                 'parent_id' => $sectionsItems['parent_id'],
-                'settings'  => $settings,
-                'link'      => $this->getItemLink($sectionsItems['id']),
-                'content'   => $sectionsItems['content'],
+                'settings' => $settings,
+                'link' => $link['detail'],
+                'new_window' => $link['new_window'],
+                'content' => $sectionsItems['content'],
             ];
         }
         $this->cache->set($sectionId['id'], $result, 'Sections');
 
-        if($assembly)
-        {
+        if ($assembly) {
             $result = $this->assemblySection($sectionId['id'], $sectionId['category']);
         }
 
@@ -476,11 +537,12 @@ class MBProjectDataCollector
 
     private function isJsonString($string): bool
     {
-        if($string == null){
+        if ($string == null) {
             return false;
         }
         try {
             json_decode($string);
+
             return (json_last_error() == JSON_ERROR_NONE);
         } catch (Exception $e) {
             return false;
@@ -494,6 +556,7 @@ class MBProjectDataCollector
         for ($i = 0; $i < $length; $i++) {
             $randomString .= $characters[rand(0, strlen($characters) - 1)];
         }
+
         return $randomString;
     }
 
@@ -504,7 +567,7 @@ class MBProjectDataCollector
 
     private function transLiterationFontFamily($family): string
     {
-        $inputString = str_replace(["'", ' '], ['','_'], $family);
+        $inputString = str_replace(["'", ' '], ['', '_'], $family);
 
         $inputString = str_replace(',', '', $inputString);
 

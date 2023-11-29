@@ -87,4 +87,26 @@ class ThreeTopMediaCircle extends Element
         return json_encode($block);
     }
 
+    private function textCreation($sectionData, $objBlock, $level )
+    {
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(is_array($embedCode)){
+                            $objBlock->item(0)->item(1)->item(0)->item(0)->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                case 'Wrapper':
+                    $objBlock->item(0)->item(1)->item(0)->item(0)->addItem($textItem);
+                    break;
+            }
+        }
+    }
+
 }

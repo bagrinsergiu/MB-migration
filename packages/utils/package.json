@@ -1,0 +1,18 @@
+{
+  "name": "utils",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint .",
+    "prettier-check": "prettier --check \"./src/**/*.{ts,tsx}\"",
+    "tsc": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "config": "*"
+  },
+  "dependencies": {
+    "nanoid": "^5.0.2",
+    "fp-utilities": "^1.1.4"
+  }
+}

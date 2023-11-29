@@ -15,25 +15,17 @@ use MBMigration\Core\Utils;
 class QueryBuilder
 {
 
-    private  $client;
-    private  $brizy_cms_api_url;
-    private  $session;
-    private  $cache;
+    private $client;
+    private $brizy_cms_api_url;
+    private $session;
+    private $cache;
 
-    public function __construct()
+    public function __construct($endpoint, $token)
     {
         $this->cache = VariableCache::getInstance();
-
-        if(Config::$graphqlToken && Config::$devMode) {
-            $this->session = Config::$graphqlToken;
-        } else {
-            $this->session = $this->cache->get('graphToken');
-        }
-
-        $this->brizy_cms_api_url = $this->cache->get('GraphApi_Brizy');
-
+        $this->session = $token;
+        $this->brizy_cms_api_url = $endpoint;
         $this->setProject();
-
     }
 
     public function setProject(): void
@@ -45,7 +37,7 @@ class QueryBuilder
 
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => 'Bearer ' . $token
+            'Authorization' => 'Bearer '.$token,
         ]);
     }
 
@@ -57,7 +49,7 @@ class QueryBuilder
             [
                 'connect_timeout' => 3,
                 'timeout' => 20,
-                'headers' => $headers
+                'headers' => $headers,
             ]
         );
     }
@@ -83,18 +75,28 @@ class QueryBuilder
                             'title',
                             'url',
                         ]
-                    )
+                    ),
                 ]
             );
 
         $variables = ['input' => ['title' => $title, 'url' => $url, 'hidden' => $hidden]];
 
         $results = $this->runQuery($mutation, true, $variables);
+
         return $results->getData()['createCollectionEditor']['collectionEditor'];
     }
 
-    public function createCollectionType($editor_id, $title, $slug, array $fields, array $settings, $priority, $public = true, $showUI = true, $showInMenu = true)
-    {
+    public function createCollectionType(
+        $editor_id,
+        $title,
+        $slug,
+        array $fields,
+        array $settings,
+        $priority,
+        $public = true,
+        $showUI = true,
+        $showInMenu = true
+    ) {
         if (!$this->client) {
             throw new \Exception('Client was not init.');
         }
@@ -123,7 +125,7 @@ class QueryBuilder
                                         'label',
                                         'type',
                                         'priority',
-                                        'required'
+                                        'required',
                                     ]
                                 ),
                             (new Query('editor'))
@@ -131,27 +133,30 @@ class QueryBuilder
                                     [
                                         'id',
                                         'title',
-                                        'url'
+                                        'url',
                                     ]
-                                )
+                                ),
                         ]
-                    )
+                    ),
                 ]
             );
 
-        $variables = ['input' => [
-            'editor' => $editor_id,
-            'title' => $title,
-            'slug' => $slug,
-            'fields' => $fields,
-            'settings' => $settings,
-            'priority' => $priority,
-            'public' => $public,
-            'showUI' => $showUI,
-            'showInMenu' => $showInMenu
-        ]];
+        $variables = [
+            'input' => [
+                'editor' => $editor_id,
+                'title' => $title,
+                'slug' => $slug,
+                'fields' => $fields,
+                'settings' => $settings,
+                'priority' => $priority,
+                'public' => $public,
+                'showUI' => $showUI,
+                'showInMenu' => $showInMenu,
+            ],
+        ];
 
         $results = $this->runQuery($mutation, true, $variables);
+
         return $results->getData()['createCollectionType']['collectionType'];
     }
 
@@ -179,7 +184,7 @@ class QueryBuilder
                                 'hidden',
                                 'icon',
                                 'titlePlural',
-                                'titleSingular'
+                                'titleSingular',
                             ]
                         ),
                     (new Query('editor'))
@@ -187,7 +192,7 @@ class QueryBuilder
                             [
                                 'id',
                                 'title',
-                                'url'
+                                'url',
                             ]
                         ),
                     (new Query('fields'))
@@ -202,13 +207,16 @@ class QueryBuilder
                                     'type',
                                     'priority',
                                     'required',
-                                    'hidden'
-                                ], $withFieldsSet ? $this->getTypeFieldSelectionSet() : [])
-                        )
+                                    'hidden',
+                                ],
+                                $withFieldsSet ? $this->getTypeFieldSelectionSet() : []
+                            )
+                        ),
                 ]
             );
 
         $results = $this->runQuery($query, true, []);
+
         return $results->getData()['collectionTypes'];
     }
 
@@ -236,7 +244,7 @@ class QueryBuilder
                                 'hidden',
                                 'icon',
                                 'titlePlural',
-                                'titleSingular'
+                                'titleSingular',
                             ]
                         ),
                     (new Query('editor'))
@@ -244,7 +252,7 @@ class QueryBuilder
                             [
                                 'id',
                                 'title',
-                                'url'
+                                'url',
                             ]
                         ),
                     (new Query('fields'))
@@ -257,13 +265,14 @@ class QueryBuilder
                                 'type',
                                 'priority',
                                 'required',
-                                'hidden'
+                                'hidden',
                             ]
-                        )
+                        ),
                 ]
             );
 
         $results = $this->runQuery($query, true, []);
+
         return $results;
     }
 
@@ -276,8 +285,14 @@ class QueryBuilder
      * @return mixed
      * @throws \Exception
      */
-    public function createCollectionItem($collection_type_id, $slug,  $title = null, $status = 'published', array $fields = [])
-    {
+    public function createCollectionItem(
+        $collection_type_id,
+        $slug,
+        $title = null,
+        $status = 'published',
+        array $fields = [],
+        $pageData = '{"items":[]}'
+    ) {
         if (!$this->client) {
             throw new \Exception('Client was not init.');
         }
@@ -298,23 +313,27 @@ class QueryBuilder
                                 ->setSelectionSet(
                                     [
                                         'slug',
-                                        'priority'
+                                        'priority',
                                     ]
                                 ),
                         ]
-                    )
+                    ),
                 ]
             );
 
-        $variables = ['input' => [
-            'type' => $collection_type_id,
-            'title' => $title,
-            'slug' => $slug,
-            'status' => $status,
-            'fields' => $fields
-        ]];
+        $variables = [
+            'input' => [
+                'type' => $collection_type_id,
+                'title' => $title,
+                'slug' => $slug,
+                'status' => $status,
+                'fields' => $fields,
+                'pageData' => $pageData,
+            ],
+        ];
 
         $results = $this->runQuery($mutation, true, $variables);
+
         return $results->getData()['createCollectionItem']['collectionItem'];
     }
 
@@ -333,8 +352,8 @@ class QueryBuilder
 
         $selectionSet = [];
         foreach ($collection_type_ids as $slug => $collection_type_id) {
-           // $slug = preg_replace('/[0-9]+/', GeneralUtils::generateRandomString(5), str_replace('-', '_', $slug)); #https://github.com/bagrinsergiu/brizy-api/issues/325
-            $selectionSet[] = (new Query($slug . ': collectionItems'))
+            // $slug = preg_replace('/[0-9]+/', GeneralUtils::generateRandomString(5), str_replace('-', '_', $slug)); #https://github.com/bagrinsergiu/brizy-api/issues/325
+            $selectionSet[] = (new Query($slug.': collectionItems'))
                 ->setArguments(['type' => $collection_type_id, 'page' => $page, 'itemsPerPage' => $limit])
                 ->setSelectionSet(
                     [
@@ -353,7 +372,7 @@ class QueryBuilder
                                             [
                                                 'title',
                                                 'description',
-                                                'enableIndexing'
+                                                'enableIndexing',
                                             ]
                                         ),
                                     $this->getCustomAssetsSelectionSet(),
@@ -361,7 +380,7 @@ class QueryBuilder
                                         ->setSelectionSet([
                                             'title',
                                             'description',
-                                            'image'
+                                            'image',
                                         ]),
                                     (new Query('type'))
                                         ->setSelectionSet(
@@ -375,7 +394,7 @@ class QueryBuilder
                                                             'hidden',
                                                             'icon',
                                                             'titlePlural',
-                                                            'titleSingular'
+                                                            'titleSingular',
                                                         ]
                                                     ),
                                                 (new Query('editor'))
@@ -383,12 +402,12 @@ class QueryBuilder
                                                         [
                                                             'id',
                                                             'title',
-                                                            'url'
+                                                            'url',
                                                         ]
-                                                    )
+                                                    ),
                                             ]
                                         ),
-                                    $withFields ? $this->getFieldsSelectionSet() : ''
+                                    $withFields ? $this->getFieldsSelectionSet() : '',
                                 ]
                             ),
                         (new Query('paginationInfo'))
@@ -396,9 +415,9 @@ class QueryBuilder
                                 [
                                     'totalCount',
                                     'itemsPerPage',
-                                    'lastPage'
+                                    'lastPage',
                                 ]
-                            )
+                            ),
                     ]
                 );
         }
@@ -408,6 +427,7 @@ class QueryBuilder
             ->setSelectionSet($selectionSet);
 
         $results = $this->runQuery($query, true, []);
+
         return $results->getData();
     }
 
@@ -444,7 +464,7 @@ class QueryBuilder
                                     ->setSelectionSet([
                                         'title',
                                         'description',
-                                        'image'
+                                        'image',
                                     ]),
                                 (new Query('type'))
                                     ->setSelectionSet(
@@ -458,7 +478,7 @@ class QueryBuilder
                                                         'hidden',
                                                         'icon',
                                                         'titlePlural',
-                                                        'titleSingular'
+                                                        'titleSingular',
                                                     ]
                                                 ),
                                             (new Query('editor'))
@@ -466,12 +486,12 @@ class QueryBuilder
                                                     [
                                                         'id',
                                                         'title',
-                                                        'url'
+                                                        'url',
                                                     ]
-                                                )
+                                                ),
                                         ]
                                     ),
-                                $this->getFieldsSelectionSet()
+                                $this->getFieldsSelectionSet(),
                             ]
                         ),
                     (new Query('paginationInfo'))
@@ -479,21 +499,28 @@ class QueryBuilder
                             [
                                 'totalCount',
                                 'itemsPerPage',
-                                'lastPage'
+                                'lastPage',
                             ]
-                        )
+                        ),
                 ]
             );
 
         $results = $this->runQuery($query, true, []);
+
         return $results->getData();
     }
 
     /**
      * @throws \Exception
      */
-    public function updateCollectionItem($collection_item_id, $slug, $pageData = [], $status = 'published', array $fields = [], $title = null)
-    {
+    public function updateCollectionItem(
+        $collection_item_id,
+        $slug,
+        $pageData = [],
+        $status = 'published',
+        array $fields = [],
+        $title = null
+    ) {
         if (!$this->client) {
             throw new \Exception('Client was not init.');
         }
@@ -514,17 +541,19 @@ class QueryBuilder
                                 ->setSelectionSet(
                                     [
                                         'slug',
-                                        'priority'
+                                        'priority',
                                     ]
-                                )
+                                ),
                         ]
-                    )
+                    ),
                 ]
             );
 
-        $variables = ['input' => [
-            'id' => $collection_item_id
-        ]];
+        $variables = [
+            'input' => [
+                'id' => $collection_item_id,
+            ],
+        ];
 
         if ($fields) {
             $variables['input']['fields'] = $fields;
@@ -587,7 +616,7 @@ class QueryBuilder
                                             'hidden',
                                             'icon',
                                             'titlePlural',
-                                            'titleSingular'
+                                            'titleSingular',
                                         ]
                                     ),
                                 (new Query('editor'))
@@ -595,9 +624,9 @@ class QueryBuilder
                                         [
                                             'id',
                                             'title',
-                                            'url'
+                                            'url',
                                         ]
-                                    )
+                                    ),
                             ]
                         ),
                     $this->getFieldsSelectionSet(),
@@ -606,19 +635,20 @@ class QueryBuilder
                             [
                                 'title',
                                 'description',
-                                'enableIndexing'
+                                'enableIndexing',
                             ]
                         ),
                     (new Query('social'))
                         ->setSelectionSet([
                             'title',
                             'description',
-                            'image'
-                        ])
+                            'image',
+                        ]),
                 ]
             );
 
         $results = $this->runQuery($query, true, []);
+
         return $results->getData()['collectionItem'];
     }
 
@@ -636,7 +666,7 @@ class QueryBuilder
                 ->setSelectionSet([
                     'title',
                     'description',
-                    'image'
+                    'image',
                 ]),
             (new Query('type'))
                 ->setSelectionSet(
@@ -650,7 +680,7 @@ class QueryBuilder
                                     'hidden',
                                     'icon',
                                     'titlePlural',
-                                    'titleSingular'
+                                    'titleSingular',
                                 ]
                             ),
                         (new Query('editor'))
@@ -658,12 +688,12 @@ class QueryBuilder
                                 [
                                     'id',
                                     'title',
-                                    'url'
+                                    'url',
                                 ]
-                            )
+                            ),
                     ]
                 ),
-            $this->getFieldsSelectionSet()
+            $this->getFieldsSelectionSet(),
         ];
     }
 
@@ -703,7 +733,7 @@ class QueryBuilder
                                             'hidden',
                                             'icon',
                                             'titlePlural',
-                                            'titleSingular'
+                                            'titleSingular',
                                         ]
                                     ),
                                 (new Query('editor'))
@@ -711,9 +741,9 @@ class QueryBuilder
                                         [
                                             'id',
                                             'title',
-                                            'url'
+                                            'url',
                                         ]
-                                    )
+                                    ),
                             ]
                         ),
                     $this->getFieldsSelectionSet(),
@@ -722,19 +752,20 @@ class QueryBuilder
                             [
                                 'title',
                                 'description',
-                                'enableIndexing'
+                                'enableIndexing',
                             ]
                         ),
                     (new Query('social'))
                         ->setSelectionSet([
                             'title',
                             'description',
-                            'image'
-                        ])
+                            'image',
+                        ]),
                 ]
             );
 
         $results = $this->runQuery($query, true, []);
+
         return $results->getData()['collectionItemBySlug'];
     }
 
@@ -751,7 +782,7 @@ class QueryBuilder
                 [
                     'id',
                     'title',
-                    'slug'
+                    'slug',
                 ]
             );
 
@@ -771,7 +802,7 @@ class QueryBuilder
     {
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => $token['token_type'] . ' ' . $token['access_token']
+            'Authorization' => $token['token_type'].' '.$token['access_token'],
         ]);
 
         $mutation = (new Mutation('createCmsPublicApplication'))
@@ -785,27 +816,30 @@ class QueryBuilder
                             'id',
                             'title',
                             'appUrl',
-                            'redirectUris'
+                            'redirectUris',
                         ]
-                    )
+                    ),
                 ]
             );
 
-        $variables = ['input' => [
-            'redirectUris' => ['https://www.brizy.cloud'],
-            'title' => $title,
-            'appUrl' => $appUrl,
-            'category' => '/cms_application_categories/1',
-            'description' => '',
-            'tagLine' => '',
-            'appIcon' => '',
-            'notificationEmail' => '',
-            'appSubmissionContactEmail' => '',
-            'supportEmail' => '',
-            'privacyPolicyUrl' => ''
-        ]];
+        $variables = [
+            'input' => [
+                'redirectUris' => ['https://www.brizy.cloud'],
+                'title' => $title,
+                'appUrl' => $appUrl,
+                'category' => '/cms_application_categories/1',
+                'description' => '',
+                'tagLine' => '',
+                'appIcon' => '',
+                'notificationEmail' => '',
+                'appSubmissionContactEmail' => '',
+                'supportEmail' => '',
+                'privacyPolicyUrl' => '',
+            ],
+        ];
 
         $results = $this->runQuery($mutation, true, $variables);
+
         return $results->getData()['createCmsPublicApplication']['cmsPublicApplication'];
     }
 
@@ -819,7 +853,7 @@ class QueryBuilder
     {
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => $token['token_type'] . ' ' . $token['access_token']
+            'Authorization' => $token['token_type'].' '.$token['access_token'],
         ]);
 
         $mutation = (new Mutation('createCmsApplicationInstall'))
@@ -835,20 +869,23 @@ class QueryBuilder
                                 [
                                     'id',
                                     'title',
-                                    'appUrl'
+                                    'appUrl',
                                 ]
-                            )
+                            ),
                         ]
-                    )
+                    ),
                 ]
             );
 
-        $variables = ['input' => [
-            'project' => '/data/' . $project_id,
-            'application' => '/cms_public_applications/' . $application_id
-        ]];
+        $variables = [
+            'input' => [
+                'project' => '/data/'.$project_id,
+                'application' => '/cms_public_applications/'.$application_id,
+            ],
+        ];
 
         $results = $this->runQuery($mutation, true, $variables);
+
         return $results->getData()['createCmsApplicationInstall']['cmsApplicationInstall'];
     }
 
@@ -861,7 +898,7 @@ class QueryBuilder
     {
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => $token['token_type'] . ' ' . $token['access_token']
+            'Authorization' => $token['token_type'].' '.$token['access_token'],
         ]);
 
         $query = (new Query('cmsPublicApplication'))
@@ -872,11 +909,12 @@ class QueryBuilder
                     'id',
                     'redirectUris',
                     'clientIdentifier',
-                    'clientSecret'
+                    'clientSecret',
                 ]
             );
 
         $results = $this->runQuery($query, true, []);
+
         return $results->getData()['cmsPublicApplication'];
     }
 
@@ -894,7 +932,7 @@ class QueryBuilder
                     'id',
                     'value',
                     'name',
-                    'type'
+                    'type',
                 ]
             );
 
@@ -917,16 +955,18 @@ class QueryBuilder
                         [
                             'id',
                             'name',
-                            'value'
+                            'value',
                         ]
-                    )
+                    ),
                 ]
             );
 
-        $variables = ['input' => [
-            'id' => $id,
-            'value' => $value
-        ]];
+        $variables = [
+            'input' => [
+                'id' => $id,
+                'value' => $value,
+            ],
+        ];
 
         $results = $this->runQuery($mutation, true, $variables);
 
@@ -953,9 +993,9 @@ class QueryBuilder
                             (new Query('choices'))
                                 ->setSelectionSet([
                                     'value',
-                                    'title'
-                                ])
-                        ])
+                                    'title',
+                                ]),
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldColor'))
                 ->setSelectionSet([
@@ -984,8 +1024,8 @@ class QueryBuilder
                     'placement',
                     (new Query('dateTimeSettings'))
                         ->setSelectionSet([
-                            'time'
-                        ])
+                            'time',
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldEmail'))
                 ->setSelectionSet([
@@ -1001,9 +1041,9 @@ class QueryBuilder
                     'placement',
                     (new Query('emailSettings'))
                         ->setSelectionSet([
-                                'placeholder'
+                                'placeholder',
                             ]
-                        )
+                        ),
                 ]),
             (new InlineFragment('CollectionTypeFieldFile'))
                 ->setSelectionSet([
@@ -1058,8 +1098,8 @@ class QueryBuilder
                     'placement',
                     (new Query('linkSettings'))
                         ->setSelectionSet([
-                            'placeholder'
-                        ])
+                            'placeholder',
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldMap'))
                 ->setSelectionSet([
@@ -1091,9 +1131,9 @@ class QueryBuilder
                             (new Query('collectionType'))
                                 ->setSelectionSet([
                                     'id',
-                                    'title'
-                                ])
-                        ])
+                                    'title',
+                                ]),
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldNumber'))
                 ->setSelectionSet([
@@ -1112,8 +1152,8 @@ class QueryBuilder
                             'min',
                             'max',
                             'step',
-                            'placeholder'
-                        ])
+                            'placeholder',
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldPassword'))
                 ->setSelectionSet([
@@ -1130,8 +1170,8 @@ class QueryBuilder
                     (new Query('passwordSettings'))
                         ->setSelectionSet([
                             'minLength',
-                            'placeholder'
-                        ])
+                            'placeholder',
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldPhone'))
                 ->setSelectionSet([
@@ -1147,8 +1187,8 @@ class QueryBuilder
                     'placement',
                     (new Query('phoneSettings'))
                         ->setSelectionSet([
-                            'placeholder'
-                        ])
+                            'placeholder',
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldReference'))
                 ->setSelectionSet([
@@ -1167,9 +1207,9 @@ class QueryBuilder
                             (new Query('collectionType'))
                                 ->setSelectionSet([
                                     'id',
-                                    'title'
-                                ])
-                        ])
+                                    'title',
+                                ]),
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldRichText'))
                 ->setSelectionSet([
@@ -1187,8 +1227,8 @@ class QueryBuilder
                         ->setSelectionSet([
                             'minLength',
                             'maxLength',
-                            'placeholder'
-                        ])
+                            'placeholder',
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldSelect'))
                 ->setSelectionSet([
@@ -1208,9 +1248,9 @@ class QueryBuilder
                             (new Query('choices'))
                                 ->setSelectionSet([
                                     'title',
-                                    'value'
-                                ])
-                        ])
+                                    'value',
+                                ]),
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldSwitch'))
                 ->setSelectionSet([
@@ -1241,8 +1281,8 @@ class QueryBuilder
                         ->setSelectionSet([
                             'minLength',
                             'maxLength',
-                            'placeholder'
-                        ])
+                            'placeholder',
+                        ]),
                 ]),
             (new InlineFragment('CollectionTypeFieldVideoLink'))
                 ->setSelectionSet([
@@ -1258,9 +1298,9 @@ class QueryBuilder
                     'placement',
                     (new Query('videoLinkSettings'))
                         ->setSelectionSet([
-                            'placeholder'
-                        ])
-                ])
+                            'placeholder',
+                        ]),
+                ]),
         ];
     }
 
@@ -1277,16 +1317,16 @@ class QueryBuilder
                         'settings',
                         (new Query('collectionType'))
                             ->setSelectionSet([
-                                'id'
-                            ])
+                                'id',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldCheck'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new query('checkValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
+                                'value',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldColor'))
                     ->setSelectionSet([
@@ -1296,7 +1336,7 @@ class QueryBuilder
                                 'red',
                                 'green',
                                 'blue',
-                                'opacity'
+                                'opacity',
                             ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldDateTime'))
@@ -1304,7 +1344,7 @@ class QueryBuilder
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('dateTimeValues'))
                             ->setSelectionSet([
-                                'timestamp'
+                                'timestamp',
                             ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldEmail'))
@@ -1312,8 +1352,8 @@ class QueryBuilder
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('emailValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
+                                'value',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldFile'))
                     ->setSelectionSet([
@@ -1323,7 +1363,7 @@ class QueryBuilder
                 (new InlineFragment('CollectionItemFieldGallery'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
-                        'id'
+                        'id',
                     ]),
                 (new InlineFragment('CollectionItemFieldImage'))
                     ->setSelectionSet([
@@ -1334,22 +1374,22 @@ class QueryBuilder
                                 (new Query('focusPoint'))
                                     ->setSelectionSet([
                                         'x',
-                                        'y'
-                                    ])
-                            ])
+                                        'y',
+                                    ]),
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldLink'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('linkValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
+                                'value',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldMap'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
-                        'id'
+                        'id',
                     ]),
                 (new InlineFragment('CollectionItemFieldMultiReference'))
                     ->setSelectionSet([
@@ -1361,33 +1401,33 @@ class QueryBuilder
                                         'id',
                                         'title',
                                         'slug',
-                                        'status'
-                                    ])
-                            ])
+                                        'status',
+                                    ]),
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldNumber'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('numberValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
+                                'value',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldPassword'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('passwordValues'))
                             ->setSelectionSet([
-                                'password'
-                            ])
+                                'password',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldPhone'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('phoneValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
+                                'value',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldReference'))
                     ->setSelectionSet([
@@ -1399,9 +1439,9 @@ class QueryBuilder
                                         'id',
                                         'title',
                                         'slug',
-                                        'status'
-                                    ])
-                            ])
+                                        'status',
+                                    ]),
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldMultiReference'))
                     ->setSelectionSet([
@@ -1413,50 +1453,50 @@ class QueryBuilder
                                         'id',
                                         'title',
                                         'slug',
-                                        'status'
-                                    ])
-                            ])
+                                        'status',
+                                    ]),
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldRichText'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('richTextValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
+                                'value',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldSelect'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('selectValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
+                                'value',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldSwitch'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('switchValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
+                                'value',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldText'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('textValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
+                                'value',
+                            ]),
                     ]),
                 (new InlineFragment('CollectionItemFieldVideoLink'))
                     ->setSelectionSet([
                         $this->getFieldInterfaceSelectionSet(),
                         (new Query('videoLinkValues'))
                             ->setSelectionSet([
-                                'value'
-                            ])
-                    ])
+                                'value',
+                            ]),
+                    ]),
             ]
         );
     }
@@ -1469,8 +1509,8 @@ class QueryBuilder
                 (new Query('js'))
                     ->setSelectionSet([
                         'header',
-                        'footer'
-                    ])
+                        'footer',
+                    ]),
             ]);
     }
 
@@ -1478,7 +1518,7 @@ class QueryBuilder
     {
         return (new Query('type'))
             ->setSelectionSet([
-                'type'
+                'type',
             ]);
     }
 
@@ -1490,7 +1530,7 @@ class QueryBuilder
             ->setOperationName('collectionEditors')
             ->setSelectionSet(
                 [
-                    'title'
+                    'title',
                 ]
             );
 
@@ -1507,7 +1547,7 @@ class QueryBuilder
         try {
             return $this->client->runQuery($query, $resultsAsArray, $variables);
         } catch (\Exception $e) {
-            Utils::log('Failed query!! Message:' . json_encode($e->getMessage()), 5, 'runQuery');
+            Utils::log('Failed query!! Message:'.json_encode($e->getMessage()), 5, 'runQuery');
             Utils::MESSAGES_POOL($e->getMessage());
             throw new \Exception('The client received an error.');
         }
@@ -1517,7 +1557,7 @@ class QueryBuilder
     {
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => $token['token_type'] . ' ' . $token['access_token']
+            'Authorization' => $token['token_type'].' '.$token['access_token'],
         ]);
 
         $mutation = (new Mutation('cloneData'))
@@ -1528,18 +1568,21 @@ class QueryBuilder
                 [
                     (new Query('data'))->setSelectionSet(
                         [
-                            'id'
+                            'id',
                         ]
-                    )
+                    ),
                 ]
             );
 
-        $variables = ['input' => [
-            'source' => '/data/' . $source,
-            'target' => '/data/' . $target
-        ]];
+        $variables = [
+            'input' => [
+                'source' => '/data/'.$source,
+                'target' => '/data/'.$target,
+            ],
+        ];
 
         $results = $this->runQuery($mutation, true, $variables);
+
         return $results->getData();
     }
 

@@ -2,266 +2,82 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
-use DOMException;
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
+use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
+use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
+use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class FullMedia extends Element
+class FullMedia extends AbstractElement
 {
-    /**
-     * @var VariableCache
-     */
-    protected $cache;
-    private $jsonDecode;
+    use RichTextAble;
+    use SectionStylesAble;
+    use DanationsAble;
 
-    public function __construct($jsonKitElements)
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
+        $mbSection = $data->getMbSection();
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizySection->getValue()->set_marginTop(0);
+
+        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
+
+        $this->handleSectionStyles($elementContext, $this->browserPage);
+
+
+//        $mbSection['items'] = $this->sortItems($mbSection['items']);
+//
+//        foreach ($mbSection['items'] as $mbItem) {
+//                if ($mbItem['category'] == 'text') {
+//                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+//                        $mbItem,
+//                        $brizySection->getItemWithDepth(0)
+//                    );
+//                }
+//                if ($mbItem['category'] == 'photo') {
+//                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+//                        $mbItem,
+//                        $brizySection->getItemWithDepth(0,0)
+//                    );
+//                }
+//                $this->handleRichTextItem($elementContext, $this->browserPage);
+//            }
+        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
+        $this->handleRichTextItems($elementContext, $this->browserPage);
+        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+
+        // configure the image wrapper
+        $brizySection->getItemValueWithDepth(0, 0)
+            ->set_marginType("ungrouped")
+            ->set_margin(0)
+            ->set_tempMargin(0)
+            ->set_marginSuffix("px")
+            ->set_tempMarginSuffix("px")
+            ->set_marginTop(10)
+            ->set_tempMarginTop(10)
+            ->set_marginTopSuffix("px")
+            ->set_tempMarginTopSuffix("px")
+            ->set_marginRight(0)
+            ->set_tempMarginRight(0)
+            ->set_marginRightSuffix("px")
+            ->set_tempMarginRightSuffix("px")
+            ->set_marginBottom(30)
+            ->set_tempMarginBottom(30)
+            ->set_marginBottomSuffix("px")
+            ->set_tempMarginBottomSuffix("px")
+            ->set_marginLeft(0)
+            ->set_tempMarginLeft(0)
+            ->set_marginLeftSuffix("px")
+            ->set_tempMarginLeftSuffix("px");
+
+        $image = $brizySection->getItemValueWithDepth(0, 0, 0);
+
+        $image->set_width(100)->set_widthSuffix('%')
+            ->set_height('')
+            ->set_heightSuffix('');
+
+        return $brizySection;
     }
 
-    /**
-     * @throws DOMException
-     */
-    public function getElement(array $elementData = [])
-    {
-        return $this->FullMedia($elementData);
-    }
-
-    /**
-     * @throws DOMException
-     * @throws \Exception
-     */
-    protected function FullMedia(array $sectionData)
-    {
-        Utils::log('Create full media', 1, "full_media");
-
-        $objBlock = new ItemBuilder();
-
-        $options = [];
-
-        $this->cache->set('currentSectionData', $sectionData);
-
-        $decoded = $this->jsonDecode['blocks']['full-media']['main'];
-        $general = $this->jsonDecode['blocks']['full-media'];
-        $blockImage = $this->jsonDecode['blocks']['full-media']['image'];
-
-        $objBlock->newItem($decoded);
-
-        $this->generalParameters($objBlock, $options, $sectionData);
-
-        $this->defaultOptionsForElement($general, $options);
-
-        $this->backgroundParallax($objBlock, $sectionData);
-
-        $this->backgroundColor($objBlock, $sectionData, $options);
-
-        $this->backgroundImages($objBlock, $sectionData, $options);
-
-        $this->setOptionsForTextColor($sectionData, $options);
-
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'text') {
-                if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
-
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-
-                    if (!is_array($richText)) {
-                        $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
-                    } else {
-                        $WrapperText = [];
-                        $TopWrapperIcon = [];
-                        $BottomWrapperIcon = [];
-                        $TopWrapperButton = [];
-                        $BottomWrapperButton = [];
-
-                        if(!empty($richText['text'])) {
-                            $WrapperText[] = $this->itemWrapperRichText($richText['text']);
-                        }
-
-                        if(!empty($richText['embeds']['persist'])) {
-                            $result = $this->findEmbeddedPasteDivs($item['content']);
-                            foreach ($result as $embedContent) {
-                                $WrapperText[] = $this->embedCode($embedContent);
-                            }
-                        }
-
-                        if (!empty($richText['icons'])) {
-                            foreach ($richText['icons'] as $itemIcon) {
-                                if ($itemIcon['position'] === 'top') {
-                                    $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                                }
-                            }
-                        }
-
-                        if (!empty($richText['icons'])) {
-                            foreach ($richText['icons'] as $itemIcon) {
-                                if ($itemIcon['position'] === 'bottom') {
-                                    $BottomWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                                }
-                            }
-                        }
-
-                        if (!empty($richText['buttons'])) {
-                            foreach ($richText['buttons'] as $itemButton) {
-                                if ($itemButton['position'] === 'top') {
-                                    $TopWrapperButton[] = $this->button($itemButton['items'], $itemButton['align']);
-                                }
-                            }
-                        }
-
-                        if (!empty($richText['buttons'])) {
-                            foreach ($richText['buttons'] as $itemButton) {
-                                if ($itemButton['position'] === 'bottom') {
-                                    $BottomWrapperButton[] = $this->button($itemButton['items'], $itemButton['align']);
-                                }
-                            }
-                        }
-
-                        if (!empty($TopWrapperIcon)) {
-                            foreach ($TopWrapperIcon as $topItem) {
-                                $objBlock->item()->item()->item()->addItem($this->wrapperColumn($topItem));
-                            }
-                        }
-
-                        if (!empty($TopWrapperButton)) {
-                            foreach ($TopWrapperButton as $topItemButton) {
-                                $objBlock->item()->item()->item()->addItem($topItemButton);
-                            }
-                        }
-
-                        if (!empty($WrapperText)) {
-                            foreach ($WrapperText as $text) {
-                                $objBlock->item()->item()->item()->addItem($text);
-                            }
-                        }
-
-                        if (!empty($BottomWrapperIcon)) {
-                            foreach ($BottomWrapperIcon as $bottomItemIcon) {
-                                $objBlock->item()->item()->item()->addItem($bottomItemIcon);
-                            }
-                        }
-
-                        if (!empty($BottomWrapperButton)) {
-                            foreach ($BottomWrapperButton as $BottomItemButton) {
-                                $objBlock->item()->item()->item()->addItem($BottomItemButton);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        foreach ($sectionData['items'] as $item) {
-            if($item['item_type']=='body' && $this->showBody($sectionData)) {
-
-                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-
-                if(!is_array($richText)) {
-                    $objBlock->item()->item()->item()->addItem($this->itemWrapperRichText($richText));
-                } else {
-                    $WrapperText = [];
-                    $TopWrapperIcon = [];
-                    $BottomWrapperIcon = [];
-                    $TopWrapperButton = [];
-                    $BottomWrapperButton = [];
-
-                    if(!empty($richText['text'])) {
-                        $WrapperText[] = $this->itemWrapperRichText($richText['text']);
-                    }
-
-                    if(!empty($richText['embeds']['persist'])) {
-                        $result = $this->findEmbeddedPasteDivs($item['content']);
-                        foreach ($result as $embedContent) {
-                            $WrapperText[] = $this->embedCode($embedContent);
-                        }
-                    }
-
-                    if (!empty($richText['icons'])) {
-                        foreach ($richText['icons'] as $itemIcon) {
-                            if ($itemIcon['position'] === 'top') {
-                                $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                            }
-                        }
-                    }
-
-                    if (!empty($richText['icons'])) {
-                        foreach ($richText['icons'] as $itemIcon) {
-                            if ($itemIcon['position'] === 'bottom') {
-                                $BottomWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                            }
-                        }
-                    }
-
-                    if (!empty($richText['buttons'])) {
-                        foreach ($richText['buttons'] as $itemButton) {
-                            if ($itemButton['position'] === 'top') {
-                                $TopWrapperButton[] = $this->button($itemButton['items'], $itemButton['align']);
-                            }
-                        }
-                    }
-
-                    if (!empty($richText['buttons'])) {
-                        foreach ($richText['buttons'] as $itemButton) {
-                            if ($itemButton['position'] === 'bottom') {
-                                $BottomWrapperButton[] = $this->button($itemButton['items'], $itemButton['align']);
-                            }
-                        }
-                    }
-
-                    if (!empty($TopWrapperIcon)) {
-                        foreach ($TopWrapperIcon as $topItem) {
-                            $objBlock->item()->item()->item()->addItem($this->wrapperColumn($topItem));
-                        }
-                    }
-
-                    if (!empty($TopWrapperButton)) {
-                        foreach ($TopWrapperButton as $topItemButton) {
-                            $objBlock->item()->item()->item()->addItem($topItemButton);
-                        }
-                    }
-
-                    if (!empty($WrapperText)) {
-                        foreach ($WrapperText as $text) {
-                            $objBlock->item()->item()->item()->addItem($text);
-                        }
-                    }
-
-                    if (!empty($BottomWrapperIcon)) {
-                        foreach ($BottomWrapperIcon as $bottomItemIcon) {
-                            $objBlock->item()->item()->item()->addItem($bottomItemIcon);
-                        }
-                    }
-
-                    if (!empty($BottomWrapperButton)) {
-                        foreach ($BottomWrapperButton as $BottomItemButton) {
-                            $objBlock->item()->item()->item()->addItem($BottomItemButton);
-                        }
-                    }
-                }
-            }
-        }
-            
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'photo' && !empty($item['content'])) {
-                $imageOptions = [
-                    'imageSrc' => $item['content'],
-                    'imageFileName' => $item['imageFileName']
-                ];
-
-                if (!empty($item['link'])) {
-                    $imageOptions = [
-                        'linkType' => 'external',
-                        'linkExternal' => $item['link']
-                    ];
-                }
-                $objBlock->item()->item()->item()->addItem($this->wrapperImage($imageOptions, $blockImage));
-            }
-        }
-        
-        $block = $this->replaceIdWithRandom($objBlock->get());
-        return json_encode($block);
-    }
 }

@@ -2,146 +2,75 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
+use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
+use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
+use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class ListLayout extends Element
+class ListLayout extends AbstractElement
 {
-    /**
-     * @var VariableCache
-     */
-    protected $cache;
-    private $jsonDecode;
+    use RichTextAble;
+    use SectionStylesAble;
+    use MbSectionUtils;
 
-    public function __construct($jsonKitElements)
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
-    }
+        $mbSection = $data->getMbSection();
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
-    /**
-     * @throws \DOMException
-     */
-    public function getElement(array $elementData = [])
-    {
-        return $this->ListLayout($elementData);
-    }
+        $photoPosition = $mbSection['settings']['sections']['list']['photo_position'] ?? 'left';
 
-    /**
-     * @throws \DOMException
-     */
-    protected function ListLayout(array $sectionData) {
-        Utils::log('Create bloc', 1, "list_layout");
-        $this->cache->set('currentSectionData', $sectionData);
-        $decoded = $this->jsonDecode['blocks']['list-layout'];
+        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
+        $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        $options = [];
+        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0, 0, 0));
+        $this->handleRichTextHead($elementContext, $this->browserPage);
 
-        $objBlock = new ItemBuilder();
-        $objItem = new ItemBuilder();
-        $objHead = new ItemBuilder();
-        $objImage = new ItemBuilder();
-        $objRow = new ItemBuilder();
+        $itemJson = json_decode($this->brizyKit['item-'.$photoPosition], true);
 
-        $objBlock->newItem($decoded['main']);
-        $objHead->newItem($decoded['head']);
-        $objImage->newItem($decoded['image']);
+        foreach ($mbSection['items'] as $item) {
+            $brizySectionItem = new BrizyComponent($itemJson);
 
-        $this->generalParameters($objBlock, $options, $sectionData);
+            $elementContext = $data->instanceWithMBSection($item);
+            $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
-        $this->defaultOptionsForElement($decoded, $options);
+            $brizySectionItem->getValue()
+                ->set_paddingTop((int)$styles['margin-top'])
+                ->set_paddingBottom((int)$styles['margin-bottom'])
+                ->set_paddingRight((int)$styles['margin-right'])
+                ->set_paddingLeft((int)$styles['margin-left']);
 
-        $this->backgroundColor($objBlock, $sectionData, $options);
+            foreach ($item['item'] as $mbItem) {
+                $photoPositionIndex = $photoPosition == 'left' ? 0 : 1;
+                if ($mbItem['item_type'] == 'title' || $mbItem['item_type'] == 'body') {
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                        $mbItem,
+                        $brizySectionItem->getItemWithDepth($photoPosition == 'left' ? 1 : 0)
+                    );
+                }
+                if ($mbItem['category'] == 'photo') {
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                        $mbItem,
+                        $brizySectionItem->getItemWithDepth($photoPositionIndex, 0)
+                    );
+                }
 
-        $this->setOptionsForTextColor($sectionData, $options);
+                $this->handleRichTextItem($elementContext, $this->browserPage);
 
-        $this->backgroundParallax($objBlock, $sectionData);
-
-        $this->backgroundImages($objBlock, $sectionData, $options);
-
-//        if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-//            Utils::log('Set background', 1, "] [list_layout");
-//
-//            if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
-//                $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
-//                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-//                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-//            }
-//            if($this->checkArrayPath($sectionData, 'settings/sections/background/opacity')) {
-//                if ($this->checkArrayPath($sectionData, 'settings/sections/background/fadeMode')) {
-//                    if ($sectionData['settings']['sections']['background']['fadeMode'] !== 'none'){
-//                        $opacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
-//                        if ($opacity <= 0.3) {
-//                            $options = array_merge($options, ['textColor' => '#000000']);
-//                        }
-//                        $objBlock->item(0)->setting('bgColorOpacity', $opacity);
-//                    } else {
-//                        $objBlock->item(0)->setting('bgColorOpacity', 1);
-//                    }
+//                if ($mbItem['category'] == 'photo') {
+//                    $brizySectionItem->getItemValueWithDepth($photoPositionIndex, 0, 0)
+//                        ->set_widthSuffix('%')
+//                        ->set_heightSuffix('%')
+//                        ->set_width(100)
+//                        ->set_height(80);
 //                }
-//                $objBlock->item(0)->setting('bgColorType', 'none');
-//            }
-//        }
-
-        $blockHead = false;
-        foreach ($sectionData['head'] as $headItem)
-        {
-            if($headItem['category'] !== 'text') { continue; }
-
-            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                $blockHead = true;
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objHead->item(0)->item(0)->item(0)->setText($richText);
             }
 
-            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
-                $blockHead = true;
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objHead->item(0)->item(2)->item(0)->setText($richText);
-            }
+            $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionItem]);
         }
 
-        if($blockHead) {
-            $objBlock->item(0)->addItem($objHead->get());
-        }
-
-        if($this->checkArrayPath($sectionData, 'settings/sections/list/photo_position')) {
-            $options['photoPosition'] = $sectionData['settings']['sections']['list']['photo_position'];
-        }
-
-        foreach ($sectionData['items'] as $section) {
-            $objRow->newItem($decoded['row']);
-            $objItem->newItem($decoded['item']);
-
-            foreach ($section['item'] as $item) {
-                if ($item['category'] === 'photo') {
-                    $objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
-                    $objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
-                    if(empty($options['photoPosition'])){
-                        $objRow->addItem($objImage->get());
-                    }
-                }
-                if ($item['category'] === 'text') {
-                    if ($item['item_type'] === 'title') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->item(0)->item(0)->setText($richText);
-                    }
-
-                    if ($item['item_type'] === 'body') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->item(2)->item(0)->setText($richText);
-                    }
-                }
-            }
-            $objRow->addItem($objItem->get());
-            if(!empty($options['photoPosition'])){
-                $objRow->addItem($objImage->get());
-            }
-            $objBlock->item(0)->addItem($objRow->get());
-        }
-        $block = $this->replaceIdWithRandom($objBlock->get());
-        return json_encode($block);
+        return $brizySection;
     }
 }

@@ -1,0 +1,30 @@
+{
+  "private": true,
+  "name": "mb-migration",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "lib/MBMigration/Builder/Layout/Theme/Voyage/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Anthem/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Solstice/Assets"
+  ],
+  "scripts": {
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "tsc": "turbo run tsc",
+    "prettier-check": "turbo run prettier-check",
+    "check-all": "npm run prettier-check && npm run lint && npm run tsc",
+    "build": "turbo build",
+    "build:prod": "turbo build -- --production"
+  },
+  "dependencies": {
+    "@nesk/puphpeteer": "^2.0.0",
+    "@nesk/rialto": "^1.4.0",
+    "@zoon/puphpeteer": "github:zoonru/puphpeteer",
+    "lodash": "^4.17.21",
+    "puppeteer": "^21.3.1"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.16"
+  }
+}

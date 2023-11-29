@@ -2,111 +2,48 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
+use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
+use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class TabsLayout extends Element
+class TabsLayout extends AbstractElement
 {
+    use RichTextAble;
+    use SectionStylesAble;
 
-    /**
-     * @var VariableCache
-     */
-    protected $cache;
-    private $jsonDecode;
-
-    public function __construct($jsonKitElements)
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
-    }
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $mbSection = $data->getMbSection();
 
-    /**
-     * @throws \DOMException
-     */
-    public function getElement(array $elementData = [])
-    {
-        return $this->TabsLayout($elementData);
-    }
+        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
+        $this->handleSectionStyles($elementContext, $this->browserPage);
 
-    /**
-     * @throws \DOMException
-     * @throws \Exception
-     */
-    protected function TabsLayout(array $sectionData) {
-        Utils::log('Create bloc', 1, "tabs_layout");
+        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0, 0, 0));
+        $this->handleRichTextHead($elementContext, $this->browserPage);
 
-        $options = ['elementType' => 'tabs_layout'];
-
-        $this->cache->set('currentSectionData', $sectionData);
-        $decoded = $this->jsonDecode['blocks']['tabs-layout'];
-
-        $objBlock = new ItemBuilder();
-        $objItem = new ItemBuilder();
-        $objRow = new ItemBuilder();
-
-        $objBlock->newItem($decoded['main']);
-        $objRow->newItem($decoded['row']);
-
-        $this->generalParameters($objBlock, $options, $sectionData);
-
-        $this->defaultOptionsForElement($decoded, $options);
-
-        $this->backgroundColor($objBlock, $sectionData, $options);
-
-        $this->setOptionsForTextColor($sectionData, $options);
-
-        $this->backgroundParallax($objBlock, $sectionData);
-
-        $this->backgroundImages($objBlock, $sectionData, $options);
-
-        $blockHead = false;
-        foreach ($sectionData['head'] as $headItem) {
-            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
-            }
-        }
-        foreach ($sectionData['head'] as $headItem) {
-            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
-            }
+        $itemJson = json_decode($this->brizyKit['item'], true);
+        $brizyAccordionItems = [];
+        foreach ($mbSection['items'] as $mbSectionItem) {
+            $brizyAccordionItem = new BrizyComponent($itemJson);
+            $brizyAccordionItem->getValue()->set_labelText(strip_tags($mbSectionItem['item'][0]['content']));
+            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                $mbSectionItem['item'][1],
+                $brizyAccordionItem
+            );
+            $this->handleRichTextItem($elementContext, $this->browserPage);
+            $brizyAccordionItems[] = $brizyAccordionItem;
         }
 
-        foreach ($sectionData['items'] as $section) {
+        $brizySection->getItemValueWithDepth(0, 1, 0, 0, 0)->set_items($brizyAccordionItems);
 
-            $objItem->newItem($decoded['item']);
-
-            foreach ($section['item'] as $item) {
-
-                if ($item['category'] === 'photo') {
-                    //$objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
-                    //$objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
-                    //$objRow->addItem($objImage->get());
-                }
-                if ($item['category'] === 'text') {
-                    if ($item['item_type'] === 'tab_title') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->setting('labelText', $richText);
-                    }
-
-                    if ($item['item_type'] === 'tab_body') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->item(0)->item(0)->setText($richText);
-                    }
-                }
-
-            }
-
-            $objRow->item(0)->addItem($objItem->get());
+        if($this->hasImageBackground($mbSection))
+        {
+            $brizySection->getItemValueWithDepth(0, 1, 0, 0, 0)->set_bgColorOpacity(0);
         }
-        $objRow->item(0)->setting('contentBgColorHex', $options['bgColor']);
-        $objRow->item(0)->setting('bgColorHex', $options['bgColor']);
-        $objBlock->item(0)->addItem($objRow->get());
-        $block = $this->replaceIdWithRandom($objBlock->get());
-        return json_encode($block);
-    }
 
+        return $brizySection;
+    }
 }

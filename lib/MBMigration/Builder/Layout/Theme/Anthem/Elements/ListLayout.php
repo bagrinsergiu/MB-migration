@@ -64,25 +64,27 @@ class ListLayout extends Element
         $this->backgroundImages($objBlock, $sectionData, $options);
 
         $blockHead = false;
+
         foreach ($sectionData['head'] as $headItem) {
-            if ($headItem['category'] !== 'text') {
-                continue;
+            if ($headItem['category'] === 'text') {
+                if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
+                    $blockHead = true;
+                    foreach ($headItem['brzElement'] as $item) {
+                        $objHead->item()->addItem($item);
+                    }
+                    $objHead->item()->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']]));
+                }
             }
+        }
 
-            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                $blockHead = true;
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
-                $objBlock->item(0)->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
-
-//                $objHead->item(0)->item(0)->item(0)->setText($richText);
-            }
-
-            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
-                $blockHead = true;
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objHead->item()->item()->addItem($this->itemWrapperRichText($richText));
+        foreach ($sectionData['head'] as $headItem) {
+            if ($headItem['category'] === 'text') {
+                if ($headItem['item_type'] === 'body' && $this->showHeader($sectionData)) {
+                    $blockHead = true;
+                    foreach ($headItem['brzElement'] as $item) {
+                        $objHead->item()->addItem($item);
+                    }
+                }
             }
         }
 
@@ -117,58 +119,12 @@ class ListLayout extends Element
             foreach ($section['item'] as $item) {
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'title') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-//                        $objItem->item(0)->item(0)->setText($richText);
-//                        $objItem->addItem($this->itemWrapperRichText($richText));
-
-                        $WrapperText = [];
-                        $TopWrapperIcon = [];
-                        $BottomWrapperIcon = [];
-                        $TopWrapperButton = [];
-                        $BottomWrapperButton = [];
-
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        if(!is_array($richText)) {
-                            $objItem->addItem($this->itemWrapperRichText($richText));
-                        } else {
-                            if(!empty($richText['text'])) {
-                                $WrapperText[] = $this->itemWrapperRichText($richText['text']);
-                            }
-                            if(!empty($richText['embeds'])) {
-                                $WrapperText[] = $this->embedCode($item['content']);
-                            }
-                            if(!empty($richText['icons'])) {
-                                foreach ($richText['icons'] as $itemIcon) {
-                                    if ($itemIcon['position'] === 'top') {
-                                        $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                                    }
-                                    if ($itemIcon['position'] === 'bottom') {
-                                        $BottomWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                                    }
-                                }
-                            }
+                        foreach ($item['brzElement'] as $element) {
+                            $objItem->addItem($element);
                         }
-
-                        if (!empty($TopWrapperIcon)) {
-                            foreach ($TopWrapperIcon as $topItem) {
-                                $objItem->addItem($this->wrapperColumn($topItem));
-                            }
-                        }
-
-                        if (!empty($WrapperText)) {
-                            foreach ($WrapperText as $text) {
-                                $objItem->addItem($this->wrapperColumn($text));
-                            }
-                        }
-
-                        if (!empty($BottomWrapperIcon)) {
-                            foreach ($BottomWrapperIcon as $bottomItem) {
-                                $objItem->addItem($this->wrapperColumn($bottomItem));
-                            }
-                        }
-
-                        $objItem->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
-
+                        $objItem->addItem($this->wrapperLine([
+                            'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                        ]));
                     }
                 }
             }
@@ -176,51 +132,8 @@ class ListLayout extends Element
             foreach ($section['item'] as $item) {
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'body') {
-
-                        $WrapperText = [];
-                        $TopWrapperIcon = [];
-                        $BottomWrapperIcon = [];
-                        $TopWrapperButton = [];
-                        $BottomWrapperButton = [];
-
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        if(!is_array($richText)) {
-                            $objItem->addItem($this->itemWrapperRichText($richText));
-                        } else {
-                            if(!empty($richText['text'])) {
-                                $WrapperText[] = $this->itemWrapperRichText($richText['text']);
-                            }
-                            if(!empty($richText['embeds'])) {
-                                $WrapperText[] = $this->embedCode($item['content']);
-                            }
-                            if(!empty($richText['icons'])) {
-                                foreach ($richText['icons'] as $itemIcon) {
-                                    if ($itemIcon['position'] === 'top') {
-                                        $TopWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                                    }
-                                    if ($itemIcon['position'] === 'bottom') {
-                                        $BottomWrapperIcon[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!empty($TopWrapperIcon)) {
-                            foreach ($TopWrapperIcon as $topItem) {
-                                $objItem->addItem($this->wrapperColumn($topItem));
-                            }
-                        }
-
-                        if (!empty($WrapperText)) {
-                            foreach ($WrapperText as $topItem) {
-                                $objItem->addItem($topItem);
-                            }
-                        }
-
-                        if (!empty($BottomWrapperIcon)) {
-                            foreach ($BottomWrapperIcon as $bottomItem) {
-                                $objItem->addItem($this->wrapperColumn($bottomItem));
-                            }
+                        foreach ($item['brzElement'] as $element) {
+                            $objItem->addItem($element);
                         }
                     }
                 }
