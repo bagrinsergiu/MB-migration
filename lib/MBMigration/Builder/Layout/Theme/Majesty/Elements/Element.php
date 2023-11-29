@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
 use Exception;
 use MBMigration\Builder\Checking;

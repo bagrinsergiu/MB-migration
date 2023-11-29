@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\Cacheable;
@@ -17,7 +17,10 @@ class Head extends AbstractElement
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
 
-            $headStyles = $this->extractBlockBrowserData($data->getMbSection()['sectionId']);
+            $headStyles = $this->extractBlockBrowserData($data->getMbSection()['sectionId'], $data);
+
+            $headStyles['menu']['lineHeight'] = 2; // set line height to 2 for menu items to fix the issue with the menu items not being centered vertically
+            $headStyles['menu']['itemPadding'] = 14; // set line height to 2 for menu items to fix the issue with the menu items not being centered vertically
 
             $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
@@ -124,7 +127,7 @@ class Head extends AbstractElement
         $menuItemKit = json_decode($this->brizyKit['item'], true);
         $brizyComponent = new BrizyComponent($menuItemKit);
         $menuItems = $this->createMenu($brizyComponent, $data->getMenu());
-        $menuComponentValue = $component->getItemValueWithDepth(0, 0, 1, 0, 0);
+        $menuComponentValue = $component->getItemValueWithDepth(0, 0, 0, 2, 0);
         $menuComponentValue->set('items', $menuItems)
             ->set_menuSelected($data->getMenu()['uid'])
             ->set_subMenuBgColorPalette('')
@@ -140,14 +143,16 @@ class Head extends AbstractElement
         return $component;
     }
 
-    protected function extractBlockBrowserData($sectionId): array
+    protected function extractBlockBrowserData(
+        $sectionId,
+        ElementContextInterface $data): array
     {
         $menuStyles = $this->browserPage->evaluateScript(
             'Menu.js',
             [
                 'SELECTOR' => '[data-id="'.$sectionId.'"]',
-                'FAMILIES' => [],
-                'DEFAULT_FAMILY' => 'lato',
+                'FAMILIES' => $data->getFontFamilies(),
+                'DEFAULT_FAMILY' => $data->getDefaultFontFamily()
             ]
         );
 
