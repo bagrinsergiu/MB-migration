@@ -15,12 +15,15 @@
     "leafo/scssphp": "^0.8.4",
     "scssphp/scssphp": "^1.11",
     "zoon/puphpeteer": "1.6.0",
-    "monolog/monolog": "^2.9"
+    "monolog/monolog": "^1.23"
   },
   "autoload": {
     "psr-0": {
       "MBMigration": "lib/"
     }
+  },
+  "scripts": {
+    "post-install-cmd": "npm install && npm run build:prod"
   },
   "require-dev": {
     "phpunit/phpunit": "^8.5"
