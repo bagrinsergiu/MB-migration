@@ -11,7 +11,7 @@ use MBMigration\Builder\Layout\Common\Element\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContext;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class LeftMedia extends PhotoTextElement
+class RightMedia extends PhotoTextElement
 {
     /**
      * @param BrizyComponent $brizySection
@@ -19,7 +19,7 @@ class LeftMedia extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0,0);
     }
 
     /**
@@ -28,11 +28,12 @@ class LeftMedia extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1);
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
     }
+
 }

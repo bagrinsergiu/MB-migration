@@ -133,11 +133,8 @@ trait SectionStylesAble
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles);
 
         // reset padding top for first section as in brizy there is no need for that padding.
-        if ($pagePosition == 0) {
-            $sectionStyles['padding-top'] = 0;
-            $sectionStyles['padding-bottom'] = 0;
-            $sectionStyles['margin-bottom'] = 0;
-            $sectionStyles['margin-top'] = 0;
+        if (!is_null($pagePosition) && $pagePosition == 0) {
+            //$sectionStyles['padding-top'] = 0;
         }
 
         // set the background color paddings and margins

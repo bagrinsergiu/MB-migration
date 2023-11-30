@@ -116,29 +116,29 @@ trait RichTextAble
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
-        $brizySection = $data->getBrizySection();
+        $brizyComponent = $data->getBrizySection();
 
         switch ($mbSectionItem['category']) {
             case 'text':
-                $brizySection = $this->handleTextItem(
+                $brizyComponent = $this->handleTextItem(
                     $mbSectionItem,
-                    $brizySection,
+                    $brizyComponent,
                     $browserPage,
                     $families,
                     $default_fonts
                 );
                 break;
             case 'photo':
-                $imageTarget = $brizySection;
-                if ($brizySection->getType() != 'Wrapper') {
-                    $imageTarget = new BrizyWrapperComponent('wrapper-image');
-                    $brizySection->getValue()->add_items([$imageTarget]);
-                }
+//                $imageTarget = $brizyComponent;
+//                if ($brizyComponent->getType() != 'Wrapper') {
+//                    $imageTarget = new BrizyWrapperComponent('wrapper-image');
+//                    $brizyComponent->getValue()->add_items([$imageTarget]);
+//                }
 
                 $this->handlePhotoItem(
                     $mbSectionItem['sectionId'] ?? $mbSectionItem['id'],
                     $mbSectionItem,
-                    $imageTarget,
+                    $brizyComponent,
                     $browserPage,
                     $families,
                     $default_fonts
@@ -147,7 +147,7 @@ trait RichTextAble
                 break;
         }
 
-        return $brizySection;
+        return $brizyComponent;
     }
 
     private function handleTextItem(
@@ -190,16 +190,14 @@ trait RichTextAble
     private function handlePhotoItem(
         $mbSectionItemId,
         $mbSectionItem,
-        BrizyComponent $brizySection,
+        BrizyComponent $brizyComponent,
         BrowserPage $browserPage,
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
 
-        $brizyImage = new BrizyImageComponent();
-
         if (!empty($mbSectionItem['content'])) {
-            $brizyImage->getValue()
+            $brizyComponent->getValue()
                 ->set_imageFileName($mbSectionItem['imageFileName'])
                 ->set_imageSrc($mbSectionItem['content'])
                 ->set_width($mbSectionItem['settings']['image']['width'])
@@ -210,7 +208,7 @@ trait RichTextAble
                 ->set_heightSuffix('px');
         }
 
-        return $brizySection->getValue()->add_items([$brizyImage]);
+        return $brizyComponent;
     }
 
     private function findEmbeddedElements($html): array

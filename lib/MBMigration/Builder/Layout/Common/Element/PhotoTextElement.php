@@ -1,16 +1,17 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Common\Element;
 
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementContext;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\ElementInterface;
+use MBMigration\Layer\Graph\QueryBuilder;
 
-class LeftMedia extends AbstractElement
+abstract class PhotoTextElement extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
@@ -27,19 +28,19 @@ class LeftMedia extends AbstractElement
                     // add the photo items on the right side of the block
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbSectionItem,
-                        $imageTarget = $this->getImageComponent($brizySection) //
+                        $imageTarget = $this->getImageComponent($brizySection)
                     );
                     $this->handleRichTextItem(
                         $elementContext,
                         $this->browserPage
                     );
 
-                    $imageTarget->getItemWithDepth(0)
-                        ->getValue()
-                        ->set_width(100)
-                        ->set_height(100)
-                        ->set_heightSuffix('%')
-                        ->set_widthSuffix('%');
+//                    $imageTarget->getItemWithDepth(0)
+//                        ->getValue()
+//                        ->set_width(100)
+//                        ->set_height(100)
+//                        ->set_heightSuffix('%')
+//                        ->set_widthSuffix('%');
                     break;
                 case 'text':
                     // add the text on the left side of th bock
@@ -68,22 +69,17 @@ class LeftMedia extends AbstractElement
      * @param BrizyComponent $brizySection
      * @return mixed|null
      */
-    protected function getImageComponent(BrizyComponent $brizySection):BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0);
-    }
+    abstract protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent;
 
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
      */
-    protected function getTextComponent(BrizyComponent $brizySection):BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0, 1);
-    }
+    abstract protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent;
 
-    protected function getSectionItemComponent(BrizyComponent $brizySection):BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
-    }
+    /**
+     * @param BrizyComponent $brizySection
+     * @return BrizyComponent
+     */
+    abstract protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent;
 }
