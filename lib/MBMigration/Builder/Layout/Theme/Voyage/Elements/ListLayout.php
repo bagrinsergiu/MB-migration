@@ -13,7 +13,6 @@ class ListLayout extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
-    use MbSectionUtils;
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {

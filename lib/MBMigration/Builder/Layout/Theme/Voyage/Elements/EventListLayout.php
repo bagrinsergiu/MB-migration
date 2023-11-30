@@ -16,7 +16,6 @@ class EventListLayout extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
-    use MbSectionUtils;
     use BrizyQueryBuilderAware;
 
     /**

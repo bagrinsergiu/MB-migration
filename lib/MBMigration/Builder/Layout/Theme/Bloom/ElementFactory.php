@@ -17,6 +17,7 @@ use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Head;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMedia;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMediaCircle;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\ListLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\ListMediaLayout;
@@ -35,6 +36,20 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new Footer($this->blockKit['blocks']['footer'], $this->browserPage);
             case 'head':
                 return new Head($this->blockKit['blocks']['menu'], $this->browserPage);
+            case 'left-media-circle':
+                return new LeftMediaCircle($this->blockKit['blocks']['tabs-layout'], $this->browserPage);
+            case 'left-media':
+                return new LeftMedia($this->blockKit['blocks']['left-media'], $this->browserPage);
+            case 'right-media':
+                return new RightMedia($this->blockKit['blocks']['right-media'], $this->browserPage);
+            case 'gallery-layout':
+                return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $this->browserPage);
+            case 'full-text':
+                return new FullText($this->blockKit['blocks']['full-text'], $this->browserPage);
+
+
+
+
             case 'accordion-layout':
                 return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $this->browserPage);
             case 'tabs-layout':
@@ -65,16 +80,10 @@ class ElementFactory  extends AbstractThemeElementFactory
 //                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $this->browserPage);
             case 'event-calendar-layout':
                 return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $this->browserPage);
-            case 'gallery-layout':
-                return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $this->browserPage);
             case 'right-media-overlap':
                 return new RightMediaOverlap($this->blockKit['blocks']['right-media-overlap'], $this->browserPage);
             case 'left-media-overlap':
                 return new LeftMediaOverlap($this->blockKit['blocks']['left-media-overlap'], $this->browserPage);
-            case 'left-media':
-                return new LeftMedia($this->blockKit['blocks']['left-media'], $this->browserPage);
-            case 'right-media':
-                return new RightMedia($this->blockKit['blocks']['right-media'], $this->browserPage);
             case 'grid-media-layout':
                 return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $this->browserPage, $this->getQueryBuilder());
             case 'list-media-layout':
@@ -83,8 +92,6 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);
             case 'grid-layout':
                 return new GridLayout($this->blockKit['blocks']['grid-layout'], $this->browserPage);
-            case 'full-text':
-                return new FullText($this->blockKit['blocks']['full-text'], $this->browserPage);
             case 'full-media':
                 return new FullMedia($this->blockKit['blocks']['full-media'], $this->browserPage);
             default:

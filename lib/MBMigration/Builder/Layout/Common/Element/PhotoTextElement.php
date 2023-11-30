@@ -77,9 +77,4 @@ abstract class PhotoTextElement extends AbstractElement
      */
     abstract protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent;
 
-    /**
-     * @param BrizyComponent $brizySection
-     * @return BrizyComponent
-     */
-    abstract protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent;
 }
