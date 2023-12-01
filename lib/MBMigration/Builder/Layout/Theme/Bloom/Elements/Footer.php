@@ -17,6 +17,6 @@ class Footer extends FooterElement
 {
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0);
+        return $brizySection;
     }
 }

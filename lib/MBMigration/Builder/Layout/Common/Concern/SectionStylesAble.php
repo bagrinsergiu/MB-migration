@@ -139,12 +139,10 @@ trait SectionStylesAble
 
         // set the background color paddings and margins
         $brizySection->getValue()
-            ->set_paddingType('ungrouped')
             ->set_paddingTop((int)$sectionStyles['padding-top'] + (int)$sectionWrapperStyles['padding-top'])
             ->set_paddingBottom((int)$sectionStyles['padding-bottom'] + (int)$sectionWrapperStyles['padding-bottom'])
             ->set_paddingRight((int)$sectionStyles['padding-right'] + (int)$sectionWrapperStyles['padding-right'])
             ->set_paddingLeft((int)$sectionStyles['padding-left'] + (int)$sectionWrapperStyles['padding-left'])
-            ->set_marginType('ungrouped')
             ->set_marginLeft((int)$sectionStyles['margin-left'] + (int)$sectionWrapperStyles['margin-left'])
             ->set_marginRight((int)$sectionStyles['margin-right'] + (int)$sectionWrapperStyles['margin-right'])
             ->set_marginTop((int)$sectionStyles['margin-top'] + (int)$sectionWrapperStyles['margin-top'])
