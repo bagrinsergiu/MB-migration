@@ -10,26 +10,37 @@ import * as Str from "utils/src/reader/string";
 import { uuid } from "utils/src/uuid";
 
 const codeToBuilderMap: Record<string, string> = {
-  facebook: "logo-facebook",
-  instagram: "logo-instagram",
-  youtube: "logo-youtube",
-  twitter: "logo-twitter",
-  vimeo: "logo-vimeo",
-  mail: "email-85",
   apple: "apple",
-  57380: "email-85",
-  58624: "logo-instagram",
-  58407: "logo-facebook",
-  57895: "logo-facebook",
-  57936: "note-03",
-  58009: "logo-youtube",
-  57993: "logo-vimeo",
-  57990: "logo-twitter",
-  58112: "logo-instagram",
-  58521: "logo-youtube",
-  58503: "logo-twitter",
+
+  57686: "pin-3",
+
+  mail: "email-85",
   57892: "email-85",
-  57686: "pin-3"
+  57380: "email-85",
+
+  57936: "note-03",
+
+  facebook: "logo-facebook",
+  57895: "logo-facebook",
+  58407: "logo-facebook",
+  61570: "logo-facebook",
+
+  youtube: "logo-youtube",
+  58009: "logo-youtube",
+  58521: "logo-youtube",
+  62513: "logo-youtube",
+
+  vimeo: "logo-vimeo",
+  57993: "logo-vimeo",
+
+  twitter: "logo-twitter",
+  57990: "logo-twitter",
+  58503: "logo-twitter",
+
+  instagram: "logo-instagram",
+  58624: "logo-instagram",
+  58112: "logo-instagram",
+  61805: "logo-instagram"
 };
 const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
 const getBgColor = mPipe(
