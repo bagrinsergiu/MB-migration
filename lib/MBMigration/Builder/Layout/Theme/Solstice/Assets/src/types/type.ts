@@ -12,5 +12,6 @@ declare global {
     isDev?: boolean;
     iconModel?: Record<string, Literal>;
     buttonModel?: Record<string, Literal>;
+    menuModel?: Record<string, Literal>;
   }
 }
