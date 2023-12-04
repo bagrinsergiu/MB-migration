@@ -1,4 +1,5 @@
 import { ElementModel } from "../../../../types/type";
+import { getGlobalIconModel } from "../../../../utils/getGlobalIconModel";
 import { getHref } from "../../../utils/common";
 import { mPipe } from "fp-utilities";
 import { parseColorString } from "utils/src/color/parseColorString";
@@ -37,40 +38,64 @@ const getBgColor = mPipe(
   parseColorString
 );
 
+export const getStyles = (node: Element) => {
+  const parentNode = getParentElementOfTextNode(node);
+  const isIconText = parentNode?.nodeName === "#text";
+  const iconNode = isIconText ? node : parentNode;
+  return iconNode ? getNodeStyle(iconNode) : {};
+};
+
+export const getParentStyles = (node: Element) => {
+  const parentElement = node.parentElement;
+  return parentElement ? getNodeStyle(parentElement) : {};
+};
+
+export const getStyleModel = (node: Element) => {
+  const style = getStyles(node);
+  const parentStyle = getParentStyles(node);
+  const opacity = +style.opacity;
+  const color = getColor(style);
+  const parentBgColor = getBgColor(parentStyle);
+
+  return {
+    ...(color && {
+      colorHex: color.hex,
+      colorOpacity: isNaN(opacity) ? color.opacity : opacity,
+      colorPalette: ""
+    }),
+    ...(parentBgColor && {
+      bgColorHex: parentBgColor.hex,
+      bgColorOpacity: parentBgColor.opacity,
+      bgColorPalette: ""
+    })
+  };
+};
+
 export function getModel(node: Element): ElementModel {
   const parentNode = getParentElementOfTextNode(node);
   const isIconText = parentNode?.nodeName === "#text";
   const iconNode = isIconText ? node : parentNode;
-  const style = iconNode ? getNodeStyle(iconNode) : {};
   const parentElement = node.parentElement;
   const isLink = parentElement?.tagName === "A" || node.tagName === "A";
-  const parentStyle = parentElement ? getNodeStyle(parentElement) : {};
-  const parentBgColor = getBgColor(parentStyle);
   const parentHref = getHref(parentElement) ?? getHref(node) ?? "";
-  const opacity = +style.opacity;
-  const color = getColor(style);
+  const modelStyle = getStyleModel(node);
   const iconCode = iconNode?.textContent?.charCodeAt(0);
+  const globalModel = getGlobalIconModel();
 
   return {
     type: "Icon",
     value: {
       _id: uuid(),
       _styles: ["icon"],
-      colorHex: color?.hex ?? "#ffffff",
-      colorOpacity: isNaN(opacity) ? color?.opacity ?? 1 : opacity,
-      ...(color !== undefined && { colorPalette: "" }),
+      ...globalModel,
+      ...modelStyle,
       name: iconCode
         ? codeToBuilderMap[iconCode] ?? "favourite-31"
         : "favourite-31",
       ...(isLink && {
         linkExternal: parentHref,
         linkType: "external",
-        linkExternalBlank: "on",
-        ...(parentBgColor && {
-          bgColorHex: parentBgColor.hex,
-          bgColorOpacity: parentBgColor.opacity,
-          bgColorPalette: ""
-        })
+        linkExternalBlank: "on"
       })
     }
   };
