@@ -6,12 +6,8 @@ use MBMigration\Browser\Browser;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\LayoutElementFactory;
 use MBMigration\Builder\Layout\Common\ThemeContext;
-use MBMigration\Builder\Layout\Theme\Majesty\Majesty;
-use MBMigration\Builder\Layout\Theme\Solstice\Solstice;
 use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Layout\Common\KitLoader;
-use MBMigration\Builder\Layout\Theme\Voyage\ElementFactory;
-use MBMigration\Builder\Layout\Theme\Voyage\Voyage;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
@@ -44,12 +40,10 @@ class PageBuilder
         $url = PathSlugExtractor::getFullUrl($slug);
 
         ExecutionTimer::start();
-        set_time_limit(1200);
 
         $this->cache->set('CurrentPageURL', $url);
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
-
 
         $layoutBasePath = dirname(__FILE__)."/Layout";
         $browser = Browser::instance($layoutBasePath);
@@ -78,10 +72,8 @@ class PageBuilder
                 $mainCollectionType,
                 $itemsID
             );
-        }
 
-        if ($design == 'Voyage') {
-            $_WorkClassTemplate = new Voyage($themeContext);
+            $_WorkClassTemplate = new $workClass($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
             $pageData = json_encode($brizySections);
@@ -92,30 +84,7 @@ class PageBuilder
             $this->sendStatus($slug, ExecutionTimer::stop());
 
             return true;
-        } elseif ($design == 'Solstice') {
-            $_WorkClassTemplate = new Solstice($themeContext);
-            $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
-            $pageData = json_encode($brizySections);
-            $queryBuilder = $this->cache->getClass('QueryBuilder');
-            $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
-
-            Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
-            $this->sendStatus($slug, ExecutionTimer::stop());
-
-            return true;
-        } elseif ($design == 'Majesty') {
-            $_WorkClassTemplate = new Majesty($themeContext);
-            $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
-
-            $pageData = json_encode($brizySections);
-            $queryBuilder = $this->cache->getClass('QueryBuilder');
-            $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
-
-            Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
-            $this->sendStatus($slug, ExecutionTimer::stop());
-
-            return true;
         } else {
             $_WorkClassTemplate = new $workClass($browserPage, $browser);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
@@ -129,18 +98,6 @@ class PageBuilder
                 return false;
             }
         }
-    }
-
-    private function saveLayoutJson(string $pageData, string $pageName): void
-    {
-        $mainFolder = $this->cache->get('page', 'ProjectFolders');
-        if (!is_dir($mainFolder)) {
-            mkdir($mainFolder, 0777, true);
-        }
-        $json = json_encode($pageData);
-        $fileFolder = $mainFolder.'/'.$pageName.'.json';
-        file_put_contents($fileFolder, $json);
-        Utils::log('Created json dump, page: '.$pageName, 1, 'saveLayoutJson');
     }
 
     private function sendStatus($pageName, $executeTime): void

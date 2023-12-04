@@ -62,13 +62,13 @@ class TwoHorizontalText extends Element
                 if ($item['category'] == 'text') {
                     if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
                         $this->textCreation($item, $objBlock);
-                        $objBlock->item()->item()->item()->addItem(
-                            $this->wrapperLine(
-                                [
-                                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
-                                ]
-                            )
-                        );
+//                        $objBlock->item()->item()->item()->addItem(
+//                            $this->wrapperLine(
+//                                [
+//                                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+//                                ]
+//                            )
+//                        );
                     }
                 }
             }
@@ -88,10 +88,10 @@ class TwoHorizontalText extends Element
                 if($item['category'] == 'text') {
                     if($item['item_type']=='title' && $this->showHeader($sectionData)) {
                         $this->textCreation($item, $objBlock, 1);
-                        $objBlock->item()->item()->item(1)
-                            ->addItem($this->wrapperLine([
-                                $sectionData['style']['border']['border-bottom-color'] ?? ''
-                            ]));
+//                        $objBlock->item()->item()->item(1)
+//                            ->addItem($this->wrapperLine([
+//                                $sectionData['style']['border']['border-bottom-color'] ?? ''
+//                            ]));
                     }
                 }
             }
@@ -105,6 +105,16 @@ class TwoHorizontalText extends Element
                 }
             }
         }
+
+        $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderWidthType", 'ungrouped');
+        $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderTopWidth", 1);
+        $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderBottomWidth", 0);
+        $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderTopWidth", 0);
+        $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderLeftWidth", 0);
+        $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderColorHex",  $sectionData['style']['border']['border-bottom-color']);
+        $objBlock->item(0)->item(0)->item(1)->setting("borderColorHex",  $sectionData['style']['border']['border-bottom-color']);
+        $objBlock->item(0)->item(0)->item(1)->setting("borderColorPalette",  '');
+
 
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);

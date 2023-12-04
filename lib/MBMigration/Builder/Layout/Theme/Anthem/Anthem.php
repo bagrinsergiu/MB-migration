@@ -52,7 +52,7 @@ class Anthem extends LayoutUtils
 
         $this->fontFamily = $this->getFontsFamily();
 
-        ThemePreProcess::treeMenu();
+//        ThemePreProcess::treeMenu();
 
         Utils::log('Connected!', 4, $this->layoutName.' Builder');
 
@@ -60,17 +60,17 @@ class Anthem extends LayoutUtils
 
         $menuList = $this->cache->get('menuList');
 
-//        if ($menuList['create'] === false) {
-//           // $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, [ 'menu' => $menuList, 'activePage' => '' ]);
-//            if ($headElement) {
-//                Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
-//                $menuList['create'] = true;
-//                $this->cache->set('menuList', $menuList);
-//            } else {
-//                Utils::log("Failed create MENU", 2, $this->layoutName."] [__construct");
-//                throw new Exception('Failed create MENU');
-//            }
-//        }
+        if ($menuList['create'] === false) {
+            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, [ 'menu' => $menuList, 'activePage' => '' ]);
+            if ($headElement) {
+                Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
+                $menuList['create'] = true;
+                $this->cache->set('menuList', $menuList);
+            } else {
+                Utils::log("Failed create MENU", 2, $this->layoutName."] [__construct");
+                throw new Exception('Failed create MENU');
+            }
+        }
         $MainSectionData = $this->cache->get('mainSection');
         $this->ExtractDataFromPage($MainSectionData, $this->browserPage, 'sectionId');
         $this->cache->set('mainSection', $MainSectionData);
@@ -101,25 +101,25 @@ class Anthem extends LayoutUtils
 
         $this->ExtractDataFromPage($preparedSectionOfThePage, $this->browserPage);
 
-        $menuList = $this->cache->get('menuList');
+//        $menuList = $this->cache->get('menuList');
+//
+//        $headElement = AnthemElementsController::getElement(
+//            'head',
+//            $this->jsonDecode,
+//            ['menu' => $menuList, 'activePage' => $activeParentPage]
+//        );
+//
+//        $itemsData['items'][] = $headElement;
+        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
 
-        $headElement = AnthemElementsController::getElement(
-            'head',
-            $this->jsonDecode,
-            ['menu' => $menuList, 'activePage' => $activeParentPage]
-        );
-
-        $itemsData['items'][] = $headElement;
-//        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
-
-        $resultFind = FamilyTreeMenu::findChildrenByChildId($parentPages['list'], $itemsID);
-        if (!empty($resultFind)) {
-            $itemsData['items'][] = AnthemElementsController::getElement(
-                'SubMenu',
-                $this->jsonDecode,
-                ['menu' => $resultFind, 'activePage' => $slug]
-            );
-        }
+//        $resultFind = FamilyTreeMenu::findChildrenByChildId($parentPages['list'], $itemsID);
+//        if (!empty($resultFind)) {
+//            $itemsData['items'][] = AnthemElementsController::getElement(
+//                'SubMenu',
+//                $this->jsonDecode,
+//                ['menu' => $resultFind, 'activePage' => $slug]
+//            );
+//        }
         Utils::log('Current Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
         $this->cache->update('createdFirstSection', false, 'flags');
         $this->cache->update('Success', '++', 'Status');
