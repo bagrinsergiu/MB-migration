@@ -1,3 +1,4 @@
+import { getGlobalMenuModel } from "../utils/getGlobalMenuModel";
 import { getModel } from "./utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData, getData } from "elements/src/utils/getData";
@@ -49,8 +50,13 @@ const getMenuV = (data: NavData) => {
     families: data.families,
     defaultFamily: data.defaultFamily
   });
+  const globalModel = getGlobalMenuModel();
 
-  return { ...v, itemPadding: isNaN(itemPadding) ? 10 : itemPadding };
+  return {
+    ...globalModel,
+    ...v,
+    itemPadding: isNaN(itemPadding) ? 10 : itemPadding
+  };
 };
 
 const getSubMenuV = (data: Required<NavData>) => {
