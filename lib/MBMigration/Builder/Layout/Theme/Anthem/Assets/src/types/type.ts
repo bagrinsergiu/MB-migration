@@ -1,3 +1,5 @@
+import { Literal } from "utils";
+
 export {};
 
 declare global {
@@ -8,5 +10,7 @@ declare global {
 
   interface Window {
     isDev?: boolean;
+    iconModel?: Record<string, Literal>;
+    buttonModel?: Record<string, Literal>;
   }
 }
