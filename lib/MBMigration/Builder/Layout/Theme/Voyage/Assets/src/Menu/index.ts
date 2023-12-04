@@ -1,3 +1,4 @@
+import { getGlobalMenuModel } from "../utils/getGlobalMenuModel";
 import { getModel } from "./model/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData, getData } from "elements/src/utils/getData";
@@ -48,8 +49,9 @@ const getMenuV = (data: NavData) => {
     families: data.families,
     defaultFamily: data.defaultFamily
   });
+  const globalStyle = getGlobalMenuModel();
 
-  return { ...v, itemPadding: 20 };
+  return { ...globalStyle, ...v, itemPadding: 20 };
 };
 
 const getSubMenuV = (data: Required<NavData>) => {
@@ -78,7 +80,10 @@ const getSubMenuV = (data: Required<NavData>) => {
   });
   const submenuTypography = prefixed(typography, "subMenu");
   const baseStyle = window.getComputedStyle(header);
-  const bgColor = parseColorString(baseStyle.backgroundColor) ?? { hex: "#ffffff", opacity: 1 };
+  const bgColor = parseColorString(baseStyle.backgroundColor) ?? {
+    hex: "#ffffff",
+    opacity: 1
+  };
 
   return {
     ...submenuTypography,
