@@ -301,6 +301,9 @@ class MBProjectDataCollector
         }
 
         foreach ($requestPageSite as $pageSite) {
+            if ($pageSite['hidden'] === true) {
+                continue;
+            }
             $result[] = [
                 'id' => $pageSite['id'],
                 'slug' => $pageSite['slug'],
@@ -434,6 +437,7 @@ class MBProjectDataCollector
                     "SELECT slug FROM pages WHERE id  = ".$requestLinkIdToPages[0]['page_id']
                 );
                 Utils::log('Get link for item: '.$requestItemLink[0]['slug'], 1, 'getItemLink');
+
                 return [
                     'detail' => $requestItemLink[0]['slug'],
                     'new_window' => false,

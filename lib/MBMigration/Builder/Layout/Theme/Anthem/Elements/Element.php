@@ -50,9 +50,13 @@ abstract class Element extends LayoutUtils
     protected function backgroundColor(ItemBuilder $objBlock, array $sectionData)
     {
         $objBlock->item(0)->setting('bgColorHex', $sectionData['style']['background-color']);
+        $objBlock->item(0)->setting('mobileBgColorHex', $sectionData['style']['background-color']);
 
         $objBlock->item(0)->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity']));
+        $objBlock->item(0)->setting('mobileBgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity']));
         $objBlock->item(0)->setting('bgColorType', 'solid');
+        $objBlock->item(0)->setting('mobileBgColorType', 'solid');
+        $objBlock->item(0)->setting('mobileBgColorPalette', '');
     }
 
 /**

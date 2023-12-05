@@ -153,8 +153,13 @@ class Head extends Element
         $objBlock->item(0)->item(0)->item(0)->item(0)->setting('horizontalAlign', 'center');
         $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileHorizontalAlign', 'left');
 
-        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginLeft', -15);
-        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginTop', -10);
+        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('mobileWidth', 40);          // in %
+        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('mobileHeight', 100);          // in %
+        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginLeft', -10);    // in px
+        $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginTop', 0);       // in px
+
+        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('mobileWidthSuffix', '%');
+        $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('mobileHeightSuffix', '%');
         $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginLeftSuffix', 'px');
         $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileMarginTopSuffix', 'px');
 

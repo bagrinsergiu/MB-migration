@@ -50,6 +50,13 @@ class GalleryLayout extends Element
             $block['value']['sliderAutoPlaySpeed'] = $rotatorSpeed;
         }
 
+        $block['value']['mobileSectionHeight'] = 20;
+        $block['value']['sectionHeight'] = 85;
+        $block['value']['sectionHeightSuffix'] = 'vh';
+        $block['value']['fullHeight'] = 'custom';
+        $block['value']['mobileSectionHeightSuffix'] = 'vh';
+        $block['value']['mobileFullHeight'] = 'custom';
+
         if(!empty($sectionData['style']['body']['background-color'])) {
             $bodyBgColor = $sectionData['style']['body']['background-color'];
         }

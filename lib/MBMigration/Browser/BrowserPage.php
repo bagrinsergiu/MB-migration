@@ -29,6 +29,12 @@ class BrowserPage implements BrowserPageInterface
         return $result;
     }
 
+    private function executeScriptWithoutResult($jsScript): void
+    {
+        $jsFunction = JsFunction::createWithBody($this->getScriptBody($jsScript));
+        $this->page->tryCatch->evaluate($jsFunction);
+    }
+
 
     private function getScriptBody($jsScript): string
     {
@@ -47,6 +53,12 @@ class BrowserPage implements BrowserPageInterface
     {
         $method = '$';
         $this->page->tryCatch->$method($elementSelector)->$eventNameMethod();
+        usleep(200000);
+    }
+
+    public function globalEval(): void
+    {
+        $this->executeScriptWithoutResult('Globals.js', []);
     }
 }
 
