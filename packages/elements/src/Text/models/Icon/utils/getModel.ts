@@ -100,6 +100,7 @@ export function getModel(node: Element): ElementModel {
       _styles: ["icon"],
       ...globalModel,
       ...modelStyle,
+      customSize: 26,
       name: iconCode
         ? codeToBuilderMap[iconCode] ?? "favourite-31"
         : "favourite-31",
