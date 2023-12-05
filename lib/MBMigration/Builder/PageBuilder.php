@@ -48,6 +48,8 @@ class PageBuilder
         $layoutBasePath = dirname(__FILE__)."/Layout";
         $browser = Browser::instance($layoutBasePath);
         $browserPage = $browser->openPage($url, $design);
+
+        $browserPage->globalEval();
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
 //        file_put_contents(JSON_PATH."/htmlPage.html", file_get_contents($url));
