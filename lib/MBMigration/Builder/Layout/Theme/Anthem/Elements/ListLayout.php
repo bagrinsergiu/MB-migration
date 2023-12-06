@@ -133,6 +133,11 @@ class ListLayout extends Element
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'body') {
                         foreach ($item['brzElement'] as $element) {
+
+                            if($element['type'] === 'Cloneable'){
+                                $element['value']['mobileHorizontalAlign']  = 'center';
+                            }
+
                             $objItem->addItem($element);
                         }
                     }

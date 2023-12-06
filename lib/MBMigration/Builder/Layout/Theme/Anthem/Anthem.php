@@ -25,6 +25,7 @@ class Anthem extends LayoutUtils
      * @var VariableCache
      */
     public $cache;
+
     /**
      * @var mixed
      */
@@ -33,8 +34,9 @@ class Anthem extends LayoutUtils
      * @var array
      */
     private $fontFamily;
+
     /**
-     * @var mixed
+     * @var Browser
      */
     private $browser;
 
@@ -204,7 +206,10 @@ class Anthem extends LayoutUtils
                         }
 
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
-//                        $hoverColor = $this->ExtractHoverColor($browserPage, '[data-id="71702"] .socialIconSymbol');
+
+                        $hoverColorIcon = $this->ExtractHoverColor($browserPage, "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]");
+
+                        $item['style']['hover']['icon'] = $hoverColorIcon['color'] ?? '';
                     } else {
                         if ($item['category'] === 'list') {
                             $this->ExtractItemContent($item['item'], $browserPage);
@@ -288,21 +293,22 @@ class Anthem extends LayoutUtils
     private function ExtractHoverColor(BrowserPage $browserPage, $selector): array
     {
         $style = [];
-        $browserPage->triggerEvent('hover', $selector);
-        $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
-            [
-                'SELECTOR' => $selector,
-                'STYLE_PROPERTIES' => [
-                    'color'
-                ],
-                'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
-            ]
-        );
+        if($browserPage->triggerEvent('hover', $selector)){
+            $sectionStyles = $browserPage->evaluateScript(
+                'StyleExtractor.js',
+                [
+                    'SELECTOR' => $selector,
+                    'STYLE_PROPERTIES' => [
+                        'color'
+                    ],
+                    'FAMILIES' => $this->fontFamily['kit'],
+                    'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+                ]
+            );
 
-        foreach ($sectionStyles['data'] as $key => $value) {
-            $style[$key] = $this->convertColor(trim($value, 'px'));
+            foreach ($sectionStyles['data'] as $key => $value) {
+                $style[$key] = $this->convertColor(trim($value, 'px'));
+            }
         }
 
         return $style;

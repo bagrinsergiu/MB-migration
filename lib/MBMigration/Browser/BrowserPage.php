@@ -49,16 +49,21 @@ class BrowserPage implements BrowserPageInterface
     /**
      * @return mixed
      */
-    public function triggerEvent($eventNameMethod, $elementSelector): void
+    public function triggerEvent($eventNameMethod, $elementSelector)
     {
-        $method = '$';
-        $this->page->tryCatch->$method($elementSelector)->$eventNameMethod();
-        usleep(200000);
+        try {
+            $method = '$';
+            $this->page->tryCatch->$method($elementSelector)->$eventNameMethod();
+            usleep(200000);
+        } catch (FatalException $e) {
+            return false;
+        }
+        return true;
     }
 
     public function globalEval(): void
     {
-        $this->executeScriptWithoutResult('Globals.js', []);
+        $this->executeScriptWithoutResult('Globals.js');
     }
 }
 

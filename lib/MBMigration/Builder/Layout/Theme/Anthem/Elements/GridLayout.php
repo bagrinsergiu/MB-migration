@@ -174,7 +174,7 @@ class GridLayout extends Element
 
             $objRow->addItem($objItem->get());
         }
-        if(count($sectionData['items']) <= 2){
+        if(count($sectionData['items']) <= 3){
             $objItem->newItem($decoded['item']);
             $objItem->setting('borderColorOpacity', 0);
             $objItem->setting('showOnMobile', "off");

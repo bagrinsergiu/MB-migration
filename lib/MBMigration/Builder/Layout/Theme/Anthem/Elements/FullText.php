@@ -120,6 +120,13 @@ class FullText extends Element
                     }
                     break;
                 case 'Cloneable':
+
+                    foreach ($textItem['value']['items'] as &$item) {
+                        if ($item['type'] == 'Icon') {
+                            $item['value']['hoverColorHex'] = $sectionData['style']['hover']['color'] ?? '';
+                        }
+                    }
+                    $objBlock->item(0)->addItem($textItem);
                 case 'Wrapper':
                     $objBlock->item(0)->addItem($textItem);
                     break;
