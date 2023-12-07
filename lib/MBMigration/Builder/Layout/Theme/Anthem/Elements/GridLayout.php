@@ -90,11 +90,11 @@ class GridLayout extends Element
             $objBlock->item(0)->addItem($objHead->get());
         }
 
-        if(count($sectionData['items']) <= 2){
-            $objItem->newItem($decoded['item']);
-            $objItem->setting('borderColorOpacity', 0);
-            $objRow->addItem($objItem->get());
-        }
+//        if(count($sectionData['items']) <= 2){
+//            $objItem->newItem($decoded['item']);
+//            $objItem->setting('borderColorOpacity', 0);
+//            $objRow->addItem($objItem->get());
+//        }
 
         foreach ($sectionData['items'] as $section)
         {
@@ -174,9 +174,16 @@ class GridLayout extends Element
 
             $objRow->addItem($objItem->get());
         }
+        if(count($sectionData['items']) <= 3){
+            $objItem->newItem($decoded['item']);
+            $objItem->setting('borderColorOpacity', 0);
+            $objItem->setting('showOnMobile', "off");
+            $objRow->addItem($objItem->get());
+        }
         if(count($sectionData['items']) <= 2){
             $objItem->newItem($decoded['item']);
             $objItem->setting('borderColorOpacity', 0);
+            $objItem->setting('showOnMobile', "off");
             $objRow->addItem($objItem->get());
         }
         $objBlock->item()->addItem($objRow->get());

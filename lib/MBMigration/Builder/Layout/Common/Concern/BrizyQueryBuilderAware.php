@@ -42,6 +42,7 @@ trait BrizyQueryBuilderAware
                 $collectionTypeUri,
                 $slug,
                 $title,
+                false,
                 'published',
                 [],
                 json_encode($pageData)

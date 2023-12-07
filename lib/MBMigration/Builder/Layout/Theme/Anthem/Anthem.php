@@ -25,6 +25,7 @@ class Anthem extends LayoutUtils
      * @var VariableCache
      */
     public $cache;
+
     /**
      * @var mixed
      */
@@ -33,8 +34,9 @@ class Anthem extends LayoutUtils
      * @var array
      */
     private $fontFamily;
+
     /**
-     * @var mixed
+     * @var Browser
      */
     private $browser;
 
@@ -61,7 +63,7 @@ class Anthem extends LayoutUtils
         $menuList = $this->cache->get('menuList');
 
         if ($menuList['create'] === false) {
-            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, [ 'menu' => $menuList, 'activePage' => '' ]);
+            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, [ 'menu' => $menuList, 'activePage' => '' ], $this->browserPage);
             if ($headElement) {
                 Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
                 $menuList['create'] = true;
@@ -204,7 +206,7 @@ class Anthem extends LayoutUtils
                         }
 
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
-//                        $hoverColor = $this->ExtractHoverColor($browserPage, '[data-id="71702"] .socialIconSymbol');
+
                     } else {
                         if ($item['category'] === 'list') {
                             $this->ExtractItemContent($item['item'], $browserPage);
@@ -221,6 +223,8 @@ class Anthem extends LayoutUtils
                         }
                     }
                 }
+                $hoverColorIcon = $this->ExtractHoverColor($browserPage, "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]");
+                $item['style']['hover']['icon'] = $hoverColorIcon['color'] ?? '';
             }
             if (!empty($section['head'])) {
                 foreach ($section['head'] as &$item) {
@@ -288,21 +292,22 @@ class Anthem extends LayoutUtils
     private function ExtractHoverColor(BrowserPage $browserPage, $selector): array
     {
         $style = [];
-        $browserPage->triggerEvent('hover', $selector);
-        $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
-            [
-                'SELECTOR' => $selector,
-                'STYLE_PROPERTIES' => [
-                    'color'
-                ],
-                'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
-            ]
-        );
+        if($browserPage->triggerEvent('hover', $selector)){
+            $sectionStyles = $browserPage->evaluateScript(
+                'StyleExtractor.js',
+                [
+                    'SELECTOR' => $selector,
+                    'STYLE_PROPERTIES' => [
+                        'color'
+                    ],
+                    'FAMILIES' => $this->fontFamily['kit'],
+                    'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+                ]
+            );
 
-        foreach ($sectionStyles['data'] as $key => $value) {
-            $style[$key] = $this->convertColor(trim($value, 'px'));
+            foreach ($sectionStyles['data'] as $key => $value) {
+                $style[$key] = $this->convertColor(trim($value, 'px'));
+            }
         }
 
         return $style;

@@ -291,7 +291,7 @@ class MBProjectDataCollector
         Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
         $requestPageSite = $this->db->request(
-            "SELECT id, slug, name, position, settings, landing, hidden FROM pages WHERE site_id = ".$this->siteId." AND parent_id IS NULL ORDER BY parent_id ASC, position"
+            "SELECT id, slug, name, position, settings, landing, hidden, password_protected FROM pages WHERE site_id = ".$this->siteId." AND parent_id IS NULL ORDER BY parent_id ASC, position"
         );
 
         if (empty($requestPageSite)) {
@@ -304,6 +304,10 @@ class MBProjectDataCollector
             if ($pageSite['hidden'] === true) {
                 continue;
             }
+            if ($pageSite['password_protected'] === null) {
+                $pageSite['password_protected'] = false;
+            }
+
             $result[] = [
                 'id' => $pageSite['id'],
                 'slug' => $pageSite['slug'],
@@ -312,6 +316,7 @@ class MBProjectDataCollector
                 'position' => $pageSite['position'],
                 'landing' => $pageSite['landing'],
                 'hidden' => $pageSite['hidden'],
+                'protectedPage' => $pageSite['password_protected'],
                 'parentSettings' => $pageSite['settings'],
                 'child' => $this->getChildPages($pageSite['id']),
             ];
@@ -344,6 +349,7 @@ class MBProjectDataCollector
                     'collection' => '',
                     'position' => $pageSite['position'],
                     'landing' => $pageSite['landing'],
+                    'protectedPage' => $pageSite['password_protected'],
                     'parentSettings' => $pageSite['settings'],
                     'child' => $this->getChildPages($pageSite['id']),
                 ];

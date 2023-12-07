@@ -126,6 +126,9 @@ class JS
 
         $result = self::Run($sectionID);
 
+
+
+
         if (!empty($result['warns'])) {
             Utils::MESSAGES_POOL($result['warns'], $sectionID, 'JS:RUN [error]');
         }

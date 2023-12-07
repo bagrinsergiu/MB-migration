@@ -503,11 +503,11 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function creteNewPage($slug, $title, $setActivePage = true)
+    private function creteNewPage($slug, $title, $setActivePage = true, bool $protectedPage = false)
     {
         if ($this->pageCheck($slug)) {
             Utils::log('Request to create a new page: '.$slug, 1, 'creteNewPage');
-            $this->QueryBuilder->createCollectionItem($this->cache->get('mainCollectionType'), $slug, $title);
+            $this->QueryBuilder->createCollectionItem($this->cache->get('mainCollectionType'), $slug, $title, $protectedPage);
             $this->getAllPage();
         }
 
@@ -577,7 +577,7 @@ class MigrationPlatform
             if ($pages['landing'] == true) {
                 if ($i != 0 || !$mainLevel) {
                     if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
-                        $newPage = $this->creteNewPage($pages['slug'], $pages['name']);
+                        $newPage = $this->creteNewPage($pages['slug'], $pages['name'], $pages['protectedPage']);
                     } else {
                         $newPage = $projectPages['listPages'][$pages['slug']];
                     }
