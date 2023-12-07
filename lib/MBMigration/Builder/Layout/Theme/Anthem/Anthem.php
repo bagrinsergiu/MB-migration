@@ -63,7 +63,7 @@ class Anthem extends LayoutUtils
         $menuList = $this->cache->get('menuList');
 
         if ($menuList['create'] === false) {
-            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, [ 'menu' => $menuList, 'activePage' => '' ]);
+            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, [ 'menu' => $menuList, 'activePage' => '' ], $this->browserPage);
             if ($headElement) {
                 Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
                 $menuList['create'] = true;
@@ -207,9 +207,6 @@ class Anthem extends LayoutUtils
 
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
 
-                        $hoverColorIcon = $this->ExtractHoverColor($browserPage, "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]");
-
-                        $item['style']['hover']['icon'] = $hoverColorIcon['color'] ?? '';
                     } else {
                         if ($item['category'] === 'list') {
                             $this->ExtractItemContent($item['item'], $browserPage);
@@ -226,6 +223,8 @@ class Anthem extends LayoutUtils
                         }
                     }
                 }
+                $hoverColorIcon = $this->ExtractHoverColor($browserPage, "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]");
+                $item['style']['hover']['icon'] = $hoverColorIcon['color'] ?? '';
             }
             if (!empty($section['head'])) {
                 foreach ($section['head'] as &$item) {

@@ -289,6 +289,7 @@ class QueryBuilder
         $collection_type_id,
         $slug,
         $title = null,
+        bool $protectedPage = false,
         $status = 'published',
         array $fields = [],
         $pageData = '{"items":[]}'
@@ -331,6 +332,11 @@ class QueryBuilder
                 'pageData' => $pageData,
             ],
         ];
+
+        if($protectedPage) {
+            $variables['input']['itemPassword'] = "876543";
+            $variables['input']['visibility'] = 'passwordProtected';
+        }
 
         $results = $this->runQuery($mutation, true, $variables);
 
