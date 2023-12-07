@@ -63,7 +63,14 @@ class BrowserPage implements BrowserPageInterface
 
     public function globalEval(): void
     {
-        $this->executeScriptWithoutResult('Globals.js');
+        $method = '$';
+        $this->page->tryCatch->$method($elementSelector)->$eventNameMethod();
+        usleep(200000);
+    }
+
+    public function globalEval(): void
+    {
+        $this->executeScriptWithoutResult('Globals.js', []);
     }
 }
 
