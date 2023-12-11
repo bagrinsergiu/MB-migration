@@ -77,7 +77,8 @@ export const getStyleModel = (node: Element) => {
     ...(parentBgColor && {
       bgColorHex: parentBgColor.hex,
       bgColorOpacity: parentBgColor.opacity,
-      bgColorPalette: ""
+      bgColorPalette: "",
+      padding: 7
     })
   };
 };
