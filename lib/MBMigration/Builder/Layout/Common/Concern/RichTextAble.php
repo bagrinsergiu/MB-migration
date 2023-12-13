@@ -214,7 +214,7 @@ trait RichTextAble
     private function findEmbeddedElements($html): array
     {
         $dom = new \DOMDocument();
-        $dom->loadHTML($html);
+        $dom->loadHTML("<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>{$html}</body></html>");
 
         $iframes = $dom->getElementsByTagName('iframe');
 

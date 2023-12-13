@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
@@ -13,7 +13,7 @@ class ListLayout extends \MBMigration\Builder\Layout\Common\Element\ListLayout
 {
     protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0, 0, 0);
+        return $brizyComponent->getItemWithDepth(0, 0);
     }
 
     protected function getItemTextContainerComponent(
@@ -27,6 +27,6 @@ class ListLayout extends \MBMigration\Builder\Layout\Common\Element\ListLayout
         BrizyComponent $brizyComponent,
         string $photoPosition
     ): BrizyComponent {
-        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0);
+        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0,0);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
@@ -11,5 +11,5 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class EventCalendarLayout extends \MBMigration\Builder\Layout\Common\Element\EventCalendarLayout
 {
-    
+
 }

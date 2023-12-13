@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
@@ -18,7 +18,7 @@ class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
 
     protected function getItemsPerRow(): int
     {
-        return 3;
+        return 4;
     }
 
     protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent

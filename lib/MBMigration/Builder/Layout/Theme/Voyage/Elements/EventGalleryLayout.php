@@ -5,13 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 
-class EventGalleryLayout extends AbstractElement
+class EventGalleryLayout extends \MBMigration\Builder\Layout\Common\Element\EventGalleryLayout
 {
-    public function transformToItem(ElementDataInterface $data): array
-    {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
-
-        return $section->get();
-    }
+  
 }

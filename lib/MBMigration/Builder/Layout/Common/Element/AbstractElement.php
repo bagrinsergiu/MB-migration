@@ -32,6 +32,7 @@ abstract class AbstractElement implements ElementInterface
         $this->browserPage = $browserPage;
     }
 
+
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);

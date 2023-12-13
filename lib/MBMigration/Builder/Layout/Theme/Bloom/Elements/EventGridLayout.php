@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
@@ -12,9 +12,9 @@ use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Layer\Graph\QueryBuilder;
 
-class EventListLayout extends \MBMigration\Builder\Layout\Common\Element\EventListLayout
+class EventGridLayout extends \MBMigration\Builder\Layout\Common\Element\EventGridLayout
 {
-    protected function getDetailsComponent(BrizyComponent $brizySection)
+    protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
