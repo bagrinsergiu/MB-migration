@@ -13,6 +13,7 @@ class Browser implements BrowserInterface
      */
     private $browser;
     private $scriptPath;
+    private $page;
 
     static public function instance($scriptPath, LoggerInterface $logger = null)
     {
@@ -51,14 +52,15 @@ class Browser implements BrowserInterface
 
     public function openPage($url, $theme): BrowserPageInterface
     {
-        $page = $this->browser->newPage();
-        $page->goto($url, ['timeout' => 60000]);
+        $this->page = $this->browser->newPage();
+        $this->page->setViewport(['width' => 1920, 'height' => 1080]);
+        $this->page->goto($url, ['timeout' => 60000]);
 
-        return new BrowserPage($page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
+        return new BrowserPage($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
     }
 
-//    function __destruct()
-//    {
-//        $this->browser->close();
-//    }
+    public function closePage(): void
+    {
+        $this->page->close();
+    }
 }

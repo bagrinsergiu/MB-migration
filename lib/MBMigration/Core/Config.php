@@ -46,6 +46,12 @@ class Config
      * @var mixed
      */
     public static $urlJsonKits;
+
+    /**
+     * @var string
+     */
+    public static $previewBaseHost;
+
     /**
      * @var mixed
      */
@@ -64,7 +70,6 @@ class Config
      * @var array
      */
     private static $defaultSettings;
-
 
     /**
      * @throws Exception
@@ -89,10 +94,12 @@ class Config
             ],
         ];
 
+        self::$previewBaseHost = $this->checkPreviewBaseHost();
+
         self::$debugMode = (bool)$this->checkSettings('debugMode');
         self::$devMode = (bool)$this->checkSettings('devMode');
 
-        self::$metaData = $this->checkMetadata('metaData');
+        self::$metaData = $this->checkMetaData();
 
         self::$urlJsonKits = $this->checkAssets('CloudUrlJsonKit');
         self::$MBMediaStaging = $this->checkAssets('MBMediaStaging');
@@ -319,5 +326,24 @@ class Config
         }
 
         return false;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkPreviewBaseHost()
+    {
+        $flag = 'previewBaseHost';
+
+        if (array_key_exists($flag, self::$settings)) {
+
+            if (empty(self::$settings[$flag])) {
+                throw new Exception('PreviewBaseHost is empty');
+            }
+
+            return self::$settings[$flag];
+        } else {
+            throw new Exception('PreviewBaseHost value is not set');
+        }
     }
 }

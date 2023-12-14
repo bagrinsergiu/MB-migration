@@ -25,6 +25,7 @@ class Anthem extends LayoutUtils
      * @var VariableCache
      */
     public $cache;
+
     /**
      * @var mixed
      */
@@ -33,8 +34,9 @@ class Anthem extends LayoutUtils
      * @var array
      */
     private $fontFamily;
+
     /**
-     * @var mixed
+     * @var Browser
      */
     private $browser;
 
@@ -52,7 +54,7 @@ class Anthem extends LayoutUtils
 
         $this->fontFamily = $this->getFontsFamily();
 
-        ThemePreProcess::treeMenu();
+//        ThemePreProcess::treeMenu();
 
         Utils::log('Connected!', 4, $this->layoutName.' Builder');
 
@@ -60,22 +62,22 @@ class Anthem extends LayoutUtils
 
         $menuList = $this->cache->get('menuList');
 
-//        if ($menuList['create'] === false) {
-//           // $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, [ 'menu' => $menuList, 'activePage' => '' ]);
-//            if ($headElement) {
-//                Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
-//                $menuList['create'] = true;
-//                $this->cache->set('menuList', $menuList);
-//            } else {
-//                Utils::log("Failed create MENU", 2, $this->layoutName."] [__construct");
-//                throw new Exception('Failed create MENU');
-//            }
-//        }
+        if ($menuList['create'] === false) {
+            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, $this->browserPage, [ 'menu' => $menuList, 'activePage' => '' ] );
+            if ($headElement) {
+                Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
+                $menuList['create'] = true;
+                $this->cache->set('menuList', $menuList);
+            } else {
+                Utils::log("Failed create MENU", 2, $this->layoutName."] [__construct");
+                throw new Exception('Failed create MENU');
+            }
+        }
         $MainSectionData = $this->cache->get('mainSection');
         $this->ExtractDataFromPage($MainSectionData, $this->browserPage, 'sectionId');
         $this->cache->set('mainSection', $MainSectionData);
 
-        AnthemElementsController::getElement('footer', $this->jsonDecode);
+        AnthemElementsController::getElement('footer', $this->jsonDecode, $this->browserPage);
     }
 
     /**
@@ -101,25 +103,25 @@ class Anthem extends LayoutUtils
 
         $this->ExtractDataFromPage($preparedSectionOfThePage, $this->browserPage);
 
-        $menuList = $this->cache->get('menuList');
+//        $menuList = $this->cache->get('menuList');
+//
+//        $headElement = AnthemElementsController::getElement(
+//            'head',
+//            $this->jsonDecode,
+//            ['menu' => $menuList, 'activePage' => $activeParentPage]
+//        );
+//
+//        $itemsData['items'][] = $headElement;
+        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
 
-        $headElement = AnthemElementsController::getElement(
-            'head',
-            $this->jsonDecode,
-            ['menu' => $menuList, 'activePage' => $activeParentPage]
-        );
-
-        $itemsData['items'][] = $headElement;
-//        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
-
-        $resultFind = FamilyTreeMenu::findChildrenByChildId($parentPages['list'], $itemsID);
-        if (!empty($resultFind)) {
-            $itemsData['items'][] = AnthemElementsController::getElement(
-                'SubMenu',
-                $this->jsonDecode,
-                ['menu' => $resultFind, 'activePage' => $slug]
-            );
-        }
+//        $resultFind = FamilyTreeMenu::findChildrenByChildId($parentPages['list'], $itemsID);
+//        if (!empty($resultFind)) {
+//            $itemsData['items'][] = AnthemElementsController::getElement(
+//                'SubMenu',
+//                $this->jsonDecode,
+//                ['menu' => $resultFind, 'activePage' => $slug]
+//            );
+//        }
         Utils::log('Current Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
         $this->cache->update('createdFirstSection', false, 'flags');
         $this->cache->update('Success', '++', 'Status');
@@ -170,7 +172,7 @@ class Anthem extends LayoutUtils
             $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
         } else {
-            $result = AnthemElementsController::getElement($elementName, $this->jsonDecode, $params);
+            $result = AnthemElementsController::getElement($elementName, $this->jsonDecode, $this->browserPage, $params);
             if (!$result) {
                 Utils::log(
                     'Element '.$elementName.' does not exist. Page: '.$marker,
@@ -183,15 +185,22 @@ class Anthem extends LayoutUtils
         return $result;
     }
 
-    private function ExtractDataFromPage(&$SectionPage, $browserPage, $nameSectionId = 'id')
+    private function ExtractDataFromPage(&$SectionPage, BrowserPage $browserPage, $nameSectionId = 'id')
     {
+        $selectorIcon = "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
+        $browserPage->ExtractHover($selectorIcon);
+
         foreach ($SectionPage as &$section) {
+            Utils::log('Extract Data' . $section['sectionId'], 1, 'ExtractDataFromPage');
+
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
+
             $section['style']['opacity_div'] = $this->ExtractStyleSectionOpacity(
                 $browserPage,
                 $section['sectionId']
             ) ?? [];
             $section['style']['body'] = $this->ExtractStylePage($browserPage);
+
             if (!empty($section['items'])) {
                 foreach ($section['items'] as &$item) {
                     if ($item['category'] === 'text') {
@@ -204,7 +213,7 @@ class Anthem extends LayoutUtils
                         }
 
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
-//                        $hoverColor = $this->ExtractHoverColor($browserPage, '[data-id="71702"] .socialIconSymbol');
+
                     } else {
                         if ($item['category'] === 'list') {
                             $this->ExtractItemContent($item['item'], $browserPage);
@@ -217,7 +226,6 @@ class Anthem extends LayoutUtils
                                     ) ?? [];
                                 }
                             }
-
                         }
                     }
                 }
@@ -277,29 +285,9 @@ class Anthem extends LayoutUtils
             ]
         );
 
-        foreach ($sectionStyles['data'] as $key => $value) {
-            $style[$key] = $this->convertColor(trim($value, 'px'));
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
         }
-
-        return $style;
-    }
-
-
-    private function ExtractHoverColor(BrowserPage $browserPage, $selector): array
-    {
-        $style = [];
-        $browserPage->triggerEvent('hover', $selector);
-        $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
-            [
-                'SELECTOR' => $selector,
-                'STYLE_PROPERTIES' => [
-                    'color'
-                ],
-                'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
-            ]
-        );
 
         foreach ($sectionStyles['data'] as $key => $value) {
             $style[$key] = $this->convertColor(trim($value, 'px'));
@@ -323,6 +311,10 @@ class Anthem extends LayoutUtils
             ]
         );
 
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
+        }
+
         foreach ($sectionStyles['data'] as $key => $value) {
             $style[$key] = $this->convertColor(trim($value, 'px'));
         }
@@ -344,6 +336,10 @@ class Anthem extends LayoutUtils
                 'DEFAULT_FAMILY' => $this->fontFamily['Default'],
             ]
         );
+
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
+        }
 
         foreach ($sectionStyles['data'] as $key => $value) {
             $style[$key] = $this->convertColor(trim($value, 'px'));
@@ -367,10 +363,14 @@ class Anthem extends LayoutUtils
             ]
         );
 
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
+        }
+
         return $sectionStyles['data'];
     }
 
-    private function ExtractStylePage($browserPage)
+    private function ExtractStylePage($browserPage): array
     {
         $style = [];
         $sectionStyles = $browserPage->evaluateScript(
@@ -384,6 +384,10 @@ class Anthem extends LayoutUtils
                 'DEFAULT_FAMILY' => $this->fontFamily['Default'],
             ]
         );
+
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
+        }
 
         foreach ($sectionStyles['data'] as $key => $value) {
             $style[$key] = $this->convertColor(trim($value, 'px'));
@@ -399,6 +403,10 @@ class Anthem extends LayoutUtils
             'FAMILIES' => $this->fontFamily['kit'],
             'DEFAULT_FAMILY' => $this->fontFamily['Default'],
         ]);
+
+        if(array_key_exists('error', $richTextBrowserData)){
+            return [];
+        }
 
         return $richTextBrowserData['data'];
     }

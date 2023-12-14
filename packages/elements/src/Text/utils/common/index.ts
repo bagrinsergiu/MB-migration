@@ -51,7 +51,7 @@ export function shouldExtractElement(
 }
 
 export const iconSelector =
-  "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"]";
+  "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
 export const buttonSelector = ".sites-button";
 export const embedSelector = ".embedded-paste";
 

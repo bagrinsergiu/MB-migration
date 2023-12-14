@@ -16,9 +16,7 @@ const v = {
   "line-height": undefined,
   "letter-spacing": undefined,
   colorHex: undefined,
-  colorOpacity: 1,
-  activeColorHex: undefined,
-  activeColorOpacity: undefined
+  colorOpacity: 1
 };
 
 export const getModel = (data: Model) => {

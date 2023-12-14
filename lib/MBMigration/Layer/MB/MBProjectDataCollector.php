@@ -8,6 +8,7 @@ use MBMigration\Builder\DebugBackTrace;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 use MBMigration\Layer\DataSource\DBConnector;
 
@@ -128,8 +129,7 @@ class MBProjectDataCollector
             "SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'"
         );
 
-        $domainSite = $this->db->requestArray("SELECT domain_name from domains WHERE site_id = $this->siteId");
-
+//        $domainSite = $this->db->requestArray("SELECT domain_name from domains WHERE site_id = $this->siteId");
 
         $settings = json_decode($settingSite[0]['settings'], true);
         if (!array_key_exists('palette', $settings)) {
@@ -139,7 +139,7 @@ class MBProjectDataCollector
         return [
             'name' => $settingSite[0]['name'],
             'title' => $settingSite[0]['title'],
-            'domain' => $domainSite[0]['domain_name'],
+            'domain' => $settingSite[0]['name'].'.'.Config::$previewBaseHost,
             'design' => $designSite[0]['name'],
             'uuid' => $settingSite[0]['uuid'],
             'parameter' => $settings,
@@ -291,7 +291,7 @@ class MBProjectDataCollector
         Utils::log('Get parent pages', 1, 'getParentPages');
         $result = [];
         $requestPageSite = $this->db->request(
-            "SELECT id, slug, name, position, settings, landing, hidden FROM pages WHERE site_id = ".$this->siteId." AND parent_id IS NULL ORDER BY parent_id ASC, position"
+            "SELECT id, slug, name, position, settings, landing, hidden, password_protected FROM pages WHERE site_id = ".$this->siteId." AND parent_id IS NULL ORDER BY parent_id ASC, position"
         );
 
         if (empty($requestPageSite)) {
@@ -301,6 +301,13 @@ class MBProjectDataCollector
         }
 
         foreach ($requestPageSite as $pageSite) {
+            if ($pageSite['hidden'] === true) {
+                continue;
+            }
+            if ($pageSite['password_protected'] === null) {
+                $pageSite['password_protected'] = false;
+            }
+
             $result[] = [
                 'id' => $pageSite['id'],
                 'slug' => $pageSite['slug'],
@@ -309,6 +316,7 @@ class MBProjectDataCollector
                 'position' => $pageSite['position'],
                 'landing' => $pageSite['landing'],
                 'hidden' => $pageSite['hidden'],
+                'protectedPage' => $pageSite['password_protected'],
                 'parentSettings' => $pageSite['settings'],
                 'child' => $this->getChildPages($pageSite['id']),
             ];
@@ -341,6 +349,7 @@ class MBProjectDataCollector
                     'collection' => '',
                     'position' => $pageSite['position'],
                     'landing' => $pageSite['landing'],
+                    'protectedPage' => $pageSite['password_protected'],
                     'parentSettings' => $pageSite['settings'],
                     'child' => $this->getChildPages($pageSite['id']),
                 ];
@@ -434,6 +443,7 @@ class MBProjectDataCollector
                     "SELECT slug FROM pages WHERE id  = ".$requestLinkIdToPages[0]['page_id']
                 );
                 Utils::log('Get link for item: '.$requestItemLink[0]['slug'], 1, 'getItemLink');
+
                 return [
                     'detail' => $requestItemLink[0]['slug'],
                     'new_window' => false,

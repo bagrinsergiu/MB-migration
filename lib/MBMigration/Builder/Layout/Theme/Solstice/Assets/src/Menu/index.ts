@@ -1,3 +1,4 @@
+import { getGlobalMenuModel } from "../utils/getGlobalMenuModel";
 import { getModel } from "./utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData, getData } from "elements/src/utils/getData";
@@ -33,7 +34,7 @@ const getMenuV = (data: NavData) => {
     return v;
   }
 
-  const link = ul.querySelector("li > a");
+  const link = ul.querySelector("li:not(.selected) > a");
   if (!link) {
     warns["menu li a"] = {
       message: `Navigation don't have ul > li > a in ${selector}`
@@ -41,7 +42,9 @@ const getMenuV = (data: NavData) => {
     return v;
   }
 
-  const styles = window.getComputedStyle(li);
+  const span = ul.querySelector("li > a > span");
+  const activeLink = ul.querySelector("li.selected > a");
+  const styles = window.getComputedStyle(link);
   const itemPadding = parseInt(styles.paddingLeft);
 
   v = getModel({
@@ -50,20 +53,40 @@ const getMenuV = (data: NavData) => {
     defaultFamily: data.defaultFamily
   });
 
+  if (activeLink) {
+    const styles = window.getComputedStyle(activeLink);
+    const color = parseColorString(styles.color);
+
+    if (color) {
+      v = {
+        ...v,
+        activeColorHex: color.hex,
+        activeColorOpacity: color.opacity
+      };
+    }
+  }
+
+  if (span) {
+    const styles = window.getComputedStyle(span);
+    const paddingTop = parseInt(styles.paddingTop ?? 0);
+    const paddingRight = parseInt(styles.paddingRight ?? 0);
+    const paddingBottom = parseInt(styles.paddingBottom ?? 0);
+    const paddingLeft = parseInt(styles.paddingLeft ?? 0);
+
+    v = {
+      ...v,
+      menuPaddingTop: paddingTop,
+      menuPaddingRight: paddingRight,
+      menuPaddingBottom: paddingBottom,
+      menuPaddingLeft: paddingLeft
+    };
+  }
+
   return { ...v, itemPadding: isNaN(itemPadding) ? 10 : itemPadding };
 };
 
 const getSubMenuV = (data: Required<NavData>) => {
-  const { subNav, selector } = data;
-
-  const ul = subNav.children[0];
-
-  if (!ul) {
-    warns["submenu"] = {
-      message: `Navigation don't have ul in ${selector}`
-    };
-    return;
-  }
+  const { subNav: ul, selector } = data;
 
   const li = ul.querySelector("li");
   if (!li) {
@@ -87,7 +110,7 @@ const getSubMenuV = (data: Required<NavData>) => {
     defaultFamily: data.defaultFamily
   });
   const submenuTypography = prefixed(typography, "subMenu");
-  const baseStyle = window.getComputedStyle(subNav);
+  const baseStyle = window.getComputedStyle(ul);
   const bgColor = parseColorString(baseStyle.backgroundColor) ?? {
     hex: "#ffffff",
     opacity: 1
@@ -126,13 +149,15 @@ const run = (entry: Entry): Output => {
     };
   }
 
-  const subNav = header.querySelector("#selected-sub-navigation") ?? undefined;
+  const subNav = header.querySelector(".sub-navigation") ?? undefined;
   let data = getMenuV({ nav, selector, families, defaultFamily });
 
   if (subNav) {
     const _v = getSubMenuV({ nav, subNav, selector, families, defaultFamily });
     data = { ...data, ..._v };
   }
+  const globalModel = getGlobalMenuModel();
+  data = { ...globalModel, ...data };
 
   return createData({ data: data });
 };

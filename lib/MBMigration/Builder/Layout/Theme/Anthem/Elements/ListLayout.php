@@ -72,7 +72,9 @@ class ListLayout extends Element
                     foreach ($headItem['brzElement'] as $item) {
                         $objHead->item()->addItem($item);
                     }
-                    $objHead->item()->addItem($this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']]));
+                    $objHead->item()->addItem(
+                        $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']])
+                    );
                 }
             }
         }
@@ -122,9 +124,11 @@ class ListLayout extends Element
                         foreach ($item['brzElement'] as $element) {
                             $objItem->addItem($element);
                         }
-                        $objItem->addItem($this->wrapperLine([
-                            'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
-                        ]));
+                        $objItem->addItem(
+                            $this->wrapperLine([
+                                'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '',
+                            ])
+                        );
                     }
                 }
             }
@@ -133,7 +137,31 @@ class ListLayout extends Element
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'body') {
                         foreach ($item['brzElement'] as $element) {
-                            $objItem->addItem($element);
+                            switch ($element['type']) {
+                                case 'EmbedCode':
+                                    if (!empty($sectionData['content'])) {
+                                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                                        if (is_array($embedCode)) {
+                                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
+                                        }
+                                        $i++;
+                                    }
+                                    break;
+                                case 'Cloneable':
+                                    $element['value']['mobileHorizontalAlign'] = 'center';
+
+                                    foreach ($element['value']['items'] as &$iconItem) {
+                                        if ($iconItem['type'] == 'Icon') {
+                                            $iconItem['value']['hoverColorHex'] = $sectionData['style']['hover']['icon'] ?? '';
+                                        }
+                                    }
+                                    $objItem->addItem($element);
+                                    break;
+                                case 'Wrapper':
+                                    $objBlock->item(0)->addItem($element);
+                                    break;
+
+                            }
                         }
                     }
                 }
