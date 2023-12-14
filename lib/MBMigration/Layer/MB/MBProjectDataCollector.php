@@ -337,7 +337,7 @@ class MBProjectDataCollector
         $result = [];
 
         $pagesSite = $this->db->request(
-            "SELECT id, slug, name, position, settings, hidden, landing FROM pages WHERE site_id = ".$this->siteId." AND hidden = 'false' AND  parent_id = ".$parentId." ORDER BY position asc"
+            "SELECT id, slug, name, position, settings, hidden, landing, password_protected FROM pages WHERE site_id = ".$this->siteId." AND hidden = 'false' AND  parent_id = ".$parentId." ORDER BY position asc"
         );
 
         foreach ($pagesSite as $pageSite) {
@@ -349,7 +349,7 @@ class MBProjectDataCollector
                     'collection' => '',
                     'position' => $pageSite['position'],
                     'landing' => $pageSite['landing'],
-                    'protectedPage' => $pageSite['password_protected'],
+                    'protectedPage' => $pageSite['password_protected'] ?? false,
                     'parentSettings' => $pageSite['settings'],
                     'child' => $this->getChildPages($pageSite['id']),
                 ];
