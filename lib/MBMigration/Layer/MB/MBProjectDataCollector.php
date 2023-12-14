@@ -8,6 +8,7 @@ use MBMigration\Builder\DebugBackTrace;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 use MBMigration\Layer\DataSource\DBConnector;
 
@@ -128,8 +129,7 @@ class MBProjectDataCollector
             "SELECT * from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'"
         );
 
-        $domainSite = $this->db->requestArray("SELECT domain_name from domains WHERE site_id = $this->siteId");
-
+//        $domainSite = $this->db->requestArray("SELECT domain_name from domains WHERE site_id = $this->siteId");
 
         $settings = json_decode($settingSite[0]['settings'], true);
         if (!array_key_exists('palette', $settings)) {
@@ -139,7 +139,7 @@ class MBProjectDataCollector
         return [
             'name' => $settingSite[0]['name'],
             'title' => $settingSite[0]['title'],
-            'domain' => $domainSite[0]['domain_name'],
+            'domain' => $settingSite[0]['name'].'.'.Config::$previewBaseHost,
             'design' => $designSite[0]['name'],
             'uuid' => $settingSite[0]['uuid'],
             'parameter' => $settings,

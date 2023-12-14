@@ -196,7 +196,7 @@ class MigrationPlatform
         $this->cache->set('projectId_Brizy', $projectID_Brizy);
         $this->cache->set('Status', ['Total' => 0, 'Success' => 0]);
 
-        $this->parser = new MBProjectDataCollector($this->cache);
+        $this->parser = new MBProjectDataCollector();
     }
 
     private function logFinalProcess(float $startTime, bool $successWorkCompletion = true): void
