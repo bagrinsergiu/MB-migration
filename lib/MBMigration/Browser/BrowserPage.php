@@ -2,6 +2,7 @@
 
 namespace MBMigration\Browser;
 
+use Exception;
 use MBMigration\Core\Utils;
 use Nesk\Puphpeteer\Puppeteer;
 use Nesk\Rialto\Data\JsFunction;
@@ -20,13 +21,19 @@ class BrowserPage implements BrowserPageInterface
 
     public function evaluateScript($jsScript, $params): array
     {
-        $jsFunction = JsFunction::createWithScope($params)
-            ->parameters(array_keys($params))
-            ->body($this->getScriptBody($jsScript));
+        try {
+            $jsFunction = JsFunction::createWithScope($params)
+                ->parameters(array_keys($params))
+                ->body($this->getScriptBody($jsScript));
 
-        $result = $this->page->tryCatch->evaluate($jsFunction);
-
-        return $result;
+            $result = $this->page->tryCatch->evaluate($jsFunction);
+            if(array_key_exists('error', $result)){
+                return [];
+            }
+            return $result;
+        } catch (Exception $e) {
+            return []; // element not found
+        }
     }
 
     private function executeScriptWithoutResult($jsScript): void
@@ -34,7 +41,6 @@ class BrowserPage implements BrowserPageInterface
         $jsFunction = JsFunction::createWithBody($this->getScriptBody($jsScript));
         $this->page->tryCatch->evaluate($jsFunction);
     }
-
 
     private function getScriptBody($jsScript): string
     {
@@ -49,28 +55,42 @@ class BrowserPage implements BrowserPageInterface
     /**
      * @return mixed
      */
-    public function triggerEvent($eventNameMethod, $elementSelector)
+    public function triggerEvent($eventNameMethod, $elementSelector): bool
     {
         try {
-            $method = '$';
-            $this->page->tryCatch->$method($elementSelector)->$eventNameMethod();
+//            $result = $this->page->tryCatch->waitForSelector($elementSelector, ['timeout' => 60000]);
+//            $this->page->tryCatch->waitForTimeout(60000);
+            $this->page->tryCatch->$eventNameMethod($elementSelector);
             usleep(200000);
-        } catch (FatalException $e) {
-            return false;
+        } catch (Exception $e) {
+            return false; // element not found
         }
-        return true;
+        return true; // element found
     }
 
-    public function globalEval(): void
+    public function ExtractHover($selector): void
     {
-        $method = '$';
-        $this->page->tryCatch->$method($elementSelector)->$eventNameMethod();
-        usleep(200000);
+        if($this->triggerEvent('hover', $selector)) {
+            $this->globalsEval();
+        }
     }
 
-    public function globalEval(): void
+    public function ExtractHoverMenu($selector): void
     {
-        $this->executeScriptWithoutResult('Globals.js', []);
+        if($this->triggerEvent('hover', $selector)) {
+            $this->globalMenuEval();
+        }
+    }
+
+    public function globalsEval(): void
+    {
+        $this->executeScriptWithoutResult('Globals.js');
+        $this->triggerEvent('hover', 'html');
+    }
+
+    public function globalMenuEval(): void
+    {
+        $this->executeScriptWithoutResult('GlobalMenu.js');
+        $this->triggerEvent('hover', 'html');
     }
 }
-

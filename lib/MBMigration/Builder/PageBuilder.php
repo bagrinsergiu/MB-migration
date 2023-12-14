@@ -49,7 +49,7 @@ class PageBuilder
         $browser = Browser::instance($layoutBasePath);
         $browserPage = $browser->openPage($url, $design);
 
-        $browserPage->globalEval();
+        $browserPage->globalsEval();
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
 //        file_put_contents(JSON_PATH."/htmlPage.html", file_get_contents($url));
@@ -84,6 +84,7 @@ class PageBuilder
 
             Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
             $this->sendStatus($slug, ExecutionTimer::stop());
+            $browser->closePage();
 
             return true;
 
@@ -92,11 +93,11 @@ class PageBuilder
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                 Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
                 $this->sendStatus($slug, ExecutionTimer::stop());
-
+                $browser->closePage();
                 return true;
             } else {
                 Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
-
+                $browser->closePage();
                 return false;
             }
         }

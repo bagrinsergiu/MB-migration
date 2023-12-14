@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\Utils\UrlBuilder;
@@ -25,10 +26,20 @@ class Head extends Element
      */
     private $activePage;
 
-    public function __construct($jsonKitElements)
+    private $browserPage;
+    /**
+     * @var array
+     */
+    private $fontFamily;
+
+    const SELECTOR = "#main-navigation li:not(.selected) a";
+
+    public function __construct($jsonKitElements, BrowserPage $browserPage)
     {
+        $this->browserPage = $browserPage;
         $this->cache = VariableCache::getInstance();
         $this->jsonDecode = $jsonKitElements;
+        $this->fontFamily = $this->getFontsFamily();
     }
 
     public function getElement(array $elementData = [])
@@ -179,10 +190,68 @@ class Head extends Element
 
     private function setParseOptions(ItemBuilder $objBlock, $options)
     {
-        $result = JS::stylesMenuExtractor($options['sectionID'], $options['currentPageURL'], $options['fontsFamily']);
-        $this->cache->set('menuStyles', $result);
-        foreach ($result as $key => $value) {
+        $this->browserPage->ExtractHoverMenu(self::SELECTOR);
+
+        $result = $this->ExtractMenuStyle($this->browserPage, $options['sectionID']);
+
+        $this->cache->set('menuStyles', $result['data']);
+        foreach ($result['data'] as $key => $value) {
             $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting($key, $value);
         }
+    }
+
+    private function ExtractMenuStyle($browserPage, int $sectionId): array
+    {
+        return $browserPage->evaluateScript(
+            'Menu.js',
+            [
+                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'FAMILIES' => $this->fontFamily['kit'],
+                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+            ]
+        );
+    }
+
+    protected function getFontsFamily(): array
+    {
+        $fontFamily = [];
+        $cache = VariableCache::getInstance();
+        $fonts = $cache->get('fonts', 'settings');
+        foreach ($fonts as $font) {
+            if ($font['name'] === 'primary') {
+                $fontFamily['Default'] = $font['uuid'];
+            } else {
+                $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
+            }
+        }
+
+        return $fontFamily;
+    }
+
+    private function convertColor($color): string
+    {
+
+        if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
+            return $color;
+        }
+
+        if (preg_match('/rgba\((\d+), (\d+), (\d+), ([0-9]*\.?[0-9]+)\)/', $color, $matches)) {
+            $r = $matches[1];
+            $g = $matches[2];
+            $b = $matches[3];
+
+            return sprintf("#%02X%02X%02X", $r, $g, $b);
+        }
+
+        if (preg_match_all('/\d+/', $color, $matches)) {
+            if (count($matches[0]) !== 3) {
+                return $color;
+            }
+            list($r, $g, $b) = $matches[0];
+
+            return sprintf("#%02X%02X%02X", $r, $g, $b);
+        }
+
+        return $color;
     }
 }

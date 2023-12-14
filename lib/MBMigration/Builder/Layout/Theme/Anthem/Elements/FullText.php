@@ -70,7 +70,7 @@ class FullText extends Element
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                    $this->textCreation($item, $objBlock);
+                    $this->textCreation($item, $objBlock, $sectionData['style']);
                     $objBlock->item(0)->addItem($this->wrapperLine(
                         [
                             'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
@@ -83,7 +83,7 @@ class FullText extends Element
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
-                    $this->textCreation($item, $objBlock);
+                    $this->textCreation($item, $objBlock, $sectionData['style']);
                 }
             }
         }
@@ -105,7 +105,7 @@ class FullText extends Element
     /**
      * @throws \Exception
      */
-    private function textCreation($sectionData, $objBlock)
+    private function textCreation($sectionData, $objBlock, $style)
     {
         $i = 0;
         foreach ($sectionData['brzElement'] as $textItem) {
@@ -120,13 +120,6 @@ class FullText extends Element
                     }
                     break;
                 case 'Cloneable':
-
-                    foreach ($textItem['value']['items'] as &$item) {
-                        if ($item['type'] == 'Icon') {
-                            $item['value']['hoverColorHex'] = $sectionData['style']['hover']['color'] ?? '';
-                        }
-                    }
-                    $objBlock->item(0)->addItem($textItem);
                 case 'Wrapper':
                     $objBlock->item(0)->addItem($textItem);
                     break;
