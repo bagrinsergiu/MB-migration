@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem;
 
 use Exception;
+use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventCalendarLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventGalleryLayout;
@@ -38,9 +39,9 @@ class AnthemElementsController
     /**
      * @throws \DOMException
      */
-    public static function getElement($elementName, $jsonKitElements, array $elementData = [])
+    public static function getElement($elementName, $jsonKitElements, BrowserPage $browserPage, array $elementData = [])
     {
-        $element = self::switchGlobalElements($elementName, $jsonKitElements, $elementData);
+        $element = self::switchGlobalElements($elementName, $jsonKitElements, $elementData, $browserPage);
         if ($element) {
             return $element;
         }
@@ -66,7 +67,7 @@ class AnthemElementsController
     /**
      * @throws \DOMException
      */
-    private static function switchGlobalElements($elementName, $jsonKitElements, $elementData)
+    private static function switchGlobalElements($elementName, $jsonKitElements, $elementData, BrowserPage $browserPage)
     {
         switch ($elementName) {
             case "footer":
@@ -74,7 +75,7 @@ class AnthemElementsController
 
                 return $element->getElement();
             case "head":
-                $element = new Head($jsonKitElements);
+                $element = new Head($jsonKitElements, $browserPage);
 
                 return $element->getElement($elementData);
             default:

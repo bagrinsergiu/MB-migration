@@ -63,7 +63,7 @@ class Anthem extends LayoutUtils
         $menuList = $this->cache->get('menuList');
 
         if ($menuList['create'] === false) {
-            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, [ 'menu' => $menuList, 'activePage' => '' ], $this->browserPage);
+            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, $this->browserPage, [ 'menu' => $menuList, 'activePage' => '' ] );
             if ($headElement) {
                 Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
                 $menuList['create'] = true;
@@ -77,7 +77,7 @@ class Anthem extends LayoutUtils
         $this->ExtractDataFromPage($MainSectionData, $this->browserPage, 'sectionId');
         $this->cache->set('mainSection', $MainSectionData);
 
-        AnthemElementsController::getElement('footer', $this->jsonDecode);
+        AnthemElementsController::getElement('footer', $this->jsonDecode, $this->browserPage);
     }
 
     /**
@@ -172,7 +172,7 @@ class Anthem extends LayoutUtils
             $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
         } else {
-            $result = AnthemElementsController::getElement($elementName, $this->jsonDecode, $params);
+            $result = AnthemElementsController::getElement($elementName, $this->jsonDecode, $this->browserPage, $params);
             if (!$result) {
                 Utils::log(
                     'Element '.$elementName.' does not exist. Page: '.$marker,
@@ -185,15 +185,22 @@ class Anthem extends LayoutUtils
         return $result;
     }
 
-    private function ExtractDataFromPage(&$SectionPage, $browserPage, $nameSectionId = 'id')
+    private function ExtractDataFromPage(&$SectionPage, BrowserPage $browserPage, $nameSectionId = 'id')
     {
+        $selectorIcon = "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
+        $browserPage->ExtractHover($selectorIcon);
+
         foreach ($SectionPage as &$section) {
+            Utils::log('Extract Data' . $section['sectionId'], 1, 'ExtractDataFromPage');
+
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
+
             $section['style']['opacity_div'] = $this->ExtractStyleSectionOpacity(
                 $browserPage,
                 $section['sectionId']
             ) ?? [];
             $section['style']['body'] = $this->ExtractStylePage($browserPage);
+
             if (!empty($section['items'])) {
                 foreach ($section['items'] as &$item) {
                     if ($item['category'] === 'text') {
@@ -219,12 +226,9 @@ class Anthem extends LayoutUtils
                                     ) ?? [];
                                 }
                             }
-
                         }
                     }
                 }
-                $hoverColorIcon = $this->ExtractHoverColor($browserPage, "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]");
-                $item['style']['hover']['icon'] = $hoverColorIcon['color'] ?? '';
             }
             if (!empty($section['head'])) {
                 foreach ($section['head'] as &$item) {
@@ -281,33 +285,12 @@ class Anthem extends LayoutUtils
             ]
         );
 
-        foreach ($sectionStyles['data'] as $key => $value) {
-            $style[$key] = $this->convertColor(trim($value, 'px'));
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
         }
 
-        return $style;
-    }
-
-
-    private function ExtractHoverColor(BrowserPage $browserPage, $selector): array
-    {
-        $style = [];
-        if($browserPage->triggerEvent('hover', $selector)){
-            $sectionStyles = $browserPage->evaluateScript(
-                'StyleExtractor.js',
-                [
-                    'SELECTOR' => $selector,
-                    'STYLE_PROPERTIES' => [
-                        'color'
-                    ],
-                    'FAMILIES' => $this->fontFamily['kit'],
-                    'DEFAULT_FAMILY' => $this->fontFamily['Default'],
-                ]
-            );
-
-            foreach ($sectionStyles['data'] as $key => $value) {
-                $style[$key] = $this->convertColor(trim($value, 'px'));
-            }
+        foreach ($sectionStyles['data'] as $key => $value) {
+            $style[$key] = $this->convertColor(trim($value, 'px'));
         }
 
         return $style;
@@ -327,6 +310,10 @@ class Anthem extends LayoutUtils
                 'DEFAULT_FAMILY' => $this->fontFamily['Default'],
             ]
         );
+
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
+        }
 
         foreach ($sectionStyles['data'] as $key => $value) {
             $style[$key] = $this->convertColor(trim($value, 'px'));
@@ -350,6 +337,10 @@ class Anthem extends LayoutUtils
             ]
         );
 
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
+        }
+
         foreach ($sectionStyles['data'] as $key => $value) {
             $style[$key] = $this->convertColor(trim($value, 'px'));
         }
@@ -372,10 +363,14 @@ class Anthem extends LayoutUtils
             ]
         );
 
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
+        }
+
         return $sectionStyles['data'];
     }
 
-    private function ExtractStylePage($browserPage)
+    private function ExtractStylePage($browserPage): array
     {
         $style = [];
         $sectionStyles = $browserPage->evaluateScript(
@@ -389,6 +384,10 @@ class Anthem extends LayoutUtils
                 'DEFAULT_FAMILY' => $this->fontFamily['Default'],
             ]
         );
+
+        if(array_key_exists('error', $sectionStyles)){
+            return [];
+        }
 
         foreach ($sectionStyles['data'] as $key => $value) {
             $style[$key] = $this->convertColor(trim($value, 'px'));
@@ -404,6 +403,10 @@ class Anthem extends LayoutUtils
             'FAMILIES' => $this->fontFamily['kit'],
             'DEFAULT_FAMILY' => $this->fontFamily['Default'],
         ]);
+
+        if(array_key_exists('error', $richTextBrowserData)){
+            return [];
+        }
 
         return $richTextBrowserData['data'];
     }

@@ -160,6 +160,15 @@ class TwoHorizontalText extends Element
                     }
                     break;
                 case 'Cloneable':
+                    $textItem['value']['mobileHorizontalAlign'] = 'center';
+
+                    foreach ($textItem['value']['items'] as &$iconItem) {
+                        if ($iconItem['type'] == 'Icon') {
+                            $iconItem['value']['hoverColorHex'] = $sectionData['style']['hover']['icon'] ?? '';
+                        }
+                    }
+                    $objBlock->item(0)->item(0)->item($setId)->addItem($textItem);
+                    break;
                 case 'Wrapper':
                     $objBlock->item(0)->item(0)->item($setId)->addItem($textItem);
                     break;
