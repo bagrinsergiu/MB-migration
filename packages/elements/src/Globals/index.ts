@@ -7,7 +7,7 @@ export const globalExtractor = (): void => {
   const icon = document.querySelector(iconSelector);
   const button = document.querySelector(buttonSelector);
 
-  if (!icon || !button) {
+  if (!icon && !button) {
     return;
   }
 

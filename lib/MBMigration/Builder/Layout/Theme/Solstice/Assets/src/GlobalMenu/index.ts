@@ -2,7 +2,9 @@ import { parseColorString } from "utils/src/color/parseColorString";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
 const globalMenuExtractor = () => {
-  const menuItem = document.querySelector("#main-navigation a");
+  const menuItem = document.querySelector(
+    "#main-navigation li:not(.selected) a"
+  );
 
   if (!menuItem) {
     return;
