@@ -39,8 +39,6 @@ class PageBuilder
 
         $url = PathSlugExtractor::getFullUrl($slug);
 
-        ExecutionTimer::start();
-
         $this->cache->set('CurrentPageURL', $url);
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;

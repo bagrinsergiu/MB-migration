@@ -8,6 +8,7 @@ use MBMigration\Builder\Checking;
 use MBMigration\Builder\ColorMapper\ColorMapper;
 use MBMigration\Builder\DebugBackTrace;
 use MBMigration\Builder\PageBuilder;
+use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Utils\TextTools;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
@@ -253,6 +254,7 @@ class MigrationPlatform
         Utils::log('Take page | ID: '.$page['id'], 4, 'MAIN Foreach');
 
         $this->cache->set('tookPage', $page);
+        ExecutionTimer::start();
 
         $preparedSectionOfThePage = $this->getItemsFromPage($page);
         if (!$preparedSectionOfThePage) {
