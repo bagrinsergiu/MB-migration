@@ -50,12 +50,12 @@ class GalleryLayout extends Element
             $block['value']['sliderAutoPlaySpeed'] = $rotatorSpeed;
         }
 
-        $block['value']['mobileSectionHeight'] = 20;
-        $block['value']['sectionHeight'] = 85;
-        $block['value']['sectionHeightSuffix'] = 'vh';
-        $block['value']['fullHeight'] = 'custom';
-        $block['value']['mobileSectionHeightSuffix'] = 'vh';
-        $block['value']['mobileFullHeight'] = 'custom';
+//        $block['value']['mobileSectionHeight'] = 20;
+//        $block['value']['sectionHeight'] = 85;
+//        $block['value']['sectionHeightSuffix'] = 'vh';
+//        $block['value']['fullHeight'] = 'custom';
+//        $block['value']['mobileSectionHeightSuffix'] = 'vh';
+//        $block['value']['mobileFullHeight'] = 'custom';
 
         if(!empty($sectionData['style']['body']['background-color'])) {
             $bodyBgColor = $sectionData['style']['body']['background-color'];
@@ -72,7 +72,7 @@ class GalleryLayout extends Element
                     $slide['value']['bgImageHeight'] = $sectionData['settings']['sections']['gallery']['max_height'];
                 }
 
-                $slide['value']['bgSize']          = 'contain';
+//                $slide['value']['bgSize']          = 'contain';
                 $slide['value']['bgImageSrc']      = $item['content'];
                 $slide['value']['bgImageFileName'] = $item['imageFileName'];
                 $slide['value']['customCSS'] = 'element{background:' . $bodyBgColor . '}';

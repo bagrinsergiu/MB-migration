@@ -186,6 +186,8 @@ class Head extends Element
         $objBlock->item(0)->setting('padding', 10);
         $objBlock->item(0)->setting('paddingType', 'grouped');
         $objBlock->item(0)->setting('bgColorOpacity', $color['opacity']);
+        $objBlock->item(0)->setting('bgColorHex', $color['background-color']);
+        $objBlock->item(0)->setting('bgColorType', 'solid');
     }
 
     private function setParseOptions(ItemBuilder $objBlock, $options)

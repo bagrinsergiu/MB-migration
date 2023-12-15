@@ -54,7 +54,7 @@ class Browser implements BrowserInterface
     {
         $this->page = $this->browser->newPage();
         $this->page->setViewport(['width' => 1920, 'height' => 1080]);
-        $this->page->goto($url, ['timeout' => 60000]);
+        $this->page->goto($url, ['timeout' => 120000]);
 
         return new BrowserPage($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
     }

@@ -23,6 +23,7 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\Items\SubMenu;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftMediaCircle;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\ListLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\LivestreamLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\RightMedia;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\RightMediaCircle;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\SmallGroupsList;
@@ -160,6 +161,10 @@ class AnthemElementsController
                 return $element->getElement($elementData);
             case "small_groups_list":
                 $element = new SmallGroupsList($jsonKitElements);
+
+                return $element->getElement($elementData);
+            case "livestream_layout":
+                $element = new LivestreamLayout($jsonKitElements);
 
                 return $element->getElement($elementData);
             default:
