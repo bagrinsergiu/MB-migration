@@ -152,13 +152,14 @@ class ListLayout extends Element
 
                                     foreach ($element['value']['items'] as &$iconItem) {
                                         if ($iconItem['type'] == 'Icon') {
-                                            $iconItem['value']['hoverColorHex'] = $sectionData['style']['hover']['icon'] ?? '';
+                                            $iconItem['value']['hoverBgColorType'] = "solid";
                                         }
                                     }
                                     $objItem->addItem($element);
                                     break;
                                 case 'Wrapper':
-                                    $objBlock->item(0)->addItem($element);
+                                    $objItem->addItem($element);
+//                                    $objBlock->item(0)->addItem($element);
                                     break;
 
                             }

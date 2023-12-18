@@ -190,6 +190,9 @@ class Anthem extends LayoutUtils
         $selectorIcon = "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
         $browserPage->ExtractHover($selectorIcon);
 
+        $selectorButton = ".sites-button:not(.nav-menu-button)";
+        $browserPage->ExtractHover($selectorButton);
+
         foreach ($SectionPage as &$section) {
             Utils::log('Extract Data' . $section['sectionId'], 1, 'ExtractDataFromPage');
 
@@ -215,18 +218,34 @@ class Anthem extends LayoutUtils
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
 
                     } else {
-                        if ($item['category'] === 'list') {
-                            $this->ExtractItemContent($item['item'], $browserPage);
 
-                            foreach ($item['item'] as $listItem) {
-                                if ($item['item_type'] == 'title'){
-                                    $section['style']['border'] = $this->ExtractBorderColorFromItem(
-                                        $browserPage,
-                                        $listItem['sectionId']
-                                    ) ?? [];
+                        switch ($item['category']){
+                            case "list":
+                            case "tab":
+                                $this->ExtractItemContent($item['item'], $browserPage);
+
+                                foreach ($item['item'] as $listItem) {
+                                    if ($item['item_type'] == 'title'){
+                                        $section['style']['border'] = $this->ExtractBorderColorFromItem(
+                                            $browserPage,
+                                            $listItem['sectionId']
+                                        ) ?? [];
+                                    }
                                 }
-                            }
                         }
+
+//                        if ($item['category'] === 'list' ) {
+//                            $this->ExtractItemContent($item['item'], $browserPage);
+//
+//                            foreach ($item['item'] as $listItem) {
+//                                if ($item['item_type'] == 'title'){
+//                                    $section['style']['border'] = $this->ExtractBorderColorFromItem(
+//                                        $browserPage,
+//                                        $listItem['sectionId']
+//                                    ) ?? [];
+//                                }
+//                            }
+//                        }
                     }
                 }
             }
