@@ -61,17 +61,28 @@ class TabsLayout extends Element
 
         $this->backgroundImages($objBlock, $sectionData, $options);
 
-        $blockHead = false;
         foreach ($sectionData['head'] as $headItem) {
-            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+            if ($headItem['category'] === 'text') {
+                if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
+                    $blockHead = true;
+                    foreach ($headItem['brzElement'] as $item) {
+                        $objBlock->item()->addItem($item);
+                    }
+                    $objBlock->item()->addItem(
+                        $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']])
+                    );
+                }
             }
         }
+
         foreach ($sectionData['head'] as $headItem) {
-            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+            if ($headItem['category'] === 'text') {
+                if ($headItem['item_type'] === 'body' && $this->showHeader($sectionData)) {
+                    $blockHead = true;
+                    foreach ($headItem['brzElement'] as $item) {
+                        $objBlock->item()->addItem($item);
+                    }
+                }
             }
         }
 
@@ -88,14 +99,45 @@ class TabsLayout extends Element
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'tab_title') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->setting('labelText', $richText);
+
+                        $objItem->setting('labelText', "test");
                     }
 
                     if ($item['item_type'] === 'tab_body') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->item(0)->item(0)->setText($richText);
+                        foreach ($item['brzElement'] as $element) {
+                            switch ($element['type']) {
+                                case 'EmbedCode':
+                                    if (!empty($sectionData['content'])) {
+                                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                                        if (is_array($embedCode)) {
+                                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
+                                        }
+                                        $i++;
+                                    }
+                                    break;
+                                case 'Cloneable':
+                                    $element['value']['mobileHorizontalAlign'] = 'center';
+
+                                    foreach ($element['value']['items'] as &$iconItem) {
+                                        if ($iconItem['type'] == 'Icon') {
+                                            $iconItem['value']['hoverBgColorType'] = "solid";
+                                        }
+                                    }
+                                    $objItem->item(0)->addItem($element);
+                                    break;
+                                case 'Wrapper':
+                                    $objItem->item(0)->addItem($element);
+//                                    $objBlock->item(0)->addItem($element);
+                                    break;
+
+                            }
+                        }
+
                     }
+//                    if ($item['item_type'] === 'tab_body') {
+//                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+//                        $objItem->item(0)->item(0)->setText($richText);
+//                    }
                 }
 
             }
