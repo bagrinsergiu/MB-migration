@@ -85,7 +85,9 @@ class Head extends Element
 
         $this->setColorBackground($objBlock, $options);
 
-        $this->setParseOptions($objBlock, $options);
+        $this->setParseOptions($objBlock, $options, [
+            'borderRadius' => 10
+        ]);
 
         $this->cache->set('flags', ['createdFirstSection' => false, 'bgColorOpacity' => true]);
 
@@ -190,12 +192,13 @@ class Head extends Element
         $objBlock->item(0)->setting('bgColorType', 'solid');
     }
 
-    private function setParseOptions(ItemBuilder $objBlock, $options)
+    private function setParseOptions(ItemBuilder $objBlock, $options, array $defOptions = [])
     {
         $this->browserPage->ExtractHoverMenu(self::SELECTOR);
 
         $result = $this->ExtractMenuStyle($this->browserPage, $options['sectionID']);
 
+        $result['data'] = array_merge_recursive($result['data'], $defOptions);
         $this->cache->set('menuStyles', $result['data']);
         foreach ($result['data'] as $key => $value) {
             $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting($key, $value);

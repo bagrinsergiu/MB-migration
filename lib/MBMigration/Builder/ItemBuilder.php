@@ -123,6 +123,9 @@ class ItemBuilder
                 $this->begin();
             }
         } else {
+            if (!is_array($this->item->value->items)) {
+                $this->item->value->items = [];
+            }
             $this->item->value->items[] = $this->arrayToObject($value);
             $this->begin();
         }

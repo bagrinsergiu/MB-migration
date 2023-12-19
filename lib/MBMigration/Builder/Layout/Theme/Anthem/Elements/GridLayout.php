@@ -33,18 +33,20 @@ class GridLayout extends Element
      * @throws \DOMException
      * @throws \Exception
      */
-    protected function GridLayout(array $sectionData) {
+    protected function GridLayout(array $sectionData)
+    {
         Utils::log('Create bloc', 1, "grid_layout");
 
-        $objItem    = new ItemBuilder();
-        $objBlock   = new ItemBuilder();
-        $objHead    = new ItemBuilder();
-        $objRow     = new ItemBuilder();
+        $objItem = new ItemBuilder();
+        $objBlock = new ItemBuilder();
+        $objHead = new ItemBuilder();
+        $objRow = new ItemBuilder();
 
         $options = [];
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
+        $global = $this->jsonDecode['global'];
 
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);
@@ -66,11 +68,13 @@ class GridLayout extends Element
                     foreach ($headItem['brzElement'] as $item) {
                         $objHead->item(0)->addItem($item);
                     }
-                    $objHead->item(0)->addItem($this->wrapperLine(
-                        [
-                            'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
-                        ]
-                    ));
+                    $objHead->item(0)->addItem(
+                        $this->wrapperLine(
+                            [
+                                'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '',
+                            ]
+                        )
+                    );
                 }
             }
         }
@@ -96,11 +100,10 @@ class GridLayout extends Element
 //            $objRow->addItem($objItem->get());
 //        }
 
-        foreach ($sectionData['items'] as $section)
-        {
+        foreach ($sectionData['items'] as $section) {
             $objItem->newItem($decoded['item']);
 
-            if(isset($section['item'])) {
+            if (isset($section['item'])) {
                 switch ($section['category']) {
                     case 'text':
                         if ($section['item_type'] == 'title') {
@@ -112,28 +115,43 @@ class GridLayout extends Element
                     case 'list':
                         foreach ($section['item'] as $sectionItem) {
                             if ($sectionItem['category'] == 'photo') {
-                                $objItem->setting('bgImageSrc', $sectionItem['content']);
-                                $objItem->setting('bgImageFileName', $sectionItem['imageFileName']);
+
+                                $imageOptions['imageSrc'] = $sectionItem['content'];
+                                $imageOptions['imageFileName'] = $sectionItem['imageFileName'];
+
+
+//                                $objItem->setting('bgImageSrc', $sectionItem['content']);
+//                                $objItem->setting('bgImageFileName', $sectionItem['imageFileName']);
 
                                 if ($sectionItem['link'] != '') {
 
                                     $urlComponents = parse_url($sectionItem['link']);
 
-                                    if(!empty($urlComponents['host'])) {
+                                    if (!empty($urlComponents['host'])) {
                                         $slash = '';
                                     } else {
                                         $slash = '/';
                                     }
-                                    if($sectionItem['new_window']){
+                                    if ($sectionItem['new_window']) {
                                         $sectionItem['new_window'] = 'on';
                                     } else {
                                         $sectionItem['new_window'] = 'off';
                                     }
-                                    $objItem->setting('linkType', 'external');
-                                    $objItem->setting('linkExternal', $slash . $sectionItem['link']);
-                                    $objItem->setting('linkExternalBlank', $sectionItem['new_window']);
+
+                                    $imageOptions['linkType'] = 'external';
+                                    $imageOptions['linkExternal'] = $slash.$sectionItem['link'];
+                                    $imageOptions['linkExternalBlank'] = $sectionItem['new_window'];
+
+//                                    $objItem->setting('linkType', 'external');
+//                                    $objItem->setting('linkExternal', $slash . $sectionItem['link']);
+//                                    $objItem->setting('linkExternalBlank', $sectionItem['new_window']);
                                 }
+
+                                $image = $this->wrapperImage($imageOptions, $global['wrapper--image']);
+                                $objItem->item(1)->addItem($image);
                             }
+                        }
+                        foreach ($section['item'] as $sectionItem) {
                             if ($sectionItem['category'] == 'text') {
                                 if ($sectionItem['item_type'] == 'title') {
                                     foreach ($sectionItem['brzElement'] as $item) {
@@ -142,6 +160,7 @@ class GridLayout extends Element
                                 }
                             }
                         }
+
                         break;
                 }
             } else {
@@ -151,7 +170,7 @@ class GridLayout extends Element
 
                     if ($section['link'] != '') {
                         $objItem->item(0)->item(0)->setting('linkType', "external");
-                        $objItem->item(0)->item(0)->setting('linkExternal', '/' . $section['link']);
+                        $objItem->item(0)->item(0)->setting('linkExternal', '/'.$section['link']);
                     }
                 }
                 if ($section['category'] == 'text') {
@@ -174,20 +193,21 @@ class GridLayout extends Element
 
             $objRow->addItem($objItem->get());
         }
-        if(count($sectionData['items']) <= 3){
-            $objItem->newItem($decoded['item']);
-            $objItem->setting('borderColorOpacity', 0);
-            $objItem->setting('showOnMobile', "off");
-            $objRow->addItem($objItem->get());
-        }
-        if(count($sectionData['items']) <= 2){
-            $objItem->newItem($decoded['item']);
-            $objItem->setting('borderColorOpacity', 0);
-            $objItem->setting('showOnMobile', "off");
-            $objRow->addItem($objItem->get());
-        }
+//        if(count($sectionData['items']) <= 3){
+//            $objItem->newItem($decoded['item']);
+//            $objItem->setting('borderColorOpacity', 0);
+//            $objItem->setting('showOnMobile', "off");
+//            $objRow->addItem($objItem->get());
+//        }
+//        if(count($sectionData['items']) <= 2){
+//            $objItem->newItem($decoded['item']);
+//            $objItem->setting('borderColorOpacity', 0);
+//            $objItem->setting('showOnMobile', "off");
+//            $objRow->addItem($objItem->get());
+//        }
         $objBlock->item()->addItem($objRow->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
+
         return json_encode($block);
     }
 
