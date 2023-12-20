@@ -151,9 +151,11 @@ class ListLayout extends Element
                                     $element['value']['mobileHorizontalAlign'] = 'center';
 
                                     foreach ($element['value']['items'] as &$iconItem) {
-//                                        if ($iconItem['type'] == 'Icon') {
-//                                            $iconItem['value']['hoverColorOpacity'] = 0.9;
-//                                        }
+                                        if ($iconItem['type'] == 'Icon') {
+                                            if($iconItem['value']['hoverColorOpacity'] == 1){
+                                                $iconItem['value']['hoverColorOpacity'] = 0.9;
+                                            }
+                                        }
 
                                         if ($iconItem['type'] == 'Button') {
                                             $iconItem['value']['borderStyle'] = "none";
