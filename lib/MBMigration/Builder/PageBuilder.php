@@ -67,7 +67,7 @@ class PageBuilder
                 $fontFamily[$font['fontFamily']] = $font['uuid'];
             }
         }
-        //file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
+        file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
         $themeContext = new ThemeContext(
             $design,
             $browserPage,

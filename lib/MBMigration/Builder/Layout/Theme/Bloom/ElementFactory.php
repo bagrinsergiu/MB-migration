@@ -8,7 +8,7 @@ use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventCalendarLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventGalleryLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventGridLayout;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventTileLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullMedia;
@@ -69,13 +69,12 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $this->browserPage);
             case 'event-list-layout':
                 return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $this->browserPage, $this->getQueryBuilder());
-            case 'event-grid-layout':
-                return new EventGridLayout($this->blockKit['blocks']['event-grid-layout'], $this->browserPage, $this->getQueryBuilder());
+            case 'event-tile-layout':
+                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $this->browserPage);
             case 'event-gallery-layout':
                 return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $this->browserPage);
             case 'event-calendar-layout':
                 return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $this->browserPage);
-
 
 
 //            case 'prayer-list':

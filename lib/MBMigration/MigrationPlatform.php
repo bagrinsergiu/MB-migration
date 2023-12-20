@@ -121,8 +121,9 @@ class MigrationPlatform
         $this->createProjectFolders();
 
         $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
-        $this->cache->set('graphToken', $this->brizyApi->getGraphToken($this->projectID_Brizy));
-
+        $graphToken = $this->brizyApi->getGraphToken($this->projectID_Brizy);
+        $this->cache->set('graphToken', $graphToken);
+        file_put_contents(JSON_PATH.'/brizy_api_token.json',$graphToken);
         $this->QueryBuilder = new QueryBuilder(
             $this->graphApiBrizy,
             $this->brizyApi->getGraphToken($this->projectID_Brizy)
@@ -157,7 +158,8 @@ class MigrationPlatform
         Utils::log('Upload Logo menu', 1, 'createMenu');
         $mainSection = $this->uploadPicturesFromSections($mainSection);
         $this->cache->set('mainSection', $mainSection);
-//        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
+        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
+
         $this->createBlankPages($parentPages);
         $this->createMenuStructure();
 
@@ -380,8 +382,9 @@ class MigrationPlatform
 
 
         $this->cache->add('menuList', $result);
-//        $parentPages = $this->cache->get('menuList');
-//        file_put_contents(JSON_PATH.'/menuList.json',json_encode($parentPages));
+
+        $parentPages = $this->cache->get('menuList');
+        file_put_contents(JSON_PATH.'/menuList.json',json_encode($parentPages));
     }
 
     private function transformToBrizyMenu(array $parentMenu): array
@@ -550,14 +553,6 @@ class MigrationPlatform
 
         $PageBuilder = new PageBuilder();
 
-//        $context = new PageBuilderContext();
-//        $context->setBrizyProject();
-//        $context->setMBProject();
-//        $context->setMBPage();
-//        $context->setBrizyPage();
-//        $context->setMBLayout();
-
-
         if ($PageBuilder->run($preparedSectionOfThePage)) {
             Utils::log('Page created successfully!', 1, 'PageBuilder');
         }
@@ -569,10 +564,9 @@ class MigrationPlatform
     private function createBlankPages(array &$parentPages, $mainLevel = true): void
     {
         Utils::log('Start created pages', 1, 'createBlankPages');
+        $projectPages = $this->brizyApi->getAllProjectPages();
         $i = 0;
         foreach ($parentPages as &$pages) {
-
-            $projectPages = $this->brizyApi->getAllProjectPages();
 
             if ($pages['landing'] == true) {
                 if ($i != 0 || !$mainLevel) {

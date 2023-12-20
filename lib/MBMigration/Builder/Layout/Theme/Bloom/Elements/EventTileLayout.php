@@ -12,10 +12,10 @@ use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Layer\Graph\QueryBuilder;
 
-class EventGridLayout extends \MBMigration\Builder\Layout\Common\Element\EventGridLayout
+class EventTileLayout extends \MBMigration\Builder\Layout\Common\Element\EventTileLayout
 {
-    protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0);
     }
 }
