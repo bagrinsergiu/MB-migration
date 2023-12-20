@@ -1,6 +1,6 @@
 import { ElementModel } from "../../../../types/type";
 import { getGlobalButtonModel } from "../../../../utils/getGlobalButtonModel";
-import { getHref } from "../../../utils/common";
+import { getHref, normalizeOpacity } from "../../../utils/common";
 import { mPipe } from "fp-utilities";
 import { Literal } from "utils";
 import { parseColorString } from "utils/src/color/parseColorString";
@@ -11,11 +11,17 @@ import * as Obj from "utils/src/reader/object";
 import * as Str from "utils/src/reader/string";
 import { uuid } from "utils/src/uuid";
 
-const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
+const getColor = mPipe(
+  Obj.readKey("color"),
+  Str.read,
+  parseColorString,
+  normalizeOpacity
+);
 const getBgColor = mPipe(
   Obj.readKey("background-color"),
   Str.read,
-  parseColorString
+  parseColorString,
+  normalizeOpacity
 );
 const getText = pipe(Obj.readKey("text"), Str.read, onNullish("BUTTON"));
 

@@ -1,4 +1,5 @@
 import { mPipe } from "fp-utilities";
+import { Color } from "utils/src/color/parseColorString";
 import * as Obj from "utils/src/reader/object";
 import * as Str from "utils/src/reader/string";
 
@@ -56,3 +57,12 @@ export const buttonSelector = ".sites-button:not(.nav-menu-button)";
 export const embedSelector = ".embedded-paste";
 
 export const getHref = mPipe(Obj.readKey("href"), Str.read);
+
+export const normalizeOpacity = (color: Color): Color => {
+  const { hex, opacity } = color;
+
+  return {
+    hex,
+    opacity: hex === "#ffffff" && opacity === "1" ? "0.99" : opacity
+  };
+};
