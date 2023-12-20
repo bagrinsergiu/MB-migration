@@ -122,6 +122,11 @@ class TabsLayout extends Element
                                         if ($iconItem['type'] == 'Icon') {
                                             $iconItem['value']['hoverBgColorType'] = "solid";
                                         }
+
+
+                                        if ($iconItem['type'] == 'Button') {
+                                            $iconItem['value']['borderStyle'] = "none";
+                                        }
                                     }
                                     $objItem->item(0)->addItem($element);
                                     break;

@@ -72,13 +72,19 @@ class ThreeTopMediaCircle extends Element
             }
 
             if ($item['item_type'] === 'title') {
-                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objBlock->item(0)->item(1)->item(0)->item(0)->item(0)->setText($richText);
+
+                $this->textCreation($item, $objBlock);
+
+//                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+//                $objBlock->item(0)->item(1)->item(0)->item(0)->item(0)->setText($richText);
             }
 
             if ($item['item_type'] === 'body') {
-                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objBlock->item(0)->item(1)->item(0)->item(2)->item(0)->setText($richText);
+
+                $this->textCreation($item, $objBlock);
+
+//                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+//                $objBlock->item(0)->item(1)->item(0)->item(2)->item(0)->setText($richText);
             }
         }
         $objBlock->item(0)->item(0)->addItem($objSpacer->get());
@@ -87,7 +93,10 @@ class ThreeTopMediaCircle extends Element
         return json_encode($block);
     }
 
-    private function textCreation($sectionData, $objBlock, $level )
+    /**
+     * @throws \Exception
+     */
+    private function textCreation($sectionData, $objBlock)
     {
         $i = 0;
         foreach ($sectionData['brzElement'] as $textItem) {
@@ -102,6 +111,13 @@ class ThreeTopMediaCircle extends Element
                     }
                     break;
                 case 'Cloneable':
+                    foreach ($textItem['value']['items'] as &$iconItem) {
+                        if ($iconItem['type'] == 'Button') {
+                            $iconItem['value']['borderStyle'] = "none";
+                        }
+                    }
+                    $objBlock->item(0)->item(1)->item(0)->item(0)->addItem($textItem);
+                    break;
                 case 'Wrapper':
                     $objBlock->item(0)->item(1)->item(0)->item(0)->addItem($textItem);
                     break;

@@ -63,7 +63,7 @@ class Anthem extends LayoutUtils
         $menuList = $this->cache->get('menuList');
 
         if ($menuList['create'] === false) {
-            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, $this->browserPage, [ 'menu' => $menuList, 'activePage' => '' ] );
+            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, $this->browser, [ 'menu' => $menuList, 'activePage' => '' ] );
             if ($headElement) {
                 Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
                 $menuList['create'] = true;

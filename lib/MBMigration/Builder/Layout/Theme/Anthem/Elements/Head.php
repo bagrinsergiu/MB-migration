@@ -26,17 +26,18 @@ class Head extends Element
      */
     private $activePage;
 
-    private $browserPage;
+    private $browser;
     /**
      * @var array
      */
     private $fontFamily;
 
     const SELECTOR = "#main-navigation li:not(.selected) a";
+    private $browserPage;
 
-    public function __construct($jsonKitElements, BrowserPage $browserPage)
+    public function __construct($jsonKitElements, $browser)
     {
-        $this->browserPage = $browserPage;
+        $this->browser = $browser;
         $this->cache = VariableCache::getInstance();
         $this->jsonDecode = $jsonKitElements;
         $this->fontFamily = $this->getFontsFamily();
@@ -64,6 +65,8 @@ class Head extends Element
         $deepSlug = PathSlugExtractor::findDeepestSlug($treePages);
         $url = PathSlugExtractor::getFullUrl($deepSlug['slug']);
 
+        $this->browserPage = $this->browser->openPage($url, 'Anthem');
+        
         $objBlock = new ItemBuilder();
         $objBlock->newItem($section['main']);
 
