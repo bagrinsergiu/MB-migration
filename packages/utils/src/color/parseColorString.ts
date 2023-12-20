@@ -1,6 +1,6 @@
 import { MValue } from "../types";
 
-interface Color {
+export interface Color {
   hex: string;
   opacity: string;
 }

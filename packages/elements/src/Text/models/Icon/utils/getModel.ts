@@ -1,6 +1,6 @@
 import { ElementModel } from "../../../../types/type";
 import { getGlobalIconModel } from "../../../../utils/getGlobalIconModel";
-import { getHref } from "../../../utils/common";
+import { getHref, normalizeOpacity } from "../../../utils/common";
 import { mPipe } from "fp-utilities";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
@@ -42,11 +42,17 @@ const codeToBuilderMap: Record<string, string> = {
   58112: "logo-instagram",
   61805: "logo-instagram"
 };
-const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
+const getColor = mPipe(
+  Obj.readKey("color"),
+  Str.read,
+  parseColorString,
+  normalizeOpacity
+);
 const getBgColor = mPipe(
   Obj.readKey("background-color"),
   Str.read,
-  parseColorString
+  parseColorString,
+  normalizeOpacity
 );
 
 export const getStyles = (node: Element) => {
@@ -102,6 +108,7 @@ export function getModel(node: Element): ElementModel {
       ...globalModel,
       ...modelStyle,
       customSize: 26,
+      padding: 7,
       name: iconCode
         ? codeToBuilderMap[iconCode] ?? "favourite-31"
         : "favourite-31",
