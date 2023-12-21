@@ -48,6 +48,12 @@ final class ColorConverter
         // get the values
         preg_match_all("/([\\d.]+)/", $rgba, $matches);
 
-        return sprintf("%.2f", (float)$matches[1][3]);
+        if(isset($matches[1][3]))
+        {
+            return sprintf("%.2f", (float)$matches[1][3]);
+        }
+        else{
+            return 1;
+        }
     }
 }

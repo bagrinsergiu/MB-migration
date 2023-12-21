@@ -13,8 +13,6 @@ class PrayerForm extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
-    use MbSectionUtils;
-
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));

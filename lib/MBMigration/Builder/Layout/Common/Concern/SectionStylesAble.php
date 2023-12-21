@@ -134,7 +134,7 @@ trait SectionStylesAble
 
         // reset padding top for first section as in brizy there is no need for that padding.
         if (!is_null($pagePosition) && $pagePosition == 0) {
-            $sectionStyles['padding-top'] = 0;
+            //$sectionStyles['padding-top'] = 0;
         }
 
         // set the background color paddings and margins

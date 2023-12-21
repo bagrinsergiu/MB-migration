@@ -18,20 +18,6 @@ class GridMediaLayout extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
-    use MbSectionUtils;
-    use BrizyQueryBuilderAware;
-
-    /**
-     * @param $brizyKit
-     * @param BrowserPageInterface $browserPage
-     * @param QueryBuilder $queryBuilder
-     */
-    public function __construct($brizyKit, BrowserPageInterface $browserPage, QueryBuilder $queryBuilder)
-    {
-        parent::__construct($brizyKit, $browserPage);
-        $this->queryBuilder = $queryBuilder;
-    }
-
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));

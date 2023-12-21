@@ -3,11 +3,15 @@
 namespace MBMigration\Builder\Layout\Common\Element;
 
 use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Layer\Graph\QueryBuilder;
 
 abstract class AbstractElement implements ElementInterface
 {
+    use MbSectionUtils;
+
     /**
      * @var array
      */
@@ -26,6 +30,12 @@ abstract class AbstractElement implements ElementInterface
     {
         $this->brizyKit = $brizyKit;
         $this->browserPage = $browserPage;
+    }
+
+
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function canShowHeader($mbSectionData): bool
@@ -48,25 +58,4 @@ abstract class AbstractElement implements ElementInterface
 
         return true;
     }
-
-    protected function sortItems($items)
-    {
-        $groupColum = array_column($items, 'group');
-        $orderByColumn = array_column($items, 'order_by');
-
-        if (count($groupColum) == 0 || count($orderByColumn) == 0) {
-            return $items;
-        }
-
-        array_multisort(
-            $groupColum,
-            SORT_ASC,
-            array_column($items, 'order_by'),
-            SORT_ASC,
-            $items
-        );
-
-        return $items;
-    }
-
 }
