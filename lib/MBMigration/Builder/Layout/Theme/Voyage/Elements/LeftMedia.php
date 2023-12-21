@@ -27,14 +27,15 @@ class LeftMedia extends AbstractElement
                     // add the photo items on the right side of the block
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbSectionItem,
-                        $brizySection->getItemWithDepth(0, 0, 0, 0) //
+                        $imageTarget = $this->getImageComponent($brizySection) //
                     );
                     $this->handleRichTextItem(
                         $elementContext,
                         $this->browserPage
                     );
 
-                    $brizySection->getItemWithDepth(0, 0, 0, 0, 0)->getValue()
+                    $imageTarget->getItemWithDepth(0)
+                        ->getValue()
                         ->set_width(100)
                         ->set_height(100)
                         ->set_heightSuffix('%')
@@ -44,24 +45,45 @@ class LeftMedia extends AbstractElement
                     // add the text on the left side of th bock
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbSectionItem,
-                        $brizySection->getItemWithDepth(0, 0, 1)
+                        $this->getTextComponent($brizySection)
                     );
                     $this->handleRichTextItem(
                         $elementContext,
                         $this->browserPage
                     );
-
-
                     break;
             }
         }
 
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0, 0, 1));
+        $elementContext = $data->instanceWithBrizyComponent($this->getTextComponent($brizySection));
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
 
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
+        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         return $brizySection;
+    }
+
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getImageComponent(BrizyComponent $brizySection):BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0, 0);
+    }
+
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getTextComponent(BrizyComponent $brizySection):BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 1);
+    }
+
+    protected function getSectionItemComponent(BrizyComponent $brizySection):BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
     }
 }

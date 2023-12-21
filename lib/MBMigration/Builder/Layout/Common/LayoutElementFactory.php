@@ -40,6 +40,10 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
         }
 
         switch ($design) {
+            case 'Bloom':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Bloom\ElementFactory(
+                    $this->blockKit, $this->browserPage,$this->queryBuilder
+                );
             case 'Voyage':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Voyage\ElementFactory(
                     $this->blockKit, $this->browserPage,$this->queryBuilder

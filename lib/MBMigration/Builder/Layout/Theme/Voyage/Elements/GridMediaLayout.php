@@ -18,7 +18,6 @@ class GridMediaLayout extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
-    use MbSectionUtils;
     use BrizyQueryBuilderAware;
 
     /**
