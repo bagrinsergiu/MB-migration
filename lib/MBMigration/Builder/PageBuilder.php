@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder;
 
+use Exception;
 use MBMigration\Browser\Browser;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\LayoutElementFactory;
@@ -91,7 +92,12 @@ class PageBuilder
 
             Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
             $this->sendStatus($slug, ExecutionTimer::stop());
-            $browser->closePage();
+
+            try {
+                $browser->closePage();
+            } catch (Exception $e) {
+                Utils::MESSAGES_POOL($e->getMessage());
+            }
 
             return true;
 
