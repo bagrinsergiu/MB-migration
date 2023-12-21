@@ -58,7 +58,16 @@ class PageBuilder
             $menu = $this->cache->get('menuList');
             $headItem = $this->cache->get('header', 'mainSection');
             $footerItem = $this->cache->get('footer', 'mainSection');
-//            file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
+            $fonts = $this->cache->get('fonts', 'settings');
+            foreach ($fonts as $font) {
+                if ($font['name'] === 'primary') {
+                    $fontFamily['Default'] = $font['uuid'];
+                } else {
+                    $fontFamily[$font['fontFamily']] = $font['uuid'];
+                }
+            }
+
+//          file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
             $themeContext = new ThemeContext(
                 $design,
                 $browserPage,
@@ -92,10 +101,12 @@ class PageBuilder
                 Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
                 $this->sendStatus($slug, ExecutionTimer::stop());
                 $browser->closePage();
+
                 return true;
             } else {
                 Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
                 $browser->closePage();
+
                 return false;
             }
         }
