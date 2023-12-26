@@ -63,7 +63,12 @@ class Anthem extends LayoutUtils
         $menuList = $this->cache->get('menuList');
 
         if ($menuList['create'] === false) {
-            $headElement = AnthemElementsController::getElement('head', $this->jsonDecode, $this->browser, [ 'menu' => $menuList, 'activePage' => '' ] );
+            $headElement = AnthemElementsController::getElement(
+                'head',
+                $this->jsonDecode,
+                $this->browser,
+                ['menu' => $menuList, 'activePage' => '']
+            );
             if ($headElement) {
                 Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
                 $menuList['create'] = true;
@@ -172,7 +177,12 @@ class Anthem extends LayoutUtils
             $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
         } else {
-            $result = AnthemElementsController::getElement($elementName, $this->jsonDecode, $this->browserPage, $params);
+            $result = AnthemElementsController::getElement(
+                $elementName,
+                $this->jsonDecode,
+                $this->browserPage,
+                $params
+            );
             if (!$result) {
                 Utils::log(
                     'Element '.$elementName.' does not exist. Page: '.$marker,
@@ -194,7 +204,7 @@ class Anthem extends LayoutUtils
         $browserPage->ExtractHover($selectorButton);
 
         foreach ($SectionPage as &$section) {
-            Utils::log('Extract Data' . $section['sectionId'], 1, 'ExtractDataFromPage');
+            Utils::log('Extract Data'.$section['sectionId'], 1, 'ExtractDataFromPage');
 
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
 
@@ -208,7 +218,7 @@ class Anthem extends LayoutUtils
                 foreach ($section['items'] as &$item) {
                     if ($item['category'] === 'text') {
 
-                        if ($item['item_type'] == 'title'){
+                        if ($item['item_type'] == 'title') {
                             $section['style']['border'] = $this->ExtractBorderColorFromItem(
                                 $browserPage,
                                 $item['id']
@@ -219,13 +229,13 @@ class Anthem extends LayoutUtils
 
                     } else {
 
-                        switch ($item['category']){
+                        switch ($item['category']) {
                             case "list":
                             case "tab":
                                 $this->ExtractItemContent($item['item'], $browserPage);
 
                                 foreach ($item['item'] as $listItem) {
-                                    if ($item['item_type'] == 'title'){
+                                    if ($item['item_type'] == 'title') {
                                         $section['style']['border'] = $this->ExtractBorderColorFromItem(
                                             $browserPage,
                                             $listItem['sectionId']
@@ -254,7 +264,7 @@ class Anthem extends LayoutUtils
                     if ($item['category'] === 'text') {
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item['id']);
 
-                        if ($item['item_type'] == 'title'){
+                        if ($item['item_type'] == 'title') {
                             $section['style']['border'] = $this->ExtractBorderColorFromItem(
                                 $browserPage,
                                 $item['id']
@@ -304,12 +314,23 @@ class Anthem extends LayoutUtils
             ]
         );
 
-        if(array_key_exists('error', $sectionStyles)){
+        if (array_key_exists('error', $sectionStyles)) {
             return [];
         }
-
+        $opacityIsSet = false;
         foreach ($sectionStyles['data'] as $key => $value) {
-            $style[$key] = $this->convertColor(trim($value, 'px'));
+            $convertedData = $this->convertColor(trim($style[$value], 'px'));
+            if (is_array($convertedData)) {
+                $style[$key] = $convertedData['color'];
+                $style['opacity'] = $convertedData['opacity'];
+                $opacityIsSet = true;
+            } else {
+                if ($opacityIsSet && $key == 'opacity') {
+                    continue;
+                } else {
+                    $style[$key] = $convertedData;
+                }
+            }
         }
 
         return $style;
@@ -330,12 +351,24 @@ class Anthem extends LayoutUtils
             ]
         );
 
-        if(array_key_exists('error', $sectionStyles)){
+        if (array_key_exists('error', $sectionStyles)) {
             return [];
         }
 
+        $opacityIsSet = false;
         foreach ($sectionStyles['data'] as $key => $value) {
-            $style[$key] = $this->convertColor(trim($value, 'px'));
+            $convertedData = $this->convertColor(trim($style[$value], 'px'));
+            if (is_array($convertedData)) {
+                $style[$key] = $convertedData['color'];
+                $style['opacity'] = $convertedData['opacity'];
+                $opacityIsSet = true;
+            } else {
+                if ($opacityIsSet && $key == 'opacity') {
+                    continue;
+                } else {
+                    $style[$key] = $convertedData;
+                }
+            }
         }
 
         return $style;
@@ -356,12 +389,24 @@ class Anthem extends LayoutUtils
             ]
         );
 
-        if(array_key_exists('error', $sectionStyles)){
+        if (array_key_exists('error', $sectionStyles)) {
             return [];
         }
 
+        $opacityIsSet = false;
         foreach ($sectionStyles['data'] as $key => $value) {
-            $style[$key] = $this->convertColor(trim($value, 'px'));
+            $convertedData = $this->convertColor(trim($style[$value], 'px'));
+            if (is_array($convertedData)) {
+                $style[$key] = $convertedData['color'];
+                $style['opacity'] = $convertedData['opacity'];
+                $opacityIsSet = true;
+            } else {
+                if ($opacityIsSet && $key == 'opacity') {
+                    continue;
+                } else {
+                    $style[$key] = $convertedData;
+                }
+            }
         }
 
         return $style;
@@ -382,7 +427,7 @@ class Anthem extends LayoutUtils
             ]
         );
 
-        if(array_key_exists('error', $sectionStyles)){
+        if (array_key_exists('error', $sectionStyles)) {
             return [];
         }
 
@@ -404,12 +449,24 @@ class Anthem extends LayoutUtils
             ]
         );
 
-        if(array_key_exists('error', $sectionStyles)){
+        if (array_key_exists('error', $sectionStyles)) {
             return [];
         }
 
+        $opacityIsSet = false;
         foreach ($sectionStyles['data'] as $key => $value) {
-            $style[$key] = $this->convertColor(trim($value, 'px'));
+            $convertedData = $this->convertColor(trim($style[$value], 'px'));
+            if (is_array($convertedData)) {
+                $style[$key] = $convertedData['color'];
+                $style['opacity'] = $convertedData['opacity'];
+                $opacityIsSet = true;
+            } else {
+                if ($opacityIsSet && $key == 'opacity') {
+                    continue;
+                } else {
+                    $style[$key] = $convertedData;
+                }
+            }
         }
 
         return $style;
@@ -423,7 +480,7 @@ class Anthem extends LayoutUtils
             'DEFAULT_FAMILY' => $this->fontFamily['Default'],
         ]);
 
-        if(array_key_exists('error', $richTextBrowserData)){
+        if (array_key_exists('error', $richTextBrowserData)) {
             return [];
         }
 
@@ -439,7 +496,7 @@ class Anthem extends LayoutUtils
         }
     }
 
-    private function convertColor($color): string
+    private function convertColor($color)
     {
 
         if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
@@ -450,8 +507,18 @@ class Anthem extends LayoutUtils
             $r = $matches[1];
             $g = $matches[2];
             $b = $matches[3];
+            $a = $matches[4];
 
-            return sprintf("#%02X%02X%02X", $r, $g, $b);
+            $color = sprintf("#%02X%02X%02X", $r, $g, $b);
+
+            if ($a == 0 && $color === "#000000") {
+                return '#ffffff';
+            } else {
+                return [
+                    'color' => sprintf("#%02X%02X%02X", $r, $g, $b),
+                    'opacity' => $a,
+                ];
+            }
         }
 
         if (preg_match_all('/\d+/', $color, $matches)) {

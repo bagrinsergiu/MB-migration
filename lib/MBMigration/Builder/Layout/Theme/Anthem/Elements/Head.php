@@ -66,7 +66,7 @@ class Head extends Element
         $url = PathSlugExtractor::getFullUrl($deepSlug['slug']);
 
         $this->browserPage = $this->browser->openPage($url, 'Anthem');
-        
+
         $objBlock = new ItemBuilder();
         $objBlock->newItem($section['main']);
 
@@ -89,7 +89,7 @@ class Head extends Element
         $this->setColorBackground($objBlock, $options);
 
         $this->setParseOptions($objBlock, $options, [
-            'borderRadius' => 10
+            'borderRadius' => 10,
         ]);
 
         $this->cache->set('flags', ['createdFirstSection' => false, 'bgColorOpacity' => true]);
@@ -205,6 +205,22 @@ class Head extends Element
         $this->cache->set('menuStyles', $result['data']);
         foreach ($result['data'] as $key => $value) {
             $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting($key, $value);
+        }
+
+        $options = [
+            'borderColorHex' => $result['data']['colorHex'] ?? '#d4d4d4',
+            'borderWidthType' => "ungrouped",
+            'borderStyle' => 'solid',
+            'borderColorOpacity' => 0.5,
+            'borderWidth' => 1,
+            'borderTopWidth' => 0,
+            'borderBottomWidth' => 1,
+            'borderRightWidth' => 0,
+            'borderLeftWidth' => 0,
+        ];
+
+        foreach ($options as $key => $value) {
+            $objBlock->item(0)->setting($key, $value);
         }
     }
 
