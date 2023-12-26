@@ -94,15 +94,16 @@ const getSubMenuV = (data: Required<NavData>) => {
   });
   const submenuTypography = prefixed(typography, "subMenu");
   const baseStyle = window.getComputedStyle(subNav);
-  const bgColor = parseColorString(baseStyle.backgroundColor) ?? {
-    hex: "#ffffff",
-    opacity: 1
-  };
+  const bgColor = parseColorString(baseStyle.backgroundColor);
 
   return {
     ...submenuTypography,
-    subMenuBgColorOpacity: bgColor.opacity,
-    subMenuBgColorHex: bgColor.hex
+    ...(bgColor &&
+      bgColor.opacity !== "0" && {
+        subMenuBgColorOpacity: bgColor.opacity,
+        subMenuBgColorHex: bgColor.hex,
+        subMenuBgColorPalette: ""
+      })
   };
 };
 
