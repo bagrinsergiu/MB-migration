@@ -1,4 +1,4 @@
-### Parser for Voyage Theme
+### Parser for Bloom Theme
 ## Requirements
 
 - node >= 16
