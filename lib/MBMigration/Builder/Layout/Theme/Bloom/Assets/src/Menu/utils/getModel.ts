@@ -3,7 +3,7 @@ import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { toCamelCase } from "utils/src/text/toCamelCase";
 
 interface Model {
-  node: HTMLElement;
+  node: Element;
   families: Record<string, string>;
   defaultFamily: string;
 }
@@ -47,7 +47,12 @@ export const getModel = (data: Model) => {
         break;
       }
       case "line-height": {
-        dic[toCamelCase(key)] = 1;
+        const value = parseInt(`${styles[key]}`);
+        if (isNaN(value)) {
+          dic[toCamelCase(key)] = 1;
+        } else {
+          dic[toCamelCase(key)] = value;
+        }
         break;
       }
       case "font-size": {
