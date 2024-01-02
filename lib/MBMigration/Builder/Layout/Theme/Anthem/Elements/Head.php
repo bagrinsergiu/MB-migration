@@ -211,12 +211,21 @@ class Head extends Element
             'borderColorHex' => $result['data']['colorHex'] ?? '#d4d4d4',
             'borderWidthType' => "ungrouped",
             'borderStyle' => 'solid',
-            'borderColorOpacity' => 0.5,
+            'borderColorOpacity' => 0.25,
             'borderWidth' => 1,
             'borderTopWidth' => 0,
             'borderBottomWidth' => 1,
             'borderRightWidth' => 0,
             'borderLeftWidth' => 0,
+
+            'boxShadow' => 'on',
+            'boxShadowColorOpacity' => 0.25,
+            'boxShadowColorHex' => $result['data']['colorHex'] ?? '#d4d4d4',
+            'boxShadowColorPalette' => '',
+            'boxShadowBlur' => 10,
+            'boxShadowSpread' => 0,
+            'boxShadowVertical' => 0,
+            'boxShadowHorizontal' => 0,
         ];
 
         foreach ($options as $key => $value) {

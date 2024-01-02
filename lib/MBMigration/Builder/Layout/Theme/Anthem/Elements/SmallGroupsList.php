@@ -70,7 +70,7 @@ class SmallGroupsList extends Element
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                    $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                    $this->textCreation($item, $objBlock);
                     $objBlock->item(0)->addItem($this->wrapperLine(
                         [
                             'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
@@ -83,12 +83,10 @@ class SmallGroupsList extends Element
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
-                    $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                    $this->textCreation($item, $objBlock);
                 }
             }
         }
-
-
 
 //        if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
 //
@@ -107,7 +105,7 @@ class SmallGroupsList extends Element
     /**
      * @throws \Exception
      */
-    private function textCreation($sectionData, $content, $options, $objBlock)
+    private function textCreation($sectionData, $objBlock)
     {
         $i = 0;
         foreach ($sectionData['brzElement'] as $textItem) {

@@ -317,23 +317,19 @@ class Anthem extends LayoutUtils
         if (array_key_exists('error', $sectionStyles)) {
             return [];
         }
-        $opacityIsSet = false;
-        foreach ($sectionStyles['data'] as $key => $value) {
-            $convertedData = $this->convertColor(trim($style[$value], 'px'));
-            if (is_array($convertedData)) {
-                $style[$key] = $convertedData['color'];
-                $style['opacity'] = $convertedData['opacity'];
-                $opacityIsSet = true;
-            } else {
-                if ($opacityIsSet && $key == 'opacity') {
-                    continue;
-                } else {
-                    $style[$key] = $convertedData;
-                }
-            }
-        }
+        $this->convertStyle($sectionStyles, $style);
 
         return $style;
+    }
+
+    private function removePx($inputString) {
+        $pos = strpos($inputString, "px");
+
+        if ($pos !== false) {
+            $inputString = substr_replace($inputString, "", $pos, 2);
+        }
+
+        return $inputString;
     }
 
     private function ExtractBorderColorFromItem($browserPage, int $sectionId): array
@@ -357,7 +353,7 @@ class Anthem extends LayoutUtils
 
         $opacityIsSet = false;
         foreach ($sectionStyles['data'] as $key => $value) {
-            $convertedData = $this->convertColor(trim($style[$value], 'px'));
+            $convertedData = $this->convertColor($this->removePx($value));
             if (is_array($convertedData)) {
                 $style[$key] = $convertedData['color'];
                 $style['opacity'] = $convertedData['opacity'];
@@ -492,6 +488,26 @@ class Anthem extends LayoutUtils
         foreach ($items as &$item) {
             if ($item['category'] === 'text') {
                 $item['brzElement'] = $this->ExtractTextContent($browserPage, $item['id']);
+            }
+        }
+    }
+
+    private function convertStyle($sectionStyles, &$style, $section = 'data')
+    {
+        $opacityIsSet = false;
+        foreach ($sectionStyles[$section] as $key => $value) {
+            $data = $this->removePx($value);
+            $convertedData = $this->convertColor(str_replace("px", "", $value));
+            if (is_array($convertedData)) {
+                $style[$key] = $convertedData['color'];
+                $style['opacity'] = $convertedData['opacity'];
+                $opacityIsSet = true;
+            } else {
+                if ($opacityIsSet && $key == 'opacity') {
+                    continue;
+                } else {
+                    $style[$key] = $convertedData;
+                }
             }
         }
     }
