@@ -10,6 +10,7 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\Even
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventGridLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Forms\Form;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Groups\GroupsList;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons\ListMediaLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Footer;
@@ -40,7 +41,7 @@ class AnthemElementsController
     /**
      * @throws \DOMException
      */
-    public static function getElement($elementName, $jsonKitElements, BrowserPage $browserPage, array $elementData = [])
+    public static function getElement($elementName, $jsonKitElements, $browserPage, array $elementData = [])
     {
         $element = self::switchGlobalElements($elementName, $jsonKitElements, $elementData, $browserPage);
         if ($element) {
@@ -68,7 +69,7 @@ class AnthemElementsController
     /**
      * @throws \DOMException
      */
-    private static function switchGlobalElements($elementName, $jsonKitElements, $elementData, BrowserPage $browserPage)
+    private static function switchGlobalElements($elementName, $jsonKitElements, $elementData, $browserPage)
     {
         switch ($elementName) {
             case "footer":
@@ -159,10 +160,6 @@ class AnthemElementsController
                 $element = new ThreeTopMediaCircle($jsonKitElements);
 
                 return $element->getElement($elementData);
-            case "small_groups_list":
-                $element = new SmallGroupsList($jsonKitElements);
-
-                return $element->getElement($elementData);
             case "livestream_layout":
                 $element = new LivestreamLayout($jsonKitElements);
 
@@ -191,7 +188,10 @@ class AnthemElementsController
                 $element = new Form(['element_form_type' => 'left']);
 
                 return $element->getElement($elementData);
+            case "small_groups_list":
+                $element = new SmallGroupsList($jsonKitElements);
 
+                return $element->getElement($elementData);
             case "list_media_layout":
                 $element = new ListMediaLayout();
 
@@ -227,12 +227,15 @@ class AnthemElementsController
         switch ($elementName) {
             case "SubMenu":
                 $element = new SubMenu($jsonKitElements);
+
                 return $element->getElement($elementData);
             case "item-image":
                 $element = new ItemImage($jsonKitElements);
+
                 return $element->getElement($elementData);
             case "item-empty":
                 $element = new ItemEmpty($jsonKitElements);
+
                 return $element->getElement($elementData);
             default:
                 return false;

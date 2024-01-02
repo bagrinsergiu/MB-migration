@@ -17,8 +17,8 @@ class JS
         $properties = ['background-color', 'opacity', 'border-bottom-color'];
         $result = ['background-color' => '#ffffff', 'opacity' => 1];
 
-        if(is_array($sectionID)){
-            $selector = '[data-id="'.$sectionID[0].'"] .' . $sectionID[1];
+        if (is_array($sectionID)) {
+            $selector = '[data-id="'.$sectionID[0].'"] .'.$sectionID[1];
         } else {
             $selector = '[data-id="'.$sectionID.'"]';
         }
@@ -26,7 +26,6 @@ class JS
             'selector' => $selector,
             'styleProperties' => json_encode($properties),
         ];
-
 
 
         if (!empty($styleProperties)) {
@@ -38,14 +37,26 @@ class JS
 
         $returned = self::Run($sectionID);
 
-        if(!empty($returned['error'])){
+        if (!empty($returned['error'])) {
             return false;
         }
 
         $style = $returned['style'];
+        $opacityIsSet = false;
         foreach ($properties as $key) {
             if (array_key_exists($key, $style)) {
-                $result[$key] = self::convertColor(trim($style[$key], 'px'));
+                $convertedData = self::convertColor(trim($style[$key], 'px'));
+                if (is_array($convertedData)) {
+                    $result[$key] = $convertedData['color'];
+                    $result['opacity'] = $convertedData['opacity'];
+                    $opacityIsSet = true;
+                } else {
+                    if ($opacityIsSet && $key == 'opacity') {
+                        continue;
+                    } else {
+                        $result[$key] = $convertedData;
+                    }
+                }
             }
         }
 
@@ -125,8 +136,6 @@ class JS
         self::$url = $pageUrl;
 
         $result = self::Run($sectionID);
-
-
 
 
         if (!empty($result['warns'])) {
@@ -254,8 +263,18 @@ class JS
             $r = $matches[1];
             $g = $matches[2];
             $b = $matches[3];
+            $a = $matches[4];
 
-            return sprintf("#%02X%02X%02X", $r, $g, $b);
+            $color = sprintf("#%02X%02X%02X", $r, $g, $b);
+
+            if ($a == 0 && $color === "#000000") {
+                return '#ffffff';
+            } else {
+                return [
+                    'color' => sprintf("#%02X%02X%02X", $r, $g, $b),
+                    'opacity' => $a,
+                ];
+            }
         }
 
         if (preg_match_all('/\d+/', $color, $matches)) {

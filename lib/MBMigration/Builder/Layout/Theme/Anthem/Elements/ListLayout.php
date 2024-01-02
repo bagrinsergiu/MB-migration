@@ -152,7 +152,13 @@ class ListLayout extends Element
 
                                     foreach ($element['value']['items'] as &$iconItem) {
                                         if ($iconItem['type'] == 'Icon') {
-                                            $iconItem['value']['hoverBgColorType'] = "solid";
+                                            if($iconItem['value']['hoverColorOpacity'] == 1){
+                                                $iconItem['value']['hoverColorOpacity'] = 0.9;
+                                            }
+                                        }
+
+                                        if ($iconItem['type'] == 'Button') {
+                                            $iconItem['value']['borderStyle'] = "none";
                                         }
                                     }
                                     $objItem->addItem($element);

@@ -26,17 +26,18 @@ class Head extends Element
      */
     private $activePage;
 
-    private $browserPage;
+    private $browser;
     /**
      * @var array
      */
     private $fontFamily;
 
     const SELECTOR = "#main-navigation li:not(.selected) a";
+    private $browserPage;
 
-    public function __construct($jsonKitElements, BrowserPage $browserPage)
+    public function __construct($jsonKitElements, $browser)
     {
-        $this->browserPage = $browserPage;
+        $this->browser = $browser;
         $this->cache = VariableCache::getInstance();
         $this->jsonDecode = $jsonKitElements;
         $this->fontFamily = $this->getFontsFamily();
@@ -64,6 +65,8 @@ class Head extends Element
         $deepSlug = PathSlugExtractor::findDeepestSlug($treePages);
         $url = PathSlugExtractor::getFullUrl($deepSlug['slug']);
 
+        $this->browserPage = $this->browser->openPage($url, 'Anthem');
+
         $objBlock = new ItemBuilder();
         $objBlock->newItem($section['main']);
 
@@ -85,7 +88,9 @@ class Head extends Element
 
         $this->setColorBackground($objBlock, $options);
 
-        $this->setParseOptions($objBlock, $options);
+        $this->setParseOptions($objBlock, $options, [
+            'borderRadius' => 10,
+        ]);
 
         $this->cache->set('flags', ['createdFirstSection' => false, 'bgColorOpacity' => true]);
 
@@ -190,15 +195,41 @@ class Head extends Element
         $objBlock->item(0)->setting('bgColorType', 'solid');
     }
 
-    private function setParseOptions(ItemBuilder $objBlock, $options)
+    private function setParseOptions(ItemBuilder $objBlock, $options, array $defOptions = [])
     {
         $this->browserPage->ExtractHoverMenu(self::SELECTOR);
 
         $result = $this->ExtractMenuStyle($this->browserPage, $options['sectionID']);
 
+        $result['data'] = array_merge_recursive($result['data'], $defOptions);
         $this->cache->set('menuStyles', $result['data']);
         foreach ($result['data'] as $key => $value) {
             $objBlock->item(0)->item(0)->item(0)->item(1)->item(0)->setting($key, $value);
+        }
+
+        $options = [
+            'borderColorHex' => $result['data']['colorHex'] ?? '#d4d4d4',
+            'borderWidthType' => "ungrouped",
+            'borderStyle' => 'solid',
+            'borderColorOpacity' => 0.25,
+            'borderWidth' => 1,
+            'borderTopWidth' => 0,
+            'borderBottomWidth' => 1,
+            'borderRightWidth' => 0,
+            'borderLeftWidth' => 0,
+
+            'boxShadow' => 'on',
+            'boxShadowColorOpacity' => 0.25,
+            'boxShadowColorHex' => $result['data']['colorHex'] ?? '#d4d4d4',
+            'boxShadowColorPalette' => '',
+            'boxShadowBlur' => 10,
+            'boxShadowSpread' => 0,
+            'boxShadowVertical' => 0,
+            'boxShadowHorizontal' => 0,
+        ];
+
+        foreach ($options as $key => $value) {
+            $objBlock->item(0)->setting($key, $value);
         }
     }
 

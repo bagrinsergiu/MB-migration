@@ -26,36 +26,49 @@ class GalleryLayout extends AbstractElement
         $arrows = $mbSection['settings']['sections']['gallery']['arrows'] ?? true;
         $markers = $mbSection['settings']['sections']['gallery']['markers'] ?? true;
         $autoplay = $mbSection['settings']['sections']['gallery']['autoplay'] ?? true;
+        $animation = $mbSection['settings']['sections']['gallery']['transition'] ?? 'Slide';
+        $slideDuration = (float)$mbSection['settings']['sections']['gallery']['slide_duration'] ?? 0.5;
+        $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
 
-        $brizySection->getValue()->set_sliderDots($markers?"arrow":"none");
-        $brizySection->getValue()->set_sliderArrows($arrows?"dots":"none");
-        $brizySection->getValue()->set_sliderAutoPlay($autoplay?"on":"off");
+        $brizySection->getValue()->set_sliderDots($markers ? "circle" : "none");
+        $brizySection->getValue()->set_sliderArrows($arrows ? "heavy" : "none");
+        $brizySection->getValue()->set_sliderAutoPlay($autoplay ? "on" : "off");
+        $brizySection->getValue()->set_animationName('slideInRight'); // as there is only one animation match
+        $brizySection->getValue()->set_animationDuration($transitionDuration * 1000);
+        $brizySection->getValue()->set_animationDelay($slideDuration * 1000);
 
         $brizySectionItems = [];
         foreach ($data->getMbSection()['items'] as $mbItem) {
             $brizySectionItem = new BrizyComponent($slideJson);
-            $brizyComponentValue = $brizySectionItem->getItemValueWithDepth(0,0);
-            $brizyComponentValue
-                ->set_marginTop(0)
-                ->set_marginBottom(0)
-                ->set_imageSrc($mbItem['content'])
-                ->set_imageFileName($mbItem['imageFileName'])
-                ->set_imageExtension($mbItem['settings']['slide']['extension']);
-
-                if(isset($mbItem['settings']['slide']['slide_width'])) {
-                    $brizyComponentValue->set_width($mbItem['settings']['slide']['slide_width']);
-                    $brizyComponentValue->set_widthSuffix('px');
-                }
-                if(isset($mbItem['settings']['slide']['slide_height'])) {
-                    $brizyComponentValue->set_height($mbItem['settings']['slide']['slide_height']);
-                    $brizyComponentValue->set_heightSuffix('px');
-                }
-
-            $brizySectionItems[] = $brizySectionItem;
+            $brizySectionItems[] = $this->setSlideImage($brizySectionItem, $mbItem);
         }
 
         $brizySection->getValue()->set_items($brizySectionItems);
+
         return $brizySection;
+    }
+
+    protected function setSlideImage(BrizyComponent $brizySectionItem, $mbItem): BrizyComponent
+    {
+        $brizyComponentValue = $brizySectionItem->getItemWithDepth(0, 0)->getValue();
+
+        $brizyComponentValue
+            ->set_marginTop(0)
+            ->set_marginBottom(0)
+            ->set_imageSrc($mbItem['content'])
+            ->set_imageFileName($mbItem['imageFileName'])
+            ->set_imageExtension($mbItem['settings']['slide']['extension']);
+
+        if (isset($mbItem['settings']['slide']['slide_width'])) {
+            $brizyComponentValue->set_width($mbItem['settings']['slide']['slide_width']);
+            $brizyComponentValue->set_widthSuffix('px');
+        }
+        if (isset($mbItem['settings']['slide']['slide_height'])) {
+            $brizyComponentValue->set_height($mbItem['settings']['slide']['slide_height']);
+            $brizyComponentValue->set_heightSuffix('px');
+        }
+
+        return $brizySectionItem;
     }
 
 }

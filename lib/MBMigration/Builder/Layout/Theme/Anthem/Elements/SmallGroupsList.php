@@ -70,7 +70,7 @@ class SmallGroupsList extends Element
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                    $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                    $this->textCreation($item, $objBlock);
                     $objBlock->item(0)->addItem($this->wrapperLine(
                         [
                             'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
@@ -83,21 +83,21 @@ class SmallGroupsList extends Element
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
-                    $this->textCreation($item['id'], $item['content'], $options, $objBlock);
+                    $this->textCreation($item, $objBlock);
                 }
             }
         }
 
-        if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
-
-            $buttonOptions = [
-                'linkExternal'=> $sectionData['settings']['sections']['donations']['url'],
-                'text'=>  $sectionData['settings']['sections']['donations']['text']
-            ];
-            $position = $sectionData['settings']['sections']['donations']['alignment'];
-
-            $objBlock->item(0)->addItem($this->button($buttonOptions, $position));
-        }
+//        if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
+//
+//            $buttonOptions = [
+//                'linkExternal'=> $sectionData['settings']['sections']['donations']['url'],
+//                'text'=>  $sectionData['settings']['sections']['donations']['text']
+//            ];
+//            $position = $sectionData['settings']['sections']['donations']['alignment'];
+//
+//            $objBlock->item(0)->addItem($this->button($buttonOptions, $position));
+//        }
 
         return json_encode($this->replaceIdWithRandom($objBlock->get()));
     }
@@ -105,22 +105,48 @@ class SmallGroupsList extends Element
     /**
      * @throws \Exception
      */
-    private function textCreation($itemID, $content, $options, $objBlock)
+    private function textCreation($sectionData, $objBlock)
     {
-        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
-        if(!is_array($richText)) {
-            $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
-        } else {
-            if(!empty($richText['text'])) {
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText['text']));
-            }
-
-            if(!empty($richText['embeds']['persist'])) {
-                $result = $this->findEmbeddedPasteDivs($content);
-                foreach ($result as $item) {
-                    $objBlock->item(0)->addItem($this->embedCode($item));
-                }
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(is_array($embedCode)){
+                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                    foreach ($textItem['value']['items'] as &$iconItem) {
+                        if ($iconItem['type'] == 'Button') {
+                            $iconItem['value']['borderStyle'] = "none";
+                        }
+                    }
+                    $objBlock->item(0)->addItem($textItem);
+                    break;
+                case 'Wrapper':
+                    $objBlock->item(0)->addItem($textItem);
+                    break;
             }
         }
+
+//        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
+//        if(!is_array($richText)) {
+//            $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+//        } else {
+//            if(!empty($richText['text'])) {
+//                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText['text']));
+//            }
+//
+//            if(!empty($richText['embeds']['persist'])) {
+//                $result = $this->findEmbeddedPasteDivs($content);
+//                foreach ($result as $item) {
+//                    $objBlock->item(0)->addItem($this->embedCode($item));
+//                }
+//            }
+//        }
     }
 }

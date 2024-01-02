@@ -60,6 +60,9 @@ class RightMediaCircle extends Element
                     $objBlock->item(0)->item(0)->item(1)->item(0)->item(0)->setText($richText);
                 }
                 if($item['item_type']=='body' && $this->showHeader($sectionData)){
+
+                    $this->textCreation($item, $objBlock);
+
                     $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
                     $objBlock->item(0)->item(0)->item(1)->item(1)->item(0)->setText($richText);
                 }
@@ -68,4 +71,35 @@ class RightMediaCircle extends Element
         $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
     }
+    private function textCreation($sectionData, $objBlock)
+    {
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(!empty($embedCode)){
+                            $objBlock->item(0)->item(0)->item(1)->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                    foreach ($textItem['value']['items'] as &$iconItem) {
+                        if ($iconItem['type'] == 'Button') {
+                            $iconItem['value']['borderStyle'] = "none";
+                        }
+                    }
+                    $objBlock->item(0)->item(0)->item(1)->addItem($textItem);
+                    break;
+                case 'Wrapper':
+                    $objBlock->item(0)->item(0)->item(1)->addItem($textItem);
+                    break;
+            }
+        }
+    }
+
+
+
 }

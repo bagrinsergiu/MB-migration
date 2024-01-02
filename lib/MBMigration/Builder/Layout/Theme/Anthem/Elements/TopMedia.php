@@ -129,6 +129,13 @@ class TopMedia extends Element
                     }
                     break;
                 case 'Cloneable':
+                    foreach ($textItem['value']['items'] as &$iconItem) {
+                        if ($iconItem['type'] == 'Button') {
+                            $iconItem['value']['borderStyle'] = "none";
+                        }
+                    }
+                    $objBlock->item()->item()->item()->addItem($textItem);
+                    break;
                 case 'Wrapper':
                     $objBlock->item()->item()->item()->addItem($textItem);
                     break;

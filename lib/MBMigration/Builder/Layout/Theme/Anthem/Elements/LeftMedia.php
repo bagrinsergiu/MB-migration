@@ -51,7 +51,6 @@ class LeftMedia extends Element
         $this->defaultOptionsForElement($general, $options);
         $this->setOptionsForTextColor($sectionData, $options);
         $this->backgroundColor($objBlock, $sectionData, $options);
-
         foreach ($sectionData['items'] as $item) {
             if($item['category'] == 'photo' && $item['content'] !== '') {
                 $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('imageSrc', $item['content']);

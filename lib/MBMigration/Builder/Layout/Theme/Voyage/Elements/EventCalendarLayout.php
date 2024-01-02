@@ -9,20 +9,7 @@ use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class EventCalendarLayout extends AbstractElement
+class EventCalendarLayout extends \MBMigration\Builder\Layout\Common\Element\EventCalendarLayout
 {
-    use RichTextAble;
-    use SectionStylesAble;
-    use MbSectionUtils;
-
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
-    {
-        $mbSection = $data->getMbSection();
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
-
-        return $brizySection;
-    }
+    
 }
