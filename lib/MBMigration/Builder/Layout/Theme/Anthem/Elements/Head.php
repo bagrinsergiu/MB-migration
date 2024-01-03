@@ -156,7 +156,35 @@ class Head extends Element
                 $imageLogo['imageFileName'] = $item['imageFileName'];
                 $imageLogo['imageWidth'] = $item['settings']['image']['width'];
                 $imageLogo['imageHeight'] = $item['settings']['image']['height'];
+
+                if ($item['link'] != '') {
+                    $imageLogo['link'] = $item['link'];
+                } else {
+                    $imageLogo['link'] = $this->cache->get('ParentPages')[0]['slug'];
+                }
+
+                if(isset($item['new_window']) && $item['new_window']){
+                    $imageLogo['new_window'] = 'on';
+                } else {
+                    $imageLogo['new_window'] = 'off';
+                }
+
             }
+        }
+
+        if ($imageLogo['link'] != '') {
+
+            $urlComponents = parse_url($imageLogo['link']);
+
+            if(!empty($urlComponents['host'])) {
+                $slash = '';
+            } else {
+                $slash = '/';
+            }
+
+            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkType', 'external');
+            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternal', $slash . $imageLogo['link']);
+            $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('linkExternalBlank', $imageLogo['new_window']);
         }
 
         if (!empty($imageLogo['imageWidth']) && !empty($imageLogo['imageHeight'])) {
@@ -166,6 +194,7 @@ class Head extends Element
         if (!empty($imageLogo['width'])) {
             $objBlock->item(0)->item(0)->item(0)->item(0)->item(0)->setting('width', $imageLogo['width']);
         }
+
         $objBlock->item(0)->item(0)->item(0)->item(0)->setting('horizontalAlign', 'center');
         $objBlock->item(0)->item(0)->item(0)->item(0)->setting('mobileHorizontalAlign', 'left');
 

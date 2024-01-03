@@ -227,7 +227,7 @@ class MigrationPlatform
     private function launch($parentPages): void
     {
         foreach ($parentPages as $page) {
-            if($page['hidden']){ continue; }
+//            if($page['hidden']){ continue; }
 
             if(!empty($page['parentSettings'])){
                $settings =  json_decode($page['parentSettings'], true);
@@ -508,7 +508,7 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function creteNewPage($slug, $title, $setActivePage = true, bool $protectedPage = false)
+    private function creteNewPage($slug, $title, $protectedPage = false, $setActivePage = true)
     {
         if ($this->pageCheck($slug)) {
             Utils::log('Request to create a new page: '.$slug, 1, 'creteNewPage');
