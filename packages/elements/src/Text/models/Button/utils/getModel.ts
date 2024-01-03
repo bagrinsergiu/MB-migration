@@ -23,6 +23,8 @@ const getBgColor = mPipe(
   parseColorString,
   normalizeOpacity
 );
+
+const getTransform = mPipe(Obj.readKey("text-transform"), Str.read);
 const getText = pipe(Obj.readKey("text"), Str.read, onNullish("BUTTON"));
 
 export const getStyleModel = (node: Element): Record<string, Literal> => {
@@ -50,13 +52,26 @@ export const getModel = (node: Element): ElementModel => {
   const isLink = node.tagName === "A";
   const modelStyle = getStyleModel(node);
   const globalModel = getGlobalButtonModel();
+  const textTransform = getTransform(getNodeStyle(node));
+  let text = getText(node);
+
+  switch (textTransform) {
+    case "uppercase": {
+      text = text.toUpperCase();
+      break;
+    }
+    case "lowercase": {
+      text = text.toUpperCase();
+      break;
+    }
+  }
 
   return {
     type: "Button",
     value: {
       _id: uuid(),
       _styles: ["button"],
-      text: getText(node),
+      text,
       ...globalModel,
       ...modelStyle,
       ...(isLink && {
