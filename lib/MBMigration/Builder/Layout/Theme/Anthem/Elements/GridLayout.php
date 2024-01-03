@@ -105,7 +105,7 @@ class GridLayout extends Element
             $objRow->newItem($decoded['row']);
 
             $countItems = count($row);
-            foreach ($row as $section) {
+            foreach ($row as $sction) {
                 $objItem->newItem($decoded['item']);
                 $width = 100 / $countItems;
                 $width = number_format($width, 2, '.', '');
@@ -128,8 +128,8 @@ class GridLayout extends Element
                                     $imageOptions['imageFileName'] = $sectionItem['imageFileName'];
 
 
-                                    //                                $objItem->setting('bgImageSrc', $sectionItem['content']);
-                                    //                                $objItem->setting('bgImageFileName', $sectionItem['imageFileName']);
+                                    //$objItem->setting('bgImageSrc', $sectionItem['content']);
+                                    //$objItem->setting('bgImageFileName', $sectionItem['imageFileName']);
 
                                     if ($sectionItem['link'] != '') {
 

@@ -112,6 +112,8 @@ class ListLayout extends Element
                         $objImage->item(0)->item(0)->setting('linkExternal', $item['link']);
                     }
 
+                    $objImage->item(0)->setting('mobileHorizontalAlign', 'center');
+
                     if (empty($options['photoPosition']) || $options['photoPosition'] === 'left') {
                         $objRow->addItem($objImage->get());
                     }
