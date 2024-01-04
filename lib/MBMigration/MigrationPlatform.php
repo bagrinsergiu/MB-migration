@@ -105,6 +105,7 @@ class MigrationPlatform
 
         if ($projectID_Brizy == 0) {
             $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4352671, 'id');
+//            $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4423676, 'id');
         } else {
             $this->projectID_Brizy = $projectID_Brizy;
         }
@@ -123,7 +124,7 @@ class MigrationPlatform
         $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
         $graphToken = $this->brizyApi->getGraphToken($this->projectID_Brizy);
         $this->cache->set('graphToken', $graphToken);
-        file_put_contents(JSON_PATH.'/brizy_api_token.json',$graphToken);
+        //file_put_contents(JSON_PATH.'/brizy_api_token.json',$graphToken);
         $this->QueryBuilder = new QueryBuilder(
             $this->graphApiBrizy,
             $this->brizyApi->getGraphToken($this->projectID_Brizy)
@@ -159,7 +160,6 @@ class MigrationPlatform
         $mainSection = $this->uploadPicturesFromSections($mainSection);
         $this->cache->set('mainSection', $mainSection);
         file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
-
         $this->createBlankPages($parentPages);
         $this->createMenuStructure();
 
@@ -226,7 +226,7 @@ class MigrationPlatform
     private function launch($parentPages): void
     {
         foreach ($parentPages as $page) {
-            if($page['hidden']){ continue; }
+//            if($page['hidden']){ continue; }
 
             if(!empty($page['parentSettings'])){
                $settings =  json_decode($page['parentSettings'], true);
@@ -507,7 +507,7 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function creteNewPage($slug, $title, $setActivePage = true, bool $protectedPage = false)
+    private function creteNewPage($slug, $title, $protectedPage = false, $setActivePage = true)
     {
         if ($this->pageCheck($slug)) {
             Utils::log('Request to create a new page: '.$slug, 1, 'creteNewPage');

@@ -112,6 +112,8 @@ class ListLayout extends Element
                         $objImage->item(0)->item(0)->setting('linkExternal', $item['link']);
                     }
 
+                    $objImage->item(0)->setting('mobileHorizontalAlign', 'center');
+
                     if (empty($options['photoPosition']) || $options['photoPosition'] === 'left') {
                         $objRow->addItem($objImage->get());
                     }
@@ -151,9 +153,11 @@ class ListLayout extends Element
                                     $element['value']['mobileHorizontalAlign'] = 'center';
 
                                     foreach ($element['value']['items'] as &$iconItem) {
-//                                        if ($iconItem['type'] == 'Icon') {
-//                                            $iconItem['value']['hoverColorOpacity'] = 0.9;
-//                                        }
+                                        if ($iconItem['type'] == 'Icon') {
+                                            if($iconItem['value']['hoverColorOpacity'] == 1){
+                                                $iconItem['value']['hoverColorOpacity'] = 0.9;
+                                            }
+                                        }
 
                                         if ($iconItem['type'] == 'Button') {
                                             $iconItem['value']['borderStyle'] = "none";

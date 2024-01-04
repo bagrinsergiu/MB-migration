@@ -301,9 +301,9 @@ class MBProjectDataCollector
         }
 
         foreach ($requestPageSite as $pageSite) {
-            if ($pageSite['hidden'] === true) {
-                continue;
-            }
+//            if ($pageSite['hidden'] === true && ($pageSite['slug'] !== 'home' || $pageSite['slug'] !== 'welcome')) {
+//                continue;
+//            }
             if ($pageSite['password_protected'] === null) {
                 $pageSite['password_protected'] = false;
             }

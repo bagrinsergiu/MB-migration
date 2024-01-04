@@ -59,9 +59,9 @@ class Footer extends Element
 
         $this->generalParameters($objBlock, $options, $sectionData);
 
-        $color = $this->cache->get('nav-subpalette', 'subpalette');
         $style = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
         $objBlock->setting('bgColorHex', $style['background-color']);
+        $objBlock->setting('bgColorOpacity', $style['opacity']);
 
         if ($this->checkArrayPath($sectionData, 'settings/background/photo')) {
             $imageAdd = true;

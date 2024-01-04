@@ -31,7 +31,6 @@ class GalleryLayout extends AbstractElement
         $slideDuration = 0.5;
         $transitionDuration = 0.1;
         if (isset($mbSection['settings']['sections']['gallery']['slide_duration'])) {
-
             $slideDuration = (float)$mbSection['settings']['sections']['gallery']['slide_duration'] ?? 0.5;
         }
         if (isset($mbSection['settings']['sections']['gallery']['transition_duration'])) {
