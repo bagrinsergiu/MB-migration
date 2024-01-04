@@ -105,7 +105,7 @@ class GridLayout extends Element
             $objRow->newItem($decoded['row']);
 
             $countItems = count($row);
-            foreach ($row as $sction) {
+            foreach ($row as $section) {
                 $objItem->newItem($decoded['item']);
                 $width = 100 / $countItems;
                 $width = number_format($width, 2, '.', '');
