@@ -1,4 +1,4 @@
-import { styleExtractor, Data } from "elements/src/StyleExtractor";
+import { Data, styleExtractor } from "elements/src/StyleExtractor";
 import { Entry } from "elements/src/types/type";
 
 const getData = (): Data => {

@@ -242,10 +242,10 @@ abstract class Element extends LayoutUtils
 
     protected function generalParameters($objBlock, &$options, $sectionData, $primary = [])
     {
-        $padding = $sectionData['style'];
+        $padding = $sectionData['style'] ?? [];
 
         $options = [
-            'position' => $sectionData['settings']['pagePosition'],
+            'position' => $sectionData['settings']['pagePosition'] ?? '',
             'currentPageURL' => $this->cache->get('CurrentPageURL'),
             'sectionID' => $sectionData['sectionId'],
             'fontsFamily' => $this->getFontsFamily()

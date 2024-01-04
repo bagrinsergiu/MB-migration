@@ -124,7 +124,7 @@ class MigrationPlatform
         $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
         $graphToken = $this->brizyApi->getGraphToken($this->projectID_Brizy);
         $this->cache->set('graphToken', $graphToken);
-//        file_put_contents(JSON_PATH.'/brizy_api_token.json',$graphToken);
+        //file_put_contents(JSON_PATH.'/brizy_api_token.json',$graphToken);
         $this->QueryBuilder = new QueryBuilder(
             $this->graphApiBrizy,
             $this->brizyApi->getGraphToken($this->projectID_Brizy)
@@ -160,7 +160,6 @@ class MigrationPlatform
         $mainSection = $this->uploadPicturesFromSections($mainSection);
         $this->cache->set('mainSection', $mainSection);
 //        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
-
         $this->createBlankPages($parentPages);
         $this->createMenuStructure();
 

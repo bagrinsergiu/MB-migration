@@ -52,7 +52,7 @@ abstract class AbstractElement implements ElementInterface
     protected function canShowBody($sectionData): bool
     {
         $sectionCategory = $sectionData['category'];
-        if (isset($mbSectionData['settings']['sections'][$sectionCategory]['show_body'])) {
+        if (isset($sectionData['settings']['sections'][$sectionCategory]['show_body'])) {
             return $sectionData['settings']['sections'][$sectionCategory]['show_body'];
         }
 

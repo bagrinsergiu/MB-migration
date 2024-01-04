@@ -27,8 +27,15 @@ class GalleryLayout extends AbstractElement
         $markers = $mbSection['settings']['sections']['gallery']['markers'] ?? true;
         $autoplay = $mbSection['settings']['sections']['gallery']['autoplay'] ?? true;
         $animation = $mbSection['settings']['sections']['gallery']['transition'] ?? 'Slide';
-        $slideDuration = (float)$mbSection['settings']['sections']['gallery']['slide_duration'] ?? 0.5;
-        $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
+
+        $slideDuration = 0.5;
+        $transitionDuration = 0.1;
+        if (isset($mbSection['settings']['sections']['gallery']['slide_duration'])) {
+            $slideDuration = (float)$mbSection['settings']['sections']['gallery']['slide_duration'] ?? 0.5;
+        }
+        if (isset($mbSection['settings']['sections']['gallery']['transition_duration'])) {
+            $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
+        }
 
         $brizySection->getValue()->set_sliderDots($markers ? "circle" : "none");
         $brizySection->getValue()->set_sliderArrows($arrows ? "heavy" : "none");

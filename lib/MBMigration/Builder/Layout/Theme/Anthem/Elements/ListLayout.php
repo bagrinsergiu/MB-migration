@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMDocument;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -124,7 +125,40 @@ class ListLayout extends Element
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'title') {
                         foreach ($item['brzElement'] as $element) {
-                            $objItem->addItem($element);
+                            switch ($element['type']) {
+                                case 'EmbedCode':
+                                    if (!empty($sectionData['content'])) {
+                                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                                        if (is_array($embedCode)) {
+                                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
+                                        }
+                                        $i++;
+                                    }
+                                    break;
+                                case 'Cloneable':
+                                    $element['value']['mobileHorizontalAlign'] = 'center';
+
+                                    foreach ($element['value']['items'] as &$iconItem) {
+                                        if ($iconItem['type'] == 'Icon') {
+                                            if($iconItem['value']['hoverColorOpacity'] == 1){
+                                                $iconItem['value']['hoverColorOpacity'] = 0.9;
+                                            }
+                                        }
+
+                                        if ($iconItem['type'] == 'Button') {
+                                            $iconItem['value']['borderStyle'] = "none";
+                                        }
+                                    }
+                                    $objItem->addItem($element);
+                                    break;
+                                case 'Wrapper':
+                                    $element['value']['items'][0]['value']['mobileContentHorizontalAlign'] = 'center';
+                                    $element['value']['items'][0]['value']['text'] = $this->addClassToTags($element['value']['items'][0]['value']['text'], 'brz-text-xs-center');
+                                    $objItem->addItem($element);
+//                                    $objBlock->item(0)->addItem($element);
+                                    break;
+
+                            }
                         }
                         $objItem->addItem(
                             $this->wrapperLine([
@@ -166,10 +200,10 @@ class ListLayout extends Element
                                     $objItem->addItem($element);
                                     break;
                                 case 'Wrapper':
+                                    $element['value']['items'][0]['value']['mobileContentHorizontalAlign'] = 'center';
                                     $objItem->addItem($element);
 //                                    $objBlock->item(0)->addItem($element);
                                     break;
-
                             }
                         }
                     }
@@ -186,4 +220,31 @@ class ListLayout extends Element
 
         return json_encode($block);
     }
+
+    private function addClassToTags($htmlString, $className) {
+        $dom = new DOMDocument;
+
+        $dom->loadHTML($htmlString, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+        $tags = $dom->getElementsByTagName('*');
+        foreach ($tags as $tag) {
+
+            $currentClasses = $tag->getAttribute('class');
+
+            $currentClassesArray = explode(' ', $currentClasses);
+
+            if (!in_array($className, $currentClassesArray)) {
+                $currentClassesArray[] = $className;
+                $newClasses = implode(' ', $currentClassesArray);
+
+                $tag->setAttribute('class', $newClasses);
+            }
+        }
+
+        $updatedHtmlString = $dom->saveHTML();
+
+        return str_replace(['<!DOCTYPE html>', '<html>', '</html>'], '', $updatedHtmlString);
+    }
+
+
 }

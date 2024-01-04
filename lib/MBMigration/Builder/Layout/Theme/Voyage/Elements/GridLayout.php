@@ -11,11 +11,6 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
 {
-    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
-    {
-        return $brizyComponent->getItemWithDepth(0, 0, 0);
-    }
-
     protected function getItemsPerRow(): int
     {
         return 3;
