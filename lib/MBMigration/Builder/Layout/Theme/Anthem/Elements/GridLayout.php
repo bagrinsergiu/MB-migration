@@ -128,8 +128,8 @@ class GridLayout extends Element
                                     $imageOptions['imageFileName'] = $sectionItem['imageFileName'];
 
 
-                                    //                                $objItem->setting('bgImageSrc', $sectionItem['content']);
-                                    //                                $objItem->setting('bgImageFileName', $sectionItem['imageFileName']);
+                                    //$objItem->setting('bgImageSrc', $sectionItem['content']);
+                                    //$objItem->setting('bgImageFileName', $sectionItem['imageFileName']);
 
                                     if ($sectionItem['link'] != '') {
 

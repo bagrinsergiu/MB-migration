@@ -237,15 +237,15 @@ class Head extends Element
         }
 
         $options = [
-            'borderColorHex' => $result['data']['colorHex'] ?? '#d4d4d4',
-            'borderWidthType' => "ungrouped",
-            'borderStyle' => 'solid',
-            'borderColorOpacity' => 0.25,
-            'borderWidth' => 1,
-            'borderTopWidth' => 0,
-            'borderBottomWidth' => 1,
-            'borderRightWidth' => 0,
-            'borderLeftWidth' => 0,
+//            'borderColorHex' => $result['data']['colorHex'] ?? '#d4d4d4',
+//            'borderWidthType' => "ungrouped",
+//            'borderStyle' => 'solid',
+//            'borderColorOpacity' => 0.25,
+//            'borderWidth' => 1,
+//            'borderTopWidth' => 0,
+//            'borderBottomWidth' => 1,
+//            'borderRightWidth' => 0,
+//            'borderLeftWidth' => 0,
 
             'boxShadow' => 'on',
             'boxShadowColorOpacity' => 0.25,
