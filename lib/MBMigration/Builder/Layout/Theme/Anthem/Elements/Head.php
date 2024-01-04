@@ -157,7 +157,7 @@ class Head extends Element
                 $imageLogo['imageWidth'] = $item['settings']['image']['width'];
                 $imageLogo['imageHeight'] = $item['settings']['image']['height'];
 
-                if ($item['link'] != '') {
+                if (isset($item['link']) && $item['link'] !== '') {
                     $imageLogo['link'] = $item['link'];
                 } else {
                     $imageLogo['link'] = $this->cache->get('ParentPages')[0]['slug'];
