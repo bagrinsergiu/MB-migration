@@ -76,14 +76,12 @@ trait SectionStylesAble
                     'margin-top',
                     'margin-bottom',
                     'margin-left',
-                    'margin-right'
+                    'margin-right',
                 ],
                 'FAMILIES' => $families,
                 'DEFAULT_FAMILY' => $defaultFont,
             ]
         );
-
-
         $sectionWrapperStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
@@ -104,19 +102,22 @@ trait SectionStylesAble
         );
 
         if (isset($mbSectionItem['settings']['sections']['background'])) {
-            $resultingSectionStyles = $browserPage->evaluateScript(
-                'StyleExtractor.js',
-                [
-                    'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"] .bg-opacity',
-                    'STYLE_PROPERTIES' => [
-                        'opacity',
-                    ],
-                    'FAMILIES' => $families,
-                    'DEFAULT_FAMILY' => $defaultFont,
-                ]
-            );
-
-            $sectionStyles['data']['opacity'] = $resultingSectionStyles['data']['opacity'];
+            if (isset($mbSectionItem['settings']['sections']['background']['opacity'])) {
+                $sectionStyles['data']['opacity'] = $mbSectionItem['settings']['sections']['background']['opacity'];
+            } else {
+                $resultingSectionStyles = $browserPage->evaluateScript(
+                    'StyleExtractor.js',
+                    [
+                        'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"] .bg-opacity',
+                        'STYLE_PROPERTIES' => [
+                            'opacity',
+                        ],
+                        'FAMILIES' => $families,
+                        'DEFAULT_FAMILY' => $defaultFont,
+                    ]
+                );
+                $sectionStyles['data']['opacity'] = $resultingSectionStyles['data']['opacity'];
+            }
         }
 
         if (isset($sectionStyles['error'])) {
@@ -155,7 +156,12 @@ trait SectionStylesAble
 
     private function hasImageBackground($mbSectionItem)
     {
-        return isset($mbSectionItem['settings']['sections']['background']['photo']);
+        return isset($mbSectionItem['settings']['sections']['background']['photo']) && $mbSectionItem['settings']['sections']['background']['photo'] != '';
+    }
+
+    private function hasVideoBackground($mbSectionItem)
+    {
+        return isset($mbSectionItem['settings']['sections']['background']['video']) && $mbSectionItem['settings']['sections']['background']['video'] != '';
     }
 
     private function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles)
@@ -167,40 +173,46 @@ trait SectionStylesAble
         $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
         $brizySection->getValue()
             ->set_bgColorHex($backgroundColorHex)
+            ->set_bgColorPalette('')
             ->set_bgColorType('solid')
             ->set_bgColorOpacity($sectionStyles['opacity']);
+
 
         // try to set the image background
         if ($this->hasImageBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
-
-            // image bg
             if (isset($background['filename']) && isset($background['photo'])) {
                 $brizySection->getValue()
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgImageSrc($background['photo'])
                     ->set_bgColorOpacity(0)
                     ->set_bgColorHex($backgroundColorHex);
-
-                if (isset($background['photoOption'])) {
-                    switch ($background['photoOption']) {
-                        case 'parallax-scroll':
-                            $brizySection->getValue(0)->set_bgAttachment('animated');
-                            break;
-                        case 'fill':
-
-                            break;
-                    }
-                }
             }
+        }
 
-            // video bg
-            if (isset($background['video'])) {
-                $videoBackground = $background['video'];
-                $brizySection->getItemValueWithDepth(0)
-                    ->set_media('video')
-                    ->set_bgVideoType('url')
-                    ->set_bgVideo($videoBackground);
+        // try to set the video background
+        if ($this->hasVideoBackground($mbSectionItem)) {
+            $background = $mbSectionItem['settings']['sections']['background'];
+            $brizySection->getValue()
+                ->set_media('video')
+                ->set_bgVideoType('url')
+                ->set_bgVideo($background['video']);
+        }
+
+        if ($this->hasImageBackground($mbSectionItem) || $this->hasVideoBackground($mbSectionItem)) {
+            $background = $mbSectionItem['settings']['sections']['background'];
+            if (isset($background['photoOption'])) {
+                switch ($background['photoOption']) {
+                    case 'parallax-scroll':
+                        $brizySection->getValue()->set_bgAttachment('animated');
+                        break;
+                    case 'parallax-fixed':
+                        $brizySection->getValue()->set_bgAttachment('fixed');
+                        break;
+                    case 'fill':
+
+                        break;
+                }
             }
         }
     }

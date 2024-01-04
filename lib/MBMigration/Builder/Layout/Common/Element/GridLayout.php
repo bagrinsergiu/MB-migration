@@ -18,13 +18,13 @@ abstract class GridLayout extends AbstractElement
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizyHeadSection = new BrizyComponent(json_decode($this->brizyKit['head'], true));
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
+        $elementContext = $data->instanceWithBrizyComponent($brizyHeadSection);
         $this->handleRichTextHead($elementContext, $this->browserPage);
-
 
         $rowJson = json_decode($this->brizyKit['row'], true);
         $itemJson = json_decode($this->brizyKit['item'], true);
@@ -81,8 +81,6 @@ abstract class GridLayout extends AbstractElement
 
         return $brizySection;
     }
-
-    abstract protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent;
 
     abstract protected function getItemsPerRow(): int;
 

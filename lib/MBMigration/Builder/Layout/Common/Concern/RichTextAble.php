@@ -92,10 +92,25 @@ trait RichTextAble
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
 
+        $sectionCategory = $mbSectionItem['category'];
+        $showHeader = $this->canShowHeader($mbSectionItem);
+        $showBody = $this->canShowBody($mbSectionItem);
+
         // sort items
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
 
         foreach ((array)$mbSectionItem['items'] as $mbItem) {
+
+            if($mbItem['category']==$sectionCategory && isset($mbItem['item_type'])) {
+                if($mbItem['item_type'] == 'title' && !$showHeader) {
+                    continue;
+                }
+                if($mbItem['item_type'] == 'body' && !$showBody) {
+                    continue;
+                }
+
+            }
+
             $elementContext = $data->instanceWithMBSection($mbItem);
             $this->handleRichTextItem(
                 $elementContext,
@@ -157,14 +172,20 @@ trait RichTextAble
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
+        $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
         $richTextBrowserData = $browserPage->evaluateScript('Text.js', [
-            'SELECTOR' => '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"]',
+
+            'SELECTOR' => '[data-id="'.$sectionId.'"]',
             'FAMILIES' => $families,
             'DEFAULT_FAMILY' => $defaultFont,
         ]);
 
         if (isset($richTextBrowserData['error'])) {
             throw new BrowserScriptException($richTextBrowserData['error']);
+        }
+
+        if (!isset($richTextBrowserData['data'])) {
+            throw new BrowserScriptException("Probably the section id was not found in page. SectionId:".$sectionId);
         }
         $embeddedElements = $this->findEmbeddedElements($mbSectionItem['content']);
         $embeddIndex = 0;
@@ -214,7 +235,9 @@ trait RichTextAble
     private function findEmbeddedElements($html): array
     {
         $dom = new \DOMDocument();
-        $dom->loadHTML("<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>{$html}</body></html>");
+        $dom->loadHTML(
+            "<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>{$html}</body></html>"
+        );
 
         $iframes = $dom->getElementsByTagName('iframe');
 

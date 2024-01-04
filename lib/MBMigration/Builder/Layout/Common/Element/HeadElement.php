@@ -173,8 +173,8 @@ abstract class HeadElement extends AbstractElement
         );
 
         return [
-            'menu' => $menuStyles['data'],
-            'style' => $menuSectionStyles['data'],
+            'menu' => isset($menuStyles['data'])?$menuStyles['data']:[],
+            'style' => isset($menuSectionStyles['data'])?$menuSectionStyles['data']:[],
         ];
     }
 
