@@ -195,6 +195,14 @@ class Anthem extends LayoutUtils
         return $result;
     }
 
+    /**
+     * Extract data from a page and update the SectionPage array with the extracted data.
+     *
+     * @param array $SectionPage The array representing the sections on the page.
+     * @param BrowserPage $browserPage The browser page object used to extract data from the page.
+     * @param string $nameSectionId The name of the section ID parameter. Default is 'id'.
+     * @throws Exception If failed to extract data.
+     */
     private function ExtractDataFromPage(&$SectionPage, BrowserPage $browserPage, $nameSectionId = 'id')
     {
         $selectorIcon = "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
@@ -537,11 +545,9 @@ class Anthem extends LayoutUtils
             }
         }
 
-        if (preg_match_all('/\d+/', $color, $matches)) {
-            if (count($matches[0]) !== 3) {
-                return $color;
-            }
-            list($r, $g, $b) = $matches[0];
+        if (preg_match_all("/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/", $color, $matches)) {
+
+            list($r, $g, $b) = array($matches[1][0], $matches[2][0], $matches[3][0]);
 
             return sprintf("#%02X%02X%02X", $r, $g, $b);
         }
