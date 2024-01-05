@@ -427,7 +427,7 @@ class Anthem extends LayoutUtils
             return [];
         }
 
-        return $sectionStyles['data'];
+        return $sectionStyles['data'] ?? [];
     }
 
     private function ExtractStylePage($browserPage): array
