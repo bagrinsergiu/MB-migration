@@ -361,7 +361,7 @@ class Anthem extends LayoutUtils
 
         $opacityIsSet = false;
         foreach ($sectionStyles['data'] as $key => $value) {
-            $convertedData = $this->convertColor($this->removePx($value));
+            $convertedData = $this->convertColor(str_replace("px", "", $value));
             if (is_array($convertedData)) {
                 $style[$key] = $convertedData['color'];
                 $style['opacity'] = $convertedData['opacity'];
@@ -399,7 +399,7 @@ class Anthem extends LayoutUtils
 
         $opacityIsSet = false;
         foreach ($sectionStyles['data'] as $key => $value) {
-            $convertedData = $this->convertColor(trim($style[$value], 'px'));
+            $convertedData = $this->convertColor(str_replace("px", "", $value));
             if (is_array($convertedData)) {
                 $style[$key] = $convertedData['color'];
                 $style['opacity'] = $convertedData['opacity'];
@@ -459,7 +459,7 @@ class Anthem extends LayoutUtils
 
         $opacityIsSet = false;
         foreach ($sectionStyles['data'] as $key => $value) {
-            $convertedData = $this->convertColor(trim($style[$value], 'px'));
+            $convertedData = $this->convertColor(str_replace("px", "", $value));
             if (is_array($convertedData)) {
                 $style[$key] = $convertedData['color'];
                 $style['opacity'] = $convertedData['opacity'];
