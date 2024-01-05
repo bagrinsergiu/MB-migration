@@ -48,7 +48,7 @@ class ErrorDump
             'file' => $file,
             'line' => $line,
             'details_message' => Utils::$MESSAGES_POOL,
-            'cache' => $this->cache->getCache()
+//            'cache' => $this->cache->getCache()
         ];
     }
 
