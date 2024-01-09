@@ -226,7 +226,7 @@ class Anthem extends LayoutUtils
                 foreach ($section['items'] as &$item) {
                     if ($item['category'] === 'text') {
 
-                        if ($item['item_type'] == 'title') {
+                        if (isset($item['item_type']) && $item['item_type'] == 'title') {
                             $section['style']['border'] = $this->ExtractBorderColorFromItem(
                                 $browserPage,
                                 $item['id']
@@ -290,7 +290,7 @@ class Anthem extends LayoutUtils
         $cache = VariableCache::getInstance();
         $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {
-            if ($font['name'] === 'primary') {
+            if (isset($font['name']) && $font['name'] === 'primary') {
                 $fontFamily['Default'] = $font['uuid'];
             } else {
                 $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
@@ -358,22 +358,23 @@ class Anthem extends LayoutUtils
         if (array_key_exists('error', $sectionStyles)) {
             return [];
         }
-
-        $opacityIsSet = false;
-        foreach ($sectionStyles['data'] as $key => $value) {
-            $convertedData = $this->convertColor(str_replace("px", "", $value));
-            if (is_array($convertedData)) {
-                $style[$key] = $convertedData['color'];
-                $style['opacity'] = $convertedData['opacity'];
-                $opacityIsSet = true;
-            } else {
-                if ($opacityIsSet && $key == 'opacity') {
-                    continue;
+        if (isset($sectionStyles['data'])) {
+            $opacityIsSet = false;
+            foreach ($sectionStyles['data'] as $key => $value) {
+                $convertedData = $this->convertColor(str_replace("px", "", $value));
+                if (is_array($convertedData)) {
+                    $style[$key] = $convertedData['color'];
+                    $style['opacity'] = $convertedData['opacity'];
+                    $opacityIsSet = true;
                 } else {
-                    $style[$key] = $convertedData;
+                    if ($opacityIsSet && $key == 'opacity') {
+                        continue;
+                    } else {
+                        $style[$key] = $convertedData;
+                    }
                 }
             }
-        }
+        }  else { return [];}
 
         return $style;
     }
@@ -396,22 +397,23 @@ class Anthem extends LayoutUtils
         if (array_key_exists('error', $sectionStyles)) {
             return [];
         }
-
-        $opacityIsSet = false;
-        foreach ($sectionStyles['data'] as $key => $value) {
-            $convertedData = $this->convertColor(str_replace("px", "", $value));
-            if (is_array($convertedData)) {
-                $style[$key] = $convertedData['color'];
-                $style['opacity'] = $convertedData['opacity'];
-                $opacityIsSet = true;
-            } else {
-                if ($opacityIsSet && $key == 'opacity') {
-                    continue;
+        if (isset($sectionStyles['data'])) {
+            $opacityIsSet = false;
+            foreach ($sectionStyles['data'] as $key => $value) {
+                $convertedData = $this->convertColor(str_replace("px", "", $value));
+                if (is_array($convertedData)) {
+                    $style[$key] = $convertedData['color'];
+                    $style['opacity'] = $convertedData['opacity'];
+                    $opacityIsSet = true;
                 } else {
-                    $style[$key] = $convertedData;
+                    if ($opacityIsSet && $key == 'opacity') {
+                        continue;
+                    } else {
+                        $style[$key] = $convertedData;
+                    }
                 }
             }
-        }
+        }  else { return [];}
 
         return $style;
     }
@@ -457,21 +459,23 @@ class Anthem extends LayoutUtils
             return [];
         }
 
-        $opacityIsSet = false;
-        foreach ($sectionStyles['data'] as $key => $value) {
-            $convertedData = $this->convertColor(str_replace("px", "", $value));
-            if (is_array($convertedData)) {
-                $style[$key] = $convertedData['color'];
-                $style['opacity'] = $convertedData['opacity'];
-                $opacityIsSet = true;
-            } else {
-                if ($opacityIsSet && $key == 'opacity') {
-                    continue;
+        if (isset($sectionStyles['data'])) {
+            $opacityIsSet = false;
+            foreach ($sectionStyles['data'] as $key => $value) {
+                $convertedData = $this->convertColor(str_replace("px", "", $value));
+                if (is_array($convertedData)) {
+                    $style[$key] = $convertedData['color'];
+                    $style['opacity'] = $convertedData['opacity'];
+                    $opacityIsSet = true;
                 } else {
-                    $style[$key] = $convertedData;
+                    if ($opacityIsSet && $key == 'opacity') {
+                        continue;
+                    } else {
+                        $style[$key] = $convertedData;
+                    }
                 }
             }
-        }
+        }  else { return [];}
 
         return $style;
     }
@@ -485,6 +489,10 @@ class Anthem extends LayoutUtils
         ]);
 
         if (array_key_exists('error', $richTextBrowserData)) {
+            return [];
+        }
+
+        if(!isset($richTextBrowserData['data'])){
             return [];
         }
 
@@ -502,22 +510,24 @@ class Anthem extends LayoutUtils
 
     private function convertStyle($sectionStyles, &$style, $section = 'data')
     {
-        $opacityIsSet = false;
-        foreach ($sectionStyles[$section] as $key => $value) {
-            $data = $this->removePx($value);
-            $convertedData = $this->convertColor(str_replace("px", "", $value));
-            if (is_array($convertedData)) {
-                $style[$key] = $convertedData['color'];
-                $style['opacity'] = $convertedData['opacity'];
-                $opacityIsSet = true;
-            } else {
-                if ($opacityIsSet && $key == 'opacity') {
-                    continue;
+        if (isset($sectionStyles['data'])) {
+            $opacityIsSet = false;
+            foreach ($sectionStyles[$section] as $key => $value) {
+                $data = $this->removePx($value);
+                $convertedData = $this->convertColor(str_replace("px", "", $value));
+                if (is_array($convertedData)) {
+                    $style[$key] = $convertedData['color'];
+                    $style['opacity'] = $convertedData['opacity'];
+                    $opacityIsSet = true;
                 } else {
-                    $style[$key] = $convertedData;
+                    if ($opacityIsSet && $key == 'opacity') {
+                        continue;
+                    } else {
+                        $style[$key] = $convertedData;
+                    }
                 }
             }
-        }
+        } else { return [];}
     }
 
     private function convertColor($color)

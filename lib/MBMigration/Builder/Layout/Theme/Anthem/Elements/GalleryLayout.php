@@ -43,7 +43,7 @@ class GalleryLayout extends Element
         $block = json_decode($decoded['main'], true);
         $slide  = json_decode($decoded['item'], true);
 
-        if($sectionData['settings']['sections']['gallery']['transition'] !== 'Slide') {
+        if(isset($sectionData['settings']['sections']['gallery']['transition']) && $sectionData['settings']['sections']['gallery']['transition'] !== 'Slide') {
             $block['value']['sliderTransition'] = 'off';
         } else {
             $block['value']['sliderAutoPlay'] = 'on';

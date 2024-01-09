@@ -9,7 +9,6 @@ use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 abstract class Element extends LayoutUtils
 {
@@ -24,45 +23,48 @@ abstract class Element extends LayoutUtils
         return $this->loadKit();
     }
 
-    protected function backgroundParallax(ItemBuilder $objBlock, array $sectionData)
+    protected function backgroundParallax(ItemBuilder $objBlock, array $sectionData): void
     {
         if($this->checkArrayPath($sectionData, 'settings/sections/background/photoOption')) {
             if( $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-scroll' or
                 $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
-                $objBlock->item(0)->setting('bgAttachment','fixed');
-                $objBlock->item(0)->setting('bgColorOpacity', 0);
+                $objBlock->item()->setting('bgAttachment','fixed');
+                $objBlock->item()->setting('bgColorOpacity', 0);
             }
         }
     }
 
-    protected function backgroundVideo(ItemBuilder $objBlock, array $sectionData)
+    protected function backgroundVideo(ItemBuilder $objBlock, array $sectionData): void
     {
         if($this->checkArrayPath($sectionData, 'settings/sections/background/video')) {
 
             $videoUrl = $sectionData['settings']['sections']['background']['video'];
 
-            $objBlock->item(0)->setting('media', 'video');
-            $objBlock->item(0)->setting('bgVideoType', 'url');
-            $objBlock->item(0)->setting('bgVideo', $videoUrl);
+            $objBlock->item()->setting('media', 'video');
+            $objBlock->item()->setting('bgVideoType', 'url');
+            $objBlock->item()->setting('bgVideo', $videoUrl);
         }
     }
 
-    protected function backgroundColor(ItemBuilder $objBlock, array $sectionData)
+    protected function backgroundColor(ItemBuilder $objBlock, array $sectionData): void
     {
-        $objBlock->item(0)->setting('bgColorHex', $sectionData['style']['background-color']);
-        $objBlock->item(0)->setting('mobileBgColorHex', $sectionData['style']['background-color']);
-
-        $objBlock->item(0)->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity']));
-        $objBlock->item(0)->setting('mobileBgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity']));
-        $objBlock->item(0)->setting('bgColorType', 'solid');
-        $objBlock->item(0)->setting('mobileBgColorType', 'solid');
-        $objBlock->item(0)->setting('mobileBgColorPalette', '');
+        if(isset($sectionData['style']['background-color'])){
+            $objBlock->item()->setting('bgColorHex', $sectionData['style']['background-color']);
+            $objBlock->item()->setting('mobileBgColorHex', $sectionData['style']['background-color']);
+        }
+        if(isset($sectionData['style']['opacity'])){
+            $objBlock->item()->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity']));
+            $objBlock->item()->setting('mobileBgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity']));
+        }
+        $objBlock->item()->setting('bgColorType', 'solid');
+        $objBlock->item()->setting('mobileBgColorType', 'solid');
+        $objBlock->item()->setting('mobileBgColorPalette', '');
     }
 
 /**
  *
  */
-    protected function setOptionsForTextColor(array $sectionData, array &$options)
+    protected function setOptionsForTextColor(array $sectionData, array &$options): void
     {
         if($this->checkArrayPath($sectionData, 'settings/color/text')) {
             $textColor = $sectionData['settings']['color']['text'];
@@ -73,16 +75,16 @@ abstract class Element extends LayoutUtils
 /**
  *
 */
-    protected function backgroundImages(ItemBuilder $objBlock, array $sectionData)
+    protected function backgroundImages(ItemBuilder $objBlock, array $sectionData): void
     {
         if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
             Utils::log('Set background Images', 1, "backgroundImages");
 
             if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
                 $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
-                $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
-                $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
-                $objBlock->item(0)->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity_div']['opacity']));
+                $objBlock->item()->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
+                $objBlock->item()->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
+                $objBlock->item()->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity_div']['opacity']));
 
             }
         }
@@ -91,12 +93,14 @@ abstract class Element extends LayoutUtils
 /**
  *
  */
-    protected function setOptionsForUsedFonts(array $item, array &$options)
+    protected function setOptionsForUsedFonts(array $item, array &$options): void
     {
         if (isset($item['settings']['used_fonts'])){
             $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
         }
-        $options = array_merge($options, ['fontType' => $item['item_type']]);
+        if (isset($item['item_type'])){
+            $options = array_merge($options, ['fontType' => $item['item_type']]);
+        }
     }
 
 /**
@@ -108,7 +112,7 @@ abstract class Element extends LayoutUtils
         $cache = VariableCache::getInstance();
         $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {
-            if($font['name'] === 'primary'){
+            if(isset($font['name']) && $font['name'] === 'primary'){
                 $fontFamily['Default'] = $font['uuid'];
             } else {
                 $fontFamily[$font['fontFamily']] = $font['uuid'];
@@ -120,7 +124,7 @@ abstract class Element extends LayoutUtils
 /**
  *
  */
-    protected function defaultOptionsForElement($element, &$options)
+    protected function defaultOptionsForElement($element, &$options): void
     {
            $loadOptions = json_decode($element['options'], true);
                $positionOption = [
@@ -133,7 +137,7 @@ abstract class Element extends LayoutUtils
 /**
  *
 */
-    protected function defaultTextPosition($element, &$options)
+    protected function defaultTextPosition($element, &$options): void
     {
         if(!empty($options['textPosition'])){
             switch ($element['item_type']){
@@ -202,7 +206,7 @@ abstract class Element extends LayoutUtils
 
     protected function createCollectionItems($mainCollectionType, $slug, $title)
     {
-        Utils::log('Create Detail Page: ' . $title, 1, $this->layoutName . "] [createDetailPage");
+        Utils::log('Create Detail Page: ' . $title, 1, "createDetailPage");
         if($this->pageCheck($slug)) {
             $QueryBuilder = $this->cache->getClass('QueryBuilder');
             $createdCollectionItem = $QueryBuilder->createCollectionItem($mainCollectionType, $slug, $title);
@@ -220,13 +224,14 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function createDetailPage($itemsID, $slug, string $elementName) {
+    protected function createDetailPage($itemsID, $slug, string $elementName): void
+    {
         $itemsData = [];
         $jsonDecode = $this->initData();
         $QueryBuilder = $this->cache->getClass('QueryBuilder');
 
         if($this->checkArrayPath($jsonDecode, "dynamic/$elementName")){
-            $decoded = $jsonDecode['dynamic']['$elementName'];
+            $decoded = $jsonDecode['dynamic'][$elementName];
         } else {
             throw new Exception('Element not found');
         }
@@ -240,7 +245,7 @@ abstract class Element extends LayoutUtils
         $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
     }
 
-    protected function generalParameters($objBlock, &$options, $sectionData, $primary = [])
+    protected function generalParameters($objBlock, &$options, $sectionData, $primary = []): void
     {
         $padding = $sectionData['style'] ?? [];
 
@@ -295,11 +300,11 @@ abstract class Element extends LayoutUtils
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--richText'];
         $block = new ItemBuilder($decoded);
-        $block->item(0)->setText($content);
+        $block->item()->setText($content);
 
         if (!empty($settings)) {
             foreach ($settings as $key => $value) {
-                $block->item(0)->setting($key, $value);
+                $block->item()->setting($key, $value);
             }
         }
         $result = $block->get();
@@ -317,7 +322,7 @@ abstract class Element extends LayoutUtils
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global']['wrapper--embedCode'];
         $block = new ItemBuilder($decoded);
-        $block->item(0)->setCode($content);
+        $block->item()->setCode($content);
         $result = $block->get();
         return json_decode(json_encode($result), true);
     }
@@ -503,7 +508,8 @@ abstract class Element extends LayoutUtils
         return $result;
     }
 
-    private function styleIframes($html) {
+    private function styleIframes($html)
+    {
         $dom = new DOMDocument();
         $dom->loadHTML($html);
 
