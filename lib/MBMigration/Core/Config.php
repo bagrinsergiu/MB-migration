@@ -312,19 +312,20 @@ class Config
      */
     private function checkMetadata()
     {
-        $metaData = self::$settings['metaData'];
-        if (!empty($metaData)) {
-            $requiredFields = ['secret', 'MBAccountID', 'MBVisitorID'];
+        if(isset(self::$settings['metaData'])) {
+            $metaData = self::$settings['metaData'];
+            if (!empty($metaData)) {
+                $requiredFields = ['secret', 'MBAccountID', 'MBVisitorID'];
 
-            foreach ($requiredFields as $field) {
-                if (empty($metaData[$field])) {
-                    throw new Exception($field." value is not set");
+                foreach ($requiredFields as $field) {
+                    if (empty($metaData[$field])) {
+                        throw new Exception($field." value is not set");
+                    }
                 }
+
+                return $metaData;
             }
-
-            return $metaData;
         }
-
         return false;
     }
 

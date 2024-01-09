@@ -111,8 +111,12 @@ class TwoHorizontalText extends Element
         $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderBottomWidth", 0);
         $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderTopWidth", 0);
         $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderLeftWidth", 0);
-        $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderColorHex",  $sectionData['style']['border']['border-bottom-color']);
-        $objBlock->item(0)->item(0)->item(1)->setting("borderColorHex",  $sectionData['style']['border']['border-bottom-color']);
+
+        if(isset($sectionData['style']['border']['border-bottom-color'])) {
+            $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderColorHex",  $sectionData['style']['border']['border-bottom-color']);
+            $objBlock->item(0)->item(0)->item(1)->setting("borderColorHex",  $sectionData['style']['border']['border-bottom-color']);
+        }
+
         $objBlock->item(0)->item(0)->item(1)->setting("borderColorPalette",  '');
 
 

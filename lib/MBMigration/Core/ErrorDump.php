@@ -41,6 +41,9 @@ class ErrorDump
     }
 
     public function handleError($severity, $message, $file, $line) {
+        if(Config::$devMode) {
+            echo "Warning: " . $message . " in file " . $file . " on line " . $line . "\n";
+        }
         $this->errorStatus = true;
         $this->errors[] = [
             'severity' => $severity,

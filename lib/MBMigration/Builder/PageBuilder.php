@@ -14,11 +14,9 @@ use MBMigration\Core\Utils;
 
 class PageBuilder
 {
-    private $cache;
+    private mixed $cache;
 
-    /**
-     * @throws \Exception
-     */
+
     public function __construct()
     {
         $this->cache = VariableCache::getInstance();
@@ -26,7 +24,6 @@ class PageBuilder
 
     /**
      * @throws ElementNotFound
-     * @throws \Exception
      */
     public function run($preparedSectionOfThePage): bool
     {
@@ -58,14 +55,6 @@ class PageBuilder
             $menu = $this->cache->get('menuList');
             $headItem = $this->cache->get('header', 'mainSection');
             $footerItem = $this->cache->get('footer', 'mainSection');
-            $fonts = $this->cache->get('fonts', 'settings');
-            foreach ($fonts as $font) {
-                if ($font['name'] === 'primary') {
-                    $fontFamily['Default'] = $font['uuid'];
-                } else {
-                    $fontFamily[$font['fontFamily']] = $font['uuid'];
-                }
-            }
 
 //          file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
             $themeContext = new ThemeContext(
@@ -127,7 +116,7 @@ class PageBuilder
         $cache = VariableCache::getInstance();
         $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {
-            if ($font['name'] === 'primary') {
+            if (isset($font['name']) && $font['name'] === 'primary') {
                 $fontFamily['Default'] = $font['uuid'];
             } else {
                 $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
