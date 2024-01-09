@@ -46,14 +46,12 @@ class SmallGroupsList extends Element
         $options = [];
 
         $objBlock = new ItemBuilder();
-        $objLine = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
 
         $decoded = $this->jsonDecode['blocks']['small-groups-list'];
 
         $objBlock->newItem($decoded['main']);
-        $objLine->newItem($decoded['line']);
 
         $this->generalParameters($objBlock, $options, $sectionData);
 
