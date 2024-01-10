@@ -29,7 +29,13 @@ class Browser implements BrowserInterface
     private function __construct($scriptPath, LoggerInterface $logger = null)
     {
         $puppeteer = new Puppeteer(
-            ['log_browser_console' => true, 'log_node_console' => true, 'logger' => $logger, 'debug' => true]
+            [
+                'log_browser_console' => true,
+                'log_node_console' => true,
+                'logger' => $logger,
+                'debug' => true,
+                'protocolTimeout' => 120000,
+            ]
         );
         $this->browser = $puppeteer->launch([
             "headless" => "new",
