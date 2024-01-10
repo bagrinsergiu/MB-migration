@@ -27,5 +27,11 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^8.5"
-  }
+  },
+  "repositories": [
+    {
+    "type": "vcs",
+    "url": "https://github.com/golovencoserghei/rialto.git"
+    }
+  ]
 }

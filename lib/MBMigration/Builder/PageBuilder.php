@@ -14,8 +14,7 @@ use MBMigration\Core\Utils;
 
 class PageBuilder
 {
-    private mixed $cache;
-
+    private $cache;
 
     public function __construct()
     {
