@@ -34,7 +34,9 @@ class Browser implements BrowserInterface
                 'log_node_console' => true,
                 'logger' => $logger,
                 'debug' => true,
-                'protocolTimeout' => 120000,
+                'protocolTimeout' => 9000,
+                'read_timeout' => 9000,
+                'idle_timeout' => 9000
             ]
         );
         $this->browser = $puppeteer->launch([
