@@ -135,10 +135,26 @@ class RightMedia extends Element
         return json_encode($block);
     }
 
-    private function textCreation($richText, $objBlock)
+    private function textCreation($sectionData, $objBlock)
     {
-        foreach ($richText['brzElement'] as $item) {
-            $objBlock->item()->item()->item()->addItem($item);
+
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(is_array($embedCode)){
+                            $objBlock->item()->item()->item()->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                case 'Wrapper':
+                    $objBlock->item()->item()->item(1)->addItem($textItem);
+                    break;
+            }
         }
     }
 

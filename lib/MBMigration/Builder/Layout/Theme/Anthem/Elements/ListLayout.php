@@ -105,8 +105,10 @@ class ListLayout extends Element
 
             foreach ($section['item'] as $item) {
                 if ($item['category'] === 'photo') {
-                    $objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
-                    $objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+                    if (isset($item['content']) && isset($item['imageFileName'])){
+                        $objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
+                        $objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+                    }
 
                     if ($item['link'] != '') {
                         $objImage->item(0)->item(0)->setting('linkType', 'external');
