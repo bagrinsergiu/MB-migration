@@ -166,7 +166,7 @@ abstract class HeadElement extends AbstractElement
             'StyleExtractor.js',
             [
                 'SELECTOR' => '[data-id="'.$sectionId.'"]',
-                'STYLE_PROPERTIES' => ['background-color', 'opacity', 'border-bottom-color'],
+                'STYLE_PROPERTIES' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
                 'FAMILIES' => [],
                 'DEFAULT_FAMILY' => 'lato',
             ]

@@ -2,16 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class PrayerList extends AbstractElement
+ class PrayerList extends \MBMigration\Builder\Layout\Common\Element\PrayerList
 {
-    public function transformToItem(ElementDataInterface $data): array
-    {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
 
-        return $section->get();
-    }
 }

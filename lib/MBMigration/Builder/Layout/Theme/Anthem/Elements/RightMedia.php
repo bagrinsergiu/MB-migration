@@ -152,7 +152,7 @@ class RightMedia extends Element
                     break;
                 case 'Cloneable':
                 case 'Wrapper':
-                    $objBlock->item()->item()->item(1)->addItem($textItem);
+                    $objBlock->item()->item()->item()->addItem($textItem);
                     break;
             }
         }

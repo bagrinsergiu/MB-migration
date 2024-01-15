@@ -230,6 +230,10 @@ class Head extends Element
 
         $result = $this->ExtractMenuStyle($this->browserPage, $options['sectionID']);
 
+        $defOptions = [
+            'activeSubMenuColorHex' => $result['data']['subMenuColorHex']
+            ];
+
         $result['data'] = array_merge_recursive($result['data'], $defOptions);
         $this->cache->set('menuStyles', $result['data']);
         foreach ($result['data'] as $key => $value) {
@@ -280,7 +284,7 @@ class Head extends Element
         $cache = VariableCache::getInstance();
         $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {
-            if ($font['name'] === 'primary') {
+            if (isset($font['name']) && $font['name'] === 'primary') {
                 $fontFamily['Default'] = $font['uuid'];
             } else {
                 $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];

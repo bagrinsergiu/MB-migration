@@ -90,13 +90,17 @@ class FullText extends Element
 
         if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
 
-           $buttonOptions = [
-                'linkExternal'=> $sectionData['settings']['sections']['donations']['url'],
-                'text'=>  $sectionData['settings']['sections']['donations']['text']
-            ];
-            $position = $sectionData['settings']['sections']['donations']['alignment'];
+            if (isset($sectionData['settings']['sections']['donations']['url']) &&
+                isset($sectionData['settings']['sections']['donations']['text'])) {
 
-            $objBlock->item(0)->addItem($this->button($buttonOptions, $position));
+                $buttonOptions = [
+                    'linkExternal' => $sectionData['settings']['sections']['donations']['url'],
+                    'text' => $sectionData['settings']['sections']['donations']['text']
+                ];
+                $position = $sectionData['settings']['sections']['donations']['alignment'];
+
+                $objBlock->item()->addItem($this->button($buttonOptions, $position));
+            }
         }
 
         return json_encode($this->replaceIdWithRandom($objBlock->get()));

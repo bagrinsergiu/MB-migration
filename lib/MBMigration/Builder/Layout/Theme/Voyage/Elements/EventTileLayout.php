@@ -2,16 +2,20 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
-use MBMigration\Builder\ItemBuilder;
+use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
+use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
+use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
+use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Layer\Graph\QueryBuilder;
 
-class EventTileLayout extends AbstractElement
+class EventTileLayout extends \MBMigration\Builder\Layout\Common\Element\EventTileLayout
 {
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
-
-        return $section->get();
+        return $brizySection->getItemWithDepth(0, 0);
     }
 }

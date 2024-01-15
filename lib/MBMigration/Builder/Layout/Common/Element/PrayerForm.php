@@ -17,14 +17,15 @@ abstract class PrayerForm extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizyPrayerForm = new BrizyComponent(json_decode($this->brizyKit['form'], true));
+        $brizyComponent = $this->getSectionItemComponent($brizySection);
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
         $this->handleSectionStyles($elementContext, $this->browserPage);
+        $this->handleRichTextHead($elementContext, $this->browserPage);
         $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
-        $brizySection->getItemWithDepth(0)->getValue()->add_items([$brizyPrayerForm->getItemWithDepth(0,0)]);
+
+        $brizyComponent->getValue()->add_items([$brizyPrayerForm]);
 
         return $brizySection;
     }
-
-    abstract public function getFormParentComponent(BrizyComponent $brizySection): BrizyComponent;
 }
