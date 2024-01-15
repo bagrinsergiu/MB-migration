@@ -34,7 +34,7 @@ class EventCalendarLayout extends DynamicElement
         $objHead->newItem($decoded['head']);
 
         if($this->checkArrayPath($sectionData, 'settings/sections/color/bg')) {
-            $blockBg = $sectionData['settings']['sections']['color']['bg'];
+            $blockBg = $sectionData['style']['background-color'];
             $objBlock->item(0)->setting('bgColorPalette','');
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
         }
