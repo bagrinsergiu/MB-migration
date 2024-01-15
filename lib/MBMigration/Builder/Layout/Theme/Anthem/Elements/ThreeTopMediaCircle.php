@@ -65,10 +65,15 @@ class ThreeTopMediaCircle extends Element
 
         foreach ($sectionData['items'] as $item)
         {
-            if ($item['category'] === 'photo') {
-                $objItem->item(0)->item(0)->setting('imageSrc', $item['content']);
-                $objItem->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
-                $objBlock->item(0)->item(0)->addItem($objItem->get());
+            if(isset($item['content']) && isset($item['imageFileName'])) {
+                if ($item['category'] === 'photo') {
+                    $objItem->item(0)->item(0)->setting('imageSrc', $item['content']);
+                    $objItem->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+                    $objBlock->item(0)->item(0)->addItem($objItem->get());
+                }
+            } else {
+                $objItem->item(0)->item(0)->setting('imageSrc', '');
+                $objItem->item(0)->item(0)->setting('imageFileName', '');
             }
 
             if ($item['item_type'] === 'title') {

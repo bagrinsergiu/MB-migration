@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMDocument;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -99,8 +100,8 @@ class TabsLayout extends Element
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'tab_title') {
-
-                        $objItem->setting('labelText', "test");
+                        $tab_title = $this->extractTextFromHtml($item['content']);
+                        $objItem->setting('labelText', $tab_title);
                     }
 
                     if ($item['item_type'] === 'tab_body') {
@@ -149,11 +150,31 @@ class TabsLayout extends Element
 
             $objRow->item(0)->addItem($objItem->get());
         }
-        $objRow->item(0)->setting('contentBgColorHex', $options['bgColor']);
-        $objRow->item(0)->setting('bgColorHex', $options['bgColor']);
+        $objRow->item(0)->setting('contentBgColorHex', $sectionData['style']['background-color']);
+        $objRow->item(0)->setting('bgColorHex', $sectionData['style']['background-color']);
         $objBlock->item(0)->addItem($objRow->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
+    }
+
+    private function extractTextFromHtml($html): string
+    {
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+
+        $dom->loadHTML($html);
+
+        $text = '';
+
+        $paragraphs = $dom->getElementsByTagName('p');
+
+        foreach ($paragraphs as $paragraph) {
+            $text .= $paragraph->nodeValue . ' ';
+        }
+
+        libxml_use_internal_errors(false);
+
+        return trim($text);
     }
 
 }

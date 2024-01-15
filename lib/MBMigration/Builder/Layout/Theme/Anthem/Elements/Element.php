@@ -95,7 +95,7 @@ abstract class Element extends LayoutUtils
  */
     protected function setOptionsForUsedFonts(array $item, array &$options): void
     {
-        if (isset($item['settings']['used_fonts'])){
+        if (isset($item['settings']['used_fonts']['uuid'])){
             $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
         }
         if (isset($item['item_type'])){
