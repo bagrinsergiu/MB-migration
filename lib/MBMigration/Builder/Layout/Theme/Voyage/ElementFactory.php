@@ -20,6 +20,7 @@ use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListMediaLayout;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\LivestreamLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\PrayerForm;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMediaOverlap;
@@ -43,8 +44,8 @@ class ElementFactory  extends AbstractThemeElementFactory
 //                return new PrayerList($this->blockKit['blocks']['prayer-list'], $this->browserPage);
             case 'prayer-form':
                 return new PrayerForm($this->blockKit['blocks']['prayer-form'], $this->browserPage);
-//            case 'livestream-layout':
-//                return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $this->browserPage);
+            case 'livestream-layout':
+                return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $this->browserPage);
             case 'small-groups-list':
                 return new SmallGroupsList($this->blockKit['blocks']['small-groups-list'], $this->browserPage);
 //            case 'small-groups-grid':

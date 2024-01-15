@@ -61,11 +61,13 @@ trait SectionStylesAble
         $brizySection = $data->getBrizySection();
         $pagePosition = $mbSectionItem['settings']['pagePosition'] ?? null;
 
+        $selectorSectionStyles = '[data-id="'.$mbSectionItem['sectionId'].'"]';
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"]',
+                'SELECTOR' => $selectorSectionStyles,
                 'STYLE_PROPERTIES' => [
+                    'color',
                     'background-color',
                     'opacity',
                     'border-bottom-color',
@@ -82,10 +84,11 @@ trait SectionStylesAble
                 'DEFAULT_FAMILY' => $defaultFont,
             ]
         );
+        $selectorSectionWrapperStyles = '[data-id="'.$mbSectionItem['sectionId'].'"]>.content-wrapper';
         $sectionWrapperStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"]>.content-wrapper',
+                'SELECTOR' => $selectorSectionWrapperStyles,
                 'STYLE_PROPERTIES' => [
                     'padding-top',
                     'padding-bottom',
@@ -101,24 +104,24 @@ trait SectionStylesAble
             ]
         );
 
-        if (isset($mbSectionItem['settings']['sections']['background'])) {
-            if (isset($mbSectionItem['settings']['sections']['background']['opacity'])) {
-                $sectionStyles['data']['opacity'] = $mbSectionItem['settings']['sections']['background']['opacity'];
-            } else {
-                $resultingSectionStyles = $browserPage->evaluateScript(
-                    'StyleExtractor.js',
-                    [
-                        'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"] .bg-opacity',
-                        'STYLE_PROPERTIES' => [
-                            'opacity',
-                        ],
-                        'FAMILIES' => $families,
-                        'DEFAULT_FAMILY' => $defaultFont,
-                    ]
-                );
-                $sectionStyles['data']['opacity'] = $resultingSectionStyles['data']['opacity'];
-            }
-        }
+//        if (isset($mbSectionItem['settings']['sections']['background'])) {
+//            if (isset($mbSectionItem['settings']['sections']['background']['opacity'])) {
+//                $sectionStyles['data']['opacity'] = $mbSectionItem['settings']['sections']['background']['opacity'];
+//            } else {
+//                $resultingSectionStyles = $browserPage->evaluateScript(
+//                    'StyleExtractor.js',
+//                    [
+//                        'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"] .bg-opacity',
+//                        'STYLE_PROPERTIES' => [
+//                            'opacity',
+//                        ],
+//                        'FAMILIES' => $families,
+//                        'DEFAULT_FAMILY' => $defaultFont,
+//                    ]
+//                );
+//                $sectionStyles['data']['opacity'] = $resultingSectionStyles['data']['opacity'];
+//            }
+//        }
 
         if (isset($sectionStyles['error'])) {
             throw new BrowserScriptException($sectionStyles['error']);
@@ -126,6 +129,17 @@ trait SectionStylesAble
 
         if (isset($sectionWrapperStyles['error'])) {
             throw new BrowserScriptException($sectionWrapperStyles['error']);
+        }
+
+        if (empty($sectionStyles)) {
+            throw new BrowserScriptException(
+                "The element with selector {$selectorSectionStyles} was not found in page."
+            );
+        }
+        if (empty($sectionWrapperStyles)) {
+            throw new BrowserScriptException(
+                "The element with selector {$selectorSectionWrapperStyles} was not found in page."
+            );
         }
 
         $sectionStyles = $sectionStyles['data'];
@@ -147,9 +161,7 @@ trait SectionStylesAble
             ->set_marginLeft((int)$sectionStyles['margin-left'] + (int)$sectionWrapperStyles['margin-left'])
             ->set_marginRight((int)$sectionStyles['margin-right'] + (int)$sectionWrapperStyles['margin-right'])
             ->set_marginTop((int)$sectionStyles['margin-top'] + (int)$sectionWrapperStyles['margin-top'])
-            ->set_marginBottom((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom'])
-            ->set_bgColorOpacity(NumberProcessor::convertToNumeric($sectionStyles['opacity']))
-            ->set_bgColorPalette('');
+            ->set_marginBottom((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom']);
 
         return $brizySection;
     }
@@ -175,7 +187,7 @@ trait SectionStylesAble
             ->set_bgColorHex($backgroundColorHex)
             ->set_bgColorPalette('')
             ->set_bgColorType('solid')
-            ->set_bgColorOpacity($sectionStyles['opacity']);
+            ->set_bgColorOpacity(NumberProcessor::convertToNumeric($sectionStyles['opacity']));
 
 
         // try to set the image background

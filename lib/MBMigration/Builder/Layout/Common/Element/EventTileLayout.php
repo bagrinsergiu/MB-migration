@@ -26,7 +26,6 @@ abstract class EventTileLayout extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
-
         $elementContext = $data->instanceWithBrizyComponent($this->getTextContainerComponent($brizySection));
         $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
 
