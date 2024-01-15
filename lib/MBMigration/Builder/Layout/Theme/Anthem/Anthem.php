@@ -251,19 +251,6 @@ class Anthem extends LayoutUtils
                                     }
                                 }
                         }
-
-//                        if ($item['category'] === 'list' ) {
-//                            $this->ExtractItemContent($item['item'], $browserPage);
-//
-//                            foreach ($item['item'] as $listItem) {
-//                                if ($item['item_type'] == 'title'){
-//                                    $section['style']['border'] = $this->ExtractBorderColorFromItem(
-//                                        $browserPage,
-//                                        $listItem['sectionId']
-//                                    ) ?? [];
-//                                }
-//                            }
-//                        }
                     }
                 }
             }
