@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Common\Element;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
+use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
@@ -16,6 +17,7 @@ abstract class PhotoTextElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use DanationsAble;
+    use ImageStylesAble;
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -35,12 +37,14 @@ abstract class PhotoTextElement extends AbstractElement
                         $this->browserPage
                     );
 
-//                    $imageTarget->getItemWithDepth(0)
-//                        ->getValue()
-//                        ->set_width(100)
-//                        ->set_height(100)
-//                        ->set_heightSuffix('%')
-//                        ->set_widthSuffix('%');
+                    $imageStyles = $this->obtainImageStyles($elementContext,$this->browserPage);
+
+                    $imageTarget
+                        ->getValue()
+                        ->set_width((int)$imageStyles['width'])
+                        ->set_height((int)$imageStyles['height'])
+                        ->set_heightSuffix((strpos($imageStyles['height'],'%')===true)?'%':'pix')
+                        ->set_widthSuffix((strpos($imageStyles['width'],'%')===true)?'%':'pix');
                     break;
                 case 'text':
                     // add the text on the left side of th bock

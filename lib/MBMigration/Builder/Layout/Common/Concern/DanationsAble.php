@@ -22,36 +22,40 @@ trait DanationsAble
         BrowserPage $browserPage,
         array $brizyKit
     ): BrizyComponent {
+
         $mbSection = $data->getMbSection();
         $brizySection = $data->getBrizySection();
 
         if (!isset($brizyKit['donation-button'])) {
-            throw new BrizyKitNotFound();
+            throw new BrizyKitNotFound('The BrizyKit does not contain the key: donation-button');
         }
 
+        try {
+            switch ($mbSection['category']) {
+                case "donation":
+                    $selector = '[data-id="'.$mbSection['sectionId'].'"] button.sites-button';
+                    $brizyDonationButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
+                    $brizyDonationButton = $this->setButtonStyles(
+                        $brizyDonationButton,
+                        $browserPage,
+                        $selector,
+                        $data,
+                        $mbSection
+                    );
 
-        switch ($mbSection['category']) {
-            case "donation":
-                $selector = '[data-id="'.$mbSection['sectionId'].'"] button.sites-button';
-                $brizyDonationButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
-                $brizyDonationButton = $this->setButtonStyles(
-                    $brizyDonationButton,
-                    $browserPage,
-                    $selector,
-                    $data,
-                    $mbSection
-                );
+                    $brizyDonationButton = $this->setHoveButtonStyles(
+                        $brizyDonationButton,
+                        $browserPage,
+                        $selector,
+                        $data,
+                        $mbSection
+                    );
 
-                $brizyDonationButton = $this->setHoveButtonStyles(
-                    $brizyDonationButton,
-                    $browserPage,
-                    $selector,
-                    $data,
-                    $mbSection
-                );
+                    $brizySection->getValue()->add_items([$brizyDonationButton]);
+                    break;
+            }
+        } catch (\Exception $e) {
 
-                $brizySection->getValue()->add_items([$brizyDonationButton]);
-                break;
         }
 
 
@@ -109,12 +113,16 @@ trait DanationsAble
             ]
         );
 
+        if (empty($buttonStyles)) {
+            throw new BrowserScriptException("The element with selector {$selector} was not found in page.");
+        }
+
         if (isset($buttonStyles['error'])) {
             throw new BrowserScriptException($buttonStyles['error']);
         }
         $buttonStyles = $buttonStyles['data'];
 
-        if (isset($mbSection['settings']['sections']['donations']['alignment'])) {
+        if (isset($mbSection['settings']['sections']['donations']['alignment']) && $mbSection['settings']['sections']['donations']['alignment'] != '') {
             $brizyDonationButton->getValue()->set_horizontalAlign(
                 $mbSection['settings']['sections']['donations']['alignment']
             );
