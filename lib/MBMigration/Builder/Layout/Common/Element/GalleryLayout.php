@@ -56,7 +56,7 @@ abstract class GalleryLayout extends AbstractElement
 
     protected function setSlideImage(BrizyComponent $brizySectionItem, $mbItem): BrizyComponent
     {
-        $brizyComponentValue = $this->getSlideImageComponent($brizySectionItem)->getItemWithDepth(0, 0)->getValue();
+        $brizyComponentValue = $this->getSlideImageComponent($brizySectionItem)->getValue();
 
         $brizyComponentValue
             ->set_marginTop(0)

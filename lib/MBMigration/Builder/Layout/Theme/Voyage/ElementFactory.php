@@ -9,9 +9,11 @@ use MBMigration\Builder\Layout\Theme\Voyage\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventCalendarLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventGridLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventListLayout;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventTileLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullText;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullWidthForm;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GridLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GridMediaLayout;
@@ -22,6 +24,7 @@ use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListMediaLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\LivestreamLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\PrayerForm;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\PrayerList;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\SmallGroupsList;
@@ -40,30 +43,24 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $this->browserPage);
             case 'tabs-layout':
                 return new TabsLayout($this->blockKit['blocks']['tabs-layout'], $this->browserPage);
-//            case 'prayer-list':
-//                return new PrayerList($this->blockKit['blocks']['prayer-list'], $this->browserPage);
             case 'prayer-form':
                 return new PrayerForm($this->blockKit['blocks']['prayer-form'], $this->browserPage);
+            case 'prayer-list':
+                return new PrayerList($this->blockKit['blocks']['prayer-list'], $this->browserPage);
             case 'livestream-layout':
                 return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $this->browserPage);
             case 'small-groups-list':
                 return new SmallGroupsList($this->blockKit['blocks']['small-groups-list'], $this->browserPage);
-//            case 'small-groups-grid':
-//                return new SmallGroupsGrid($this->blockKit['blocks']['small-groups-grid'], $this->browserPage);
-//            case 'right-form-with-text':
-//                return new RightFormWithText($this->blockKit['blocks']['right-form-with-text'], $this->browserPage);
-//            case 'left-form-with-text':
-//                return new LeftFormWithText($this->blockKit['blocks']['left-form-with-text'], $this->browserPage);
-//            case 'full-width-form':
-//                return new FullWidthForm($this->blockKit['blocks']['full-width-form'], $this->browserPage);
+            case 'full-width-form':
+                return new FullWidthForm($this->blockKit['blocks']['form'], $this->browserPage);
             case 'event-list-layout':
                 return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $this->browserPage, $this->getQueryBuilder());
             case 'event-grid-layout':
                 return new EventGridLayout($this->blockKit['blocks']['event-grid-layout'], $this->browserPage, $this->getQueryBuilder());
 //            case 'event-gallery-layout':
 //                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $this->browserPage);
-//            case 'event-tile-layout':
-//                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $this->browserPage);
+            case 'event-tile-layout':
+                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $this->browserPage);
             case 'event-calendar-layout':
                 return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $this->browserPage);
             case 'gallery-layout':

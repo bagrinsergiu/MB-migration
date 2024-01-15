@@ -25,4 +25,8 @@ class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
     {
         return $brizyComponent->getItemWithDepth(0, 0);
     }
+
+    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent {
+        return $brizyComponent->getItemWithDepth(0);
+    }
 }
