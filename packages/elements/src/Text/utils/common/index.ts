@@ -22,6 +22,7 @@ export const extractedAttributes = [
   "font-size",
   "font-family",
   "font-weight",
+  "line-height",
   "text-align",
   "letter-spacing",
   "text-transform"
