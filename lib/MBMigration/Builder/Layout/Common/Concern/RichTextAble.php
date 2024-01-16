@@ -12,6 +12,7 @@ use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 trait RichTextAble
 {
+    use DomeElementSizeExtractor;
 
     /**
      * Process and add all items the same brizy section
@@ -101,11 +102,11 @@ trait RichTextAble
 
         foreach ((array)$mbSectionItem['items'] as $mbItem) {
 
-            if($mbItem['category']==$sectionCategory && isset($mbItem['item_type'])) {
-                if($mbItem['item_type'] == 'title' && !$showHeader) {
+            if ($mbItem['category'] == $sectionCategory && isset($mbItem['item_type'])) {
+                if ($mbItem['item_type'] == 'title' && !$showHeader) {
                     continue;
                 }
-                if($mbItem['item_type'] == 'body' && !$showBody) {
+                if ($mbItem['item_type'] == 'body' && !$showBody) {
                     continue;
                 }
 
@@ -218,15 +219,24 @@ trait RichTextAble
     ) {
 
         if (!empty($mbSectionItem['content'])) {
+
+            $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container img';
+            $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+            $sizeUnit = 'px';
+            if (strpos($sizes['width'], '%') !== false) {
+                $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container';
+                $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+            }
+
             $brizyComponent->getValue()
                 ->set_imageFileName($mbSectionItem['imageFileName'])
                 ->set_imageSrc($mbSectionItem['content'])
-                ->set_width($mbSectionItem['settings']['image']['width'])
-                ->set_height($mbSectionItem['settings']['image']['height'])
-                //->set_imageWidth($mbSectionItem['settings']['image']['width'])
-                //->set_imageHeight($mbSectionItem['settings']['image']['height'])
-                ->set_widthSuffix('px')
-                ->set_heightSuffix('px');
+                ->set_width((int)$sizes['width'])
+                ->set_height((int)$sizes['height'])
+                ->set_imageWidth($mbSectionItem['settings']['image']['width'])
+                ->set_imageHeight($mbSectionItem['settings']['image']['height'])
+                ->set_widthSuffix($sizeUnit)
+                ->set_heightSuffix($sizeUnit);
         }
 
         return $brizyComponent;
@@ -263,4 +273,5 @@ trait RichTextAble
 
         return $result;
     }
+
 }

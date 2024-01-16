@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
+use MBMigration\Builder\Layout\Common\Concern\DomeElementSizeExtractor;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
@@ -13,6 +14,8 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class LeftMediaOverlap extends PhotoTextElement
 {
+    use DomeElementSizeExtractor;
+
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
@@ -28,11 +31,12 @@ class LeftMediaOverlap extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
     }
+
 }
