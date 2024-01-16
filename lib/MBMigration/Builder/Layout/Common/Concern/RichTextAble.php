@@ -223,8 +223,8 @@ trait RichTextAble
                 ->set_imageSrc($mbSectionItem['content'])
                 ->set_width($mbSectionItem['settings']['image']['width'])
                 ->set_height($mbSectionItem['settings']['image']['height'])
-                ->set_imageWidth($mbSectionItem['settings']['image']['width'])
-                ->set_imageHeight($mbSectionItem['settings']['image']['height'])
+                //->set_imageWidth($mbSectionItem['settings']['image']['width'])
+                //->set_imageHeight($mbSectionItem['settings']['image']['height'])
                 ->set_widthSuffix('px')
                 ->set_heightSuffix('px');
         }

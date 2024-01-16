@@ -27,6 +27,6 @@ class ListLayout extends \MBMigration\Builder\Layout\Common\Element\ListLayout
         BrizyComponent $brizyComponent,
         string $photoPosition
     ): BrizyComponent {
-        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0);
+        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0, 0);
     }
 }

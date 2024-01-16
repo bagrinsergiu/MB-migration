@@ -197,6 +197,7 @@ trait SectionStylesAble
                 $brizySection->getValue()
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgImageSrc($background['photo'])
+                    ->set_bgSize('auto')
                     ->set_bgColorOpacity(0)
                     ->set_bgColorHex($backgroundColorHex);
             }
