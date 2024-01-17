@@ -6,7 +6,7 @@ export const getData = (): Entry => {
     // window.isDev = true;
     return window.isDev
       ? {
-          selector: `[data-id='${19576386}']`,
+          selector: `[data-id='${window.elementId}']`,
           families: {
             "proxima_nova_proxima_nova_regular_sans-serif": "uid1111",
             "helvetica_neue_helveticaneue_helvetica_arial_sans-serif": "uid2222"
