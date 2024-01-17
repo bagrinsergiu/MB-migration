@@ -17,40 +17,23 @@ trait SectionStylesAble
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
         $defaultFont = $data->getDefaultFontFamily();
+        $selector = '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"]';
+        $properties = [
+            'background-color',
+            'opacity',
+            'border-bottom-color',
+            'padding-top',
+            'padding-bottom',
+            'padding-right',
+            'padding-left',
+            'margin-top',
+            'margin-bottom',
+            'margin-left',
+            'margin-right',
+        ];
 
-        $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
-            [
-                'SELECTOR' => '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"]',
-                'STYLE_PROPERTIES' => [
-                    'background-color',
-                    'opacity',
-                    'border-bottom-color',
-                    'padding-top',
-                    'padding-bottom',
-                    'padding-right',
-                    'padding-left',
-                    'margin-top',
-                    'margin-bottom',
-                    'margin-left',
-                    'margin-right',
-                ],
-                'FAMILIES' => $families,
-                'DEFAULT_FAMILY' => $defaultFont,
-            ]
-        );
+        return $this->getDomElementStyle($selector, $properties, $browserPage, $families, $defaultFont);
 
-        if (isset($sectionStyles['error'])) {
-            throw new BrowserScriptException($sectionStyles['error']);
-        }
-
-        if (isset($sectionWrapperStyles['error'])) {
-            throw new BrowserScriptException($sectionWrapperStyles['error']);
-        }
-
-        $sectionStyles = $sectionStyles['data'];
-
-        return $sectionStyles;
     }
 
     protected function handleSectionStyles(ElementContextInterface $data, BrowserPage $browserPage): BrizyComponent
@@ -62,47 +45,49 @@ trait SectionStylesAble
         $pagePosition = $mbSectionItem['settings']['pagePosition'] ?? null;
 
         $selectorSectionStyles = '[data-id="'.$mbSectionItem['sectionId'].'"]';
-        $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
-            [
-                'SELECTOR' => $selectorSectionStyles,
-                'STYLE_PROPERTIES' => [
-                    'color',
-                    'background-color',
-                    'opacity',
-                    'border-bottom-color',
-                    'padding-top',
-                    'padding-bottom',
-                    'padding-right',
-                    'padding-left',
-                    'margin-top',
-                    'margin-bottom',
-                    'margin-left',
-                    'margin-right',
-                ],
-                'FAMILIES' => $families,
-                'DEFAULT_FAMILY' => $defaultFont,
-            ]
+        $properties = [
+            'color',
+            'background-color',
+            'opacity',
+            'border-bottom-color',
+            'padding-top',
+            'padding-bottom',
+            'padding-right',
+            'padding-left',
+            'margin-top',
+            'margin-bottom',
+            'margin-left',
+            'margin-right',
+            'height',
+        ];
+        $sectionStyles = $this->getDomElementStyle(
+            $selectorSectionStyles,
+            $properties,
+            $browserPage,
+            $families,
+            $defaultFont
         );
+
         $selectorSectionWrapperStyles = '[data-id="'.$mbSectionItem['sectionId'].'"]>.content-wrapper';
-        $sectionWrapperStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
-            [
-                'SELECTOR' => $selectorSectionWrapperStyles,
-                'STYLE_PROPERTIES' => [
-                    'padding-top',
-                    'padding-bottom',
-                    'padding-right',
-                    'padding-left',
-                    'margin-top',
-                    'margin-bottom',
-                    'margin-left',
-                    'margin-right',
-                ],
-                'FAMILIES' => $families,
-                'DEFAULT_FAMILY' => $defaultFont,
-            ]
+        $properties = [
+            'padding-top',
+            'padding-bottom',
+            'padding-right',
+            'padding-left',
+            'margin-top',
+            'margin-bottom',
+            'margin-left',
+            'margin-right',
+            'height',
+        ];
+        $sectionWrapperStyles = $this->getDomElementStyle(
+            $selectorSectionStyles,
+            $properties,
+            $browserPage,
+            $families,
+            $defaultFont
         );
+
 
 //        if (isset($mbSectionItem['settings']['sections']['background'])) {
 //            if (isset($mbSectionItem['settings']['sections']['background']['opacity'])) {
@@ -123,34 +108,20 @@ trait SectionStylesAble
 //            }
 //        }
 
-        if (isset($sectionStyles['error'])) {
-            throw new BrowserScriptException($sectionStyles['error']);
-        }
-
-        if (isset($sectionWrapperStyles['error'])) {
-            throw new BrowserScriptException($sectionWrapperStyles['error']);
-        }
-
-        if (empty($sectionStyles)) {
-            throw new BrowserScriptException(
-                "The element with selector {$selectorSectionStyles} was not found in page."
-            );
-        }
-        if (empty($sectionWrapperStyles)) {
-            throw new BrowserScriptException(
-                "The element with selector {$selectorSectionWrapperStyles} was not found in page."
-            );
-        }
-
-        $sectionStyles = $sectionStyles['data'];
-        $sectionWrapperStyles = $sectionWrapperStyles['data'];
-
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles);
 
         // reset padding top for first section as in brizy there is no need for that padding.
         if (!is_null($pagePosition) && $pagePosition == 0) {
             //$sectionStyles['padding-top'] = 0;
         }
+
+        // set section height
+        $brizySection
+            ->getParent()
+            ->getValue()
+            ->set_fullHeight('custom')
+            ->set_sectionHeight((int)$sectionStyles['height'])
+            ->set_sectionHeightSuffix(strpos($sectionStyles['height'], 'px') !== false ? 'px' : '%');
 
         // set the background color paddings and margins
         $brizySection->getValue()
@@ -197,7 +168,7 @@ trait SectionStylesAble
                 $brizySection->getValue()
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgImageSrc($background['photo'])
-                    ->set_bgSize('auto')
+                    ->set_bgSize('cover')
                     ->set_bgColorOpacity(0)
                     ->set_bgColorHex($backgroundColorHex);
             }

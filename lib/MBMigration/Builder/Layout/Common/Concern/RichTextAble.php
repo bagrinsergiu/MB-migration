@@ -12,8 +12,6 @@ use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 trait RichTextAble
 {
-    use DomeElementSizeExtractor;
-
     /**
      * Process and add all items the same brizy section
      */
@@ -22,10 +20,8 @@ trait RichTextAble
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
 
-
         $showHeader = $this->canShowHeader($mbSectionItem);
         $showBody = $this->canShowBody($mbSectionItem);
-
 
         $mbSectionItem['head'] = $this->sortItems($mbSectionItem['head']);
 
