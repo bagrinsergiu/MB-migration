@@ -68,7 +68,7 @@ trait SectionStylesAble
             $defaultFont
         );
 
-        $selectorSectionWrapperStyles = '[data-id="'.$mbSectionItem['sectionId'].'"]>.content-wrapper';
+        $selectorSectionWrapperStyles = '[data-id="'.$mbSectionItem['sectionId'].'"] .content-wrapper';
         $properties = [
             'padding-top',
             'padding-bottom',
@@ -81,7 +81,7 @@ trait SectionStylesAble
             'height',
         ];
         $sectionWrapperStyles = $this->getDomElementStyle(
-            $selectorSectionStyles,
+            $selectorSectionWrapperStyles,
             $properties,
             $browserPage,
             $families,
