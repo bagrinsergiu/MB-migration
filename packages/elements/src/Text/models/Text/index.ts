@@ -1,6 +1,7 @@
 import { createWrapperModel } from "../../../Models/Wrapper";
 import { ElementModel } from "../../../types/type";
 import { removeAllStylesFromHTML } from "../../utils/dom/removeAllStylesFromHTML";
+import { removeEmptyNodes } from "../../utils/dom/removeEmptyNodes";
 // import { removeEmptyNodes } from "../../utils/dom/removeEmptyNodes";
 import { transformDivsToParagraphs } from "../../utils/dom/transformDivsToParagraphs";
 import { copyParentColorToChild } from "../../utils/styles/copyParentColorToChild";
@@ -21,8 +22,8 @@ export const getTextModel = (data: Data): ElementModel => {
   // Transform all inside div to P
   node = transformDivsToParagraphs(node);
 
-  // Remove all empty P with [ <br>, \n ]
-  // node = removeEmptyNodes(node);
+  // Remove all empty P with [ \n ]
+  node = removeEmptyNodes(node);
 
   // Copy Parent Color to Child, from <p> to <span>
   node = copyParentColorToChild(node);

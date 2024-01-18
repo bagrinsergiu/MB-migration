@@ -2,9 +2,11 @@ export function removeEmptyNodes(node: Element): Element {
   const children = Array.from(node.children);
 
   children.forEach((child) => {
-    const haveText = child.textContent?.trim();
+    const text = child.textContent;
 
-    if (!haveText) {
+    // Check if have only `\n` then remove it
+    // when have <br> textContent is empty string ['']
+    if (text && text.includes("\n") && !text.trim()) {
       child.remove();
     }
   });
