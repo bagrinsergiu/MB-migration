@@ -12,6 +12,8 @@ use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 trait RichTextAble
 {
+    use TextsExtractorAware;
+
     /**
      * Process and add all items the same brizy section
      */
@@ -170,23 +172,11 @@ trait RichTextAble
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
-        $richTextBrowserData = $browserPage->evaluateScript('Text.js', [
+        $richTextBrowserData = $this->extractTexts('[data-id="'.$sectionId.'"]',$browserPage,$families,$defaultFont);
 
-            'SELECTOR' => '[data-id="'.$sectionId.'"]',
-            'FAMILIES' => $families,
-            'DEFAULT_FAMILY' => $defaultFont,
-        ]);
-
-        if (isset($richTextBrowserData['error'])) {
-            throw new BrowserScriptException($richTextBrowserData['error']);
-        }
-
-        if (!isset($richTextBrowserData['data'])) {
-            throw new BrowserScriptException("Probably the section id was not found in page. SectionId:".$sectionId);
-        }
         $embeddedElements = $this->findEmbeddedElements($mbSectionItem['content']);
         $embeddIndex = 0;
-        foreach ($richTextBrowserData['data'] as $i => $textItem) {
+        foreach ($richTextBrowserData as $i => $textItem) {
             switch ($textItem['type']) {
                 case 'EmbedCode':
                     //wrapper

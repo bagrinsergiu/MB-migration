@@ -4,15 +4,17 @@ namespace MBMigration\Builder\Layout\Common\Element;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\DomeElementSizeExtractor;
+use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
+use MBMigration\Builder\Layout\Common\Concern\TextsExtractorAware;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Layer\Graph\QueryBuilder;
 
 abstract class AbstractElement implements ElementInterface
 {
-    use DomeElementSizeExtractor;
+    use CssPropertyExtractorAware;
     use MbSectionUtils;
+    use TextsExtractorAware;
 
     /**
      * @var array

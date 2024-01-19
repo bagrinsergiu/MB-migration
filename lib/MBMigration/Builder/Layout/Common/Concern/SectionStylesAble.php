@@ -32,7 +32,7 @@ trait SectionStylesAble
             'margin-right',
         ];
 
-        return $this->getDomElementStyle($selector, $properties, $browserPage, $families, $defaultFont);
+        return $this->getDomElementStyles($selector, $properties, $browserPage, $families, $defaultFont);
 
     }
 
@@ -60,7 +60,7 @@ trait SectionStylesAble
             'margin-right',
             'height',
         ];
-        $sectionStyles = $this->getDomElementStyle(
+        $sectionStyles = $this->getDomElementStyles(
             $selectorSectionStyles,
             $properties,
             $browserPage,
@@ -80,7 +80,7 @@ trait SectionStylesAble
             'margin-right',
             'height',
         ];
-        $sectionWrapperStyles = $this->getDomElementStyle(
+        $sectionWrapperStyles = $this->getDomElementStyles(
             $selectorSectionWrapperStyles,
             $properties,
             $browserPage,
