@@ -72,9 +72,13 @@ const getMenuV = (data: NavData) => {
     const paddingRight = parseInt(styles.paddingRight ?? 0);
     const paddingBottom = parseInt(styles.paddingBottom ?? 0);
     const paddingLeft = parseInt(styles.paddingLeft ?? 0);
+    const borderRadius = parseInt(styles.borderRadius ?? 0);
 
     v = {
       ...v,
+      menuBorderRadius: borderRadius,
+      menuBorderWidthType: "grouped",
+      menuPaddingType: "ungrouped",
       menuPaddingTop: paddingTop,
       menuPaddingRight: paddingRight,
       menuPaddingBottom: paddingBottom,
@@ -111,15 +115,15 @@ const getSubMenuV = (data: Required<NavData>) => {
   });
   const submenuTypography = prefixed(typography, "subMenu");
   const baseStyle = window.getComputedStyle(ul);
-  const bgColor = parseColorString(baseStyle.backgroundColor) ?? {
-    hex: "#ffffff",
-    opacity: 1
-  };
+  const bgColor = parseColorString(baseStyle.backgroundColor);
 
   return {
     ...submenuTypography,
-    subMenuBgColorOpacity: bgColor.opacity,
-    subMenuBgColorHex: bgColor.hex
+    ...(bgColor && {
+      subMenuBgColorPalette: "",
+      subMenuBgColorOpacity: bgColor.opacity,
+      subMenuBgColorHex: bgColor.hex
+    })
   };
 };
 
