@@ -69,11 +69,13 @@ export const getModel = (data: Model) => {
         break;
       }
       case "colorHex": {
-        const toHex = parseColorString(`${styles["color"]}`);
-        dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
+        const color = parseColorString(`${styles["color"]}`);
+        dic[toCamelCase(key)] = color?.hex ?? "#000000";
         break;
       }
       case "colorOpacity": {
+        const color = parseColorString(`${styles["color"]}`);
+        dic[toCamelCase(key)] = color?.opacity ?? "1";
         break;
       }
       default: {
