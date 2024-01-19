@@ -27,9 +27,7 @@ class BrowserPage implements BrowserPageInterface
                 ->body($this->getScriptBody($jsScript));
 
             $result = $this->page->tryCatch->evaluate($jsFunction);
-            if(array_key_exists('error', $result)){
-                return [];
-            }
+
             return $result;
         } catch (Exception $e) {
             return []; // element not found

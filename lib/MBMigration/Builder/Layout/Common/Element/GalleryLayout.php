@@ -36,12 +36,13 @@ abstract class GalleryLayout extends AbstractElement
             $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
         }
 
-        $brizySection->getValue()->set_sliderDots($markers ? "circle" : "none");
-        $brizySection->getValue()->set_sliderArrows($arrows ? "heavy" : "none");
-        $brizySection->getValue()->set_sliderAutoPlay($autoplay ? "on" : "off");
-        $brizySection->getValue()->set_animationName('slideInRight'); // as there is only one animation match
-        $brizySection->getValue()->set_animationDuration($transitionDuration * 1000);
-        $brizySection->getValue()->set_animationDelay($slideDuration * 1000);
+        $brizySection->getValue()
+            ->set_sliderDots($markers ? "circle" : "none")
+            ->set_sliderArrows($arrows ? "heavy" : "none")
+            ->set_sliderAutoPlay($autoplay ? "on" : "off")
+            ->set_animationName('slideInRight') // as there is only one animation matc
+            ->set_animationDuration($transitionDuration * 1000)
+            ->set_animationDelay($slideDuration * 1000);
 
         $brizySectionItems = [];
         foreach ($data->getMbSection()['items'] as $mbItem) {

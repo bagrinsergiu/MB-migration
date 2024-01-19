@@ -2,13 +2,14 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
+use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 trait TextsExtractorAware
 {
     protected function extractTexts(
         $selectorSectionStyles,
-        $browserPage,
+        BrowserPage $browserPage,
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
