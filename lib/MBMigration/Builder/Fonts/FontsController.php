@@ -63,7 +63,7 @@ class FontsController extends builderUtils
             $createUrlForFileFontsMap = Config::$urlJsonKits . '/fonts/fonts.json';
             $this->fontsMap = $this->loadJsonFromUrl($createUrlForFileFontsMap);
         } else {
-            $file = __DIR__ . '\fonts.json';
+            $file = __DIR__ . '/fonts.json';
             $fileContent = file_get_contents($file);
             $this->fontsMap = json_decode($fileContent, true);
         }

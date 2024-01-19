@@ -115,19 +115,6 @@ trait SectionStylesAble
             //$sectionStyles['padding-top'] = 0;
         }
 
-        // set section height
-        $component = $brizySection->getParent();
-        if (in_array($brizySection->getType(),['Section','SectionFooter','SectionHeader'])) {
-            $component = $brizySection;
-        }
-
-        $component
-            ->getValue()
-            ->set_fullHeight('custom')
-            ->set_sectionHeight((int)$sectionStyles['height'])
-            ->set_sectionHeightSuffix(strpos($sectionStyles['height'], 'px') !== false ? 'px' : '%');
-
-
         // set the background color paddings and margins
         $brizySection->getValue()
             ->set_paddingTop((int)$sectionStyles['padding-top'] + (int)$sectionWrapperStyles['padding-top'])

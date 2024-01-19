@@ -25,8 +25,6 @@ abstract class FullMediaElement extends AbstractElement
 
         $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
 
-
-
         $this->handleSectionStyles($elementContext, $this->browserPage);
         $this->handleRichTextItems($elementContext, $this->browserPage);
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
