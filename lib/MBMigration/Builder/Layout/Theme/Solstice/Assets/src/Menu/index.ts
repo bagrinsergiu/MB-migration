@@ -93,7 +93,7 @@ const getMenuV = (data: NavData) => {
 const getSubMenuV = (data: Required<NavData>) => {
   const { subNav: ul, selector } = data;
 
-  const li = ul.querySelector("li:not(.selected)");
+  const li = ul.querySelector("li");
 
   if (!li) {
     warns["submenu li"] = {
@@ -102,7 +102,7 @@ const getSubMenuV = (data: Required<NavData>) => {
     return;
   }
 
-  const link = ul.querySelector("li > a");
+  const link = ul.querySelector("li:not(.selected) > a");
 
   if (!link) {
     warns["submenu li a"] = {
