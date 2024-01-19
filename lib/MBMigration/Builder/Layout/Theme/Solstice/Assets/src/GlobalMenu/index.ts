@@ -32,7 +32,7 @@ const globalMenuExtractor = () => {
       window.menuModel = {
         ...window.menuModel,
         hoverMenuBgColorHex: bgColor.hex,
-        hoverMenuBgColorOpacity: bgColor.hex
+        hoverMenuBgColorOpacity: bgColor.opacity
       };
     }
   }
