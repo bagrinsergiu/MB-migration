@@ -28,6 +28,6 @@ class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
 
     protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0, 0);
+        return $brizyComponent->getItemWithDepth(0,0);
     }
 }
