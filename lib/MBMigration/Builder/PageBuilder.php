@@ -47,7 +47,7 @@ class PageBuilder
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
 //        file_put_contents(JSON_PATH."/htmlPage.html", file_get_contents($url));
-        if ($design !== 'Anthem') {
+        if ($design !== 'Anthem' && $design !== 'Solstice') {
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder);
             $themeElementFactory = $layoutElementFactory->getFactory($design);

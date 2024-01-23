@@ -2,88 +2,128 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\BrizyComponent\BrizyComponentValue;
-use MBMigration\Builder\Layout\Common\Concern\Cacheable;
-use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
-use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementContext;
-use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Utils\ColorConverter;
+use DOMException;
+use MBMigration\Builder\ItemBuilder;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
+use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Utils;
+use MBMigration\Parser\JS;
 
-class Footer extends AbstractElement
+class Footer extends Element
 {
-    const CACHE_KEY = 'footer';
-    use Cacheable;
-    use RichTextAble;
-    use SectionStylesAble;
+    /**
+     * @var VariableCache
+     */
+    protected $cache;
+    private $jsonDecode;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    public function __construct($jsonKitElements)
     {
-        return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
-
-            $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-            $brizySection->getItemValueWithDepth(0, 0)->set_items([]);
-
-            $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
-
-            $this->handleRichTextItems($elementContext, $this->browserPage);
-            $this->handleSectionStyles($elementContext, $this->browserPage);
-
-            return $brizySection;
-        });
+        $this->cache = VariableCache::getInstance();
+        $this->jsonDecode = $jsonKitElements;
     }
 
-//
-//    protected function applySectionStyles($mbSectionItem, BrizyComponent $brizySection): BrizyComponent
-//    {
-//        $sectionStyles = $this->browserPage->evaluateScript(
-//            'StyleExtractor.js',
-//            [
-//                'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"]',
-//                'STYLE_PROPERTIES' => [
-//                    'background-color',
-//                    'opacity',
-//                    'border-bottom-color',
-//                    'padding-top',
-//                    'padding-bottom',
-//                    'margin-top',
-//                    'margin-bottom',
-//                ],
-//                'FAMILIES' => [],
-//                'DEFAULT_FAMILY' => 'lato',
-//            ]
-//        );
-//
-//        $sectionWrapperStyles = $this->browserPage->evaluateScript('StyleExtractor.js', [
-//            'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"]>.content-wrapper',
-//            'STYLE_PROPERTIES' => [
-//                'padding-top',
-//                'padding-bottom',
-//                'margin-top',
-//                'margin-bottom',
-//            ],
-//            'FAMILIES' => [],
-//            'DEFAULT_FAMILY' => 'helvetica_neue_helveticaneue_helvetica_arial_sans-serif',
-//        ]);
-//
-//        $sectionStyles = $sectionStyles['data'];
-//        $sectionWrapperStyles = $sectionWrapperStyles['data'];
-//
-//        $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
-//
-//        $brizySection->getItemValueWithDepth(0)
-//            ->set_bgColorHex($backgroundColorHex)
-//            ->set_bgColorOpacity($sectionStyles['opacity'])
-//            ->set_bgColorType('none')
-//            ->set_paddingTop((int)$sectionStyles['padding-top'] + (int)$sectionWrapperStyles['padding-top'])
-//            ->set_paddingBottom((int)$sectionStyles['padding-bottom'] + (int)$sectionWrapperStyles['padding-bottom'])
-//            ->set_marginTop((int)$sectionWrapperStyles['margin-top'])
-//            ->set_marginBottom((int)$sectionWrapperStyles['margin-bottom'])
-//            ->set_bgColorPalette('');
-//
-//
-//        return $brizySection;
-//    }
+    /**
+     * @throws DOMException
+     */
+    public function getElement(array $elementData = []): bool
+    {
+        return $this->Footer();
+    }
+
+    /**
+     * @throws DOMException
+     * @throws \Exception
+     */
+    protected function Footer(): bool
+    {
+        Utils::log('Create Footer', 1, "] [createFooter");
+
+        $sectionData = $this->cache->get('mainSection')['footer'];
+
+        $options = [];
+
+        $imageAdd = false;
+
+        $objBlock = new ItemBuilder();
+        $objText = new ItemBuilder();
+        $objImage = new ItemBuilder();
+        $objColum = new ItemBuilder();
+        $objIcon = new ItemBuilder();
+
+        $decoded = $this->jsonDecode['blocks']['footer'];
+
+        $objBlock->newItem($decoded['main']);
+        $objText->newItem($decoded['item-text']);
+        $objImage->newItem($decoded['item-image']);
+        $objColum->newItem($decoded['item-empty']);
+
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $objBlock->item()->setting('bgColorHex', $sectionData['style']['background-color']);
+        $objBlock->item()->setting('bgColorOpacity', $sectionData['style']['opacity']);
+
+        if ($this->checkArrayPath($sectionData, 'settings/background/photo')) {
+            $imageAdd = true;
+            $objImage->item()->item()->setting('imageSrc', $sectionData['settings']['background']['photo']);
+            $objImage->item()->item()->setting('imageFileName', $sectionData['settings']['background']['filename']);
+            $objImage->item()->item()->setting('sizeType', 'custom');
+            $objImage->item()->item()->setting('size', 100);
+            $objImage->item()->item()->setting('width', 80);
+            $objImage->item()->item()->setting('widthSuffix', "%");
+            $objImage->item()->item()->setting('height', 100);
+            $objImage->item()->item()->setting('heightSuffix', "%");
+        }
+
+        foreach ($sectionData['items'] as $item) {
+            if ($item['category'] == 'text') {
+                $this->setOptionsForUsedFonts($item, $options);
+                $this->defaultTextPosition($item, $options);
+
+                $this->textCreation($item, $objBlock);
+            }
+        }
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        $this->cache->set('footerBlock', json_encode($block));
+
+        return true;
+    }
+
+    private function iconColumnCreation($IconItems, $objIcon, $objColum, $decoded)
+    {
+        foreach ($IconItems as $item) {
+            $iconName = $this->getDataIconValue($item['content']);
+            $objIcon->newItem($decoded['item']);
+            $objIcon->setting('linkExternal', $item['href']);
+            $objIcon->setting('name', $this->getIcon($iconName['icon']));
+            $objColum->item()->addItem($objIcon->get());
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function textCreation($sectionData, $objBlock)
+    {
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if (!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if (is_array($embedCode)) {
+                            $objBlock->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                case 'Wrapper':
+                    $objBlock->item()->addItem($textItem);
+                    break;
+            }
+        }
+    }
+
 }

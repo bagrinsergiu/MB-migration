@@ -231,7 +231,7 @@ class Head extends Element
         $result = $this->ExtractMenuStyle($this->browserPage, $options['sectionID']);
 
         $defOptions = [
-            'activeSubMenuColorHex' => $result['data']['subMenuColorHex']
+            'activeSubMenuColorHex' => $result['data']['hoverColorHex']
             ];
 
         $result['data'] = array_merge_recursive($result['data'], $defOptions);

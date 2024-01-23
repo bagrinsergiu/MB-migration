@@ -36,6 +36,11 @@ class Utils
             Utils::$MESSAGES_POOL[$section] = [];
         }
 
+        $MESSAGES_POOL= [
+            'MAIN_MESSAGE' => [],
+            'Error_Message' =>[]
+            ];
+
         $messageArray = &Utils::$MESSAGES_POOL[$section];
 
         if (!is_array($messageArray)) {

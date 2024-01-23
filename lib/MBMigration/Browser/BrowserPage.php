@@ -47,6 +47,7 @@ class BrowserPage implements BrowserPageInterface
         }
 
         $code = file_get_contents($this->scriptPath."/".$jsScript)." return output.default; ";
+
         return $code;
     }
 
@@ -63,19 +64,20 @@ class BrowserPage implements BrowserPageInterface
         } catch (Exception $e) {
             return false; // element not found
         }
+
         return true; // element found
     }
 
     public function ExtractHover($selector): void
     {
-        if($this->triggerEvent('hover', $selector)) {
+        if ($this->triggerEvent('hover', $selector)) {
             $this->globalsEval();
         }
     }
 
     public function ExtractHoverMenu($selector): void
     {
-        if($this->triggerEvent('hover', $selector)) {
+        if ($this->triggerEvent('hover', $selector)) {
             $this->globalMenuEval();
         }
     }
@@ -90,5 +92,27 @@ class BrowserPage implements BrowserPageInterface
     {
         $this->executeScriptWithoutResult('GlobalMenu.js');
         $this->triggerEvent('hover', 'html');
+    }
+
+    public function setNodeAttributes($selector, array $attributes)
+    {
+        $this->evaluateScript("function (selector, attributes) {
+            var element = document.querySelector(selector);
+            if (element) {
+                for (var key in attributes) {
+                        element.style[key] = attributes[key];
+                }
+            }
+        }
+        ",
+            [
+                'selector' => $selector,
+                'attributes' => $attributes,
+            ]
+        );
+
+        $this->page->waitForSelector($selector);
+
+        $this->page->screenshot(['path' =>  __DIR__ . 'testImage.png']);
     }
 }

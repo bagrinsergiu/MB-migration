@@ -3,78 +3,143 @@
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
+use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Utils;
 
-class ThreeTopMedia extends AbstractElement
+class ThreeTopMedia extends Element
 {
-    use RichTextAble;
-    use SectionStylesAble;
-    use DanationsAble;
+    /**
+     * @var VariableCache
+     */
+    protected $cache;
+    private $jsonDecode;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    public function __construct($jsonKitElements)
     {
-        $mbSection = $data->getMbSection();
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-        $brizySection->getValue()->set_marginTop(0);
+        $this->cache = VariableCache::getInstance();
+        $this->jsonDecode = $jsonKitElements;
+    }
 
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
+    /**
+     * @throws \DOMException
+     */
+    public function getElement(array $elementData)
+    {
+        return $this->three_top_media($elementData);
+    }
 
-        $rowJson = json_decode($this->brizyKit['row'], true);
-        $itemJson = json_decode($this->brizyKit['item'], true);
+    /**
+     * @throws \DOMException
+     */
+    protected function three_top_media(array $sectionData)
+    {
+        Utils::log('Create bloc', 1, "three_top_media_circle");
+        $this->cache->set('currentSectionData', $sectionData);
+        $decoded = $this->jsonDecode['blocks']['three-top-media'];
 
-        $brizySectionRow = new BrizyComponent($rowJson);
+        $options = [];
 
-        foreach ($mbSection['items'] as $mbItem) {
-            switch ($mbItem['category']) {
-                case 'photo':
-                    $brizySectionItem = new BrizyComponent($itemJson);
+        $objBlock = new ItemBuilder();
+        $objItem = new ItemBuilder();
+        $objRowImage = new ItemBuilder();
+        $objRowText = new ItemBuilder();
 
-                    $brizySectionItem->getItemWithDepth(0, 0)->getValue()
-                        ->set_imageSrc($mbItem['content'])
-                        ->set_imageFileName($mbItem['imageFileName'])
-                        ->set_imageExtension($mbItem['settings']['slide']['extension']);
+        $objBlock->newItem($decoded['main']);
+        $objItem->newItem($decoded['item']);
+        $objRowImage->newItem($decoded['row']);
+        $objRowText->newItem($decoded['row']);
 
-                    $brizySectionRow->getValue()->add_items([$brizySectionItem]);
-                    break;
+        $objBlock->item(0)->setting('bgAttachment', 'none');
+        $objBlock->item(0)->setting('bgColorPalette', '');
+
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->defaultOptionsForElement($decoded, $options);
+
+        $this->backgroundColor($objBlock, $sectionData, $options);
+
+        $this->setOptionsForTextColor($sectionData, $options);
+
+        $this->backgroundParallax($objBlock, $sectionData);
+
+        $this->backgroundImages($objBlock, $sectionData, $options);
+
+        foreach ($sectionData['items'] as $item) {
+            if(isset($item['content']) && isset($item['imageFileName'])) {
+                if ($item['category'] === 'photo') {
+                    $objItem->item()->item()->setting('imageSrc', $item['content']);
+                    $objItem->item()->item()->setting('imageFileName', $item['imageFileName']);
+                    $objRowImage->addItem($objItem->get());
+                }
+            }
+        }
+        $objBlock->item()->addItem($objRowImage->get());
+
+        foreach ($sectionData['items'] as $item) {
+            if ($item['item_type'] === 'title') {
+
+                $this->textCreation($item, $objRowText);
+
+//                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+//                $objBlock->item(0)->item(1)->item(0)->item(0)->item(0)->setText($richText);
+                $this->items(0,0,1,0)->setting();
             }
         }
 
-        $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
+        foreach ($sectionData['items'] as $item)
+        {
+            if ($item['item_type'] === 'body') {
 
-        foreach ($mbSection['items'] as $mbItem) {
-            switch ($mbItem['category']) {
-                case 'text':
-                    // if the text is not shown in the header or body, skip it
-                    if((!$this->canShowHeader($mbItem) && $mbItem['item_type'] == 'body') ||
-                        (!$this->canShowHeader($mbItem) && $mbItem['item_type'] == 'title')) {
-                        break;
+                $this->textCreation($item, $objRowText);
+
+//                $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+//                $objBlock->item(0)->item(1)->item(0)->item(2)->item(0)->setText($richText);
+            }
+        }
+
+        $objBlock->item()->addItem($objRowText->get());
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
+        return json_encode($block);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function textCreation($sectionData, $objBlock)
+    {
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(is_array($embedCode)){
+                            $objBlock->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
                     }
-
-                    // add the text on the left side of th bock
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbItem,
-                        $brizySection->getItemWithDepth(0)
-                    );
-                    $this->handleRichTextItem(
-                        $elementContext,
-                        $this->browserPage
-                    );
+                    break;
+                case 'Cloneable':
+                    foreach ($textItem['value']['items'] as &$iconItem) {
+                        if ($iconItem['type'] == 'Button') {
+                            $iconItem['value']['borderStyle'] = "none";
+                        }
+                    }
+                    $objBlock->addItem($textItem);
+                    break;
+                case 'Wrapper':
+                    $objBlock->addItem($textItem);
                     break;
             }
-
         }
-
-//        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
-//        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
-
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
-
-        return $brizySection;
     }
 
 }
