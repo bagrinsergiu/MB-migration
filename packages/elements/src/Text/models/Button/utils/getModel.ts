@@ -1,6 +1,7 @@
 import { ElementModel } from "../../../../types/type";
 import { getGlobalButtonModel } from "../../../../utils/getGlobalButtonModel";
-import { getHref, normalizeOpacity } from "../../../utils/common";
+import { getHref, iconSelector, normalizeOpacity } from "../../../utils/common";
+import { getModel as getIconModel } from "../../Icon/utils/getModel";
 import { mPipe } from "fp-utilities";
 import { Literal } from "utils";
 import { parseColorString } from "utils/src/color/parseColorString";
@@ -53,6 +54,24 @@ export const getModel = (node: Element): ElementModel => {
   const modelStyle = getStyleModel(node);
   const globalModel = getGlobalButtonModel();
   const textTransform = getTransform(getNodeStyle(node));
+  let iconModel: Record<string, Literal> = {};
+  const icon = node.querySelector(iconSelector);
+
+  if (icon) {
+    const model = getIconModel(icon);
+    const name = Str.read(model.value.name);
+
+    // Remove the html for Icon
+    // have conflicts with text of button
+    icon.remove();
+
+    if (name) {
+      iconModel = {
+        iconName: name
+      };
+    }
+  }
+
   let text = getText(node);
 
   switch (textTransform) {
@@ -74,6 +93,7 @@ export const getModel = (node: Element): ElementModel => {
       text,
       ...globalModel,
       ...modelStyle,
+      ...iconModel,
       ...(isLink && {
         linkExternal: getHref(node),
         linkType: "external",
