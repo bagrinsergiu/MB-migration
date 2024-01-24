@@ -10,6 +10,7 @@
     "prettier-check": {},
     "tsc": {},
     "check-all": {},
+    "test": {},
     "dev": {
       "cache": false,
       "persistent": true
