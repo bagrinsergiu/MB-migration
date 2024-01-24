@@ -40,7 +40,9 @@ const codeToBuilderMap: Record<string, string> = {
   instagram: "logo-instagram",
   58624: "logo-instagram",
   58112: "logo-instagram",
-  61805: "logo-instagram"
+  61805: "logo-instagram",
+
+  58211: "circle-right-37"
 };
 const getColor = mPipe(
   Obj.readKey("color"),

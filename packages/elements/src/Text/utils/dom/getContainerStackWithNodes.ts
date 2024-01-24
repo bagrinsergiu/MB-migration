@@ -37,6 +37,25 @@ interface Container {
   destroy: () => void;
 }
 
+const extractInnerText = (node: Node, stack: Stack, selector: string): void => {
+  const _node = node.cloneNode(true);
+
+  if (_node instanceof HTMLElement) {
+    const innerElements = _node.querySelectorAll(selector);
+
+    if (innerElements.length > 0) {
+      innerElements.forEach((el) => {
+        el.remove();
+      });
+
+      // Extract the other html without Artifacts like Button, Icons
+      if (_node.innerHTML.trim()) {
+        stack.append(_node, { type: "text" });
+      }
+    }
+  }
+};
+
 export const getContainerStackWithNodes = (node: Element): Container => {
   const container = document.createElement("div");
   const stack = new Stack();
@@ -47,19 +66,42 @@ export const getContainerStackWithNodes = (node: Element): Container => {
     const containerOfNode = document.createElement("div");
     containerOfNode.append(_node);
 
+    // Exclude extracting icons & button for [ UL, OL ]
+    // Removed all icons & button inside [ UL, OL ]
+    const excludeIcons =
+      _node instanceof HTMLOListElement || _node instanceof HTMLUListElement;
+
     if (_node instanceof HTMLElement) {
-      if (containerOfNode.querySelector(iconSelector)) {
-        appendNewText = true;
-        stack.append(_node, { type: "icon" });
-        return;
+      const icons = containerOfNode.querySelectorAll(iconSelector);
+      const buttons = containerOfNode.querySelectorAll(buttonSelector);
+
+      if (excludeIcons) {
+        icons.forEach((node) => {
+          node.remove();
+        });
+        buttons.forEach((node) => {
+          node.remove();
+        });
+      } else {
+        // Check the button first because
+        // inside button can be icons
+        if (buttons.length > 0) {
+          appendNewText = true;
+          extractInnerText(_node, stack, buttonSelector);
+          stack.append(_node, { type: "button" });
+          return;
+        }
+        if (icons.length > 0) {
+          appendNewText = true;
+          extractInnerText(_node, stack, iconSelector);
+          stack.append(_node, { type: "icon" });
+          return;
+        }
       }
-      if (containerOfNode.querySelector(buttonSelector)) {
-        appendNewText = true;
-        stack.append(_node, { type: "button" });
-        return;
-      }
+
       if (containerOfNode.querySelector(embedSelector)) {
         appendNewText = true;
+        extractInnerText(_node, stack, embedSelector);
         stack.append(_node, { type: "embed" });
         return;
       }
