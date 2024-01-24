@@ -172,19 +172,32 @@ class ItemBuilder
 
     private function arrayToObject($array): stdClass
     {
+//        if (is_array($array)) {
+//            $object = new stdClass();
+//            foreach ($array as $key => $value) {
+//                if (is_array($value)) {
+//                    $object->$key = $this->arrayToObject($value);
+//                } else {
+//                    $object->$key = $value;
+//                }
+//            }
+//            return $object;
+//        } else {
+//
+//                return $array;
+//
+//        }
+
+        $object = new stdClass();
+
         if (is_array($array)) {
-            $object = new stdClass();
             foreach ($array as $key => $value) {
-                if (is_array($value)) {
-                    $object->$key = $this->arrayToObject($value);
-                } else {
-                    $object->$key = $value;
-                }
+                $object->$key = is_array($value) ? $this->arrayToObject($value) : $value;
             }
-            return $object;
-        } else {
-            return $array;
         }
+
+        return $object;
+
     }
 
     private function textContent($key)
