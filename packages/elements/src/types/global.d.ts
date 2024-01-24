@@ -8,8 +8,11 @@ declare global {
   const DEFAULT_FAMILY: string;
 
   interface Window {
-    isDev?: boolean;
     iconModel?: Record<string, Literal>;
     buttonModel?: Record<string, Literal>;
+
+    // only for development
+    isDev?: boolean;
+    elementId?: boolean;
   }
 }

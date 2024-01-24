@@ -169,7 +169,8 @@ class TabsLayout extends Element
         $paragraphs = $dom->getElementsByTagName('p');
 
         foreach ($paragraphs as $paragraph) {
-            $text .= $paragraph->nodeValue . ' ';
+            $filteredText = preg_replace('/[^\p{L}\p{N}\s]/u', '', $paragraph->nodeValue);
+            $text .= $filteredText . ' ';
         }
 
         libxml_use_internal_errors(false);

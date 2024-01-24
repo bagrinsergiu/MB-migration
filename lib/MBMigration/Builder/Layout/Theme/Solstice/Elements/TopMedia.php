@@ -7,7 +7,7 @@ use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
 
-class FullMedia extends Element
+class TopMedia extends Element
 {
     /**
      * @var VariableCache
@@ -35,9 +35,9 @@ class FullMedia extends Element
 
         $this->cache->set('currentSectionData', $sectionData);
 
-        $decoded = $this->jsonDecode['blocks']['full-media']['main'];
-        $general = $this->jsonDecode['blocks']['full-media'];
-        $blockImage = $this->jsonDecode['blocks']['full-media']['image'];
+        $decoded = $this->jsonDecode['blocks']['top-media']['main'];
+        $general = $this->jsonDecode['blocks']['top-media'];
+        $blockImage = $this->jsonDecode['blocks']['top-media']['image'];
 
         $objBlock->newItem($decoded);
 
@@ -54,39 +54,37 @@ class FullMedia extends Element
         $this->setOptionsForTextColor($sectionData, $options);
 
         foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'text') {
-                if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
-
-                    $this->textCreation($item, $objBlock);
-                }
-            }
-        }
-
-        foreach ($sectionData['items'] as $item) {
-            if ($item['item_type'] == 'body' && $this->showBody($sectionData)) {
-                $this->textCreation($item, $objBlock);
-            }
-        }
-
-        foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'photo' && !empty($item['content'])) {
                 $imageOptions = [
                     'imageSrc' => $item['content'],
-                    'imageFileName' => $item['imageFileName'],
+                    'imageFileName' => $item['imageFileName']
                 ];
 
                 if (!empty($item['link'])) {
                     $imageOptions = array_merge($imageOptions, [
                         'linkType' => 'external',
-                        'linkExternal' => $item['link'],
+                        'linkExternal' => $item['link']
                     ]);
                 }
                 $objBlock->item()->item()->item()->addItem($this->wrapperImage($imageOptions, $blockImage));
             }
         }
 
-        $block = $this->replaceIdWithRandom($objBlock->get());
+        foreach ($sectionData['items'] as $item) {
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
+                    $this->textCreation($item, $objBlock);
+                }
+            }
+        }
 
+        foreach ($sectionData['items'] as $item) {
+            if($item['item_type']=='body' && $this->showBody($sectionData)) {
+                $this->textCreation($item, $objBlock);
+            }
+        }
+
+        $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
     }
 
@@ -100,9 +98,9 @@ class FullMedia extends Element
         foreach ($sectionData['brzElement'] as $textItem) {
             switch ($textItem['type']) {
                 case 'EmbedCode':
-                    if (!empty($sectionData['content'])) {
+                    if(!empty($sectionData['content'])) {
                         $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
-                        if (!empty($embedCode)) {
+                        if(!empty($embedCode)){
                             $objBlock->item()->item()->item()->addItem($this->embedCode($embedCode[$i]));
                         }
                         $i++;

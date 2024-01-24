@@ -2,77 +2,151 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Concern\Cacheable;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
-use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
-use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementContext;
-use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
-class RightMedia extends AbstractElement
+class RightMedia extends Element
 {
-    use RichTextAble;
-    use SectionStylesAble;
-    use DanationsAble;
+    protected $cache;
+    private $jsonDecode;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    public function __construct($jsonKitElements)
     {
-        $mbSection = $data->getMbSection();
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $this->cache = VariableCache::getInstance();
+        $this->jsonDecode = $jsonKitElements;
+    }
 
-        foreach ((array)$mbSection['items'] as $mbSectionItem) {
-            switch ($mbSectionItem['category']) {
-                case 'photo':
-                    // add the photo items on the right side of the block
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbSectionItem,
-                        $brizySection->getItemWithDepth(0, 0, 1, 0) //
-                    );
-                    $this->handleRichTextItem(
-                        $elementContext,
-                        $this->browserPage
-                    );
+    /**
+     * @throws DOMException
+     */
+    public function getElement(array $elementData = [])
+    {
+        return $this->RightMedia($elementData);
+    }
 
-                    $brizySection->getItemWithDepth(0, 0, 1, 0, 0)->getValue()
-                        ->set_width(100)
-                        ->set_height(100)
-                        ->set_heightSuffix('%')
-                        ->set_widthSuffix('%');
-                    break;
-                case 'text':
-                    // if the text is not shown in the header or body, skip it
-                    if((!$this->canShowHeader($mbSectionItem) && $mbSectionItem['item_type'] == 'body') ||
-                        (!$this->canShowHeader($mbSectionItem) && $mbSectionItem['item_type'] == 'title')) {
-                        break;
+    /**
+     * @throws DOMException
+     * @throws \Exception
+     */
+    protected function RightMedia(array $sectionData)
+    {
+        Utils::log('Create bloc', 1, "right_media");
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $options = [];
+
+        $objBlock = new ItemBuilder();
+
+        $decoded = $this->jsonDecode['blocks']['right-media']['main'];
+        $general = $this->jsonDecode['blocks']['right-media'];
+
+        $objBlock->newItem($decoded);
+
+        $objBlock->item()->setting('bgColorPalette', '');
+        $objBlock->item()->setting('bgColorOpacity', 1);
+
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->defaultOptionsForElement($general, $options);
+
+        $this->backgroundColor($objBlock, $sectionData, $options);
+
+        $this->setOptionsForTextColor($sectionData, $options);
+
+        $this->backgroundParallax($objBlock, $sectionData);
+
+        $this->backgroundImages($objBlock, $sectionData, $options);
+
+        foreach ($sectionData['items'] as $item) {
+            if ($item['category'] == 'photo' && $item['content'] !== '') {
+                $objBlock->item()->item()->item(1)->item()->item()->setting('imageSrc', $item['content']);
+                $objBlock->item()->item()->item(1)->item()->item()->setting(
+                    'imageFileName',
+                    $item['imageFileName']
+                );
+                $objBlock->item()->item()->item(1)->item()->item()->setting('mobileSize', 100);
+                $objBlock->item()->item()->item(1)->item()->item()->setting('mobileSizeSuffix', '%');
+
+
+                if ($this->checkArrayPath($item, 'settings/image')) {
+                    $objBlock->item()->item()->item(1)->item()->item()->setting(
+                        'imageWidth',
+                        $item['settings']['image']['width']
+                    );
+                    $objBlock->item()->item()->item(1)->item()->item()->setting(
+                        'imageHeight',
+                        $item['settings']['image']['height']
+                    );
+                }
+
+                if ($item['link'] != '') {
+
+                    $urlComponents = parse_url($item['link']);
+
+                    if (!empty($urlComponents['host'])) {
+                        $slash = '';
+                    } else {
+                        $slash = '/';
                     }
-
-                    // add the text on the left side of th bock
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbSectionItem,
-                        $brizySection->getItemWithDepth(0, 0, 0)
+                    if ($item['new_window']) {
+                        $sectionItem['new_window'] = 'on';
+                    } else {
+                        $sectionItem['new_window'] = 'off';
+                    }
+                    $objBlock->item()->item()->item(1)->item()->item()->setting('linkType', 'external');
+                    $objBlock->item()->item()->item(1)->item()->item()->setting(
+                        'linkExternal',
+                        $slash.$item['link']
                     );
-                    $this->handleRichTextItem(
-                        $elementContext,
-                        $this->browserPage
+                    $objBlock->item()->item()->item(1)->item()->item()->setting(
+                        'linkExternalBlank',
+                        $sectionItem['new_window']
                     );
-                    break;
+                }
             }
         }
 
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0, 0, 0));
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        foreach ($sectionData['items'] as $item) {
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
+                    $this->textCreation($item, $objBlock);
+                }
+            }
+        }
+        foreach ($sectionData['items'] as $item) {
+            if ($item['category'] == 'text') {
+                if ($item['item_type'] == 'body' && $this->showBody($sectionData)) {
+                    $this->textCreation($item, $objBlock);
+                }
+            }
+        }
+        $block = $this->replaceIdWithRandom($objBlock->get());
 
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
-
-        return $brizySection;
-
+        return json_encode($block);
     }
+
+    private function textCreation($sectionData, $objBlock)
+    {
+
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(is_array($embedCode)){
+                            $objBlock->item()->item()->item()->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                case 'Wrapper':
+                    $objBlock->item()->item()->item()->addItem($textItem);
+                    break;
+            }
+        }
+    }
+
 }

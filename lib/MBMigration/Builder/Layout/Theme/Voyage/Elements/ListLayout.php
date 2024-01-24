@@ -16,17 +16,12 @@ class ListLayout extends \MBMigration\Builder\Layout\Common\Element\ListLayout
         return $brizyComponent->getItemWithDepth(0, 0, 0);
     }
 
-    protected function getItemTextContainerComponent(
-        BrizyComponent $brizyComponent,
-        string $photoPosition
-    ): BrizyComponent {
+    protected function getItemTextContainerComponent(BrizyComponent $brizyComponent,string $photoPosition): BrizyComponent {
         return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 1 : 0);
     }
 
-    protected function getItemImageComponent(
-        BrizyComponent $brizyComponent,
-        string $photoPosition
-    ): BrizyComponent {
-        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0);
+    protected function getItemImageComponent(BrizyComponent $brizyComponent, string $photoPosition): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0, 0);
     }
 }

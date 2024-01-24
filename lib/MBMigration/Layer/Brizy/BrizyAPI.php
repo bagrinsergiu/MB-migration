@@ -164,7 +164,6 @@ class BrizyAPI extends Utils
             }
         }
 
-        file_put_contents('token.json',$resultDecode['access_token']);
         return $resultDecode['access_token'];
     }
 

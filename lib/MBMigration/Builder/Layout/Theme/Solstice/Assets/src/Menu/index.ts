@@ -2,7 +2,8 @@ import { getGlobalMenuModel } from "../utils/getGlobalMenuModel";
 import { getModel } from "./utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData, getData } from "elements/src/utils/getData";
-import { parseColorString } from "utils/src/color/parseColorString";
+import { MValue } from "utils";
+import { Color, parseColorString } from "utils/src/color/parseColorString";
 import { prefixed } from "utils/src/models/prefixed";
 
 interface NavData {
@@ -72,9 +73,13 @@ const getMenuV = (data: NavData) => {
     const paddingRight = parseInt(styles.paddingRight ?? 0);
     const paddingBottom = parseInt(styles.paddingBottom ?? 0);
     const paddingLeft = parseInt(styles.paddingLeft ?? 0);
+    const borderRadius = parseInt(styles.borderRadius ?? 0);
 
     v = {
       ...v,
+      menuBorderRadius: borderRadius,
+      menuBorderWidthType: "grouped",
+      menuPaddingType: "ungrouped",
       menuPaddingTop: paddingTop,
       menuPaddingRight: paddingRight,
       menuPaddingBottom: paddingBottom,
@@ -89,6 +94,7 @@ const getSubMenuV = (data: Required<NavData>) => {
   const { subNav: ul, selector } = data;
 
   const li = ul.querySelector("li");
+
   if (!li) {
     warns["submenu li"] = {
       message: `Navigation don't have ul > li in ${selector}`
@@ -96,13 +102,15 @@ const getSubMenuV = (data: Required<NavData>) => {
     return;
   }
 
-  const link = ul.querySelector("li > a");
+  const link = ul.querySelector("li:not(.selected) > a");
+
   if (!link) {
     warns["submenu li a"] = {
       message: `Navigation don't have ul > li > a in ${selector}`
     };
     return;
   }
+  const selectedLink = ul.querySelector("li.selected > a");
 
   const typography = getModel({
     node: link,
@@ -111,15 +119,26 @@ const getSubMenuV = (data: Required<NavData>) => {
   });
   const submenuTypography = prefixed(typography, "subMenu");
   const baseStyle = window.getComputedStyle(ul);
-  const bgColor = parseColorString(baseStyle.backgroundColor) ?? {
-    hex: "#ffffff",
-    opacity: 1
-  };
+  const bgColor = parseColorString(baseStyle.backgroundColor);
+  let subMenuActiveColor: MValue<Color> = undefined;
+
+  if (selectedLink) {
+    const baseStyle = window.getComputedStyle(selectedLink);
+    subMenuActiveColor = parseColorString(baseStyle.color);
+  }
 
   return {
     ...submenuTypography,
-    subMenuBgColorOpacity: bgColor.opacity,
-    subMenuBgColorHex: bgColor.hex
+    ...(bgColor && {
+      subMenuBgColorPalette: "",
+      subMenuBgColorOpacity: bgColor.opacity,
+      subMenuBgColorHex: bgColor.hex
+    }),
+    ...(subMenuActiveColor && {
+      activeSubMenuColorPalette: "",
+      activeSubMenuColorHex: subMenuActiveColor.hex,
+      activeSubMenuColorOpacity: subMenuActiveColor.opacity
+    })
   };
 };
 

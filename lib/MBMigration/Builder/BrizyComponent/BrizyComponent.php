@@ -7,15 +7,17 @@ class BrizyComponent implements \JsonSerializable
     protected $type;
     protected $value;
     protected $blockId;
+    protected $parent;
 
-    public function __construct($data)
+    public function __construct($data,$parent=null)
     {
         if (!is_array($data)) {
             throw new \Exception('Wrong data format provided for BrizyComponent');
         }
 
         $this->type = $data['type'] ?? '';
-        $this->value = new BrizyComponentValue($data['value'] ?? []);
+        $this->value = new BrizyComponentValue($data['value'] ?? [], $this);
+        $this->parent = $parent;
 
         if (isset($data['blockId'])) {
             $this->blockId = $data['blockId'];
@@ -75,7 +77,7 @@ class BrizyComponent implements \JsonSerializable
     public function jsonSerialize()
     {
         $getObjectVars = get_object_vars($this);
-
+        unset($getObjectVars['parent']);
         return $getObjectVars;
     }
 
@@ -92,6 +94,14 @@ class BrizyComponent implements \JsonSerializable
         }
 
         return $item;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     public function getItemValueWithDepth()

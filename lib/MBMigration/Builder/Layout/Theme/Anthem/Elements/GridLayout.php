@@ -65,9 +65,27 @@ class GridLayout extends Element
             if ($headItem['category'] === 'text') {
                 if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                     $blockHead = true;
-                    foreach ($headItem['brzElement'] as $item) {
-                        $objHead->item(0)->addItem($item);
+                    $i = 0;
+                    foreach ($headItem['brzElement'] as $textItem) {
+                        switch ($textItem['type']) {
+                            case 'EmbedCode':
+                                if(!empty($headItem['content'])) {
+                                    $embedCode = $this->findEmbeddedPasteDivs($headItem['content']);
+                                    if(is_array($embedCode)){
+                                        $objHead->item(0)->addItem($this->embedCode($embedCode[$i]));
+                                    }
+                                    $i++;
+                                }
+                                break;
+                            case 'Cloneable':
+                            case 'Wrapper':
+                                if($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])){
+                                    $objHead->item(0)->addItem($textItem);
+                                }
+                                break;
+                        }
                     }
+
                     $objHead->item(0)->addItem(
                         $this->wrapperLine(
                             [
@@ -83,8 +101,25 @@ class GridLayout extends Element
             if ($headItem['category'] === 'text') {
                 if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
                     $blockHead = true;
-                    foreach ($headItem['brzElement'] as $item) {
-                        $objHead->item()->addItem($item);
+                    $i = 0;
+                    foreach ($headItem['brzElement'] as $textItem) {
+                        switch ($textItem['type']) {
+                            case 'EmbedCode':
+                                if(!empty($headItem['content'])) {
+                                    $embedCode = $this->findEmbeddedPasteDivs($headItem['content']);
+                                    if(is_array($embedCode)){
+                                        $objHead->item()->addItem($this->embedCode($embedCode[$i]));
+                                    }
+                                    $i++;
+                                }
+                                break;
+                            case 'Cloneable':
+                            case 'Wrapper':
+                                if($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])){
+                                    $objHead->item()->addItem($textItem);
+                                }
+                                break;
+                        }
                     }
                 }
             }
@@ -162,9 +197,27 @@ class GridLayout extends Element
                             foreach ($section['item'] as $sectionItem) {
                                 if ($sectionItem['category'] == 'text' ) {
                                     if ($sectionItem['item_type'] == 'title' && $this->showBody($section)) {
-                                        foreach ($sectionItem['brzElement'] as $item) {
-                                            $objItem->item(1)->addItem($item);
+                                        $i = 0;
+                                        foreach ($sectionItem['brzElement'] as $textItem) {
+                                            switch ($textItem['type']) {
+                                                case 'EmbedCode':
+                                                    if(!empty($sectionItem['content'])) {
+                                                        $embedCode = $this->findEmbeddedPasteDivs($sectionItem['content']);
+                                                        if(is_array($embedCode)){
+                                                            $objItem->item(1)->addItem($this->embedCode($embedCode[$i]));
+                                                        }
+                                                        $i++;
+                                                    }
+                                                    break;
+                                                case 'Cloneable':
+                                                case 'Wrapper':
+                                                    if($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])){
+                                                        $objItem->item(1)->addItem($textItem);
+                                                    }
+                                                    break;
+                                            }
                                         }
+
                                     }
                                 }
                             }
@@ -183,15 +236,49 @@ class GridLayout extends Element
                     if ($section['category'] == 'text') {
                         if ($section['item_type'] == 'title' && $this->showHeader($section)) {
                             if ($section['item_type'] == 'title') {
-                                foreach ($section['brzElement'] as $item) {
-                                    $objItem->addItem($item);
+                                $i = 0;
+                                foreach ($section['brzElement'] as $textItem) {
+                                    switch ($textItem['type']) {
+                                        case 'EmbedCode':
+                                            if(!empty($section['content'])) {
+                                                $embedCode = $this->findEmbeddedPasteDivs($section['content']);
+                                                if(is_array($embedCode)){
+                                                    $objItem->addItem($this->embedCode($embedCode[$i]));
+                                                }
+                                                $i++;
+                                            }
+                                            break;
+                                        case 'Cloneable':
+                                        case 'Wrapper':
+                                            if($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])){
+                                                $objItem->addItem($textItem);
+                                            }
+                                            break;
+                                    }
                                 }
                             }
                         }
                         if ($section['item_type'] == 'body' && $this->showBody($section)) {
                             if ($section['item_type'] == 'body') {
-                                foreach ($section['brzElement'] as $item) {
-                                    $objItem->addItem($item);
+                                $i = 0;
+                                foreach ($section['brzElement'] as $textItem) {
+                                    switch ($textItem['type']) {
+                                        case 'EmbedCode':
+                                            if(!empty($section['content'])) {
+                                                $embedCode = $this->findEmbeddedPasteDivs($section['content']);
+                                                if(is_array($embedCode)){
+                                                    $objItem->addItem($this->embedCode($embedCode[$i]));
+                                                }
+                                                $i++;
+                                            }
+                                            break;
+                                        case 'Cloneable':
+                                        case 'Wrapper':
+                                            if($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])){
+                                                $objItem->addItem($textItem);
+                                            }
+                                            break;
+                                    }
                                 }
                             }
                         }

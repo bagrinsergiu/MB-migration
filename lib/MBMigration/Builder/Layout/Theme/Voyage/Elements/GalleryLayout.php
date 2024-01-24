@@ -20,4 +20,52 @@ class GalleryLayout extends \MBMigration\Builder\Layout\Common\Element\GalleryLa
         return $brizySection;
     }
 
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $brizySection = parent::transformToItem($data);
+
+//        $mbSectionItem = $data->getMbSection();
+//        $families = $data->getFontFamilies();
+//        $defaultFont = $data->getDefaultFontFamily();
+//
+//        $selectorSectionStyles = '[data-id="'.$mbSectionItem['sectionId'].'"]';
+//        $properties = [
+//            'color',
+//            'background-color',
+//            'opacity',
+//            'border-bottom-color',
+//            'padding-top',
+//            'padding-bottom',
+//            'padding-right',
+//            'padding-left',
+//            'margin-top',
+//            'margin-bottom',
+//            'margin-left',
+//            'margin-right',
+//            'height',
+//        ];
+//        $sectionStyles = $this->getDomElementStyles(
+//            $selectorSectionStyles,
+//            $properties,
+//            $this->browserPage,
+//            $families,
+//            $defaultFont
+//        );
+
+        // set section height
+//        $component = $brizySection->getParent();
+//        if (in_array($brizySection->getType(), ['Section', 'SectionFooter', 'SectionHeader'])) {
+//            $component = $brizySection;
+//        }
+
+//        $component
+//            ->getValue()
+//            ->set_fullHeight('custom')
+//            ->set_sectionHeight((int)$sectionStyles['height'])
+//            ->set_sectionHeightSuffix(strpos($sectionStyles['height'], 'px') !== false ? 'px' : '%');
+
+        return $brizySection;
+    }
+
+
 }

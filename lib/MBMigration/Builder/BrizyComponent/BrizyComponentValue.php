@@ -7,14 +7,14 @@ use Socket\Raw\Exception;
 class BrizyComponentValue implements \JsonSerializable
 {
     private $fields;
-
-    public function __construct($data)
+    public function __construct($data, $parent = null)
     {
+
         if (isset($data['items'])) {
             $this->set(
                 'items',
-                array_map(function ($component) {
-                    return new BrizyComponent($component);
+                array_map(function ($component) use ($parent){
+                    return new BrizyComponent($component,$parent);
                 }, $data['items'])
             );
         }
@@ -45,7 +45,7 @@ class BrizyComponentValue implements \JsonSerializable
 
     public function get($field, $value)
     {
-        if(!isset($this->fields[$field])) {
+        if (!isset($this->fields[$field])) {
             throw new \Exception();
         }
 

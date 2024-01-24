@@ -2,64 +2,86 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
-use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
+use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Utils;
 
-class GalleryLayout extends AbstractElement
+class GalleryLayout extends Element
 {
-    use RichTextAble;
-    use SectionStylesAble;
-
     /**
-     * @throws BrowserScriptException
-     * @throws \Exception
+     * @var VariableCache
      */
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected $cache;
+
+    private $jsonDecode;
+
+    public function __construct($jsonKitElements)
     {
-        $mbSection = $data->getMbSection();
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-
-        $elementContext = $data->instanceWithBrizyComponent($brizySection);
-        $this->handleSectionStyles($elementContext, $this->browserPage);
-
-        $slideJson = json_decode($this->brizyKit['item'], true);
-
-        $arrows = $mbSection['settings']['sections']['gallery']['arrows'] ?? true;
-        $markers = $mbSection['settings']['sections']['gallery']['markers'] ?? true;
-        $autoplay = $mbSection['settings']['sections']['gallery']['autoplay'] ?? true;
-
-        $brizySection->getValue()->set_sliderDots($markers ? "circle" : "none");
-        $brizySection->getValue()->set_sliderArrows($arrows ? "thin" : "none");
-        $brizySection->getValue()->set_sliderAutoPlay($autoplay ? "on" : "off");
-
-        $brizySectionItems = [];
-        foreach ($data->getMbSection()['items'] as $mbItem) {
-            $brizySectionItem = new BrizyComponent($slideJson);
-            $brizySectionItem->getValue()->set_marginTop(0);
-            $brizySectionItem->getValue()->set_marginBottom(0);
-            $brizySectionItem->getValue()->set_bgImageSrc($mbItem['content']);
-            $brizySectionItem->getValue()->set_bgImageFileName($mbItem['imageFileName']);
-            $brizySectionItem->getValue()->set_imageExtension($mbItem['settings']['slide']['extension']);
-
-//            if (isset($mbItem['settings']['slide']['slide_width'])) {
-//                $brizyComponentValue->set_width($mbItem['settings']['slide']['slide_width']);
-//                $brizyComponentValue->set_widthSuffix('px');
-//            }
-//            if (isset($mbItem['settings']['slide']['slide_height'])) {
-//                $brizyComponentValue->set_height($mbItem['settings']['slide']['slide_height']);
-//                $brizyComponentValue->set_heightSuffix('px');
-//            }
-
-            $brizySectionItems[] = $brizySectionItem;
-        }
-
-        $brizySection->getValue()->set_items($brizySectionItems);
-
-        return $brizySection;
+        $this->cache = VariableCache::getInstance();
+        $this->jsonDecode = $jsonKitElements;
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function getElement($elementData)
+    {
+        return $this->gallery_layout($elementData);
+    }
+
+    protected function gallery_layout(array $sectionData)
+    {
+        $bodyBgColor = '#ffffff';
+        $rotatorSpeed = 5;
+
+
+        Utils::log('Create bloc', 1, "gallery_layout");
+        $this->cache->set('currentSectionData', $sectionData);
+
+        $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);
+
+        $decoded = $this->jsonDecode['blocks']['gallery-layout'];
+        $block = json_decode($decoded['main'], true);
+        $slide  = json_decode($decoded['item'], true);
+
+        if(isset($sectionData['settings']['sections']['gallery']['transition']) && $sectionData['settings']['sections']['gallery']['transition'] !== 'Slide') {
+            $block['value']['sliderTransition'] = 'off';
+        } else {
+            $block['value']['sliderAutoPlay'] = 'on';
+            $block['value']['sliderAutoPlaySpeed'] = $rotatorSpeed;
+        }
+
+//        $block['value']['mobileSectionHeight'] = 20;
+//        $block['value']['sectionHeight'] = 85;
+//        $block['value']['sectionHeightSuffix'] = 'vh';
+//        $block['value']['fullHeight'] = 'custom';
+//        $block['value']['mobileSectionHeightSuffix'] = 'vh';
+//        $block['value']['mobileFullHeight'] = 'custom';
+
+        if(!empty($sectionData['style']['body']['background-color'])) {
+            $bodyBgColor = $sectionData['style']['body']['background-color'];
+        }
+
+        foreach ($sectionData['items'] as $item){
+            if(!$item['uploadStatus']) {
+                continue;
+            }
+
+            if(!empty($sectionData['settings']['sections']['gallery']['max_width']) &&
+                !empty($sectionData['settings']['sections']['gallery']['max_height'])){
+                $slide['value']['bgImageWidth']  = $sectionData['settings']['sections']['gallery']['max_width'];
+                $slide['value']['bgImageHeight'] = $sectionData['settings']['sections']['gallery']['max_height'];
+            }
+
+//                $slide['value']['bgSize']          = 'contain';
+            $slide['value']['bgImageSrc']      = $item['content'];
+            $slide['value']['bgImageFileName'] = $item['imageFileName'];
+            $slide['value']['customCSS'] = 'element{background:' . $bodyBgColor . '}';
+
+
+            $this->insertElementAtPosition($block, 'value/items', $slide);
+        }
+        $block = $this->replaceIdWithRandom($block);
+        return json_encode($block);
+    }
 }

@@ -21,7 +21,7 @@ class RightMediaOverlap extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0,0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
     /**
@@ -30,7 +30,7 @@ class RightMediaOverlap extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent

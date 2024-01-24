@@ -21,7 +21,7 @@ export const getTextModel = (data: Data): ElementModel => {
   // Transform all inside div to P
   node = transformDivsToParagraphs(node);
 
-  // Remove all empty P with [ <br>, \n ]
+  // Remove all empty P with [ \n ]
   node = removeEmptyNodes(node);
 
   // Copy Parent Color to Child, from <p> to <span>

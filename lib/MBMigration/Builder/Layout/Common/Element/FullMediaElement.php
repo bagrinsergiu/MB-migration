@@ -19,6 +19,7 @@ abstract class FullMediaElement extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizySection->getValue()->set_marginTop(0);
+        $mbSectionItem = $data->getMbSection();
 
         $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
 
@@ -60,6 +61,10 @@ abstract class FullMediaElement extends AbstractElement
             ->set_widthSuffix('%')
             ->set_height('')
             ->set_heightSuffix('');
+
+        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+        $imageMb = $mbSectionItem['items'][0];
+        $this->handlePhotoItem($imageMb['id'],$imageMb,$brizyImageComponent,$this->browserPage,$data->getFontFamilies(),$data->getDefaultFontFamily());
 
         return $brizySection;
     }
