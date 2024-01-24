@@ -17,7 +17,7 @@
     "tsc": "turbo run tsc",
     "test": "turbo run test",
     "prettier-check": "turbo run prettier-check",
-    "check-all": "npm run prettier-check && npm run lint && npm run tsc",
+    "check-all": "npm run prettier-check && npm run lint && npm run tsc && npm run test",
     "build": "turbo build",
     "build:prod": "turbo build -- --production"
   },
@@ -29,6 +29,6 @@
     "puppeteer": "^21.7.0"
   },
   "devDependencies": {
-    "turbo": "^1.10.16"
+    "turbo": "^1.11.3"
   }
 }
