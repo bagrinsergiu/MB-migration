@@ -535,6 +535,7 @@ abstract class Element extends LayoutUtils
 
     public function hasAnyTagsInsidePTag($html)
     {
+        $ignoreTags = ['<br>'];
 
         $dom = new DOMDocument;
 
@@ -547,7 +548,7 @@ abstract class Element extends LayoutUtils
         foreach ($pTags as $pTag) {
             if ($pTag->hasChildNodes()) {
                 foreach ($pTag->childNodes as $childNode) {
-                    if ($childNode->nodeType === XML_ELEMENT_NODE) {
+                    if ($childNode->nodeType === XML_ELEMENT_NODE && !in_array($childNode->nodeName, $ignoreTags)) {
                         return true;
                     }
                 }
