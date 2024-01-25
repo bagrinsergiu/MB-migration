@@ -50,6 +50,10 @@ class MigrationPlatform
      */
     private $finalSuccess;
     private $buildPage;
+    /**
+     * @var PageBuilder
+     */
+    private $PageBuilder;
 
     use checking;
     use DebugBackTrace;
@@ -168,6 +172,8 @@ class MigrationPlatform
         }
 
         $this->launch($parentPages);
+
+        $this->PageBuilder->closeBrowser();
 
         Utils::log('Project migration completed successfully!', 6, 'PROCESS');
 
@@ -552,9 +558,9 @@ class MigrationPlatform
             Utils::log('Start Builder | create default Page', 4, 'RunPageBuilder');
         }
 
-        $PageBuilder = new PageBuilder();
+        $this->PageBuilder = new PageBuilder();
 
-        if ($PageBuilder->run($preparedSectionOfThePage)) {
+        if ($this->PageBuilder->run($preparedSectionOfThePage)) {
             Utils::log('Page created successfully!', 1, 'PageBuilder');
         }
     }

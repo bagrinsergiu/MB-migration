@@ -72,7 +72,7 @@ class Browser implements BrowserInterface
         $this->page->close();
     }
 
-    public function __destruct()
+    public function closeBrowser()
     {
         $this->browser->close();
     }
