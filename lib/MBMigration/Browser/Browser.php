@@ -36,7 +36,7 @@ class Browser implements BrowserInterface
                 'debug' => true,
                 'protocolTimeout' => 9000,
                 'read_timeout' => 9000,
-                'idle_timeout' => 9000
+                'idle_timeout' => 9000,
             ]
         );
         $this->browser = $puppeteer->launch([
@@ -70,5 +70,10 @@ class Browser implements BrowserInterface
     public function closePage(): void
     {
         $this->page->close();
+    }
+
+    public function __destruct()
+    {
+        $this->browser->close();
     }
 }
