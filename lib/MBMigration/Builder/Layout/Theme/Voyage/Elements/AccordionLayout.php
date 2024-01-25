@@ -13,6 +13,6 @@ class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\Accordi
 
     protected function getAccordionParentComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemValueWithDepth(0, 1, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
 }

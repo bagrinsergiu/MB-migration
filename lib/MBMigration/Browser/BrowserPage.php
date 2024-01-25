@@ -30,7 +30,7 @@ class BrowserPage implements BrowserPageInterface
 
             return $result;
         } catch (Exception $e) {
-            return []; // element not found
+            return ['error' => $e->getMessage()]; // element not found
         }
     }
 

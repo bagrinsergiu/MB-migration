@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
+use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 trait CssPropertyExtractorAware
@@ -10,7 +11,7 @@ trait CssPropertyExtractorAware
         $scriptName,
         $selectorSectionStyles,
         $styles,
-        $browserPage,
+        BrowserPage  $browserPage,
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
