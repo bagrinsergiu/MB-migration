@@ -76,9 +76,13 @@ export function copyColorStyleToTextNodes(element: Element): void {
     }
   } else if (element.nodeType === Node.ELEMENT_NODE) {
     // If the current node is an element node, recursively process its child nodes
-    const children = element.children;
+    const children = element.childNodes;
     for (let i = 0; i < children.length; i++) {
-      copyColorStyleToTextNodes(children[i] as Element);
+      const node = children[i];
+      // Check if not "\n" or empty ""
+      if (node.textContent?.trim()) {
+        copyColorStyleToTextNodes(node as Element);
+      }
     }
   }
 }
