@@ -15,6 +15,10 @@ use MBMigration\Core\Utils;
 class PageBuilder
 {
     private $cache;
+    /**
+     * @var Browser|null
+     */
+    private $browser;
 
     public function __construct()
     {
@@ -41,6 +45,7 @@ class PageBuilder
 
         $layoutBasePath = dirname(__FILE__)."/Layout";
         $browser = Browser::instance($layoutBasePath);
+        $this->browser = $browser;
         $browserPage = $browser->openPage($url, $design);
 
         $browserPage->globalsEval();
@@ -123,6 +128,11 @@ class PageBuilder
         }
 
         return $fontFamily;
+    }
+
+    public function closeBrowser()
+    {
+        $this->browser->closeBrowser();
     }
 
 }
