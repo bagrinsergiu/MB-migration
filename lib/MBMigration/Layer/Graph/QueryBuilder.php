@@ -166,6 +166,11 @@ class QueryBuilder
             Utils::log('Client was not init.', 2, 'getCollectionTypes');
         }
 
+        static $result;
+
+        if(!empty($result))
+            return $result;
+
         $query = (new Query('collectionTypes'))
             ->setOperationName('collectionTypes')
             ->setSelectionSet(
@@ -217,7 +222,7 @@ class QueryBuilder
 
         $results = $this->runQuery($query, true, []);
 
-        return $results->getData()['collectionTypes'];
+        return $result = $results->getData()['collectionTypes'];
     }
 
     /**

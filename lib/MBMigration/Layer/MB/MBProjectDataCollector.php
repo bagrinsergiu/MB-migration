@@ -185,19 +185,35 @@ class MBProjectDataCollector
     public function getDefaultFont($fontThemeUUID, $migrationDefaultFonts)
     {
         $fontStyle = $this->db->request(
-            "select display_name, name, font_id, font_size, text_transform, letter_spacing, position, bold, italic FROM font_theme_styles WHERE font_theme_id IN(SELECT id from font_themes WHERE uuid = '$fontThemeUUID') ORDER BY position"
+            //"select display_name, name, font_id, font_size, text_transform, letter_spacing, position, bold, italic FROM font_theme_styles WHERE font_theme_id IN(SELECT id from font_themes WHERE uuid = '$fontThemeUUID') ORDER BY position"
+            "
+            select fts.display_name,
+                   fts.name,
+                   fts.font_id,
+                   fts.font_size,
+                   fts.text_transform,
+                   fts.letter_spacing,
+                   fts.position,
+                   fts.bold,
+                   fts.italic,
+                   f.name as fontName,
+                   f.family as fontFamily
+            FROM font_theme_styles fts
+                JOIN public.font_themes ft on ft.id = fts.font_theme_id and ft.uuid='{$fontThemeUUID}'
+                JOIN public.fonts f on f.id = fts.font_id
+            ORDER BY fts.position
+            "
+
         );
         $addedFonts = [];
         foreach ($fontStyle as &$font) {
-            $fontName = $this->db->request("SELECT name, family from fonts WHERE id = ".$font['font_id']);
-            $font['fontName'] = $fontName[0]['name'];
-            $font['fontFamily'] = $this->transLiterationFontFamily($fontName[0]['family']);
-
+            $font['fontName'] = $font['fontname'];
+            $font['fontFamily'] = $font['fontfamily'];
             if (array_key_exists($font['font_id'], $addedFonts)) {
                 $font['uuid'] = $addedFonts[$font['font_id']];
                 continue;
             }
-            $font['uuid'] = $this->fontsController->upLoadFonts($fontName[0]['name']);
+            $font['uuid'] = $this->fontsController->upLoadFonts($font['fontname']);
             $addedFonts[$font['font_id']] = $font['uuid'];
         }
         $this->primaryDefaultFonts($fontStyle, $migrationDefaultFonts);
@@ -390,12 +406,26 @@ class MBProjectDataCollector
         $result = [];
         $i = 0;
         $requestSections = $this->db->request(
-            "SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = ".$id." ORDER BY position asc"
+            //"SELECT id, section_layout_uuid, category, position, settings FROM sections WHERE page_id  = ".$id." ORDER BY position asc"
+            "
+            SELECT s.id,
+                   s.section_layout_uuid,
+                   s.category,
+                   s.position,
+                   s.settings,
+                   sl.name as typeSection,
+                   sl.category as categoryLayout,
+                   sl.settings as settingsLayout
+            FROM sections s
+            JOIN public.section_layouts sl on s.section_layout_uuid = sl.uuid
+            WHERE s.page_id = {$id}
+            ORDER BY s.position asc;
+            "
         );
         foreach ($requestSections as $pageSections) {
-            $typeSectionLayoutUuid = $this->db->requestArray(
-                "SELECT name, category, settings FROM section_layouts WHERE uuid  = '".$pageSections['section_layout_uuid']."'"
-            );
+//            $typeSectionLayoutUuid = $this->db->requestArray(
+//                "SELECT name, category, settings FROM section_layouts WHERE uuid  = '".$pageSections['section_layout_uuid']."'"
+//            );
             $settings = json_decode($pageSections['settings'], true);
 
             if (!array_key_exists('color', $settings)) {
@@ -404,14 +434,14 @@ class MBProjectDataCollector
 
             $result[] = [
                 'id' => $pageSections['id'],
-                'categoryLayout' => $typeSectionLayoutUuid[0]['category'],
+                'categoryLayout' => $pageSections['categorylayout'],
                 'category' => $pageSections['category'],
-                'typeSection' => $typeSectionLayoutUuid[0]['name'],
+                'typeSection' => $pageSections['typesection'],
                 'position' => $pageSections['position'],
                 'settings' => [
                     'pagePosition' => $i,
                     'sections' => $settings,
-                    'layout' => json_decode($typeSectionLayoutUuid[0]['settings'], true),
+                    'layout' => json_decode($pageSections['settingslayout'], true),
                 ],
             ];
             $i++;
@@ -486,7 +516,28 @@ class MBProjectDataCollector
         }
 
         $requestItemsFromSection = $this->db->request(
-            'SELECT * FROM items WHERE "group" is not null and section_id = '.$sectionId['id'].' ORDER BY parent_id DESC, order_by'
+            //'SELECT * FROM items WHERE "group" is not null and section_id = '.$sectionId['id'].' ORDER BY parent_id DESC, order_by'
+            "
+            SELECT
+                i.*,
+            
+                CASE
+                WHEN l.page_id is not null THEN p.slug
+                ELSE l.detail
+                END AS link,
+            
+                CASE
+                WHEN l.page_id is not null THEN null
+                ELSE l.settings->>'new_window'
+                END AS new_window
+            
+            FROM items i
+            LEFT JOIN public.links l on i.id = l.item_id
+            LEFT JOIN public.pages p on l.page_id = p.id
+            WHERE i.group is not null
+              and i.section_id = {$sectionId['id']}
+            ORDER BY i.parent_id DESC, order_by    
+            "
         );
         foreach ($requestItemsFromSection as $sectionsItems) {
             Utils::log(
@@ -496,9 +547,7 @@ class MBProjectDataCollector
             );
             $settings = '';
             $uploadedFont = [];
-            if ($this->isJsonString($sectionsItems['settings'])) {
-                $settings = json_decode($sectionsItems['settings'], true);
-
+            if ($settings = json_decode($sectionsItems['settings'], true)) {
                 if (isset($settings['used_fonts'])) {
                     foreach ($settings['used_fonts'] as $fontName) {
                         $defaultFont = $this->cache->get('fonts', 'settings');
@@ -509,7 +558,7 @@ class MBProjectDataCollector
                             }
                         }
 
-                        $settingSite = $this->db->request("SELECT family from fonts WHERE name = '$fontName'");
+                        $settingSite = $this->getFont($fontName);
                         $uploadedFont[] = [
                             'fontName' => $fontName,
                             'fontFamily' => $this->transLiterationFontFamily($settingSite[0]['family']),
@@ -522,7 +571,8 @@ class MBProjectDataCollector
                     }
                 }
             }
-            $link = $this->getItemLink($sectionsItems['id']);
+
+           // $link = $this->getItemLink($sectionsItems['id']);
             $result[] = [
                 'id' => $sectionsItems['id'],
                 'category' => $sectionsItems['category'],
@@ -531,8 +581,8 @@ class MBProjectDataCollector
                 'group' => $sectionsItems['group'],
                 'parent_id' => $sectionsItems['parent_id'],
                 'settings' => $settings,
-                'link' => $link['detail'],
-                'new_window' => $link['new_window'],
+                'link' => $sectionsItems['link'],
+                'new_window' => $sectionsItems['new_window']?true:false,
                 'content' => $sectionsItems['content'],
             ];
         }
@@ -543,6 +593,23 @@ class MBProjectDataCollector
         }
 
         return $result;
+    }
+
+    /**
+     * @param $fontName
+     * @return array|false
+     * @throws Exception
+     */
+    protected function getFont($fontName)
+    {
+        static $settingSite = null;
+
+        if($settingSite)
+            return $settingSite;
+
+        $settingSite = $this->db->request("SELECT family from fonts WHERE name = '$fontName'");
+
+        return $settingSite;
     }
 
     private function isJsonString($string): bool

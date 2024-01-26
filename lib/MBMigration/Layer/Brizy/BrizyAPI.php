@@ -477,7 +477,11 @@ class BrizyAPI extends Utils
     public function getAllProjectPages(): array
     {
         Utils::log('Get All Pages from projects', 1, 'getAllProjectPages');
-        $result = [];
+        static $result;
+
+        if(!empty($result))
+            return $result;
+
         $this->QueryBuilder = $this->cacheBR->getClass('QueryBuilder');
 
         $collectionTypes = $this->QueryBuilder->getCollectionTypes();
