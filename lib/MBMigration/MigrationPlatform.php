@@ -144,7 +144,7 @@ class MigrationPlatform
 
         $this->brizyApi->setMetaDate();
 
-        $parentPages = $this->parser->getParentPages();
+        $parentPages = $this->parser->getPages();
 
         if (empty($parentPages)) {
             Utils::log(
