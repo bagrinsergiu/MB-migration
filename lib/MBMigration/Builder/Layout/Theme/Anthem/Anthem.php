@@ -103,7 +103,7 @@ class Anthem extends LayoutUtils
             $activeParentPage = $slug;
         }
         $url = PathSlugExtractor::getFullUrl($slug);
-
+        $this->browserPage = $this->browser->openPage($url, 'Anthem');
         $this->cache->set('CurrentPageURL', $url);
 
         $this->ExtractDataFromPage($preparedSectionOfThePage, $this->browserPage);

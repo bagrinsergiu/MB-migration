@@ -185,7 +185,15 @@ class MBProjectDataCollector
             $settings['theme'] = $this->processFonts($settings['theme'],$migrationDefaultFonts);
             return $settings['theme'];
         } else {
-            return $this->getDefaultFont($fontThemeUUID, $migrationDefaultFonts);
+            $result = $this->getDefaultFont($fontThemeUUID, $migrationDefaultFonts);
+
+//            foreach ($result['theme'] as $i=>$font) {
+//                $settings['theme'][$i]['font_name'] = $fontData[$font['font_id']]['name'];
+//                $settings['theme'][$i]['font_family'] = $this->transLiterationFontFamily($fontData[$font['font_id']]['family']);
+//            }
+
+            return  $result;
+
         }
     }
 

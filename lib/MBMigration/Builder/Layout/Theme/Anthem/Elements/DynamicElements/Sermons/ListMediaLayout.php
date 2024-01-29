@@ -82,7 +82,7 @@ class ListMediaLayout extends DynamicElement
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
-        $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName);
+        $this->createDetailPage($collectionItemsForDetailPage, $slug, $title, $elementName);
         return json_encode($block);
     }
 }

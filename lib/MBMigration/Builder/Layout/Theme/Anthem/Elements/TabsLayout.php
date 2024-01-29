@@ -69,9 +69,12 @@ class TabsLayout extends Element
                     foreach ($headItem['brzElement'] as $item) {
                         $objBlock->item()->addItem($item);
                     }
-                    $objBlock->item()->addItem(
-                        $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']])
-                    );
+                    if(!empty($sectionData['style']['border']['border-bottom-color']))
+                    {
+                        $objBlock->item()->addItem(
+                            $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']])
+                        );
+                    }
                 }
             }
         }
@@ -150,8 +153,8 @@ class TabsLayout extends Element
 
             $objRow->item(0)->addItem($objItem->get());
         }
-        $objRow->item(0)->setting('contentBgColorHex', $sectionData['style']['background-color']);
-        $objRow->item(0)->setting('bgColorHex', $sectionData['style']['background-color']);
+        $objRow->item(0)->setting('contentBgColorHex', $sectionData['style']['background-color'] ?? '#FFFFFF');
+        $objRow->item(0)->setting('bgColorHex', $sectionData['style']['background-color'] ?? "#FFFFFF");
         $objBlock->item(0)->addItem($objRow->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
