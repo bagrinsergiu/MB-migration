@@ -12,13 +12,14 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "utils": "*",
-    "elements": "*"
+    "elements": "*",
+    "utils": "*"
   },
   "devDependencies": {
     "config": "*",
     "esbuild": "^0.19.5",
     "minimist": "^1.2.8",
+    "path-scurry": "^1.10.1",
     "rimraf": "^5.0.5"
   }
 }
