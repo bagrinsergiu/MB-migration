@@ -29,7 +29,6 @@
     "puppeteer": "^21.5.0"
   },
   "devDependencies": {
-    "@esbuild/darwin-arm64": "^0.19.12",
     "turbo": "^1.11.3"
   }
 }
