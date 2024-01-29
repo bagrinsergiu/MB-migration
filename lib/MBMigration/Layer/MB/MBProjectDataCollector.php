@@ -124,6 +124,7 @@ class MBProjectDataCollector
                 s.uuid,
                 s.name,
                 s.title,
+                CONCAT(s.name,'.','".Config::$previewBaseHost."') as domain,
                 d.name as design,
                 s.settings as parameter,
                 s.favicon,
