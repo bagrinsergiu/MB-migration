@@ -43,24 +43,25 @@ abstract class HeadElement extends AbstractElement
     }
 
     // region Menu methods
-    private function createMenu(BrizyComponent $brizyComponent, $menuList): array
+    private function createMenu($menuList): array
     {
-        $menuItems = $this->creatingMenuTree($menuList['list'], $brizyComponent);
+        $menuItems = $this->creatingMenuTree($menuList['list']);
 
         return $menuItems;
     }
 
-    private function creatingMenuTree($menuList, BrizyComponent $cloneBlockMenu): array
+    private function creatingMenuTree($menuList): array
     {
+        $menuItemKit = json_decode($this->brizyKit['item'], true);
         $treeMenu = [];
         foreach ($menuList as $item) {
-            $blockMenu = clone $cloneBlockMenu;
+            $blockMenu = new BrizyComponent($menuItemKit);
             $blockMenu->getValue()->set_itemId($item['collection']);
             $blockMenu->getValue()->set_title($item['name']);
             $blockMenu->getValue()->set_url($item['slug'] == 'home' ? '/' : $item['slug']);
             $blockMenu->getValue()->set_id(bin2hex(random_bytes(16)));
 
-            $menuSubItems = $this->creatingMenuTree($item['child'], $cloneBlockMenu);
+            $menuSubItems = $this->creatingMenuTree($item['child']);
             $blockMenu->getValue()->set_items($menuSubItems);
 
             if ($item['landing'] == false) {
@@ -132,9 +133,7 @@ abstract class HeadElement extends AbstractElement
         BrizyComponent $component,
         $headStyles
     ): BrizyComponent {
-        $menuItemKit = json_decode($this->brizyKit['item'], true);
-        $brizyComponent = new BrizyComponent($menuItemKit);
-        $menuItems = $this->createMenu($brizyComponent, $data->getMenu());
+        $menuItems = $this->createMenu($data->getMenu());
         $menuComponentValue = $component->getValue();
         $menuComponentValue->set('items', $menuItems)
             ->set_menuSelected($data->getMenu()['uid'])
