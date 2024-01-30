@@ -633,6 +633,7 @@ class MBProjectDataCollector
             );
             $settings = '';
             $uploadedFont = [];
+
             if ($settings = json_decode($sectionsItems['settings'], true)) {
                 if (isset($settings['used_fonts'])) {
                     foreach ($settings['used_fonts'] as $fontName) {
@@ -688,11 +689,11 @@ class MBProjectDataCollector
      */
     protected function getFont($fontName)
     {
-        static $settingSite = null;
-
-        if ($settingSite) {
-            return $settingSite;
-        }
+//        static $settingSite = null;
+//
+//        if ($settingSite) {
+//            return $settingSite;
+//        }
 
         $settingSite = $this->db->request("SELECT family from fonts WHERE name = '$fontName'");
 
