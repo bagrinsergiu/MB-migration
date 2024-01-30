@@ -20,6 +20,7 @@ trait SectionStylesAble
         $selector = '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"]';
         $properties = [
             'background-color',
+            'background-size',
             'opacity',
             'border-bottom-color',
             'padding-top',
@@ -161,8 +162,8 @@ trait SectionStylesAble
                 $brizySection->getValue()
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgImageSrc($background['photo'])
-                    ->set_bgSize('cover')
-                    ->set_bgColorOpacity(0)
+                    ->set_bgSize($sectionStyles['background-size'])
+                    ->set_bgColorOpacity(NumberProcessor::convertToNumeric($background['opacity']))
                     ->set_bgColorHex($backgroundColorHex);
             }
         }

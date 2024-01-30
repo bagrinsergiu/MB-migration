@@ -32,14 +32,14 @@ abstract class FullTextElement extends AbstractElement
 
         // not sure if this must be there or in a concrete theme
         // the image in the bg is not always correctly fitted
-        $mbSectionItem = $data->getMbSection();
-        if ($this->hasImageBackground($mbSectionItem)) {
-            $background = $mbSectionItem['settings']['sections']['background'];
-            if (isset($background['filename']) && isset($background['photo'])) {
-                $this->getSectionItemComponent($brizySection)->getValue()
-                    ->set_bgSize('auto');
-            }
-        }
+        // $mbSectionItem = $data->getMbSection();
+        // if ($this->hasImageBackground($mbSectionItem)) {
+        //    $background = $mbSectionItem['settings']['sections']['background'];
+        //    if (isset($background['filename']) && isset($background['photo'])) {
+        //        $this->getSectionItemComponent($brizySection)->getValue()
+        //            ->set_bgSize('auto');
+        //    }
+        // }
 
         return $brizySection;
     }
