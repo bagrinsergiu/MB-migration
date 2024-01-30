@@ -185,14 +185,8 @@ class MBProjectDataCollector
             $settings['theme'] = $this->processFonts($settings['theme'],$migrationDefaultFonts);
             return $settings['theme'];
         } else {
-            $result = $this->getDefaultFont($fontThemeUUID, $migrationDefaultFonts);
 
-//            foreach ($result['theme'] as $i=>$font) {
-//                $settings['theme'][$i]['font_name'] = $fontData[$font['font_id']]['name'];
-//                $settings['theme'][$i]['font_family'] = $this->transLiterationFontFamily($fontData[$font['font_id']]['family']);
-//            }
-
-            return  $result;
+            return $this->getDefaultFont($fontThemeUUID, $migrationDefaultFonts);
 
         }
     }
@@ -246,6 +240,10 @@ class MBProjectDataCollector
 
         // upload and add fonts to project
         $fontStyles = $this->fontsController->addFontsToBrizyProject($fontStyles);
+
+        foreach ($fontStyles as &$font) {
+            $font['fontFamily'] = $this->transLiterationFontFamily($font['fontFamily']);
+        }
 
         return $fontStyles;
     }
