@@ -221,17 +221,21 @@ class MBProjectDataCollector
         return $this->processFonts($dbFontStyles, $migrationDefaultFonts);
     }
 
-    private function processFonts($dbFontStyles, $migrationDefaultFonts) {
+    private function processFonts($dbFontStyles, $migrationDefaultFonts)
+    {
         $fontStyles = [];
         foreach ($dbFontStyles as $font) {
-            $font['fontName'] = $font['font_name'];
-            $font['fontFamily'] = $font['font_family'];
-            $font['uuid'] = null; //$this->fontsController->upLoadFont($font['font_name']);
-            $fontStyles[$font['font_name']] = $font;
+            $fontStyles[] = [
+                'name' => $font['name'],
+                'fontName' => $font['font_name'],
+                'text_transform' => $font['text_transform'],
+                'fontFamily' => $this->transLiterationFontFamily($font['font_family']),
+                'uuid' => null,
+            ];
 
         }
 
-        $fontStyles[$migrationDefaultFonts] = [
+        $fontStyles[] = [
             'name' => 'primary',
             'fontName' => $migrationDefaultFonts,
             'fontFamily' => $this->transLiterationFontFamily($migrationDefaultFonts),
@@ -640,10 +644,10 @@ class MBProjectDataCollector
                             }
                         }
 
-                        $settingSite = $this->getFont($fontName);
+                        $dbFont = $this->getFont($fontName);
                         $uploadedFont[] = [
                             'fontName' => $fontName,
-                            'fontFamily' => $this->transLiterationFontFamily($settingSite[0]['family']),
+                            'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
                             'uuid' => $this->fontsController->upLoadFont($fontName),
                         ];
 
