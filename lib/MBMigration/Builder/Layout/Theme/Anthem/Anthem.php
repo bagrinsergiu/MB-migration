@@ -222,6 +222,13 @@ class Anthem extends LayoutUtils
             ) ?? [];
             $section['style']['body'] = $this->ExtractStylePage($browserPage);
 
+            if ($section['typeSection'] === 'two-horizontal-text') {
+                $section['style']['vertical-border'] = $this->ExtractBorderColorForTHT(
+                    $browserPage,
+                    $section['sectionId']
+                ) ?? [];
+            }
+
             if (!empty($section['items'])) {
                 foreach ($section['items'] as &$item) {
                     if ($item['category'] === 'text') {
@@ -317,7 +324,8 @@ class Anthem extends LayoutUtils
         return $style;
     }
 
-    private function removePx($inputString) {
+    private function removePx($inputString)
+    {
         $pos = strpos($inputString, "px");
 
         if ($pos !== false) {
@@ -361,20 +369,22 @@ class Anthem extends LayoutUtils
                     }
                 }
             }
-        }  else { return [];}
+        } else {
+            return [];
+        }
 
         return $style;
     }
 
-    private function ExtractStyleBorderSection($browserPage, int $sectionId): array
+    private function ExtractBorderColorForTHT($browserPage, int $sectionId): array
     {
         $style = [];
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'SELECTOR' => '[data-id="'.$sectionId.'"] .group-0',
                 'STYLE_PROPERTIES' => [
-                    'border-bottom-color',
+                    'border-color',
                 ],
                 'FAMILIES' => $this->fontFamily['kit'],
                 'DEFAULT_FAMILY' => $this->fontFamily['Default'],
@@ -400,7 +410,9 @@ class Anthem extends LayoutUtils
                     }
                 }
             }
-        }  else { return [];}
+        } else {
+            return [];
+        }
 
         return $style;
     }
@@ -462,7 +474,9 @@ class Anthem extends LayoutUtils
                     }
                 }
             }
-        }  else { return [];}
+        } else {
+            return [];
+        }
 
         return $style;
     }
@@ -479,7 +493,7 @@ class Anthem extends LayoutUtils
             return [];
         }
 
-        if(!isset($richTextBrowserData['data'])){
+        if (!isset($richTextBrowserData['data'])) {
             return [];
         }
 
@@ -514,7 +528,9 @@ class Anthem extends LayoutUtils
                     }
                 }
             }
-        } else { return [];}
+        } else {
+            return [];
+        }
     }
 
     private function convertColor($color)

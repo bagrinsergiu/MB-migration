@@ -112,13 +112,14 @@ class TwoHorizontalText extends Element
         $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderTopWidth", 0);
         $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderLeftWidth", 0);
 
-        if(isset($sectionData['style']['border']['border-bottom-color'])) {
-            $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderColorHex",  $sectionData['style']['border']['border-bottom-color']);
-            $objBlock->item(0)->item(0)->item(1)->setting("borderColorHex",  $sectionData['style']['border']['border-bottom-color']);
-        }
-
+        $objBlock->item(0)->item(0)->item(1)->setting("borderColorOpacity", 1);
+        $objBlock->item(0)->item(0)->item(1)->setting("borderLeftWidth", 2);
         $objBlock->item(0)->item(0)->item(1)->setting("borderColorPalette",  '');
 
+        if(isset($sectionData['style']['vertical-border']['border-color'])) {
+            $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderColorHex",  $sectionData['style']['vertical-border']['border-color']);
+            $objBlock->item(0)->item(0)->item(1)->setting("borderColorHex",  $sectionData['style']['vertical-border']['border-color']);
+        }
 
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
