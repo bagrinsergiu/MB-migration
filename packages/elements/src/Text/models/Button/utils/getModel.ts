@@ -1,6 +1,11 @@
 import { ElementModel } from "../../../../types/type";
 import { getGlobalButtonModel } from "../../../../utils/getGlobalButtonModel";
-import { getHref, iconSelector, normalizeOpacity } from "../../../utils/common";
+import {
+  getHref,
+  getTarget,
+  iconSelector,
+  normalizeOpacity
+} from "../../../utils/common";
 import { getModel as getIconModel } from "../../Icon/utils/getModel";
 import { mPipe } from "fp-utilities";
 import { Literal } from "utils";
@@ -30,6 +35,12 @@ const getTransform = mPipe(Obj.readKey("text-transform"), Str.read);
 const getText = pipe(Obj.readKey("text"), Str.read, onNullish("BUTTON"));
 
 const getBgColorOpacity = (color: Color, opacity: number): number => {
+  const colorOpacity = +color.opacity;
+
+  if (colorOpacity === 0) {
+    return 0;
+  }
+
   return +(isNaN(opacity) ? color.opacity ?? 1 : opacity);
 };
 
@@ -83,6 +94,9 @@ export const getModel = (node: Element): ElementModel => {
 
   let text = getText(node);
 
+  const link = getTarget(node);
+  const targetType = link === "_self" ? "off" : "on";
+
   switch (textTransform) {
     case "uppercase": {
       text = text.toUpperCase();
@@ -106,7 +120,7 @@ export const getModel = (node: Element): ElementModel => {
       ...(isLink && {
         linkExternal: getHref(node),
         linkType: "external",
-        linkExternalBlank: "on"
+        linkExternalBlank: targetType
       })
     }
   };

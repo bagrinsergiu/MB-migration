@@ -60,6 +60,8 @@ export const embedSelector = ".embedded-paste";
 
 export const getHref = mPipe(Obj.readKey("href"), Str.read);
 
+export const getTarget = mPipe(Obj.readKey("target"), Str.read);
+
 export const normalizeOpacity = (color: Color): Color => {
   const { hex, opacity } = color;
 
