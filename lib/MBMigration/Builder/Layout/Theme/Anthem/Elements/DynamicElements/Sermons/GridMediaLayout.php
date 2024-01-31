@@ -48,7 +48,7 @@ class GridMediaLayout extends DynamicElement
 
             if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
-                $this->textCreation($headItem['id'], $item['content'], $options, $objBlock);
+                $this->textCreation($headItem['id'], $headItem['content'], $options, $objBlock);
                 $objBlock->item()->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
             }
 
@@ -77,59 +77,40 @@ class GridMediaLayout extends DynamicElement
         return json_encode($block);
     }
 
-    private function textCreation($itemID, $content, $options, $objBlock)
+
+    private function textCreation($sectionData, $objBlock, $setId = 0)
     {
-        $multiElement = [];
-
-        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
-
-        if(!is_array($richText)) {
-            $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
-        } else {
-            if(!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'top') {
-                        $multiElement[] = $this->wrapperIcon($itemIcon['items'], $itemIcon['align']);
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(!empty($embedCode)){
+                            $objBlock->item(0)->item(0)->item($setId)->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
                     }
-                }
-            }
+                    break;
+                case 'Cloneable':
+                    $textItem['value']['mobileHorizontalAlign'] = 'center';
 
-            if(!empty($richText['text'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'top') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
+                    foreach ($textItem['value']['items'] as &$iconItem) {
+//                        if ($iconItem['type'] == 'Icon') {
+//                            $iconItem['value']['hoverColorHex'] = $sectionData['style']['hover']['icon'] ?? '';
+//                        }
+
+                        if ($iconItem['type'] == 'Button') {
+                            $iconItem['value']['borderStyle'] = "none";
+                        }
+
                     }
-                }
+                    $objBlock->item(0)->item(0)->item($setId)->addItem($textItem);
+                    break;
+                case 'Wrapper':
+                    $objBlock->item(0)->item(0)->item($setId)->addItem($textItem);
+                    break;
             }
-
-            if(!empty($richText['text'])) {
-                $multiElement[] = $this->itemWrapperRichText($richText['text']);
-            }
-
-            if(!empty($richText['embeds']['persist'])) {
-                $result = $this->findEmbeddedPasteDivs($content);
-                foreach ($result as $item) {
-                    $multiElement[] = $this->embedCode($item);
-                }
-            }
-
-            if(!empty($richText['button'])) {
-                foreach ($richText['button'] as $itemButton) {
-                    if ($itemButton['position'] === 'bottom') {
-                        $multiElement[] = $this->button($itemButton['items'], $itemButton['align']);
-                    }
-                }
-            }
-
-            if(!empty($richText['icons'])) {
-                foreach ($richText['icons'] as $itemIcon) {
-                    if ($itemIcon['position'] === 'bottom') {
-                        $multiElement[] = $this->wrapperColumn($multiElement, true);
-                    }
-                }
-            }
-
-            $objBlock->item(0)->addItem($this->wrapperColumn($multiElement, true));
         }
     }
 
