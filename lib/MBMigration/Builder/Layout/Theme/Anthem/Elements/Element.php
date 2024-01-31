@@ -246,7 +246,7 @@ abstract class Element extends LayoutUtils
         $jsonDecode = $this->initData();
         $QueryBuilder = $this->cache->getClass('QueryBuilder');
 
-        $QueryBuilder->createCollectionItem($itemsID, $slug, $title);
+//        $QueryBuilder->createCollectionItem($itemsID, $slug, $title);
 
         if ($this->checkArrayPath($jsonDecode, "dynamic/$elementName")) {
             $decoded = $jsonDecode['dynamic'][$elementName];
@@ -396,6 +396,7 @@ abstract class Element extends LayoutUtils
             'borderColorPalette' => '',
             'borderColorHex' => '#000000',
             'borderColorOpacity' => 1,
+            'borderWidth' => 2,
         ];
 
         $jsonDecode = $this->initData();
