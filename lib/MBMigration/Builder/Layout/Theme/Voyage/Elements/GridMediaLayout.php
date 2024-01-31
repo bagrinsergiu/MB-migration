@@ -62,10 +62,12 @@ class GridMediaLayout extends AbstractElement
 
         // header
         $headElement = $data->getThemeContext()->getElementFactory()->getElement('head');
-        $headBlock = $headElement->transformToItem($data->getThemeContext()->getMbHeadSection());
+        $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbHeadSection());
+        $headBlock = $headElement->transformToItem($elementContext);
 
-        $footerElement = $data->getThemeContext()->getElementFactory()->getElement('head');
-        $footerBlock = $footerElement->transformToItem($data->getThemeContext()->getMbFooterSection());
+        $footerElement = $data->getThemeContext()->getElementFactory()->getElement('footer');
+        $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbFooterSection());
+        $footerBlock = $footerElement->transformToItem($elementContext);
         // footer
 
         // create details page

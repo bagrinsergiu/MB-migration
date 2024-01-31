@@ -29,7 +29,9 @@ abstract class GridLayout extends AbstractElement
         $itemJson = json_decode($this->brizyKit['item'], true);
 
 
-        $itemsChunks = array_chunk($mbSection['items'], $this->getItemsPerRow());
+        $accordionItems = $this->getItemsByCategory($mbSection,'list');
+        $accordionItems = $this->sortItems($accordionItems);
+        $itemsChunks = array_chunk($accordionItems, $this->getItemsPerRow());
         foreach ($itemsChunks as $row) {
             $brizySectionRow = new BrizyComponent($rowJson);
             foreach ($row as $item) {
@@ -45,7 +47,6 @@ abstract class GridLayout extends AbstractElement
                     ->set_paddingLeft((int)$styles['margin-left']);
 
                 foreach ($item['item'] as $mbItem) {
-
                     switch ($mbItem['category']) {
                         case 'photo':
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
@@ -69,11 +70,8 @@ abstract class GridLayout extends AbstractElement
                             break;
                     }
                 }
-
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
             }
-
-
             $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
         }
 

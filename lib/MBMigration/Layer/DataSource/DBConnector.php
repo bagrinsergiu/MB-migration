@@ -30,6 +30,13 @@ class DBConnector
         return $this->connection->request($query);
     }
 
+    public function requestOne($query)
+    {
+        $array = $this->connection->request($query);
+
+        return array_pop($array);
+    }
+
     /**
      * @throws Exception
      */

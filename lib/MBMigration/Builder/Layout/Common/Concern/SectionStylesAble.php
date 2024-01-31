@@ -20,6 +20,7 @@ trait SectionStylesAble
         $selector = '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"]';
         $properties = [
             'background-color',
+            'background-size',
             'opacity',
             'border-bottom-color',
             'padding-top',
@@ -111,8 +112,9 @@ trait SectionStylesAble
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles);
 
         // reset padding top for first section as in brizy there is no need for that padding.
+        // In Voyage our fixed heared adds space
         if (!is_null($pagePosition) && $pagePosition == 0) {
-            //$sectionStyles['padding-top'] = 0;
+            $sectionStyles['padding-top'] = 0;
         }
 
         // set the background color paddings and margins
@@ -160,8 +162,8 @@ trait SectionStylesAble
                 $brizySection->getValue()
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgImageSrc($background['photo'])
-                    ->set_bgSize('cover')
-                    ->set_bgColorOpacity(0)
+                    ->set_bgSize($sectionStyles['background-size'])
+                    ->set_bgColorOpacity(NumberProcessor::convertToNumeric($background['opacity']))
                     ->set_bgColorHex($backgroundColorHex);
             }
         }

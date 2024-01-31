@@ -1,7 +1,6 @@
 import { Output } from "../types/type";
 import { createData } from "../utils/getData";
 import { Literal } from "utils";
-import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
 export interface Data {
   selector: string;
@@ -21,10 +20,10 @@ export const styleExtractor = (entry: Data): Output => {
     };
   }
 
-  const computedStyles = getNodeStyle(element);
+  const computedStyles = getComputedStyle(element);
 
   styleProperties.forEach((styleName) => {
-    data[styleName] = computedStyles[styleName];
+    data[styleName] = computedStyles.getPropertyValue(styleName);
   });
 
   return createData({ data });

@@ -49,7 +49,10 @@ const extractInnerText = (node: Node, stack: Stack, selector: string): void => {
       });
 
       // Extract the other html without Artifacts like Button, Icons
-      if (_node.innerHTML.trim()) {
+      const text = _node.textContent;
+      const isBr = _node.querySelector("br");
+
+      if (isBr || (text && text.includes("\n") && !text.trim())) {
         stack.append(_node, { type: "text" });
       }
     }

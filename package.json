@@ -26,10 +26,9 @@
     "@nesk/rialto": "^1.4.0",
     "@zoon/puphpeteer": "github:zoonru/puphpeteer",
     "lodash": "^4.17.21",
-    "puppeteer": "^21.7.0"
+    "puppeteer": "^21.5.0"
   },
   "devDependencies": {
-    "@esbuild/darwin-arm64": "^0.19.12",
     "turbo": "^1.11.3"
   }
 }

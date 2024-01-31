@@ -2,8 +2,6 @@
 
 namespace MBMigration\Builder\BrizyComponent;
 
-use Socket\Raw\Exception;
-
 class BrizyComponentValue implements \JsonSerializable
 {
     private $fields;

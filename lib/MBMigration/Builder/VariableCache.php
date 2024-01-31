@@ -190,4 +190,11 @@ class VariableCache
         $this->cache['OBJECTS'] = [];
     }
 
+    public function dumpCache($filePath) {
+        file_put_contents($filePath,json_encode($this->cache));
+    }
+    public function loadDump($filePath) {
+        $this->cache = json_decode(file_get_contents($filePath),true);
+    }
+
 }

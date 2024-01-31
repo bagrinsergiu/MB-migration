@@ -2,7 +2,6 @@
 
 namespace MBMigration\Browser;
 
-use MBMigration\Core\Utils;
 use Nesk\Puphpeteer\Puppeteer;
 use Psr\Log\LoggerInterface;
 
@@ -13,7 +12,7 @@ class Browser implements BrowserInterface
      */
     private $browser;
     private $scriptPath;
-    private $page;
+    private $page = null;
 
     static public function instance($scriptPath, LoggerInterface $logger = null)
     {
@@ -36,7 +35,7 @@ class Browser implements BrowserInterface
                 'debug' => true,
                 'protocolTimeout' => 9000,
                 'read_timeout' => 9000,
-                'idle_timeout' => 9000,
+                'idle_timeout' => null,
             ]
         );
         $this->browser = $puppeteer->launch([
@@ -60,16 +59,21 @@ class Browser implements BrowserInterface
 
     public function openPage($url, $theme): BrowserPageInterface
     {
-        $this->page = $this->browser->newPage();
-        $this->page->setViewport(['width' => 1920, 'height' => 1080]);
-        $this->page->goto($url, ['timeout' => 120000]);
+        echo "\nOpen page: {$url}\n";
+
+        if(!isset($this->page)) {
+            $this->page = $this->browser->newPage();
+            $this->page->setViewport(['width' => 1920, 'height' => 1480]);
+        }
+
+        $this->page->goto($url, ['timeout' => 120000, 'waitUntil' => 'networkidle0']);
 
         return new BrowserPage($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
     }
 
     public function closePage(): void
     {
-        $this->page->close();
+        //$this->page->close();
     }
 
     public function closeBrowser()

@@ -94,7 +94,7 @@ abstract class Element extends LayoutUtils
                 $objBlock->item()->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
                 $objBlock->item()->setting(
                     'bgColorOpacity',
-                    $this->convertToNumeric($sectionData['style']['opacity_div']['opacity'])
+                    $this->convertToNumeric($sectionData['style']['opacity_div']['opacity'] ?? 1)
                 );
 
             }
@@ -239,11 +239,14 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function createDetailPage($itemsID, $slug, string $elementName): void
+    protected function createDetailPage($itemsID, $slug, $title, string $elementName): void
     {
+
         $itemsData = [];
         $jsonDecode = $this->initData();
         $QueryBuilder = $this->cache->getClass('QueryBuilder');
+
+//        $QueryBuilder->createCollectionItem($itemsID, $slug, $title);
 
         if ($this->checkArrayPath($jsonDecode, "dynamic/$elementName")) {
             $decoded = $jsonDecode['dynamic'][$elementName];
@@ -393,6 +396,7 @@ abstract class Element extends LayoutUtils
             'borderColorPalette' => '',
             'borderColorHex' => '#000000',
             'borderColorOpacity' => 1,
+            'borderWidth' => 2,
         ];
 
         $jsonDecode = $this->initData();

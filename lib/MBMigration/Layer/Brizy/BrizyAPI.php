@@ -313,6 +313,21 @@ class BrizyAPI extends Utils
         return $data['uid'];
     }
 
+    public function updateProject(array $projectFullData): array
+    {
+        $containerID = Utils::$cache->get('projectId_Brizy');
+        $url = $this->createPrivatUrlAPI('projects').'/'.$containerID;
+
+        $r_projectFullData['is_autosave'] = 0;
+        $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
+        $r_projectFullData['data'] = $projectFullData['data'];
+
+        $result = $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
+
+        return json_decode($result->getBody(), true);
+    }
+
+
     /**
      * @throws GuzzleException
      */
@@ -477,7 +492,12 @@ class BrizyAPI extends Utils
     public function getAllProjectPages(): array
     {
         Utils::log('Get All Pages from projects', 1, 'getAllProjectPages');
-        $result = [];
+        static $result;
+
+        if (!empty($result)) {
+            return $result;
+        }
+
         $this->QueryBuilder = $this->cacheBR->getClass('QueryBuilder');
 
         $collectionTypes = $this->QueryBuilder->getCollectionTypes();

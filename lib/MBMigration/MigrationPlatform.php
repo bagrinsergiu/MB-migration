@@ -144,7 +144,7 @@ class MigrationPlatform
 
         $this->brizyApi->setMetaDate();
 
-        $parentPages = $this->parser->getParentPages();
+        $parentPages = $this->parser->getPages();
 
         if (empty($parentPages)) {
             Utils::log(
@@ -496,11 +496,16 @@ class MigrationPlatform
             }
         }
 
-        $collectionItems = $this->QueryBuilder->getCollectionItems($foundCollectionTypes);
-
-        foreach ($collectionItems['page']['collection'] as $entity) {
-            $entities[$entity['slug']] = $entity['id'];
+        $page = 1;
+        do{
+            $collectionItems = $this->QueryBuilder->getCollectionItems($foundCollectionTypes,$page++);
+            
+            foreach ($collectionItems['page']['collection'] as $entity) {
+                $entities[$entity['slug']] = $entity['id'];
+            }
         }
+        while(count($collectionItems['page']['collection'])>0);
+
         $this->cache->set('ListPages', $entities);
     }
 
