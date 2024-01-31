@@ -239,7 +239,7 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function createDetailPage($itemsID, $slug, $title, string $elementName): void
+    protected function createDetailPage($itemsID, $slug, string $elementName): void
     {
 
         $itemsData = [];
