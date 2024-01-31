@@ -2,7 +2,7 @@ import { ElementModel, EmbedModel, Entry, Output } from "../types/type";
 import { createData } from "../utils/getData";
 import { getButtonModel } from "./models/Button";
 import { getEmbedModel } from "./models/Embed";
-import { getIconModel } from "./models/Icon";
+// import { getIconModel } from "./models/Icon";
 import { getTextModel } from "./models/Text";
 import { getContainerStackWithNodes } from "./utils/dom/getContainerStackWithNodes";
 
@@ -48,11 +48,11 @@ export const getText = (entry: Entry): Output => {
           data.push(...models);
           break;
         }
-        case "icon": {
-          const models = getIconModel(node);
-          data.push(...models);
-          break;
-        }
+        // case "icon": {
+        //   const models = getIconModel(node);
+        //   data.push(...models);
+        //   break;
+        // }
       }
     }
   });
