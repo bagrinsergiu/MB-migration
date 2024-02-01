@@ -2,6 +2,7 @@
 
 namespace MBMigration\Browser;
 
+use MBMigration\Core\Utils;
 use Nesk\Puphpeteer\Puppeteer;
 use Psr\Log\LoggerInterface;
 
@@ -61,7 +62,7 @@ class Browser implements BrowserInterface
     {
         echo "\nOpen page: {$url}\n";
 
-        if(!isset($this->page)) {
+        if (!isset($this->page)) {
             $this->page = $this->browser->newPage();
             $this->page->setViewport(['width' => 1920, 'height' => 1480]);
         }
@@ -73,11 +74,20 @@ class Browser implements BrowserInterface
 
     public function closePage(): void
     {
-        //$this->page->close();
+        try {
+            $this->page->close();
+        } catch (\Exception $e) {
+            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+        }
+        $this->page->close();
     }
 
     public function closeBrowser()
     {
-        $this->browser->close();
+        try {
+            $this->browser->close();
+        } catch (\Exception $e) {
+            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+        }
     }
 }
