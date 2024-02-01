@@ -5,14 +5,13 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyEmbedCodeComponent;
-use MBMigration\Builder\BrizyComponent\BrizyImageComponent;
-use MBMigration\Builder\BrizyComponent\BrizyWrapperComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Core\Utils;
 
 trait RichTextAble
 {
     use TextsExtractorAware;
+    use CssPropertyExtractorAware;
 
     /**
      * Process and add all items the same brizy section
@@ -37,10 +36,14 @@ trait RichTextAble
             }
 
             $elementContext = $data->instanceWithMBSection($mbSectionItem);
-            $this->handleRichTextItem(
-                $elementContext,
-                $browserPage
-            );
+            try {
+                $this->handleRichTextItem(
+                    $elementContext,
+                    $browserPage
+                );
+            } catch (\Exception $e) {
+                Utils::log($e->getMessage(), 6, 'PROCESS');
+            }
         }
 
         return $brizySection;
@@ -70,14 +73,20 @@ trait RichTextAble
 
             $elementContext = $data->instanceWithMBSection($mbSectionItem);
 
-            if (!is_null($acllback)) {
-                $acllback($elementContext);
-            } else {
-                $this->handleRichTextItem(
-                    $elementContext,
-                    $browserPage
-                );
+            try {
+                if (!is_null($acllback)) {
+                    $acllback($elementContext);
+                } else {
+                    $this->handleRichTextItem(
+                        $elementContext,
+                        $browserPage
+                    );
+                }
+            } catch (\Exception $e) {
+                Utils::log($e->getMessage(), 6, 'PROCESS');
             }
+
+
         }
 
         return $brizySection;
@@ -111,10 +120,14 @@ trait RichTextAble
             }
 
             $elementContext = $data->instanceWithMBSection($mbItem);
-            $this->handleRichTextItem(
-                $elementContext,
-                $browserPage
-            );
+            try {
+                $this->handleRichTextItem(
+                    $elementContext,
+                    $browserPage
+                );
+            } catch (\Exception $e) {
+                Utils::log($e->getMessage(), 6, 'PROCESS');
+            }
         }
 
         return $brizySection;
@@ -172,17 +185,27 @@ trait RichTextAble
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
-        $richTextBrowserData = $this->extractTexts('[data-id="'.$sectionId.'"]',$browserPage,$families,$defaultFont);
-
+        $richTextBrowserData = $this->extractTexts('[data-id="'.$sectionId.'"]', $browserPage, $families, $defaultFont);
+        $styles = $this->getDomElementStyles(
+            '[data-id="'.$sectionId.'"]',
+            ['text-align', 'font-family'],
+            $browserPage,
+            $families,
+            $defaultFont
+        );
         $embeddedElements = $this->findEmbeddedElements($mbSectionItem['content']);
         $embeddIndex = 0;
         foreach ($richTextBrowserData as $i => $textItem) {
             switch ($textItem['type']) {
                 case 'EmbedCode':
                     //wrapper
-                    $brizySection->getValue()->add_items(
-                        [new BrizyEmbedCodeComponent($embeddedElements[$embeddIndex++])]
+                    $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embeddedElements[$embeddIndex++]);
+                    $cssClass = 'custom-align-'.random_int(0, 10000);
+                    $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
+                    $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
+                        ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }"
                     );
+                    $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
                     break;
                 case 'Cloneable':
                 case 'Wrapper':

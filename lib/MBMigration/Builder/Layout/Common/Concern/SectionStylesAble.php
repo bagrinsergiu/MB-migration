@@ -48,6 +48,7 @@ trait SectionStylesAble
         $selectorSectionStyles = '[data-id="'.$mbSectionItem['sectionId'].'"]';
         $properties = [
             'color',
+            'background-size',
             'background-color',
             'opacity',
             'border-bottom-color',
@@ -163,7 +164,7 @@ trait SectionStylesAble
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgImageSrc($background['photo'])
                     ->set_bgSize($sectionStyles['background-size'])
-                    ->set_bgColorOpacity(NumberProcessor::convertToNumeric($background['opacity']))
+                    ->set_bgColorOpacity(1-NumberProcessor::convertToNumeric($background['opacity']))
                     ->set_bgColorHex($backgroundColorHex);
             }
         }
