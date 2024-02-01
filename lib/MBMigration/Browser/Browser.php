@@ -36,7 +36,7 @@ class Browser implements BrowserInterface
                 'debug' => true,
                 'protocolTimeout' => 9000,
                 'read_timeout' => 9000,
-                'idle_timeout' => null,
+                'idle_timeout' => 9000,
             ]
         );
         $this->browser = $puppeteer->launch([
