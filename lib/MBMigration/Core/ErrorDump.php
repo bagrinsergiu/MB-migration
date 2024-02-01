@@ -50,7 +50,7 @@ class ErrorDump
             'message' => $message,
             'file' => $file,
             'line' => $line,
-            'fullError' => $fullError,
+            'fullError' => json_encode($fullError),
             'details_message' => Utils::$MESSAGES_POOL,
 //            'cache' => $this->cache->getCache()
         ];
