@@ -30,8 +30,12 @@
   },
   "repositories": [
     {
-    "type": "vcs",
-    "url": "https://github.com/golovencoserghei/rialto.git"
+      "type": "vcs",
+      "url": "https://github.com/golovencoserghei/rialto.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/bodnar1212/socket-raw.git"
     }
   ]
 }
