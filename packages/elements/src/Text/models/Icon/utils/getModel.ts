@@ -11,6 +11,7 @@ import { uuid } from "utils/src/uuid";
 
 const codeToBuilderMap: Record<string, string> = {
   apple: "apple",
+  57351: "apple",
 
   57686: "pin-3",
 
@@ -42,7 +43,9 @@ const codeToBuilderMap: Record<string, string> = {
   58112: "logo-instagram",
   61805: "logo-instagram",
 
-  58211: "circle-right-37"
+  58211: "circle-right-37",
+
+  63244: "user-run"
 };
 const getColor = mPipe(
   Obj.readKey("color"),

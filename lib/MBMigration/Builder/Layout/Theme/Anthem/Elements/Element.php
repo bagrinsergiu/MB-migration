@@ -54,12 +54,20 @@ abstract class Element extends LayoutUtils
             $objBlock->item()->setting('bgColorHex', $sectionData['style']['background-color']);
             $objBlock->item()->setting('mobileBgColorHex', $sectionData['style']['background-color']);
         }
-        if (isset($sectionData['style']['opacity'])) {
-            $objBlock->item()->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity']));
+        if(isset($sectionData['settings']['sections']['background']['filename'])){
+            $objBlock->item()->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity_div']['opacity']));
             $objBlock->item()->setting(
                 'mobileBgColorOpacity',
-                $this->convertToNumeric($sectionData['style']['opacity'])
+                $this->convertToNumeric($sectionData['style']['opacity_div']['opacity'])
             );
+        } else {
+            if (isset($sectionData['style']['opacity'])) {
+                $objBlock->item()->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity']));
+                $objBlock->item()->setting(
+                    'mobileBgColorOpacity',
+                    $this->convertToNumeric($sectionData['style']['opacity'])
+                );
+            }
         }
         $objBlock->item()->setting('bgColorType', 'solid');
         $objBlock->item()->setting('mobileBgColorType', 'solid');
