@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermo
 
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElement;
+use MBMigration\Builder\VariableCache;
 
 class ListMediaLayout extends DynamicElement
 {
@@ -13,6 +14,7 @@ class ListMediaLayout extends DynamicElement
      */
     public function getElement(array $elementData = [])
     {
+        $this->cache = VariableCache::getInstance();
         return $this->listMedia($elementData);
     }
 
@@ -25,6 +27,8 @@ class ListMediaLayout extends DynamicElement
         $slug = 'sermon-list';
         $title = 'Sermon List';
         $elementName = 'ListMediaLayout';
+
+        $currentPageSlug = $this->cache->get('tookPage')['slug'];
 
         $objBlock = new ItemBuilder();
         $objHead  = new ItemBuilder();
@@ -79,7 +83,7 @@ class ListMediaLayout extends DynamicElement
         $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
 
         $objBlock->item()->item()->item()->setting('detailPage', '{{ brizy_dc_url_post id="' . $collectionItemsForDetailPage . '" }} "');
-        $objBlock->item()->item()->item()->setting('defaultCategory', '');
+        $objBlock->item()->item()->item()->setting('defaultCategory', $currentPageSlug);
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 

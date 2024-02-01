@@ -4,12 +4,14 @@ namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Event
 
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElement;
+use MBMigration\Builder\VariableCache;
 
 
 class EventListLayout extends DynamicElement
 {
     public function getElement($elementData)
     {
+        $this->cache = VariableCache::getInstance();
         return $this->List($elementData);
     }
 
@@ -18,6 +20,8 @@ class EventListLayout extends DynamicElement
         $slug = 'event-list';
         $title = 'Event List';
         $elementName = 'EventListLayout';
+
+        $currentPageSlug = $this->cache->get('tookPage')['slug'];
 
         $objBlock = new ItemBuilder();
         $objHead  = new ItemBuilder();
@@ -72,6 +76,7 @@ class EventListLayout extends DynamicElement
         $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
 
         $objBlock->item()->item()->item()->setting('detailPage', '{{ brizy_dc_url_post id="' . $collectionItemsForDetailPage . '" }} "');
+        $objBlock->item()->item()->item()->setting('defaultCategory', $currentPageSlug);
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
