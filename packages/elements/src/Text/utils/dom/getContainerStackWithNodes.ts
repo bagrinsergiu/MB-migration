@@ -50,9 +50,8 @@ const extractInnerText = (node: Node, stack: Stack, selector: string): void => {
 
       // Extract the other html without Artifacts like Button, Icons
       const text = _node.textContent;
-      const isBr = _node.querySelector("br");
 
-      if (isBr || (text && text.includes("\n") && !text.trim())) {
+      if (text && text.trim()) {
         stack.append(_node, { type: "text" });
       }
     }
@@ -90,14 +89,64 @@ export const getContainerStackWithNodes = (node: Element): Container => {
         // inside button can be icons
         if (buttons.length > 0) {
           appendNewText = true;
-          extractInnerText(_node, stack, buttonSelector);
-          stack.append(_node, { type: "button" });
+          let appendedButton = false;
+
+          _node.childNodes.forEach((node) => {
+            if (node instanceof HTMLElement) {
+              const container = document.createElement("div");
+              container.append(node.cloneNode(true));
+
+              if (container.querySelector(buttonSelector)) {
+                if (!appendedButton) {
+                  stack.append(_node, { type: "button" });
+                  appendedButton = true;
+                }
+              } else {
+                const text = node.textContent;
+
+                if (text?.trim()) {
+                  extractInnerText(_node, stack, buttonSelector);
+                }
+              }
+            } else {
+              const text = node.textContent;
+
+              if (text?.trim()) {
+                extractInnerText(_node, stack, buttonSelector);
+              }
+            }
+          });
           return;
         }
         if (icons.length > 0) {
           appendNewText = true;
-          extractInnerText(_node, stack, iconSelector);
-          stack.append(_node, { type: "icon" });
+          let appendedIcon = false;
+
+          _node.childNodes.forEach((node) => {
+            if (node instanceof HTMLElement) {
+              const container = document.createElement("div");
+              container.append(node.cloneNode(true));
+
+              if (container.querySelector(iconSelector)) {
+                if (!appendedIcon) {
+                  stack.append(_node, { type: "icon" });
+                  appendedIcon = true;
+                }
+              } else {
+                const text = node.textContent;
+
+                if (text?.trim()) {
+                  extractInnerText(_node, stack, iconSelector);
+                }
+              }
+            } else {
+              const text = node.textContent;
+
+              if (text?.trim()) {
+                extractInnerText(_node, stack, iconSelector);
+              }
+            }
+          });
           return;
         }
       }
