@@ -61,6 +61,11 @@ class GalleryLayout extends Element
             $bodyBgColor = $sectionData['style']['body']['background-color'];
         }
 
+        $colorArrows = $this->getContrastColor($bodyBgColor);
+        $block['value']['sliderArrowsColorHex'] = $colorArrows;
+        $block['value']['sliderArrowsColorOpacity'] = 1;
+        $block['value']['sliderArrowsColorPalette'] = '';
+
         foreach ($sectionData['items'] as $item){
                 if(!$item['uploadStatus']) {
                     continue;
@@ -82,5 +87,17 @@ class GalleryLayout extends Element
         }
         $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
+    }
+
+    private function getContrastColor($hexColor) {
+        $hexColor = str_replace('#', '', $hexColor);
+
+        $r = hexdec(substr($hexColor, 0, 2));
+        $g = hexdec(substr($hexColor, 2, 2));
+        $b = hexdec(substr($hexColor, 4, 2));
+
+        $brightness = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+        return $brightness > 125 ? '#000000' : '#FFFFFF';
     }
 }
