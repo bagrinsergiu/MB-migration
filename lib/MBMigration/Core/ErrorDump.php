@@ -40,7 +40,7 @@ class ErrorDump
         $this->errors = [];
     }
 
-    public function handleError($severity, $message, $file, $line) {
+    public function handleError($severity, $message, $file, $line, $fullError) {
         if(Config::$devMode) {
             echo "Warning: " . $message . " in file " . $file . " on line " . $line . "\n";
         }
@@ -50,6 +50,7 @@ class ErrorDump
             'message' => $message,
             'file' => $file,
             'line' => $line,
+            'fullError' => $fullError,
             'details_message' => Utils::$MESSAGES_POOL,
 //            'cache' => $this->cache->getCache()
         ];
@@ -61,7 +62,7 @@ class ErrorDump
     public function handleFatalError() {
         $error = error_get_last();
         if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
-            $this->handleError($error['type'], $error['message'], $error['file'], $error['line']);
+            $this->handleError($error['type'], $error['message'], $error['file'], $error['line'], $error);
         }
 
     }
