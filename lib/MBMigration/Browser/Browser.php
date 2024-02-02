@@ -36,7 +36,7 @@ class Browser implements BrowserInterface
                 'debug' => true,
                 'protocolTimeout' => 9000,
                 'read_timeout' => 9000,
-                'idle_timeout' => 9000,
+                'idle_timeout' => null,
             ]
         );
         $this->browser = $puppeteer->launch([
@@ -67,7 +67,11 @@ class Browser implements BrowserInterface
             $this->page->setViewport(['width' => 1920, 'height' => 1480]);
         }
 
-        $this->page->goto($url, ['timeout' => 120000, 'waitUntil' => 'networkidle0']);
+        try {
+            $this->page->goto($url, ['timeout' => 120000, 'waitUntil' => 'networkidle0']);
+        } catch (\Exception $e) {
+            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+        }
 
         return new BrowserPage($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
     }
