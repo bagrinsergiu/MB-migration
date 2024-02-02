@@ -404,7 +404,7 @@ abstract class Element extends LayoutUtils
             'borderColorPalette' => '',
             'borderColorHex' => '#000000',
             'borderColorOpacity' => 1,
-            'borderWidth' => 2,
+            'borderWidth' => 1,
         ];
 
         $jsonDecode = $this->initData();

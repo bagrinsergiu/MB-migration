@@ -113,7 +113,7 @@ class TwoHorizontalText extends Element
         $objBlock->item(0)->item(0)->item(1)->setting("mobileBorderLeftWidth", 0);
 
         $objBlock->item(0)->item(0)->item(1)->setting("borderColorOpacity", 1);
-        $objBlock->item(0)->item(0)->item(1)->setting("borderLeftWidth", 2);
+        $objBlock->item(0)->item(0)->item(1)->setting("borderLeftWidth", 1);
         $objBlock->item(0)->item(0)->item(1)->setting("borderColorPalette",  '');
 
         if(isset($sectionData['style']['vertical-border']['border-color'])) {
