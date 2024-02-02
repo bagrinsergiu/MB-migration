@@ -39,35 +39,30 @@ class ListMediaLayout extends DynamicElement
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/color/bg')) {
-            $blockBg = $sectionData['settings']['sections']['color']['bg'];
-            $objBlock->item(0)->setting('bgColorPalette','');
-            $objBlock->item(0)->setting('bgColorHex', $blockBg);
-        }
+        $this->generalParameters($objBlock, $options, $sectionData);
+
+        $this->backgroundColor($objBlock, $sectionData);
 
         $blockHead = false;
+
         foreach ($sectionData['head'] as $headItem)
         {
-            if($headItem['category'] !== 'text') { continue; }
-
-            $show_header = true;
-            $show_body = true;
-
-            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                $show_header = $sectionData['settings']['sections']['list']['show_header'];
-            }
-            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                $show_body = $sectionData['settings']['sections']['list']['show_body'];
-            }
-
-            if ($headItem['item_type'] === 'title' && $show_header) {
+            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
-                $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])), 0);
+                $this->textCreation($headItem, $objBlock);
+                $objBlock->item()->addItem($this->wrapperLine(
+                    [
+                        'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                    ]
+                ));
             }
+        }
 
-            if ($headItem['item_type'] === 'body' && $show_body) {
+        foreach ($sectionData['head'] as $headItem)
+        {
+            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
                 $blockHead = true;
-                $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])));
+                $this->textCreation($headItem, $objBlock);
             }
         }
 
@@ -100,7 +95,7 @@ class ListMediaLayout extends DynamicElement
                     if(!empty($sectionData['content'])) {
                         $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
                         if(is_array($embedCode)){
-                            $objBlock->item()->item(1)->item()->addItem($this->embedCode($embedCode[$i]));
+                            $objBlock->item()->addItem($this->embedCode($embedCode[$i]));
                         }
                         $i++;
                     }
@@ -111,10 +106,10 @@ class ListMediaLayout extends DynamicElement
                             $iconItem['value']['borderStyle'] = "none";
                         }
                     }
-                    $objBlock->item()->item(1)->item()->addItem($textItem);
+                    $objBlock->item()->addItem($textItem);
                     break;
                 case 'Wrapper':
-                    $objBlock->item()->item(1)->item()->addItem($textItem);
+                    $objBlock->item()->addItem($textItem);
                     break;
             }
         }
