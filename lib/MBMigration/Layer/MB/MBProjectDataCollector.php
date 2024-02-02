@@ -283,6 +283,33 @@ class MBProjectDataCollector
             );
             $item = [];
             foreach ($requestItemsFromMainSection as $itemsFromMainSections) {
+
+                if ($settings = json_decode($itemsFromMainSections['settings'], true)) {
+                    if (isset($settings['used_fonts'])) {
+                        foreach ($settings['used_fonts'] as $fontName) {
+                            $defaultFont = $this->cache->get('fonts', 'settings');
+                            foreach ($defaultFont as $font) {
+                                if ($font['fontName'] === $fontName) {
+                                    $settings['used_fonts'] = ['fontName' => $font['fontName'], 'uuid' => $font['uuid']];
+                                    continue 2;
+                                }
+                            }
+
+                            $dbFont = $this->getFont($fontName);
+                            $uploadedFont[] = [
+                                'fontName' => $fontName,
+                                'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
+                                'uuid' => $this->fontsController->upLoadFont($fontName),
+                            ];
+
+                            $defaultFont = array_merge($defaultFont, $uploadedFont);
+                            $this->cache->set('fonts', $defaultFont, 'settings');
+                            $settings['used_fonts'] = $uploadedFont;
+                        }
+                    }
+                }
+
+
                 $item[] = [
                     'sectionId' => $itemsFromMainSections['id'],
                     'category' => $itemsFromMainSections['category'],
