@@ -66,6 +66,12 @@ class GalleryLayout extends Element
         $block['value']['sliderArrowsColorOpacity'] = 1;
         $block['value']['sliderArrowsColorPalette'] = '';
 
+        $block['value']['hoverSliderArrowsColorHex'] = '#7f7c7c';
+        $block['value']['hoverSliderArrowsColorOpacity'] = 1;
+        $block['value']['hoverSliderArrowsColorPalette'] = '';
+
+
+
         foreach ($sectionData['items'] as $item){
                 if(!$item['uploadStatus']) {
                     continue;
