@@ -80,10 +80,10 @@ class Browser implements BrowserInterface
     {
         try {
             $this->page->close();
+            sleep(2);
         } catch (\Exception $e) {
             Utils::MESSAGES_POOL($e->getMessage(), 'error');
         }
-        $this->page->close();
     }
 
     public function closeBrowser()
