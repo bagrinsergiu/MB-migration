@@ -28,6 +28,8 @@ class GridMediaLayout extends DynamicElement
         $title = 'Sermon Grid';
         $elementName = 'GridMediaLayout';
 
+        $currentPageSlug = $this->cache->get('tookPage')['slug'];
+
         $objBlock = new ItemBuilder();
         $objHead  = new ItemBuilder();
 
@@ -39,22 +41,28 @@ class GridMediaLayout extends DynamicElement
 
         $this->generalParameters($objBlock, $options, $sectionData);
 
-        $this->backgroundColor($objBlock, $sectionData, $options);
+        $this->backgroundColor($objBlock, $sectionData);
 
         $blockHead = false;
+
         foreach ($sectionData['head'] as $headItem)
         {
-            if($headItem['category'] !== 'text') { continue; }
-
             if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
-                $this->textCreation($headItem['id'], $headItem['content'], $options, $objBlock);
-                $objBlock->item()->addItem($this->wrapperLine(['borderColorHex' => $options['borderColorHex']]));
+                $this->textCreation($headItem, $objBlock);
+                $objBlock->item()->addItem($this->wrapperLine(
+                    [
+                        'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                    ]
+                ));
             }
+        }
 
+        foreach ($sectionData['head'] as $headItem)
+        {
             if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
                 $blockHead = true;
-                $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])));
+                $this->textCreation($headItem, $objBlock);
             }
         }
 
@@ -70,6 +78,7 @@ class GridMediaLayout extends DynamicElement
         $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
 
         $objBlock->item()->item()->item()->setting('detailPage', '{{ brizy_dc_url_post id="' . $collectionItemsForDetailPage . '" }} "');
+        $objBlock->item()->item()->item()->setting('defaultCategory', $currentPageSlug);
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
@@ -78,7 +87,7 @@ class GridMediaLayout extends DynamicElement
     }
 
 
-    private function textCreation($sectionData, $objBlock, $setId = 0)
+    private function textCreation($sectionData, $objBlock)
     {
         $i = 0;
         foreach ($sectionData['brzElement'] as $textItem) {
@@ -87,28 +96,23 @@ class GridMediaLayout extends DynamicElement
                     if(!empty($sectionData['content'])) {
                         $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
                         if(!empty($embedCode)){
-                            $objBlock->item(0)->item(0)->item($setId)->addItem($this->embedCode($embedCode[$i]));
+                            $objBlock->item()->addItem($this->embedCode($embedCode[$i]));
                         }
                         $i++;
                     }
                     break;
                 case 'Cloneable':
                     $textItem['value']['mobileHorizontalAlign'] = 'center';
-
                     foreach ($textItem['value']['items'] as &$iconItem) {
-//                        if ($iconItem['type'] == 'Icon') {
-//                            $iconItem['value']['hoverColorHex'] = $sectionData['style']['hover']['icon'] ?? '';
-//                        }
-
                         if ($iconItem['type'] == 'Button') {
                             $iconItem['value']['borderStyle'] = "none";
                         }
 
                     }
-                    $objBlock->item(0)->item(0)->item($setId)->addItem($textItem);
+                    $objBlock->item()->addItem($textItem);
                     break;
                 case 'Wrapper':
-                    $objBlock->item(0)->item(0)->item($setId)->addItem($textItem);
+                    $objBlock->item()->addItem($textItem);
                     break;
             }
         }
