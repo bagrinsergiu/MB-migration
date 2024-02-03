@@ -80,7 +80,8 @@ class MigrationPlatform
         } else {
             try {
                 $this->run($projectID_MB, $projectID_Brizy);
-            } catch (Exception $e) {Utils::MESSAGES_POOL($e->getMessage());
+            } catch (Exception $e) {
+                Utils::MESSAGES_POOL($e->getMessage());
 
                 return false;
             } catch (GuzzleException $e) {
@@ -234,11 +235,11 @@ class MigrationPlatform
         foreach ($parentPages as $page) {
 //            if($page['hidden']){ continue; }
 
-            if(!empty($page['parentSettings'])){
-               $settings =  json_decode($page['parentSettings'], true);
-               if(array_key_exists('external_url', $settings)){
-                   continue;
-               }
+            if (!empty($page['parentSettings'])) {
+                $settings = json_decode($page['parentSettings'], true);
+                if (array_key_exists('external_url', $settings)) {
+                    continue;
+                }
             }
 
             if (!empty($page['child'])) {
@@ -408,7 +409,7 @@ class MigrationPlatform
 
         foreach ($parentMenu as $item) {
             if (isset($item['hidden'])) {
-                if($item['hidden']){
+                if ($item['hidden']) {
                     continue;
                 }
             }
@@ -423,10 +424,10 @@ class MigrationPlatform
                     "type" => "custom_link",
                     'url' => $settings['external_url'],
                     "description" => "",
-                    "items" =>  $this->transformToBrizyMenu($item['child']),
+                    "items" => $this->transformToBrizyMenu($item['child']),
                 ];
             } else {
-                if(empty($item['collection'])){
+                if (empty($item['collection'])) {
                     $item['collection'] = $item['child'][0]['collection'];
                 }
                 $mainMenu[] = [
@@ -497,14 +498,13 @@ class MigrationPlatform
         }
 
         $page = 1;
-        do{
-            $collectionItems = $this->QueryBuilder->getCollectionItems($foundCollectionTypes,$page++);
-            
+        do {
+            $collectionItems = $this->QueryBuilder->getCollectionItems($foundCollectionTypes, $page++);
+
             foreach ($collectionItems['page']['collection'] as $entity) {
                 $entities[$entity['slug']] = $entity['id'];
             }
-        }
-        while(count($collectionItems['page']['collection'])>0);
+        } while (count($collectionItems['page']['collection']) > 0);
 
         $this->cache->set('ListPages', $entities);
     }
@@ -522,7 +522,12 @@ class MigrationPlatform
     {
         if ($this->pageCheck($slug)) {
             Utils::log('Request to create a new page: '.$slug, 1, 'creteNewPage');
-            $this->QueryBuilder->createCollectionItem($this->cache->get('mainCollectionType'), $slug, $title, $protectedPage);
+            $this->QueryBuilder->createCollectionItem(
+                $this->cache->get('mainCollectionType'),
+                $slug,
+                $title,
+                $protectedPage
+            );
             $this->getAllPage();
         }
 
@@ -543,9 +548,9 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function renameSlug($itemsID, $slug)
+    private function renameSlug($itemsID, $slug, $title = null)
     {
-        $res = $this->QueryBuilder->updateCollectionItem($itemsID, $slug);
+        $res = $this->QueryBuilder->updateCollectionItem($itemsID, $slug, [], 'published', [], $title);
         Utils::log('Page name is Rename', 1, 'renameSlug');
 
         return $res;
@@ -577,19 +582,25 @@ class MigrationPlatform
     {
         Utils::log('Start created pages', 1, 'createBlankPages');
         $projectPages = $this->brizyApi->getAllProjectPages();
+        $ProjectTitle = $this->cache->get('settings')['title'];
+
         $i = 0;
         foreach ($parentPages as &$pages) {
-
+                $title = $ProjectTitle.' | '.$pages['name'];
             if ($pages['landing'] == true) {
                 if ($i != 0 || !$mainLevel) {
                     if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
-                        $newPage = $this->creteNewPage($pages['slug'], $pages['name'], $pages['protectedPage']);
+                        $newPage = $this->creteNewPage(
+                            $pages['slug'],
+                            $title,
+                            $pages['protectedPage']
+                        );
                     } else {
                         $newPage = $projectPages['listPages'][$pages['slug']];
                     }
                 } else {
                     if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
-                        $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug']);
+                        $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug'], $title);
                         $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
                     } else {
                         $newPage = $projectPages['listPages'][$pages['slug']];
