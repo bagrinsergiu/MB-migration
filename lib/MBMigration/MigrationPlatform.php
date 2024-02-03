@@ -599,12 +599,12 @@ class MigrationPlatform
                         $newPage = $projectPages['listPages'][$pages['slug']];
                     }
                 } else {
-                    if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
+//                    if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
                         $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug'], $title);
                         $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
-                    } else {
-                        $newPage = $projectPages['listPages'][$pages['slug']];
-                    }
+//                    } else {
+//                        $newPage = $projectPages['listPages'][$pages['slug']];
+//                    }
                 }
 
                 if (!$newPage) {
