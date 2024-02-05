@@ -21,9 +21,6 @@ export const getTextModel = (data: Data): ElementModel => {
   // Transform all inside div to P
   node = transformDivsToParagraphs(node);
 
-  // Remove all empty P with [ \n ]
-  node = removeEmptyNodes(node);
-
   // Copy Parent Color to Child, from <p> to <span>
   node = copyParentColorToChild(node);
 
@@ -43,6 +40,9 @@ export const getTextModel = (data: Data): ElementModel => {
       styleNode.removeAttribute("data-uid");
     }
   });
+
+  // Remove all empty P with [ \n ]
+  node = removeEmptyNodes(node);
 
   const text = node.innerHTML;
 
