@@ -262,9 +262,9 @@ abstract class Element extends LayoutUtils
             throw new Exception('Element not found');
         }
 
-        $itemsData['items'][] = $this->cache->get('menuBlock');
+        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
         $itemsData['items'][] = json_decode($decoded['detail'], true);
-        $itemsData['items'][] = $this->cache->get('footerBlock');
+        $itemsData['items'][] = json_decode($this->cache->get('footerBlock'), true);
 
         $pageData = json_encode($itemsData);
 
