@@ -403,7 +403,8 @@ class MigrationPlatform
         $settingsTextTransform = $this->cache->get('fonts', 'settings');
         foreach ($settingsTextTransform as $itemTextTransform) {
             if ($itemTextTransform['name'] === 'main_nav') {
-                $textTransform = $itemTextTransform['text_transform'];
+                $textTransform = $itemTextTransform['text_transform'] ?? 'none';
+                break;
             }
         }
 
