@@ -151,36 +151,6 @@ const ex3: Data = {
         }
       },
       {
-        type: "Cloneable",
-        value: {
-          _id: "1",
-          _styles: ["wrapper-clone", "wrapper-clone--icon"],
-          items: [
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                padding: 7,
-                customSize: 26,
-                name: "logo-facebook"
-              }
-            },
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                padding: 7,
-                customSize: 26,
-                name: "logo-twitter"
-              }
-            }
-          ],
-          horizontalAlign: "center"
-        }
-      },
-      {
         type: "Wrapper",
         value: {
           _id: "1",
@@ -260,26 +230,6 @@ const ex5: Data = {
         }
       },
       {
-        type: "Cloneable",
-        value: {
-          _id: "1",
-          _styles: ["wrapper-clone", "wrapper-clone--icon"],
-          items: [
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                padding: 7,
-                customSize: 26,
-                name: "email-85"
-              }
-            }
-          ],
-          horizontalAlign: undefined
-        }
-      },
-      {
         type: "Wrapper",
         value: {
           _id: "1",
@@ -346,26 +296,6 @@ const ex6: Data = {
               }
             }
           ]
-        }
-      },
-      {
-        type: "Cloneable",
-        value: {
-          _id: "1",
-          _styles: ["wrapper-clone", "wrapper-clone--icon"],
-          items: [
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                customSize: 26,
-                name: "apple",
-                padding: 7
-              }
-            }
-          ],
-          horizontalAlign: undefined
         }
       },
       {
@@ -438,26 +368,6 @@ const ex7: Data = {
         }
       },
       {
-        type: "Cloneable",
-        value: {
-          _id: "1",
-          _styles: ["wrapper-clone", "wrapper-clone--icon"],
-          items: [
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                padding: 7,
-                customSize: 26,
-                name: "user-run"
-              }
-            }
-          ],
-          horizontalAlign: undefined
-        }
-      },
-      {
         type: "Wrapper",
         value: {
           _id: "1",
@@ -505,36 +415,6 @@ const ex8: Data = {
         }
       },
       {
-        type: "Cloneable",
-        value: {
-          _id: "1",
-          _styles: ["wrapper-clone", "wrapper-clone--icon"],
-          items: [
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                padding: 7,
-                customSize: 26,
-                name: "logo-facebook"
-              }
-            },
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                padding: 7,
-                customSize: 26,
-                name: "logo-twitter"
-              }
-            }
-          ],
-          horizontalAlign: "center"
-        }
-      },
-      {
         type: "Wrapper",
         value: {
           _id: "1",
@@ -549,36 +429,6 @@ const ex8: Data = {
               }
             }
           ]
-        }
-      },
-      {
-        type: "Cloneable",
-        value: {
-          _id: "1",
-          _styles: ["wrapper-clone", "wrapper-clone--icon"],
-          items: [
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                padding: 7,
-                customSize: 26,
-                name: "logo-facebook"
-              }
-            },
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                padding: 7,
-                customSize: 26,
-                name: "logo-twitter"
-              }
-            }
-          ],
-          horizontalAlign: "center"
         }
       },
       {
@@ -627,26 +477,6 @@ const ex9: Data = {
               }
             }
           ]
-        }
-      },
-      {
-        type: "Cloneable",
-        value: {
-          _id: "1",
-          _styles: ["wrapper-clone", "wrapper-clone--icon"],
-          items: [
-            {
-              type: "Icon",
-              value: {
-                _id: "1",
-                _styles: ["icon"],
-                customSize: 26,
-                name: "apple",
-                padding: 7
-              }
-            }
-          ],
-          horizontalAlign: undefined
         }
       },
       {
@@ -786,7 +616,73 @@ const ex10: Data = {
 
 //#endregion
 
-describe.each([ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, ex9, ex10])(
+//#region Exameple 11 (Icons without links)
+
+const ex11: Data = {
+  html: `<div class="text-content text-1 editable" data-id="71702" data-category="text"><div><p style="font-weight: 300; font-size: 2em;"><a data-location="external" data-detail="https://instagram.com/antioch_sm/" data-category="link" href="https://instagram.com/antioch_sm/" target="_blank" class="cloverlinks" style="font-family: 'Mono Social Icons Font'; letter-spacing: 0.01em; font-size: 2em;"></a> &nbsp;&nbsp;&nbsp;<a class="socialIconLink" href=""><span data-socialicon=""><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only"></span></span></a><br></p><p style="font-weight: 300; font-size: 1em;"><br></p><p style="font-weight: 300; font-size: 1em;">We're here to help middle and high schoolers follow Christ in a world that often rejects Him and welcome others in a world that often rejects them. We are a place where anybody can belong, and we would love for you to join us!&nbsp;</p><p style="font-weight: 300; font-size: 1em;"><br></p><p style="font-weight: 300; font-size: 1em;"><br></p><p style="font-weight: 500; font-size: 1.2em;">SUNDAY MORNING</p><p style="font-size: 0.9973em;"><br></p><p style="font-size: 0.9973em;"></p><p style="font-size: 0.9973em;"> We want today's youth to know they are a vital part of today's church. That's why our students worship as part of the congregation during our 8:15 and 10:30 services.&nbsp;</p><p><br></p><p>We also offer Sunday School in the Teen Center for our Middle and High School students each Sunday morning at 9:30 a.m.</p><p>With discussion based Bible stories, sword drills, and memory verses, we use this time to become more and more familiar with scripture and how it can shape our lives.</p><p><br></p><p><br></p><p style="font-size: 1.2em; font-weight: 500; font-family: Roboto, &quot;Roboto Light&quot;, sans-serif;">SUNDAY NIGHTS</p><p style="font-size: 1.2em; font-weight: 500; font-family: Roboto, &quot;Roboto Light&quot;, sans-serif;"><br></p><p style="font-size: 1.2em; font-weight: 300;"><span class="clovercustom" style="font-size: 0.8311em;">Welcome to Thirst! Meeting from 5:30-7:00 in the Teen Center (the older-looking church building), this is a</span><span style="font-size: 12pt; letter-spacing: normal;"> youth-oriented worship service designed to equip students to take ownership of their faith. A typical evening includes opportunities to build meaningful relationships with other students, singing, Bible study, and a time to split into smaller groups to discuss faith and encourage one other. Afterward, students are welcome to join us for dinner (usually at a fast food restaurant in Hickory Flat).</span></p><p><br></p><p style="font-size: 1.2em; font-weight: 300;"><br></p><p style="font-size: 1.2em; font-weight: 300;"><span class="clovercustom" style="font-size: 0.8311em;"><br></span></p><p style="font-weight: 500; font-size: 1.1968em;">WEDNESDAY NIGHTS</p><p style="font-weight: 500; font-size: 1.1968em;"><br></p><p style="font-weight: 300; font-size: 0.9973em; font-style: normal;">Wanting to dig deeper into faith?&nbsp; Our Middle and High School students meet for bible study and discussion at 6:30 p.m. in the Teen Center. (We also offer a meal for all ages at 5:30 in the fellowship hall.)&nbsp;</p><p><style></style></p></div></div>`,
+  //prettier-ignore
+  entry:{...entry, selector:"[data-id=\"71702\"]"},
+  output: {
+    data: [
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                padding: 7,
+                customSize: 26,
+                name: "logo-instagram",
+                linkExternal: "/antioch_sm/",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                padding: 7,
+                customSize: 26,
+                name: "logo-facebook",
+                linkExternal: "/",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">We\'re here to help middle and high schoolers follow Christ in a world that often rejects Him and welcome others in a world that often rejects them. We are a place where anybody can belong, and we would love for you to join us!&nbsp;</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 500; ">SUNDAY MORNING</span></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span> We want today\'s youth to know they are a vital part of today\'s church. That\'s why our students worship as part of the congregation during our 8:15 and 10:30 services.&nbsp;</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span>We also offer Sunday School in the Teen Center for our Middle and High School students each Sunday morning at 9:30 a.m.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span>With discussion based Bible stories, sword drills, and memory verses, we use this time to become more and more familiar with scripture and how it can shape our lives.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 500; ">SUNDAY NIGHTS</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-12 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-0"><span style="font-weight: 300; ">Welcome to Thirst! Meeting from 5:30-7:00 in the Teen Center (the older-looking church building), this is a</span><span style="font-weight: 300; "> youth-oriented worship service designed to equip students to take ownership of their faith. A typical evening includes opportunities to build meaningful relationships with other students, singing, Bible study, and a time to split into smaller groups to discuss faith and encourage one other. Afterward, students are welcome to join us for dinner (usually at a fast food restaurant in Hickory Flat).</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style=""><br></span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 500; ">WEDNESDAY NIGHTS</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">Wanting to dig deeper into faith?&nbsp; Our Middle and High School students meet for bible study and discussion at 6:30 p.m. in the Teen Center. (We also offer a meal for all ages at 5:30 in the fellowship hall.)&nbsp;</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><style></style></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+//#endregion
+describe.each([ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, ex9, ex10, ex11])(
   "testing 'getText' function nr %#",
   ({ entry, output, html }) => {
     beforeEach(() => {

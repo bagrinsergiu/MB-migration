@@ -128,9 +128,13 @@ export const getContainerStackWithNodes = (node: Element): Container => {
               container.append(node.cloneNode(true));
 
               if (container.querySelector(iconSelector)) {
-                if (!appendedIcon) {
-                  stack.append(_node, { type: "icon" });
-                  appendedIcon = true;
+                const iconHref = node.getAttribute("href");
+
+                if (iconHref) {
+                  if (!appendedIcon) {
+                    stack.append(_node, { type: "icon" });
+                    appendedIcon = true;
+                  }
                 }
               } else {
                 const text = node.textContent;
