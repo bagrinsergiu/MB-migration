@@ -89,7 +89,8 @@ class ListMediaLayout extends AbstractElement
 
         $brizySection->getItemValueWithDepth(0, 1, 0, 0, 0)
             ->set_source($collectionTypeUri)
-            ->set_detailPage("{{ brizy_dc_url_post id=\"".$detailCollectionItem['id']."\" }}");
+            ->set_detailPage("{{ brizy_dc_url_post id=\"".$detailCollectionItem['id']."\" }}")
+            ->set_defaultCategory($data->getThemeContext()->getSlug());
 
         return $brizySection;
     }
