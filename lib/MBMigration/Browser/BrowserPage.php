@@ -28,6 +28,9 @@ class BrowserPage implements BrowserPageInterface
 
             $result = $this->page->tryCatch->evaluate($jsFunction);
 
+            // for the case when the script does not return anything
+            if(!$result) $result = [];
+
             return $result;
         } catch (Exception $e) {
             return ['error' => $e->getMessage()]; // element not found
