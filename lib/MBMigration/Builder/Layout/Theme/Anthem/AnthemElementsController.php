@@ -217,6 +217,10 @@ class AnthemElementsController
                 $element = new EventGalleryLayout();
 
                 return $element->getElement($elementData);
+            case "prayer_form":
+                $element = new Form();
+
+                return $element->getElement($elementData);
             default:
                 return false;
         }
