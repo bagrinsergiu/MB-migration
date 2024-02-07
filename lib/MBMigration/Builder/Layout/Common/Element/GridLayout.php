@@ -34,6 +34,9 @@ abstract class GridLayout extends AbstractElement
         $itemsChunks = array_chunk($accordionItems, $this->getItemsPerRow());
         foreach ($itemsChunks as $row) {
             $brizySectionRow = new BrizyComponent($rowJson);
+            $itemCount = $row;
+            $itemWidth = (int)100/$itemCount;
+
             foreach ($row as $item) {
                 $brizySectionItem = new BrizyComponent($itemJson);
 
@@ -41,6 +44,7 @@ abstract class GridLayout extends AbstractElement
                 $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
                 $brizySectionItem->getValue()
+                    ->set_width($itemWidth)
                     ->set_paddingTop((int)$styles['margin-top'])
                     ->set_paddingBottom((int)$styles['margin-bottom'])
                     ->set_paddingRight((int)$styles['margin-right'])
