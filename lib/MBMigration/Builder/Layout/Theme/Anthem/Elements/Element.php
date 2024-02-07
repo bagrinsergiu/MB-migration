@@ -32,6 +32,8 @@ abstract class Element extends LayoutUtils
                 $sectionData['settings']['sections']['background']['photoOption'] === 'parallax-fixed') {
                 $objBlock->item()->setting('bgAttachment', 'fixed');
                 $objBlock->item()->setting('bgColorOpacity', 0);
+                $objBlock->setting('mobileFullHeight', "custom");
+                $objBlock->setting('mobileSectionHeight', 213);
             }
         }
     }
