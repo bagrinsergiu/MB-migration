@@ -24,9 +24,13 @@ abstract class FullTextElement extends AbstractElement
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizySection->getValue()->set_marginTop(0);
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $textContainerComponent = $this->getTextContainerComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $elementContext = $data->instanceWithBrizyComponent($textContainerComponent);
         $this->handleRichTextItems($elementContext, $this->browserPage);
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
 
@@ -43,4 +47,6 @@ abstract class FullTextElement extends AbstractElement
 
         return $brizySection;
     }
+
+    abstract protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent;
 }

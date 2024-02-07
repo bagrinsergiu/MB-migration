@@ -45,51 +45,27 @@ trait SectionStylesAble
         $brizySection = $data->getBrizySection();
         $pagePosition = $mbSectionItem['settings']['pagePosition'] ?? null;
 
-        $selectorSectionStyles = '[data-id="'.$mbSectionItem['sectionId'].'"]';
-        $properties = [
-            'color',
-            'background-size',
-            'background-color',
-            'opacity',
-            'border-bottom-color',
-            'padding-top',
-            'padding-bottom',
-            'padding-right',
-            'padding-left',
-            'margin-top',
-            'margin-bottom',
-            'margin-left',
-            'margin-right',
-            'height',
-        ];
-        $sectionStyles = $this->getDomElementStyles(
-            $selectorSectionStyles,
-            $properties,
+
+        $sectionStyles = $this->getSectionStyles(
+            $mbSectionItem['sectionId'],
             $browserPage,
             $families,
             $defaultFont
         );
 
-        $selectorSectionWrapperStyles = '[data-id="'.$mbSectionItem['sectionId'].'"] .content-wrapper';
-        $properties = [
-            'padding-top',
-            'padding-bottom',
-            'padding-right',
-            'padding-left',
-            'margin-top',
-            'margin-bottom',
-            'margin-left',
-            'margin-right',
-            'height',
-        ];
-        $sectionWrapperStyles = $this->getDomElementStyles(
-            $selectorSectionWrapperStyles,
-            $properties,
+        $sectionWrapperStyles = $this->getSectionWrapperStyles(
+            $mbSectionItem['sectionId'],
+            $browserPage,
+            $families,
+            $defaultFont
+        );
+        $bodyStyles = $this->getBodyStyles(
             $browserPage,
             $families,
             $defaultFont
         );
 
+        $this->handleSectionBackground($brizySection, $mbSectionItem, $bodyStyles);
 
 //        if (isset($mbSectionItem['settings']['sections']['background'])) {
 //            if (isset($mbSectionItem['settings']['sections']['background']['opacity'])) {
@@ -120,6 +96,8 @@ trait SectionStylesAble
 
         // set the background color paddings and margins
         $brizySection->getValue()
+            //->set_paddingType('ungrouped')
+            //->set_marginType('ungrouped')
             ->set_paddingTop((int)$sectionStyles['padding-top'] + (int)$sectionWrapperStyles['padding-top'])
             ->set_paddingBottom((int)$sectionStyles['padding-bottom'] + (int)$sectionWrapperStyles['padding-bottom'])
             ->set_paddingRight((int)$sectionStyles['padding-right'] + (int)$sectionWrapperStyles['padding-right'])
@@ -149,12 +127,19 @@ trait SectionStylesAble
         }
 
         $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
+        $opacity = ColorConverter::rgba2opacity($sectionStyles['background-color']);
+
+        if (!$opacity) {
+            $opacity = NumberProcessor::convertToNumeric($sectionStyles['opacity']);
+        }
+
+        if((int)$opacity===0) return;
+
         $brizySection->getValue()
             ->set_bgColorHex($backgroundColorHex)
             ->set_bgColorPalette('')
             ->set_bgColorType('solid')
-            ->set_bgColorOpacity(NumberProcessor::convertToNumeric($sectionStyles['opacity']));
-
+            ->set_bgColorOpacity($opacity);
 
         // try to set the image background
         if ($this->hasImageBackground($mbSectionItem)) {
@@ -164,7 +149,7 @@ trait SectionStylesAble
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgImageSrc($background['photo'])
                     ->set_bgSize($sectionStyles['background-size'])
-                    ->set_bgColorOpacity(1-NumberProcessor::convertToNumeric($background['opacity']))
+                    ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
                     ->set_bgColorHex($backgroundColorHex);
             }
         }
@@ -195,5 +180,109 @@ trait SectionStylesAble
                 }
             }
         }
+    }
+
+    /**
+     * @param $sectionId
+     * @param array $properties
+     * @param BrowserPage $browserPage
+     * @param array $families
+     * @param string $defaultFont
+     * @return mixed
+     */
+    protected function getSectionStyles(
+        $sectionId,
+        BrowserPage $browserPage,
+        array $families,
+        string $defaultFont
+    ) {
+
+        $properties = [
+            'color',
+            'background-size',
+            'background-color',
+            'opacity',
+            'border-bottom-color',
+            'padding-top',
+            'padding-bottom',
+            'padding-right',
+            'padding-left',
+            'margin-top',
+            'margin-bottom',
+            'margin-left',
+            'margin-right',
+            'height',
+            'position',
+        ];
+        $selectorSectionStyles = '[data-id="'.$sectionId.'"]';
+
+        return $this->getDomElementStyles(
+            $selectorSectionStyles,
+            $properties,
+            $browserPage,
+            $families,
+            $defaultFont
+        );
+    }
+
+    /**
+     * @param $sectionId
+     * @param array $properties
+     * @param BrowserPage $browserPage
+     * @param array $families
+     * @param string $defaultFont
+     * @return mixed
+     */
+    protected function getSectionWrapperStyles(
+        $sectionId,
+        BrowserPage $browserPage,
+        array $families,
+        string $defaultFont
+    ) {
+        $selectorSectionWrapperStyles = '[data-id="'.$sectionId.'"] .content-wrapper';
+        $properties = [
+            'padding-top',
+            'padding-bottom',
+            'padding-right',
+            'padding-left',
+            'margin-top',
+            'margin-bottom',
+            'margin-left',
+            'margin-right',
+            'height',
+        ];
+
+        return $this->getDomElementStyles(
+            $selectorSectionWrapperStyles,
+            $properties,
+            $browserPage,
+            $families,
+            $defaultFont
+        );
+    }
+
+    private function getBodyStyles($browserPage, $families, $defaultFont)
+    {
+        static $styles = null;
+
+        if ($styles) {
+            return $styles;
+        }
+
+        $selector = 'body';
+        $properties = [
+            'color',
+            'background-size',
+            'background-color',
+            'background-image',
+        ];
+
+        return $this->getDomElementStyles(
+            $selector,
+            $properties,
+            $browserPage,
+            $families,
+            $defaultFont
+        );
     }
 }

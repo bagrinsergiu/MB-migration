@@ -11,4 +11,9 @@ class FullText extends FullTextElement
     {
         return $brizySection->getItemWithDepth(0);
     }
+
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
 }
