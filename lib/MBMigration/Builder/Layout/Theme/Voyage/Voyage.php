@@ -54,7 +54,8 @@ class Voyage extends AbstractTheme
             $this->getThemeSubMenuItemSelector(),
             ['class' => 'show-more show-more-visible']
         );
-        if ($browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector())) {
+
+        if ($browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector()." ul li")) {
             $browserPage->evaluateScript('GlobalMenu.js', []);
             $browserPage->triggerEvent('hover', 'html');
         }
