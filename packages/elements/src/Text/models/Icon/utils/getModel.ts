@@ -37,6 +37,7 @@ const codeToBuilderMap: Record<string, string> = {
   twitter: "logo-twitter",
   57990: "logo-twitter",
   58503: "logo-twitter",
+  57991: "logo-twitter",
 
   instagram: "logo-instagram",
   58624: "logo-instagram",
