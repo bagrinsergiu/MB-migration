@@ -25,5 +25,41 @@ use MBMigration\Core\Utils;
 
 class Voyage extends AbstractTheme
 {
+    public function getThemeIconSelector(): string
+    {
+        return "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
+    }
+
+    public function getThemeButtonSelector(): string
+    {
+        return ".sites-button:not(.nav-menu-button)";
+    }
+
+    public function getThemeMenuItemSelector(): string
+    {
+        return "#main-navigation li:not(.selected) a";
+    }
+
+    public function getThemeSubMenuItemSelector(): string
+    {
+        return "#more-nav-button";
+    }
+
+    public function beforeTransformBlocks(BrizyPage $page, array $mbPageSections): BrizyPage
+    {
+        parent::beforeTransformBlocks($page,$mbPageSections);
+
+        $browserPage = $this->themeContext->getBrowserPage();
+        $browserPage->setNodeAttribute(
+            $this->getThemeSubMenuItemSelector(),
+            ['class' => 'show-more show-more-visible']
+        );
+        if ($browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector())) {
+            $browserPage->evaluateScript('GlobalMenu.js', []);
+            $browserPage->triggerEvent('hover', 'html');
+        }
+
+        return $page;
+    }
 
 }

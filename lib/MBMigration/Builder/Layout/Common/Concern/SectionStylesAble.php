@@ -175,6 +175,7 @@ trait SectionStylesAble
             $brizySection->getValue()
                 ->set_media('video')
                 ->set_bgVideoType('url')
+                ->set_bgColorOpacity(1-NumberProcessor::convertToNumeric($background['opacity']))
                 ->set_bgVideo($background['video']);
         }
 
