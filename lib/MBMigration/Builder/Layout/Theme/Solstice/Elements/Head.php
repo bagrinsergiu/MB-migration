@@ -234,10 +234,9 @@ class Head extends Element
     {
         $this->browserPage->ExtractHoverMenu(self::SELECTOR_MENU);
 
-
         $result2 = $this->ExtractMenuStyle($this->browserPage, $options['sectionID']);
 
-        $this->browserPage->setNodeAttributes("#main-navigation .has-sub > ul", ['display' => 'block']);
+        $this->browserPage->setNodeStyles("#main-navigation .has-sub > ul", ['display' => 'block']);
 
         $this->browserPage->ExtractHoverMenu(self::SELECTOR_SUB_MENU);
 

@@ -17,6 +17,7 @@ abstract class HeadElement extends AbstractElement
 {
     const CACHE_KEY = 'head';
     use Cacheable;
+    use SectionStylesAble;
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -28,7 +29,6 @@ abstract class HeadElement extends AbstractElement
 
             // reset color palette
             $sectionItem = $this->getSectionItemComponent($section);
-            $sectionItem->getValue()->set_bgColorPalette('');
 
             $logoImageComponent = $this->getLogoComponent($section);
             $menuTargetComponent = $this->getTargetMenuComponent($section);
@@ -36,8 +36,9 @@ abstract class HeadElement extends AbstractElement
             // build menu items and set the menu uid
             $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles);
             $this->setImageLogo($logoImageComponent, $data->getMbSection());
-            $this->setSectionBackgroundColor($sectionItem, $headStyles['style']);
 
+            $elementContext = $data->instanceWithBrizyComponent($sectionItem);
+            $this->handleSectionStyles($elementContext,$this->browserPage);
             return $section;
         });
     }
@@ -108,22 +109,6 @@ abstract class HeadElement extends AbstractElement
     }
 
     /**
-     * @param BrizyComponent $component
-     * @param $styles
-     * @return BrizyComponent
-     */
-    private function setSectionBackgroundColor(BrizyComponent $component, $styles): BrizyComponent
-    {
-        $rgbaToHex = ColorConverter::rgba2hex($styles['background-color']);
-        $opacity = ColorConverter::rgba2opacity($styles['background-color']);
-
-        $component->getValue()->set_bgColorHex($rgbaToHex)->set_bgColorOpacity($opacity);
-
-        return $component;
-    }
-
-
-    /**
      * @param ElementContextInterface $data
      * @param BrizyComponent $component
      * @return BrizyComponent
@@ -143,28 +128,13 @@ abstract class HeadElement extends AbstractElement
             $method = "set_{$field}";
             $menuComponentValue->$method($value);
         }
-        foreach ($headStyles['hoverMenu'] as $field => $value) {
-            $method = "set_{$field}";
-            $menuComponentValue->$method($value);
-        }
-
-        $menuComponentValue->set_activeSubMenuColorHex($headStyles['hoverMenu']['hoverColorHex']);
 
         return $component;
     }
 
     protected function extractBlockBrowserData($sectionId): array
     {
-        $menuStyles = $this->browserPage->evaluateScript(
-            'Menu.js',
-            [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
-                'FAMILIES' => [],
-                'DEFAULT_FAMILY' => 'lato',
-            ]
-        );
-
-        $menuSectionStyles = $this->browserPage->evaluateScript(
+         $menuSectionStyles = $this->browserPage->evaluateScript(
             'StyleExtractor.js',
             [
                 'SELECTOR' => '[data-id="'.$sectionId.'"]',
@@ -179,7 +149,7 @@ abstract class HeadElement extends AbstractElement
             $this->browserPage->triggerEvent('hover', 'html');
         }
 
-        $hoverMenuStyles = $this->browserPage->evaluateScript(
+        $menuStyles = $this->browserPage->evaluateScript(
             'Menu.js',
             [
                 'SELECTOR' => '[data-id="'.$sectionId.'"]',
@@ -190,7 +160,6 @@ abstract class HeadElement extends AbstractElement
 
         return [
             'menu' => isset($menuStyles['data']) ? $menuStyles['data'] : [],
-            'hoverMenu' => isset($hoverMenuStyles['data']) ? $hoverMenuStyles['data'] : [],
             'style' => isset($menuSectionStyles['data']) ? $menuSectionStyles['data'] : [],
         ];
     }
