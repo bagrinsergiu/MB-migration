@@ -34,8 +34,10 @@ abstract class GridLayout extends AbstractElement
         $itemsChunks = array_chunk($accordionItems, $this->getItemsPerRow());
         foreach ($itemsChunks as $row) {
             $brizySectionRow = new BrizyComponent($rowJson);
-            $itemCount = $row;
-            $itemWidth = (int)100/$itemCount;
+            $itemCount = count($row);
+            $itemWidth = (int)(100/$itemCount);
+            $rowWidth = (int)( (100/$this->getItemsPerRow()) * $itemCount );
+            $brizySectionRow->getValue()->set_size($rowWidth);
 
             foreach ($row as $item) {
                 $brizySectionItem = new BrizyComponent($itemJson);
