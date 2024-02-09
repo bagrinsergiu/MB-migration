@@ -15,6 +15,7 @@ const v = {
   "font-size": undefined,
   "line-height": undefined,
   "letter-spacing": undefined,
+  "font-style": "",
   colorHex: undefined,
   colorOpacity: 1,
   activeColorHex: undefined,
@@ -44,6 +45,10 @@ export const getModel = (data: Model) => {
       }
       case "font-family-type": {
         dic[toCamelCase(key)] = "upload";
+        break;
+      }
+      case "font-style": {
+        dic[toCamelCase(key)] = "";
         break;
       }
       case "line-height": {
