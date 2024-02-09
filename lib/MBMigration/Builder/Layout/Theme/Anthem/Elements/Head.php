@@ -237,8 +237,8 @@ class Head extends Element
 
         $defOptions = [
             'activeSubMenuColorHex' => $result['data']['hoverColorHex'],
-            'fontStyle' =>"",
-            'fontSizeSuffix' =>"px",
+            'menuPadding' => 5,
+            'menuPaddingBottom' => 5,
             ];
 
         $result['data'] = array_merge_recursive($result['data'], $defOptions);
