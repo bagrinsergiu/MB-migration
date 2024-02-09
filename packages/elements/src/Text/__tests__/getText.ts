@@ -173,7 +173,7 @@ const ex3: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "favourite-31"
+                name: "logo-twitter"
               }
             }
           ],
@@ -527,7 +527,7 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "favourite-31"
+                name: "logo-twitter"
               }
             }
           ],
@@ -574,7 +574,7 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "favourite-31"
+                name: "logo-twitter"
               }
             }
           ],

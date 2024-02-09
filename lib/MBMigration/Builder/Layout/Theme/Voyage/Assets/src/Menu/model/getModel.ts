@@ -3,7 +3,7 @@ import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { toCamelCase } from "utils/src/text/toCamelCase";
 
 interface Model {
-  node: HTMLElement;
+  node: Element;
   families: Record<string, string>;
   defaultFamily: string;
 }
@@ -15,6 +15,7 @@ const v = {
   "font-size": undefined,
   "line-height": undefined,
   "letter-spacing": undefined,
+  "font-style": "",
   colorHex: undefined,
   colorOpacity: 1,
   activeColorHex: undefined,
@@ -46,8 +47,17 @@ export const getModel = (data: Model) => {
         dic[toCamelCase(key)] = "upload";
         break;
       }
+      case "font-style": {
+        dic[toCamelCase(key)] = "";
+        break;
+      }
       case "line-height": {
-        dic[toCamelCase(key)] = 1;
+        const value = parseInt(`${styles[key]}`);
+        if (isNaN(value)) {
+          dic[toCamelCase(key)] = 1;
+        } else {
+          dic[toCamelCase(key)] = value;
+        }
         break;
       }
       case "font-size": {
