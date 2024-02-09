@@ -31,6 +31,11 @@ class MBProjectDataCollector
      */
     private $container;
 
+    /**
+     * @var array
+     */
+    private $additionalMappingFonts;
+
     use DebugBackTrace;
 
     /**
@@ -48,6 +53,13 @@ class MBProjectDataCollector
         $this->db = new DBConnector();
         $this->manipulator = new ArrayManipulator();
         $this->fontsController = new FontsController($this->container);
+
+        $this->additionalMappingFonts = [
+            'helvetica' => [
+                "Helvetica Neue, Helvetica, Arial, sans-serif",
+                "\"Helvetica Neue\", HelveticaNeue, Helvetica, Arial, sans-serif",
+                ]
+        ];
 
         Utils::log('READY', 4, 'Parser Module');
     }
@@ -165,24 +177,28 @@ class MBProjectDataCollector
                 return $font['font_id'];
             }, $settings['theme']);
 
-            if(count($fontsIds)==0)
+            if (count($fontsIds) == 0) {
                 return $settings['theme'];
+            }
 
-            $ids = implode(',',$fontsIds);
+            $ids = implode(',', $fontsIds);
 
             $settingSite = $this->db->request("SELECT id, name, family from fonts WHERE id in ({$ids})");
 
             $fontData = array();
-            foreach($settingSite as $val) {
+            foreach ($settingSite as $val) {
                 $fontData[$val['id']] = $val;
             }
 
-            foreach ($settings['theme'] as $i=>$font) {
+            foreach ($settings['theme'] as $i => $font) {
                 $settings['theme'][$i]['font_name'] = $fontData[$font['font_id']]['name'];
-                $settings['theme'][$i]['font_family'] = $this->transLiterationFontFamily($fontData[$font['font_id']]['family']);
+                $settings['theme'][$i]['font_family'] = $this->transLiterationFontFamily(
+                    $fontData[$font['font_id']]['family']
+                );
             }
 
-            $settings['theme'] = $this->processFonts($settings['theme'],$migrationDefaultFonts);
+            $settings['theme'] = $this->processFonts($settings['theme'], $migrationDefaultFonts);
+
             return $settings['theme'];
         } else {
 
@@ -233,6 +249,28 @@ class MBProjectDataCollector
                 'uuid' => null,
             ];
 
+        }
+        $i = 0;
+        foreach ($this->additionalMappingFonts as $name => $family) {
+            if (!is_array($family)) {
+                $fontStyles[] = [
+                    'name' => 'additional_'.$i,
+                    'fontName' => $name,
+                    'fontFamily' => $this->transLiterationFontFamily($family),
+                    'uuid' => null,
+                ];
+                $i++;
+            } else {
+                foreach ($family as $f) {
+                    $fontStyles[] = [
+                        'name' => 'additional_'.$i,
+                        'fontName' => $name,
+                        'fontFamily' => $this->transLiterationFontFamily($f),
+                        'uuid' => null,
+                    ];
+                    $i++;
+                }
+            }
         }
 
         $fontStyles[] = [
@@ -290,7 +328,10 @@ class MBProjectDataCollector
                             $defaultFont = $this->cache->get('fonts', 'settings');
                             foreach ($defaultFont as $font) {
                                 if ($font['fontName'] === $fontName) {
-                                    $settings['used_fonts'] = ['fontName' => $font['fontName'], 'uuid' => $font['uuid']];
+                                    $settings['used_fonts'] = [
+                                        'fontName' => $font['fontName'],
+                                        'uuid' => $font['uuid'],
+                                    ];
                                     continue 2;
                                 }
                             }
@@ -383,6 +424,7 @@ class MBProjectDataCollector
             unset($page['parentsettings']);
             unset($page['protectedpage']);
             $this->cache->update('Total', '++', 'Status');
+
             return $page;
         }, $allPages);
 
@@ -392,28 +434,28 @@ class MBProjectDataCollector
                 return $page['parent_id'] == $parent;
             });
 
-            foreach ($pages as $i=>$page) {
+            foreach ($pages as $i => $page) {
                 $pages[$i]['child'] = getPagesByParent($page['id'], $allpages);
             }
 
-            usort($pages, function($a, $b)
-            {
+            usort($pages, function ($a, $b) {
                 return $a['position'] <=> $b['position'];
             });
 
             return $pages;
         }
 
-        $result = getPagesByParent(null,$allPages);
+        $result = getPagesByParent(null, $allPages);
         $this->cache->set('ParentPages', $result);
+
         return $result;
 
     }
 
     /**
+     * @throws Exception
      * @deprecated Very slow implementation. Use getPages.
      *
-     * @throws Exception
      */
     public function getParentPages(): array
     {
@@ -759,7 +801,7 @@ class MBProjectDataCollector
 
     private function transLiterationFontFamily($family): string
     {
-        $inputString = str_replace(["'", ' '], ['', '_'], $family);
+        $inputString = str_replace(["\"","'", ' '], ['','', '_'], $family);
 
         $inputString = str_replace(',', '', $inputString);
 

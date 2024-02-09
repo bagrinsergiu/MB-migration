@@ -245,7 +245,7 @@ class BrizyAPI extends Utils
             Utils::log("Request to Upload font name: $fontsName, font weight: $fontWeight", 1, "createFonts");
             foreach ($pathToFonts as $pathToFont) {
                 $fileExtension = $this->getExtensionFromFileString($pathToFont);
-                if (Config::$urlJsonKits) {
+                if (Config::$urlJsonKits && Config::$devMode === false) {
                     $pathToFont = Config::$urlJsonKits.'/fonts/'.$pathToFont;
                     $fonts[] = [
                         'name' => "files[$fontWeight][$fileExtension]",

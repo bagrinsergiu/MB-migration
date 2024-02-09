@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\ItemBuilder;
+use MBMigration\Builder\Menu\MenuHandler;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\Utils\UrlBuilder;
 use MBMigration\Builder\VariableCache;
@@ -70,8 +71,6 @@ class Head extends Element
         $objBlock = new ItemBuilder();
         $objBlock->newItem($section['main']);
 
-        $this->creatingMenu($objBlock, $menuList, $section, $this->activePage);
-
         $this->generalParameters(
             $objBlock,
             $options,
@@ -91,6 +90,12 @@ class Head extends Element
         $this->setParseOptions($objBlock, $options, [
             'borderRadius' => 10,
         ]);
+
+
+        $MenuHandler = new MenuHandler($this->browserPage);
+        $menuList2 = $MenuHandler->createMenuStructure(self::SELECTOR);
+
+        $this->creatingMenu($objBlock, $menuList2, $section, $this->activePage);
 
         $this->cache->set('flags', ['createdFirstSection' => false, 'bgColorOpacity' => true]);
 
@@ -231,7 +236,9 @@ class Head extends Element
         $result = $this->ExtractMenuStyle($this->browserPage, $options['sectionID']);
 
         $defOptions = [
-            'activeSubMenuColorHex' => $result['data']['hoverColorHex']
+            'activeSubMenuColorHex' => $result['data']['hoverColorHex'],
+            'menuPadding' => 5,
+            'menuPaddingBottom' => 5,
             ];
 
         $result['data'] = array_merge_recursive($result['data'], $defOptions);
