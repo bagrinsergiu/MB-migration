@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "workspaces": [
     "packages/*",
+    "node-puppeteer",
     "lib/MBMigration/Builder/Layout/Theme/Voyage/Assets",
     "lib/MBMigration/Builder/Layout/Theme/Anthem/Assets",
     "lib/MBMigration/Builder/Layout/Theme/Solstice/Assets",
