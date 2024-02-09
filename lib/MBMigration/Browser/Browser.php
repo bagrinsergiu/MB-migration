@@ -3,8 +3,10 @@
 namespace MBMigration\Browser;
 
 use MBMigration\Core\Utils;
+use Monolog\Handler\StreamHandler;
 use Nesk\Puphpeteer\Puppeteer;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 class Browser implements BrowserInterface
 {
@@ -28,15 +30,20 @@ class Browser implements BrowserInterface
 
     private function __construct($scriptPath, LoggerInterface $logger = null)
     {
+        if(is_null($logger)) {
+            $logger = new \Monolog\Logger('my_logger');
+            $logger->pushHandler(new StreamHandler('php://stdout', LogLevel::DEBUG));
+        }
+
         $puppeteer = new Puppeteer(
             [
                 'log_browser_console' => true,
                 'log_node_console' => true,
                 'logger' => $logger,
-                'debug' => true,
-                'protocolTimeout' => 9000,
-                'read_timeout' => 9000,
+                'protocolTimeout' => 900,
+                'read_timeout' => 900,
                 'idle_timeout' => null,
+                'debug' => true,
             ]
         );
         $this->browser = $puppeteer->launch([

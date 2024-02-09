@@ -59,11 +59,11 @@ trait SectionStylesAble
             $families,
             $defaultFont
         );
-        $bodyStyles = $this->getBodyStyles(
-            $browserPage,
-            $families,
-            $defaultFont
-        );
+//        $bodyStyles = $this->getBodyStyles(
+//            $browserPage,
+//            $families,
+//            $defaultFont
+//        );
 
 
 
@@ -86,7 +86,7 @@ trait SectionStylesAble
 //            }
 //        }
 
-        $this->handleSectionBackground($brizySection, $mbSectionItem, $bodyStyles);
+        //$this->handleSectionBackground($brizySection, $mbSectionItem, $bodyStyles);
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles);
 
         // reset padding top for first section as in brizy there is no need for that padding.
@@ -131,11 +131,7 @@ trait SectionStylesAble
         $opacity = ColorConverter::rgba2opacity($sectionStyles['background-color']);
         $opacity = NumberProcessor::convertToNumeric($opacity);
 
-        if (!$opacity) {
-            $opacity = NumberProcessor::convertToNumeric($sectionStyles['opacity']);
-        }
-
-        if((float)$opacity===0.) return;
+        //if((float)$opacity===0.) return;
 
         $brizySection->getValue()
             ->set_bgColorHex($backgroundColorHex)
