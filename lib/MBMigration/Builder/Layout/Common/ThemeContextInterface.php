@@ -28,4 +28,6 @@ interface ThemeContextInterface
     public function getBrizyCollectionItemURI(): string;
 
     public function getMbMenu(): array;
+
+    public function getSlug(): string;
 }

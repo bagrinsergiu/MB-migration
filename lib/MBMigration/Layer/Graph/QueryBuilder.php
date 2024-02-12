@@ -47,8 +47,8 @@ class QueryBuilder
             $this->brizy_cms_api_url,
             [],
             [
-                'connect_timeout' => 3,
-                'timeout' => 20,
+                'connect_timeout' => 5,
+                'timeout' => 2000,
                 'headers' => $headers,
             ]
         );

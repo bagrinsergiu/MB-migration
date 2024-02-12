@@ -8,4 +8,5 @@ use Nesk\Puphpeteer\Puppeteer;
 interface BrowserPageInterface
 {
     public function evaluateScript($jsScript, $params): array;
+    public function triggerEvent($eventNameMethod, $elementSelector): bool;
 }

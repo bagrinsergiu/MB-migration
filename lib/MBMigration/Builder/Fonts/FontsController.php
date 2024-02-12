@@ -129,7 +129,7 @@ class FontsController extends builderUtils
     {
         $this->layoutName = 'FontsController';
         Utils::log("Download fonts map", 1, "downloadMapFontsFromUrl");
-        if (Config::$urlJsonKits) {
+        if (Config::$urlJsonKits && Config::$devMode === false) {
             $createUrlForFileFontsMap = Config::$urlJsonKits.'/fonts/fonts.json';
             $this->fontsMap = $this->loadJsonFromUrl($createUrlForFileFontsMap);
         } else {

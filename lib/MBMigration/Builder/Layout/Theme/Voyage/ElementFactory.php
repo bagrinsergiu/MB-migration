@@ -18,6 +18,7 @@ use MBMigration\Builder\Layout\Theme\Voyage\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GridLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Head;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftForm;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\LeftMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListLayout;
@@ -25,6 +26,7 @@ use MBMigration\Builder\Layout\Theme\Voyage\Elements\ListMediaLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\LivestreamLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\PrayerForm;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\PrayerList;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightForm;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\RightMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\SmallGroupsList;
@@ -53,6 +55,10 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new SmallGroupsList($this->blockKit['blocks']['small-groups-list'], $this->browserPage);
             case 'full-width-form':
                 return new FullWidthForm($this->blockKit['blocks']['form'], $this->browserPage);
+            case 'left-form-with-text':
+                return new LeftForm($this->blockKit['blocks']['form'], $this->browserPage);
+            case 'right-form-with-text':
+                return new RightForm($this->blockKit['blocks']['form'], $this->browserPage);
             case 'event-list-layout':
                 return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $this->browserPage, $this->getQueryBuilder());
             case 'event-grid-layout':

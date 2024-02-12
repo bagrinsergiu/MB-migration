@@ -1,0 +1,39 @@
+name: "(¬‿¬)"
+
+on:
+  pull_request:
+    types: [ labeled ]
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: [ self-hosted, tester ]
+    concurrency:
+      group: ${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
+    if: ${{ github.event.label.name == 'review' }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        env:
+          CACHE_HTTP_API: "http://cache-http"
+          KEY: "node18-${{ hashFiles('package-lock.json') }}"
+        run: |
+          cd .github
+          ./cache.sh $CACHE_HTTP_API $KEY
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typescript
+        run: npm run tsc
+
+      - name: Tests
+        run: npm run test

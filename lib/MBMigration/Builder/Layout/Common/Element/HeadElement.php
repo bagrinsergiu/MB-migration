@@ -136,16 +136,19 @@ abstract class HeadElement extends AbstractElement
         $menuItems = $this->createMenu($data->getMenu());
         $menuComponentValue = $component->getValue();
         $menuComponentValue->set('items', $menuItems)
-            ->set_menuSelected($data->getMenu()['uid'])
-            ->set_subMenuBgColorPalette('')
-            ->set_colorOpacity(1)
-            ->set_tempColorOpacity(1)
-            ->set_colorPalette('');
+            ->set_menuSelected($data->getMenu()['uid']);
+
         // apply menu styles
         foreach ($headStyles['menu'] as $field => $value) {
             $method = "set_{$field}";
             $menuComponentValue->$method($value);
         }
+        foreach ($headStyles['hoverMenu'] as $field => $value) {
+            $method = "set_{$field}";
+            $menuComponentValue->$method($value);
+        }
+
+        $menuComponentValue->set_activeSubMenuColorHex($headStyles['hoverMenu']['hoverColorHex']);
 
         return $component;
     }
@@ -171,9 +174,24 @@ abstract class HeadElement extends AbstractElement
             ]
         );
 
+        if ($this->browserPage->triggerEvent('hover', '#main-navigation li:not(.selected) a')) {
+            $this->browserPage->evaluateScript('GlobalMenu.js', []);
+            $this->browserPage->triggerEvent('hover', 'html');
+        }
+
+        $hoverMenuStyles = $this->browserPage->evaluateScript(
+            'Menu.js',
+            [
+                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'FAMILIES' => [],
+                'DEFAULT_FAMILY' => 'lato',
+            ]
+        );
+
         return [
-            'menu' => isset($menuStyles['data'])?$menuStyles['data']:[],
-            'style' => isset($menuSectionStyles['data'])?$menuSectionStyles['data']:[],
+            'menu' => isset($menuStyles['data']) ? $menuStyles['data'] : [],
+            'hoverMenu' => isset($hoverMenuStyles['data']) ? $hoverMenuStyles['data'] : [],
+            'style' => isset($menuSectionStyles['data']) ? $menuSectionStyles['data'] : [],
         ];
     }
 

@@ -388,8 +388,14 @@ class MigrationPlatform
 
         $result = $this->brizyApi->createMenu($data);
 
-
-        $this->cache->add('menuList', $result);
+        $this->cache->set('menuList', [
+            'id' => $result['id'] ?? null,
+            'uid' => $result['uid'] ?? null,
+            'name' => $result['name'] ?? null,
+            'create' => false,
+            'list' => $parentPages['list'],
+            'data' => $result['data'] ?? '',
+        ]);
 
         $parentPages = $this->cache->get('menuList');
 //        file_put_contents(JSON_PATH.'/menuList.json',json_encode($parentPages));
@@ -402,7 +408,7 @@ class MigrationPlatform
 
         $settingsTextTransform = $this->cache->get('fonts', 'settings');
         foreach ($settingsTextTransform as $itemTextTransform) {
-            if ($itemTextTransform['name'] === 'main_nav') {
+            if (isset($itemTextTransform['name']) && $itemTextTransform['name'] === 'main_nav') {
                 $textTransform = $itemTextTransform['text_transform'] ?? 'none';
                 break;
             }

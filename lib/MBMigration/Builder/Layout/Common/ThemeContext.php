@@ -60,6 +60,10 @@ final class ThemeContext implements ThemeContextInterface
      * @var array
      */
     private $mbMenu;
+    /**
+     * @var string
+     */
+    private $slug;
 
     public function __construct(
         string $layoutName,
@@ -72,7 +76,8 @@ final class ThemeContext implements ThemeContextInterface
         string $defaultFamily,
         ThemeElementFactoryInterface $elementFactory,
         string $brizyCollectionTypeURI,
-        string $brizyCollectionItemURI
+        string $brizyCollectionItemURI,
+        string $slug
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
@@ -85,6 +90,7 @@ final class ThemeContext implements ThemeContextInterface
         $this->browserPage = $browserPage;
         $this->brizyCollectionTypeURI = $brizyCollectionTypeURI;
         $this->brizyCollectionItemURI = $brizyCollectionItemURI;
+        $this->slug = $slug;
     }
 
     public function getLayoutName(): string
@@ -142,5 +148,8 @@ final class ThemeContext implements ThemeContextInterface
         return $this->mbMenu;
     }
 
-
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
 }
