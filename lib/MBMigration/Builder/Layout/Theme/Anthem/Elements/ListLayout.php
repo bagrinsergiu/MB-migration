@@ -65,27 +65,34 @@ class ListLayout extends Element
         $this->backgroundImages($objBlock, $sectionData, $options);
 
         $blockHead = false;
+        $blockHeadSet = false;
+        $titleSectionSet = false;
+        $bodySectionSet = false;
 
-        foreach ($sectionData['head'] as $headItem) {
-            if ($headItem['category'] === 'text') {
-                if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                    $blockHead = true;
-                    foreach ($headItem['brzElement'] as $item) {
-                        $objHead->item()->addItem($item);
+        if(!empty($sectionData['head'])){
+            foreach ($sectionData['head'] as $headItem) {
+                if ($headItem['category'] === 'text') {
+                    if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
+                        $blockHead = true;
+                        $titleSectionSet = true;
+                        foreach ($headItem['brzElement'] as $item) {
+                            $objHead->item()->addItem($item);
+                        }
+                        $objHead->item()->addItem(
+                            $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']])
+                        );
                     }
-                    $objHead->item()->addItem(
-                        $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']])
-                    );
                 }
             }
-        }
 
-        foreach ($sectionData['head'] as $headItem) {
-            if ($headItem['category'] === 'text') {
-                if ($headItem['item_type'] === 'body' && $this->showHeader($sectionData)) {
-                    $blockHead = true;
-                    foreach ($headItem['brzElement'] as $item) {
-                        $objHead->item()->addItem($item);
+            foreach ($sectionData['head'] as $headItem) {
+                if ($headItem['category'] === 'text') {
+                    if ($headItem['item_type'] === 'body' && $this->showHeader($sectionData)) {
+                        $blockHead = true;
+                        $bodySectionSet = true;
+                        foreach ($headItem['brzElement'] as $item) {
+                            $objHead->item()->addItem($item);
+                        }
                     }
                 }
             }
@@ -100,6 +107,37 @@ class ListLayout extends Element
         }
 
         foreach ($sectionData['items'] as $section) {
+            if ($section['category'] === 'text' && !$titleSectionSet) {
+                if ($section['item_type'] === 'title' && $this->showHeader($sectionData)) {
+                    foreach ($section['brzElement'] as $item) {
+                        $objHead->item()->addItem($item);
+                    }
+                    $objHead->item()->addItem(
+                        $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']])
+                    );
+                    $blockHeadSet = true;
+                }
+            }
+
+            if ($section['category'] === 'text' && !$bodySectionSet) {
+                if ($section['item_type'] === 'body' && $this->showHeader($sectionData)) {
+                    foreach ($section['brzElement'] as $item) {
+                        $objHead->item()->addItem($item);
+                    }
+                    $blockHeadSet = true;
+                }
+            }
+        }
+
+        if($blockHeadSet){
+            $objBlock->item()->addItem($objHead->get());
+        }
+
+        foreach ($sectionData['items'] as $section) {
+            if (empty($section['item'])) {
+                continue;
+            }
+
             $objRow->newItem($decoded['row']);
             $objItem->newItem($decoded['item']);
 

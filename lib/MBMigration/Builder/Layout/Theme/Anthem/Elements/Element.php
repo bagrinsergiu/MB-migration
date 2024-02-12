@@ -43,10 +43,14 @@ abstract class Element extends LayoutUtils
         if ($this->checkArrayPath($sectionData, 'settings/sections/background/video')) {
 
             $videoUrl = $sectionData['settings']['sections']['background']['video'];
+            $videoOpacity = $this->colorOpacity($sectionData['settings']['sections']['background']['opacity']);
 
             $objBlock->item()->setting('media', 'video');
             $objBlock->item()->setting('bgVideoType', 'url');
             $objBlock->item()->setting('bgVideo', $videoUrl);
+            $objBlock->item()->setting('bgColorOpacity', $videoOpacity);
+            $objBlock->item()->setting('bgVideoLoop', 'on');
+            $objBlock->setting('sectionHeight', 500);
         }
     }
 
@@ -428,11 +432,11 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function wrapperForm(array $options = [])
+    protected function wrapperForm(array $options = [], $type = 'main')
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global'];
-        $objForm = new ItemBuilder($decoded['wrapper--form']['main']);
+        $objForm = new ItemBuilder($decoded['wrapper--form'][$type]);
         if (!empty($options)) {
             foreach ($options as $key => $value) {
                 $objForm->item()->setting($key, $value);
@@ -547,22 +551,50 @@ abstract class Element extends LayoutUtils
         return $result;
     }
 
-    public function hasAnyTagsInsidePTag($html)
+//    public function hasAnyTagsInsidePTag($html)
+//    {
+//        $ignoreTags = ['<br>'];
+//
+//        $dom = new DOMDocument;
+//
+//        libxml_use_internal_errors(true);
+//
+//        $dom->loadHTML($html);
+//
+//        $pTags = $dom->getElementsByTagName('p');
+//
+//        foreach ($pTags as $pTag) {
+//            if ($pTag->hasChildNodes()) {
+//                foreach ($pTag->childNodes as $childNode) {
+//                    if ($childNode->nodeType === XML_ELEMENT_NODE && !in_array($childNode->nodeName, $ignoreTags)) {
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
+//
+//        return false;
+//    }
+
+    public function hasAnyTagsInsidePTag($html): bool
     {
-        $ignoreTags = ['<br>'];
-
         $dom = new DOMDocument;
-
         libxml_use_internal_errors(true);
-
         $dom->loadHTML($html);
 
         $pTags = $dom->getElementsByTagName('p');
 
+        $ignoreTags = ['br'];
+
         foreach ($pTags as $pTag) {
             if ($pTag->hasChildNodes()) {
                 foreach ($pTag->childNodes as $childNode) {
-                    if ($childNode->nodeType === XML_ELEMENT_NODE && !in_array($childNode->nodeName, $ignoreTags)) {
+
+                    if ($childNode->nodeType === XML_ELEMENT_NODE && !in_array(strtolower($childNode->nodeName), $ignoreTags)) {
+                        return true;
+                    }
+
+                    if ($childNode->nodeType === XML_TEXT_NODE && trim($childNode->nodeValue) !== '') {
                         return true;
                     }
                 }

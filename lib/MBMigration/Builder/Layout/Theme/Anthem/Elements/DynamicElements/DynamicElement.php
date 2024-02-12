@@ -17,6 +17,10 @@ abstract class DynamicElement extends Element implements DynamicElementInterface
      * @var array
      */
     protected $elementOptions;
+    /**
+     * @var mixed
+     */
+    protected $jsonDecodeAnthem;
 
     /**
      * @throws \Exception
@@ -25,6 +29,7 @@ abstract class DynamicElement extends Element implements DynamicElementInterface
     {
         $this->cache = VariableCache::getInstance();
         $this->jsonDecode = $this->loadKit();
+        $this->jsonDecodeAnthem = $this->loadKit('Anthem');
         $this->elementOptions = $ElementOptions;
     }
 

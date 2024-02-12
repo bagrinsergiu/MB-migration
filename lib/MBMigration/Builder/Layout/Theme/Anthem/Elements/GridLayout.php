@@ -43,6 +43,7 @@ class GridLayout extends Element
         $objRow = new ItemBuilder();
 
         $options = [];
+        $blockHead = false;
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
@@ -56,6 +57,8 @@ class GridLayout extends Element
 
         $this->defaultOptionsForElement($decoded, $options);
         $this->backgroundColor($objBlock, $sectionData, $options);
+
+        $this->backgroundVideo($objBlock, $sectionData);
         $this->backgroundImages($objBlock, $sectionData, $options);
         $this->setOptionsForTextColor($sectionData, $options);
 
@@ -141,6 +144,8 @@ class GridLayout extends Element
 
             $countItems = count($row);
             foreach ($row as $section) {
+                $itemAdd = false;
+
                 $objItem->newItem($decoded['item']);
                 $width = 100 / $countItems;
                 $width = number_format($width, 2, '.', '');
@@ -192,6 +197,7 @@ class GridLayout extends Element
 
                                     $image = $this->wrapperImage($imageOptions, $global['wrapper--image']);
                                     $objItem->item(1)->addItem($image);
+                                    $itemAdd = true;
                                 }
                             }
                             foreach ($section['item'] as $sectionItem) {
@@ -205,6 +211,7 @@ class GridLayout extends Element
                                                         $embedCode = $this->findEmbeddedPasteDivs($sectionItem['content']);
                                                         if(is_array($embedCode)){
                                                             $objItem->item(1)->addItem($this->embedCode($embedCode[$i]));
+                                                            $itemAdd = true;
                                                         }
                                                         $i++;
                                                     }
@@ -213,6 +220,7 @@ class GridLayout extends Element
                                                 case 'Wrapper':
                                                     if($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])){
                                                         $objItem->item(1)->addItem($textItem);
+                                                        $itemAdd = true;
                                                     }
                                                     break;
                                             }
@@ -244,6 +252,7 @@ class GridLayout extends Element
                                                 $embedCode = $this->findEmbeddedPasteDivs($section['content']);
                                                 if(is_array($embedCode)){
                                                     $objItem->addItem($this->embedCode($embedCode[$i]));
+                                                    $itemAdd = true;
                                                 }
                                                 $i++;
                                             }
@@ -252,6 +261,7 @@ class GridLayout extends Element
                                         case 'Wrapper':
                                             if($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])){
                                                 $objItem->addItem($textItem);
+                                                $itemAdd = true;
                                             }
                                             break;
                                     }
@@ -268,6 +278,7 @@ class GridLayout extends Element
                                                 $embedCode = $this->findEmbeddedPasteDivs($section['content']);
                                                 if(is_array($embedCode)){
                                                     $objItem->addItem($this->embedCode($embedCode[$i]));
+                                                    $itemAdd = true;
                                                 }
                                                 $i++;
                                             }
@@ -276,7 +287,7 @@ class GridLayout extends Element
                                         case 'Wrapper':
                                             if($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])){
                                                 $objItem->addItem($textItem);
-                                            }
+                                                $itemAdd = true;                                            }
                                             break;
                                     }
                                 }
@@ -284,8 +295,9 @@ class GridLayout extends Element
                         }
                     }
                 }
-
-                $objRow->addItem($objItem->get());
+                if ($itemAdd) {
+                    $objRow->addItem($objItem->get());
+                }
             }
             $objBlock->item()->addItem($objRow->get());
         }
