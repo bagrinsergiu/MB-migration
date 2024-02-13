@@ -21,6 +21,15 @@ jobs:
         with:
           node-version: 18
 
+      - name: Install PHP dependencies
+        uses: php-actions/composer@v6
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"} }'
+
+      - uses: php-actions/phpunit@v3
+        with:
+          php_version: 7.2
+
       - name: Install Dependencies
         env:
           CACHE_HTTP_API: "http://cache-http"
