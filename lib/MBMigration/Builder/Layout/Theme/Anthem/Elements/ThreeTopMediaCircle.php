@@ -63,12 +63,53 @@ class ThreeTopMediaCircle extends Element
 
         $this->backgroundImages($objBlock, $sectionData, $options);
 
-        foreach ($sectionData['items'] as $item)
-        {
-            if(isset($item['content']) && isset($item['imageFileName'])) {
+        foreach ($sectionData['items'] as $item) {
+            if (isset($item['content']) && isset($item['imageFileName'])) {
                 if ($item['category'] === 'photo') {
                     $objItem->item(0)->item(0)->setting('imageSrc', $item['content']);
                     $objItem->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
+
+                    if ($item['link'] != '') {
+                        $sectionItem = [];
+                        if ($item['new_window']) {
+                            $sectionItem['new_window'] = 'on';
+                        } else {
+                            $sectionItem['new_window'] = 'off';
+                        }
+
+                        switch ($this->detectLinkType($item['link'])) {
+                            case 'mail':
+                                $objItem->item()->item()->setting('linkType', 'external');
+                                $objItem->item()->item()->setting('linkExternal', 'mailto:'.$item['link']);
+                                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
+                                break;
+                            case 'phone':
+                                $objItem->item()->item()->setting('linkType', 'external');
+                                $objItem->item()->item()->setting('linkExternal', 'tel:'.$item['link']);
+                                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
+                                break;
+                            case 'string':
+                            case 'link':
+                                $urlComponents = parse_url($item['link']);
+
+                                if (!empty($urlComponents['host'])) {
+                                    $slash = '';
+                                } else {
+                                    $slash = '/';
+                                }
+
+                                $objItem->item()->item()->setting('linkType', 'external');
+                                $objItem->item()->item()->setting('linkExternal', $slash.$item['link']);
+                                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
+                                break;
+                            default:
+                                $objItem->item()->item()->setting('linkType', 'external');
+                                $objItem->item()->item()->setting('linkExternal', $slash.$item['link']);
+                                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
+                                break;
+                        }
+                    }
+
                     $objBlock->item(0)->item(0)->addItem($objItem->get());
                 }
             } else {
@@ -77,8 +118,7 @@ class ThreeTopMediaCircle extends Element
             }
         }
 
-        foreach ($sectionData['items'] as $item)
-        {
+        foreach ($sectionData['items'] as $item) {
             if ($item['item_type'] === 'title') {
 
                 $this->textCreation($item, $objBlock);
@@ -89,8 +129,7 @@ class ThreeTopMediaCircle extends Element
         }
 
 
-        foreach ($sectionData['items'] as $item)
-        {
+        foreach ($sectionData['items'] as $item) {
             if ($item['item_type'] === 'body') {
 
                 $this->textCreation($item, $objBlock);
@@ -104,6 +143,7 @@ class ThreeTopMediaCircle extends Element
 //        $objBlock->item(0)->item(0)->addItem($objSpacer->get());
 
         $block = $this->replaceIdWithRandom($objBlock->get());
+
         return json_encode($block);
     }
 
@@ -116,9 +156,9 @@ class ThreeTopMediaCircle extends Element
         foreach ($sectionData['brzElement'] as $textItem) {
             switch ($textItem['type']) {
                 case 'EmbedCode':
-                    if(!empty($sectionData['content'])) {
+                    if (!empty($sectionData['content'])) {
                         $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
-                        if(is_array($embedCode)){
+                        if (is_array($embedCode)) {
                             $objBlock->item()->item(1)->item()->addItem($this->embedCode($embedCode[$i]));
                         }
                         $i++;

@@ -15,7 +15,25 @@ class LayoutUtils extends builderUtils
 {
     public function colorOpacity($value): float
     {
-        return 1 - (float) $value;
+        return 1 - (float)$value;
+    }
+
+    public function checkPhoneNumber($str)
+    {
+        if (!preg_match("/^(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\$/", $str)) {
+
+            return false;
+        }
+
+        $number = preg_replace('/[^0-9]/', '', $str);
+
+        if (ctype_digit($number)) {
+
+            return true;
+        } else {
+
+            return false;
+        }
     }
 
     /**
@@ -40,6 +58,7 @@ class LayoutUtils extends builderUtils
             }
             $fontFamily = $option['mainFonts']['uuid'];
         }
+
         return ['fontType' => $fontType, 'fontFamily' => $fontFamily];
     }
 
@@ -54,6 +73,7 @@ class LayoutUtils extends builderUtils
         } else {
             $upperCase = '';
         }
+
         return $upperCase;
     }
 
@@ -68,6 +88,7 @@ class LayoutUtils extends builderUtils
         } else {
             $fontWeight = 400;
         }
+
         return $fontWeight;
     }
 
@@ -87,6 +108,7 @@ class LayoutUtils extends builderUtils
         if (array_key_exists('textColor', $option)) {
             $mainColor = $option['textColor'];
         }
+
         return $mainColor;
     }
 
@@ -98,6 +120,7 @@ class LayoutUtils extends builderUtils
         } else {
             $color = [];
         }
+
         return $color;
     }
 
@@ -112,6 +135,7 @@ class LayoutUtils extends builderUtils
         } else {
             $fontSize = 16;
         }
+
         return $fontSize;
     }
 
@@ -126,6 +150,7 @@ class LayoutUtils extends builderUtils
         } else {
             $position = 'brz-text-lg-center';
         }
+
         return $position;
     }
 
@@ -142,10 +167,12 @@ class LayoutUtils extends builderUtils
         } else {
             $letterSpacing = '0_8';
         }
+
         return $letterSpacing;
     }
 
-    public function transformNumber($number) {
+    public function transformNumber($number)
+    {
 
         $parts = explode('.', $number);
         if (count($parts) > 1) {
@@ -170,10 +197,12 @@ class LayoutUtils extends builderUtils
         } else {
             $sectionType = 'brz-tp-lg-paragraph';
         }
+
         return $sectionType;
     }
 
-    protected function replaceIdWithRandom($data) {
+    protected function replaceIdWithRandom($data)
+    {
         if (is_array($data)) {
             foreach ($data as $key => &$value) {
                 if (is_array($value)) {
@@ -195,6 +224,7 @@ class LayoutUtils extends builderUtils
         for ($i = 0; $i < $length; $i++) {
             $randomString .= $characters[rand(0, strlen($characters) - 1)];
         }
+
         return $randomString;
     }
 
@@ -208,7 +238,7 @@ class LayoutUtils extends builderUtils
             'em' => 16,
             'rem' => 16,
             'pt' => 1.33,
-            'percent' => 0.16
+            'percent' => 0.16,
         ];
 
         if (!isset($unitFactors[$originalUnit])) {
@@ -223,7 +253,7 @@ class LayoutUtils extends builderUtils
         preg_match('/(\d+(\.\d+)?)\s*([a-z]{2})/', $fontSize, $matches);
 
         if (count($matches) === 4) {
-            $size = (float) $matches[1];
+            $size = (float)$matches[1];
             $unit = $matches[3];
 
             if ($unit === 'em') {
@@ -241,14 +271,15 @@ class LayoutUtils extends builderUtils
             } elseif ($unit === 'in') {
                 $size *= 96;
             }
-            if($round){
+            if ($round) {
                 $result = round($size);
             } else {
                 $result = $size;
             }
         } else {
-            $result = (float) $matches[1];
+            $result = (float)$matches[1];
         }
+
         return $result;
     }
 
@@ -267,21 +298,24 @@ class LayoutUtils extends builderUtils
                 if ($span->hasAttribute('data-icon')) {
                     $icon = $span->getAttribute('data-icon');
                     $iconNameBrizy = $this->checkExistIcon($icon, $hostName);
-                    $result[] = [ 'icon' => $iconNameBrizy, 'href' => $href];
-                } else if ($span->hasAttribute('data-socialicon')) {
-                    $icon = $span->getAttribute('data-socialicon');
-                    $iconNameBrizy = $this->checkExistIcon($icon, $hostName);
-                    $result[] = [ 'icon' => $iconNameBrizy, 'href' => $href];
-                } else if ($span->getAttribute('class')) {
-                    $class = $span->getAttribute('class');
-                    if (strpos($class, 'socialIconSymbol') !== false) {
-                        $icon = $span->nodeValue;
+                    $result[] = ['icon' => $iconNameBrizy, 'href' => $href];
+                } else {
+                    if ($span->hasAttribute('data-socialicon')) {
+                        $icon = $span->getAttribute('data-socialicon');
                         $iconNameBrizy = $this->checkExistIcon($icon, $hostName);
                         $result[] = ['icon' => $iconNameBrizy, 'href' => $href];
+                    } else {
+                        if ($span->getAttribute('class')) {
+                            $class = $span->getAttribute('class');
+                            if (strpos($class, 'socialIconSymbol') !== false) {
+                                $icon = $span->nodeValue;
+                                $iconNameBrizy = $this->checkExistIcon($icon, $hostName);
+                                $result[] = ['icon' => $iconNameBrizy, 'href' => $href];
+                            }
+                        } else {
+                            Utils::log('Icons Attribute not found', 3, "replaceTitleTag");
+                        }
                     }
-                }
-                else {
-                    Utils::log('Icons Attribute not found', 3, "replaceTitleTag");
                 }
             }
         }
@@ -297,10 +331,11 @@ class LayoutUtils extends builderUtils
             '&#130;',
             '&#135;',
             '&#138;',
-            '&icirc;'
+            '&icirc;',
         ];
 
         $html = str_replace($replace, '', $resultHtml);
+
         return $result;
     }
 
@@ -308,15 +343,18 @@ class LayoutUtils extends builderUtils
     {
         $hostName = $this->extractDomainName($url);
         $result = $this->checkExistIcon($hostName, $iconCode, false);
+
         return $result;
     }
 
-    private function recursiveRemove($string, $toRemove) {
+    private function recursiveRemove($string, $toRemove)
+    {
 
         if (is_array($toRemove)) {
             foreach ($toRemove as $item) {
                 $string = $this->recursiveRemove($string, $item);
             }
+
             return $string;
         } else {
 
@@ -328,37 +366,43 @@ class LayoutUtils extends builderUtils
     {
         $result = 'logo-rss';
 
-        if($hostName === false){
+        if ($hostName === false) {
             $icoName = $this->getIcon($name);
-            if(!$icoName){
+            if (!$icoName) {
                 $icoName = $this->getIcon($iconCode);
-                if(!$icoName){
-                    Utils::log('icons were not found: ' . $name, 3, "checkExistIcon");
+                if (!$icoName) {
+                    Utils::log('icons were not found: '.$name, 3, "checkExistIcon");
+
                     return $result;
                 }
-            } else{
+            } else {
                 $icoName = $this->getIcon($iconCode);
             }
+
             return $icoName;
         }
 
-        if($name === $hostName){
+        if ($name === $hostName) {
             $result = $name;
-        } else if ($this->getIcon($name) !== false) {
-            $result = $name;
-        } else if ($this->getIcon($hostName) !== false) {
-            $result = $hostName;
         } else {
-            Utils::log('icons were not found', 3, "checkExistIcon");
+            if ($this->getIcon($name) !== false) {
+                $result = $name;
+            } else {
+                if ($this->getIcon($hostName) !== false) {
+                    $result = $hostName;
+                } else {
+                    Utils::log('icons were not found', 3, "checkExistIcon");
+                }
+            }
         }
 
         return $result;
     }
 
-    protected function extractDomainName($url) {
+    protected function extractDomainName($url)
+    {
 
-        if($this->isEmailLink($url))
-        {
+        if ($this->isEmailLink($url)) {
             return 'mail';
         }
 
@@ -381,6 +425,7 @@ class LayoutUtils extends builderUtils
         }
 
         $parts = explode('.', $domain);
+
         return $parts[count($parts) - 2];
     }
 
@@ -391,7 +436,7 @@ class LayoutUtils extends builderUtils
         }
 
         $emailPattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
-        if(preg_match($emailPattern, $url)){
+        if (preg_match($emailPattern, $url)) {
             return true;
         }
 
@@ -406,8 +451,9 @@ class LayoutUtils extends builderUtils
             "<body>",
             "</html>",
             "</body>",
-            "\n"
+            "\n",
         ];
+
         return str_replace($replase, '', $str);
     }
 
@@ -423,10 +469,9 @@ class LayoutUtils extends builderUtils
             $current = $current[$key];
         }
 
-        if($check != '')
-        {
-            if(is_array($check)){
-                foreach ($check as $look){
+        if ($check != '') {
+            if (is_array($check)) {
+                foreach ($check as $look) {
                     if ($current === $look) {
                         return true;
                     }
@@ -437,30 +482,33 @@ class LayoutUtils extends builderUtils
                 }
             }
         }
+
         return true;
     }
 
     protected function getIcon($iconName)
     {
         $icon = [
-            'facebook'  => 'logo-facebook',
+            'facebook' => 'logo-facebook',
             'instagram' => 'logo-instagram',
-            'youtube'   => 'logo-youtube',
-            'twitter'   => 'logo-twitter',
-            'vimeo'     => 'logo-vimeo',
-            'mail'      => 'email-85',
-            'apple'     => 'apple',
-            57380      => 'email-85',
-            58624     => 'logo-instagram',
-            58407     => 'logo-facebook',
+            'youtube' => 'logo-youtube',
+            'twitter' => 'logo-twitter',
+            'vimeo' => 'logo-vimeo',
+            'mail' => 'email-85',
+            'apple' => 'apple',
+            57380 => 'email-85',
+            58624 => 'logo-instagram',
+            58407 => 'logo-facebook',
         ];
-        if(array_key_exists($iconName, $icon)){
+        if (array_key_exists($iconName, $icon)) {
             return $icon[$iconName];
         }
+
         return false;
     }
 
-    protected function getKeyRecursive($key, $section, $array) {
+    protected function getKeyRecursive($key, $section, $array)
+    {
         foreach ($array as $k => $value) {
             if ($k === $section && is_array($value)) {
                 if (array_key_exists($key, $value)) {
@@ -474,6 +522,7 @@ class LayoutUtils extends builderUtils
                 }
             }
         }
+
         return null;
     }
 
@@ -492,7 +541,8 @@ class LayoutUtils extends builderUtils
         $current = array_merge($current, $mergeArray);
     }
 
-    protected function replaceValue($data, $keyToReplace, $newValue) {
+    protected function replaceValue($data, $keyToReplace, $newValue)
+    {
         if (is_array($data)) {
             foreach ($data as $key => &$value) {
                 if (is_array($value)) {
@@ -518,7 +568,7 @@ class LayoutUtils extends builderUtils
             }
             $current = &$current[$key];
         }
-        if($position === null){
+        if ($position === null) {
             $current[] = $element;
         } else {
             $count = count($current);
@@ -535,8 +585,9 @@ class LayoutUtils extends builderUtils
 
     protected function getNameHash($data = ''): string
     {
-        $to_hash = $this->generateUniqueID() . $data;
+        $to_hash = $this->generateUniqueID().$data;
         $newHash = hash('sha256', $to_hash);
+
         return substr($newHash, 0, 32);
     }
 
@@ -546,14 +597,16 @@ class LayoutUtils extends builderUtils
         $microtime = str_replace('.', '', $microtime);
         $microtime = substr($microtime, 0, 10);
         $random_number = rand(1000, 9999);
-        return $microtime . $random_number;
+
+        return $microtime.$random_number;
     }
 
     protected function sortByOrderBy(array $array): array
     {
-        usort($array, function($a, $b) {
+        usort($array, function ($a, $b) {
             return $a['order_by'] - $b['order_by'];
         });
+
         return $array;
     }
 
@@ -569,6 +622,7 @@ class LayoutUtils extends builderUtils
                 $styles[$key] = $value;
             }
         }
+
         return $styles;
     }
 
@@ -594,17 +648,20 @@ class LayoutUtils extends builderUtils
 
     protected function replaceInName($str): string
     {
-        if(empty($str))
-        {
+        if (empty($str)) {
             return false;
         }
+
         return str_replace("-", "_", $str);
     }
 
     protected function createUrl(object $href)
     {
         $valueAttributeHref = $href->getAttribute('href');
-        $ahref = json_decode('{"type":"external","anchor":"","external":"","externalBlank":"off","externalRel":"off","externalType":"external","population":"","popup":"","upload":"","linkToSlide":1}', true);
+        $ahref = json_decode(
+            '{"type":"external","anchor":"","external":"","externalBlank":"off","externalRel":"off","externalType":"external","population":"","popup":"","upload":"","linkToSlide":1}',
+            true
+        );
         $ahref['external'] = $valueAttributeHref;
         $ahref = json_encode($ahref);
         $dataHref = urlencode($ahref);
@@ -627,6 +684,7 @@ class LayoutUtils extends builderUtils
         } else {
             $contrastColor = '#ffffff';
         }
+
         return $contrastColor;
     }
 
@@ -635,7 +693,7 @@ class LayoutUtils extends builderUtils
         $hex = str_replace('#', '', $hex);
 
         if (strlen($hex) === 3) {
-            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
         }
 
         $red = hexdec(substr($hex, 0, 2));
@@ -651,34 +709,35 @@ class LayoutUtils extends builderUtils
     protected function replaceString($htmlString, $option = []): array
     {
         $mainFonts = $this->mainFonts($option);
-        $fontMain  = $this->getFonts($option);
+        $fontMain = $this->getFonts($option);
 
         $hOptions = [
-            'sectionType'   => $this->getSectionType($option),
-            'fontType'      => $mainFonts['fontType'],
-            'fontFamily'    => $mainFonts['fontFamily'],
+            'sectionType' => $this->getSectionType($option),
+            'fontType' => $mainFonts['fontType'],
+            'fontFamily' => $mainFonts['fontFamily'],
             'letterSpacing' => $this->getLetterSpacing($fontMain),
-            'position'      => $this->getPosition($option),
-            'fontSize'      => $this->getFontSize($fontMain),
-            'mainColor'     => $this->getMainColor($option),
-            'textColor'     => $this->getMainColor($option),
-            'fontWeight'    => $this->getWeight($option),
-            'upperCase'     => $this->getUpperCase($fontMain),
-            'fontMain'      => $fontMain,
-            'color'         => $this->getColor($option),
+            'position' => $this->getPosition($option),
+            'fontSize' => $this->getFontSize($fontMain),
+            'mainColor' => $this->getMainColor($option),
+            'textColor' => $this->getMainColor($option),
+            'fontWeight' => $this->getWeight($option),
+            'upperCase' => $this->getUpperCase($fontMain),
+            'fontMain' => $fontMain,
+            'color' => $this->getColor($option),
         ];
 
         $processedHTML = new HtmlHandler($htmlString, $hOptions);
 
         return [
-            'text' => $this->removeNewlines($processedHTML->getNewHtml())
+            'text' => $this->removeNewlines($processedHTML->getNewHtml()),
         ];
     }
 
     /**
      * @throws \DOMException
      */
-    private function replaceDivWithParagraph($html) {
+    private function replaceDivWithParagraph($html)
+    {
         $dom = new DOMDocument();
         $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
@@ -698,13 +757,16 @@ class LayoutUtils extends builderUtils
 
             $div->parentNode->replaceChild($p, $div);
         }
+
         return $dom->saveHTML();
     }
 
-    protected function removeSemicolon($string) {
+    protected function removeSemicolon($string)
+    {
         if (substr($string, -1) === ';') {
             $string = substr($string, 0, -1);
         }
+
         return $string;
     }
 
@@ -714,16 +776,17 @@ class LayoutUtils extends builderUtils
      */
     protected function replaceTitleTag($html, $options = [], $type = '', $position = ''): array
     {
-        Utils::log('Replace Title Tag ', 1,  "] [replaceTitleTag");
-        if(empty($html))
+        Utils::log('Replace Title Tag ', 1, "] [replaceTitleTag");
+        if (empty($html)) {
             return [
-                'text' => ''
+                'text' => '',
             ];
+        }
 
         $mainFonts = $this->getFonts('headers');
         $size = $this->convertFontSize($mainFonts['font_size']);
         $fontWeight = 400;
-        if(isset($options['bg'])){
+        if (isset($options['bg'])) {
             $textColor = $this->getContrastingColor($options['bg']);
         } else {
             $textColor = '#000000';
@@ -741,12 +804,12 @@ class LayoutUtils extends builderUtils
                 $class = '';
 
                 $textPosition = ' brz-text-lg-center';
-                 if($position !== ''){
-                    $textPosition  = ' ' . $position;
+                if ($position !== '') {
+                    $textPosition = ' '.$position;
                 }
 
-                if($type !== ''){
-                    $textPosition  .= ' ' . $type;
+                if ($type !== '') {
+                    $textPosition .= ' '.$type;
                 }
 
 
@@ -754,18 +817,17 @@ class LayoutUtils extends builderUtils
                     $styleValueString = $paragraph->getAttribute('style');
                     // font-weight: 200; letter-spacing: -0.05em; line-height: 1.1em; text-align: left;
                     $styleValue = $this->parseStyle($styleValueString);
-                    foreach ($styleValue as $key => $value)
-                    {
-                        if($key == 'text-align'){
+                    foreach ($styleValue as $key => $value) {
+                        if ($key == 'text-align') {
                             $textPosition .= $this->textPosition[$value];
                         }
-                        if($key == 'color'){
-                            $style .= 'color:' . $value . ';';
+                        if ($key == 'color') {
+                            $style .= 'color:'.$value.';';
                         }
-                        if($key == 'font-size'){
-                            $style .= ' font-size:' . $value . ';';
+                        if ($key == 'font-size') {
+                            $style .= ' font-size:'.$value.';';
                         }
-                        if($key == 'font-weight'){
+                        if ($key == 'font-weight') {
                             $fontWeight = $value;
                         }
 
@@ -773,7 +835,7 @@ class LayoutUtils extends builderUtils
                 }
 
                 $spans = $paragraph->getElementsByTagName('span');
-                if($spans->length > 0) {
+                if ($spans->length > 0) {
                     foreach ($spans as $span) {
                         if ($span->hasAttribute('style')) {
                             $styleValueString = $paragraph->getAttribute('style');
@@ -784,20 +846,20 @@ class LayoutUtils extends builderUtils
                                     $textPosition = $this->textPosition[$value];
                                 }
 
-                                    $style .= 'color:' . $this->hexToRgb($textColor) . ';';
+                                $style .= 'color:'.$this->hexToRgb($textColor).';';
 
                                 if ($key == 'font-size') {
-                                    $style .= ' font-size:' . $value . ';';
+                                    $style .= ' font-size:'.$value.';';
                                 }
                             }
                         }
                     }
                 }
-                $textPosition .= " brz-tp-lg-empty brz-ff-" . $mainFonts['uuid'] . " brz-ft-upload brz-fs-lg-$size brz-fss-lg-px brz-fw-lg-$fontWeight brz-ls-lg-0 brz-lh-lg-1_9 syler";
+                $textPosition .= " brz-tp-lg-empty brz-ff-".$mainFonts['uuid']." brz-ft-upload brz-fs-lg-$size brz-fss-lg-px brz-fw-lg-$fontWeight brz-ls-lg-0 brz-lh-lg-1_9 syler";
 
                 $class .= $textPosition;
                 $paragraph->removeAttribute('style');
-                $htmlClass = 'brz-tp-lg-heading1 ' . $class;
+                $htmlClass = 'brz-tp-lg-heading1 '.$class;
                 $paragraph->setAttribute('class', $htmlClass);
 
                 $span = $doc->createElement('span');
@@ -810,6 +872,7 @@ class LayoutUtils extends builderUtils
                 $paragraph->appendChild($span);
             }
         }
+
         return [
             'text' => $this->clearHtmlTag($doc->saveHTML()),
             'FontStyle' => '',
@@ -820,7 +883,7 @@ class LayoutUtils extends builderUtils
             'FontWeight' => $fontWeight,
             'LetterSpacing' => $mainFonts['letter_spacing'],
             'LineHeight' => 1,
-            'FontColor' => $textColor
+            'FontColor' => $textColor,
         ];
     }
 
@@ -829,9 +892,9 @@ class LayoutUtils extends builderUtils
      */
     protected function replaceParagraphs($html, $type = '', $position = '', $options = []): array
     {
-        Utils::log('Replace Paragraph', 1,  "] [replaceParagraphs");
-        if(empty($html)){
-            return [ 'text' => '' ];
+        Utils::log('Replace Paragraph', 1, "] [replaceParagraphs");
+        if (empty($html)) {
+            return ['text' => ''];
         }
 
         $doc = new DOMDocument();
@@ -842,7 +905,7 @@ class LayoutUtils extends builderUtils
 
         foreach ($paragraphs as $paragraph) {
             $getTagAInPatragraph = $paragraph->getElementsByTagName('a');
-            if($getTagAInPatragraph->length > 0 ){
+            if ($getTagAInPatragraph->length > 0) {
                 $this->createUrl($getTagAInPatragraph->item(0));
             }
             $style = '';
@@ -850,39 +913,37 @@ class LayoutUtils extends builderUtils
 
             $textPosition = ' brz-text-lg-center';
 
-            if($position !== ''){
-                $textPosition  = ' ' . $position;
+            if ($position !== '') {
+                $textPosition = ' '.$position;
             }
 
-            if($type !== ''){
-                $class  .= ' ' . $type;
-            }
-            else{
+            if ($type !== '') {
+                $class .= ' '.$type;
+            } else {
                 $class .= $textPosition;
             }
 
             $styleValueString = $paragraph->getAttribute('style');
             // font-weight: 200; letter-spacing: -0.05em; line-height: 1.1em; text-align: left;
             $styleValue = $this->parseStyle($styleValueString);
-            foreach ($styleValue as $key => $value)
-            {
-                if($key == 'text-align'){
-                    if(array_key_exists($value, $this->textPosition)){
+            foreach ($styleValue as $key => $value) {
+                if ($key == 'text-align') {
+                    if (array_key_exists($value, $this->textPosition)) {
                         $class .= $this->textPosition[$value];
                     } else {
                         $class .= $this->textPosition['center'];
                     }
                 }
-                if($key == 'color'){
-                    $style .= 'color:' . $value . ';';
+                if ($key == 'color') {
+                    $style .= 'color:'.$value.';';
                 }
-                if($key == 'font-size'){
-                    $style .= ' font-size:' . $this->convertFontSize($value) . ';';
+                if ($key == 'font-size') {
+                    $style .= ' font-size:'.$this->convertFontSize($value).';';
                 }
             }
 
             $paragraph->removeAttribute('style');
-            $htmlClass = 'brz-tp-lg-paragraph ' . $class;
+            $htmlClass = 'brz-tp-lg-paragraph '.$class;
             $paragraph->setAttribute('class', $htmlClass);
 
             $span = $doc->createElement('span');
@@ -894,8 +955,9 @@ class LayoutUtils extends builderUtils
             }
             $paragraph->appendChild($span);
         }
+
         return [
-            'text' => $this->clearHtmlTag($doc->saveHTML())
+            'text' => $this->clearHtmlTag($doc->saveHTML()),
         ];
     }
 
@@ -906,6 +968,7 @@ class LayoutUtils extends builderUtils
         } else {
             $result = $array;
         }
+
         return $result;
     }
 
@@ -918,17 +981,17 @@ class LayoutUtils extends builderUtils
             $content = $this->replaceParagraphs($section['content'], 'brz-text-lg-center');
             $position = null;
         }
-        $wrapper = $this->itemWrapperRichText($content,  [], true);
+        $wrapper = $this->itemWrapperRichText($content, [], true);
         $this->insertElementAtPosition($block, $path, $wrapper, $position);
     }
 
-    protected function marginAndPaddingOffset(&$block, $settings =[])
+    protected function marginAndPaddingOffset(&$block, $settings = [])
     {
         $imageOffset = ['Bloom'];
         $designName = $this->cache->get('design', 'settings');
 
 
-        if(in_array($designName,$imageOffset)) {
+        if (in_array($designName, $imageOffset)) {
             $flags = $this->cache->get('createdFirstSection', 'flags');
             if (!$flags) {
                 $block['value']['marginTop'] = -200;
@@ -949,42 +1012,44 @@ class LayoutUtils extends builderUtils
     /**
      * @throws Exception
      */
-    protected function loadKit($layoutName = '', $fileName = ''){
+    protected function loadKit($layoutName = '', $fileName = '')
+    {
 
-        if(Config::$urlJsonKits && !Config::$devMode) {
+        if (Config::$urlJsonKits && !Config::$devMode) {
             Utils::log('Download json BlocksKit', 1, "] [loadKit");
-            $createUrl = Config::$urlJsonKits . '/Layout';
+            $createUrl = Config::$urlJsonKits.'/Layout';
 
-            if($fileName === '' && $layoutName === '' ) {
+            if ($fileName === '' && $layoutName === '') {
                 $createUrl .= '/globalBlocksKit.json';
             } else {
                 if ($layoutName !== '') {
-                    $createUrl .= '/Theme/' . $layoutName;
+                    $createUrl .= '/Theme/'.$layoutName;
                 }
                 if ($fileName !== '') {
-                    $createUrl .= '/' . $fileName;
+                    $createUrl .= '/'.$fileName;
                 } else {
                     $createUrl .= '/blocksKit.json';
                 }
             }
             $url = $this->validateAndFixURL($createUrl);
-            if(!$url) {
-                Utils::log('Bad Url: ' . $createUrl, 3, "] [loadKit");
+            if (!$url) {
+                Utils::log('Bad Url: '.$createUrl, 3, "] [loadKit");
                 throw new Exception("Bad Url: loadKit");
             }
+
             return $this->loadJsonFromUrl($url);
 
         } else {
             Utils::log('Open file json BlocksKit', 1, "] [loadKit");
             $file = __DIR__;
-            if($fileName === '' && $layoutName === '' ) {
+            if ($fileName === '' && $layoutName === '') {
                 $file .= '/globalBlocksKit.json';
             } else {
                 if ($layoutName !== '') {
-                    $file .= '/Theme/' . $layoutName;
+                    $file .= '/Theme/'.$layoutName;
                 }
                 if ($fileName !== '') {
-                    $file .= '/' . $fileName;
+                    $file .= '/'.$fileName;
                 } else {
                     $file .= '/blocksKit.json';
                 }
@@ -993,22 +1058,24 @@ class LayoutUtils extends builderUtils
                 $fileContent = file_get_contents($file);
 
                 if (empty($fileContent)) {
-                    Utils::log('File ' . $file . ' empty', 2, "] [loadKit");
-                    throw new Exception('File ' . $file . ' empty');
+                    Utils::log('File '.$file.' empty', 2, "] [loadKit");
+                    throw new Exception('File '.$file.' empty');
                 }
-                Utils::log('File exist: ' . $file, 1, "] [loadKit");
+                Utils::log('File exist: '.$file, 1, "] [loadKit");
+
                 return json_decode($fileContent, true);
 
             } else {
-                Utils::log('File does not exist. Path: ' . $file, 2,  "] [loadKit");
-                throw new Exception('File does not exist. Path: ' . $file);
+                Utils::log('File does not exist. Path: '.$file, 2, "] [loadKit");
+                throw new Exception('File does not exist. Path: '.$file);
             }
         }
     }
 
-    protected function validateAndFixURL($url) {
+    protected function validateAndFixURL($url)
+    {
         if (!parse_url($url, PHP_URL_SCHEME)) {
-            $url = 'https://' . $url;
+            $url = 'https://'.$url;
         }
         if (!parse_url($url, PHP_URL_HOST)) {
             return false;
@@ -1016,10 +1083,12 @@ class LayoutUtils extends builderUtils
         if (preg_match('/[^A-Za-z0-9-._~:\/?#\[\]@!$&\'()*+,;=]/', $url)) {
             return false;
         }
+
         return str_replace(' ', '%20', $url);
     }
 
-    protected function getFonts($option) {
+    protected function getFonts($option)
+    {
 
         if (array_key_exists('fontType', $option)) {
             $fontsType = $option['fontType'];
@@ -1027,11 +1096,10 @@ class LayoutUtils extends builderUtils
             $fontsType = 'body';
         }
 
-        $fontRoute = ['title'=>'sub_headers', 'body'=>'main_text'];
-        if(array_key_exists($fontsType, $fontRoute))
-        {
+        $fontRoute = ['title' => 'sub_headers', 'body' => 'main_text'];
+        if (array_key_exists($fontsType, $fontRoute)) {
             $fontsType = $fontRoute[$fontsType];
-        }else{
+        } else {
             $fontsType = 'main_text';
         }
 
@@ -1042,11 +1110,14 @@ class LayoutUtils extends builderUtils
                 return $font;
             }
         }
+
         return false;
     }
 
-    private function removeNewlines($inputString) {
+    private function removeNewlines($inputString)
+    {
         $newlines = array("\n", "\r");
+
         return str_replace($newlines, '', $inputString);
     }
 
