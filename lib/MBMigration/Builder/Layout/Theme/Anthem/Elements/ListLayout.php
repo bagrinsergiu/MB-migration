@@ -79,7 +79,7 @@ class ListLayout extends Element
                             $objHead->item()->addItem($item);
                         }
                         $objHead->item()->addItem(
-                            $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''])
+                            $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']])
                         );
                     }
                 }
