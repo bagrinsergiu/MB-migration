@@ -22,4 +22,4 @@ const globalMenuExtractor = () => {
   }
 };
 
-globalMenuExtractor();
+export { globalMenuExtractor };
