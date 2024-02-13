@@ -95,7 +95,7 @@ class AccordionLayout extends Element
             }
             $objList->item(0)->addItem($objItem->get());
         }
-        $objList->item(0)->setting('bgColorHex', $options['bgColor']);
+        $objList->item(0)->setting('bgColorHex', $sectionData['style']['background-color']);
         $objBlock->item(0)->addItem($objList->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
