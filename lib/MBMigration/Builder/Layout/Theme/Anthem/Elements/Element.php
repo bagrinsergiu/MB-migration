@@ -38,6 +38,23 @@ abstract class Element extends LayoutUtils
         }
     }
 
+
+    public function detectLinkType($link): string
+    {
+        if (filter_var($link, FILTER_VALIDATE_EMAIL)) {
+            return 'mail';
+        }
+        if (filter_var($link, FILTER_VALIDATE_URL)) {
+            return 'link';
+        }
+        if ($this->checkPhoneNumber($link)) {
+            return 'phone';
+        }
+
+        return 'string';
+    }
+
+
     protected function backgroundVideo(ItemBuilder $objBlock, array $sectionData): void
     {
         if ($this->checkArrayPath($sectionData, 'settings/sections/background/video')) {
@@ -51,6 +68,7 @@ abstract class Element extends LayoutUtils
             $objBlock->item()->setting('bgColorOpacity', $videoOpacity);
             $objBlock->item()->setting('bgVideoLoop', 'on');
             $objBlock->setting('sectionHeight', 500);
+            $objBlock->setting('fullHeight', 'custom');
         }
     }
 
