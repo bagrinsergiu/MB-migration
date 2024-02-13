@@ -250,7 +250,6 @@ class MigrationPlatform
                     continue;
                 }
             }
-            if($page['landing'] !== true){ continue; }
             $this->collector($page);
         }
     }
