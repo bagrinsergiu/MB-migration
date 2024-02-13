@@ -786,7 +786,38 @@ const ex10: Data = {
 
 //#endregion
 
-describe.each([ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, ex9, ex10])(
+//#region Example 11 (Rounded the line-height)
+
+const ex11: Data = {
+  html: `<header class="text-content text-0 title-text editable" data-id="24167954" data-category="text"><div><p>Discipleships<br></p></div></header>`,
+  //prettier-ignore
+  entry: {...entry, selector: "[data-id=\"24167954\"]"},
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span>Discipleships</span><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+//#endregion
+
+describe.each([ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, ex9, ex10, ex11])(
   "testing 'getText' function nr %#",
   ({ entry, output, html }) => {
     beforeEach(() => {
