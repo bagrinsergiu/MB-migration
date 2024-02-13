@@ -88,20 +88,20 @@ class FullText extends Element
             }
         }
 
-        if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
-
-            if (isset($sectionData['settings']['sections']['donations']['url']) &&
-                isset($sectionData['settings']['sections']['donations']['text'])) {
-
-                $buttonOptions = [
-                    'linkExternal' => $sectionData['settings']['sections']['donations']['url'],
-                    'text' => $sectionData['settings']['sections']['donations']['text']
-                ];
-                $position = $sectionData['settings']['sections']['donations']['alignment'];
-
-                $objBlock->item()->addItem($this->button($buttonOptions, $position));
-            }
-        }
+//        if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
+//
+//            if (isset($sectionData['settings']['sections']['donations']['url']) &&
+//                isset($sectionData['settings']['sections']['donations']['text'])) {
+//
+//                $buttonOptions = [
+//                    'linkExternal' => $sectionData['settings']['sections']['donations']['url'],
+//                    'text' => $sectionData['settings']['sections']['donations']['text']
+//                ];
+//                $position = $sectionData['settings']['sections']['donations']['alignment'];
+//
+//                $objBlock->item()->addItem($this->button($buttonOptions, $position));
+//            }
+//        }
 
         return json_encode($this->replaceIdWithRandom($objBlock->get()));
     }
