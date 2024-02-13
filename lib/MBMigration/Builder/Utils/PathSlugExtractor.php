@@ -52,17 +52,23 @@ class PathSlugExtractor
         return ['slug' => $deepestSlug, 'depth' => $maxDepth];
     }
 
-    private static function findElementBySlugAndOrder($data, $slug, $path = []) {
+    public static function findElementBySlugAndOrder($data, $slug, $path = []) {
         foreach ($data as $item) {
-            $currentPath = array_merge($path, [$item['slug']]);
-
             if ($item['slug'] === $slug) {
-                return $currentPath;
+                if (!empty($item['child'])) {
+                    $result = self::findElementBySlugAndOrder($item['child'], $slug);
+                    if ($result !== null) {
+                        array_unshift($result, $item['slug']);
+                        return $result;
+                    }
+                }
+                return [$item['slug']];
             }
 
             if (!empty($item['child'])) {
-                $result = self::findElementBySlugAndOrder($item['child'], $slug, $currentPath);
-                if ($result) {
+                $result = self::findElementBySlugAndOrder($item['child'], $slug);
+                if ($result !== null) {
+                    array_unshift($result, $item['slug']);
                     return $result;
                 }
             }
@@ -91,7 +97,7 @@ class PathSlugExtractor
         return null;
     }
 
-    private static function getOrderedPathString($data, $slug): ?string
+    public static function getOrderedPathString($data, $slug): ?string
     {
         $orderedPath = self::getOrderedPath($data, $slug);
 
