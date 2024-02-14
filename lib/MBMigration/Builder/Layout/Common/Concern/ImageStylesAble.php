@@ -20,15 +20,15 @@ trait ImageStylesAble
 
         $selector = '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"] .photo-container img';
         $imageStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'SELECTOR' => $selector,
-                'STYLE_PROPERTIES' => [
+                'selector' => $selector,
+                'styleProperties' => [
                     'width',
                     'height',
                 ],
-                'FAMILIES' => $families,
-                'DEFAULT_FAMILY' => $defaultFont,
+                'families' => $families,
+                'defaultFamily' => $defaultFont,
             ]
         );
 

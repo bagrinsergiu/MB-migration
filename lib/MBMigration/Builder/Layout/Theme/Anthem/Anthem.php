@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem;
 use Exception;
 use MBMigration\Browser\Browser;
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Items\SubMenu;
 use MBMigration\Builder\Utils\FamilyTreeMenu;
@@ -203,7 +204,7 @@ class Anthem extends LayoutUtils
      * @param string $nameSectionId The name of the section ID parameter. Default is 'id'.
      * @throws Exception If failed to extract data.
      */
-    private function ExtractDataFromPage(&$SectionPage, BrowserPage $browserPage, $nameSectionId = 'id')
+    private function ExtractDataFromPage(&$SectionPage, BrowserPageInterface $browserPage, $nameSectionId = 'id')
     {
         $selectorIcon = "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
         $browserPage->ExtractHover($selectorIcon);
@@ -300,7 +301,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'STYLE_PROPERTIES' => [
                     'background-color',
                     'opacity',
@@ -341,7 +342,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'STYLE_PROPERTIES' => [
                     'border-bottom-color',
                 ],
@@ -382,7 +383,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"] .group-0',
+                'selector' => '[data-id="'.$sectionId.'"] .group-0',
                 'STYLE_PROPERTIES' => [
                     'border-color',
                 ],
@@ -423,7 +424,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"] .bg-opacity',
+                'selector' => '[data-id="'.$sectionId.'"] .bg-opacity',
                 'STYLE_PROPERTIES' => [
                     'opacity',
                 ],
@@ -445,7 +446,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => 'body',
+                'selector' => 'body',
                 'STYLE_PROPERTIES' => [
                     'background-color',
                 ],
@@ -484,7 +485,7 @@ class Anthem extends LayoutUtils
     private function ExtractTextContent($browserPage, int $mbSectionItemId)
     {
         $richTextBrowserData = $browserPage->evaluateScript('Text.js', [
-            'SELECTOR' => '[data-id="'.$mbSectionItemId.'"]',
+            'selector' => '[data-id="'.$mbSectionItemId.'"]',
             'FAMILIES' => $this->fontFamily['kit'],
             'DEFAULT_FAMILY' => $this->fontFamily['Default'],
         ]);

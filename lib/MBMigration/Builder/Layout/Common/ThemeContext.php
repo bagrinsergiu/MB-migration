@@ -67,7 +67,7 @@ final class ThemeContext implements ThemeContextInterface
 
     public function __construct(
         string $layoutName,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         array $brizyKit,
         array $mbMenu,
         array $mbHeadSection,

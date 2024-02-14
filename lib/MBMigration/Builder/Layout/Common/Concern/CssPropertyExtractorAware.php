@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Common\Concern;
 
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 trait CssPropertyExtractorAware
@@ -11,17 +12,17 @@ trait CssPropertyExtractorAware
         $scriptName,
         $selectorSectionStyles,
         $styles,
-        BrowserPage  $browserPage,
+        BrowserPageInterface  $browserPage,
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
         $elementStyles = $browserPage->evaluateScript(
             $scriptName,
             [
-                'SELECTOR' => $selectorSectionStyles,
-                'STYLE_PROPERTIES' => $styles,
-                'FAMILIES' => $families,
-                'DEFAULT_FAMILY' => $default_fonts,
+                'selector' => $selectorSectionStyles,
+                'styleProperties' => $styles,
+                'families' => $families,
+                'defaultFamily' => $default_fonts,
             ]
         );
 
@@ -47,7 +48,7 @@ trait CssPropertyExtractorAware
     ) {
 
         return $this->evaluate(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             $selectorSectionStyles,
             $styles,
             $browserPage,

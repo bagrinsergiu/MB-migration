@@ -3,7 +3,7 @@
   "description": "Library for migration from Ministry Brands to Brizy",
   "type": "library",
   "require": {
-    "php": "7.2.*",
+    "php": "7.4.*",
     "gmostafa/php-graphql-client": "^1.13",
     "ext-dom": "*",
     "ext-pdo": "*",
@@ -15,7 +15,8 @@
     "leafo/scssphp": "^0.8.4",
     "scssphp/scssphp": "^1.11",
     "zoon/puphpeteer": "1.6.0",
-    "monolog/monolog": "^1.23"
+    "monolog/monolog": "^1.23",
+    "chrome-php/chrome": "^1.10"
   },
   "autoload": {
     "psr-0": {
