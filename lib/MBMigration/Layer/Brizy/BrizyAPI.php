@@ -120,7 +120,7 @@ class BrizyAPI extends Utils
     {
         $param = ['project' => $projectID];
 
-        $url = $this->createPrivatUrlAPI('projects').'/'.$projectID;
+        $url = $this->createPrivateUrlAPI('projects').'/'.$projectID;
 
         $result = $this->httpClient('GET', $url, $param);
 
@@ -206,12 +206,37 @@ class BrizyAPI extends Utils
             }
             $base64_content = base64_encode($file_contents);
 
-            return $this->httpClient('POST', $this->createPrivatUrlAPI('media'), [
+            return $this->httpClient('POST', $this->createPrivateUrlAPI('media'), [
                 'filename' => $this->getFileName($pathToFileName),
                 'name' => $this->getNameHash($base64_content).'.'.$this->getFileExtension($mime_type),
                 'attachment' => $base64_content,
             ]);
         }
+
+        return false;
+    }
+
+    /**
+     * @throws Exception
+     * @throws GuzzleException
+     */
+    public function createGlobalBlock($data, $position, $rules)
+    {
+        Utils::log('Create Global Block', 1, "createGlobalBlock");
+
+        $requestData['project'] = Utils::$cache->get('projectId_Brizy');
+        $requestData['status'] = 'publish';
+        $requestData['position'] = $position;
+        $requestData['rules'] = $rules;
+        $requestData['dataVersion'] = 0;
+        $requestData['data'] = $data;
+        $requestData['is_autosave'] = 0;
+        $requestData['uid'] = self::generateCharID(12);
+
+        $url = $this->createPrivateUrlAPI('globalBlocks');
+
+        $result = $this->httpClient('POST', $url, $requestData);
+
 
         return false;
     }
@@ -276,7 +301,7 @@ class BrizyAPI extends Utils
             ],
         ]);
 
-        $res = $this->request('POST', $this->createPrivatUrlAPI('fonts'), $options);
+        $res = $this->request('POST', $this->createPrivateUrlAPI('fonts'), $options);
 
         return json_decode($res->getBody()->getContents(), true);
     }
@@ -302,7 +327,7 @@ class BrizyAPI extends Utils
         $newData['brizyId'] = self::generateCharID(36);
 
         $projectData['fonts']['upload']['data'][] = $newData;
-        $url = $this->createPrivatUrlAPI('projects').'/'.$containerID;
+        $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
 
         $r_projectFullData['data'] = json_encode($projectData);
         $r_projectFullData['is_autosave'] = 0;
@@ -316,7 +341,7 @@ class BrizyAPI extends Utils
     public function updateProject(array $projectFullData): array
     {
         $containerID = Utils::$cache->get('projectId_Brizy');
-        $url = $this->createPrivatUrlAPI('projects').'/'.$containerID;
+        $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
 
         $r_projectFullData['is_autosave'] = 0;
         $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
@@ -366,7 +391,7 @@ class BrizyAPI extends Utils
      */
     public function getProjectContainer(int $containerID, $fullDataProject = false)
     {
-        $url = $this->createPrivatUrlAPI('projects');
+        $url = $this->createPrivateUrlAPI('projects');
         $result = $this->httpClient('GET_P', $url, $containerID);
         if (!$fullDataProject) {
             if ($result['status'] === 200) {
@@ -439,7 +464,7 @@ class BrizyAPI extends Utils
             'project' => $projectID,
         ];
 
-        $result = $this->httpClient('GET', $this->createPrivatUrlAPI('pages'), $param);
+        $result = $this->httpClient('GET', $this->createPrivateUrlAPI('pages'), $param);
 
         if (!isset($filtre)) {
             return $result;
@@ -466,7 +491,7 @@ class BrizyAPI extends Utils
      */
     public function createPage($projectID, $pageName, $filter = null)
     {
-        $result = $this->httpClient('POST', $this->createPrivatUrlAPI('pages'), [
+        $result = $this->httpClient('POST', $this->createPrivateUrlAPI('pages'), [
             'project' => $projectID,
             'dataVersion' => '2.0',
             'data' => $pageName,
@@ -528,7 +553,7 @@ class BrizyAPI extends Utils
     public function createMenu($data)
     {
         Utils::log('Request to create menu', 1, 'createMenu');
-        $result = $this->httpClient('POST', $this->createPrivatUrlAPI('menu'), [
+        $result = $this->httpClient('POST', $this->createPrivateUrlAPI('menu'), [
             'project' => $data['project'],
             'name' => $data['name'],
             'data' => $data['data'],
@@ -560,7 +585,7 @@ class BrizyAPI extends Utils
         return $urlProjectAPI.Config::$endPointApi[$endPoint];
     }
 
-    private function createPrivatUrlAPI($endPoint): string
+    private function createPrivateUrlAPI($endPoint): string
     {
         return Config::$urlAPI.Config::$endPointApi[$endPoint];
     }
@@ -687,6 +712,10 @@ class BrizyAPI extends Utils
 
         if ($method === 'PUT') {
             $headers['X-HTTP-Method-Override'] = 'PUT';
+        }
+
+        if ($method === 'POST') {
+            $headers['X-HTTP-Method-Override'] = 'POST';
         }
 
         if ($method === 'PATCH') {

@@ -56,7 +56,7 @@ const ex1: Data = {
                 text: "I'm New ",
                 borderStyle: "none",
                 iconName: "circle-right-37",
-                linkExternal: "http://localhost/about-us/who-we-are",
+                linkExternal: "/about-us/who-we-are",
                 linkType: "external",
                 linkExternalBlank: "off"
               }
@@ -309,7 +309,7 @@ const ex5: Data = {
                 _styles: ["button"],
                 text: "LINK",
                 borderStyle: "none",
-                linkExternal: "http://google.com/",
+                linkExternal: "/",
                 linkType: "external",
                 linkExternalBlank: "on"
               }
@@ -398,7 +398,7 @@ const ex6: Data = {
                 _styles: ["button"],
                 text: "google",
                 borderStyle: "none",
-                linkExternal: "http://google.com/",
+                linkExternal: "/",
                 linkType: "external",
                 linkExternalBlank: "on"
               }
@@ -679,7 +679,7 @@ const ex9: Data = {
                 _styles: ["button"],
                 text: "google",
                 borderStyle: "none",
-                linkExternal: "http://google.com/",
+                linkExternal: "/",
                 linkType: "external",
                 linkExternalBlank: "on"
               }
@@ -701,7 +701,7 @@ const ex9: Data = {
                 _styles: ["button"],
                 text: "google",
                 borderStyle: "none",
-                linkExternal: "http://google.com/",
+                linkExternal: "/",
                 linkType: "external",
                 linkExternalBlank: "on"
               }
@@ -754,7 +754,7 @@ const ex10: Data = {
                 text: "I'm New ",
                 borderStyle: "none",
                 iconName: "circle-right-37",
-                linkExternal: "http://localhost/about-us/who-we-are",
+                linkExternal: "/about-us/who-we-are",
                 linkExternalBlank: "off",
                 linkType: "external"
               }

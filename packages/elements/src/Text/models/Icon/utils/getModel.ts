@@ -46,7 +46,11 @@ const codeToBuilderMap: Record<string, string> = {
 
   58211: "circle-right-37",
 
-  63244: "user-run"
+  63244: "user-run",
+
+  62319: "app-store",
+
+  62379: "google-play"
 };
 const getColor = mPipe(
   Obj.readKey("color"),

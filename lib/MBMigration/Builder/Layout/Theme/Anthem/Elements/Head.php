@@ -9,6 +9,7 @@ use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\Utils\UrlBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Parser\JS;
 
 class Head extends Element
@@ -33,15 +34,22 @@ class Head extends Element
      */
     private $fontFamily;
 
-    const SELECTOR = "#main-navigation li:not(.selected) a";
     private $browserPage;
 
-    public function __construct($jsonKitElements, $browser)
+    /**
+     * @var BrizyAPI
+     */
+    private $brizyAPI;
+
+    const SELECTOR = "#main-navigation li:not(.selected) a";
+
+    public function __construct($jsonKitElements, $browser,BrizyAPI $brizyAPI)
     {
         $this->browser = $browser;
         $this->cache = VariableCache::getInstance();
         $this->jsonDecode = $jsonKitElements;
         $this->fontFamily = $this->getFontsFamily();
+        $this->brizyAPI = $brizyAPI;
     }
 
     public function getElement(array $elementData = [])
@@ -102,6 +110,11 @@ class Head extends Element
         $block = $this->replaceIdWithRandom($objBlock->get());
         $this->cache->set('menuBlock', json_encode($block));
 
+
+        $position = '{"align":"top","top":0,"bottom":0}';
+        $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
+
+        $this->brizyAPI->createGlobalBlock(json_encode($block), $position, $rules);
         return json_decode(json_encode($block), true);
     }
 
