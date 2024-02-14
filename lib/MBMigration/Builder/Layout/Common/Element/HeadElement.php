@@ -137,7 +137,16 @@ abstract class HeadElement extends AbstractElement
          $menuSectionStyles = $this->browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
+                'STYLE_PROPERTIES' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
+                'FAMILIES' => [],
+                'DEFAULT_FAMILY' => 'lato',
+            ]
+        );
+         $menuSectionStyles = $this->browserPage->evaluateScript(
+            'StyleExtractor.js',
+            [
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'STYLE_PROPERTIES' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
                 'FAMILIES' => [],
                 'DEFAULT_FAMILY' => 'lato',
@@ -152,7 +161,7 @@ abstract class HeadElement extends AbstractElement
         $menuStyles = $this->browserPage->evaluateScript(
             'Menu.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'FAMILIES' => [],
                 'DEFAULT_FAMILY' => 'lato',
             ]

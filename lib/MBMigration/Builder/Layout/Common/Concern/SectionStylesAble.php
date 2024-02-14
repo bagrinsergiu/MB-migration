@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Common\Concern;
 
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyComponentValue;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
@@ -12,7 +13,7 @@ use MBMigration\Builder\Utils\NumberProcessor;
 
 trait SectionStylesAble
 {
-    protected function obtainSectionStyles(ElementContextInterface $data, BrowserPage $browserPage): array
+    protected function obtainSectionStyles(ElementContextInterface $data, BrowserPageInterface $browserPage): array
     {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -37,7 +38,7 @@ trait SectionStylesAble
 
     }
 
-    protected function handleSectionStyles(ElementContextInterface $data, BrowserPage $browserPage): BrizyComponent
+    protected function handleSectionStyles(ElementContextInterface $data, BrowserPageInterface $browserPage): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -74,7 +75,7 @@ trait SectionStylesAble
 //                $resultingSectionStyles = $browserPage->evaluateScript(
 //                    'StyleExtractor.js',
 //                    [
-//                        'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"] .bg-opacity',
+//                        'selector' => '[data-id="'.$mbSectionItem['sectionId'].'"] .bg-opacity',
 //                        'STYLE_PROPERTIES' => [
 //                            'opacity',
 //                        ],
@@ -183,14 +184,14 @@ trait SectionStylesAble
     /**
      * @param $sectionId
      * @param array $properties
-     * @param BrowserPage $browserPage
+     * @param BrowserPageInterface $browserPage
      * @param array $families
      * @param string $defaultFont
      * @return mixed
      */
     protected function getSectionStyles(
         $sectionId,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         array $families,
         string $defaultFont
     ) {
@@ -233,7 +234,7 @@ trait SectionStylesAble
      */
     protected function getSectionWrapperStyles(
         $sectionId,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         array $families,
         string $defaultFont
     ) {

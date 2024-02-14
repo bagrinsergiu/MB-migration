@@ -60,6 +60,9 @@ class Browser implements BrowserInterface
                     '--disable-gpu-shader-disk-cache',
                     '--media-cache-size=0',
                     '--disk-cache-size=0',
+                    '--enable-logging',
+                    '-v=6',
+                    '--user-data-dir=/opt/project/var/chrome_data'
                 ],
         ]);
         $this->scriptPath = $scriptPath;
@@ -71,11 +74,14 @@ class Browser implements BrowserInterface
 
         if (!isset($this->page)) {
             $this->page = $this->browser->newPage();
+            sleep(1);
             $this->page->setViewport(['width' => 1920, 'height' => 1480]);
+            sleep(1);
         }
 
         try {
             $this->page->goto($url, ['timeout' => 120000, 'waitUntil' => 'networkidle0']);
+            sleep(1);
         } catch (\Exception $e) {
             Utils::MESSAGES_POOL($e->getMessage(), 'error');
         }
@@ -86,7 +92,7 @@ class Browser implements BrowserInterface
     public function closePage(): void
     {
         try {
-            $this->page->close();
+            //$this->page->close();
             sleep(2);
         } catch (\Exception $e) {
             Utils::MESSAGES_POOL($e->getMessage(), 'error');

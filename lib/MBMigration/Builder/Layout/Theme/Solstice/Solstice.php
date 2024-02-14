@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Solstice;
 use Exception;
 use MBMigration\Browser\Browser;
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\Utils\FamilyTreeMenu;
@@ -203,11 +204,11 @@ class Solstice extends LayoutUtils
      * Extract data from a page and update the SectionPage array with the extracted data.
      *
      * @param array $SectionPage The array representing the sections on the page.
-     * @param BrowserPage $browserPage The browser page object used to extract data from the page.
+     * @param BrowserPageInterface $browserPage The browser page object used to extract data from the page.
      * @param string $nameSectionId The name of the section ID parameter. Default is 'id'.
      * @throws Exception If failed to extract data.
      */
-    private function ExtractDataFromPage(&$SectionPage, BrowserPage $browserPage, $nameSectionId = 'id')
+    private function ExtractDataFromPage(&$SectionPage, BrowserPageInterface $browserPage, $nameSectionId = 'id')
     {
         $selectorIcon = "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
         $browserPage->ExtractHover($selectorIcon);
@@ -281,7 +282,7 @@ class Solstice extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'STYLE_PROPERTIES' => [
                     'background-color',
                     'opacity',
@@ -321,7 +322,7 @@ class Solstice extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'STYLE_PROPERTIES' => [
                     'border-bottom-color',
                 ],
@@ -360,7 +361,7 @@ class Solstice extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'STYLE_PROPERTIES' => [
                     'border-bottom-color',
                 ],
@@ -399,7 +400,7 @@ class Solstice extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"] .bg-opacity',
+                'selector' => '[data-id="'.$sectionId.'"] .bg-opacity',
                 'STYLE_PROPERTIES' => [
                     'opacity',
                 ],
@@ -421,7 +422,7 @@ class Solstice extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => 'body',
+                'selector' => 'body',
                 'STYLE_PROPERTIES' => [
                     'background-color',
                 ],
@@ -458,7 +459,7 @@ class Solstice extends LayoutUtils
     private function ExtractTextContent($browserPage, int $mbSectionItemId)
     {
         $richTextBrowserData = $browserPage->evaluateScript('Text.js', [
-            'SELECTOR' => '[data-id="'.$mbSectionItemId.'"]',
+            'selector' => '[data-id="'.$mbSectionItemId.'"]',
             'FAMILIES' => $this->fontFamily['kit'],
             'DEFAULT_FAMILY' => $this->fontFamily['Default'],
         ]);

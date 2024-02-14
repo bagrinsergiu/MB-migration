@@ -150,7 +150,7 @@ class Head extends AbstractElement
         $menuStyles = $this->browserPage->evaluateScript(
             'Menu.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'FAMILIES' => $data->getFontFamilies(),
                 'DEFAULT_FAMILY' => $data->getDefaultFontFamily()
             ]
@@ -159,7 +159,7 @@ class Head extends AbstractElement
         $menuSectionStyles = $this->browserPage->evaluateScript(
             'StyleExtractor.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'STYLE_PROPERTIES' => ['background-color', 'opacity', 'border-bottom-color'],
                 'FAMILIES' => [],
                 'DEFAULT_FAMILY' => 'lato',

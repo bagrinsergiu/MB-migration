@@ -283,7 +283,7 @@ class Head extends Element
         return $browserPage->evaluateScript(
             'Menu.js',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="'.$sectionId.'"]',
                 'FAMILIES' => $this->fontFamily['kit'],
                 'DEFAULT_FAMILY' => $this->fontFamily['Default'],
             ]

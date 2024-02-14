@@ -3,13 +3,17 @@
 namespace MBMigration\Browser;
 
 use Exception;
+use HeadlessChromium\Page;
 use MBMigration\Core\Utils;
 use Nesk\Puphpeteer\Puppeteer;
 use Nesk\Rialto\Data\JsFunction;
 use Nesk\Rialto\Exceptions\Node\FatalException;
 
-class BrowserPage implements BrowserPageInterface
+class BrowserPagePHP implements BrowserPageInterface
 {
+    /**
+     * @var Page
+     */
     private $page;
     private $scriptPath;
 
@@ -17,19 +21,20 @@ class BrowserPage implements BrowserPageInterface
     {
         $this->page = $page;
         $this->scriptPath = $scriptPath;
+        $this->page->addScriptTag([
+            'content' => $this->getScriptBody("index.js"),
+        ])->waitForResponse();
+
     }
 
     public function evaluateScript($jsScript, $params): array
     {
         try {
-            $jsFunction = JsFunction::createWithScope($params)
-                ->parameters(array_keys($params))
-                ->body($this->getScriptBody($jsScript));
+            $result = $this->page->callFunction($jsScript, [(object)$params])->getReturnValue(1000);
 
-            $result = $this->page->tryCatch->evaluate($jsFunction);
-
-            // for the case when the script does not return anything
-            if(!$result) $result = [];
+            if (!$result) {
+                $result = [];
+            }
 
             return $result;
         } catch (Exception $e) {
@@ -49,7 +54,7 @@ class BrowserPage implements BrowserPageInterface
             throw new \Exception($this->scriptPath."/".$jsScript." not found.");
         }
 
-        $code = file_get_contents($this->scriptPath."/".$jsScript)." return output.default; ";
+        $code = file_get_contents($this->scriptPath."/".$jsScript);
 
         return $code;
     }
@@ -57,13 +62,15 @@ class BrowserPage implements BrowserPageInterface
     /**
      * @return mixed
      */
-    public function triggerEvent($eventNameMethod, $elementSelector): bool
+    public function triggerEvent($eventNameMethod, $elementSelector,$params=[]): bool
     {
         try {
-//            $result = $this->page->tryCatch->waitForSelector($elementSelector, ['timeout' => 60000]);
-//            $this->page->tryCatch->waitForTimeout(60000);
-            $this->page->tryCatch->$eventNameMethod($elementSelector);
-            usleep(200000);
+            switch ($eventNameMethod) {
+                case 'mouse.hover':
+                    $this->page->mouse()->find($elementSelector);
+                    break;
+            }
+
         } catch (Exception $e) {
             return false; // element not found
         }
@@ -71,35 +78,26 @@ class BrowserPage implements BrowserPageInterface
         return true; // element found
     }
 
-    public function ExtractHover($selector): void
+    public function extractHover($selector): void
     {
         if ($this->triggerEvent('hover', $selector)) {
-            $this->globalsEval();
+            $this->evaluateScript('brizy.globalExtractor', []);
+            $this->triggerEvent('hover', 'html');
         }
     }
 
-    public function ExtractHoverMenu($selector): void
+    public function extractHoverMenu($selector): void
     {
         if ($this->triggerEvent('hover', $selector)) {
-            $this->globalMenuEval();
+            $this->evaluateScript('brizy.globalMenuExtractor', []);
+            $this->triggerEvent('hover', 'html');
         }
-    }
-
-    public function globalsEval(): void
-    {
-        $this->executeScriptWithoutResult('Globals.js');
-        $this->triggerEvent('hover', 'html');
-    }
-
-    public function globalMenuEval(): void
-    {
-        $this->executeScriptWithoutResult('GlobalMenu.js');
-        $this->triggerEvent('hover', 'html');
     }
 
     public function setNodeStyles($selector, array $attributes)
     {
-        $this->evaluateScript("function (selector, attributes) {
+        $this->page->callFunction(
+            "function (selector, attributes) {
             var element = document.querySelector(selector);
             if (element) {
                 for (var key in attributes) {
@@ -109,19 +107,16 @@ class BrowserPage implements BrowserPageInterface
         }
         ",
             [
-                'selector' => $selector,
-                'attributes' => $attributes,
+                $selector,
+                $attributes,
             ]
-        );
-
-        $this->page->waitForSelector($selector);
-
-        $this->page->screenshot(['path' =>  __DIR__ . 'testImage.png']);
+        )->waitForResponse(500);
     }
 
     public function setNodeAttribute($selector, array $attributes)
     {
-        $this->evaluateScript("function (selector, attributes) {
+        $this->page->callFunction(
+            "function (selector, attributes) {
             var element = document.querySelector(selector);
             if (element) {
                 for (var key in attributes) {
@@ -130,13 +125,10 @@ class BrowserPage implements BrowserPageInterface
             }
         }",
             [
-                'selector' => $selector,
-                'attributes' => $attributes,
+                $selector,
+                $attributes,
             ]
-        );
-
-        $this->page->waitForSelector($selector);
-
-        $this->page->screenshot(['path' =>  __DIR__ . 'testImageAttr.png']);
+        )->waitForResponse(500);
     }
+
 }

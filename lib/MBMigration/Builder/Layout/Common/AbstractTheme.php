@@ -90,28 +90,16 @@ abstract class AbstractTheme implements ThemeInterface
     {
         $browserPage = $this->themeContext->getBrowserPage();
 
-        $selectorIcon = $this->getThemeIconSelector(); //"[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
-        if ($browserPage->triggerEvent('hover', $selectorIcon)) {
-            $browserPage->evaluateScript('Globals.js', []);
-            $browserPage->triggerEvent('hover', 'html');
-        }
-
-        $selectorButton = $this->getThemeButtonSelector(); //".sites-button:not(.nav-menu-button)";
-        if ($browserPage->triggerEvent('hover', $selectorButton)) {
-            $browserPage->evaluateScript('Globals.js', []);
-            $browserPage->triggerEvent('hover', 'html');
-        }
-
         $selector = $this->getThemeMenuItemSelector(); //"#main-navigation li:not(.selected) a";
-        if ($browserPage->triggerEvent('hover', $selector)) {
-            $browserPage->evaluateScript('GlobalMenu.js', []);
-            $browserPage->triggerEvent('hover', 'html');
+        if ($browserPage->triggerEvent('mouse.hover', $selector)) {
+            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
+            $browserPage->triggerEvent('mouse.hover', 'html',[1,1]);
         }
 
         $browserPage->setNodeStyles($this->getThemeSubMenuItemSelector(), ['display' => 'block','visibility'=>'visible']);
-        if ($browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector())) {
-            $browserPage->evaluateScript('GlobalMenu.js', []);
-            $browserPage->triggerEvent('hover', 'html');
+        if ($browserPage->triggerEvent('mouse.hover', $this->getThemeSubMenuItemSelector())) {
+            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
+            $browserPage->triggerEvent('mouse.hover', 'html',[1,1]);
         }
 
         return $page;

@@ -12,13 +12,14 @@ const globalMenuExtractor = () => {
 
   const styles = getNodeStyle(menuItem);
   const color = parseColorString(`${styles["color"]}`);
+  const opacity = +styles["opacity"];
 
   if (color) {
     window.menuModel = {
       hoverColorHex: color.hex,
-      hoverColorOpacity: color.opacity
+      hoverColorOpacity: isNaN(opacity) ? color.opacity : opacity
     };
   }
 };
 
-globalMenuExtractor();
+export { globalMenuExtractor };
