@@ -41,6 +41,21 @@ class ArrayManipulator
         return $this->array;
     }
 
+    public static function checkArrayPath($array, $path): bool
+    {
+        $keys = explode('/', $path);
+        $current = $array;
+
+        foreach ($keys as $key) {
+            if (!isset($current[$key])) {
+                return false;
+            }
+            $current = $current[$key];
+        }
+
+        return true;
+    }
+
     public function groupArrayByParentId($list, $section): array
     {
         $result = [];
