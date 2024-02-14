@@ -58,7 +58,16 @@ export const iconSelector =
 export const buttonSelector = ".sites-button:not(.nav-menu-button)";
 export const embedSelector = ".embedded-paste";
 
-export const getHref = mPipe(Obj.readKey("href"), Str.read);
+export const extractUrlWithoutDomain = (url: string) => {
+  const urlWithoutDomain = new URL(url).pathname;
+  return urlWithoutDomain;
+};
+
+export const getHref = mPipe(
+  Obj.readKey("href"),
+  Str.read,
+  extractUrlWithoutDomain
+);
 
 export const getTarget = mPipe(Obj.readKey("target"), Str.read);
 
