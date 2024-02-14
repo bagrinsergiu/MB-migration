@@ -11,6 +11,7 @@ use MBMigration\Builder\Layout\Common\KitLoader;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 class PageBuilder
 {
@@ -19,10 +20,15 @@ class PageBuilder
      * @var Browser|null
      */
     private $browser;
+    /**
+     * @var BrizyAPI
+     */
+    private $brizyAPI;
 
-    public function __construct()
+    public function __construct(BrizyAPI $brizyAPI)
     {
         $this->cache = VariableCache::getInstance();
+        $this->brizyAPI = $brizyAPI;
     }
 
     /**
@@ -89,7 +95,7 @@ class PageBuilder
             return true;
 
         } else {
-            $_WorkClassTemplate = new $workClass($browserPage, $browser);
+            $_WorkClassTemplate = new $workClass($browserPage, $browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                 Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
                 $this->sendStatus($slug, ExecutionTimer::stop());
