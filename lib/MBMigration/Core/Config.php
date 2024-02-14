@@ -122,6 +122,7 @@ class Config
         self::$pathLogFile = $path.'/mb_log/{{PREFIX}}.log';
 
         self::$endPointApi = [
+            'globalBlocks' => '/global_blocks',
             'team_members' => '/team_members',
             'menus/create' => '/menus/create',
             'workspaces' => '/workspaces',

@@ -11,6 +11,7 @@ use MBMigration\Builder\Utils\FamilyTreeMenu;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 class Anthem extends LayoutUtils
 {
@@ -43,7 +44,7 @@ class Anthem extends LayoutUtils
     /**
      * @throws Exception
      */
-    public function __construct($browserPage, $browser)
+    public function __construct($browserPage, $browser, BrizyAPI $brizyAPI)
     {
         $this->layoutName = 'Anthem';
 
@@ -67,7 +68,8 @@ class Anthem extends LayoutUtils
                 'head',
                 $this->jsonDecode,
                 $this->browser,
-                ['menu' => $menuList, 'activePage' => '']
+                ['menu' => $menuList, 'activePage' => ''],
+                $brizyAPI
             );
             if ($headElement) {
                 Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
@@ -78,11 +80,14 @@ class Anthem extends LayoutUtils
                 throw new Exception('Failed create MENU');
             }
         }
-        $MainSectionData = $this->cache->get('mainSection');
-        $this->ExtractDataFromPage($MainSectionData, $this->browserPage, 'sectionId');
-        $this->cache->set('mainSection', $MainSectionData);
 
-        AnthemElementsController::getElement('footer', $this->jsonDecode, $this->browserPage);
+        if ($this->cache->get('footerBlockCreated') === false) {
+            $MainSectionData = $this->cache->get('mainSection');
+            $this->ExtractDataFromPage($MainSectionData, $this->browserPage, 'sectionId');
+            $this->cache->set('mainSection', $MainSectionData);
+
+            AnthemElementsController::getElement('footer', $this->jsonDecode, $this->browserPage, [], $brizyAPI);
+        }
     }
 
     /**
@@ -117,8 +122,7 @@ class Anthem extends LayoutUtils
 //        );
 //
 //        $itemsData['items'][] = $headElement;
-        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
-
+//        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
 //        $resultFind = FamilyTreeMenu::findChildrenByChildId($parentPages['list'], $itemsID);
 //        if (!empty($resultFind)) {
 //            $itemsData['items'][] = AnthemElementsController::getElement(
@@ -151,7 +155,7 @@ class Anthem extends LayoutUtils
             }
         }
 
-        $itemsData['items'][] = json_decode($this->cache->get('footerBlock'), true);
+//        $itemsData['items'][] = json_decode($this->cache->get('footerBlock'), true);
 
         $pageData = json_encode($itemsData);
 

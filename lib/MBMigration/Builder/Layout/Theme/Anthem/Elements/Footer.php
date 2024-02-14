@@ -3,9 +3,11 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use DOMException;
+use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
+use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Parser\JS;
 
 class Footer extends Element
@@ -15,11 +17,16 @@ class Footer extends Element
      */
     protected $cache;
     private $jsonDecode;
+    /**
+     * @var BrizyAPI
+     */
+    private $brizyAPI;
 
-    public function __construct($jsonKitElements)
+    public function __construct($jsonKitElements, BrizyAPI $brizyAPI)
     {
         $this->cache = VariableCache::getInstance();
         $this->jsonDecode = $jsonKitElements;
+        $this->brizyAPI = $brizyAPI;
     }
 
     /**
@@ -33,6 +40,7 @@ class Footer extends Element
     /**
      * @throws DOMException
      * @throws \Exception
+     * @throws GuzzleException
      */
     protected function Footer(): bool
     {
@@ -85,7 +93,15 @@ class Footer extends Element
         }
 
         $block = $this->replaceIdWithRandom($objBlock->get());
+
+
+        $position = '{"align":"bottom","top":1,"bottom":1}';
+        $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
+
+        $this->brizyAPI->createGlobalBlock(json_encode($block), $position, $rules);
+
         $this->cache->set('footerBlock', json_encode($block));
+        $this->cache->set('footerBlockCreated', true);
 
         return true;
     }

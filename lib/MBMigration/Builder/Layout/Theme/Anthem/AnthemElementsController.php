@@ -33,6 +33,7 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\ThreeHorizontalText;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\ThreeTopMediaCircle;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\TopMedia;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\TwoHorizontalText;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 
 class AnthemElementsController
@@ -41,9 +42,9 @@ class AnthemElementsController
     /**
      * @throws \DOMException
      */
-    public static function getElement($elementName, $jsonKitElements, $browserPage, array $elementData = [])
+    public static function getElement($elementName, $jsonKitElements, $browserPage, array $elementData = [], $brizyAPI = null)
     {
-        $element = self::switchGlobalElements($elementName, $jsonKitElements, $elementData, $browserPage);
+        $element = self::switchGlobalElements($elementName, $jsonKitElements, $elementData, $browserPage, $brizyAPI);
         if ($element) {
             return $element;
         }
@@ -69,15 +70,15 @@ class AnthemElementsController
     /**
      * @throws \DOMException
      */
-    private static function switchGlobalElements($elementName, $jsonKitElements, $elementData, $browserPage)
+    private static function switchGlobalElements($elementName, $jsonKitElements, $elementData, $browserPage, $brizyAPI)
     {
         switch ($elementName) {
             case "footer":
-                $element = new Footer($jsonKitElements);
+                $element = new Footer($jsonKitElements, $brizyAPI);
 
                 return $element->getElement();
             case "head":
-                $element = new Head($jsonKitElements, $browserPage);
+                $element = new Head($jsonKitElements, $browserPage, $brizyAPI);
 
                 return $element->getElement($elementData);
             default:

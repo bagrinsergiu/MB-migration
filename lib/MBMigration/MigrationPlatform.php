@@ -204,6 +204,8 @@ class MigrationPlatform
         $this->cache->set('projectId_MB', $projectID_MB);
         $this->cache->set('projectId_Brizy', $projectID_Brizy);
         $this->cache->set('Status', ['Total' => 0, 'Success' => 0]);
+        $this->cache->set('headBlockCreated', false);
+        $this->cache->set('footerBlockCreated', false);
 
         $this->parser = new MBProjectDataCollector();
     }
@@ -576,7 +578,7 @@ class MigrationPlatform
             Utils::log('Start Builder | create default Page', 4, 'RunPageBuilder');
         }
 
-        $this->PageBuilder = new PageBuilder();
+        $this->PageBuilder = new PageBuilder($this->brizyApi);
 
         if ($this->PageBuilder->run($preparedSectionOfThePage)) {
             Utils::log('Page created successfully!', 1, 'PageBuilder');
