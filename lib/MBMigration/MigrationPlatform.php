@@ -277,7 +277,10 @@ class MigrationPlatform
 //        file_put_contents(JSON_PATH.'/preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
         $collectionItem = $this->getCollectionItem($page['slug']);
         if (!$collectionItem) {
-            $newPage = $this->creteNewPage($page['slug'], $page['name']);
+            $ProjectTitle = $this->cache->get('settings')['title'];
+            $title = $ProjectTitle.' | '.$page['name'];
+
+            $newPage = $this->creteNewPage($page['slug'], $page['name'], $title, $page['protectedPage']);
             if (!$newPage) {
                 Utils::log(
                     'Failed created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
@@ -528,7 +531,7 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function creteNewPage($slug, $title, $protectedPage = false, $setActivePage = true)
+    private function creteNewPage($slug, $title, $seoTitle, $protectedPage = false, $setActivePage = true)
     {
         if ($this->pageCheck($slug)) {
             Utils::log('Request to create a new page: '.$slug, 1, 'creteNewPage');
@@ -536,6 +539,7 @@ class MigrationPlatform
                 $this->cache->get('mainCollectionType'),
                 $slug,
                 $title,
+                $seoTitle,
                 $protectedPage
             );
             $this->getAllPage();
@@ -558,9 +562,15 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function renameSlug($itemsID, $slug, $title = null)
+    private function renameSlug($itemsID, $slug, string $title, string $seoTitle)
     {
-        $res = $this->QueryBuilder->updateCollectionItem($itemsID, $slug, [], 'published', [], $title);
+
+        $seo = [
+            'enableIndexing' => true,
+            'title' => $seoTitle,
+        ];
+
+        $res = $this->QueryBuilder->updateCollectionItem($itemsID, $slug, [], 'published', [], $title, $seo);
         Utils::log('Page name is Rename', 1, 'renameSlug');
 
         return $res;
@@ -602,6 +612,7 @@ class MigrationPlatform
                     if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
                         $newPage = $this->creteNewPage(
                             $pages['slug'],
+                            $pages['name'],
                             $title,
                             $pages['protectedPage']
                         );
@@ -610,7 +621,7 @@ class MigrationPlatform
                     }
                 } else {
 //                    if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
-                        $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug'], $title);
+                        $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug'], $pages['name'], $title);
                         $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
 //                    } else {
 //                        $newPage = $projectPages['listPages'][$pages['slug']];
