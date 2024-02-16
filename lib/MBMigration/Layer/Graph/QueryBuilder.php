@@ -294,6 +294,7 @@ class QueryBuilder
         $collection_type_id,
         $slug,
         $title = null,
+        $seo = null,
         bool $protectedPage = false,
         $status = 'published',
         array $fields = [],
@@ -337,6 +338,14 @@ class QueryBuilder
                 'pageData' => $pageData,
             ],
         ];
+
+        if ($seo) {
+            $seoValue = [
+                'enableIndexing' => true,
+                'title' => $seo,
+            ];
+            $variables['input']['seo'] = $seoValue;
+        }
 
         if($protectedPage) {
             $variables['input']['itemPassword'] = "876543";
@@ -530,7 +539,8 @@ class QueryBuilder
         $pageData = [],
         $status = 'published',
         array $fields = [],
-        $title = null
+        $title = null,
+        $seo = null
     ) {
         if (!$this->client) {
             throw new \Exception('Client was not init.');
@@ -584,6 +594,10 @@ class QueryBuilder
 
         if ($pageData) {
             $variables['input']['pageData'] = $pageData;
+        }
+
+        if ($seo) {
+            $variables['input']['seo'] = $seo;
         }
 
         $results = $this->runQuery($mutation, true, $variables);

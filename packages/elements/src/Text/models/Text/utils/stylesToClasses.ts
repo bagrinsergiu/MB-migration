@@ -47,7 +47,8 @@ export const stylesToClasses = (
       case "line-height": {
         const fs = `${styles["font-size"]}`;
         const fontSize = fs.replace("px", "");
-        const lineHeight = getLineHeight(`${value}`, fontSize);
+        const size = Math.round(Num.readInt(value) ?? 1);
+        const lineHeight = getLineHeight(`${size}`, fontSize);
         classes.push(`brz-lh-lg-${lineHeight}`);
         break;
       }

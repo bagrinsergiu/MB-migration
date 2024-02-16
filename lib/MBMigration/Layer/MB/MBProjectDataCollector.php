@@ -799,7 +799,7 @@ class MBProjectDataCollector
         return $this->manipulator->groupArrayByParentId($this->cache->get($id, 'Sections'), $section);
     }
 
-    private function transLiterationFontFamily($family): string
+    public function transLiterationFontFamily($family): string
     {
         $inputString = str_replace(["\"","'", ' '], ['','', '_'], $family);
 
