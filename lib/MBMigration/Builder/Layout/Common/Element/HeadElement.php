@@ -38,7 +38,8 @@ abstract class HeadElement extends AbstractElement
             $this->setImageLogo($logoImageComponent, $data->getMbSection());
 
             $elementContext = $data->instanceWithBrizyComponent($sectionItem);
-            $this->handleSectionStyles($elementContext,$this->browserPage);
+            $this->handleSectionStyles($elementContext, $this->browserPage);
+
             return $section;
         });
     }
@@ -134,36 +135,27 @@ abstract class HeadElement extends AbstractElement
 
     protected function extractBlockBrowserData($sectionId): array
     {
-         $menuSectionStyles = $this->browserPage->evaluateScript(
-            'StyleExtractor.js',
+        $menuSectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
             [
                 'selector' => '[data-id="'.$sectionId.'"]',
-                'STYLE_PROPERTIES' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
-                'FAMILIES' => [],
-                'DEFAULT_FAMILY' => 'lato',
-            ]
-        );
-         $menuSectionStyles = $this->browserPage->evaluateScript(
-            'StyleExtractor.js',
-            [
-                'selector' => '[data-id="'.$sectionId.'"]',
-                'STYLE_PROPERTIES' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
-                'FAMILIES' => [],
-                'DEFAULT_FAMILY' => 'lato',
+                'styleProperties' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
+                'families' => [],
+                'defaultFamily' => 'lato',
             ]
         );
 
         if ($this->browserPage->triggerEvent('hover', '#main-navigation li:not(.selected) a')) {
-            $this->browserPage->evaluateScript('GlobalMenu.js', []);
+            $this->browserPage->evaluateScript('brizy.globalMenuExtractor', []);
             $this->browserPage->triggerEvent('hover', 'html');
         }
 
         $menuStyles = $this->browserPage->evaluateScript(
-            'Menu.js',
+            'brizy.getMenu',
             [
                 'selector' => '[data-id="'.$sectionId.'"]',
-                'FAMILIES' => [],
-                'DEFAULT_FAMILY' => 'lato',
+                'families' => [],
+                'defaultFamily' => 'lato',
             ]
         );
 

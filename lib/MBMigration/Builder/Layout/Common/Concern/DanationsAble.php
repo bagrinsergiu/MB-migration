@@ -2,11 +2,8 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
-use MBMigration\Browser\BrowserPage;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\BrizyComponent\BrizyImageComponent;
-use MBMigration\Builder\BrizyComponent\BrizyWrapperComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrizyKitNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
@@ -80,7 +77,7 @@ trait DanationsAble
         array $mbSection
     ): BrizyComponent {
         $buttonStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
                 'selector' => $selector,
                 'STYLE_PROPERTIES' => [

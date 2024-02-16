@@ -24,28 +24,22 @@ class BrowserPagePHP implements BrowserPageInterface
         $this->page->addScriptTag([
             'content' => $this->getScriptBody("index.js"),
         ])->waitForResponse();
-
     }
 
     public function evaluateScript($jsScript, $params): array
     {
         try {
-            $result = $this->page->callFunction($jsScript, [(object)$params])->getReturnValue(1000);
+            $result = $this->page->callFunction($jsScript, [(object)$params])
+                ->waitForResponse(5000)
+                ->getReturnValue(5000);
 
             if (!$result) {
                 $result = [];
             }
-
             return $result;
         } catch (Exception $e) {
             return ['error' => $e->getMessage()]; // element not found
         }
-    }
-
-    private function executeScriptWithoutResult($jsScript): void
-    {
-        $jsFunction = JsFunction::createWithBody($this->getScriptBody($jsScript));
-        $this->page->tryCatch->evaluate($jsFunction);
     }
 
     private function getScriptBody($jsScript): string
@@ -62,15 +56,14 @@ class BrowserPagePHP implements BrowserPageInterface
     /**
      * @return mixed
      */
-    public function triggerEvent($eventNameMethod, $elementSelector,$params=[]): bool
+    public function triggerEvent($eventNameMethod, $elementSelector, $params = []): bool
     {
         try {
             switch ($eventNameMethod) {
-                case 'mouse.hover':
+                case 'hover':
                     $this->page->mouse()->find($elementSelector);
                     break;
             }
-
         } catch (Exception $e) {
             return false; // element not found
         }
@@ -110,7 +103,7 @@ class BrowserPagePHP implements BrowserPageInterface
                 $selector,
                 $attributes,
             ]
-        )->waitForResponse(500);
+        )->waitForResponse(5000);
     }
 
     public function setNodeAttribute($selector, array $attributes)
@@ -128,7 +121,7 @@ class BrowserPagePHP implements BrowserPageInterface
                 $selector,
                 $attributes,
             ]
-        )->waitForResponse(500);
+        )->waitForResponse(5000);
     }
 
 }

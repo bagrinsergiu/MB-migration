@@ -40,11 +40,14 @@ class BrowserPHP implements BrowserInterface
 
         // starts headless Chrome
         $this->browser = $browserFactory->createBrowser([
-            'windowSize' => [1920, 1000],
-            'enableImages' => false,
+            'windowSize' => [1920, 2000],
+            //'enableImages' => true,
             'debugLogger' => $logger,
             'keepAlive' => true,
-            'noSandbox' => true
+            'noSandbox' => true,
+            'customFlags'=>['--single-process','--no-zygote','--disable-setuid-sandbox','--disable-canvas-aa','--disable-3d-apis','--stub-cros-settings','--disable-dev-shm-usage','--no-sandbox'],
+            'userDataDir'=>JSON_PATH."/chrome_data",
+            //'excludedSwitches'=>['--disable-background-networking']
         ]);
 
         $this->scriptPath = $scriptPath;
@@ -55,7 +58,7 @@ class BrowserPHP implements BrowserInterface
         echo "\nOpen page: {$url}\n";
 
         if (!isset($this->page)) {
-            $this->page = $this->browser->createPage();;
+            $this->page = $this->browser->createPage();
         }
 
         try {
@@ -70,7 +73,7 @@ class BrowserPHP implements BrowserInterface
     public function closePage(): void
     {
         try {
-            $this->page->close();
+            //$this->page->close();
         } catch (\Exception $e) {
             Utils::MESSAGES_POOL($e->getMessage(), 'error');
         }
