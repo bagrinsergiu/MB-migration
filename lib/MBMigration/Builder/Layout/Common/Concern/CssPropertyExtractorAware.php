@@ -2,7 +2,6 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
-use MBMigration\Browser\BrowserPage;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
