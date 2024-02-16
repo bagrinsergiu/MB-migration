@@ -55,7 +55,7 @@ const ex1: Data = {
                 _styles: ["button"],
                 text: "I'm New ",
                 borderStyle: "none",
-                iconName: "circle-right-37",
+                iconName: "arrow-alt-circle-right",
                 linkExternal: "/about-us/who-we-are",
                 linkType: "external",
                 linkExternalBlank: "off"
@@ -163,7 +163,8 @@ const ex3: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-facebook"
+                name: "facebook-square",
+                type: "fa"
               }
             },
             {
@@ -173,7 +174,8 @@ const ex3: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-twitter"
+                name: "twitter",
+                type: "fa"
               }
             }
           ],
@@ -272,7 +274,8 @@ const ex5: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "email-85"
+                name: "envelope",
+                type: "fa"
               }
             }
           ],
@@ -361,6 +364,7 @@ const ex6: Data = {
                 _styles: ["icon"],
                 customSize: 26,
                 name: "apple",
+                type: "fa",
                 padding: 7
               }
             }
@@ -450,7 +454,8 @@ const ex7: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "user-run"
+                name: "running",
+                type: "fa"
               }
             }
           ],
@@ -517,7 +522,8 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-facebook"
+                name: "facebook-square",
+                type: "fa"
               }
             },
             {
@@ -527,7 +533,8 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-twitter"
+                name: "twitter",
+                type: "fa"
               }
             }
           ],
@@ -564,7 +571,8 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-facebook"
+                name: "facebook-square",
+                type: "fa"
               }
             },
             {
@@ -574,7 +582,8 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-twitter"
+                name: "twitter",
+                type: "fa"
               }
             }
           ],
@@ -642,6 +651,7 @@ const ex9: Data = {
                 _styles: ["icon"],
                 customSize: 26,
                 name: "apple",
+                type: "fa",
                 padding: 7
               }
             }
@@ -753,7 +763,7 @@ const ex10: Data = {
                 _styles: ["button"],
                 text: "I'm New ",
                 borderStyle: "none",
-                iconName: "circle-right-37",
+                iconName: "arrow-alt-circle-right",
                 linkExternal: "/about-us/who-we-are",
                 linkExternalBlank: "off",
                 linkType: "external"
@@ -817,7 +827,181 @@ const ex11: Data = {
 
 //#endregion
 
-describe.each([ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, ex9, ex10, ex11])(
+//#region Example 12 (New icons )
+
+const ex12: Data = {
+  html: `<div class="text-content text-0 editable" data-id="24125824" data-category="text"><div><div><br></div><div><br></div><div>
+<p style="text-align: center;"><a class="socialIconLink cloverlinks" style="font-size: 4.0625em;" href="https://www.facebook.com/friendshiphp/?show_switched_toast=0&amp;show_invite_to_follow=0&amp;show_switched_tooltip=0&amp;show_podcast_settings=0&amp;show_community_review_changes=0&amp;show_community_rollback=0&amp;show_follower_visibility_disclosure=0" data-location="external" data-button="false" data-detail="https://www.facebook.com/friendshiphp/?show_switched_toast=0&amp;show_invite_to_follow=0&amp;show_switched_tooltip=0&amp;show_podcast_settings=0&amp;show_community_review_changes=0&amp;show_community_rollback=0&amp;show_follower_visibility_disclosure=0" data-category="link" target="_blank"><span data-icon="facebook-square"><span class="clovericons fab" aria-hidden="true"></span><span class="sr-only">Facebook Square</span></span></a>&hairsp;&nbsp; &nbsp; &nbsp;<a class="socialIconLink cloverlinks" style="font-size: 4.1875em;" href="https://www.instagram.com/friendshipbaptisthp/?igsh=ODA1NTc5OTg5Nw%3D%3D&amp;utm_source=qr&amp;fbclid=IwAR03juy0vNfIVO7hrTuq6IE3yvAtr10CAVMYs4tTomC5v-t8vN8U3KjU8KY" data-location="external" data-button="false" data-detail="https://www.instagram.com/friendshipbaptisthp/?igsh=ODA1NTc5OTg5Nw%3D%3D&amp;utm_source=qr&amp;fbclid=IwAR03juy0vNfIVO7hrTuq6IE3yvAtr10CAVMYs4tTomC5v-t8vN8U3KjU8KY" data-category="link" target="_blank"><span data-icon="instagram"><span class="clovericons fab" aria-hidden="true"></span><span class="sr-only">Instagram</span></span></a> &nbsp;&nbsp; <a href="https://clover.ministryone.com/landing/baA0" data-location="external" data-button="false" data-detail="https://clover.ministryone.com/landing/baA0" data-category="link" target="_blank" style="font-size: 4.0625em;" class="socialIconLink cloverlinks"><span data-icon="app-store"><span class="clovericons fab" aria-hidden="true"></span><span class="sr-only">App Store</span></span></a><span class="clovercustom" style="font-size: 0.9016em;"> &nbsp; &nbsp; </span><a href="https://clover.ministryone.com/landing/baA0" data-location="external" data-button="false" data-detail="https://clover.ministryone.com/landing/baA0" data-category="link" target="_blank" style="font-size: 3.6875em;" class="socialIconLink cloverlinks"><span data-icon="google-play"><span class="clovericons fab" aria-hidden="true"></span><span class="sr-only">Google Play</span></span></a></p>
+<p style="text-align: center;">Follow us on Facebook, and download our App!<br></p>
+</div><p style="text-align: center;"><br></p><p style="text-align: center;">Friendship Baptist Church<br></p><p style="text-align: center;">220 Friendship Church Rd</p><p style="text-align: center;">Honea Path, SC - 29654</p><p style="text-align: center;"><br></p><p style="text-align: center;"><a href="https://www.google.com/maps/place/Friendship+Baptist+Church/@34.4976879,-82.3867438,17z/data=!3m1!4b1!4m6!3m5!1s0x88581a7eb152c6b5:0xc1ce4aa373e2994f!8m2!3d34.4976879!4d-82.3841689!16s%2Fg%2F11bvtf258y?entry=ttu" data-location="external" data-button="true" data-detail="https://www.google.com/maps/place/Friendship+Baptist+Church/@34.4976879,-82.3867438,17z/data=!3m1!4b1!4m6!3m5!1s0x88581a7eb152c6b5:0xc1ce4aa373e2994f!8m2!3d34.4976879!4d-82.3841689!16s%2Fg%2F11bvtf258y?entry=ttu" data-category="link" target="_blank" class="cloverlinks sites-button" role="button">Show on Maps</a></p><p style="text-align: center;"><br></p><p style="text-align: center;"><br></p></div></div>`,
+  //prettier-ignore
+  entry: {...entry, selector: "[data-id=\"24125824\"]"},
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                padding: 7,
+                customSize: 26,
+                name: "facebook-square",
+                type: "fa",
+                linkExternal: "/friendshiphp/",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                padding: 7,
+                customSize: 26,
+                name: "instagram",
+                type: "fa",
+                linkExternal: "/friendshipbaptisthp/",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                padding: 7,
+                customSize: 26,
+                name: "app-store",
+                type: "fa",
+                linkExternal: "/landing/baA0",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                padding: 7,
+                customSize: 26,
+                name: "google-play",
+                type: "fa",
+                linkExternal: "/landing/baA0",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><a style="" href="https://www.facebook.com/friendshiphp/?show_switched_toast=0&amp;show_invite_to_follow=0&amp;show_switched_tooltip=0&amp;show_podcast_settings=0&amp;show_community_review_changes=0&amp;show_community_rollback=0&amp;show_follower_visibility_disclosure=0" data-location="external" data-button="false" data-detail="https://www.facebook.com/friendshiphp/?show_switched_toast=0&amp;show_invite_to_follow=0&amp;show_switched_tooltip=0&amp;show_podcast_settings=0&amp;show_community_review_changes=0&amp;show_community_rollback=0&amp;show_follower_visibility_disclosure=0" data-category="link" target="_blank"></a> &nbsp; &nbsp; &nbsp;<a style="" href="https://www.instagram.com/friendshipbaptisthp/?igsh=ODA1NTc5OTg5Nw%3D%3D&amp;utm_source=qr&amp;fbclid=IwAR03juy0vNfIVO7hrTuq6IE3yvAtr10CAVMYs4tTomC5v-t8vN8U3KjU8KY" data-location="external" data-button="false" data-detail="https://www.instagram.com/friendshipbaptisthp/?igsh=ODA1NTc5OTg5Nw%3D%3D&amp;utm_source=qr&amp;fbclid=IwAR03juy0vNfIVO7hrTuq6IE3yvAtr10CAVMYs4tTomC5v-t8vN8U3KjU8KY" data-category="link" target="_blank"></a> &nbsp;&nbsp; <a href="https://clover.ministryone.com/landing/baA0" data-location="external" data-button="false" data-detail="https://clover.ministryone.com/landing/baA0" data-category="link" target="_blank" style=""></a><span style=""> &nbsp; &nbsp; </span><a href="https://clover.ministryone.com/landing/baA0" data-location="external" data-button="false" data-detail="https://clover.ministryone.com/landing/baA0" data-category="link" target="_blank" style=""></a></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><span>Follow us on Facebook, and download our App!</span><br></p><p></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><span>Friendship Baptist Church</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><span>220 Friendship Church Rd</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><span>Honea Path, SC - 29654</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                text: "Show on Maps",
+                borderStyle: "none",
+                linkExternal:
+                  "/maps/place/Friendship+Baptist+Church/@34.4976879,-82.3867438,17z/data=!3m1!4b1!4m6!3m5!1s0x88581a7eb152c6b5:0xc1ce4aa373e2994f!8m2!3d34.4976879!4d-82.3841689!16s%2Fg%2F11bvtf258y",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+//#endregion
+
+describe.each([ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, ex9, ex10, ex11, ex12])(
   "testing 'getText' function nr %#",
   ({ entry, output, html }) => {
     beforeEach(() => {
