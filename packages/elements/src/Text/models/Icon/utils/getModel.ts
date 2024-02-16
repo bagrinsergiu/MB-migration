@@ -2276,17 +2276,12 @@ const codeToBuilderMap: Record<string, string> = {
 
   "youtube-square": "youtube-square"
 };
-const getColor = mPipe(
-  Obj.readKey("color"),
-  Str.read,
-  parseColorString,
-  normalizeOpacity
-);
+
+const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
 const getBgColor = mPipe(
   Obj.readKey("background-color"),
   Str.read,
-  parseColorString,
-  normalizeOpacity
+  parseColorString
 );
 
 export const getStyles = (node: Element) => {
@@ -2310,8 +2305,14 @@ export const getStyleModel = (node: Element) => {
 
   return {
     ...(color && {
-      colorHex: color.hex,
-      colorOpacity: isNaN(opacity) ? color.opacity : opacity,
+      colorHex: normalizeOpacity({
+        hex: color.hex,
+        opacity: color.opacity ?? String(opacity)
+      }).hex,
+      colorOpacity: normalizeOpacity({
+        hex: color.hex,
+        opacity: isNaN(opacity) ? color.opacity ?? "1" : String(opacity)
+      }).opacity,
       colorPalette: ""
     }),
     ...(parentBgColor && {
