@@ -36,6 +36,7 @@ class BrowserPagePHP implements BrowserPageInterface
             if (!$result) {
                 $result = [];
             }
+
             return $result;
         } catch (Exception $e) {
             return ['error' => $e->getMessage()]; // element not found
@@ -61,7 +62,11 @@ class BrowserPagePHP implements BrowserPageInterface
         try {
             switch ($eventNameMethod) {
                 case 'hover':
-                    $this->page->mouse()->find($elementSelector);
+                    $pos = $this->page->mouse()->find($elementSelector)->getPosition();
+                    $this->page->mouse()->move($pos['x'], $pos['y']);
+                    break;
+                case 'click':
+                    $this->page->mouse()->find($elementSelector)->click();
                     break;
             }
         } catch (Exception $e) {
@@ -122,6 +127,17 @@ class BrowserPagePHP implements BrowserPageInterface
                 $attributes,
             ]
         )->waitForResponse(5000);
+    }
+
+    public function screenshot($path)
+    {
+        $screenshot = $this->page->screenshot([
+            'captureBeyondViewport' => true,
+            'clip' => $this->page->getFullPageClip(),
+            'format' => 'jpeg',
+        ]);
+
+        $screenshot->saveToFile($path);
     }
 
 }

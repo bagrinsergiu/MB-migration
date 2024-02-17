@@ -16,6 +16,7 @@ use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullText;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullWidthForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridLayout;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Head;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMedia;

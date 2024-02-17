@@ -45,8 +45,19 @@ class BrowserPHP implements BrowserInterface
             'debugLogger' => $logger,
             'keepAlive' => true,
             'noSandbox' => true,
-            'customFlags'=>['--single-process','--no-zygote','--disable-setuid-sandbox','--disable-canvas-aa','--disable-3d-apis','--stub-cros-settings','--disable-dev-shm-usage','--no-sandbox'],
-            'userDataDir'=>JSON_PATH."/chrome_data",
+            'customFlags' => [
+                '--single-process',
+                '--no-zygote',
+                '--disable-setuid-sandbox',
+                '--disable-canvas-aa',
+                '--disable-3d-apis',
+                '--stub-cros-settings',
+                '--disable-dev-shm-usage',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-web-security',
+            ],
+            'userDataDir' => JSON_PATH."/chrome_data",
             //'excludedSwitches'=>['--disable-background-networking']
         ]);
 
