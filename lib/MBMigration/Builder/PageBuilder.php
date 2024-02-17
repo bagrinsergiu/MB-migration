@@ -79,7 +79,8 @@ class PageBuilder
                 $fontFamily['Default'],
                 $themeElementFactory,
                 $mainCollectionType,
-                $itemsID
+                $itemsID,
+                $slug
             );
 
             $_WorkClassTemplate = new $workClass($themeContext);
