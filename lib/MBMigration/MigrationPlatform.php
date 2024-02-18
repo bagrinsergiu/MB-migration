@@ -416,7 +416,7 @@ class MigrationPlatform
             }
             $settings = json_decode($item['parentSettings'], true);
 
-            if (array_key_exists('external_url', $settings)) {
+            if ($settings && array_key_exists('external_url', $settings)) {
                 $mainMenu[] = [
                     'id' => '',
                     "uid" => Utils::getNameHash(),

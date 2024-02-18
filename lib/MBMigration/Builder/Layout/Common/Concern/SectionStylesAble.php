@@ -8,6 +8,7 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
+use Wrench\Exception\Exception;
 
 trait SectionStylesAble
 {
@@ -36,8 +37,10 @@ trait SectionStylesAble
 
     }
 
-    protected function handleSectionStyles(ElementContextInterface $data, BrowserPageInterface $browserPage): BrizyComponent
-    {
+    protected function handleSectionStyles(
+        ElementContextInterface $data,
+        BrowserPageInterface $browserPage
+    ): BrizyComponent {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
         $defaultFont = $data->getDefaultFontFamily();
@@ -58,34 +61,20 @@ trait SectionStylesAble
             $families,
             $defaultFont
         );
-//        $bodyStyles = $this->getBodyStyles(
-//            $browserPage,
-//            $families,
-//            $defaultFont
-//        );
 
+        try {
+            $sectionBgStyles = $this->getBgHelperStyles(
+                $mbSectionItem['sectionId'],
+                $browserPage,
+                $families,
+                $defaultFont
+            );
 
+            $sectionStyles = array_merge($sectionStyles,$sectionBgStyles);
+        }
+        catch (\Exception $e) {
+        }
 
-//        if (isset($mbSectionItem['settings']['sections']['background'])) {
-//            if (isset($mbSectionItem['settings']['sections']['background']['opacity'])) {
-//                $sectionStyles['data']['opacity'] = $mbSectionItem['settings']['sections']['background']['opacity'];
-//            } else {
-//                $resultingSectionStyles = $browserPage->evaluateScript(
-//                    'StyleExtractor.js',
-//                    [
-//                        'selector' => '[data-id="'.$mbSectionItem['sectionId'].'"] .bg-opacity',
-//                        'STYLE_PROPERTIES' => [
-//                            'opacity',
-//                        ],
-//                        'FAMILIES' => $families,
-//                        'DEFAULT_FAMILY' => $defaultFont,
-//                    ]
-//                );
-//                $sectionStyles['data']['opacity'] = $resultingSectionStyles['data']['opacity'];
-//            }
-//        }
-
-        //$this->handleSectionBackground($brizySection, $mbSectionItem, $bodyStyles);
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles);
 
         // reset padding top for first section as in brizy there is no need for that padding.
@@ -157,7 +146,7 @@ trait SectionStylesAble
             $brizySection->getValue()
                 ->set_media('video')
                 ->set_bgVideoType('url')
-                ->set_bgColorOpacity(1-NumberProcessor::convertToNumeric($background['opacity']))
+                ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
                 ->set_bgVideo($background['video']);
         }
 
@@ -258,28 +247,25 @@ trait SectionStylesAble
         );
     }
 
-    private function getBodyStyles($browserPage, $families, $defaultFont)
-    {
-        static $styles = null;
-
-        if ($styles) {
-            return $styles;
-        }
-
-        $selector = 'body';
+    protected function getBgHelperStyles(
+        $sectionId,
+        BrowserPageInterface $browserPage,
+        array $families,
+        string $defaultFont
+    ) {
+        $selectorSectionWrapperStyles = '[data-id="'.$sectionId.'"] .bg-helper>.bg-opacity';
         $properties = [
-            'color',
-            'background-size',
             'background-color',
-            'background-image',
+            'opacity',
         ];
 
         return $this->getDomElementStyles(
-            $selector,
+            $selectorSectionWrapperStyles,
             $properties,
             $browserPage,
             $families,
             $defaultFont
         );
     }
+
 }
