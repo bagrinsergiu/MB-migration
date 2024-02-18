@@ -93,13 +93,12 @@ abstract class AbstractTheme implements ThemeInterface
         $selector = $this->getThemeMenuItemSelector(); //"#main-navigation li:not(.selected) a";
         if ($browserPage->triggerEvent('hover', $selector)) {
             $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
-            $browserPage->triggerEvent('hover', 'html',[1,1]);
         }
 
-        $browserPage->setNodeStyles($this->getThemeSubMenuItemSelector(), ['display' => 'block','visibility'=>'visible']);
-        if ($browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector())) {
+        if ($browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()) &&
+            $browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector())) {
             $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
-            $browserPage->triggerEvent('hover', 'html',[1,1]);
+            $browserPage->triggerEvent('hover', 'html', [1, 1]);
         }
 
         return $page;

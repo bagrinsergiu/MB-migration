@@ -37,30 +37,17 @@ class Voyage extends AbstractTheme
 
     public function getThemeMenuItemSelector(): string
     {
-        return "#main-navigation li:not(.selected) a";
+        return "#main-navigation>ul>li:not(.selected) a";
+    }
+
+    public function getThemeParentMenuItemSelector(): string
+    {
+        return "#main-navigation>ul>li:has(.sub-navigation):first-child a";
     }
 
     public function getThemeSubMenuItemSelector(): string
     {
-        return "#more-nav-button";
-    }
-
-    public function beforeTransformBlocks(BrizyPage $page, array $mbPageSections): BrizyPage
-    {
-        parent::beforeTransformBlocks($page,$mbPageSections);
-
-        $browserPage = $this->themeContext->getBrowserPage();
-        $browserPage->setNodeAttribute(
-            $this->getThemeSubMenuItemSelector(),
-            ['class' => 'show-more show-more-visible']
-        );
-
-        if ($browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector()." ul li")) {
-            $browserPage->evaluateScript('GlobalMenu.js', []);
-            $browserPage->triggerEvent('hover', 'html');
-        }
-
-        return $page;
+        return "#main-navigation>ul>li:has(.sub-navigation):first-child .sub-navigation a:first-child";
     }
 
 }

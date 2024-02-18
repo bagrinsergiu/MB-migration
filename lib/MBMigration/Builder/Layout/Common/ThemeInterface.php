@@ -16,5 +16,6 @@ interface ThemeInterface
     public function getThemeIconSelector(): string;
     public function getThemeButtonSelector(): string;
     public function getThemeMenuItemSelector(): string;
+    public function getThemeParentMenuItemSelector(): string;
     public function getThemeSubMenuItemSelector(): string;
 }
