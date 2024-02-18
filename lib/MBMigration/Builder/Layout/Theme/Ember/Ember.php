@@ -23,11 +23,16 @@ class Ember extends AbstractTheme
 
     public function getThemeMenuItemSelector(): string
     {
-        return "#main-navigation li:not(.selected) a";
+        return "#main-navigation>ul>li:not(.selected) a";
+    }
+
+    public function getThemeParentMenuItemSelector(): string
+    {
+        return "#main-navigation>ul>li:has(.sub-navigation) a:first-child";
     }
 
     public function getThemeSubMenuItemSelector(): string
     {
-        return "#main-navigation .sub-navigation li:not(.selected) a";
+        return "#main-navigation>ul>li:has(.sub-navigation) .sub-navigation a:first-child";
     }
 }
