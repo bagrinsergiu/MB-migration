@@ -21,7 +21,7 @@ use MBMigration\Core\Utils;
 
 class Bloom extends AbstractTheme
 {
-        public function getThemeIconSelector(): string
+    public function getThemeIconSelector(): string
     {
         return "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
     }
@@ -33,11 +33,17 @@ class Bloom extends AbstractTheme
 
     public function getThemeMenuItemSelector(): string
     {
-        return "#main-navigation li:not(.selected) a";
+        return "#main-navigation>ul>li:not(.selected) a";
     }
+
+    public function getThemeParentMenuItemSelector(): string
+    {
+        return "#main-navigation>ul>li.has-sub a:first-child";
+    }
+
 
     public function getThemeSubMenuItemSelector(): string
     {
-        return "#main-navigation .sub-navigation li:not(.selected) a";
+        return "#main-navigation>ul>li.has-sub ul a:first-child";
     }
 }

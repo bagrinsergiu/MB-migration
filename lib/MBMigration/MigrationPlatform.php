@@ -121,7 +121,7 @@ class MigrationPlatform
 
         $this->cache->set('container', $this->brizyApi->getProjectContainer($this->projectID_Brizy));
 
-        $this->init($projectUUID_MB, $this->projectID_Brizy);
+        $this->init($projectID_MB, $this->projectID_Brizy);
         $this->checkDesign($this->parser->getDesignSite());
 
         $this->createProjectFolders();
@@ -174,7 +174,9 @@ class MigrationPlatform
 
         $this->launch($parentPages);
 
-        $this->PageBuilder->closeBrowser();
+        if ($this->PageBuilder) {
+            $this->PageBuilder->closeBrowser();
+        }
 
         Utils::log('Project migration completed successfully!', 6, 'PROCESS');
 
@@ -185,7 +187,7 @@ class MigrationPlatform
      * @throws Exception
      * @throws GuzzleException
      */
-    private function init(string $projectUUID_MB, int $projectID_Brizy): void
+    private function init(string $projectID_MB, int $projectID_Brizy): void
     {
         Utils::log('-------------------------------------------------------------------------------------- []', 4, '');
         Utils::log('Start Process!', 4, 'MIGRATION');
@@ -198,8 +200,6 @@ class MigrationPlatform
         Utils::log('Migration ID: '.$this->migrationID, 4, 'MIGRATION');
 
         $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
-
-        $projectID_MB = MBProjectDataCollector::getIdByUUID($projectUUID_MB);
 
         $this->cache->set('projectId_MB', $projectID_MB);
         $this->cache->set('projectId_Brizy', $projectID_Brizy);
@@ -606,7 +606,7 @@ class MigrationPlatform
 
         $i = 0;
         foreach ($parentPages as &$pages) {
-                $title = $ProjectTitle.' | '.$pages['name'];
+            $title = $ProjectTitle.' | '.$pages['name'];
             if ($pages['landing'] == true) {
                 if ($i != 0 || !$mainLevel) {
                     if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
@@ -621,8 +621,8 @@ class MigrationPlatform
                     }
                 } else {
 //                    if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
-                        $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug'], $pages['name'], $title);
-                        $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
+                    $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug'], $pages['name'], $title);
+                    $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
 //                    } else {
 //                        $newPage = $projectPages['listPages'][$pages['slug']];
 //                    }
