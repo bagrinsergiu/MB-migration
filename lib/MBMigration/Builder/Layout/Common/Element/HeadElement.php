@@ -23,7 +23,7 @@ abstract class HeadElement extends AbstractElement
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
 
-            $headStyles = $this->extractBlockBrowserData($data->getMbSection()['sectionId']);
+            $headStyles = $this->extractBlockBrowserData($data->getMbSection()['sectionId'], $data->getFontFamilies(),$data->getDefaultFontFamily());
 
             $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
@@ -133,29 +133,24 @@ abstract class HeadElement extends AbstractElement
         return $component;
     }
 
-    protected function extractBlockBrowserData($sectionId): array
+    protected function extractBlockBrowserData($sectionId,$families,$defaultFamilies): array
     {
         $menuSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
                 'selector' => '[data-id="'.$sectionId.'"]',
                 'styleProperties' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
-                'families' => [],
-                'defaultFamily' => 'lato',
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
             ]
         );
-
-        if ($this->browserPage->triggerEvent('hover', '#main-navigation li:not(.selected) a')) {
-            $this->browserPage->evaluateScript('brizy.globalMenuExtractor', []);
-            $this->browserPage->triggerEvent('hover', 'html');
-        }
 
         $menuStyles = $this->browserPage->evaluateScript(
             'brizy.getMenu',
             [
                 'selector' => '[data-id="'.$sectionId.'"]',
-                'families' => [],
-                'defaultFamily' => 'lato',
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
             ]
         );
 
