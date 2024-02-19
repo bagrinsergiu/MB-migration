@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem;
 use Exception;
 use MBMigration\Browser\Browser;
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Items\SubMenu;
 use MBMigration\Builder\Utils\FamilyTreeMenu;
@@ -53,7 +54,7 @@ class Anthem extends LayoutUtils
         $this->browserPage = $browserPage;
         $this->browser = $browser;
 
-        $this->fontFamily = $this->getFontsFamily();
+        $this->fontFamily = FontsController::getFontsFamily();
 
 //        ThemePreProcess::treeMenu();
 
@@ -207,7 +208,7 @@ class Anthem extends LayoutUtils
      * @param string $nameSectionId The name of the section ID parameter. Default is 'id'.
      * @throws Exception If failed to extract data.
      */
-    private function ExtractDataFromPage(&$SectionPage, BrowserPage $browserPage, $nameSectionId = 'id')
+    private function ExtractDataFromPage(array &$SectionPage, BrowserPage $browserPage, string $nameSectionId = 'id')
     {
         $selectorIcon = "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
         $browserPage->ExtractHover($selectorIcon);
@@ -280,22 +281,6 @@ class Anthem extends LayoutUtils
                 }
             }
         }
-    }
-
-    protected function getFontsFamily(): array
-    {
-        $fontFamily = [];
-        $cache = VariableCache::getInstance();
-        $fonts = $cache->get('fonts', 'settings');
-        foreach ($fonts as $font) {
-            if (isset($font['name']) && $font['name'] === 'primary') {
-                $fontFamily['Default'] = $font['uuid'];
-            } else {
-                $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
-            }
-        }
-
-        return $fontFamily;
     }
 
     private function ExtractStyleSection($browserPage, int $sectionId): array

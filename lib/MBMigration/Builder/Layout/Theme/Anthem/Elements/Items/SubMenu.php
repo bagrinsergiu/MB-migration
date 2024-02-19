@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\Items;
 
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\Utils\TextTools;
@@ -109,7 +110,7 @@ class SubMenu extends Element
         $SubMenuGeneralParameters = [
             'position'       => $sectionData['settings']['pagePosition'],
             'sectionID'      => $sectionData['sectionId'],
-            'fontsFamily'    => $this->getFontsFamily(),
+            'fontsFamily'    => FontsController::getFontsFamily(),
             'currentPageURL' => $this->cache->get('CurrentPageURL')
         ];
 

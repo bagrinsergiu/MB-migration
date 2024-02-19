@@ -3,6 +3,7 @@
 namespace MBMigration\Builder;
 
 use MBMigration\Browser\Browser;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\LayoutElementFactory;
 use MBMigration\Builder\Layout\Common\ThemeContext;
@@ -41,7 +42,7 @@ class PageBuilder
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
 
-        $fontFamily = $this->getFontsFamily();
+        $fontFamily = FontsController::getFontsFamily();
 
         $url = PathSlugExtractor::getFullUrl($slug);
 
@@ -118,22 +119,6 @@ class PageBuilder
         echo " => Current Page: {$pageName} | Status: ".json_encode(
                 $this->cache->get('Status')
             )."| Time: $executeTime \n";
-    }
-
-    private function getFontsFamily(): array
-    {
-        $fontFamily = [];
-        $cache = VariableCache::getInstance();
-        $fonts = $cache->get('fonts', 'settings');
-        foreach ($fonts as $font) {
-            if (isset($font['name']) && $font['name'] === 'primary') {
-                $fontFamily['Default'] = $font['uuid'];
-            } else {
-                $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
-            }
-        }
-
-        return $fontFamily;
     }
 
     public function closeBrowser()

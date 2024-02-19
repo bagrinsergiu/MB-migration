@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 use DOMDocument;
 use Exception;
 use MBMigration\Builder\Checking;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\VariableCache;
@@ -152,25 +153,6 @@ abstract class Element extends LayoutUtils
     /**
      *
      */
-    protected function getFontsFamily(): array
-    {
-        $fontFamily = [];
-        $cache = VariableCache::getInstance();
-        $fonts = $cache->get('fonts', 'settings');
-        foreach ($fonts as $font) {
-            if (isset($font['name']) && $font['name'] === 'primary') {
-                $fontFamily['Default'] = $font['uuid'];
-            } else {
-                $fontFamily[$font['fontFamily']] = $font['uuid'];
-            }
-        }
-
-        return $fontFamily;
-    }
-
-    /**
-     *
-     */
     protected function defaultOptionsForElement($element, &$options): void
     {
         $loadOptions = json_decode($element['options'], true);
@@ -306,7 +288,7 @@ abstract class Element extends LayoutUtils
             'position' => $sectionData['settings']['pagePosition'] ?? '',
             'currentPageURL' => $this->cache->get('CurrentPageURL'),
             'sectionID' => $sectionData['sectionId'],
-            'fontsFamily' => $this->getFontsFamily(),
+            'fontsFamily' => FontsController::getFontsFamily(),
         ];
 
         foreach ($primary as $key => $value) {

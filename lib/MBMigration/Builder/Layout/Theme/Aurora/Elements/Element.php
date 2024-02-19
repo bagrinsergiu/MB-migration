@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Aurora\Elements;
 
 use Exception;
 use MBMigration\Builder\Checking;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\VariableCache;
@@ -114,20 +115,6 @@ abstract class Element extends LayoutUtils
             $options = array_merge($options, ['fontFamily' => $item['settings']['used_fonts']['uuid']]);
         }
         $options = array_merge($options, ['fontType' => $item['item_type']]);
-    }
-
-    /**
-     *
-     */
-    protected function getFontsFamily(): array
-    {
-        $fontFamily = [];
-        $cache = VariableCache::getInstance();
-        $fonts = $cache->get('fonts', 'settings');
-        foreach ($fonts as $font) {
-            $fontFamily[$font['fontFamily']] = $font['uuid'];
-        }
-        return $fontFamily;
     }
 
     /**
@@ -259,7 +246,7 @@ abstract class Element extends LayoutUtils
             'position' => $sectionData['settings']['pagePosition'],
             'currentPageURL' => $this->cache->get('CurrentPageURL'),
             'sectionID' => $sectionData['sectionId'],
-            'fontsFamily' => $this->getFontsFamily()
+            'fontsFamily' => FontsController::getFontsFamily()
         ];
 
         $padding = JS::StylesPaddingExtractor($options['sectionID'], $options['currentPageURL']);
