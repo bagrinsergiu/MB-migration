@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Menu\MenuHandler;
 use MBMigration\Builder\Utils\PathSlugExtractor;
@@ -48,7 +49,7 @@ class Head extends Element
         $this->browser = $browser;
         $this->cache = VariableCache::getInstance();
         $this->jsonDecode = $jsonKitElements;
-        $this->fontFamily = $this->getFontsFamily();
+        $this->fontFamily = FontsController::getFontsFamily();
         $this->brizyAPI = $brizyAPI;
     }
 
@@ -296,22 +297,6 @@ class Head extends Element
                 'DEFAULT_FAMILY' => $this->fontFamily['Default'],
             ]
         );
-    }
-
-    protected function getFontsFamily(): array
-    {
-        $fontFamily = [];
-        $cache = VariableCache::getInstance();
-        $fonts = $cache->get('fonts', 'settings');
-        foreach ($fonts as $font) {
-            if (isset($font['name']) && $font['name'] === 'primary') {
-                $fontFamily['Default'] = $font['uuid'];
-            } else {
-                $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
-            }
-        }
-
-        return $fontFamily;
     }
 
     private function convertColor($color): string

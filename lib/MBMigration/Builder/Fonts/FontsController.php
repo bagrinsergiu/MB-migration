@@ -159,6 +159,22 @@ class FontsController extends builderUtils
         return false;
     }
 
+    static public function getFontsFamily(): array
+    {
+        $fontFamily = [];
+        $cache = VariableCache::getInstance();
+        $fonts = $cache->get('fonts', 'settings');
+        foreach ($fonts as $font) {
+            if (isset($font['name']) && $font['name'] === 'primary') {
+                $fontFamily['Default'] = $font['uuid'];
+            } else {
+                $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
+            }
+        }
+
+        return $fontFamily;
+    }
+
     protected function checkArrayPath($array, $path, $check = ''): bool
     {
         $keys = explode('/', $path);

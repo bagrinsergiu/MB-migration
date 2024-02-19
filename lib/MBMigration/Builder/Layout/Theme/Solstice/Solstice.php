@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Solstice;
 use Exception;
 use MBMigration\Browser\Browser;
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\Utils\FamilyTreeMenu;
 use MBMigration\Builder\Utils\PathSlugExtractor;
@@ -51,7 +52,7 @@ class Solstice extends LayoutUtils
         $this->browserPage = $browserPage;
         $this->browser = $browser;
 
-        $this->fontFamily = $this->getFontsFamily();
+        $this->fontFamily = FontsController::getFontsFamily();
 
 //        ThemePreProcess::treeMenu();
 
@@ -272,22 +273,6 @@ class Solstice extends LayoutUtils
                 }
             }
         }
-    }
-
-    protected function getFontsFamily(): array
-    {
-        $fontFamily = [];
-        $cache = VariableCache::getInstance();
-        $fonts = $cache->get('fonts', 'settings');
-        foreach ($fonts as $font) {
-            if (isset($font['name']) && $font['name'] === 'primary') {
-                $fontFamily['Default'] = $font['uuid'];
-            } else {
-                $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
-            }
-        }
-
-        return $fontFamily;
     }
 
     private function ExtractStyleSection($browserPage, int $sectionId): array

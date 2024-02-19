@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\Utils\PathSlugExtractor;
@@ -45,7 +46,7 @@ class Head extends Element
         $this->browser = $browser;
         $this->cache = VariableCache::getInstance();
         $this->jsonDecode = $jsonKitElements;
-        $this->fontFamily = $this->getFontsFamily();
+        $this->fontFamily = FontsController::getFontsFamily();
     }
 
     public function getElement(array $elementData = [])
@@ -290,19 +291,4 @@ class Head extends Element
         );
     }
 
-    protected function getFontsFamily(): array
-    {
-        $fontFamily = [];
-        $cache = VariableCache::getInstance();
-        $fonts = $cache->get('fonts', 'settings');
-        foreach ($fonts as $font) {
-            if (isset($font['name']) && $font['name'] === 'primary') {
-                $fontFamily['Default'] = $font['uuid'];
-            } else {
-                $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
-            }
-        }
-
-        return $fontFamily;
-    }
 }
