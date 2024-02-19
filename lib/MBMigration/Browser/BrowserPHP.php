@@ -29,14 +29,14 @@ class BrowserPHP implements BrowserInterface
         return $instance = new self($scriptPath, $logger);
     }
 
-    private function __construct($scriptPath, LoggerInterface $logger = null)
+    private function __construct($scriptPath, $chromeExecutable='/usr/bin/google-chrome',LoggerInterface $logger = null)
     {
         if (is_null($logger)) {
             $logger = new \Monolog\Logger('my_logger');
             $logger->pushHandler(new StreamHandler('php://stdout', LogLevel::DEBUG));
         }
 
-        $browserFactory = new BrowserFactory('/usr/bin/google-chrome');
+        $browserFactory = new BrowserFactory($chromeExecutable);
 
         // starts headless Chrome
         $this->browser = $browserFactory->createBrowser([
