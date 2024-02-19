@@ -50,6 +50,7 @@ class Form extends DynamicElement
 
         $this->setOptionsForTextColor($sectionData, $options);
 
+
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
@@ -78,7 +79,7 @@ class Form extends DynamicElement
             $objBlock->item(0)->addItem($this->button($buttonOptions, $position));
         }
 
-        $objBlock->item(0)->addItem($this->wrapperForm([], 'wrapper'));
+        $objBlock->item(0)->addItem($this->wrapperForm([], $sectionData['settings']['sections']['form']['form_id'] ?? '', 'wrapper'));
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
