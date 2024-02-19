@@ -78,8 +78,11 @@ abstract class Element extends LayoutUtils
             $objBlock->item()->setting('bgColorHex', $sectionData['style']['background-color']);
             $objBlock->item()->setting('mobileBgColorHex', $sectionData['style']['background-color']);
         }
-        if(isset($sectionData['settings']['sections']['background']['filename'])){
-            $objBlock->item()->setting('bgColorOpacity', $this->convertToNumeric($sectionData['style']['opacity_div']['opacity']));
+        if (isset($sectionData['settings']['sections']['background']['filename'])) {
+            $objBlock->item()->setting(
+                'bgColorOpacity',
+                $this->convertToNumeric($sectionData['style']['opacity_div']['opacity'])
+            );
             $objBlock->item()->setting(
                 'mobileBgColorOpacity',
                 $this->convertToNumeric($sectionData['style']['opacity_div']['opacity'])
@@ -450,11 +453,14 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function wrapperForm(array $options = [], $type = 'main')
+    protected function wrapperForm(array $options = [], $formId = '', $type = 'main')
     {
         $jsonDecode = $this->initData();
         $decoded = $jsonDecode['global'];
         $objForm = new ItemBuilder($decoded['wrapper--form'][$type]);
+        if (!empty($formId)) {
+            $objForm->item()->setting('form', $formId);
+        }
         if (!empty($options)) {
             foreach ($options as $key => $value) {
                 $objForm->item()->setting($key, $value);
@@ -608,7 +614,10 @@ abstract class Element extends LayoutUtils
             if ($pTag->hasChildNodes()) {
                 foreach ($pTag->childNodes as $childNode) {
 
-                    if ($childNode->nodeType === XML_ELEMENT_NODE && !in_array(strtolower($childNode->nodeName), $ignoreTags)) {
+                    if ($childNode->nodeType === XML_ELEMENT_NODE && !in_array(
+                            strtolower($childNode->nodeName),
+                            $ignoreTags
+                        )) {
                         return true;
                     }
 
