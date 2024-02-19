@@ -16,7 +16,10 @@
     "scssphp/scssphp": "^1.11",
     "zoon/puphpeteer": "1.6.0",
     "monolog/monolog": "^1.23",
-    "chrome-php/chrome": "^1.10"
+    "chrome-php/chrome": "^1.10",
+    "symfony/dotenv": "^5.4",
+    "symfony/runtime": "^5.4",
+    "symfony/http-foundation": "^5.4"
   },
   "autoload": {
     "psr-0": {
@@ -34,5 +37,10 @@
       "type": "vcs",
       "url": "https://github.com/golovencoserghei/rialto.git"
     }
-  ]
+  ],
+  "config": {
+    "allow-plugins": {
+      "symfony/runtime": true
+    }
+  }
 }
