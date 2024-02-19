@@ -40,13 +40,12 @@ RUN rm google-chrome-stable_121.0.6167.184-1_amd64.deb
 RUN rm -rf /var/lib/apt/lists/*
 
 ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION v18.17.0
 RUN mkdir -p $NVM_DIR
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
-ENV NODE_VERSION v18.17.0
 RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION"
 ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
-
 
 # download tini
 ARG TINI_VERSION='v0.19.0'
@@ -56,16 +55,18 @@ RUN chmod +x /usr/local/bin/tini
 COPY --from=stage_composer /vendor ./
 COPY . ./
 
-RUN npm i && npm build:prod
-RUN mkdir -p var/log && mkdir -p var/cache
-RUN chown -R www-data:www-data var/log && chown -R www-data:www-data var/cache
+RUN npm i && npm run build:prod
 
 COPY .docker/nginx/nginx.conf /etc/nginx/sites-enabled/default
 COPY .docker/entrypoint.sh /usr/local/bin/docker-entrypoint
 
+RUN mkdir -p var/log && mkdir -p var/cache
+RUN chown -R www-data:www-data var/log && chown -R www-data:www-data var/cache
+
 ENTRYPOINT ["tini", "docker-entrypoint", "--"]
 
 CMD []
+
 FROM production as development
 COPY --from=stage_composer /usr/bin/composer /usr/bin/composer
 
