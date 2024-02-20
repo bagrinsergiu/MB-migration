@@ -163,7 +163,8 @@ const ex3: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-facebook"
+                name: "facebook-square",
+                type: "fa"
               }
             },
             {
@@ -173,7 +174,8 @@ const ex3: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-twitter"
+                name: "logo-twitter",
+                type: "fa"
               }
             }
           ],
@@ -272,7 +274,8 @@ const ex5: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "email-85"
+                name: "email-85",
+                type: "fa"
               }
             }
           ],
@@ -361,7 +364,8 @@ const ex6: Data = {
                 _styles: ["icon"],
                 customSize: 26,
                 name: "apple",
-                padding: 7
+                padding: 7,
+                type: "fa"
               }
             }
           ],
@@ -450,7 +454,8 @@ const ex7: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "user-run"
+                name: "user-run",
+                type: "fa"
               }
             }
           ],
@@ -517,7 +522,8 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-facebook"
+                name: "facebook-square",
+                type: "fa"
               }
             },
             {
@@ -527,7 +533,8 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-twitter"
+                name: "logo-twitter",
+                type: "fa"
               }
             }
           ],
@@ -564,7 +571,8 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-facebook"
+                name: "facebook-square",
+                type: "fa"
               }
             },
             {
@@ -574,7 +582,8 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-twitter"
+                name: "logo-twitter",
+                type: "fa"
               }
             }
           ],
@@ -642,7 +651,8 @@ const ex9: Data = {
                 _styles: ["icon"],
                 customSize: 26,
                 name: "apple",
-                padding: 7
+                padding: 7,
+                type: "fa"
               }
             }
           ],
