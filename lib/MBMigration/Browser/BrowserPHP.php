@@ -33,7 +33,7 @@ class BrowserPHP implements BrowserInterface
     {
         if (is_null($logger)) {
             $logger = new \Monolog\Logger('my_logger');
-            $logger->pushHandler(new StreamHandler('php://stdout', LogLevel::DEBUG));
+            $logger->pushHandler(new StreamHandler('php://stdout', $_ENV['CHROME_LOG_LEVEL']));
         }
 
         $browserFactory = new BrowserFactory($chromeExecutable);
