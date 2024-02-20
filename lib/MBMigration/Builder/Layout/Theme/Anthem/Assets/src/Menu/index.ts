@@ -1,7 +1,7 @@
 import { getGlobalMenuModel } from "../utils/getGlobalMenuModel";
 import { getModel } from "./utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
-import { createData, getData } from "elements/src/utils/getData";
+import { createData } from "elements/src/utils/getData";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { prefixed } from "utils/src/models/prefixed";
 
@@ -146,7 +146,5 @@ const run = (entry: Entry): Output => {
 
 // For development
 // window.isDev = true;
-const data = getData();
-const output = run(data);
 
-export default output;
+export { run };
