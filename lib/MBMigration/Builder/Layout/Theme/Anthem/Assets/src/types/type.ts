@@ -12,8 +12,7 @@ declare global {
   interface Window {
     isDev?: boolean;
     elementId?: string;
-    iconModel?: Record<string, Literal>;
-    buttonModel?: Record<string, Literal>;
     menuModel?: Record<string, Literal>;
+    brizy?: Record<string, unknown>;
   }
 }
