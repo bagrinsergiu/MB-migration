@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "workspaces": [
     "packages/*",
-    "node-puppeteer",
     "lib/MBMigration/Builder/Layout/Theme/Voyage/Assets",
     "lib/MBMigration/Builder/Layout/Theme/Anthem/Assets",
     "lib/MBMigration/Builder/Layout/Theme/Solstice/Assets",
@@ -30,6 +29,6 @@
     "puppeteer": "^21.5.0"
   },
   "devDependencies": {
-    "turbo": "^1.11.3"
+    "turbo": "^1.12.4"
   }
 }
