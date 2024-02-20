@@ -89,13 +89,13 @@ const codeToBuilderMap: Record<string, string> = {
   57351: "apple",
   61817: "apple",
 
-  57686: "pin-3",
+  57686: "map-marker-alt",
 
-  mail: "email-85",
-  57892: "email-85",
-  57380: "email-85",
+  mail: "envelope",
+  57892: "envelope",
+  57380: "envelope",
 
-  57936: "note-03",
+  57936: "music",
 
   facebook: "facebook-square",
   57895: "facebook-square",
@@ -103,25 +103,25 @@ const codeToBuilderMap: Record<string, string> = {
   61570: "facebook-square",
   61594: "facebook",
 
-  youtube: "logo-youtube",
-  58009: "logo-youtube",
-  58521: "logo-youtube",
-  62513: "logo-youtube",
+  youtube: "youtube",
+  58009: "youtube",
+  58521: "youtube",
+  62513: "youtube",
 
-  vimeo: "logo-vimeo",
-  57993: "logo-vimeo",
+  vimeo: "vimeo-v",
+  57993: "vimeo-v",
 
-  twitter: "logo-twitter",
-  57990: "logo-twitter",
-  58503: "logo-twitter",
-  57991: "logo-twitter",
+  twitter: "twitter",
+  57990: "twitter",
+  58503: "twitter",
+  57991: "twitter",
 
-  instagram: "logo-instagram",
-  58624: "logo-instagram",
-  58112: "logo-instagram",
-  61805: "logo-instagram",
+  instagram: "instagram",
+  58624: "instagram",
+  58112: "instagram",
+  61805: "instagram",
 
-  58211: "circle-right-37",
+  58211: "arrow-alt-circle-right",
 
   63244: "user-run",
 

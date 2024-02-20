@@ -55,7 +55,7 @@ const ex1: Data = {
                 _styles: ["button"],
                 text: "I'm New ",
                 borderStyle: "none",
-                iconName: "circle-right-37",
+                iconName: "arrow-alt-circle-right",
                 linkExternal: "/about-us/who-we-are",
                 linkType: "external",
                 linkExternalBlank: "off"
@@ -174,7 +174,7 @@ const ex3: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-twitter",
+                name: "twitter",
                 type: "fa"
               }
             }
@@ -274,7 +274,7 @@ const ex5: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "email-85",
+                name: "envelope",
                 type: "fa"
               }
             }
@@ -533,7 +533,7 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-twitter",
+                name: "twitter",
                 type: "fa"
               }
             }
@@ -582,7 +582,7 @@ const ex8: Data = {
                 _styles: ["icon"],
                 padding: 7,
                 customSize: 26,
-                name: "logo-twitter",
+                name: "twitter",
                 type: "fa"
               }
             }
@@ -763,7 +763,7 @@ const ex10: Data = {
                 _styles: ["button"],
                 text: "I'm New ",
                 borderStyle: "none",
-                iconName: "circle-right-37",
+                iconName: "arrow-alt-circle-right",
                 linkExternal: "/about-us/who-we-are",
                 linkExternalBlank: "off",
                 linkType: "external"
