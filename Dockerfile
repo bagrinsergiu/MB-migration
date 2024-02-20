@@ -10,18 +10,8 @@ RUN composer install --ignore-platform-reqs --prefer-dist --no-interaction --no-
 RUN rm -rf /root/.composer
 
 FROM node:18-alpine as node
-WORKDIR /assets
-COPY ./packages ./
-COPY ./package.json ./
-COPY ./package-lock.json ./
-
-COPY ./lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/package* lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/
-COPY ./lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/package* lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/
-COPY ./lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/package* lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/
-COPY ./lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/package* lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/
-COPY ./lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/package* lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/
-COPY ./lib/MBMigration/Builder/Layout/Theme/Ember/Asset/package* lib/MBMigration/Builder/Layout/Theme/Ember/Asset/
-
+WORKDIR /build
+COPY ./ ./
 RUN npm i && npm run build:prod
 
 FROM php:7.4-fpm as production
@@ -53,14 +43,6 @@ RUN curl -LO http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-sta
 
 RUN rm -rf /var/lib/apt/lists/*
 
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION v18.17.0
-RUN mkdir -p $NVM_DIR
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
-RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION"
-ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
-
 # download tini
 ARG TINI_VERSION='v0.19.0'
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/local/bin/tini
@@ -68,8 +50,8 @@ RUN chmod +x /usr/local/bin/tini
 
 COPY --from=stage_composer /vendor ./
 COPY . ./
-
-RUN npm i && npm run build:prod
+RUN rm -rf lib/MBMigration/Builder/Layout/Theme/*/Assets/*
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/*/Assets/dist ./
 
 COPY .docker/nginx/nginx.conf /etc/nginx/sites-enabled/default
 COPY .docker/entrypoint.sh /usr/local/bin/docker-entrypoint

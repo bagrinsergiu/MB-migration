@@ -16,6 +16,6 @@ services:
     environment:
       APP_ENV: dev
       APP_DEBUG: 1
-#    volumes:
-#      - ./:/project:delegated
+    volumes:
+      - ./:/project:delegated
 

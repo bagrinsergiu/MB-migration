@@ -1,25 +1,17 @@
-./.git
-./.turbo
-./.idea
-./bin
-./vendor
-./node_modules
-./docker-compose.yamluumb-migration-migration:latest
+*
 
-lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/*
-!lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/dist
+!packages
+!package.json
+!package-lock.json
+!composer.lock
+!composer.json
+!turbo.json
+!./public
+!./lib
+!.env
+!.docker
 
-lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/*
-!lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/dist
 
-lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/*
-!lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/dist
+lib/MBMigration/Builder/Layout/Theme/*/Assets/node_modules
+lib/MBMigration/Builder/Layout/Theme/*/Assets/dist
 
-lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/*
-!lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/dist
-
-lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/*
-!lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/dist
-
-lib/MBMigration/Builder/Layout/Theme/Ember/Asset/*
-!lib/MBMigration/Builder/Layout/Theme/Ember/Asset/dist
