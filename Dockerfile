@@ -20,7 +20,8 @@ ARG UID=1000
 ARG PHP_FPM_INI_DIR="/usr/local/etc/php"
 COPY .docker/conf.d/php.ini $PHP_FPM_INI_DIR/conf.d/php.ini
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update
+RUN apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libpng-dev \

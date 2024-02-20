@@ -57,7 +57,6 @@ class BrowserPHP implements BrowserInterface
                 '--disable-setuid-sandbox',
                 '--disable-web-security',
             ],
-            'userDataDir' => JSON_PATH."/chrome_data",
             //'excludedSwitches'=>['--disable-background-networking']
         ]);
 
