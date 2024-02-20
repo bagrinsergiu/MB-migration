@@ -9,9 +9,23 @@ COPY ./composer.lock ./
 RUN composer install --ignore-platform-reqs --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts  --no-dev
 RUN rm -rf /root/.composer
 
+FROM node:18-alpine as node
+WORKDIR /assets
+COPY ./packages ./
+COPY ./package.json ./
+COPY ./package-lock.json ./
+
+COPY ./lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/package* lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/
+COPY ./lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/package* lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/
+COPY ./lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/package* lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/
+COPY ./lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/package* lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/
+COPY ./lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/package* lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/
+COPY ./lib/MBMigration/Builder/Layout/Theme/Ember/Asset/package* lib/MBMigration/Builder/Layout/Theme/Ember/Asset/
+
+RUN npm i && npm run build:prod
+
 FROM php:7.4-fpm as production
 WORKDIR /project
-COPY --from=stage_composer /usr/bin/composer /usr/bin/composer
 ARG UID=1000
 ARG PHP_FPM_INI_DIR="/usr/local/etc/php"
 COPY .docker/conf.d/php.ini $PHP_FPM_INI_DIR/conf.d/php.ini
@@ -33,9 +47,9 @@ RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
-RUN curl -LO http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_121.0.6167.184-1_amd64.deb
-RUN apt-get install -y ./google-chrome-stable_121.0.6167.184-1_amd64.deb
-RUN rm google-chrome-stable_121.0.6167.184-1_amd64.deb
+RUN curl -LO http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_121.0.6167.184-1_amd64.deb && \
+    apt-get install -y ./google-chrome-stable_121.0.6167.184-1_amd64.deb && \
+    rm google-chrome-stable_121.0.6167.184-1_amd64.deb
 
 RUN rm -rf /var/lib/apt/lists/*
 
