@@ -44,6 +44,14 @@ RUN curl -LO http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-sta
 
 RUN rm -rf /var/lib/apt/lists/*
 
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION v18.17.0
+RUN mkdir -p $NVM_DIR
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION"
+ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
+
 # download tini
 ARG TINI_VERSION='v0.19.0'
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/local/bin/tini
