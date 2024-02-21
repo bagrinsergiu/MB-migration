@@ -119,7 +119,7 @@ class Config
 
         self::$path = $path;
         self::$pathTmp = $path.'/mb_tmp/';
-        self::$pathLogFile = $path.'/mb_log/{{PREFIX}}.log';
+        self::$pathLogFile = 'php://stdout';
 
         self::$endPointApi = [
             'globalBlocks' => '/global_blocks',

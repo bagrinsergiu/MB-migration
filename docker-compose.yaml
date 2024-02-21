@@ -21,9 +21,9 @@ services:
   postgress:
       image: cagataygurturk/docker-ssh-tunnel
       volumes:
-        - $HOME/.ssh:/root/ssh:ro
+        - ./bin/.ssh:/root/ssh:ro
       environment:
-        TUNNEL_HOST: 'office'
-        REMOTE_HOST: 0.0.0.0
-        LOCAL_PORT: 50000
-        REMOTE_PORT: 50000
+        TUNNEL_HOST: 'ministry_brands'
+        REMOTE_HOST: page-api-production-cluster.cluster-cupqeojhh9pu.us-west-2.rds.amazonaws.com
+        REMOTE_PORT: 5432
+        LOCAL_PORT: 5432

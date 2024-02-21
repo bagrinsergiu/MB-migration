@@ -6,3 +6,4 @@
 /mbaaa
 *.local
 *.http
+bin/.ssh/*.key
