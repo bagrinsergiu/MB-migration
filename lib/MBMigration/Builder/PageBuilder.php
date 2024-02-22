@@ -97,7 +97,7 @@ class PageBuilder
             return true;
 
         } else {
-            $this->browser = Browser::instance($layoutBasePath);
+            $this->browser = BrowserPHP::instance($layoutBasePath);
             $browserPage = $this->browser->openPage($url, $design);
             $browserPage->globalsEval();
             $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
