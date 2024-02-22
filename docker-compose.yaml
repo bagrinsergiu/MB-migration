@@ -3,7 +3,6 @@ version: '3.8'
 x-environment:
   - &service
 
-
 services:
   migration:
     platform: linux/amd64
@@ -18,12 +17,3 @@ services:
       APP_DEBUG: 1
     volumes:
       - ./:/project:delegated
-  postgress:
-      image: cagataygurturk/docker-ssh-tunnel
-      volumes:
-        - ./bin/.ssh:/root/ssh:ro
-      environment:
-        TUNNEL_HOST: 'ministry_brands'
-        REMOTE_HOST: page-api-production-cluster.cluster-cupqeojhh9pu.us-west-2.rds.amazonaws.com
-        REMOTE_PORT: 5432
-        LOCAL_PORT: 5432

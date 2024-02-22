@@ -1,3 +1,0 @@
-#!/bin/sh
-cd $(dirname $0)/../
-ssh -4 -o StrictHostKeyChecking=no -o ExitOnForwardFailure=yes  -L 0.0.0.0:50000:page-api-production-cluster.cluster-cupqeojhh9pu.us-west-2.rds.amazonaws.com:5432 brizy_contractor@54.149.121.133 -i dev/key
