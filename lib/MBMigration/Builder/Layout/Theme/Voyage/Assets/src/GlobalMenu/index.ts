@@ -17,7 +17,7 @@ const globalMenuExtractor = () => {
   if (color) {
     window.menuModel = {
       hoverColorHex: color.hex,
-      hoverColorOpacity: isNaN(opacity) ? color.opacity : opacity
+      hoverColorOpacity: isNaN(opacity) ? color.opacity ?? 1 : opacity
     };
   }
 };

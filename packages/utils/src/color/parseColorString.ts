@@ -2,7 +2,7 @@ import { MValue } from "../types";
 
 export interface Color {
   hex: string;
-  opacity: string;
+  opacity?: string;
 }
 
 const hexRegex = /^#(?:[A-Fa-f0-9]{3}){1,2}$/;
@@ -32,7 +32,9 @@ function parseRgb(color: string): MValue<[number, number, number]> {
   return undefined;
 }
 
-function parseRgba(color: string): MValue<[number, number, number, number]> {
+export function parseRgba(
+  color: string
+): MValue<[number, number, number, number]> {
   const matches = rgbaRegex.exec(color);
 
   if (matches) {
@@ -46,16 +48,14 @@ function parseRgba(color: string): MValue<[number, number, number, number]> {
 export function parseColorString(colorString: string): MValue<Color> {
   if (isHex(colorString)) {
     return {
-      hex: colorString,
-      opacity: "1"
+      hex: colorString
     };
   }
 
   const rgbResult = parseRgb(colorString);
   if (rgbResult) {
     return {
-      hex: fromRgb(rgbResult),
-      opacity: "1"
+      hex: fromRgb(rgbResult)
     };
   }
 

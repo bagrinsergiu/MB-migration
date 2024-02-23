@@ -18,26 +18,19 @@ import * as Obj from "utils/src/reader/object";
 import * as Str from "utils/src/reader/string";
 import { uuid } from "utils/src/uuid";
 
-const getColor = mPipe(
-  Obj.readKey("color"),
-  Str.read,
-  parseColorString,
-  normalizeOpacity
-);
+const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
 const getBgColor = mPipe(
   Obj.readKey("background-color"),
   Str.read,
-  parseColorString,
-  normalizeOpacity
+  parseColorString
 );
+
 const getBorderWidth = mPipe(Obj.readKey("border-width"), Num.read);
 const getTransform = mPipe(Obj.readKey("text-transform"), Str.read);
 const getText = pipe(Obj.readKey("text"), Str.read, onNullish("BUTTON"));
 
 const getBgColorOpacity = (color: Color, opacity: number): number => {
-  const colorOpacity = +color.opacity;
-
-  if (colorOpacity === 0) {
+  if (color.opacity && +color.opacity === 0) {
     return 0;
   }
 
@@ -53,8 +46,14 @@ export const getStyleModel = (node: Element): Record<string, Literal> => {
 
   return {
     ...(color && {
-      colorHex: color.hex,
-      colorOpacity: +color.opacity,
+      colorHex: normalizeOpacity({
+        hex: color.hex,
+        opacity: color.opacity ?? String(opacity)
+      }).hex,
+      colorOpacity: normalizeOpacity({
+        hex: color.hex,
+        opacity: color.opacity ?? String(opacity)
+      }).opacity,
       colorPalette: ""
     }),
     ...(bgColor && {
