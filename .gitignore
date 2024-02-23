@@ -9,3 +9,4 @@
 bin/.ssh/*.key
 .phpunit.result.cache
 /phpunit.xml
+./var/**

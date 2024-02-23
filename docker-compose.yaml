@@ -17,3 +17,13 @@ services:
       APP_DEBUG: 1
     volumes:
       - ./:/project:delegated
+  dependencies:
+    platform: linux/amd64
+    restart: "no"
+    build:
+      context: ./
+      target: development
+    entrypoint: /usr/bin/composer
+    command: install
+    volumes:
+      - ./:/project:delegated
