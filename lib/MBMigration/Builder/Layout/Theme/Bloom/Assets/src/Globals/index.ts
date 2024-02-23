@@ -1,3 +1,1 @@
-import { globalExtractor } from "elements/src/Globals";
-
-globalExtractor();
+export { globalExtractor } from "elements/src/Globals";

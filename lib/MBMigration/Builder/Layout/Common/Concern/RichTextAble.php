@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
-use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyEmbedCodeComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
@@ -16,7 +16,7 @@ trait RichTextAble
     /**
      * Process and add all items the same brizy section
      */
-    protected function handleRichTextHead(ElementContextInterface $data, BrowserPage $browserPage): BrizyComponent
+    protected function handleRichTextHead(ElementContextInterface $data, BrowserPageInterface $browserPage): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
@@ -51,7 +51,7 @@ trait RichTextAble
 
     protected function handleRichTextHeadFromItems(
         ElementContextInterface $data,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         callable $acllback = null
     ): BrizyComponent {
         $mbSectionItem = $data->getMbSection();
@@ -95,7 +95,7 @@ trait RichTextAble
     /**
      * Process and add all items the same brizy section
      */
-    protected function handleRichTextItems(ElementContextInterface $data, BrowserPage $browserPage): BrizyComponent
+    protected function handleRichTextItems(ElementContextInterface $data, BrowserPageInterface $browserPage): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
@@ -138,7 +138,7 @@ trait RichTextAble
      */
     protected function handleRichTextItem(
         ElementContextInterface $data,
-        BrowserPage $browserPage
+        BrowserPageInterface $browserPage
     ) {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -180,7 +180,7 @@ trait RichTextAble
     private function handleTextItem(
         $mbSectionItem,
         BrizyComponent $brizySection,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
@@ -222,7 +222,7 @@ trait RichTextAble
         $mbSectionItemId,
         $mbSectionItem,
         BrizyComponent $brizyComponent,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {

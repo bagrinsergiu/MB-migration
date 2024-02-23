@@ -119,7 +119,7 @@ class Config
 
         self::$path = $path;
         self::$pathTmp = $path.'/mb_tmp/';
-        self::$pathLogFile = $path.'/mb_log/{{PREFIX}}.log';
+        self::$pathLogFile = 'php://stdout';
 
         self::$endPointApi = [
             'globalBlocks' => '/global_blocks',
@@ -293,18 +293,8 @@ class Config
      */
     function checkAndDeleteFile($path)
     {
-        $testFile = $path.'/test_file.log';
-        $handle = @fopen($testFile, 'w');
-
-        if ($handle === false) {
-            throw new Exception('Unable to create or write a file at the specified path.');
-        }
-
-        fwrite($handle, "test");
-        fclose($handle);
-
-        if (!unlink($testFile)) {
-            throw new Exception('The file was successfully verified and created, but failed to delete the file.');
+        if (!is_writable($path)) {
+            throw new Exception("The path [{$path}] is no writable.");
         }
     }
 

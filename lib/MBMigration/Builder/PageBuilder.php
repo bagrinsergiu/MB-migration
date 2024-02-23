@@ -3,6 +3,7 @@
 namespace MBMigration\Builder;
 
 use MBMigration\Browser\Browser;
+use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\LayoutElementFactory;
@@ -51,15 +52,14 @@ class PageBuilder
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
 
         $layoutBasePath = dirname(__FILE__)."/Layout";
-        $browser = Browser::instance($layoutBasePath);
-        $this->browser = $browser;
-        $browserPage = $browser->openPage($url, $design);
 
-        $browserPage->globalsEval();
+
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
 //        file_put_contents(JSON_PATH."/htmlPage.html", file_get_contents($url));
         if ($design !== 'Anthem' && $design !== 'Solstice') {
+            $this->browser = BrowserPHP::instance($layoutBasePath);
+            $browserPage = $this->browser->openPage($url, $design);
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder);
             $themeElementFactory = $layoutElementFactory->getFactory($design);
@@ -79,7 +79,8 @@ class PageBuilder
                 $fontFamily['Default'],
                 $themeElementFactory,
                 $mainCollectionType,
-                $itemsID
+                $itemsID,
+                $slug
             );
 
             $_WorkClassTemplate = new $workClass($themeContext);
@@ -91,20 +92,24 @@ class PageBuilder
 
             Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
             $this->sendStatus($slug, ExecutionTimer::stop());
-            $browser->closePage();
+            $this->browser->closePage();
 
             return true;
 
         } else {
-            $_WorkClassTemplate = new $workClass($browserPage, $browser, $this->brizyAPI);
+            $this->browser = BrowserPHP::instance($layoutBasePath);
+            $browserPage = $this->browser->openPage($url, $design);
+            $browserPage->globalsEval();
+            $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                 Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
                 $this->sendStatus($slug, ExecutionTimer::stop());
+
 //                $browser->closePage();
                 return true;
             } else {
                 Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
-                $browser->closePage();
+                $this->browser->closePage();
 
                 return false;
             }

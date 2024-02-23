@@ -2,10 +2,8 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
-use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\BrizyComponent\BrizyImageComponent;
-use MBMigration\Builder\BrizyComponent\BrizyWrapperComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrizyKitNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
@@ -19,7 +17,7 @@ trait DanationsAble
      */
     protected function handleDonations(
         ElementContextInterface $data,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         array $brizyKit
     ): BrizyComponent {
 
@@ -63,7 +61,7 @@ trait DanationsAble
     }
 
     /**
-     * @param BrowserPage $browserPage
+     * @param BrowserPageInterface $browserPage
      * @param string $selector
      * @param ElementContextInterface $data
      * @param $donationButton
@@ -73,15 +71,15 @@ trait DanationsAble
      */
     protected function setButtonStyles(
         BrizyComponent $brizyDonationButton,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         string $selector,
         ElementContextInterface $data,
         array $mbSection
     ): BrizyComponent {
         $buttonStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'SELECTOR' => $selector,
+                'selector' => $selector,
                 'STYLE_PROPERTIES' => [
                     'font-family',
                     'font-size',
@@ -155,17 +153,17 @@ trait DanationsAble
 
     protected function setHoveButtonStyles(
         BrizyComponent $brizyDonationButton,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         string $selector,
         ElementContextInterface $data,
         array $mbSection
     ): BrizyComponent {
         $browserPage->triggerEvent('hover', $selector);
         $buttonStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'SELECTOR' => $selector,
-                'STYLE_PROPERTIES' => [
+                'selector' => $selector,
+                'styleProperties' => [
                     'font-family',
                     'font-size',
                     'font-weight',
@@ -178,8 +176,8 @@ trait DanationsAble
                     'border-top-style',
                     'background-color',
                 ],
-                'FAMILIES' => $data->getFontFamilies(),
-                'DEFAULT_FAMILY' => $data->getDefaultFontFamily(),
+                'families' => $data->getFontFamilies(),
+                'defaultFamily' => $data->getDefaultFontFamily(),
             ]
         );
 

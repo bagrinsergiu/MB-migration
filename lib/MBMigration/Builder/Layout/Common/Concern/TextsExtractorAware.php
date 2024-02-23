@@ -2,21 +2,21 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
-use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
 trait TextsExtractorAware
 {
     protected function extractTexts(
         $selectorSectionStyles,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ) {
-        $richTextBrowserData = $browserPage->evaluateScript('Text.js', [
-            'SELECTOR' => $selectorSectionStyles,
-            'FAMILIES' => $families,
-            'DEFAULT_FAMILY' => $defaultFont,
+        $richTextBrowserData = $browserPage->evaluateScript('brizy.getText', [
+            'selector' => $selectorSectionStyles,
+            'families' => $families,
+            'defaultFamily' => $defaultFont,
         ]);
 
         if (isset($richTextBrowserData['error'])) {

@@ -4,3 +4,6 @@
 **/node_modules/
 .turbo
 /mbaaa
+*.local
+*.http
+bin/.ssh/*.key

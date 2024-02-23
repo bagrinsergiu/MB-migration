@@ -2,7 +2,6 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
-use MBMigration\Browser\BrowserPage;
 use MBMigration\Browser\BrowserPageInterface;
 
 final class ThemeContext implements ThemeContextInterface
@@ -23,7 +22,7 @@ final class ThemeContext implements ThemeContextInterface
     private $elementFactory;
 
     /**
-     * @var BrowserPage
+     * @var BrowserPageInterface
      */
     private $browserPage;
 
@@ -67,7 +66,7 @@ final class ThemeContext implements ThemeContextInterface
 
     public function __construct(
         string $layoutName,
-        BrowserPage $browserPage,
+        BrowserPageInterface $browserPage,
         array $brizyKit,
         array $mbMenu,
         array $mbHeadSection,

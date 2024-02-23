@@ -12,7 +12,7 @@ abstract class AbstractTheme implements ThemeInterface
     /**
      * @var ThemeContextInterface
      */
-    private $themeContext;
+    protected $themeContext;
 
 
     public function __construct(ThemeContextInterface $themeContext)
@@ -32,6 +32,8 @@ abstract class AbstractTheme implements ThemeInterface
         $brizyPage = new BrizyPage;
         $brizyComponent = new BrizyComponent(['value' => ['items' => []]]);
         $elementFactory = $this->themeContext->getElementFactory();
+
+        $brizyPage = $this->beforeTransformBlocks($brizyPage, $mbPageSections);
 
         $elementContext = ElementContext::instance(
             $this->themeContext,
@@ -60,7 +62,7 @@ abstract class AbstractTheme implements ThemeInterface
                 $brizySection = $element->transformToItem($elementContext);
                 $brizyPage->addItem($brizySection);
             } catch (ElementNotFound|BrowserScriptException $e) {
-                printf("\nException: %s",$e->getMessage());
+                printf("\nException: %s", $e->getMessage());
                 continue;
             }
         }
@@ -79,7 +81,31 @@ abstract class AbstractTheme implements ThemeInterface
                 )
         );
 
+        $brizyPage = $this->afterTransformBlocks($brizyPage, $mbPageSections);
+
         return $brizyPage;
     }
 
+    public function beforeTransformBlocks(BrizyPage $page, array $mbPageSections): BrizyPage
+    {
+        $browserPage = $this->themeContext->getBrowserPage();
+
+        $selector = $this->getThemeMenuItemSelector(); //"#main-navigation li:not(.selected) a";
+        if ($browserPage->triggerEvent('hover', $selector)) {
+            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
+        }
+
+        if ($browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()) &&
+            $browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector())) {
+            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
+            $browserPage->triggerEvent('hover', 'html', [1, 1]);
+        }
+
+        return $page;
+    }
+
+    public function afterTransformBlocks(BrizyPage $page, array $mbPageSections): BrizyPage
+    {
+        return $page;
+    }
 }
