@@ -36,6 +36,7 @@ return static function (array $context, Request $request): Response {
         $config = new Config(
             $context['BRIZY_CLOUD_HOST'],
             $context['LOG_PATH'],
+            $context['CACHE_PATH'],
             $context['BRIZY_CLOUD_TOKEN'],
             $settings
         );
@@ -53,7 +54,6 @@ return static function (array $context, Request $request): Response {
     $mb_page_slug = $request->get('mb_page_slug') ?? '';
 
     # start the DB tunnel
-    //`ssh -4 -g -o StrictHostKeyChecking=no -o ExitOnForwardFailure=yes -f -N -L 50000:0.0.0.0:50000 b@87.255.68.163 -i /root/.ssh/office || exit 1`;
     try {
         $migrationPlatform = new \MBMigration\MigrationPlatform($config, $mb_page_slug);
         $result = $migrationPlatform->start($mb_project_uuid, $brz_project_id);

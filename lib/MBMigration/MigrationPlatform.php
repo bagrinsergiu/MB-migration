@@ -60,14 +60,13 @@ class MigrationPlatform
 
     public function __construct(Config $config, $buildPage = '')
     {
-        $this->cache = VariableCache::getInstance();
-        $this->cache->init();
+        $this->cache = VariableCache::getInstance(Config::$cachePath);
 
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
         register_shutdown_function([$this->errorDump, 'handleFatalError']);
         Utils::MESSAGES_POOL('initialization');
-        $setConfig = $config;
+
         $this->finalSuccess['status'] = 'start';
 
         $this->buildPage = $buildPage;
@@ -79,7 +78,9 @@ class MigrationPlatform
             Utils::MESSAGES_POOL(json_encode(JS::RichText(8152825, 'https://www.crosspointcoc.org/')));
         } else {
             try {
+                $this->cache->loadDump($projectID_MB, $projectID_Brizy);
                 $this->run($projectID_MB, $projectID_Brizy);
+                $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
             } catch (Exception $e) {
                 Utils::MESSAGES_POOL($e->getMessage());
 
@@ -106,7 +107,9 @@ class MigrationPlatform
 
 //        $this->projectMetadata($projectID_Brizy);
 
-        $projectID_MB = MBProjectDataCollector::getIdByUUID($projectUUID_MB);
+        if (!($projectID_MB = $this->cache->get('projectId_MB'))) {
+            $projectID_MB = MBProjectDataCollector::getIdByUUID($projectUUID_MB);
+        }
 
         if ($projectID_Brizy == 0) {
             $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4352671, 'id');
@@ -119,7 +122,9 @@ class MigrationPlatform
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
 
-        $this->cache->set('container', $this->brizyApi->getProjectContainer($this->projectID_Brizy));
+        if (!$this->cache->get('container')) {
+            $this->cache->set('container', $this->brizyApi->getProjectContainer($this->projectID_Brizy));
+        }
 
         $this->init($projectID_MB, $this->projectID_Brizy);
         $this->checkDesign($this->parser->getDesignSite());
@@ -127,21 +132,25 @@ class MigrationPlatform
         $this->createProjectFolders();
 
         $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
-        $graphToken = $this->brizyApi->getGraphToken($this->projectID_Brizy);
-        $this->cache->set('graphToken', $graphToken);
-        //file_put_contents(JSON_PATH.'/brizy_api_token.json',$graphToken);
+
+        if (!($graphToken = $this->cache->get('graphToken'))) {
+            $graphToken = $this->brizyApi->getGraphToken($this->projectID_Brizy);
+            $this->cache->set('graphToken', $graphToken);
+        }
+
         $this->QueryBuilder = new QueryBuilder(
             $this->graphApiBrizy,
-            $this->brizyApi->getGraphToken($this->projectID_Brizy)
+            $graphToken
         );
 
         $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
 
         $this->getAllPage();
 
-        $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0).' Message: Site not found');
-
-        $this->cache->set('settings', $settings);
+        if (!$this->cache->get('settings')) {
+            $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0).' Message: Site not found');
+            $this->cache->set('settings', $settings);
+        }
 
         $this->brizyApi->setMetaDate();
 
@@ -159,11 +168,13 @@ class MigrationPlatform
         }
 
         $this->createPalette();
-        $mainSection = $this->parser->getMainSection();
-        $this->updateColorSection($mainSection);
-        Utils::log('Upload Logo menu', 1, 'createMenu');
-        $mainSection = $this->uploadPicturesFromSections($mainSection);
-        $this->cache->set('mainSection', $mainSection);
+        if (!$this->cache->get('mainSection')) {
+            $mainSection = $this->parser->getMainSection();
+            $this->updateColorSection($mainSection);
+            Utils::log('Upload Logo menu', 1, 'createMenu');
+            $mainSection = $this->uploadPicturesFromSections($mainSection);
+            $this->cache->set('mainSection', $mainSection);
+        }
 //        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
         $this->createBlankPages($parentPages);
         $this->createMenuStructure();
@@ -252,7 +263,9 @@ class MigrationPlatform
                     continue;
                 }
             }
-            if($page['landing'] !== true){ continue; }
+            if ($page['landing'] !== true) {
+                continue;
+            }
             $this->collector($page);
         }
     }
@@ -267,13 +280,17 @@ class MigrationPlatform
         $this->cache->set('tookPage', $page);
         ExecutionTimer::start();
 
-        $preparedSectionOfThePage = $this->getItemsFromPage($page);
-        if (!$preparedSectionOfThePage) {
-            return;
+        if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage'))) {
+            $preparedSectionOfThePage = $this->getItemsFromPage($page);
+            if (!$preparedSectionOfThePage) {
+                return;
+            }
+            $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
+            $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
+            $this->cache->set('preparedSectionOfThePage', $preparedSectionOfThePage);
         }
 
-        $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
-        $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
+
 //        file_put_contents(JSON_PATH.'/preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
         $collectionItem = $this->getCollectionItem($page['slug']);
         if (!$collectionItem) {
@@ -381,6 +398,10 @@ class MigrationPlatform
      */
     private function createMenuStructure(): void
     {
+        if ($this->cache->get('menuList')) {
+            return;
+        }
+
         Utils::log('Create menu structure', 1, 'createMenuStructure');
 
         $parentPages = $this->cache->get('menuList');
@@ -402,9 +423,6 @@ class MigrationPlatform
             'list' => $parentPages['list'],
             'data' => $result['data'] ?? '',
         ]);
-
-        $parentPages = $this->cache->get('menuList');
-//        file_put_contents(JSON_PATH.'/menuList.json',json_encode($parentPages));
     }
 
     private function transformToBrizyMenu(array $parentMenu): array
@@ -495,6 +513,10 @@ class MigrationPlatform
      */
     private function getAllPage(): void
     {
+        if ($this->cache->get('ListPages')) {
+            return;
+        }
+
         $collectionTypes = $this->emptyCheck(
             $this->QueryBuilder->getCollectionTypes(),
             self::trace(0).' Message: CollectionTypes not found'
@@ -600,6 +622,10 @@ class MigrationPlatform
      */
     private function createBlankPages(array &$parentPages, $mainLevel = true): void
     {
+        if ($this->cache->get('menuList')) {
+            return;
+        }
+
         Utils::log('Start created pages', 1, 'createBlankPages');
         $projectPages = $this->brizyApi->getAllProjectPages();
         $ProjectTitle = $this->cache->get('settings')['title'];
@@ -621,7 +647,12 @@ class MigrationPlatform
                     }
                 } else {
 //                    if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
-                    $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug'], $pages['name'], $title);
+                    $updateNameResult = $this->renameSlug(
+                        $projectPages['listPages']['home'],
+                        $pages['slug'],
+                        $pages['name'],
+                        $title
+                    );
                     $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
 //                    } else {
 //                        $newPage = $projectPages['listPages'][$pages['slug']];

@@ -70,11 +70,12 @@ class Config
      * @var array
      */
     private static $defaultSettings;
+    public static string $cachePath;
 
     /**
      * @throws Exception
      */
-    public function __construct(string $cloud_host, string $path, string $token, array $settings)
+    public function __construct(string $cloud_host, string $path, string $cachePath, string $token, array $settings)
     {
         $path = $this->checkPath($path);
 
@@ -117,6 +118,7 @@ class Config
         self::$urlGetApiToken = self::$cloud_host.'/api/projects/{project}/token';
         self::$urlGraphqlAPI = self::$cloud_host.'/graphql/{ProjectId}';
 
+        self::$cachePath = $cachePath;
         self::$path = $path;
         self::$pathTmp = $path.'/mb_tmp/';
         self::$pathLogFile = 'php://stdout';
