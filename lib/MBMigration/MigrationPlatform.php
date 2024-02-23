@@ -83,11 +83,11 @@ class MigrationPlatform
             } catch (Exception $e) {
                 Utils::MESSAGES_POOL($e->getMessage());
 
-                return false;
+                throw $e;
             } catch (GuzzleException $e) {
                 Utils::MESSAGES_POOL($e->getMessage());
 
-                return false;
+                throw $e;
             }
         }
 
