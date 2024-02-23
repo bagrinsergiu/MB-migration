@@ -127,7 +127,14 @@ class MigrationPlatform
         }
 
         $this->init($projectID_MB, $this->projectID_Brizy);
-        $this->checkDesign($this->parser->getDesignSite());
+
+        if (!$designName = $this->cache->get('designName')) {
+            $designName = $this->parser->getDesignSite();
+            $this->cache->set('designName',$designName);
+        }
+
+        $this->checkDesign($designName);
+
 
         $this->createProjectFolders();
 
