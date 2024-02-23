@@ -7,3 +7,5 @@
 *.local
 *.http
 bin/.ssh/*.key
+.phpunit.result.cache
+/phpunit.xml
