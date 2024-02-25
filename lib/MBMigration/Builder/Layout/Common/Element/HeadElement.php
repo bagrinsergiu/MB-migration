@@ -23,7 +23,11 @@ abstract class HeadElement extends AbstractElement
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
 
-            $headStyles = $this->extractBlockBrowserData($data->getMbSection()['sectionId'], $data->getFontFamilies(),$data->getDefaultFontFamily());
+            $headStyles = $this->extractBlockBrowserData(
+                $data->getMbSection()['sectionId'],
+                $data->getFontFamilies(),
+                $data->getDefaultFontFamily()
+            );
 
             $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
@@ -45,7 +49,7 @@ abstract class HeadElement extends AbstractElement
     }
 
     // region Menu methods
-    private function createMenu($menuList): array
+    protected function createMenu($menuList): array
     {
         $menuItems = $this->creatingMenuTree($menuList['list']);
 
@@ -62,6 +66,11 @@ abstract class HeadElement extends AbstractElement
             $blockMenu->getValue()->set_title($item['name']);
             $blockMenu->getValue()->set_url($item['slug'] == 'home' ? '/' : $item['slug']);
             $blockMenu->getValue()->set_id(bin2hex(random_bytes(16)));
+
+            if (isset($item['iconName']) && isset($item['iconType'])) {
+                $blockMenu->getValue()->set_iconName($item['iconName']);
+                $blockMenu->getValue()->set_iconType($item['iconType']);
+            }
 
             $menuSubItems = $this->creatingMenuTree($item['child']);
             $blockMenu->getValue()->set_items($menuSubItems);
@@ -121,7 +130,8 @@ abstract class HeadElement extends AbstractElement
     ): BrizyComponent {
         $menuItems = $this->createMenu($data->getMenu());
         $menuComponentValue = $component->getValue();
-        $menuComponentValue->set('items', $menuItems)
+        $menuComponentValue
+            ->set('items', $menuItems)
             ->set_menuSelected($data->getMenu()['uid']);
 
         // apply menu styles
@@ -133,7 +143,7 @@ abstract class HeadElement extends AbstractElement
         return $component;
     }
 
-    protected function extractBlockBrowserData($sectionId,$families,$defaultFamilies): array
+    protected function extractBlockBrowserData($sectionId, $families, $defaultFamilies): array
     {
         $menuSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
@@ -145,6 +155,7 @@ abstract class HeadElement extends AbstractElement
             ]
         );
 
+        $this->browserPage->screenshot("/project/var/log/test3.png");
         $menuStyles = $this->browserPage->evaluateScript(
             'brizy.getMenu',
             [
@@ -153,6 +164,7 @@ abstract class HeadElement extends AbstractElement
                 'defaultFamily' => $defaultFamilies,
             ]
         );
+        $this->browserPage->screenshot("/project/var/log/test4.png");
 
         return [
             'menu' => isset($menuStyles['data']) ? $menuStyles['data'] : [],

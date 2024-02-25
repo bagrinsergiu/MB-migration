@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\Checking;
 use MBMigration\Builder\ColorMapper\ColorMapper;
 use MBMigration\Builder\DebugBackTrace;
+use MBMigration\Builder\Layout\Common\MenuBuilderFactory;
 use MBMigration\Builder\PageBuilder;
 use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Utils\TextTools;
@@ -130,7 +131,7 @@ class MigrationPlatform
 
         if (!$designName = $this->cache->get('designName')) {
             $designName = $this->parser->getDesignSite();
-            $this->cache->set('designName',$designName);
+            $this->cache->set('designName', $designName);
         }
 
         $this->checkDesign($designName);
@@ -412,15 +413,16 @@ class MigrationPlatform
         Utils::log('Create menu structure', 1, 'createMenuStructure');
 
         $parentPages = $this->cache->get('menuList');
-        $mainMenu = $this->transformToBrizyMenu($parentPages['list']);
+        $design = $this->cache->get('design');
+        $brizyProject = $this->cache->get('projectId_Brizy');
+        $fonts = $this->cache->get('fonts', 'settings');
+        $brizyApi = $this->cache->get('brizyApi');
 
-        $data = [
-            'project' => $this->projectID_Brizy,
-            'name' => 'mainMenu',
-            'data' => json_encode($mainMenu),
-        ];
+        $menuBuilder = MenuBuilderFactory::instanceOfThemeMenuBuilder($design, $brizyProject, $brizyApi, $fonts);
+        $menuStructure = $menuBuilder->transformToBrizyMenu($parentPages['list']);
+        $result = $menuBuilder->createBrizyMenu('mainMenu', $menuStructure);
 
-        $result = $this->brizyApi->createMenu($data);
+        $this->cache->set('brizyMenuItems', $menuStructure);
 
         $this->cache->set('menuList', [
             'id' => $result['id'] ?? null,

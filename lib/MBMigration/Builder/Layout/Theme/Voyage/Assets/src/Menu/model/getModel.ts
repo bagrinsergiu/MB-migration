@@ -52,8 +52,8 @@ export const getModel = (data: Model) => {
         break;
       }
       case "line-height": {
-        const value = parseInt(`${styles[key]}`);
-        if (isNaN(value)) {
+        const value = `${styles[key]}`;
+        if (value) {
           dic[toCamelCase(key)] = 1;
         } else {
           dic[toCamelCase(key)] = value;
@@ -81,6 +81,8 @@ export const getModel = (data: Model) => {
         break;
       }
       case "colorOpacity": {
+        const opacity = styles[key];
+        dic[toCamelCase(key)] = opacity ?? 1;
         break;
       }
       default: {

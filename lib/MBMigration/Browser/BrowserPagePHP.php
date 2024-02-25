@@ -72,7 +72,7 @@ class BrowserPagePHP implements BrowserPageInterface
         } catch (Exception $e) {
             return false; // element not found
         }
-
+        usleep(500000);
         return true; // element found
     }
 
@@ -132,7 +132,7 @@ class BrowserPagePHP implements BrowserPageInterface
     public function screenshot($path)
     {
         $screenshot = $this->page->screenshot([
-            'captureBeyondViewport' => true,
+            //'captureBeyondViewport' => true,
             'clip' => $this->page->getFullPageClip(),
             'format' => 'jpeg',
         ]);

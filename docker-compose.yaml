@@ -16,7 +16,7 @@ services:
       APP_ENV: dev
       APP_DEBUG: 1
     volumes:
-      - ./:/project:delegated
+      - ./:/project
   dependencies:
     platform: linux/amd64
     restart: "no"

@@ -95,11 +95,16 @@ abstract class AbstractTheme implements ThemeInterface
             $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
         }
 
-        if ($browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()) &&
-            $browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector())) {
-            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
-            $browserPage->triggerEvent('hover', 'html', [1, 1]);
-        }
+//        $elementSelector = $this->getThemeParentMenuItemSelector();
+//        $elementSelector1 = $this->getThemeSubMenuItemSelector();
+//        if ($browserPage->triggerEvent('hover', $elementSelector) &&
+//            $browserPage->triggerEvent('hover', $elementSelector1)) {
+//            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
+//            //$browserPage->screenshot("/project/var/log/test2.png");
+//            $browserPage->triggerEvent('hover', 'html', [1, 1]);
+//        }
+
+        $browserPage->triggerEvent('hover', 'body', [1, 1]);
 
         return $page;
     }

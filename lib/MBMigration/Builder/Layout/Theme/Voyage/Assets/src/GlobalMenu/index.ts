@@ -3,7 +3,7 @@ import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
 const run = () => {
   const menuItem = document.querySelector(
-    "#main-navigation li:not(.selected) a"
+    "#main-navigation>ul>li:not(.selected) a"
   );
 
   if (!menuItem) {

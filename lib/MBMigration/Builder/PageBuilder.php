@@ -63,7 +63,7 @@ class PageBuilder
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder);
             $themeElementFactory = $layoutElementFactory->getFactory($design);
-            $menu = $this->cache->get('menuList');
+            $menu = $this->cache->get('brizyMenuItems');
             $headItem = $this->cache->get('header', 'mainSection');
             $footerItem = $this->cache->get('footer', 'mainSection');
 
