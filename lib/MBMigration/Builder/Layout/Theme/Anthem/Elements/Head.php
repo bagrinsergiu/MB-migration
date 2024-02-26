@@ -2,10 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
-use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPagePHP;
+use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Menu\MenuHandler;
+use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\Utils\UrlBuilder;
 use MBMigration\Builder\VariableCache;
@@ -29,13 +31,13 @@ class Head extends Element
      */
     private $activePage;
 
-    private $browser;
+    private BrowserPHP $browser;
     /**
      * @var array
      */
     private $fontFamily;
 
-    private $browserPage;
+    private BrowserPagePHP $browserPage;
 
     /**
      * @var BrizyAPI
@@ -44,7 +46,7 @@ class Head extends Element
 
     const SELECTOR = "#main-navigation li:not(.selected) a";
 
-    public function __construct($jsonKitElements, $browser,BrizyAPI $brizyAPI)
+    public function __construct($jsonKitElements, $browser, BrizyAPI $brizyAPI)
     {
         $this->browser = $browser;
         $this->cache = VariableCache::getInstance();
@@ -165,10 +167,10 @@ class Head extends Element
 
         foreach ($headItem['items'] as $item) {
             if ($item['category'] = 'photo') {
-                $imagesStyle = JS::imageStylesExtractor($options['sectionID'], $options['currentPageURL']);
+                $imagesStyle = $this->imageStylesExtractor($this->browserPage, $options['sectionID']);
 
                 if (!empty($imagesStyle)) {
-                    $imageLogo['width'] = $imagesStyle;
+                    $imageLogo['width'] = $imagesStyle['width'];
                 }
 
                 $imageLogo['imageSrc'] = $item['content'];
@@ -182,7 +184,7 @@ class Head extends Element
                     $imageLogo['link'] = $this->cache->get('ParentPages')[0]['slug'];
                 }
 
-                if(isset($item['new_window']) && $item['new_window']){
+                if (isset($item['new_window']) && $item['new_window']) {
                     $imageLogo['new_window'] = 'on';
                 } else {
                     $imageLogo['new_window'] = 'off';
@@ -195,7 +197,7 @@ class Head extends Element
 
             $urlComponents = parse_url($imageLogo['link']);
 
-            if(!empty($urlComponents['host'])) {
+            if (!empty($urlComponents['host'])) {
                 $slash = '';
             } else {
                 $slash = '/';
@@ -234,7 +236,8 @@ class Head extends Element
 
     private function setColorBackground(ItemBuilder $objBlock, $options)
     {
-        $color = JS::StylesColorExtractor($options['sectionID'], $options['currentPageURL']);
+        $color = $this->ExtractStyleSection($this->browserPage, $options['sectionID']);
+
         $objBlock->item(0)->setting('paddingType', 'grouped');
         $objBlock->item(0)->setting('padding', 10);
         $objBlock->item(0)->setting('paddingType', 'grouped');
@@ -253,7 +256,7 @@ class Head extends Element
             'activeSubMenuColorHex' => $result['data']['hoverColorHex'] ?? '#827777',
             'menuPadding' => 5,
             'menuPaddingBottom' => 5,
-            ];
+        ];
 
         $result['data'] = array_merge_recursive($result['data'], $defOptions);
         $this->cache->set('menuStyles', $result['data']);
@@ -290,13 +293,53 @@ class Head extends Element
     private function ExtractMenuStyle($browserPage, int $sectionId): array
     {
         return $browserPage->evaluateScript(
-            'Menu.js',
+            'brizy.getMenu',
             [
-                'selector' => '[data-id="'.$sectionId.'"]',
-                'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+                'selector' => '[data-id="' . $sectionId . '"]',
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
             ]
         );
+    }
+
+    private function ExtractStyleSection($browserPage, int $sectionId): array
+    {
+        $style = [];
+        $sectionStyles = $browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => '[data-id="' . $sectionId . '"]',
+                'styleProperties' => ['background-color', 'opacity', 'border-bottom-color'],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return [];
+        }
+        ColorConverter::convertStyle($sectionStyles, $style);
+
+        return $style;
+    }
+
+    private function imageStylesExtractor($browserPage, int $sectionId): array
+    {
+        $sectionStyles = $browserPage->evaluateScript(
+            'brizy.getImage',
+            [
+                'selector' => '[data-id="' . $sectionId . '"]',
+                'styleProperties' => [],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return [];
+        }
+
+        return $sectionStyles['data'][0] ?? [];
     }
 
     private function convertColor($color): string
