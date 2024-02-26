@@ -29,7 +29,7 @@ abstract class EventListLayout extends AbstractElement
         $this->setQueryBuilder($queryBuilder);
     }
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['head'], true));
@@ -50,12 +50,12 @@ abstract class EventListLayout extends AbstractElement
         // header
         $headElement = $data->getThemeContext()->getElementFactory()->getElement('head');
         $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbHeadSection()); // the foot should be already cached.. so no nee to build the right context
-        $headBlock = $headElement->transformToItem($elementContext);
+        $headBlock = $headElement->internalTransformToItem($elementContext);
 
         // footer
         $footerElement = $data->getThemeContext()->getElementFactory()->getElement('footer');
         $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbFooterSection()); // the foot should be already cached.. so no nee to build the right context
-        $footerBlock = $footerElement->transformToItem($elementContext);
+        $footerBlock = $footerElement->internalTransformToItem($elementContext);
 
        // create details page
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();

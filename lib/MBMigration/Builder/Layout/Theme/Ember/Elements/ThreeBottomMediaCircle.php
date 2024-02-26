@@ -8,9 +8,9 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class ThreeBottomMediaCircle extends FullTextElement
 {
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $mainBrizySection = parent::transformToItem($data);
+        $mainBrizySection = parent::internalTransformToItem($data);
 
         $circleRow = new BrizyComponent(json_decode($this->brizyKit['media-circles'], true));
         $spacer = new BrizyComponent(json_decode($this->brizyKit['spacer'], true));

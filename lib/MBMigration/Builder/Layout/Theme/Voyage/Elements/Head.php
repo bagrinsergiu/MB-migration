@@ -37,4 +37,11 @@ class Head extends HeadElement
     {
         return $brizySection->getItemWithDepth(0);
     }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        // because of a fantastic idea to not have the option the place the icon per menu item
+        $menuComponent = $brizySection->getItemWithDepth(0,0,1,0,0);
+        $menuComponent->getValue()->set_iconPosition('right');
+    }
 }

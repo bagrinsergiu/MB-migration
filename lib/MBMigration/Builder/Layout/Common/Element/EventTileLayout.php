@@ -18,7 +18,7 @@ abstract class EventTileLayout extends AbstractElement
     use SectionStylesAble;
     use BrizyQueryBuilderAware;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $eventsComponent = new BrizyComponent(json_decode($this->brizyKit['events'], true));

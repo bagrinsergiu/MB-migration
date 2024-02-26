@@ -136,7 +136,6 @@ class MigrationPlatform
 
         $this->checkDesign($designName);
 
-
         $this->createProjectFolders();
 
         $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
@@ -153,8 +152,9 @@ class MigrationPlatform
 
         $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
 
-        $this->getAllPage();
-
+        if (!$this->cache->get('ListPages')) {
+            $this->getAllPage();
+        }
         if (!$this->cache->get('settings')) {
             $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0).' Message: Site not found');
             $this->cache->set('settings', $settings);
@@ -184,8 +184,12 @@ class MigrationPlatform
             $this->cache->set('mainSection', $mainSection);
         }
 //        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
-        $this->createBlankPages($parentPages);
-        $this->createMenuStructure();
+
+
+        if (!$this->cache->get('menuList')) {
+            $this->createBlankPages($parentPages);
+            $this->createMenuStructure();
+        }
 
         if (Config::$devMode) {
             echo $this->cache->get('design', 'settings')."\n";

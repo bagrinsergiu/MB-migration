@@ -14,7 +14,7 @@ class LivestreamLayout extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);

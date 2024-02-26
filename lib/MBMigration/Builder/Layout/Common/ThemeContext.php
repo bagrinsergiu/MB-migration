@@ -56,19 +56,18 @@ final class ThemeContext implements ThemeContextInterface
      */
     private $brizyCollectionItemURI;
     /**
-     * @var array
-     */
-    private $mbMenu;
-    /**
      * @var string
      */
     private $slug;
+    private array $brizyMenuEntity;
+    private array $brizyMenuItems;
 
     public function __construct(
         string $layoutName,
         BrowserPageInterface $browserPage,
         array $brizyKit,
-        array $mbMenu,
+        array $brizyMenuEntity,
+        array $brizyMenuItems,
         array $mbHeadSection,
         array $mbFooterSection,
         array $families,
@@ -80,7 +79,6 @@ final class ThemeContext implements ThemeContextInterface
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
-        $this->mbMenu = $mbMenu;
         $this->elementFactory = $elementFactory;
         $this->mbHeadSection = $mbHeadSection;
         $this->mbFooterSection = $mbFooterSection;
@@ -90,6 +88,8 @@ final class ThemeContext implements ThemeContextInterface
         $this->brizyCollectionTypeURI = $brizyCollectionTypeURI;
         $this->brizyCollectionItemURI = $brizyCollectionItemURI;
         $this->slug = $slug;
+        $this->brizyMenuEntity = $brizyMenuEntity;
+        $this->brizyMenuItems = $brizyMenuItems;
     }
 
     public function getLayoutName(): string
@@ -142,13 +142,18 @@ final class ThemeContext implements ThemeContextInterface
         return $this->brizyCollectionItemURI;
     }
 
-    public function getMbMenu(): array
-    {
-        return $this->mbMenu;
-    }
-
     public function getSlug(): string
     {
         return $this->slug;
+    }
+
+    public function getBrizyMenuEntity(): array
+    {
+        return $this->brizyMenuEntity;
+    }
+
+    public function getBrizyMenuItems(): array
+    {
+        return $this->brizyMenuItems;
     }
 }

@@ -39,7 +39,8 @@ abstract class AbstractTheme implements ThemeInterface
             $this->themeContext,
             $this->themeContext->getMbHeadSection(),
             $brizyComponent,
-            $this->themeContext->getMbMenu(),
+            $this->themeContext->getBrizyMenuEntity(),
+            $this->themeContext->getBrizyMenuItems(),
             $this->themeContext->getFamilies(),
             $this->themeContext->getDefaultFamily()
         );
@@ -54,7 +55,8 @@ abstract class AbstractTheme implements ThemeInterface
                     $this->themeContext,
                     $mbPageSection,
                     $brizyComponent,
-                    $this->themeContext->getMbMenu(),
+                    $this->themeContext->getBrizyMenuEntity(),
+                    $this->themeContext->getBrizyMenuItems(),
                     $this->themeContext->getFamilies(),
                     $this->themeContext->getDefaultFamily()
                 );
@@ -74,7 +76,8 @@ abstract class AbstractTheme implements ThemeInterface
                         $this->themeContext,
                         $this->themeContext->getMbFooterSection(),
                         $brizyComponent,
-                        $this->themeContext->getMbMenu(),
+                        $this->themeContext->getBrizyMenuEntity(),
+                        $this->themeContext->getBrizyMenuItems(),
                         $this->themeContext->getFamilies(),
                         $this->themeContext->getDefaultFamily()
                     )

@@ -30,12 +30,12 @@ final class ElementContext implements ElementContextInterface
      */
     private $brizyComponent;
 
-    private $brizyCollectionType;
-    private $brizyCollectionItem;
     /**
      * @var ThemeContextInterface
      */
     private $themeContext;
+    private array $brizyMenuEntity;
+    private array $brizyMenuItems;
 
     /**
      * @param $mbSection
@@ -48,7 +48,8 @@ final class ElementContext implements ElementContextInterface
         ThemeContextInterface $themeContext,
         array $mbSection,
         BrizyComponent $brizyComponent = null,
-        array $menu = [],
+        array $brizyMenuEntity = [],
+        array $brizyMenuItems = [],
         array $fontFamilies = [],
         string $defaultFontFamily = ''
     ): self {
@@ -56,7 +57,8 @@ final class ElementContext implements ElementContextInterface
             $themeContext,
             $mbSection,
             $brizyComponent,
-            $menu,
+            $brizyMenuEntity,
+            $brizyMenuItems,
             $fontFamilies,
             $defaultFontFamily
         );
@@ -68,7 +70,8 @@ final class ElementContext implements ElementContextInterface
             $this->themeContext,
             $this->getMbSection(),
             $brizyComponent,
-            $this->getMenu(),
+             $this->getBrizyMenuEntity(),
+            $this->getBrizyMenuItems(),
             $this->getFontFamilies(),
             $this->getDefaultFontFamily()
         );
@@ -80,7 +83,8 @@ final class ElementContext implements ElementContextInterface
             $this->themeContext,
             $mbSection,
             $this->getBrizySection(),
-            $this->getMenu(),
+            $this->getBrizyMenuEntity(),
+            $this->getBrizyMenuItems(),
             $this->getFontFamilies(),
             $this->getDefaultFontFamily()
         );
@@ -94,7 +98,8 @@ final class ElementContext implements ElementContextInterface
             $this->themeContext,
             $mbSection,
             $brizyComponent,
-            $this->getMenu(),
+            $this->getBrizyMenuEntity(),
+            $this->getBrizyMenuItems(),
             $this->getFontFamilies(),
             $this->getDefaultFontFamily()
         );
@@ -104,16 +109,18 @@ final class ElementContext implements ElementContextInterface
         ThemeContextInterface $themeContext,
         array $section,
         BrizyComponent $brizyComponent = null,
-        array $menu = [],
+        array $brizyMenuEntity = [],
+        array $brizyMenuItems = [],
         array $fontFamily = [],
         string $defaultFontFamilies = ''
     ) {
         $this->mbSection = $section;
         $this->brizyComponent = $brizyComponent;
-        $this->menu = $menu;
         $this->fontFamilies = $fontFamily;
         $this->defaultFontFamily = $defaultFontFamilies;
         $this->themeContext = $themeContext;
+        $this->brizyMenuEntity = $brizyMenuEntity;
+        $this->brizyMenuItems = $brizyMenuItems;
     }
 
     public function getMbSection(): array
@@ -121,9 +128,14 @@ final class ElementContext implements ElementContextInterface
         return $this->mbSection;
     }
 
-    public function getMenu(): array
+    public function getBrizyMenuEntity(): array
     {
-        return $this->menu;
+        return $this->brizyMenuEntity;
+    }
+
+    public function getBrizyMenuItems(): array
+    {
+        return $this->brizyMenuItems;
     }
 
     /**

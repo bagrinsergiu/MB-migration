@@ -15,9 +15,9 @@ use MBMigration\Layer\Graph\QueryBuilder;
 
 abstract class FormWithTextElement extends FormElement
 {
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $brizySection = parent::transformToItem($data);
+        $brizySection = parent::internalTransformToItem($data);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getTextContainerElement($brizySection));
         $this->handleText($elementContext, $this->browserPage);

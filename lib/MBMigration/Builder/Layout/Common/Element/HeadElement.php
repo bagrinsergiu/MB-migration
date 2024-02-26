@@ -22,36 +22,44 @@ abstract class HeadElement extends AbstractElement
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
+            $this->beforeTransformToItem($data);
+            $component = $this->internalTransformToItem($data);
+            $this->afterTransformToItem($component);
 
-            $headStyles = $this->extractBlockBrowserData(
-                $data->getMbSection()['sectionId'],
-                $data->getFontFamilies(),
-                $data->getDefaultFontFamily()
-            );
-
-            $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-
-            // reset color palette
-            $sectionItem = $this->getSectionItemComponent($section);
-
-            $logoImageComponent = $this->getLogoComponent($section);
-            $menuTargetComponent = $this->getTargetMenuComponent($section);
-
-            // build menu items and set the menu uid
-            $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles);
-            $this->setImageLogo($logoImageComponent, $data->getMbSection());
-
-            $elementContext = $data->instanceWithBrizyComponent($sectionItem);
-            $this->handleSectionStyles($elementContext, $this->browserPage);
-
-            return $section;
+            return $component;
         });
+    }
+
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $headStyles = $this->extractBlockBrowserData(
+            $data->getMbSection()['sectionId'],
+            $data->getFontFamilies(),
+            $data->getDefaultFontFamily()
+        );
+
+        $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+
+        // reset color palette
+        $sectionItem = $this->getSectionItemComponent($section);
+
+        $logoImageComponent = $this->getLogoComponent($section);
+        $menuTargetComponent = $this->getTargetMenuComponent($section);
+
+        // build menu items and set the menu uid
+        $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles);
+        $this->setImageLogo($logoImageComponent, $data->getMbSection());
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItem);
+        $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        return $section;
     }
 
     // region Menu methods
     protected function createMenu($menuList): array
     {
-        $menuItems = $this->creatingMenuTree($menuList['list']);
+        $menuItems = $this->creatingMenuTree($menuList);
 
         return $menuItems;
     }
@@ -121,6 +129,7 @@ abstract class HeadElement extends AbstractElement
     /**
      * @param ElementContextInterface $data
      * @param BrizyComponent $component
+     * @param $headStyles
      * @return BrizyComponent
      */
     private function buildMenuItemsAndSetTheMenuUid(
@@ -128,11 +137,10 @@ abstract class HeadElement extends AbstractElement
         BrizyComponent $component,
         $headStyles
     ): BrizyComponent {
-        $menuItems = $this->createMenu($data->getMenu());
         $menuComponentValue = $component->getValue();
         $menuComponentValue
-            ->set('items', $menuItems)
-            ->set_menuSelected($data->getMenu()['uid']);
+            ->set('items', $this->createMenu($data->getBrizyMenuItems()))
+            ->set_menuSelected($data->getBrizyMenuEntity()['uid']);
 
         // apply menu styles
         foreach ($headStyles['menu'] as $field => $value) {

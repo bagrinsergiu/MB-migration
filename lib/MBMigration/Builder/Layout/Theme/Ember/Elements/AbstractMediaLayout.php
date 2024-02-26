@@ -17,7 +17,7 @@ abstract class AbstractMediaLayout extends AbstractElement
     use BrizyQueryBuilderAware;
 
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $mainBrizySection = $this->getSectionItemComponent($brizySection);

@@ -7,7 +7,7 @@ use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 
 class EventGalleryLayout extends AbstractElement
 {
-    public function transformToItem(ElementDataInterface $data): array
+    protected function internalTransformToItem(ElementDataInterface $data): array
     {
         $section = new ItemBuilder();
         $section->newItem($this->brizyKit['main']);

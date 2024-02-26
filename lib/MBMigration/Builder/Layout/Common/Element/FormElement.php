@@ -18,7 +18,7 @@ abstract class FormElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->getJsonFromBrizyKit(), true));
         $brizySection->getValue()->set_marginTop(0);

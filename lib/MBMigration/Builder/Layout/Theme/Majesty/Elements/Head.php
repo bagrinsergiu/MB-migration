@@ -13,7 +13,7 @@ class Head extends AbstractElement
     const CACHE_KEY = 'head';
     use Cacheable;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
 
@@ -126,10 +126,10 @@ class Head extends AbstractElement
     ): BrizyComponent {
         $menuItemKit = json_decode($this->brizyKit['item'], true);
         $brizyComponent = new BrizyComponent($menuItemKit);
-        $menuItems = $this->createMenu($brizyComponent, $data->getMenu());
+        $menuItems = $this->createMenu($brizyComponent, $data->getBrizyMenuItems());
         $menuComponentValue = $component->getItemValueWithDepth(0, 0, 0, 2, 0);
         $menuComponentValue->set('items', $menuItems)
-            ->set_menuSelected($data->getMenu()['uid'])
+            ->set_menuSelected($data->getBrizyMenuEntity()['uid'])
             ->set_subMenuBgColorPalette('')
             ->set_colorOpacity(1)
             ->set_tempColorOpacity(1)

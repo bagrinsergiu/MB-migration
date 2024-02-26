@@ -55,12 +55,13 @@ class Majesty extends LayoutUtils implements ThemeInterface
             $this->themeContext,
             $this->themeContext->getMbHeadSection(),
             $brizyComponent,
-            $this->themeContext->getMbMenu(),
+            $this->themeContext->getBrizyMenuEntity(),
+            $this->themeContext->getBrizyMenuItems(),
             $this->themeContext->getFamilies(),
             $this->themeContext->getDefaultFamily()
         );
 
-        $brizyPage->addItem($elementFactory->getElement('head')->transformToItem($elementContext));
+        $brizyPage->addItem($elementFactory->getElement('head')->internalTransformToItem($elementContext));
 
         foreach ($mbPageSections as $mbPageSection) {
             $elementName = $mbPageSection['typeSection'];
@@ -70,12 +71,13 @@ class Majesty extends LayoutUtils implements ThemeInterface
                     $this->themeContext,
                     $mbPageSection,
                     $brizyComponent,
-                    $this->themeContext->getMbMenu(),
+                    $this->themeContext->getBrizyMenuEntity(),
+                    $this->themeContext->getBrizyMenuItems(),
                     $this->themeContext->getFamilies(),
                     $this->themeContext->getDefaultFamily()
                 );
 
-                $brizySection = $element->transformToItem($elementContext);
+                $brizySection = $element->internalTransformToItem($elementContext);
                 $brizyPage->addItem($brizySection);
             } catch (ElementNotFound|BrowserScriptException $e) {
                 continue;
@@ -84,12 +86,13 @@ class Majesty extends LayoutUtils implements ThemeInterface
 
         $brizyPage->addItem(
             $elementFactory->getElement('footer')
-                ->transformToItem(
+                ->internalTransformToItem(
                     ElementContext::instance(
                         $this->themeContext,
                         $this->themeContext->getMbFooterSection(),
                         $brizyComponent,
-                        $this->themeContext->getMbMenu(),
+                        $this->themeContext->getBrizyMenuEntity(),
+                        $this->themeContext->getBrizyMenuItems(),
                         $this->themeContext->getFamilies(),
                         $this->themeContext->getDefaultFamily()
                     )

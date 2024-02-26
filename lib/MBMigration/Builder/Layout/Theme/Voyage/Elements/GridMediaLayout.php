@@ -31,7 +31,7 @@ class GridMediaLayout extends AbstractElement
         $this->queryBuilder = $queryBuilder;
     }
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $detailsSection = new BrizyComponent(json_decode($this->brizyKit['details'], true));
@@ -63,11 +63,11 @@ class GridMediaLayout extends AbstractElement
         // header
         $headElement = $data->getThemeContext()->getElementFactory()->getElement('head');
         $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbHeadSection());
-        $headBlock = $headElement->transformToItem($elementContext);
+        $headBlock = $headElement->internalTransformToItem($elementContext);
 
         $footerElement = $data->getThemeContext()->getElementFactory()->getElement('footer');
         $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbFooterSection());
-        $footerBlock = $footerElement->transformToItem($elementContext);
+        $footerBlock = $footerElement->internalTransformToItem($elementContext);
         // footer
 
         // create details page
