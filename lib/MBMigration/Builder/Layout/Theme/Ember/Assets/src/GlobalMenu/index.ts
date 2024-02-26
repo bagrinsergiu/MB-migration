@@ -15,9 +15,11 @@ const run = () => {
   const opacity = +styles["opacity"];
 
   if (color) {
+    const _opacity = color.opacity ?? 1;
+
     window.menuModel = {
       hoverColorHex: color.hex,
-      hoverColorOpacity: isNaN(opacity) ? color.opacity : opacity
+      hoverColorOpacity: isNaN(opacity) ? _opacity : opacity
     };
   }
 };
