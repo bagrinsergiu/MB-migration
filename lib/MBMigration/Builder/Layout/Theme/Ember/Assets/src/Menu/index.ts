@@ -1,5 +1,5 @@
 import { getGlobalMenuModel } from "../utils/getGlobalMenuModel";
-import { getModel } from "./model/getModel";
+import { getModel } from "./utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
 import { parseColorString } from "utils/src/color/parseColorString";
