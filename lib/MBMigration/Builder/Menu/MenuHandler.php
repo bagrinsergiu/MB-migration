@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Menu;
 
-use MBMigration\Browser\BrowserPagePHP;
+use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\PageBuilder;
 use MBMigration\Builder\Utils\TextTools;
 use MBMigration\Builder\VariableCache;
@@ -29,7 +29,7 @@ class MenuHandler
      */
     private $browserPage;
 
-    public function __construct(BrowserPagePHP $browserPage)
+    public function __construct($browserPage)
     {
         $this->cache = VariableCache::getInstance();
         
@@ -115,14 +115,14 @@ class MenuHandler
     {
         $style = [];
         $textTransform = $browserPage->evaluateScript(
-            'brizy.StyleExtractor.js',
+            'StyleExtractor.js',
             [
-                'selector' => $selector,
-                'styleProperties' => [
+                'SELECTOR' => $selector,
+                'STYLE_PROPERTIES' => [
                     'text-transform',
                 ],
-                'families' => [],
-                'defaultFamily' => [],
+                'FAMILIES' => [],
+                'DEFAULT_FAMILY' => [],
             ]
         );
         if(isset($textTransform['data']['text-transform'])){

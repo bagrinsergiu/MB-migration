@@ -5,11 +5,15 @@ namespace MBMigration\Browser;
 use HeadlessChromium\BrowserFactory;
 use MBMigration\Core\Utils;
 use Monolog\Handler\StreamHandler;
+use Nesk\Puphpeteer\Puppeteer;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 class BrowserPHP implements BrowserInterface
 {
+    /**
+     * @var Puppeteer
+     */
     private $browser;
     private $scriptPath;
     private $page = null;

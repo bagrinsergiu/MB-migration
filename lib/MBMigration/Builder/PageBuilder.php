@@ -99,7 +99,7 @@ class PageBuilder
         } else {
             $this->browser = BrowserPHP::instance($layoutBasePath);
             $browserPage = $this->browser->openPage($url, $design);
-//            $browserPage->globalsEval();
+            $browserPage->globalsEval();
             $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                 Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');

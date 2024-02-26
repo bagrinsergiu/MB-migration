@@ -406,6 +406,10 @@ class MigrationPlatform
      */
     private function createMenuStructure(): void
     {
+        if ($this->cache->get('menuList')) {
+            return;
+        }
+
         Utils::log('Create menu structure', 1, 'createMenuStructure');
 
         $parentPages = $this->cache->get('menuList');
@@ -518,6 +522,10 @@ class MigrationPlatform
      */
     private function getAllPage(): void
     {
+        if ($this->cache->get('ListPages')) {
+            return;
+        }
+
         $collectionTypes = $this->emptyCheck(
             $this->QueryBuilder->getCollectionTypes(),
             self::trace(0).' Message: CollectionTypes not found'
@@ -623,6 +631,10 @@ class MigrationPlatform
      */
     private function createBlankPages(array &$parentPages, $mainLevel = true): void
     {
+        if ($this->cache->get('menuList')) {
+            return;
+        }
+
         Utils::log('Start created pages', 1, 'createBlankPages');
         $projectPages = $this->brizyApi->getAllProjectPages();
         $ProjectTitle = $this->cache->get('settings')['title'];
@@ -630,11 +642,6 @@ class MigrationPlatform
         $i = 0;
         foreach ($parentPages as &$pages) {
             $title = $ProjectTitle.' | '.$pages['name'];
-
-            if (!empty($pages['child'])) {
-                $this->createBlankPages($pages['child'], false);
-            }
-
             if ($pages['landing'] == true) {
                 if ($i != 0 || !$mainLevel) {
                     if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
@@ -680,7 +687,9 @@ class MigrationPlatform
                     $pages['collection'] = $pages['child'][0]['collection'];
                 }
             }
-
+            if (!empty($pages['child'])) {
+                $this->createBlankPages($pages['child'], false);
+            }
             $i++;
         }
         $this->cache->set('menuList', [
