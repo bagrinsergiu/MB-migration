@@ -14,44 +14,14 @@ const defaultIcon = "favourite-31";
 const codeToBuilderMap: Record<string, string> = {
   //#region No icons on our side
 
-  blip: defaultIcon,
-  57361: defaultIcon,
-
-  feedburner: defaultIcon,
-  57384: defaultIcon,
-
-  googletalk: defaultIcon,
-  57408: defaultIcon,
-
-  photobucket: defaultIcon,
-  57442: defaultIcon,
-
-  picasa: defaultIcon,
-  57443: defaultIcon,
-
   thecity: defaultIcon,
   57680: defaultIcon,
 
   tableproject: defaultIcon,
   57681: defaultIcon,
 
-  diagonalarrow: defaultIcon,
-  57705: defaultIcon,
-
-  circleblip: defaultIcon,
-  57873: defaultIcon,
-
   circlefeedburner: defaultIcon,
   57896: defaultIcon,
-
-  circlegoogletalk: defaultIcon,
-  57920: defaultIcon,
-
-  circlephotobucket: defaultIcon,
-  57954: defaultIcon,
-
-  circlepicasa: defaultIcon,
-  57955: defaultIcon,
 
   circlethecity: defaultIcon,
   58192: defaultIcon,
@@ -59,23 +29,11 @@ const codeToBuilderMap: Record<string, string> = {
   circletableproject: defaultIcon,
   58193: defaultIcon,
 
-  circlediagonalarrow: defaultIcon,
-  58217: defaultIcon,
-
   roundedblip: defaultIcon,
   58385: defaultIcon,
 
   roundedfeedburner: defaultIcon,
   58408: defaultIcon,
-
-  roundedgoogletalk: defaultIcon,
-  58432: defaultIcon,
-
-  roundedphotobucket: defaultIcon,
-  58466: defaultIcon,
-
-  roundedpicasa: defaultIcon,
-  58467: defaultIcon,
 
   roundedthecity: defaultIcon,
   58704: defaultIcon,
@@ -2274,7 +2232,49 @@ const codeToBuilderMap: Record<string, string> = {
 
   61799: "youtube",
 
-  "youtube-square": "youtube-square"
+  "youtube-square": "youtube-square",
+
+  blip: "rss",
+  57361: "rss",
+
+  feedburner: "fire",
+  57384: "fire",
+
+  diagonalarrow: "arrow-up-right-from-square",
+  57705: "arrow-up-right-from-square",
+
+  circlediagonalarrow: "arrow-up-right-from-square",
+  58217: "arrow-up-right-from-square",
+
+  circleblip: "rss-square",
+  57873: "rss-square",
+
+  googletalk: "comment",
+  57408: "comment",
+
+  circlegoogletalk: "comment",
+  57920: "comment",
+
+  roundedgoogletalk: "comment",
+  58432: "comment",
+
+  photobucket: "camera",
+  57442: "camera",
+
+  circlephotobucket: "camera",
+  57954: "camera",
+
+  roundedphotobucket: "camera",
+  58466: "camera",
+
+  picasa: "image",
+  57443: "image",
+
+  circlepicasa: "image",
+  57955: "image",
+
+  roundedpicasa: "image",
+  58467: "image"
 };
 
 const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
