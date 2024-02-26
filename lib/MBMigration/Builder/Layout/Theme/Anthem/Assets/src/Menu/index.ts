@@ -2,6 +2,7 @@ import { getGlobalMenuModel } from "../utils/getGlobalMenuModel";
 import { getModel } from "./utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
+import { getDataByEntry } from "elements/src/utils/getDataByEntry";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { prefixed } from "utils/src/models/prefixed";
 
@@ -107,7 +108,9 @@ const getSubMenuV = (data: Required<NavData>) => {
   };
 };
 
-const run = (entry: Entry): Output => {
+const run = (_entry: Entry): Output => {
+  const entry = window.isDev ? getDataByEntry(_entry) : _entry;
+
   const { selector, families, defaultFamily } = entry;
   const node = document.querySelector(selector);
 

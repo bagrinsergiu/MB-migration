@@ -1,5 +1,6 @@
 import { ElementModel, EmbedModel, Entry, Output } from "../types/type";
 import { createData } from "../utils/getData";
+import { getDataByEntry } from "../utils/getDataByEntry";
 import { getButtonModel } from "./models/Button";
 import { getEmbedModel } from "./models/Embed";
 import { getIconModel } from "./models/Icon";
@@ -8,7 +9,9 @@ import { getContainerStackWithNodes } from "./utils/dom/getContainerStackWithNod
 
 type TextModel = ElementModel | EmbedModel;
 
-export const getText = (entry: Entry): Output => {
+export const getText = (_entry: Entry): Output => {
+  const entry = window.isDev ? getDataByEntry(_entry) : _entry;
+
   let node = document.querySelector(entry.selector);
 
   if (!node) {

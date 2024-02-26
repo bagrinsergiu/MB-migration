@@ -1,4 +1,5 @@
 import { createData } from "../utils/getData";
+import { getDataByEntry } from "../utils/getDataByEntry";
 import { Entry, Output } from "elements/src/types/type";
 
 interface ImageModel {
@@ -7,7 +8,9 @@ interface ImageModel {
   height: number;
 }
 
-export const getImage = (entry: Entry): Output => {
+export const getImage = (_entry: Entry): Output => {
+  const entry = window.isDev ? getDataByEntry(_entry) : _entry;
+
   const node = document.querySelector(entry.selector);
   if (!node) {
     return {
