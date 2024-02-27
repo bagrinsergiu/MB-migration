@@ -42,12 +42,14 @@ class Voyage extends AbstractTheme
 
     public function getThemeParentMenuItemSelector(): string
     {
-        return "#main-navigation>ul>li:has(.sub-navigation):first-child a";
+        return "#main-navigation>ul>li.has-sub>a";
+        //return "#main-navigation>ul>li:has(.sub-navigation):first-child a";
     }
 
     public function getThemeSubMenuItemSelector(): string
     {
-        return "#main-navigation>ul>li:has(.sub-navigation):first-child .sub-navigation a:first-child";
+        //return "#main-navigation>ul>li:has(.sub-navigation):first-child .sub-navigation a:first-child";
+        return "#main-navigation>ul>li.has-sub .sub-navigation>li>a";
     }
 
 }
