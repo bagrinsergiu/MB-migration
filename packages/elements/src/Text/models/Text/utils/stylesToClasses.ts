@@ -49,13 +49,20 @@ export const stylesToClasses = (
         break;
       }
       case "line-height": {
-        const fs = `${styles["font-size"]}`;
-        const fontSize = fs.replace("px", "");
-        const size = Math.round(Num.readInt(value) ?? 1);
-        const lineHeight = getLineHeight(`${size}`, fontSize);
-        classes.push(`brz-lh-lg-${lineHeight}`);
-        classes.push(`brz-lh-sm-${defaultTabletLineHeight}`);
-        classes.push(`brz-lh-xs-${defaultMobileLineHeight}`);
+        const _value = value as string;
+        const size = Math.round(Num.readInt(_value) ?? 1);
+
+        if (_value && _value.includes("em")) {
+          classes.push(`brz-lh-lg-${size}`);
+        } else {
+          const fontSize = _value && _value.replace("px", "");
+          const lineHeight = getLineHeight(`${size}`, fontSize);
+
+          classes.push(`brz-lh-lg-${lineHeight}`);
+          classes.push(`brz-lh-sm-${defaultTabletLineHeight}`);
+          classes.push(`brz-lh-xs-${defaultMobileLineHeight}`);
+        }
+
         break;
       }
       default:
