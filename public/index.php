@@ -61,5 +61,5 @@ return static function (array $context, Request $request): Response {
         return new JsonResponse(['error' => $e->getMessage()],400);
     }
 
-    return new JsonResponse([]);
+    return new JsonResponse($migrationPlatform->getLogs());
 };

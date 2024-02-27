@@ -13,7 +13,7 @@ services:
       context: ./
       target: development
     environment:
-      APP_ENV: dev
+      APP_ENV: prod
       APP_DEBUG: 1
     volumes:
       - ./:/project
