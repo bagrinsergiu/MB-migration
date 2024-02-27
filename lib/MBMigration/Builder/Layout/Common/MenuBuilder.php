@@ -98,7 +98,7 @@ class MenuBuilder implements MenuBuilderInterface
             $newItem['id'] = $item['collection'];
         }
 
-        if (count($item['child'])) {
+        if (isset($item['child']) && count($item['child'])) {
             $newItem["items"] = $this->getMainMenu($item['child']);
         }
 
