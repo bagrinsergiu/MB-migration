@@ -2,7 +2,6 @@
 
 namespace MBMigration\Builder;
 
-use MBMigration\Browser\Browser;
 use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
@@ -19,7 +18,7 @@ class PageBuilder
 {
     private $cache;
     /**
-     * @var Browser|null
+     * @var BrowserPHP
      */
     private $browser;
     /**

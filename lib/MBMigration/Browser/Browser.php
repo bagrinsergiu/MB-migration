@@ -2,6 +2,7 @@
 
 namespace MBMigration\Browser;
 
+use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 use Monolog\Handler\StreamHandler;
 use Nesk\Puphpeteer\Puppeteer;
@@ -70,7 +71,9 @@ class Browser implements BrowserInterface
 
     public function openPage($url, $theme): BrowserPageInterface
     {
-        echo "\nOpen page: {$url}\n";
+        if (Config::$devMode) {
+            echo "\nOpen page: {$url}\n";
+        }
 
         if (!isset($this->page)) {
             $this->page = $this->browser->newPage();

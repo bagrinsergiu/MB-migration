@@ -3,6 +3,7 @@
 namespace MBMigration\Browser;
 
 use HeadlessChromium\BrowserFactory;
+use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 use Monolog\Handler\StreamHandler;
 use Nesk\Puphpeteer\Puppeteer;
@@ -65,7 +66,9 @@ class BrowserPHP implements BrowserInterface
 
     public function openPage($url, $theme): BrowserPageInterface
     {
-        echo "\nOpen page: {$url}\n";
+        if (Config::$devMode) {
+            echo "\nOpen page: {$url}\n";
+        }
 
         if (!isset($this->page)) {
             $this->page = $this->browser->createPage();

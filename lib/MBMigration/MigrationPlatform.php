@@ -358,18 +358,6 @@ class MigrationPlatform
                     1,
                     'getItemsFromPage'
                 );
-                if ($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
-                    $value['settings']['color'] = $this->getColorFromPalette(
-                        $value['settings']['sections']['color']['subpalette']
-                    );
-                    unset($value['settings']['sections']['color']);
-                }
-                if ($this->checkArrayPath($value, 'settings/layout/color/subpalette')) {
-                    $value['settings']['layout-color'] = $this->getColorFromPalette(
-                        $value['settings']['layout']['color']['subpalette']
-                    );
-                    unset($value['settings']['layout']['color']);
-                }
 
                 $items = [
                     'sectionId' => $value['id'],
