@@ -292,14 +292,14 @@ class MigrationPlatform
         $this->cache->set('tookPage', $page);
         ExecutionTimer::start();
 
-        if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage'))) {
+        if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
             $preparedSectionOfThePage = $this->getItemsFromPage($page);
             if (!$preparedSectionOfThePage) {
                 return;
             }
             $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
             $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
-            $this->cache->set('preparedSectionOfThePage', $preparedSectionOfThePage);
+            $this->cache->set('preparedSectionOfThePage_'.$page['id'], $preparedSectionOfThePage);
         }
 
 
