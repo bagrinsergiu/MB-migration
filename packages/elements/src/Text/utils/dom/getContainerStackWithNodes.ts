@@ -1,4 +1,9 @@
-import { buttonSelector, embedSelector, iconSelector } from "../common";
+import {
+  buttonSelector,
+  embedSelector,
+  extractedAttributes,
+  iconSelector
+} from "../common";
 
 export class Stack {
   collection: Array<Element> = [];
@@ -47,15 +52,64 @@ const extractInnerText = (node: Node, stack: Stack, selector: string): void => {
       innerElements.forEach((el) => {
         el.remove();
       });
+    }
+    // Extract the other html without Artifacts like Button, Icons
+    const text = _node.textContent;
 
-      // Extract the other html without Artifacts like Button, Icons
-      const text = _node.textContent;
-
-      if (text && text.trim()) {
-        stack.append(_node, { type: "text" });
-      }
+    if (text && text.trim()) {
+      stack.append(_node, { type: "text" });
     }
   }
+};
+
+function appendNodeStyles(node: HTMLElement, targetNode: HTMLElement) {
+  const styles = window.getComputedStyle(node);
+  extractedAttributes.forEach((style) => {
+    targetNode.style.setProperty(style, styles.getPropertyValue(style));
+  });
+}
+
+function removeNestedDivs(node: HTMLElement, cssText: string) {
+  Array.from(node.childNodes).forEach((child) => {
+    if (child instanceof HTMLElement && child.nodeName === "DIV") {
+      removeNestedDivs(child, cssText);
+
+      // in case if there is no div or p inside of node should stop flattening
+      const tagsToFlatten = ["DIV", "P"];
+      const hasDivOrPChildren = Array.from(child.children).find((node) =>
+        tagsToFlatten.includes(node.nodeName)
+      );
+      if (!hasDivOrPChildren) return;
+
+      // insert granchild to child parent node and remove child
+      Array.from(child.childNodes).forEach((grandchild) => {
+        if (grandchild instanceof HTMLElement) {
+          appendNodeStyles(grandchild, grandchild);
+
+          node.insertBefore(grandchild, child);
+        } else if (grandchild.textContent?.trim()) {
+          const containerOfNode = document.createElement("div");
+          appendNodeStyles(child, containerOfNode);
+          containerOfNode.append(grandchild);
+
+          node.insertBefore(containerOfNode, child);
+        }
+      });
+
+      node.removeChild(child);
+    }
+  });
+}
+
+const flattenNode = (node: Element) => {
+  const _node = node.cloneNode(true) as HTMLElement;
+  node.parentElement?.append(_node);
+
+  removeNestedDivs(_node, _node.style.cssText);
+
+  _node.remove();
+
+  return _node;
 };
 
 export const getContainerStackWithNodes = (node: Element): Container => {
@@ -63,7 +117,9 @@ export const getContainerStackWithNodes = (node: Element): Container => {
   const stack = new Stack();
   let appendNewText = false;
 
-  node.childNodes.forEach((node) => {
+  const flatNode = flattenNode(node);
+
+  flatNode.childNodes.forEach((node) => {
     const _node = node.cloneNode(true);
     const containerOfNode = document.createElement("div");
     containerOfNode.append(_node);
@@ -122,14 +178,17 @@ export const getContainerStackWithNodes = (node: Element): Container => {
           appendNewText = true;
           let appendedIcon = false;
 
-          _node.childNodes.forEach((node) => {
+          Array.from(_node.childNodes).forEach((node) => {
             if (node instanceof HTMLElement) {
               const container = document.createElement("div");
               container.append(node.cloneNode(true));
 
               if (container.querySelector(iconSelector)) {
-                if (!appendedIcon) {
-                  stack.append(_node, { type: "icon" });
+                // if latest appended is icon, icons must be wrapped in same node
+                if (appendedIcon) {
+                  stack.set(node);
+                } else {
+                  stack.append(node, { type: "icon" });
                   appendedIcon = true;
                 }
               } else {
@@ -137,6 +196,7 @@ export const getContainerStackWithNodes = (node: Element): Container => {
 
                 if (text?.trim()) {
                   extractInnerText(_node, stack, iconSelector);
+                  appendedIcon = false;
                 }
               }
             } else {
