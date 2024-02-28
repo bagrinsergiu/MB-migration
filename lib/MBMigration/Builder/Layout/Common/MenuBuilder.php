@@ -30,12 +30,10 @@ class MenuBuilder implements MenuBuilderInterface
 
     public function createBrizyMenu($name, $menuItems): array
     {
-        $mainMenu = $this->getMainMenu($menuItems);
-
         $data = [
             'project' => $this->brizyProject,
             'name' => $name,
-            'data' => json_encode($mainMenu),
+            'data' => json_encode($menuItems),
         ];
 
         $result = $this->brizyApi->createMenu($data);
