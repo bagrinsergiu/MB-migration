@@ -140,7 +140,7 @@ abstract class HeadElement extends AbstractElement
     ): BrizyComponent {
         $menuComponentValue = $component->getValue();
         $menuComponentValue
-            ->set('items', $this->createMenu($data->getBrizyMenuItems()))
+            ->set('items', $this->createMenu($data->getBrizyMenuEntity()['list']))
             ->set_menuSelected($data->getBrizyMenuEntity()['uid']);
 
         // apply menu styles

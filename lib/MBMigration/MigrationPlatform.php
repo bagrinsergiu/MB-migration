@@ -184,10 +184,22 @@ class MigrationPlatform
             $this->cache->set('mainSection', $mainSection);
         }
 
-
         if (!$this->cache->get('menuList')) {
-            $this->createBlankPages($parentPages);
+            Utils::log('Start created pages', 1, 'createBlankPages');
+            $projectTitle = $this->cache->get('settings')['title'];
+
+            $this->createBlankPages($parentPages, $projectTitle);
+            $this->cache->set('menuList', [
+                'id' => null,
+                'uid' => null,
+                'name' => null,
+                'create' => false,
+                'list' => $parentPages,
+                'data' => "",
+            ]);
             $this->createMenuStructure();
+        } else {
+            $parentPages = $this->cache->get('menuList')['list'];
         }
 
         if (Config::$devMode) {
@@ -301,8 +313,6 @@ class MigrationPlatform
             $this->cache->set('preparedSectionOfThePage_'.$page['id'], $preparedSectionOfThePage);
         }
 
-
-//        file_put_contents(JSON_PATH.'/preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
         $collectionItem = $this->getCollectionItem($page['slug']);
         if (!$collectionItem) {
             $ProjectTitle = $this->cache->get('settings')['title'];
@@ -612,18 +622,17 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function createBlankPages(array &$parentPages, $mainLevel = true): void
+    private function createBlankPages(array &$parentPages,  $projectTitle, $mainLevel = true)
     {
         Utils::log('Start created pages', 1, 'createBlankPages');
         $projectPages = $this->brizyApi->getAllProjectPages();
-        $ProjectTitle = $this->cache->get('settings')['title'];
 
         $i = 0;
         foreach ($parentPages as &$pages) {
-            $title = $ProjectTitle.' | '.$pages['name'];
+            $title = $projectTitle.' | '.$pages['name'];
 
             if (!empty($pages['child'])) {
-                $this->createBlankPages($pages['child'], false);
+                $this->createBlankPages($pages['child'],  $projectTitle, false);
             }
 
             if ($pages['landing'] == true) {
@@ -674,14 +683,6 @@ class MigrationPlatform
 
             $i++;
         }
-        $this->cache->set('menuList', [
-            'id' => null,
-            'uid' => null,
-            'name' => null,
-            'create' => false,
-            'list' => $parentPages,
-            'data' => "",
-        ]);
     }
 
     private function getPisturesUrl($nameImage, $type)
