@@ -36,6 +36,7 @@ abstract class AbstractTheme implements ThemeInterface
         $brizyPage = $this->beforeTransformBlocks($brizyPage, $mbPageSections);
 
         $elementContext = ElementContext::instance(
+            $this,
             $this->themeContext,
             $this->themeContext->getMbHeadSection(),
             $brizyComponent,
@@ -52,6 +53,7 @@ abstract class AbstractTheme implements ThemeInterface
             try {
                 $element = $elementFactory->getElement($elementName);
                 $elementContext = ElementContext::instance(
+                    $this,
                     $this->themeContext,
                     $mbPageSection,
                     $brizyComponent,
@@ -73,6 +75,7 @@ abstract class AbstractTheme implements ThemeInterface
             $elementFactory->getElement('footer')
                 ->transformToItem(
                     ElementContext::instance(
+                        $this,
                         $this->themeContext,
                         $this->themeContext->getMbFooterSection(),
                         $brizyComponent,
@@ -91,24 +94,6 @@ abstract class AbstractTheme implements ThemeInterface
 
     public function beforeTransformBlocks(BrizyPage $page, array $mbPageSections): BrizyPage
     {
-        $browserPage = $this->themeContext->getBrowserPage();
-
-        $selector = $this->getThemeMenuItemSelector(); //"#main-navigation li:not(.selected) a";
-        if ($browserPage->triggerEvent('hover', $selector)) {
-            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
-        }
-
-//        $elementSelector = $this->getThemeParentMenuItemSelector();
-//        $elementSelector1 = $this->getThemeSubMenuItemSelector();
-//        if ($browserPage->triggerEvent('hover', $elementSelector) &&
-//            $browserPage->triggerEvent('hover', $elementSelector1)) {
-//            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
-//            //$browserPage->screenshot("/project/var/log/test2.png");
-//            $browserPage->triggerEvent('hover', 'html', [1, 1]);
-//        }
-
-        $browserPage->triggerEvent('hover', 'body', [1, 1]);
-
         return $page;
     }
 

@@ -18,6 +18,8 @@ interface ElementContextInterface
 
     public function getThemeContext(): ThemeContextInterface;
 
+    public function getThemeInstance(): ThemeInterface;
+
     public function getBrizyMenuEntity(): array;
     public function getBrizyMenuItems(): array;
 

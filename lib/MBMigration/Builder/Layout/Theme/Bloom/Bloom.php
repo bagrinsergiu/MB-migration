@@ -31,19 +31,4 @@ class Bloom extends AbstractTheme
         return ".sites-button:not(.nav-menu-button)";
     }
 
-    public function getThemeMenuItemSelector(): string
-    {
-        return "#main-navigation>ul>li:not(.selected) a";
-    }
-
-    public function getThemeParentMenuItemSelector(): string
-    {
-        return "#main-navigation>ul>li.has-sub a:first-child";
-    }
-
-
-    public function getThemeSubMenuItemSelector(): string
-    {
-        return "#main-navigation>ul>li.has-sub ul a:first-child";
-    }
 }

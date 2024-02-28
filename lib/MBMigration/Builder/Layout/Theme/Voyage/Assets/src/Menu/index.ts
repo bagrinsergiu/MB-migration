@@ -1,6 +1,6 @@
 import {getGlobalMenuModel} from "../utils/getGlobalMenuModel";
 import {getModel} from "./model/getModel";
-import {Entry, MenuEntry, Output} from "elements/src/types/type";
+import {MenuEntry, Output} from "elements/src/types/type";
 import {createData} from "elements/src/utils/getData";
 import {parseColorString} from "utils/src/color/parseColorString";
 import {prefixed} from "utils/src/models/prefixed";
@@ -16,13 +16,13 @@ interface NavData {
 const warns: Record<string, Record<string, string>> = {};
 
 const getMenuV = (data: NavData) => {
-    const {menuItem, subMenuItem, selector} = data;
+    const {menuItem, families,defaultFamily} = data;
     let v = {};
 
     v = getModel({
         node: menuItem,
-        families: data.families,
-        defaultFamily: data.defaultFamily
+        families: families,
+        defaultFamily: defaultFamily
     });
     const globalStyle = getGlobalMenuModel();
 
@@ -30,12 +30,12 @@ const getMenuV = (data: NavData) => {
 };
 
 const getSubMenuV = (data: Required<NavData>) => {
-    const { section, subMenuItem} = data;
+    const { section, subMenuItem,families,defaultFamily} = data;
 
     const typography = getModel({
         node: subMenuItem,
-        families: data.families,
-        defaultFamily: data.defaultFamily
+        families: families,
+        defaultFamily: defaultFamily
     });
     const submenuTypography = prefixed(typography, "subMenu");
     const baseStyle = window.getComputedStyle(section);
@@ -59,13 +59,13 @@ const run = (entry: MenuEntry): Output => {
 
     if (!menuItem) {
         return {
-            error: `Element with selector ${itemSelector} not found`
+            error: `Element with itemSelector: "${itemSelector}" was not found`
         };
     }
 
     if (!section) {
         return {
-            error: `Element with selector ${sectionSelector} not found`
+            error: `Element with sectionSelector: "${sectionSelector}" was not found`
         };
     }
 

@@ -16,15 +16,17 @@ class Head extends HeadElement
      * @param BrizyComponent $brizySection
      * @return mixed|null
      */
-    protected function getLogoComponent(BrizyComponent $brizySection): BrizyComponent {
-        return   $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
+    protected function getLogoComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
      */
-    protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent {
+    protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
+    {
         return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
@@ -32,7 +34,46 @@ class Head extends HeadElement
      * @param BrizyComponent $brizySection
      * @return BrizyComponent
      */
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent {
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
         return $brizySection->getItemWithDepth(0);
+    }
+
+    public function getThemeMenuItemSelector(): string
+    {
+        return "#main-navigation>ul>li:not(.selected) a";
+    }
+
+    public function getThemeParentMenuItemSelector(): string
+    {
+        return "#main-navigation>ul>li.has-sub a:first-child";
+    }
+
+    public function getThemeSubMenuItemSelector(): string
+    {
+        return "#main-navigation>ul>li.has-sub ul a:first-child";
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $menuSectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => 'body',
+                'styleProperties' => ['background-color','background-image'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+        if(!isset($menuSectionStyles['data'])) return;
+
+        $menuSectionStyles = $menuSectionStyles['data'];
+        $backgroundColorHex = ColorConverter::rgba2hex($menuSectionStyles['background-color']);
+        $opacity = ColorConverter::rgba2opacity($menuSectionStyles['background-color']);
+
+        $brizySection->getItemWithDepth(0)
+            ->getValue()
+            ->set_bgColorHex($backgroundColorHex)
+            ->set_bgColorOpacity($opacity);
     }
 }

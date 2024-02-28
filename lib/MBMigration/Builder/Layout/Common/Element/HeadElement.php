@@ -10,6 +10,7 @@ use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
+use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -83,7 +84,7 @@ abstract class HeadElement extends AbstractElement
             $menuSubItems = $this->creatingMenuTree($item['child']);
             $blockMenu->getValue()->set_items($menuSubItems);
 
-            if ($item['landing'] == false) {
+            if ($item['landing'] == false && count($menuSubItems)) {
                 $url = $blockMenu->getItemValueWithDepth(0)->get_url();
                 $blockMenu->getValue()->set_url($url);
             }
@@ -151,8 +152,32 @@ abstract class HeadElement extends AbstractElement
         return $component;
     }
 
-    protected function extractBlockBrowserData($sectionId, $families, $defaultFamilies): array
-    {
+    protected function extractBlockBrowserData(
+        $sectionId,
+        $families,
+        $defaultFamilies
+    ): array {
+
+        $selector = $this->getThemeMenuItemSelector();
+        if ($this->browserPage->triggerEvent('hover', $selector)) {
+            $this->browserPage->evaluateScript('brizy.globalMenuExtractor', [
+                'selector' => $selector,
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
+            ]);
+        }
+
+//        $elementSelector = $this->getThemeParentMenuItemSelector();
+//        $elementSelector1 = $this->getThemeSubMenuItemSelector();
+//        if ($browserPage->triggerEvent('hover', $elementSelector) &&
+//            $browserPage->triggerEvent('hover', $elementSelector1)) {
+//            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
+//            //$browserPage->screenshot("/project/var/log/test2.png");
+//            $browserPage->triggerEvent('hover', 'html', [1, 1]);
+//        }
+
+        $this->browserPage->triggerEvent('hover', 'body', [1, 1]);
+
         $menuSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
@@ -163,16 +188,16 @@ abstract class HeadElement extends AbstractElement
             ]
         );
 
-        $this->browserPage->screenshot("/project/var/log/test3.png");
         $menuStyles = $this->browserPage->evaluateScript(
             'brizy.getMenu',
             [
-                'selector' => '[data-id="'.$sectionId.'"]',
+                'sectionSelector' => '[data-id="'.$sectionId.'"]',
+                'itemSelector' => $this->getThemeMenuItemSelector(),
+                'subItemSelector' => $this->getThemeSubMenuItemSelector(),
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,
             ]
         );
-        $this->browserPage->screenshot("/project/var/log/test4.png");
 
         return [
             'menu' => isset($menuStyles['data']) ? $menuStyles['data'] : [],
@@ -192,4 +217,9 @@ abstract class HeadElement extends AbstractElement
      */
     abstract protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent;
 
+    abstract protected function getThemeMenuItemSelector(): string;
+
+    abstract protected function getThemeParentMenuItemSelector(): string;
+
+    abstract protected function getThemeSubMenuItemSelector(): string;
 }
