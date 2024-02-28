@@ -4,7 +4,6 @@ import {MenuEntry, Output} from "elements/src/types/type";
 import {createData} from "elements/src/utils/getData";
 import {parseColorString} from "utils/src/color/parseColorString";
 import {prefixed} from "utils/src/models/prefixed";
-import {MValue} from "utils";
 
 interface NavData {
     section: Element;
