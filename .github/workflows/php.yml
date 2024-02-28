@@ -4,14 +4,11 @@ on:
   release:
     types: [published]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  cancel-previous-workflow:
-    name: Cancel previous workflow
-    runs-on: ubuntu-latest
-    steps:
-      - uses: styfle/cancel-workflow-action@0.8.0
-        with:
-          access_token: ${{ github.token }}
   push_to_registry:
     needs: cancel-previous-workflow
     name: Push Docker image to Docker Hub
