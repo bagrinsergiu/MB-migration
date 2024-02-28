@@ -1,25 +1,33 @@
-import { parseColorString } from "utils/src/color/parseColorString";
-import { getNodeStyle } from "utils/src/dom/getNodeStyle";
+import {parseColorString} from "utils/src/color/parseColorString";
+import {getNodeStyle} from "utils/src/dom/getNodeStyle";
+import {Entry} from "elements/src/types/type";
 
-const run = () => {
-  const menuItem = document.querySelector(
-    "#main-navigation>ul>li:not(.selected) a"
-  );
+const run = (entry: Entry) => {
 
-  if (!menuItem) {
-    return;
-  }
+    const {selector} = entry;
+    const menuItem = document.querySelector(selector);
 
-  const styles = getNodeStyle(menuItem);
-  const color = parseColorString(`${styles["color"]}`);
-  const opacity = +styles["opacity"];
+    if (!menuItem) {
+        return {
+            error: `Element with selector: '${selector}' was not found`
+        };
+    }
 
-  if (color) {
-    window.menuModel = {
-      hoverColorHex: color.hex,
-      hoverColorOpacity: isNaN(opacity) ? color.opacity ?? 1 : opacity
-    };
-  }
+    const styles = getNodeStyle(menuItem);
+    const color = parseColorString(`${styles["color"]}`);
+    const opacity = +styles["opacity"];
+
+    if (color) {
+        const activeColorOpacity = isNaN(opacity) ? color.opacity ?? 1 : opacity;
+        return window.menuModel = {
+            hoverColorHex: color.hex,
+            hoverColorOpacity: activeColorOpacity,
+            activeColorHex: color.hex,
+            activeColorOpacity: activeColorOpacity,
+            hoverSubMenuColorHex:color.hex,
+            hoverSubMenuColorOpacity:activeColorOpacity
+        };
+    }
 };
 
-export { run };
+export {run};

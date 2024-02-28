@@ -2,17 +2,17 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
-use MBMigration\Builder\Layout\Theme\Voyage\MenuBuilder;
-
 class MenuBuilderFactory
 {
     static public function instanceOfThemeMenuBuilder($theme, $brizyProject, $brizyApi, $fonts)
     {
         switch ($theme) {
+            case 'Bloom':
+                return new \MBMigration\Builder\Layout\Theme\Bloom\MenuBuilder($brizyProject, $brizyApi, $fonts);
             case 'Voyage':
-                return new MenuBuilder($brizyProject, $brizyApi, $fonts);
+                return new \MBMigration\Builder\Layout\Theme\Voyage\MenuBuilder($brizyProject, $brizyApi, $fonts);
             default:
-                return new \MBMigration\Builder\Layout\Common\MenuBuilder($brizyProject, $brizyApi, $fonts);
+                return new MenuBuilder($brizyProject, $brizyApi, $fonts);
         }
     }
 }

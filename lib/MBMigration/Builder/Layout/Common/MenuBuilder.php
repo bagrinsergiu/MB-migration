@@ -108,7 +108,7 @@ class MenuBuilder implements MenuBuilderInterface
 
     protected function checkOpenInNewTab($settings): bool
     {
-        if (array_key_exists('new_window', $settings)) {
+        if ($settings && array_key_exists('new_window', $settings)) {
             return $settings['new_window'];
         } else {
             return false;

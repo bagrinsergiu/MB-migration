@@ -52,6 +52,7 @@ class Majesty extends LayoutUtils implements ThemeInterface
         $elementFactory = $this->themeContext->getElementFactory();
 
         $elementContext = ElementContext::instance(
+            $this,
             $this->themeContext,
             $this->themeContext->getMbHeadSection(),
             $brizyComponent,
@@ -61,13 +62,14 @@ class Majesty extends LayoutUtils implements ThemeInterface
             $this->themeContext->getDefaultFamily()
         );
 
-        $brizyPage->addItem($elementFactory->getElement('head')->internalTransformToItem($elementContext));
+        $brizyPage->addItem($elementFactory->getElement('head')->transformToItem($elementContext));
 
         foreach ($mbPageSections as $mbPageSection) {
             $elementName = $mbPageSection['typeSection'];
             try {
                 $element = $elementFactory->getElement($elementName);
                 $elementContext = ElementContext::instance(
+                    $this,
                     $this->themeContext,
                     $mbPageSection,
                     $brizyComponent,
@@ -77,7 +79,7 @@ class Majesty extends LayoutUtils implements ThemeInterface
                     $this->themeContext->getDefaultFamily()
                 );
 
-                $brizySection = $element->internalTransformToItem($elementContext);
+                $brizySection = $element->transformToItem($elementContext);
                 $brizyPage->addItem($brizySection);
             } catch (ElementNotFound|BrowserScriptException $e) {
                 continue;
@@ -86,8 +88,9 @@ class Majesty extends LayoutUtils implements ThemeInterface
 
         $brizyPage->addItem(
             $elementFactory->getElement('footer')
-                ->internalTransformToItem(
+                ->transformToItem(
                     ElementContext::instance(
+                        $this,
                         $this->themeContext,
                         $this->themeContext->getMbFooterSection(),
                         $brizyComponent,
