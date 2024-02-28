@@ -38,7 +38,7 @@ const getSubMenuV = (data: Required<NavData>) => {
         defaultFamily: defaultFamily
     });
     const submenuTypography = prefixed(typography, "subMenu");
-    const baseStyle = window.getComputedStyle(section);
+    const baseStyle = window.getComputedStyle(subMenuItem.parentElement.parentElement);
     const bgColor = parseColorString(baseStyle.backgroundColor) ?? {
         hex: "#ffffff",
         opacity: 1
