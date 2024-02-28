@@ -183,7 +183,6 @@ class MigrationPlatform
             $mainSection = $this->uploadPicturesFromSections($mainSection);
             $this->cache->set('mainSection', $mainSection);
         }
-//        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
 
 
         if (!$this->cache->get('menuList')) {
