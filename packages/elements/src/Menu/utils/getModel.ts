@@ -1,32 +1,27 @@
 import {parseColorString} from "utils/src/color/parseColorString";
 import {getNodeStyle} from "utils/src/dom/getNodeStyle";
 import {toCamelCase} from "utils/src/text/toCamelCase";
+import {MenuItemElement} from "../../types/type";
 
 interface Model {
-    node: Element;
+    node: MenuItemElement;
+    modelDefaults: Record<string, string | number | undefined>;
     families: Record<string, string>;
     defaultFamily: string;
 }
 
-const v = {
-    "font-family": undefined,
-    "font-family-type": "uploaded",
-    "font-weight": undefined,
-    "font-size": undefined,
-    "line-height": undefined,
-    "letter-spacing": undefined,
-    "font-style": "",
-    "color-hex": undefined,
-    "color-opacity": 1,
+const pxToEm = (lineHeightValue: string, fontSize: string | Number) :number => {
+    if (!lineHeightValue.includes("px")) return parseInt(lineHeightValue);
+    const value = parseInt(lineHeightValue);
+    return value / ((value / Number(fontSize)) * value);
 };
 
 export const getModel = (data: Model) => {
-
-    const {node, families, defaultFamily} = data;
-    const styles = getNodeStyle(node);
+    const {node, modelDefaults, families, defaultFamily} = data;
+    const styles = getNodeStyle(node.item, node.pseudoEl);
     const dic: Record<string, string | number> = {};
 
-    Object.keys(v).forEach((key) => {
+    Object.keys(modelDefaults).forEach((key) => {
         switch (key) {
             case "font-family": {
                 const value = `${styles[key]}`;
@@ -50,9 +45,15 @@ export const getModel = (data: Model) => {
                 dic[toCamelCase(key)] = "";
                 break;
             }
+            case "item-padding": {
+                dic[toCamelCase(key)] = parseInt(`${styles["padding-left"]}`); // we naively assume the padding are equal
+                dic["itemPaddingSuffix"] = "px"; // we naively assume the padding are equal
+                break;
+            }
             case "line-height": {
-                const value = `${styles[key]}`;
-                if (value) {
+                const value = pxToEm(String(styles[key]), styles["font-size"]);
+
+                if (isNaN(value)) {
                     dic[toCamelCase(key)] = 1;
                 } else {
                     dic[toCamelCase(key)] = value;
@@ -74,14 +75,28 @@ export const getModel = (data: Model) => {
                 }
                 break;
             }
+            case "hover-color-hex":
             case "color-hex": {
                 const toHex = parseColorString(`${styles["color"]}`);
-                dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
+                dic[toCamelCase(key)] = toHex?.hex ?? "#ffffff";
                 break;
             }
+            case "hover-color-opacity":
             case "color-opacity": {
-                const opacity = styles["opacity"];
-                dic[toCamelCase(key)] = opacity ?? 1;
+                const toHex = parseColorString(`${styles["color"]}`);
+                dic[toCamelCase(key)] = toHex?.opacity ?? 1;
+                dic[toCamelCase(key)] = styles["opacity"] ?? undefined;
+                break;
+            }
+            case "bg-color-hex":
+            case "menu-bg-color-hex": {
+                const toHex = parseColorString(`${styles["background-color"]}`);
+                dic[toCamelCase(key)] = toHex?.hex ?? "#ffffff";
+                break;
+            }
+            case "bg-color-opacity": {
+                const toHex = parseColorString(`${styles["background-color"]}`);
+                dic[toCamelCase(key)] = toHex?.opacity ?? 1;
                 break;
             }
             default: {

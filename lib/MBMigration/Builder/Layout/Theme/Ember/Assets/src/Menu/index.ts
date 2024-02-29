@@ -1,4 +1,2 @@
-import {getMenuItem} from "Menu/getMenuItem";
-import {getSubMenuItem} from "Menu/getSubMenuItem";
-
-export {getMenuItem, getSubMenuItem};
+export { getMenuItem } from "elements/src/Menu/getMenuItem";
+export { getSubMenuItem } from "elements/src/Menu/getSubMenuItem";

@@ -39,33 +39,52 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0);
     }
 
-    public function getThemeMenuItemSelector(): string
+    public function getThemeMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li:not(.selected) a";
+        return ["selector" => "#main-navigation>ul>li:not(.selected)>a", "pseudoEl" => ""];
     }
 
-    public function getThemeParentMenuItemSelector(): string
+    public function getThemeParentMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li.has-sub a:first-child";
+        return ["selector" => "#main-navigation>ul>li:has(.sub-navigation)", "pseudoEl" => ""];
     }
 
-    public function getThemeSubMenuItemSelector(): string
+    public function getThemeSubMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li.has-sub ul a:first-child";
+        return ["selector" => "#main-navigation>ul>li:has(.sub-navigation) .sub-navigation>li>a", "pseudoEl" => ""];
+    }
+
+    public function getThemeMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getThemeSubMenuItemBGSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li:has(.sub-navigation) .sub-navigation", "pseudoEl" => ""];
+    }
+
+    public function getThemeMenuItemPaddingSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
+        //set the default body bg as there are sections that are transparent
+
         $menuSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
                 'selector' => 'body',
-                'styleProperties' => ['background-color','background-image'],
+                'styleProperties' => ['background-color', 'background-image'],
                 'families' => [],
                 'defaultFamily' => '',
             ]
         );
-        if(!isset($menuSectionStyles['data'])) return;
+        if (!isset($menuSectionStyles['data'])) {
+            return;
+        }
 
         $menuSectionStyles = $menuSectionStyles['data'];
         $backgroundColorHex = ColorConverter::rgba2hex($menuSectionStyles['background-color']);

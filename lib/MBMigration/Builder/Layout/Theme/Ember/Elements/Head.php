@@ -30,18 +30,34 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
-    public function getThemeMenuItemSelector(): string
+    public function getThemeMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li:not(.selected)>a";
+        return ["selector" => "#main-navigation>ul>li:not(.selected)>a", "pseudoEl" => ""];
     }
 
-    public function getThemeParentMenuItemSelector(): string
+    public function getThemeParentMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li:has(.sub-navigation) li";
+        return ["selector" => "#main-navigation>ul>li:has(.sub-navigation)", "pseudoEl" => ""];
     }
 
-    public function getThemeSubMenuItemSelector(): string
+    public function getThemeSubMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li:has(.sub-navigation) .sub-navigation a:first-child";
+        return ["selector" => "#main-navigation>ul>li:has(.sub-navigation) .sub-navigation>li>a", "pseudoEl" => ""];
     }
+
+    public function getThemeMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getThemeSubMenuItemBGSelector(): array
+    {
+        return $this->getThemeSubMenuItemSelector();
+    }
+
+    public function getThemeMenuItemPaddingSelector(): array
+    {
+        return $this->getThemeParentMenuItemSelector();
+    }
+
 }

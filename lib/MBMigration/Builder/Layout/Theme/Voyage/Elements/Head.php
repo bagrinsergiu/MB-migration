@@ -45,20 +45,33 @@ class Head extends HeadElement
         $menuComponent->getValue()->set_iconPosition('right');
     }
 
-    public function getThemeMenuItemSelector(): string
+    public function getThemeMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li:not(.selected) a";
+        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
-    public function getThemeParentMenuItemSelector(): string
+    public function getThemeParentMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li.has-sub>a";
-        //return "#main-navigation>ul>li:has(.sub-navigation):first-child a";
+        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
     }
 
-    public function getThemeSubMenuItemSelector(): string
+    public function getThemeSubMenuItemSelector(): array
     {
-        //return "#main-navigation>ul>li:has(.sub-navigation):first-child .sub-navigation a:first-child";
-        return "#main-navigation>ul>li.has-sub .sub-navigation>li>a";
+        return ["selector" => "#main-navigation>ul>li.has-sub .sub-navigation>li>a", "pseudoEl" => ""];
+    }
+
+    public function getThemeMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getThemeSubMenuItemBGSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.has-sub .sub-navigation", "pseudoEl" => ":before"];
+    }
+
+    public function getThemeMenuItemPaddingSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
     }
 }

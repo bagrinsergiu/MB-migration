@@ -1,10 +1,11 @@
-import {MenuItemEntry, Output} from "elements/src/types/type";
+import {MenuItemElement, MenuItemEntry, Output} from "elements/src/types/type";
 import {createData} from "elements/src/utils/getData";
 import {getModel} from "./utils/getModel";
+import {prefixed} from "utils/src/models/prefixed";
 
 interface MenuItemData {
-    item: Element;
-    itemBg: Element;
+    item: MenuItemElement;
+    itemBg: MenuItemElement;
     families: Record<string, string>;
     defaultFamily: string;
 }
@@ -21,7 +22,7 @@ const getV = (entry: MenuItemData) => {
         "letter-spacing": undefined,
         "font-style": "",
         "color-hex": undefined,
-        "color-opacity": 1
+        "color-opacity": undefined
     };
 
     const v = getModel({
@@ -32,10 +33,9 @@ const getV = (entry: MenuItemData) => {
     });
 
     const bgModel = {
-        "menu-bg-color-hex": undefined,
-        "menu-bg-color-opacity": 1
+        "bg-color-hex": undefined,
+        "bg-color-opacity": undefined
     };
-
     const bgV = getModel({
         node: itemBg,
         modelDefaults: bgModel,
@@ -43,15 +43,15 @@ const getV = (entry: MenuItemData) => {
         defaultFamily: defaultFamily
     });
 
-    return {...v, ...bgV};
+    return {...prefixed(v, "subMenu"), ...prefixed(bgV, "subMenu")};
 };
 
 const getHoverV = (entry: MenuItemData) => {
     const {item, itemBg, families, defaultFamily} = entry;
 
     const model = {
-        "hover-color-hex": undefined,
-        "hover-color-opacity": undefined,
+        "color-hex": undefined,
+        "color-opacity": undefined,
     };
 
     const v = getModel({
@@ -62,8 +62,8 @@ const getHoverV = (entry: MenuItemData) => {
     });
 
     const bgModel = {
-        "hover-menu-bg-color-hex": undefined,
-        "hover-menu-bg-color-opacity": undefined,
+        "bg-color-hex": undefined,
+        "bg-color-opacity": 1,
     };
 
     const bgV = getModel({
@@ -72,24 +72,28 @@ const getHoverV = (entry: MenuItemData) => {
         families: families,
         defaultFamily: defaultFamily
     });
-    return {...v, ...bgV};
+    return {...prefixed(v, "hoverSubMenu"), ...prefixed(bgV, "hoverSubMenu")};
 };
 
-const getMenuItem = (entry: MenuItemEntry): Output => {
+const getSubMenuItem = (entry: MenuItemEntry): Output => {
     const {itemSelector, itemBgSelector, hover, families, defaultFamily} = entry;
-    const item = document.querySelector(itemSelector);
-    const itemBg = document.querySelector(itemBgSelector);
+    const itemElement = document.querySelector(itemSelector.selector);
+    const itemBgElement = document.querySelector(itemBgSelector.selector);
 
-    if (!item) {
+    if (!itemElement) {
         return {
             error: `Element with selector "${itemSelector}" not found`
         };
     }
-    if (!itemBg) {
+    if (!itemBgElement) {
         return {
             error: `Element with selector "${itemBgSelector}" not found`
         };
     }
+
+    const item = {item: itemElement, pseudoEl: itemSelector.pseudoEl};
+    const itemBg = {item: itemBgElement, pseudoEl: itemBgSelector.pseudoEl};
+
     let data = {};
     if (!hover)
         data = getV({item, itemBg, families, defaultFamily});
@@ -102,4 +106,4 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
 // For development
 // window.isDev = true;
 
-export {getMenuItem};
+export {getSubMenuItem};
