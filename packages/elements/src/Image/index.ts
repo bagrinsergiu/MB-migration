@@ -11,10 +11,12 @@ interface ImageModel {
 export const getImage = (_entry: Entry): Output => {
   const entry = window.isDev ? getDataByEntry(_entry) : _entry;
 
-  const node = document.querySelector(entry.selector);
+  const { selector } = entry;
+
+  const node = selector ? document.querySelector(selector) : undefined;
   if (!node) {
     return {
-      error: `Element with selector ${entry.selector} not found`
+      error: `Element with selector ${selector} not found`
     };
   }
 

@@ -12,11 +12,13 @@ type TextModel = ElementModel | EmbedModel;
 export const getText = (_entry: Entry): Output => {
   const entry = window.isDev ? getDataByEntry(_entry) : _entry;
 
-  let node = document.querySelector(entry.selector);
+  const { selector } = entry;
+
+  let node = selector ? document.querySelector(selector) : undefined;
 
   if (!node) {
     return {
-      error: `Element with selector ${entry.selector} not found`
+      error: `Element with selector ${selector} not found`
     };
   }
 

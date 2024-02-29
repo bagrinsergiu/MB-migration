@@ -14,7 +14,6 @@ export interface MenuEntry {
   defaultFamily: string;
 }
 
-
 export interface OutputData {
   data: unknown;
   warns?: Record<string, Record<string, string>>;

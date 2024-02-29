@@ -16,7 +16,7 @@ export const styleExtractor = (_entry: Data): Output => {
   const { selector, styleProperties } = entry;
 
   const data: Record<string, Literal> = {};
-  const element = document.querySelector(selector);
+  const element = selector ? document.querySelector(selector) : undefined;
 
   if (!element) {
     return {

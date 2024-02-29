@@ -54,9 +54,11 @@ const getAccordionV = (data: NavData) => {
 
 export const getAccordion = (_entry: Entry): Output => {
   const entry = window.isDev ? getDataByEntry(_entry) : _entry;
+
   const { selector, families, defaultFamily } = entry;
-  const node = document.querySelector(selector);
-  if (!node) {
+  const node = selector ? document.querySelector(selector) : undefined;
+
+  if (!node || !selector) {
     return {
       error: `Element with selector ${entry.selector} not found`
     };

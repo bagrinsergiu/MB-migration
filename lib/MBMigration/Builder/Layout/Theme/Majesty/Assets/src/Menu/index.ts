@@ -1,7 +1,6 @@
-import { getGlobalMenuModel } from "../utils/getGlobalMenuModel";
 import { getModel } from "./utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
-import { createData } from "elements/src/utils/getData";
+import { createData, getData } from "elements/src/utils/getData";
 import { getDataByEntry } from "elements/src/utils/getDataByEntry";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { prefixed } from "utils/src/models/prefixed";
@@ -51,13 +50,8 @@ const getMenuV = (data: NavData) => {
     families: data.families,
     defaultFamily: data.defaultFamily
   });
-  const globalModel = getGlobalMenuModel();
 
-  return {
-    ...globalModel,
-    ...v,
-    itemPadding: isNaN(itemPadding) ? 10 : itemPadding
-  };
+  return { ...v, itemPadding: isNaN(itemPadding) ? 10 : itemPadding };
 };
 
 const getSubMenuV = (data: Required<NavData>) => {
@@ -95,16 +89,15 @@ const getSubMenuV = (data: Required<NavData>) => {
   });
   const submenuTypography = prefixed(typography, "subMenu");
   const baseStyle = window.getComputedStyle(subNav);
-  const bgColor = parseColorString(baseStyle.backgroundColor);
+  const bgColor = parseColorString(baseStyle.backgroundColor) ?? {
+    hex: "#ffffff",
+    opacity: 1
+  };
 
   return {
     ...submenuTypography,
-    ...(bgColor &&
-      bgColor.opacity !== "0" && {
-        subMenuBgColorOpacity: bgColor.opacity,
-        subMenuBgColorHex: bgColor.hex,
-        subMenuBgColorPalette: ""
-      })
+    subMenuBgColorOpacity: bgColor.opacity,
+    subMenuBgColorHex: bgColor.hex
   };
 };
 
@@ -112,9 +105,9 @@ const run = (_entry: Entry): Output => {
   const entry = window.isDev ? getDataByEntry(_entry) : _entry;
 
   const { selector, families, defaultFamily } = entry;
-  const node = document.querySelector(selector);
+  const node = selector ? document.querySelector(selector) : undefined;
 
-  if (!node) {
+  if (!node || !selector) {
     return {
       error: `Element with selector ${entry.selector} not found`
     };
@@ -149,5 +142,7 @@ const run = (_entry: Entry): Output => {
 
 // For development
 // window.isDev = true;
+const data = getData();
+const output = run(data);
 
-export { run };
+export default output;
