@@ -879,8 +879,19 @@ class MigrationPlatform
     private function createDirectory($directoryPath): void
     {
         if (!is_dir($directoryPath)) {
-            Utils::log('Create Directory: '.$directoryPath, 1, 'createDirectory');
-            mkdir($directoryPath, 0777, true);
+            Utils::log('Create Directory: ' . $directoryPath, 1, 'createDirectory');
+
+            $result = shell_exec("mkdir -p " . escapeshellarg($directoryPath));
+
+            if ($result === null) {
+                Utils::log('Directory created successfully.', 1, 'createDirectory');
+            } else {
+                Utils::log('Error creating directory: ' . $result, 3, 'createDirectory');
+            }
+
+            if (!is_dir($directoryPath)) {
+                mkdir($directoryPath, 0777, true);
+            }
         }
     }
 
