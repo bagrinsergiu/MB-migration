@@ -32,12 +32,12 @@ class Head extends HeadElement
 
     public function getThemeMenuItemSelector(): string
     {
-        return "#main-navigation>ul>li:not(.selected) a";
+        return "#main-navigation>ul>li:not(.selected)>a";
     }
 
     public function getThemeParentMenuItemSelector(): string
     {
-        return "#main-navigation>ul>li:has(.sub-navigation) a:first-child";
+        return "#main-navigation>ul>li:has(.sub-navigation) li";
     }
 
     public function getThemeSubMenuItemSelector(): string

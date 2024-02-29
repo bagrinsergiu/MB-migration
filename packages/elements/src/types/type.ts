@@ -6,6 +6,15 @@ export interface Entry {
   defaultFamily: string;
 }
 
+export interface MenuItemEntry {
+  hover: boolean
+  itemSelector: string;
+  itemBgSelector: string;
+  families: Record<string, string>;
+  defaultFamily: string;
+}
+
+
 export interface MenuEntry {
   sectionSelector: string;
   itemSelector: string;
