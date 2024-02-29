@@ -4,6 +4,7 @@ import {MenuEntry, Output} from "elements/src/types/type";
 import {createData} from "elements/src/utils/getData";
 import {parseColorString} from "utils/src/color/parseColorString";
 import {prefixed} from "utils/src/models/prefixed";
+import {MValue} from "utils";
 
 interface NavData {
     section: Element;
@@ -16,7 +17,7 @@ interface NavData {
 const warns: Record<string, Record<string, string>> = {};
 
 const getMenuV = (data: NavData) => {
-    const {menuItem, families,defaultFamily} = data;
+    const {menuItem, families, defaultFamily} = data;
     let v = {};
 
     v = getModel({
@@ -30,7 +31,7 @@ const getMenuV = (data: NavData) => {
 };
 
 const getSubMenuV = (data: Required<NavData>) => {
-    const { section, subMenuItem,families,defaultFamily} = data;
+    const {subMenuItem, families, defaultFamily} = data;
 
     const typography = getModel({
         node: subMenuItem,
@@ -38,16 +39,22 @@ const getSubMenuV = (data: Required<NavData>) => {
         defaultFamily: defaultFamily
     });
     const submenuTypography = prefixed(typography, "subMenu");
-    const baseStyle = window.getComputedStyle(subMenuItem.parentElement.parentElement);
-    const bgColor = parseColorString(baseStyle.backgroundColor) ?? {
-        hex: "#ffffff",
-        opacity: 1
-    };
+    let subMenuBgColorOpacity = 1;
+    let subMenuBgColorHex = "#ffffff";
+    const subMenuItemParentElement = subMenuItem.parentElement?.parentElement;
 
+    if (subMenuItemParentElement) {
+        const baseStyle = window.getComputedStyle(subMenuItemParentElement);
+        const color = parseColorString(baseStyle.backgroundColor);
+        if (color) {
+            subMenuBgColorHex = color.hex;
+            subMenuBgColorOpacity = parseInt(color.opacity ?? "1");
+        }
+    }
     return {
         ...submenuTypography,
-        subMenuBgColorOpacity: bgColor.opacity,
-        subMenuBgColorHex: bgColor.hex
+        subMenuBgColorOpacity,
+        subMenuBgColorHex
     };
 };
 
