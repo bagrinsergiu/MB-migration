@@ -7,16 +7,24 @@ use MBMigration\Core\Utils;
 
 class VariableCache
 {
+    private $cachePath;
     private static $instance = null;
     private $cache;
 
-    private function __construct() {}
+    private function __construct($cachePath)
+    {
+        Utils::log('Initialization', 4, 'Cache');
+        $this->cachePath = rtrim($cachePath, '/');
+        $this->cache = ['OBJECTS' => []];
+    }
 
-    public static function getInstance() {
+    public static function getInstance($cachePath = null)
+    {
         $subclass = static::class;
         if (!isset(self::$instance[$subclass])) {
-            self::$instance[$subclass] = new static();
+            self::$instance[$subclass] = new static($cachePath);
         }
+
         return self::$instance[$subclass];
     }
 
@@ -28,7 +36,8 @@ class VariableCache
         return $this->cache;
     }
 
-    public function get($key, $section = ''){
+    public function get($key, $section = '')
+    {
         if ($section !== '') {
             return $this->getKeyRecursive($key, $section, $this->cache);
         } else {
@@ -57,6 +66,7 @@ class VariableCache
         if (array_key_exists($key, $this->cache)) {
             return true;
         }
+
         return false;
     }
 
@@ -71,14 +81,14 @@ class VariableCache
 
     public function add($key, $value, $expiration = 0): void
     {
-        if(array_key_exists($key, $this->cache)) {
+        if (array_key_exists($key, $this->cache)) {
             $this->cache[$key] = array_merge($this->cache[$key], $value);
         } else {
             $this->cache[$key] = $value;
         }
         if ($expiration > 0) {
             $expiration_time = time() + $expiration;
-            $this->cache[$key . '_expiration'] = $expiration_time;
+            $this->cache[$key.'_expiration'] = $expiration_time;
         }
     }
 
@@ -94,7 +104,7 @@ class VariableCache
 
     private function setKeyRecursive($section, $key, $value, &$array): void
     {
-        if(is_array($section)) {
+        if (is_array($section)) {
             $currentSection = array_shift($section);
         } else {
             $currentSection = $section;
@@ -102,19 +112,22 @@ class VariableCache
         if (!isset($array[$currentSection])) {
             $array[$currentSection] = [];
         }
-        if(is_array($section)) {
+        if (is_array($section)) {
             if (count($section) === 0) {
                 $array[$currentSection][$key] = $value;
+
                 return;
             }
         } else {
             $array[$currentSection][$key] = $value;
+
             return;
         }
         $this->setKeyRecursive($section, $key, $value, $array[$currentSection]);
     }
 
-    private function getKeyRecursive($key, $section, $array) {
+    private function getKeyRecursive($key, $section, $array)
+    {
         foreach ($array as $k => $value) {
             if ($k === $section && is_array($value)) {
                 if (array_key_exists($key, $value)) {
@@ -128,10 +141,12 @@ class VariableCache
                 }
             }
         }
+
         return null;
     }
 
-    private function searchKeyRecursive($key, $array) {
+    private function searchKeyRecursive($key, $array)
+    {
         foreach ($array as $k => $value) {
             if ($k === $key) {
                 return $value;
@@ -143,6 +158,7 @@ class VariableCache
                 }
             }
         }
+
         return null;
     }
 
@@ -158,6 +174,7 @@ class VariableCache
                     } else {
                         $v[$key] = $value;
                     }
+
                     return;
                 }
             }
@@ -170,7 +187,6 @@ class VariableCache
     public function LOAD_DATA($data)
     {
         if (is_string($data)) {
-
             $decodedData = json_decode($data, true);
             if ($decodedData === null && json_last_error() !== JSON_ERROR_NONE) {
                 throw new \InvalidArgumentException('Invalid JSON data');
@@ -190,11 +206,17 @@ class VariableCache
         $this->cache['OBJECTS'] = [];
     }
 
-    public function dumpCache($filePath) {
-        file_put_contents($filePath,json_encode($this->cache));
-    }
-    public function loadDump($filePath) {
-        $this->cache = json_decode(file_get_contents($filePath),true);
+    public function dumpCache($projectID_MB, $projectID_Brizy)
+    {
+        $fileName = $this->cachePath."/".md5($projectID_MB.$projectID_Brizy).'.json';
+        file_put_contents($fileName, json_encode($this->cache));
     }
 
+    public function loadDump($projectID_MB, $projectID_Brizy)
+    {
+        $fileName = $this->cachePath."/".md5($projectID_MB.$projectID_Brizy).'.json';
+        if (file_exists($fileName)) {
+            $this->cache = json_decode(file_get_contents($fileName), true);
+        }
+    }
 }

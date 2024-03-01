@@ -1,6 +1,13 @@
-/vendor/*
-/sample/*
+vendor/*
+sample/*
 .idea
 **/node_modules/
 .turbo
 /mbaaa
+*.local
+*.http
+bin/.ssh/*.key
+.phpunit.result.cache
+phpunit.xml
+var/cache/*
+var/log/*

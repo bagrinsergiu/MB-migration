@@ -30,7 +30,7 @@ class EventGridLayout extends AbstractElement
         $this->setQueryBuilder($queryBuilder);
     }
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['head'], true));
@@ -44,10 +44,10 @@ class EventGridLayout extends AbstractElement
 
         // header
         $headElement = $data->getThemeContext()->getElementFactory()->getElement('head');
-        $headBlock = $headElement->transformToItem($data->getThemeContext()->getMbHeadSection());
+        $headBlock = $headElement->internalTransformToItem($data->getThemeContext()->getMbHeadSection());
 
         $footerElement = $data->getThemeContext()->getElementFactory()->getElement('head');
-        $footerBlock = $footerElement->transformToItem($data->getThemeContext()->getMbFooterSection());
+        $footerBlock = $footerElement->internalTransformToItem($data->getThemeContext()->getMbFooterSection());
 
         // create details page
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();

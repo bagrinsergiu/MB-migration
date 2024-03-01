@@ -13,7 +13,7 @@ use MBMigration\Parser\JS;
 
 class AccordionLayout extends AbstractElement
 {
-    public function transformToItem(ElementContextInterface $data): array
+    protected function internalTransformToItem(ElementContextInterface $data): array
     {
         $section = new ItemBuilder();
         $section->newItem($this->brizyKit['main']);

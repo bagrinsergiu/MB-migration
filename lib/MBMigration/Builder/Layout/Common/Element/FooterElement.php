@@ -23,16 +23,24 @@ abstract class FooterElement extends AbstractElement
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
+            $this->beforeTransformToItem($data);
+            $component = $this->internalTransformToItem($data);
+            $this->afterTransformToItem($component);
 
-            $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-            $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
-            $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
-
-            $this->handleRichTextItems($elementContext, $this->browserPage);
-            $this->handleSectionStyles($elementContext, $this->browserPage);
-
-            return $brizySection;
+            return $component;
         });
+    }
+
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
+
+        $this->handleRichTextItems($elementContext, $this->browserPage);
+        $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        return $brizySection;
     }
 
 }

@@ -183,8 +183,8 @@ class Utils
 
         $prefix = date("Y-m-d");
 
-        self::createDirectoryIfNeeded(Config::$pathLogFile);
-        $dirToLog = Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
+        //self::createDirectoryIfNeeded(Config::$pathLogFile);
+        $dirToLog = Config::$pathLogFile;//Utils::strReplace(Config::$pathLogFile, '{{PREFIX}}', $prefix);
 
         if ($dirToDumpLog !== null) {
             file_put_contents($dirToDumpLog . 'process.log', $strLog, FILE_APPEND);

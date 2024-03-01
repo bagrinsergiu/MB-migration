@@ -19,7 +19,7 @@ class Footer extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
 
@@ -41,7 +41,7 @@ class Footer extends AbstractElement
 //        $sectionStyles = $this->browserPage->evaluateScript(
 //            'StyleExtractor.js',
 //            [
-//                'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"]',
+//                'selector' => '[data-id="'.$mbSectionItem['sectionId'].'"]',
 //                'STYLE_PROPERTIES' => [
 //                    'background-color',
 //                    'opacity',
@@ -57,7 +57,7 @@ class Footer extends AbstractElement
 //        );
 //
 //        $sectionWrapperStyles = $this->browserPage->evaluateScript('StyleExtractor.js', [
-//            'SELECTOR' => '[data-id="'.$mbSectionItem['sectionId'].'"]>.content-wrapper',
+//            'selector' => '[data-id="'.$mbSectionItem['sectionId'].'"]>.content-wrapper',
 //            'STYLE_PROPERTIES' => [
 //                'padding-top',
 //                'padding-bottom',

@@ -6,6 +6,15 @@ export interface Entry {
   defaultFamily: string;
 }
 
+export interface MenuEntry {
+  sectionSelector: string;
+  itemSelector: string;
+  subItemSelector: string;
+  families: Record<string, string>;
+  defaultFamily: string;
+}
+
+
 export interface OutputData {
   data: unknown;
   warns?: Record<string, Record<string, string>>;

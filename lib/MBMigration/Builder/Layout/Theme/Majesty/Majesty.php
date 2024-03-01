@@ -52,10 +52,12 @@ class Majesty extends LayoutUtils implements ThemeInterface
         $elementFactory = $this->themeContext->getElementFactory();
 
         $elementContext = ElementContext::instance(
+            $this,
             $this->themeContext,
             $this->themeContext->getMbHeadSection(),
             $brizyComponent,
-            $this->themeContext->getMbMenu(),
+            $this->themeContext->getBrizyMenuEntity(),
+            $this->themeContext->getBrizyMenuItems(),
             $this->themeContext->getFamilies(),
             $this->themeContext->getDefaultFamily()
         );
@@ -67,10 +69,12 @@ class Majesty extends LayoutUtils implements ThemeInterface
             try {
                 $element = $elementFactory->getElement($elementName);
                 $elementContext = ElementContext::instance(
+                    $this,
                     $this->themeContext,
                     $mbPageSection,
                     $brizyComponent,
-                    $this->themeContext->getMbMenu(),
+                    $this->themeContext->getBrizyMenuEntity(),
+                    $this->themeContext->getBrizyMenuItems(),
                     $this->themeContext->getFamilies(),
                     $this->themeContext->getDefaultFamily()
                 );
@@ -86,10 +90,12 @@ class Majesty extends LayoutUtils implements ThemeInterface
             $elementFactory->getElement('footer')
                 ->transformToItem(
                     ElementContext::instance(
+                        $this,
                         $this->themeContext,
                         $this->themeContext->getMbFooterSection(),
                         $brizyComponent,
-                        $this->themeContext->getMbMenu(),
+                        $this->themeContext->getBrizyMenuEntity(),
+                        $this->themeContext->getBrizyMenuItems(),
                         $this->themeContext->getFamilies(),
                         $this->themeContext->getDefaultFamily()
                     )

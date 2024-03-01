@@ -14,7 +14,7 @@ abstract class GridLayout extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -34,6 +34,11 @@ abstract class GridLayout extends AbstractElement
         $itemsChunks = array_chunk($accordionItems, $this->getItemsPerRow());
         foreach ($itemsChunks as $row) {
             $brizySectionRow = new BrizyComponent($rowJson);
+            $itemCount = count($row);
+            $itemWidth = (int)(100/$itemCount);
+            $rowWidth = (int)( (100/$this->getItemsPerRow()) * $itemCount );
+            $brizySectionRow->getValue()->set_size($rowWidth);
+
             foreach ($row as $item) {
                 $brizySectionItem = new BrizyComponent($itemJson);
 
@@ -41,6 +46,7 @@ abstract class GridLayout extends AbstractElement
                 $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
                 $brizySectionItem->getValue()
+                    ->set_width($itemWidth)
                     ->set_paddingTop((int)$styles['margin-top'])
                     ->set_paddingBottom((int)$styles['margin-bottom'])
                     ->set_paddingRight((int)$styles['margin-right'])

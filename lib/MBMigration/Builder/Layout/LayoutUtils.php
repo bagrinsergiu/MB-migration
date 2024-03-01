@@ -1014,77 +1014,35 @@ class LayoutUtils extends builderUtils
      */
     protected function loadKit($layoutName = '', $fileName = '')
     {
-
-        if (Config::$urlJsonKits && !Config::$devMode) {
-            Utils::log('Download json BlocksKit', 1, "] [loadKit");
-            $createUrl = Config::$urlJsonKits.'/Layout';
-
-            if ($fileName === '' && $layoutName === '') {
-                $createUrl .= '/globalBlocksKit.json';
+        Utils::log('Open file json BlocksKit', 1, "] [loadKit");
+        $file = __DIR__;
+        if ($fileName === '' && $layoutName === '') {
+            $file .= '/globalBlocksKit.json';
+        } else {
+            if ($layoutName !== '') {
+                $file .= '/Theme/'.$layoutName;
+            }
+            if ($fileName !== '') {
+                $file .= '/'.$fileName;
             } else {
-                if ($layoutName !== '') {
-                    $createUrl .= '/Theme/'.$layoutName;
-                }
-                if ($fileName !== '') {
-                    $createUrl .= '/'.$fileName;
-                } else {
-                    $createUrl .= '/blocksKit.json';
-                }
+                $file .= '/blocksKit.json';
             }
-            $url = $this->validateAndFixURL($createUrl);
-            if (!$url) {
-                Utils::log('Bad Url: '.$createUrl, 3, "] [loadKit");
-                throw new Exception("Bad Url: loadKit");
-            }
+        }
+        if (file_exists($file)) {
+            $fileContent = file_get_contents($file);
 
-            return $this->loadJsonFromUrl($url);
+            if (empty($fileContent)) {
+                Utils::log('File '.$file.' empty', 2, "] [loadKit");
+                throw new Exception('File '.$file.' empty');
+            }
+            Utils::log('File exist: '.$file, 1, "] [loadKit");
+
+            return json_decode($fileContent, true);
 
         } else {
-            Utils::log('Open file json BlocksKit', 1, "] [loadKit");
-            $file = __DIR__;
-            if ($fileName === '' && $layoutName === '') {
-                $file .= '/globalBlocksKit.json';
-            } else {
-                if ($layoutName !== '') {
-                    $file .= '/Theme/'.$layoutName;
-                }
-                if ($fileName !== '') {
-                    $file .= '/'.$fileName;
-                } else {
-                    $file .= '/blocksKit.json';
-                }
-            }
-            if (file_exists($file)) {
-                $fileContent = file_get_contents($file);
-
-                if (empty($fileContent)) {
-                    Utils::log('File '.$file.' empty', 2, "] [loadKit");
-                    throw new Exception('File '.$file.' empty');
-                }
-                Utils::log('File exist: '.$file, 1, "] [loadKit");
-
-                return json_decode($fileContent, true);
-
-            } else {
-                Utils::log('File does not exist. Path: '.$file, 2, "] [loadKit");
-                throw new Exception('File does not exist. Path: '.$file);
-            }
+            Utils::log('File does not exist. Path: '.$file, 2, "] [loadKit");
+            throw new Exception('File does not exist. Path: '.$file);
         }
-    }
-
-    protected function validateAndFixURL($url)
-    {
-        if (!parse_url($url, PHP_URL_SCHEME)) {
-            $url = 'https://'.$url;
-        }
-        if (!parse_url($url, PHP_URL_HOST)) {
-            return false;
-        }
-        if (preg_match('/[^A-Za-z0-9-._~:\/?#\[\]@!$&\'()*+,;=]/', $url)) {
-            return false;
-        }
-
-        return str_replace(' ', '%20', $url);
     }
 
     protected function getFonts($option)

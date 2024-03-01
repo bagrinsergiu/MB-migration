@@ -19,10 +19,14 @@ abstract class PhotoTextElement extends AbstractElement
     use DanationsAble;
     use ImageStylesAble;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+
+        $showHeader = $mbSection['settings']['sections']['text']['show_header'] ?? true;
+        $showSecondaryHeader = $mbSection['settings']['sections']['text']['show_secondary_header'] ?? true;
+        $showBody = $mbSection['settings']['sections']['text']['show_body'] ?? true;
 
         foreach ((array)$mbSection['items'] as $mbSectionItem) {
             switch ($mbSectionItem['category']) {
@@ -47,6 +51,11 @@ abstract class PhotoTextElement extends AbstractElement
                         ->set_widthSuffix((strpos($imageStyles['width'],'%')===true)?'%':'pix');
                     break;
                 case 'text':
+
+                    if($mbSectionItem['item_type']=='title' && !$showHeader) continue 2;
+                    if($mbSectionItem['item_type']=='secondary_title' && !$showSecondaryHeader) continue 2;
+                    if($mbSectionItem['item_type']=='body' && !$showBody) continue 2;
+
                     // add the text on the left side of th bock
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbSectionItem,

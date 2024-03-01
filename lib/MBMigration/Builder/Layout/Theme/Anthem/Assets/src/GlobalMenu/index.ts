@@ -1,7 +1,7 @@
 import { parseColorString } from "utils/src/color/parseColorString";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
-const globalMenuExtractor = () => {
+const run = () => {
   const menuItem = document.querySelector(
     "#main-navigation li:not(.selected) a"
   );
@@ -16,9 +16,9 @@ const globalMenuExtractor = () => {
   if (color) {
     window.menuModel = {
       hoverColorHex: color.hex,
-      hoverColorOpacity: color.opacity
+      hoverColorOpacity: color.opacity ?? 1
     };
   }
 };
 
-globalMenuExtractor();
+export { run };

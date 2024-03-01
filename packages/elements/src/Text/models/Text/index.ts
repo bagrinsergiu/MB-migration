@@ -1,5 +1,6 @@
 import { createWrapperModel } from "../../../Models/Wrapper";
 import { ElementModel } from "../../../types/type";
+import { addMarginsToLists } from "../..//utils/styles/addMarginsToLists";
 import { removeAllStylesFromHTML } from "../../utils/dom/removeAllStylesFromHTML";
 import { removeEmptyNodes } from "../../utils/dom/removeEmptyNodes";
 import { transformDivsToParagraphs } from "../../utils/dom/transformDivsToParagraphs";
@@ -26,6 +27,9 @@ export const getTextModel = (data: Data): ElementModel => {
 
   // Get all ours style for Builder [font-family, font-size, line-height, .etc]
   const styles = getTypographyStyles(node);
+
+  // Get all lists and add margins to it;
+  node = addMarginsToLists(node);
 
   // Remove all inline styles like background-color, positions.. etc.
   node = removeAllStylesFromHTML(node);

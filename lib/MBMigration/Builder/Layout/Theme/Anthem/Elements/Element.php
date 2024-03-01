@@ -263,17 +263,13 @@ abstract class Element extends LayoutUtils
         $jsonDecode = $this->initData();
         $QueryBuilder = $this->cache->getClass('QueryBuilder');
 
-//        $QueryBuilder->createCollectionItem($itemsID, $slug, $title);
-
         if ($this->checkArrayPath($jsonDecode, "dynamic/$elementName")) {
             $decoded = $jsonDecode['dynamic'][$elementName];
         } else {
             throw new Exception('Element not found');
         }
 
-        $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
         $itemsData['items'][] = json_decode($decoded['detail'], true);
-        $itemsData['items'][] = json_decode($this->cache->get('footerBlock'), true);
 
         $pageData = json_encode($itemsData);
 

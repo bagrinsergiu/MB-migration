@@ -1,0 +1,17 @@
+*
+
+!packages
+!package.json
+!package-lock.json
+!composer.lock
+!composer.json
+!turbo.json
+!./public
+!./lib
+!.env
+!.docker
+
+
+lib/MBMigration/Builder/Layout/Theme/*/Assets/node_modules
+
+

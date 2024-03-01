@@ -10,6 +10,7 @@ use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
+use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -17,35 +18,49 @@ abstract class HeadElement extends AbstractElement
 {
     const CACHE_KEY = 'head';
     use Cacheable;
+    use SectionStylesAble;
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
+            $this->beforeTransformToItem($data);
+            $component = $this->internalTransformToItem($data);
+            $this->afterTransformToItem($component);
 
-            $headStyles = $this->extractBlockBrowserData($data->getMbSection()['sectionId']);
-
-            $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-
-            // reset color palette
-            $sectionItem = $this->getSectionItemComponent($section);
-            $sectionItem->getValue()->set_bgColorPalette('');
-
-            $logoImageComponent = $this->getLogoComponent($section);
-            $menuTargetComponent = $this->getTargetMenuComponent($section);
-
-            // build menu items and set the menu uid
-            $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles);
-            $this->setImageLogo($logoImageComponent, $data->getMbSection());
-            $this->setSectionBackgroundColor($sectionItem, $headStyles['style']);
-
-            return $section;
+            return $component;
         });
     }
 
-    // region Menu methods
-    private function createMenu($menuList): array
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $menuItems = $this->creatingMenuTree($menuList['list']);
+        $headStyles = $this->extractBlockBrowserData(
+            $data->getMbSection()['sectionId'],
+            $data->getFontFamilies(),
+            $data->getDefaultFontFamily()
+        );
+
+        $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+
+        // reset color palette
+        $sectionItem = $this->getSectionItemComponent($section);
+
+        $logoImageComponent = $this->getLogoComponent($section);
+        $menuTargetComponent = $this->getTargetMenuComponent($section);
+
+        // build menu items and set the menu uid
+        $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles);
+        $this->setImageLogo($logoImageComponent, $data->getMbSection());
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItem);
+        $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        return $section;
+    }
+
+    // region Menu methods
+    protected function createMenu($menuList): array
+    {
+        $menuItems = $this->creatingMenuTree($menuList);
 
         return $menuItems;
     }
@@ -61,10 +76,15 @@ abstract class HeadElement extends AbstractElement
             $blockMenu->getValue()->set_url($item['slug'] == 'home' ? '/' : $item['slug']);
             $blockMenu->getValue()->set_id(bin2hex(random_bytes(16)));
 
+            if (isset($item['iconName']) && isset($item['iconType'])) {
+                $blockMenu->getValue()->set_iconName($item['iconName']);
+                $blockMenu->getValue()->set_iconType($item['iconType']);
+            }
+
             $menuSubItems = $this->creatingMenuTree($item['child']);
             $blockMenu->getValue()->set_items($menuSubItems);
 
-            if ($item['landing'] == false) {
+            if ($item['landing'] == false && count($menuSubItems)) {
                 $url = $blockMenu->getItemValueWithDepth(0)->get_url();
                 $blockMenu->getValue()->set_url($url);
             }
@@ -108,24 +128,9 @@ abstract class HeadElement extends AbstractElement
     }
 
     /**
-     * @param BrizyComponent $component
-     * @param $styles
-     * @return BrizyComponent
-     */
-    private function setSectionBackgroundColor(BrizyComponent $component, $styles): BrizyComponent
-    {
-        $rgbaToHex = ColorConverter::rgba2hex($styles['background-color']);
-        $opacity = ColorConverter::rgba2opacity($styles['background-color']);
-
-        $component->getValue()->set_bgColorHex($rgbaToHex)->set_bgColorOpacity($opacity);
-
-        return $component;
-    }
-
-
-    /**
      * @param ElementContextInterface $data
      * @param BrizyComponent $component
+     * @param $headStyles
      * @return BrizyComponent
      */
     private function buildMenuItemsAndSetTheMenuUid(
@@ -133,64 +138,69 @@ abstract class HeadElement extends AbstractElement
         BrizyComponent $component,
         $headStyles
     ): BrizyComponent {
-        $menuItems = $this->createMenu($data->getMenu());
         $menuComponentValue = $component->getValue();
-        $menuComponentValue->set('items', $menuItems)
-            ->set_menuSelected($data->getMenu()['uid']);
+        $menuComponentValue
+            ->set('items', $this->createMenu($data->getBrizyMenuEntity()['list']))
+            ->set_menuSelected($data->getBrizyMenuEntity()['uid']);
 
         // apply menu styles
         foreach ($headStyles['menu'] as $field => $value) {
             $method = "set_{$field}";
             $menuComponentValue->$method($value);
         }
-        foreach ($headStyles['hoverMenu'] as $field => $value) {
-            $method = "set_{$field}";
-            $menuComponentValue->$method($value);
-        }
-
-        $menuComponentValue->set_activeSubMenuColorHex($headStyles['hoverMenu']['hoverColorHex']);
 
         return $component;
     }
 
-    protected function extractBlockBrowserData($sectionId): array
-    {
-        $menuStyles = $this->browserPage->evaluateScript(
-            'Menu.js',
-            [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
-                'FAMILIES' => [],
-                'DEFAULT_FAMILY' => 'lato',
-            ]
-        );
+    protected function extractBlockBrowserData(
+        $sectionId,
+        $families,
+        $defaultFamilies
+    ): array {
 
-        $menuSectionStyles = $this->browserPage->evaluateScript(
-            'StyleExtractor.js',
-            [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
-                'STYLE_PROPERTIES' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
-                'FAMILIES' => [],
-                'DEFAULT_FAMILY' => 'lato',
-            ]
-        );
-
-        if ($this->browserPage->triggerEvent('hover', '#main-navigation li:not(.selected) a')) {
-            $this->browserPage->evaluateScript('GlobalMenu.js', []);
-            $this->browserPage->triggerEvent('hover', 'html');
+        $selector = $this->getThemeMenuItemSelector();
+        if ($this->browserPage->triggerEvent('hover', $selector)) {
+            $this->browserPage->evaluateScript('brizy.globalMenuExtractor', [
+                'selector' => $selector,
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
+            ]);
         }
 
-        $hoverMenuStyles = $this->browserPage->evaluateScript(
-            'Menu.js',
+//        $elementSelector = $this->getThemeParentMenuItemSelector();
+//        $elementSelector1 = $this->getThemeSubMenuItemSelector();
+//        if ($browserPage->triggerEvent('hover', $elementSelector) &&
+//            $browserPage->triggerEvent('hover', $elementSelector1)) {
+//            $browserPage->evaluateScript('brizy.globalMenuExtractor', []);
+//            //$browserPage->screenshot("/project/var/log/test2.png");
+//            $browserPage->triggerEvent('hover', 'html', [1, 1]);
+//        }
+
+        $this->browserPage->triggerEvent('hover', 'body', [1, 1]);
+
+        $menuSectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
-                'FAMILIES' => [],
-                'DEFAULT_FAMILY' => 'lato',
+                'selector' => '[data-id="'.$sectionId.'"]',
+                'styleProperties' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
+            ]
+        );
+
+        $menuStyles = $this->browserPage->evaluateScript(
+            'brizy.getMenu',
+            [
+                'sectionSelector' => '[data-id="'.$sectionId.'"]',
+                'itemSelector' => $this->getThemeMenuItemSelector(),
+                'subItemSelector' => $this->getThemeSubMenuItemSelector(),
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
             ]
         );
 
         return [
             'menu' => isset($menuStyles['data']) ? $menuStyles['data'] : [],
-            'hoverMenu' => isset($hoverMenuStyles['data']) ? $hoverMenuStyles['data'] : [],
             'style' => isset($menuSectionStyles['data']) ? $menuSectionStyles['data'] : [],
         ];
     }
@@ -207,4 +217,9 @@ abstract class HeadElement extends AbstractElement
      */
     abstract protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent;
 
+    abstract protected function getThemeMenuItemSelector(): string;
+
+    abstract protected function getThemeParentMenuItemSelector(): string;
+
+    abstract protected function getThemeSubMenuItemSelector(): string;
 }

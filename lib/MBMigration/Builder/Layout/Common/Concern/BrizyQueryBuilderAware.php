@@ -37,18 +37,18 @@ trait BrizyQueryBuilderAware
         $collectionItem = $this->getQueryBuilder()->getCollectionItemBySlug($slug);
 
         if (!$collectionItem) {
-            $pageData = json_encode($pageData);
             $collectionItem = $this->getQueryBuilder()->createCollectionItem(
                 $collectionTypeUri,
                 $slug,
                 $title,
+                false,
                 false,
                 'published',
                 [],
                 json_encode($pageData)
             );
         } else {
-             $this->getQueryBuilder()->updateCollectionItem(
+            $this->getQueryBuilder()->updateCollectionItem(
                 $collectionItem['id'],
                 $slug,
                 json_encode($pageData)

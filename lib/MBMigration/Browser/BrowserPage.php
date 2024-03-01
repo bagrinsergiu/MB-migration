@@ -97,7 +97,7 @@ class BrowserPage implements BrowserPageInterface
         $this->triggerEvent('hover', 'html');
     }
 
-    public function setNodeAttributes($selector, array $attributes)
+    public function setNodeStyles($selector, array $attributes)
     {
         $this->evaluateScript("function (selector, attributes) {
             var element = document.querySelector(selector);
@@ -117,5 +117,26 @@ class BrowserPage implements BrowserPageInterface
         $this->page->waitForSelector($selector);
 
         $this->page->screenshot(['path' =>  __DIR__ . 'testImage.png']);
+    }
+
+    public function setNodeAttribute($selector, array $attributes)
+    {
+        $this->evaluateScript("function (selector, attributes) {
+            var element = document.querySelector(selector);
+            if (element) {
+                for (var key in attributes) {
+                    element.setAttribute(key,attributes[key]);
+                }
+            }
+        }",
+            [
+                'selector' => $selector,
+                'attributes' => $attributes,
+            ]
+        );
+
+        $this->page->waitForSelector($selector);
+
+        $this->page->screenshot(['path' =>  __DIR__ . 'testImageAttr.png']);
     }
 }

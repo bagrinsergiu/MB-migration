@@ -12,7 +12,7 @@ abstract class GalleryLayout extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -22,9 +22,11 @@ abstract class GalleryLayout extends AbstractElement
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
 
+        $declaredAutoplay = $mbSection['settings']['sections']['gallery']['autoplay'] ?? true;
+
         $arrows = $mbSection['settings']['sections']['gallery']['arrows'] ?? true;
         $markers = $mbSection['settings']['sections']['gallery']['markers'] ?? true;
-        $autoplay = $mbSection['settings']['sections']['gallery']['autoplay'] ?? true;
+        $autoplay = count($mbSection['items']) <= 1 ? false : $declaredAutoplay;
         $animation = $mbSection['settings']['sections']['gallery']['transition'] ?? 'Slide';
 
         $slideDuration = 0.5;
@@ -40,12 +42,12 @@ abstract class GalleryLayout extends AbstractElement
             ->set_sliderDots($markers ? "circle" : "none")
             ->set_sliderArrows($arrows ? "heavy" : "none")
             ->set_sliderAutoPlay($autoplay ? "on" : "off")
-            ->set_animationName('slideInRight') // as there is only one animation matc
+            ->set_animationName($autoplay ? 'slideInRight' : 'none') // as there is only one animation matc
             ->set_animationDuration($transitionDuration * 1000)
             ->set_animationDelay($slideDuration * 1000);
 
         $brizySectionItems = [];
-        foreach ($data->getMbSection()['items'] as $mbItem) {
+        foreach ($mbSection['items'] as $mbItem) {
             $brizySectionItem = new BrizyComponent($slideJson);
             $brizySectionItems[] = $this->setSlideImage($brizySectionItem, $mbItem);
         }

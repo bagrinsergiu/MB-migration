@@ -13,7 +13,7 @@ abstract class EventGalleryLayout extends AbstractElement
     use SectionStylesAble;
     use RichTextAble;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['head'], true));

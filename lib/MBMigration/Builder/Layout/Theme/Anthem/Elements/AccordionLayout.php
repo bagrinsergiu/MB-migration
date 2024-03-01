@@ -60,14 +60,12 @@ class AccordionLayout extends Element
 
         foreach ($sectionData['head'] as $headItem) {
             if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+                $this->textCreation($headItem, $objItem);
             }
         }
         foreach ($sectionData['head'] as $headItem) {
             if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
-                $richText = JS::RichText($headItem['id'], $options['currentPageURL'], $options['fontsFamily']);
-                $objBlock->item(0)->addItem($this->itemWrapperRichText($richText));
+                $this->textCreation($headItem, $objItem);
             }
         }
 
@@ -83,13 +81,11 @@ class AccordionLayout extends Element
                 }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'accordion_title') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->setting('labelText', $richText);
+                        $this->textCreation($item, $objItem);
                     }
 
                     if ($item['item_type'] === 'accordion_body') {
-                        $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                        $objItem->item(0)->item(0)->setText($richText);
+                        $this->textCreation($item, $objItem);
                     }
                 }
             }
@@ -99,5 +95,27 @@ class AccordionLayout extends Element
         $objBlock->item(0)->addItem($objList->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
+    }
+
+    private function textCreation($sectionData, $objBlock)
+    {
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(is_array($embedCode)){
+                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                case 'Wrapper':
+                    $objBlock->item(0)->addItem($textItem);
+                    break;
+            }
+        }
     }
 }

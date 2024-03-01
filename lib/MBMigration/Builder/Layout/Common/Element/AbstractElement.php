@@ -7,6 +7,7 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
 use MBMigration\Builder\Layout\Common\Concern\TextsExtractorAware;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -36,6 +37,21 @@ abstract class AbstractElement implements ElementInterface
         $this->browserPage = $browserPage;
     }
 
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $this->beforeTransformToItem($data);
+        $component = $this->internalTransformToItem($data);
+        $this->afterTransformToItem($component);
+
+        return $component;
+    }
+
+    /**
+     * Returns and Brizy fully build section ready to be inserted in page data.
+     *
+     * @return array
+     */
+    abstract protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent;
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
@@ -61,5 +77,15 @@ abstract class AbstractElement implements ElementInterface
         }
 
         return true;
+    }
+
+
+    protected function beforeTransformToItem(ElementContextInterface $data): void
+    {
+
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
     }
 }

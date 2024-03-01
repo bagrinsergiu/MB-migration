@@ -15,7 +15,7 @@ abstract class FullMediaElement extends AbstractElement
     use SectionStylesAble;
     use DanationsAble;
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizySection->getValue()->set_marginTop(0);
@@ -63,7 +63,8 @@ abstract class FullMediaElement extends AbstractElement
             ->set_heightSuffix('');
 
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
-        $imageMb = $mbSectionItem['items'][0];
+        $images = $this->getItemsByCategory($mbSectionItem, 'photo');
+        $imageMb = array_pop($images);
         $this->handlePhotoItem($imageMb['id'],$imageMb,$brizyImageComponent,$this->browserPage,$data->getFontFamilies(),$data->getDefaultFontFamily());
 
         return $brizySection;

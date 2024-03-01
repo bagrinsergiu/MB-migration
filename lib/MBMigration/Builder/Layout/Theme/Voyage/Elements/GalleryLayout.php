@@ -20,9 +20,9 @@ class GalleryLayout extends \MBMigration\Builder\Layout\Common\Element\GalleryLa
         return $brizySection;
     }
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $brizySection = parent::transformToItem($data);
+        $brizySection = parent::internalTransformToItem($data);
 
 //        $mbSectionItem = $data->getMbSection();
 //        $families = $data->getFontFamilies();

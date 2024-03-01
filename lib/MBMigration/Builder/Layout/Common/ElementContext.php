@@ -30,12 +30,13 @@ final class ElementContext implements ElementContextInterface
      */
     private $brizyComponent;
 
-    private $brizyCollectionType;
-    private $brizyCollectionItem;
     /**
      * @var ThemeContextInterface
      */
     private $themeContext;
+    private array $brizyMenuEntity;
+    private array $brizyMenuItems;
+    private ThemeInterface $themeInstance;
 
     /**
      * @param $mbSection
@@ -45,18 +46,22 @@ final class ElementContext implements ElementContextInterface
      * @return self
      */
     static public function instance(
+        ThemeInterface $themeInstance,
         ThemeContextInterface $themeContext,
         array $mbSection,
         BrizyComponent $brizyComponent = null,
-        array $menu = [],
+        array $brizyMenuEntity = [],
+        array $brizyMenuItems = [],
         array $fontFamilies = [],
         string $defaultFontFamily = ''
     ): self {
         return new self(
+            $themeInstance,
             $themeContext,
             $mbSection,
             $brizyComponent,
-            $menu,
+            $brizyMenuEntity,
+            $brizyMenuItems,
             $fontFamilies,
             $defaultFontFamily
         );
@@ -65,10 +70,12 @@ final class ElementContext implements ElementContextInterface
     public function instanceWithBrizyComponent(BrizyComponent $brizyComponent): ElementContextInterface
     {
         return new self(
+            $this->themeInstance,
             $this->themeContext,
             $this->getMbSection(),
             $brizyComponent,
-            $this->getMenu(),
+            $this->getBrizyMenuEntity(),
+            $this->getBrizyMenuItems(),
             $this->getFontFamilies(),
             $this->getDefaultFontFamily()
         );
@@ -77,10 +84,12 @@ final class ElementContext implements ElementContextInterface
     public function instanceWithMBSection($mbSection): ElementContextInterface
     {
         return new self(
+            $this->themeInstance,
             $this->themeContext,
             $mbSection,
             $this->getBrizySection(),
-            $this->getMenu(),
+            $this->getBrizyMenuEntity(),
+            $this->getBrizyMenuItems(),
             $this->getFontFamilies(),
             $this->getDefaultFontFamily()
         );
@@ -91,29 +100,35 @@ final class ElementContext implements ElementContextInterface
         BrizyComponent $brizyComponent
     ): ElementContextInterface {
         return new self(
+            $this->themeInstance,
             $this->themeContext,
             $mbSection,
             $brizyComponent,
-            $this->getMenu(),
+            $this->getBrizyMenuEntity(),
+            $this->getBrizyMenuItems(),
             $this->getFontFamilies(),
             $this->getDefaultFontFamily()
         );
     }
 
     public function __construct(
+        ThemeInterface $themeInstance,
         ThemeContextInterface $themeContext,
         array $section,
         BrizyComponent $brizyComponent = null,
-        array $menu = [],
+        array $brizyMenuEntity = [],
+        array $brizyMenuItems = [],
         array $fontFamily = [],
         string $defaultFontFamilies = ''
     ) {
         $this->mbSection = $section;
         $this->brizyComponent = $brizyComponent;
-        $this->menu = $menu;
         $this->fontFamilies = $fontFamily;
         $this->defaultFontFamily = $defaultFontFamilies;
         $this->themeContext = $themeContext;
+        $this->brizyMenuEntity = $brizyMenuEntity;
+        $this->brizyMenuItems = $brizyMenuItems;
+        $this->themeInstance = $themeInstance;
     }
 
     public function getMbSection(): array
@@ -121,9 +136,14 @@ final class ElementContext implements ElementContextInterface
         return $this->mbSection;
     }
 
-    public function getMenu(): array
+    public function getBrizyMenuEntity(): array
     {
-        return $this->menu;
+        return $this->brizyMenuEntity;
+    }
+
+    public function getBrizyMenuItems(): array
+    {
+        return $this->brizyMenuItems;
     }
 
     /**
@@ -153,5 +173,10 @@ final class ElementContext implements ElementContextInterface
     public function getThemeContext(): ThemeContextInterface
     {
         return $this->themeContext;
+    }
+
+    public function getThemeInstance(): ThemeInterface
+    {
+        return $this->themeInstance;
     }
 }

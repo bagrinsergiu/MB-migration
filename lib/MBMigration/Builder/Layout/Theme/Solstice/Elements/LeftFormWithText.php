@@ -12,7 +12,7 @@ use MBMigration\Parser\JS;
 
 class LeftFormWithText extends AbstractElement
 {
-    public function transformToItem(ElementDataInterface $data): array
+    protected function internalTransformToItem(ElementDataInterface $data): array
     {
         $section = new ItemBuilder();
         $section->newItem($this->brizyKit['main']);

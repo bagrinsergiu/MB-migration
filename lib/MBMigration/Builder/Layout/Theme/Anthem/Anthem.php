@@ -3,11 +3,13 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem;
 
 use Exception;
-use MBMigration\Browser\Browser;
-use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPHP;
+use MBMigration\Browser\BrowserPagePHP;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Items\SubMenu;
+use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\FamilyTreeMenu;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
@@ -38,7 +40,7 @@ class Anthem extends LayoutUtils
     private $fontFamily;
 
     /**
-     * @var Browser
+     * @var BrowserPHP
      */
     private $browser;
 
@@ -64,7 +66,7 @@ class Anthem extends LayoutUtils
 
         $menuList = $this->cache->get('menuList');
 
-        if ($menuList['create'] === false) {
+        if (empty($menuList['create'])) {
             $headElement = AnthemElementsController::getElement(
                 'head',
                 $this->jsonDecode,
@@ -204,11 +206,11 @@ class Anthem extends LayoutUtils
      * Extract data from a page and update the SectionPage array with the extracted data.
      *
      * @param array $SectionPage The array representing the sections on the page.
-     * @param BrowserPage $browserPage The browser page object used to extract data from the page.
+     * @param BrowserPagePHP $browserPage The browser page object used to extract data from the page.
      * @param string $nameSectionId The name of the section ID parameter. Default is 'id'.
      * @throws Exception If failed to extract data.
      */
-    private function ExtractDataFromPage(array &$SectionPage, BrowserPage $browserPage, string $nameSectionId = 'id')
+    private function ExtractDataFromPage(array &$SectionPage, BrowserPageInterface $browserPage, string $nameSectionId = 'id')
     {
         $selectorIcon = "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
         $browserPage->ExtractHover($selectorIcon);
@@ -287,10 +289,10 @@ class Anthem extends LayoutUtils
     {
         $style = [];
         $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
-                'STYLE_PROPERTIES' => [
+                'selector' => '[data-id="'.$sectionId.'"]',
+                'styleProperties' => [
                     'background-color',
                     'opacity',
                     'padding-top',
@@ -300,8 +302,8 @@ class Anthem extends LayoutUtils
                     'padding-left',
                     'padding-right',
                 ],
-                'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
             ]
         );
 
@@ -328,14 +330,14 @@ class Anthem extends LayoutUtils
     {
         $style = [];
         $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"]',
-                'STYLE_PROPERTIES' => [
+                'selector' => '[data-id="'.$sectionId.'"]',
+                'styleProperties' => [
                     'border-bottom-color',
                 ],
-                'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
             ]
         );
 
@@ -345,7 +347,7 @@ class Anthem extends LayoutUtils
         if (isset($sectionStyles['data'])) {
             $opacityIsSet = false;
             foreach ($sectionStyles['data'] as $key => $value) {
-                $convertedData = $this->convertColor(str_replace("px", "", $value));
+                $convertedData = ColorConverter::convertColor(str_replace("px", "", $value));
                 if (is_array($convertedData)) {
                     $style[$key] = $convertedData['color'];
                     $style['opacity'] = $convertedData['opacity'];
@@ -369,14 +371,14 @@ class Anthem extends LayoutUtils
     {
         $style = [];
         $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"] .group-0',
-                'STYLE_PROPERTIES' => [
+                'selector' => '[data-id="'.$sectionId.'"] .group-0',
+                'styleProperties' => [
                     'border-color',
                 ],
-                'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
             ]
         );
 
@@ -386,7 +388,7 @@ class Anthem extends LayoutUtils
         if (isset($sectionStyles['data'])) {
             $opacityIsSet = false;
             foreach ($sectionStyles['data'] as $key => $value) {
-                $convertedData = $this->convertColor(str_replace("px", "", $value));
+                $convertedData = ColorConverter::convertColor(str_replace("px", "", $value));
                 if (is_array($convertedData)) {
                     $style[$key] = $convertedData['color'];
                     $style['opacity'] = $convertedData['opacity'];
@@ -410,14 +412,14 @@ class Anthem extends LayoutUtils
     {
 
         $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'SELECTOR' => '[data-id="'.$sectionId.'"] .bg-opacity',
-                'STYLE_PROPERTIES' => [
+                'selector' => '[data-id="'.$sectionId.'"] .bg-opacity',
+                'styleProperties' => [
                     'opacity',
                 ],
-                'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
             ]
         );
 
@@ -432,14 +434,14 @@ class Anthem extends LayoutUtils
     {
         $style = [];
         $sectionStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'SELECTOR' => 'body',
-                'STYLE_PROPERTIES' => [
+                'selector' => 'body',
+                'styleProperties' => [
                     'background-color',
                 ],
-                'FAMILIES' => $this->fontFamily['kit'],
-                'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
             ]
         );
 
@@ -450,7 +452,7 @@ class Anthem extends LayoutUtils
         if (isset($sectionStyles['data'])) {
             $opacityIsSet = false;
             foreach ($sectionStyles['data'] as $key => $value) {
-                $convertedData = $this->convertColor(str_replace("px", "", $value));
+                $convertedData = ColorConverter::convertColor(str_replace("px", "", $value));
                 if (is_array($convertedData)) {
                     $style[$key] = $convertedData['color'];
                     $style['opacity'] = $convertedData['opacity'];
@@ -472,10 +474,10 @@ class Anthem extends LayoutUtils
 
     private function ExtractTextContent($browserPage, int $mbSectionItemId)
     {
-        $richTextBrowserData = $browserPage->evaluateScript('Text.js', [
-            'SELECTOR' => '[data-id="'.$mbSectionItemId.'"]',
-            'FAMILIES' => $this->fontFamily['kit'],
-            'DEFAULT_FAMILY' => $this->fontFamily['Default'],
+        $richTextBrowserData = $browserPage->evaluateScript('brizy.getText', [
+            'selector' => '[data-id="'.$mbSectionItemId.'"]',
+            'families' => $this->fontFamily['kit'],
+            'defaultFamily' => $this->fontFamily['Default'],
         ]);
 
         if (array_key_exists('error', $richTextBrowserData)) {
@@ -504,7 +506,7 @@ class Anthem extends LayoutUtils
             $opacityIsSet = false;
             foreach ($sectionStyles[$section] as $key => $value) {
                 $data = $this->removePx($value);
-                $convertedData = $this->convertColor(str_replace("px", "", $value));
+                $convertedData = ColorConverter::convertColor(str_replace("px", "", $value));
                 if (is_array($convertedData)) {
                     $style[$key] = $convertedData['color'];
                     $style['opacity'] = $convertedData['opacity'];
@@ -520,41 +522,6 @@ class Anthem extends LayoutUtils
         } else {
             return [];
         }
-    }
-
-    private function convertColor($color)
-    {
-
-        if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
-            return $color;
-        }
-
-        if (preg_match('/rgba\((\d+), (\d+), (\d+), ([0-9]*\.?[0-9]+)\)/', $color, $matches)) {
-            $r = $matches[1];
-            $g = $matches[2];
-            $b = $matches[3];
-            $a = $matches[4];
-
-            $color = sprintf("#%02X%02X%02X", $r, $g, $b);
-
-            if ($a == 0 && $color === "#000000") {
-                return '#ffffff';
-            } else {
-                return [
-                    'color' => sprintf("#%02X%02X%02X", $r, $g, $b),
-                    'opacity' => $a,
-                ];
-            }
-        }
-
-        if (preg_match_all("/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/", $color, $matches)) {
-
-            list($r, $g, $b) = array($matches[1][0], $matches[2][0], $matches[3][0]);
-
-            return sprintf("#%02X%02X%02X", $r, $g, $b);
-        }
-
-        return $color;
     }
 
 }

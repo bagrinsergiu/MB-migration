@@ -45,10 +45,11 @@ export function removeStylesExceptFontWeightAndColor(
 
 export function removeAllStylesFromHTML(node: Element) {
   // Define the list of allowed tags
+  const tagsToRemoveStyles = allowedTags.filter((item) => item !== "LI");
 
   // Find elements with inline styles only for allowed tags
   const elementsWithStyles = node.querySelectorAll(
-    allowedTags.join(",") + "[style]"
+    tagsToRemoveStyles.join(",") + "[style]"
   );
 
   // Remove the "style" attribute from each element

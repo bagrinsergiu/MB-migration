@@ -2,17 +2,13 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
-use MBMigration\Browser\BrowserPage;
-use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\BrizyComponent\BrizyComponentValue;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
-use MBMigration\Builder\Utils\ColorConverter;
-use MBMigration\Builder\Utils\NumberProcessor;
 
 trait ImageStylesAble
 {
-    protected function obtainImageStyles(ElementContextInterface $data, BrowserPage $browserPage): array
+    protected function obtainImageStyles(ElementContextInterface $data, BrowserPageInterface $browserPage): array
     {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -20,15 +16,15 @@ trait ImageStylesAble
 
         $selector = '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"] .photo-container img';
         $imageStyles = $browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'SELECTOR' => $selector,
-                'STYLE_PROPERTIES' => [
+                'selector' => $selector,
+                'styleProperties' => [
                     'width',
                     'height',
                 ],
-                'FAMILIES' => $families,
-                'DEFAULT_FAMILY' => $defaultFont,
+                'families' => $families,
+                'defaultFamily' => $defaultFont,
             ]
         );
 

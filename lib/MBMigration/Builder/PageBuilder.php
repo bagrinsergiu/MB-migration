@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder;
 
-use MBMigration\Browser\Browser;
+use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\LayoutElementFactory;
@@ -18,7 +18,7 @@ class PageBuilder
 {
     private $cache;
     /**
-     * @var Browser|null
+     * @var BrowserPHP
      */
     private $browser;
     /**
@@ -51,35 +51,34 @@ class PageBuilder
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
 
         $layoutBasePath = dirname(__FILE__)."/Layout";
-        $browser = Browser::instance($layoutBasePath);
-        $this->browser = $browser;
-        $browserPage = $browser->openPage($url, $design);
 
-        $browserPage->globalsEval();
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
-//        file_put_contents(JSON_PATH."/htmlPage.html", file_get_contents($url));
         if ($design !== 'Anthem' && $design !== 'Solstice') {
+            $this->browser = BrowserPHP::instance($layoutBasePath);
+            $browserPage = $this->browser->openPage($url, $design);
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder);
             $themeElementFactory = $layoutElementFactory->getFactory($design);
-            $menu = $this->cache->get('menuList');
+            $brizyMenuEntity = $this->cache->get('menuList');
+            $brizyMenuItems = $this->cache->get('brizyMenuItems');
             $headItem = $this->cache->get('header', 'mainSection');
             $footerItem = $this->cache->get('footer', 'mainSection');
 
-//          file_put_contents(JSON_PATH."/fonts.json", json_encode($fontFamily));
             $themeContext = new ThemeContext(
                 $design,
                 $browserPage,
                 $brizyKit,
-                $menu,
+                $brizyMenuEntity,
+                $brizyMenuItems,
                 $headItem,
                 $footerItem,
                 $fontFamily['kit'],
                 $fontFamily['Default'],
                 $themeElementFactory,
                 $mainCollectionType,
-                $itemsID
+                $itemsID,
+                $slug
             );
 
             $_WorkClassTemplate = new $workClass($themeContext);
@@ -91,21 +90,19 @@ class PageBuilder
 
             Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
             $this->sendStatus($slug, ExecutionTimer::stop());
-            $browser->closePage();
 
             return true;
 
         } else {
-            $_WorkClassTemplate = new $workClass($browserPage, $browser, $this->brizyAPI);
+            $this->browser = BrowserPHP::instance($layoutBasePath);
+            $browserPage = $this->browser->openPage($url, $design);
+            $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                 Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
                 $this->sendStatus($slug, ExecutionTimer::stop());
-//                $browser->closePage();
                 return true;
             } else {
                 Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
-                $browser->closePage();
-
                 return false;
             }
         }

@@ -20,7 +20,7 @@ const globalMenuExtractor = () => {
   if (color) {
     window.menuModel = {
       hoverColorHex: color.hex,
-      hoverColorOpacity: color.opacity
+      hoverColorOpacity: color.opacity ?? 1
     };
   }
 
@@ -32,7 +32,7 @@ const globalMenuExtractor = () => {
       window.menuModel = {
         ...window.menuModel,
         hoverMenuBgColorHex: bgColor.hex,
-        hoverMenuBgColorOpacity: bgColor.opacity
+        hoverMenuBgColorOpacity: bgColor.opacity ?? 1
       };
     }
   }
@@ -47,7 +47,7 @@ const globalMenuExtractor = () => {
       window.menuModel = {
         ...window.menuModel,
         hoverSubMenuColorHex: color.hex,
-        hoverSubMenuColorOpacity: color.opacity,
+        hoverSubMenuColorOpacity: color.opacity ?? 1,
         hoverSubMenuColorPalette: ""
       };
     }
@@ -60,7 +60,7 @@ const globalMenuExtractor = () => {
         window.menuModel = {
           ...window.menuModel,
           hoverSubMenuBgColorHex: bgColor.hex,
-          hoverSubMenuBgColorOpacity: bgColor.opacity,
+          hoverSubMenuBgColorOpacity: bgColor.opacity ?? 1,
           hoverSubMenuBgColorPalette: ""
         };
       }

@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\Checking;
 use MBMigration\Builder\ColorMapper\ColorMapper;
 use MBMigration\Builder\DebugBackTrace;
+use MBMigration\Builder\Layout\Common\MenuBuilderFactory;
 use MBMigration\Builder\PageBuilder;
 use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Utils\TextTools;
@@ -60,14 +61,13 @@ class MigrationPlatform
 
     public function __construct(Config $config, $buildPage = '')
     {
-        $this->cache = VariableCache::getInstance();
-        $this->cache->init();
+        $this->cache = VariableCache::getInstance(Config::$cachePath);
 
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
         register_shutdown_function([$this->errorDump, 'handleFatalError']);
         Utils::MESSAGES_POOL('initialization');
-        $setConfig = $config;
+
         $this->finalSuccess['status'] = 'start';
 
         $this->buildPage = $buildPage;
@@ -79,15 +79,17 @@ class MigrationPlatform
             Utils::MESSAGES_POOL(json_encode(JS::RichText(8152825, 'https://www.crosspointcoc.org/')));
         } else {
             try {
+                $this->cache->loadDump($projectID_MB, $projectID_Brizy);
                 $this->run($projectID_MB, $projectID_Brizy);
+                $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
             } catch (Exception $e) {
                 Utils::MESSAGES_POOL($e->getMessage());
 
-                return false;
+                throw $e;
             } catch (GuzzleException $e) {
                 Utils::MESSAGES_POOL($e->getMessage());
 
-                return false;
+                throw $e;
             }
         }
 
@@ -106,7 +108,9 @@ class MigrationPlatform
 
 //        $this->projectMetadata($projectID_Brizy);
 
-        $projectID_MB = MBProjectDataCollector::getIdByUUID($projectUUID_MB);
+        if (!($projectID_MB = $this->cache->get('projectId_MB'))) {
+            $projectID_MB = MBProjectDataCollector::getIdByUUID($projectUUID_MB);
+        }
 
         if ($projectID_Brizy == 0) {
             $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4352671, 'id');
@@ -119,29 +123,42 @@ class MigrationPlatform
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
 
-        $this->cache->set('container', $this->brizyApi->getProjectContainer($this->projectID_Brizy));
+        if (!$this->cache->get('container')) {
+            $this->cache->set('container', $this->brizyApi->getProjectContainer($this->projectID_Brizy));
+        }
 
-        $this->init($projectUUID_MB, $this->projectID_Brizy);
-        $this->checkDesign($this->parser->getDesignSite());
+        $this->init($projectID_MB, $this->projectID_Brizy);
+
+        if (!$designName = $this->cache->get('designName')) {
+            $designName = $this->parser->getDesignSite();
+            $this->cache->set('designName', $designName);
+        }
+
+        $this->checkDesign($designName);
 
         $this->createProjectFolders();
 
         $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
-        $graphToken = $this->brizyApi->getGraphToken($this->projectID_Brizy);
-        $this->cache->set('graphToken', $graphToken);
-        //file_put_contents(JSON_PATH.'/brizy_api_token.json',$graphToken);
+
+        if (!($graphToken = $this->cache->get('graphToken'))) {
+            $graphToken = $this->brizyApi->getGraphToken($this->projectID_Brizy);
+            $this->cache->set('graphToken', $graphToken);
+        }
+
         $this->QueryBuilder = new QueryBuilder(
             $this->graphApiBrizy,
-            $this->brizyApi->getGraphToken($this->projectID_Brizy)
+            $graphToken
         );
 
         $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
 
-        $this->getAllPage();
-
-        $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0).' Message: Site not found');
-
-        $this->cache->set('settings', $settings);
+        if (!$this->cache->get('ListPages')) {
+            $this->getAllPage();
+        }
+        if (!$this->cache->get('settings')) {
+            $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0).' Message: Site not found');
+            $this->cache->set('settings', $settings);
+        }
 
         $this->brizyApi->setMetaDate();
 
@@ -159,14 +176,31 @@ class MigrationPlatform
         }
 
         $this->createPalette();
-        $mainSection = $this->parser->getMainSection();
-        $this->updateColorSection($mainSection);
-        Utils::log('Upload Logo menu', 1, 'createMenu');
-        $mainSection = $this->uploadPicturesFromSections($mainSection);
-        $this->cache->set('mainSection', $mainSection);
-//        file_put_contents(JSON_PATH.'/mainSection.json',json_encode($mainSection));
-        $this->createBlankPages($parentPages);
-        $this->createMenuStructure();
+        if (!$this->cache->get('mainSection')) {
+            $mainSection = $this->parser->getMainSection();
+            $this->updateColorSection($mainSection);
+            Utils::log('Upload Logo menu', 1, 'createMenu');
+            $mainSection = $this->uploadPicturesFromSections($mainSection);
+            $this->cache->set('mainSection', $mainSection);
+        }
+
+        if (!$this->cache->get('menuList')) {
+            Utils::log('Start created pages', 1, 'createBlankPages');
+            $projectTitle = $this->cache->get('settings')['title'];
+
+            $this->createBlankPages($parentPages, $projectTitle);
+            $this->cache->set('menuList', [
+                'id' => null,
+                'uid' => null,
+                'name' => null,
+                'create' => false,
+                'list' => $parentPages,
+                'data' => "",
+            ]);
+            $this->createMenuStructure();
+        } else {
+            $parentPages = $this->cache->get('menuList')['list'];
+        }
 
         if (Config::$devMode) {
             echo $this->cache->get('design', 'settings')."\n";
@@ -174,7 +208,9 @@ class MigrationPlatform
 
         $this->launch($parentPages);
 
-        $this->PageBuilder->closeBrowser();
+        if ($this->PageBuilder) {
+            $this->PageBuilder->closeBrowser();
+        }
 
         Utils::log('Project migration completed successfully!', 6, 'PROCESS');
 
@@ -185,7 +221,7 @@ class MigrationPlatform
      * @throws Exception
      * @throws GuzzleException
      */
-    private function init(string $projectUUID_MB, int $projectID_Brizy): void
+    private function init(string $projectID_MB, int $projectID_Brizy): void
     {
         Utils::log('-------------------------------------------------------------------------------------- []', 4, '');
         Utils::log('Start Process!', 4, 'MIGRATION');
@@ -198,8 +234,6 @@ class MigrationPlatform
         Utils::log('Migration ID: '.$this->migrationID, 4, 'MIGRATION');
 
         $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
-
-        $projectID_MB = MBProjectDataCollector::getIdByUUID($projectUUID_MB);
 
         $this->cache->set('projectId_MB', $projectID_MB);
         $this->cache->set('projectId_Brizy', $projectID_Brizy);
@@ -252,7 +286,9 @@ class MigrationPlatform
                     continue;
                 }
             }
-            if($page['landing'] !== true){ continue; }
+            if ($page['landing'] !== true) {
+                continue;
+            }
             $this->collector($page);
         }
     }
@@ -267,14 +303,16 @@ class MigrationPlatform
         $this->cache->set('tookPage', $page);
         ExecutionTimer::start();
 
-        $preparedSectionOfThePage = $this->getItemsFromPage($page);
-        if (!$preparedSectionOfThePage) {
-            return;
+        if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
+            $preparedSectionOfThePage = $this->getItemsFromPage($page);
+            if (!$preparedSectionOfThePage) {
+                return;
+            }
+            $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
+            $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
+            $this->cache->set('preparedSectionOfThePage_'.$page['id'], $preparedSectionOfThePage);
         }
 
-        $preparedSectionOfThePage = $this->uploadPicturesFromSections($preparedSectionOfThePage);
-        $preparedSectionOfThePage = $this->sortArrayByPosition($preparedSectionOfThePage);
-//        file_put_contents(JSON_PATH.'/preparedSectionOfThePage.json',json_encode($preparedSectionOfThePage));
         $collectionItem = $this->getCollectionItem($page['slug']);
         if (!$collectionItem) {
             $ProjectTitle = $this->cache->get('settings')['title'];
@@ -329,18 +367,6 @@ class MigrationPlatform
                     1,
                     'getItemsFromPage'
                 );
-                if ($this->checkArrayPath($value, 'settings/sections/color/subpalette')) {
-                    $value['settings']['color'] = $this->getColorFromPalette(
-                        $value['settings']['sections']['color']['subpalette']
-                    );
-                    unset($value['settings']['sections']['color']);
-                }
-                if ($this->checkArrayPath($value, 'settings/layout/color/subpalette')) {
-                    $value['settings']['layout-color'] = $this->getColorFromPalette(
-                        $value['settings']['layout']['color']['subpalette']
-                    );
-                    unset($value['settings']['layout']['color']);
-                }
 
                 $items = [
                     'sectionId' => $value['id'],
@@ -384,15 +410,16 @@ class MigrationPlatform
         Utils::log('Create menu structure', 1, 'createMenuStructure');
 
         $parentPages = $this->cache->get('menuList');
-        $mainMenu = $this->transformToBrizyMenu($parentPages['list']);
+        $design = $this->cache->get('design');
+        $brizyProject = $this->cache->get('projectId_Brizy');
+        $fonts = $this->cache->get('fonts', 'settings');
+        $brizyApi = $this->cache->get('brizyApi');
 
-        $data = [
-            'project' => $this->projectID_Brizy,
-            'name' => 'mainMenu',
-            'data' => json_encode($mainMenu),
-        ];
+        $menuBuilder = MenuBuilderFactory::instanceOfThemeMenuBuilder($design, $brizyProject, $brizyApi, $fonts);
+        $menuStructure = $menuBuilder->transformToBrizyMenu($parentPages['list']);
+        $result = $menuBuilder->createBrizyMenu('mainMenu', $menuStructure);
 
-        $result = $this->brizyApi->createMenu($data);
+        $this->cache->set('brizyMenuItems', $menuStructure);
 
         $this->cache->set('menuList', [
             'id' => $result['id'] ?? null,
@@ -402,9 +429,6 @@ class MigrationPlatform
             'list' => $parentPages['list'],
             'data' => $result['data'] ?? '',
         ]);
-
-        $parentPages = $this->cache->get('menuList');
-//        file_put_contents(JSON_PATH.'/menuList.json',json_encode($parentPages));
     }
 
     private function transformToBrizyMenu(array $parentMenu): array
@@ -428,7 +452,7 @@ class MigrationPlatform
             }
             $settings = json_decode($item['parentSettings'], true);
 
-            if (array_key_exists('external_url', $settings)) {
+            if ($settings && array_key_exists('external_url', $settings)) {
                 $mainMenu[] = [
                     'id' => '',
                     "uid" => Utils::getNameHash(),
@@ -598,15 +622,19 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function createBlankPages(array &$parentPages, $mainLevel = true): void
+    private function createBlankPages(array &$parentPages,  $projectTitle, $mainLevel = true)
     {
         Utils::log('Start created pages', 1, 'createBlankPages');
         $projectPages = $this->brizyApi->getAllProjectPages();
-        $ProjectTitle = $this->cache->get('settings')['title'];
 
         $i = 0;
         foreach ($parentPages as &$pages) {
-                $title = $ProjectTitle.' | '.$pages['name'];
+            $title = $projectTitle.' | '.$pages['name'];
+
+            if (!empty($pages['child'])) {
+                $this->createBlankPages($pages['child'],  $projectTitle, false);
+            }
+
             if ($pages['landing'] == true) {
                 if ($i != 0 || !$mainLevel) {
                     if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
@@ -621,8 +649,13 @@ class MigrationPlatform
                     }
                 } else {
 //                    if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
-                        $updateNameResult = $this->renameSlug($projectPages['listPages']['home'], $pages['slug'], $pages['name'], $title);
-                        $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
+                    $updateNameResult = $this->renameSlug(
+                        $projectPages['listPages']['home'],
+                        $pages['slug'],
+                        $pages['name'],
+                        $title
+                    );
+                    $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
 //                    } else {
 //                        $newPage = $projectPages['listPages'][$pages['slug']];
 //                    }
@@ -647,19 +680,9 @@ class MigrationPlatform
                     $pages['collection'] = $pages['child'][0]['collection'];
                 }
             }
-            if (!empty($pages['child'])) {
-                $this->createBlankPages($pages['child'], false);
-            }
+
             $i++;
         }
-        $this->cache->set('menuList', [
-            'id' => null,
-            'uid' => null,
-            'name' => null,
-            'create' => false,
-            'list' => $parentPages,
-            'data' => "",
-        ]);
     }
 
     private function getPisturesUrl($nameImage, $type)
@@ -856,8 +879,19 @@ class MigrationPlatform
     private function createDirectory($directoryPath): void
     {
         if (!is_dir($directoryPath)) {
-            Utils::log('Create Directory: '.$directoryPath, 1, 'createDirectory');
-            mkdir($directoryPath, 0777, true);
+            Utils::log('Create Directory: ' . $directoryPath, 1, 'createDirectory');
+
+            $result = shell_exec("mkdir -p " . escapeshellarg($directoryPath));
+
+            if ($result === null) {
+                Utils::log('Directory created successfully.', 1, 'createDirectory');
+            } else {
+                Utils::log('Error creating directory: ' . $result, 3, 'createDirectory');
+            }
+
+            if (!is_dir($directoryPath)) {
+                mkdir($directoryPath, 0777, true);
+            }
         }
     }
 
