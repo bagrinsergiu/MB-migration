@@ -73,7 +73,9 @@ class EventGridLayout extends DynamicElement
 
         $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
 
-        $objBlock->item()->item()->item()->setting('detailPage', '{{ brizy_dc_url_post id="' . $collectionItemsForDetailPage . '" }} "');
+        $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
+        $objBlock->item()->item()->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
+
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
