@@ -3,6 +3,7 @@ import { run as globalMenuExtractor } from "./GlobalMenu";
 import { run as getImage } from "./Image";
 import { run as getMenu } from "./Menu";
 import { run as getStyles } from "./StyleExtractor";
+import { run as getTabs } from "./Tabs";
 import { run as getText } from "./Text";
 
 window.brizy = {
@@ -11,5 +12,6 @@ window.brizy = {
   getStyles,
   getText,
   getImage,
-  getAccordion
+  getAccordion,
+  getTabs
 };

@@ -1,4 +1,4 @@
-import { getModel } from "./utils/getModel";
+import { getModel } from "../utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
 import * as Num from "utils/src/reader/number";
