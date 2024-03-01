@@ -58,7 +58,7 @@ class PageBuilder
             $this->browser = BrowserPHP::instance($layoutBasePath);
             $browserPage = $this->browser->openPage($url, $design);
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-            $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder);
+            $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder, $this->brizyAPI);
             $themeElementFactory = $layoutElementFactory->getFactory($design);
             $brizyMenuEntity = $this->cache->get('menuList');
             $brizyMenuItems = $this->cache->get('brizyMenuItems');
@@ -100,9 +100,11 @@ class PageBuilder
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                 Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
                 $this->sendStatus($slug, ExecutionTimer::stop());
+
                 return true;
             } else {
                 Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+
                 return false;
             }
         }

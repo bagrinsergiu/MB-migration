@@ -12,6 +12,7 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 
 abstract class HeadElement extends AbstractElement
@@ -20,12 +21,26 @@ abstract class HeadElement extends AbstractElement
     use Cacheable;
     use SectionStylesAble;
 
+    protected BrizyAPI $brizyAPIClient;
+
+    public function __construct($brizyKit, BrowserPageInterface $browserPage, BrizyAPI $brizyAPI)
+    {
+        parent::__construct($brizyKit, $browserPage);
+
+        $this->brizyAPIClient = $brizyAPI;
+    }
+
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
             $this->beforeTransformToItem($data);
             $component = $this->internalTransformToItem($data);
             $this->afterTransformToItem($component);
+
+            // save it as a global block
+            $position = '{"align":"top","top":0,"bottom":0}';
+            $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
+            $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
 
             return $component;
         });
