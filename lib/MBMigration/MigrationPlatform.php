@@ -184,7 +184,7 @@ class MigrationPlatform
             $this->cache->set('mainSection', $mainSection);
         }
 
-        if (!$this->cache->get('menuList')) {
+        if (true || !$this->cache->get('menuList')) {
             Utils::log('Start created pages', 1, 'createBlankPages');
             $projectTitle = $this->cache->get('settings')['title'];
 
@@ -273,7 +273,12 @@ class MigrationPlatform
 
             if (!empty($page['parentSettings'])) {
                 $settings = json_decode($page['parentSettings'], true);
-                if (array_key_exists('external_url', $settings)) {
+                if (array_key_exists('external_url', $settings)  ) {
+                    continue;
+                }
+
+                // there a pages that have only one section only and de same slug as home page..
+                if ( array_key_exists('category', $settings) ) {
                     continue;
                 }
             }
@@ -559,13 +564,14 @@ class MigrationPlatform
     {
         if ($this->pageCheck($slug)) {
             Utils::log('Request to create a new page: '.$slug, 1, 'creteNewPage');
-            $this->QueryBuilder->createCollectionItem(
+            $collectionItem = $this->QueryBuilder->createCollectionItem(
                 $this->cache->get('mainCollectionType'),
                 $slug,
                 $title,
                 $seoTitle,
                 $protectedPage
             );
+            $slug = $collectionItem['slug']; // the slug can be renamed as brizy has some restrictions like slug: blog.
             $this->getAllPage();
         }
 
@@ -628,31 +634,31 @@ class MigrationPlatform
         $projectPages = $this->brizyApi->getAllProjectPages();
 
         $i = 0;
-        foreach ($parentPages as &$pages) {
-            $title = $projectTitle.' | '.$pages['name'];
+        foreach ($parentPages as &$page) {
+            $title = $projectTitle.' | '.$page['name'];
 
-            if (!empty($pages['child'])) {
-                $this->createBlankPages($pages['child'],  $projectTitle, false);
+            if (!empty($page['child'])) {
+                $this->createBlankPages($page['child'],  $projectTitle, false);
             }
 
-            if ($pages['landing'] == true) {
+            if ($page['landing'] == true) {
                 if ($i != 0 || !$mainLevel) {
-                    if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
+                    if (!array_key_exists($page['slug'], $projectPages['listPages'])) {
                         $newPage = $this->creteNewPage(
-                            $pages['slug'],
-                            $pages['name'],
+                            $page['slug'],
+                            $page['name'],
                             $title,
-                            $pages['protectedPage']
+                            $page['protectedPage']
                         );
                     } else {
-                        $newPage = $projectPages['listPages'][$pages['slug']];
+                        $newPage = $projectPages['listPages'][$page['slug']];
                     }
                 } else {
 //                    if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
                     $updateNameResult = $this->renameSlug(
                         $projectPages['listPages']['home'],
-                        $pages['slug'],
-                        $pages['name'],
+                        $page['slug'],
+                        $page['name'],
                         $title
                     );
                     $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
@@ -663,21 +669,21 @@ class MigrationPlatform
 
                 if (!$newPage) {
                     Utils::log(
-                        'Failed created pages | ID: '.$pages['id'].' | Name page: '.$pages['name'].' | Slug: '.$pages['slug'],
+                        'Failed created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
                         2,
                         'createBlankPages'
                     );
                 } else {
                     Utils::log(
-                        'Success created pages | ID: '.$pages['id'].' | Name page: '.$pages['name'].' | Slug: '.$pages['slug'],
+                        'Success created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
                         1,
                         'createBlankPages'
                     );
-                    $pages['collection'] = $newPage;
+                    $page['collection'] = $newPage;
                 }
             } else {
-                if (!empty($pages['child'])) {
-                    $pages['collection'] = $pages['child'][0]['collection'];
+                if (!empty($page['child'])) {
+                    $page['collection'] = $page['child'][0]['collection'];
                 }
             }
 

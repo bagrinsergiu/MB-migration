@@ -42,7 +42,7 @@ class MenuBuilder extends \MBMigration\Builder\Layout\Common\MenuBuilder
             $menuItems[] = $moreItem;
         }
 
-        return array_values($menuItems);
+        return parent::transformToBrizyMenu(array_values($menuItems));
     }
 
 }

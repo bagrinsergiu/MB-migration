@@ -241,6 +241,20 @@ class BrizyAPI extends Utils
         return false;
     }
 
+    public function deleteAllGlobalBlocks()
+    {
+        $url = $this->createPrivateUrlAPI('globalBlocks');
+        $requestData['project'] = Utils::$cache->get('projectId_Brizy');
+        $requestData['fields'] = ['id','uid'];
+        $response = $this->httpClient('GET', $url, $requestData);
+        if($response['status']==200) {
+            $globalBlocks = json_decode($response['body'], true);
+            foreach($globalBlocks as $block) {
+                $response = $this->httpClient('DELETE', $url."/".$block['id']);
+            }
+        }
+    }
+
     public function fopenFromURL($url)
     {
         $context = stream_context_create(array(
@@ -797,20 +811,29 @@ class BrizyAPI extends Utils
 
                 Utils::log(json_encode(['status' => $statusCode, 'body' => $body]), 3, $nameFunction);
                 if ($statusCode > 200) {
-                    Utils::MESSAGES_POOL("Error: RequestException Message:" . json_encode(['status' => $statusCode, 'body' => $body]), 'error');
+                    Utils::MESSAGES_POOL(
+                        "Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body]),
+                        'error'
+                    );
                 }
-                Utils::MESSAGES_POOL("Error: RequestException Message:" . json_encode(['status' => $statusCode, 'body' => $body]), 'error');
+                Utils::MESSAGES_POOL(
+                    "Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body]),
+                    'error'
+                );
 
                 return ['status' => $statusCode, 'body' => $body];
             } else {
-                Utils::MESSAGES_POOL("Error: GuzzleException Message:" . json_encode(['status' => false, 'body' => 'Request timed out.']), 'error');
+                Utils::MESSAGES_POOL(
+                    "Error: GuzzleException Message:".json_encode(['status' => false, 'body' => 'Request timed out.']),
+                    'error'
+                );
                 Utils::log(json_encode(['status' => false, 'body' => 'Request timed out.']), 3, $nameFunction);
 
                 return ['status' => false, 'body' => 'Request timed out.'];
             }
         } catch (GuzzleException $e) {
             Utils::MESSAGES_POOL("Error: GuzzleException Message:".json_encode($e->getMessage()), 'error');
-            Utils::MESSAGES_POOL("Error: GuzzleException Message: code" . $statusCode . "Response: " . $body, 'error');
+            Utils::MESSAGES_POOL("Error: GuzzleException Message: code".$statusCode."Response: ".$body, 'error');
             Utils::log(json_encode(['status' => false, 'body' => $e->getMessage()]), 3, $nameFunction);
 
             return ['status' => false, 'body' => $e->getMessage()];

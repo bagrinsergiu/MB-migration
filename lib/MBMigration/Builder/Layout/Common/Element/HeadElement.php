@@ -40,6 +40,7 @@ abstract class HeadElement extends AbstractElement
             // save it as a global block
             $position = '{"align":"top","top":0,"bottom":0}';
             $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
+            $this->brizyAPIClient->deleteAllGlobalBlocks();
             $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
 
             return $component;
