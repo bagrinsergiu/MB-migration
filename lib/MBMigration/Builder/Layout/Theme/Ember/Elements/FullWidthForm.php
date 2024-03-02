@@ -22,13 +22,8 @@ class FullWidthForm extends FormElement
         return $this->brizyKit['full-width'];
     }
 
-    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent {
+    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent
+    {
         return $brizyComponent->getItemWithDepth(0);
-    }
-
-    protected function handleForm(ElementContextInterface $elementContext, BrowserPageInterface $browserPage): BrizyComponent {
-
-        // add the form here.
-        return $elementContext->getBrizySection();
     }
 }

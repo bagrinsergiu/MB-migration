@@ -268,7 +268,7 @@ class MigrationPlatform
      */
     private function launch($parentPages): void
     {
-        foreach ($parentPages as $page) {
+        foreach ($parentPages as $i=>$page) {
 //            if($page['hidden']){ continue; }
 
             if (!empty($page['parentSettings'])) {
@@ -278,7 +278,7 @@ class MigrationPlatform
                 }
 
                 // there a pages that have only one section only and de same slug as home page..
-                if ( array_key_exists('category', $settings) ) {
+                if ( array_key_exists('category', $settings) && $settings['category']=='text' ) {
                     continue;
                 }
             }

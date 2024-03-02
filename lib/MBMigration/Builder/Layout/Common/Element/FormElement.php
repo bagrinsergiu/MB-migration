@@ -36,5 +36,17 @@ abstract class FormElement extends AbstractElement
 
     abstract protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent;
 
-    abstract protected function handleForm(ElementContextInterface $elementContext, BrowserPageInterface $browserPage): BrizyComponent;
+    protected function handleForm(ElementContextInterface $elementContext, BrowserPageInterface $browserPage): BrizyComponent {
+         // add the form here.
+        $mbSection = $elementContext->getMbSection();
+        $formId = $mbSection['settings']['sections']['form']['form_id'];
+
+        $form = new BrizyComponent(json_decode($this->brizyKit['form-wrapper'], true));
+        $form->getItemWithDepth(0)->getValue()->set_form($formId);
+
+        $brizyComponent = $elementContext->getBrizySection();
+        $brizyComponent->getValue()->set_items([$form]);
+
+        return $brizyComponent;
+    }
 }
