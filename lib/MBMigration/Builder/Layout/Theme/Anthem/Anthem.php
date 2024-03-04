@@ -236,6 +236,13 @@ class Anthem extends LayoutUtils
                 ) ?? [];
             }
 
+            if ($section['typeSection'] === 'accordion-layout') {
+                $section['style']['accordion'] = $this->ExtractAccordion(
+                    $browserPage,
+                    $section['sectionId']
+                ) ?? [];
+            }
+
             if (!empty($section['items'])) {
                 foreach ($section['items'] as &$item) {
                     if ($item['category'] === 'text') {
@@ -407,6 +414,28 @@ class Anthem extends LayoutUtils
 
         return $style;
     }
+    private function ExtractAccordion($browserPage, int $sectionId): array
+    {
+        $style = [];
+        $sectionStyles = $browserPage->evaluateScript(
+            'brizy.getAccordion',
+            [
+                'selector' => '[data-id="'.$sectionId.'"]',
+                'styleProperties' => [
+                    'border-color',
+                ],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return [];
+        }
+
+        return $sectionStyles['data'];
+    }
+
 
     private function ExtractStyleSectionOpacity($browserPage, int $sectionId)
     {

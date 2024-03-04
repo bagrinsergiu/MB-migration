@@ -60,12 +60,12 @@ class AccordionLayout extends Element
 
         foreach ($sectionData['head'] as $headItem) {
             if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                $this->textCreation($headItem, $objItem);
+                $this->textCreation($headItem, $objBlock);
             }
         }
         foreach ($sectionData['head'] as $headItem) {
             if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
-                $this->textCreation($headItem, $objItem);
+                $this->textCreation($headItem, $objBlock);
             }
         }
 
@@ -74,16 +74,15 @@ class AccordionLayout extends Element
             $objItem->newItem($decoded['item']);
 
             foreach ($section['item'] as $item) {
-                if ($item['category'] === 'photo') {
-                    //$objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
-                    //$objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
-                    //$objRow->addItem($objImage->get());
-                }
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'accordion_title') {
                         $this->textCreation($item, $objItem);
                     }
+                }
+            }
 
+            foreach ($section['item'] as $item) {
+                if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'accordion_body') {
                         $this->textCreation($item, $objItem);
                     }
@@ -92,6 +91,14 @@ class AccordionLayout extends Element
             $objList->item(0)->addItem($objItem->get());
         }
         $objList->item(0)->setting('bgColorHex', $sectionData['style']['background-color']);
+
+//        if(!empty($sectionData['style']['accordion'])){
+//            foreach ( $sectionData['style']['accordion'] as $key => $value){
+//                $objList->item(0)->setting($key, $value);
+//            }
+//        }
+
+
         $objBlock->item(0)->addItem($objList->get());
         $block = $this->replaceIdWithRandom($objBlock->get());
         return json_encode($block);
