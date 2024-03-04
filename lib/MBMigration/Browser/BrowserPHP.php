@@ -27,11 +27,14 @@ class BrowserPHP implements BrowserInterface
             return $instance;
         }
 
-        return $instance = new self($scriptPath, $logger);
+        return $instance = new self($scriptPath, '/usr/bin/google-chrome', $logger);
     }
 
-    private function __construct($scriptPath, $chromeExecutable='/usr/bin/google-chrome',LoggerInterface $logger = null)
-    {
+    private function __construct(
+        $scriptPath,
+        $chromeExecutable = '/usr/bin/google-chrome',
+        LoggerInterface $logger = null
+    ) {
         if (is_null($logger)) {
             $logger = new \Monolog\Logger('my_logger');
             $logger->pushHandler(new StreamHandler('php://stdout', $_ENV['CHROME_LOG_LEVEL']));

@@ -13,6 +13,7 @@ use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
+use Psr\Log\LoggerInterface;
 
 class PageBuilder
 {
@@ -25,11 +26,13 @@ class PageBuilder
      * @var BrizyAPI
      */
     private $brizyAPI;
+    private LoggerInterface $logger;
 
-    public function __construct(BrizyAPI $brizyAPI)
+    public function __construct(BrizyAPI $brizyAPI, LoggerInterface $logger)
     {
         $this->cache = VariableCache::getInstance();
         $this->brizyAPI = $brizyAPI;
+        $this->logger = $logger;
     }
 
     /**
@@ -55,7 +58,7 @@ class PageBuilder
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
         if ($design !== 'Anthem' && $design !== 'Solstice') {
-            $this->browser = BrowserPHP::instance($layoutBasePath);
+            $this->browser = BrowserPHP::instance($layoutBasePath,$this->logger);
             $browserPage = $this->browser->openPage($url, $design);
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder, $this->brizyAPI);
@@ -94,7 +97,7 @@ class PageBuilder
             return true;
 
         } else {
-            $this->browser = BrowserPHP::instance($layoutBasePath);
+            $this->browser = BrowserPHP::instance($layoutBasePath, $this->logger);
             $browserPage = $this->browser->openPage($url, $design);
             $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {

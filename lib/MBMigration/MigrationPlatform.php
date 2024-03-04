@@ -19,6 +19,7 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
 use MBMigration\Parser\JS;
+use Psr\Log\LoggerInterface;
 
 class MigrationPlatform
 {
@@ -55,13 +56,15 @@ class MigrationPlatform
      * @var PageBuilder
      */
     private $PageBuilder;
+    private LoggerInterface $logger;
 
     use checking;
     use DebugBackTrace;
 
-    public function __construct(Config $config, $buildPage = '')
+    public function __construct(Config $config, LoggerInterface $logger, $buildPage = '')
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
+        $this->logger = $logger;
 
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
@@ -618,7 +621,7 @@ class MigrationPlatform
             Utils::log('Start Builder | create default Page', 4, 'RunPageBuilder');
         }
 
-        $this->PageBuilder = new PageBuilder($this->brizyApi);
+        $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
 
         if ($this->PageBuilder->run($preparedSectionOfThePage)) {
             Utils::log('Page created successfully!', 1, 'PageBuilder');
