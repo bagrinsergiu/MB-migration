@@ -31,7 +31,7 @@ class RightMedia extends Element
      */
     protected function RightMedia(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "right_media");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $options = [];

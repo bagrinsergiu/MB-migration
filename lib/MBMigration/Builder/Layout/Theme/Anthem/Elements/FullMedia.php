@@ -36,7 +36,7 @@ class FullMedia extends Element
      */
     protected function FullMedia(array $sectionData)
     {
-        Utils::log('Create full media', 1, "full_media");
+        \MBMigration\Core\Logger::instance()->info('Create full media');
 
         $objBlock = new ItemBuilder();
 

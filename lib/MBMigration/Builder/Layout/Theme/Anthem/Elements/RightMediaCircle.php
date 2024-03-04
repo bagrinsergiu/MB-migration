@@ -35,7 +35,7 @@ class RightMediaCircle extends Element
      */
     protected function RightMediaCircle(array $sectionData)
     {
-        Utils::log('Create bloc', 1,  "RightMediaCircle");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $options = [];
 

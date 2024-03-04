@@ -91,7 +91,7 @@ class PageBuilder
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
 
-            Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+            \MBMigration\Core\Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
             $this->sendStatus($slug, ExecutionTimer::stop());
 
             return true;
@@ -101,12 +101,12 @@ class PageBuilder
             $browserPage = $this->browser->openPage($url, $design);
             $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
-                Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+                \MBMigration\Core\Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
                 $this->sendStatus($slug, ExecutionTimer::stop());
 
                 return true;
             } else {
-                Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+                \MBMigration\Core\Logger::instance()->info('Fail Build Page: '.$itemsID.' | Slug: '.$slug);
 
                 return false;
             }

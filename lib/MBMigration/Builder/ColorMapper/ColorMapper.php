@@ -886,10 +886,10 @@ class ColorMapper
     public function getPalette (string $design, array $colorKit)
     {
         if (method_exists($this, $design)) {
-            Utils::log('Call method ' . $design , 1, "getPalette");
+            \MBMigration\Core\Logger::instance()->info('Call method ' . $design);
             return call_user_func_array(array($this, $design), [$colorKit]);
         }
-        Utils::log('Method ' . $design . ' does not exist', 2, "getPalette");
+        \MBMigration\Core\Logger::instance()->warning('Method ' . $design . ' does not exist');
         return false;
     }
 }

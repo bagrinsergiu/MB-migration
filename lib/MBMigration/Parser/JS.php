@@ -13,7 +13,7 @@ class JS
 
     public static function StylesColorExtractor($sectionID, $pageUrl, array $styleProperties = [])
     {
-        Utils::log('Styles Extractor', 1, "StylesExtractor");
+        \MBMigration\Core\Logger::instance()->info('Styles Extractor');
         $properties = ['background-color', 'opacity', 'border-bottom-color'];
         $result = ['background-color' => '#ffffff', 'opacity' => 1];
 
@@ -65,7 +65,7 @@ class JS
 
     public static function imageStylesExtractor(int $sectionID, $pageUrl)
     {
-        Utils::log('Image Styles Extractor', 1, "StylesExtractor");
+        \MBMigration\Core\Logger::instance()->info('Image Styles Extractor');
         $data = [
             'selector' => '[data-id="'.$sectionID.'"]',
         ];
@@ -84,7 +84,7 @@ class JS
 
     public static function StylesPaddingExtractor(int $sectionID, $pageUrl, array $styleProperties = []): array
     {
-        Utils::log('Styles Extractor', 1, "StylesExtractor");
+        \MBMigration\Core\Logger::instance()->info('Styles Extractor');
 
         $result = ['padding-bottom' => 15, 'padding-top' => 15, 'padding-left' => 0, 'padding-right' => 0];
 
@@ -105,10 +105,10 @@ class JS
         $padding = self::Run($sectionID);
 
         if (!empty($padding['error'])) {
-            Utils::MESSAGES_POOL($padding['error'], $sectionID, 'JS:RUN [error]');
+            \MBMigration\Core\Logger::instance()->info($padding['error']);
         }
         if (!empty($padding['style'])) {
-            Utils::MESSAGES_POOL('success', $sectionID, 'JS:RUN');
+            \MBMigration\Core\Logger::instance()->info('success');
 
             $style = $padding['style'];
 
@@ -125,7 +125,7 @@ class JS
     public static function stylesMenuExtractor(int $sectionID, $pageUrl, array $fontFamilies)
     {
 
-        Utils::log('Styles Extractor From Menu', 1, "StylesExtractor");
+        \MBMigration\Core\Logger::instance()->info('Styles Extractor From Menu');
 
         $data = [
             'selector' => '[data-id="'.$sectionID.'"]',
@@ -139,10 +139,10 @@ class JS
 
 
         if (!empty($result['warns'])) {
-            Utils::MESSAGES_POOL($result['warns'], $sectionID, 'JS:RUN [error]');
+            \MBMigration\Core\Logger::instance()->info($result['warns']);
         }
         if (!empty($result['menu'])) {
-            Utils::MESSAGES_POOL('success', $sectionID, 'JS:RUN');
+            \MBMigration\Core\Logger::instance()->info('success');
 
             return $result['menu'];
         }
@@ -187,13 +187,13 @@ class JS
         $RichText = self::Run($blockID);
 
         if (!empty($RichText['warns'])) {
-            Utils::MESSAGES_POOL($RichText['warns'], $blockID, 'JS:RUN [warns]');
+            \MBMigration\Core\Logger::instance()->info($RichText['warns']);
         }
 
         if (!empty($RichText['error'])) {
-            Utils::MESSAGES_POOL($RichText['error'], $blockID, 'JS:RUN [error]');
+            \MBMigration\Core\Logger::instance()->info($RichText['error']);
         } else {
-            Utils::MESSAGES_POOL('success', $blockID, 'JS:RUN');
+            \MBMigration\Core\Logger::instance()->info('success');
         }
 
         if (!empty($RichText['text']) && (empty($RichText['embeds']) && empty($RichText['icons']) && empty($RichText['buttons']))) {
@@ -211,12 +211,12 @@ class JS
     private static function Run($id)
     {
         if (empty(self::$CODE)) {
-            Utils::MESSAGES_POOL('JS:CODE is empty', $id, 'JS:RUN');
+            \MBMigration\Core\Logger::instance()->info('JS:CODE is empty');
 
             return '';
         }
         try {
-            Utils::log('style parse from page', 1, "getStylesFromSection");
+            \MBMigration\Core\Logger::instance()->info('style parse from page');
             $puppeteer = new Puppeteer();
             $browser = $puppeteer->launch([
                 "headless" => "new",
@@ -247,7 +247,7 @@ class JS
 
             return json_decode($result, true);
         } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), $id, 'JS:RUN');
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
 
             return '';
         }

@@ -32,7 +32,7 @@ class QueryBuilder
     {
         $token = $this->session;
         if (!$token) {
-            Utils::log('Token was not found', 1, 'QueryBuilder');
+            \MBMigration\Core\Logger::instance()->info('Token was not found');
         }
 
         $this->client = $this->getClient([
@@ -163,7 +163,7 @@ class QueryBuilder
     public function getCollectionTypes($withFieldsSet = true)
     {
         if (!$this->client) {
-            Utils::log('Client was not init.', 2, 'getCollectionTypes');
+            \MBMigration\Core\Logger::instance()->warning('Client was not init.');
         }
 
         static $result;
@@ -367,7 +367,7 @@ class QueryBuilder
     public function getCollectionItems(array $collection_type_ids, $page = 1, $limit = 1000, $withFields = true)
     {
         if (!$this->client) {
-            Utils::log('Client was not init.', 2, 'getCollectionItems');
+            \MBMigration\Core\Logger::instance()->warning('Client was not init.');
         }
 
         $selectionSet = [];
@@ -1572,8 +1572,8 @@ class QueryBuilder
         try {
             return $this->client->runQuery($query, $resultsAsArray, $variables);
         } catch (\Exception $e) {
-            Utils::log('Failed query!! Message:'.json_encode($e->getMessage()), 5, 'runQuery');
-            Utils::MESSAGES_POOL($e->getMessage());
+            \MBMigration\Core\Logger::instance()->error('Failed query!! Message:'.json_encode($e->getMessage()));
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
             throw new \Exception('The client received an error.');
         }
     }

@@ -36,7 +36,7 @@ class ListLayout extends Element
      */
     protected function ListLayout(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "list_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['list-layout'];
 

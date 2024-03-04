@@ -15,11 +15,11 @@ class DBConnector
      * @throws Exception
      */
     public function __construct() {
-        Utils::log('Initialization', 4, 'DBConnector');
+        \MBMigration\Core\Logger::instance()->info('Initialization');
 
         $this->connection = new PostgresSQL();
 
-        Utils::log('READY', 4, 'DBConnector Module');
+        \MBMigration\Core\Logger::instance()->info('READY');
     }
 
     /**

@@ -34,7 +34,7 @@ class AccordionLayout extends Element
      * @throws \DOMException
      */
     protected function AccordionLayout(array $sectionData) {
-        Utils::log('Create bloc', 1, "Accordion_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $options = [];
 

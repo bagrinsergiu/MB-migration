@@ -59,7 +59,7 @@ class JSCode
         $path = __DIR__ . '/js/' . $fileName . '.js';
 
         if (!file_exists($path)) {
-            Utils::MESSAGES_POOL("File dont exist: " . $path, 'ERROR');
+            \MBMigration\Core\Logger::instance()->info("File dont exist: " . $path);
             return false;
         }
 

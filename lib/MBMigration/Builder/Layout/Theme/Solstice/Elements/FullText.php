@@ -40,7 +40,7 @@ class FullText extends Element
      */
     protected function FullText(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "full_text");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $options = [];
 

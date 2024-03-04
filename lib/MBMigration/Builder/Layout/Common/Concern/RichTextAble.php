@@ -42,7 +42,7 @@ trait RichTextAble
                     $browserPage
                 );
             } catch (\Exception $e) {
-                Utils::log($e->getMessage(), 6, 'PROCESS');
+                \MBMigration\Core\Logger::instance()->info($e->getMessage());
             }
         }
 
@@ -83,7 +83,7 @@ trait RichTextAble
                     );
                 }
             } catch (\Exception $e) {
-                Utils::log($e->getMessage(), 6, 'PROCESS');
+                \MBMigration\Core\Logger::instance()->info($e->getMessage());
             }
 
 
@@ -126,7 +126,7 @@ trait RichTextAble
                     $browserPage
                 );
             } catch (\Exception $e) {
-                Utils::log($e->getMessage(), 6, 'PROCESS');
+                \MBMigration\Core\Logger::instance()->info($e->getMessage());
             }
         }
 

@@ -37,7 +37,7 @@ class Footer extends Element
      */
     protected function Footer(): bool
     {
-        Utils::log('Create Footer', 1, "] [createFooter");
+        \MBMigration\Core\Logger::instance()->info('Create Footer');
 
         $sectionData = $this->cache->get('mainSection')['footer'];
 

@@ -42,7 +42,7 @@ class GridLayout extends Element
      */
     protected function GridLayout(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "grid_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $objItem = new ItemBuilder();
         $objBlock = new ItemBuilder();

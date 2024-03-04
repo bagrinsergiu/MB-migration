@@ -37,7 +37,7 @@ class ThreeHorizontalText extends Element
      */
     protected function ThreeHorizontalText($sectionData)
     {
-        Utils::log('Create full media', 1, "three-horizontal-text");
+        \MBMigration\Core\Logger::instance()->info('Create full media');
 
         $options = [];
 

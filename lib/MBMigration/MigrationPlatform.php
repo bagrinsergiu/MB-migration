@@ -69,7 +69,7 @@ class MigrationPlatform
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
         register_shutdown_function([$this->errorDump, 'handleFatalError']);
-        Utils::MESSAGES_POOL('initialization');
+        \MBMigration\Core\Logger::instance()->info('initialization');
 
         $this->finalSuccess['status'] = 'start';
 
@@ -79,18 +79,18 @@ class MigrationPlatform
     public function start(string $projectID_MB, int $projectID_Brizy = 0): bool
     {
         if ($projectID_MB == 'sample') {
-            Utils::MESSAGES_POOL(json_encode(JS::RichText(8152825, 'https://www.crosspointcoc.org/')));
+            \MBMigration\Core\Logger::instance()->info(json_encode(JS::RichText(8152825, 'https://www.crosspointcoc.org/')));
         } else {
             try {
                 $this->cache->loadDump($projectID_MB, $projectID_Brizy);
                 $this->run($projectID_MB, $projectID_Brizy);
                 $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
             } catch (Exception $e) {
-                Utils::MESSAGES_POOL($e->getMessage());
+                \MBMigration\Core\Logger::instance()->info($e->getMessage());
 
                 throw $e;
             } catch (GuzzleException $e) {
-                Utils::MESSAGES_POOL($e->getMessage());
+                \MBMigration\Core\Logger::instance()->info($e->getMessage());
 
                 throw $e;
             }
@@ -168,11 +168,7 @@ class MigrationPlatform
         $parentPages = $this->parser->getPages();
 
         if (empty($parentPages)) {
-            Utils::log(
-                'MB project not found, migration did not start, process completed without errors!',
-                1,
-                "MAIN Foreach"
-            );
+            \MBMigration\Core\Logger::instance()->info('MB project not found, migration did not start, process completed without errors!');
             $this->logFinalProcess($this->startTime, false);
 
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
@@ -182,13 +178,13 @@ class MigrationPlatform
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
             $this->updateColorSection($mainSection);
-            Utils::log('Upload Logo menu', 1, 'createMenu');
+            \MBMigration\Core\Logger::instance()->info('Upload Logo menu');
             $mainSection = $this->uploadPicturesFromSections($mainSection);
             $this->cache->set('mainSection', $mainSection);
         }
 
         if (true || !$this->cache->get('menuList')) {
-            Utils::log('Start created pages', 1, 'createBlankPages');
+            \MBMigration\Core\Logger::instance()->info('Start created pages');
             $projectTitle = $this->cache->get('settings')['title'];
 
             $this->createBlankPages($parentPages, $projectTitle);
@@ -215,7 +211,7 @@ class MigrationPlatform
             $this->PageBuilder->closeBrowser();
         }
 
-        Utils::log('Project migration completed successfully!', 6, 'PROCESS');
+        \MBMigration\Core\Logger::instance()->info('Project migration completed successfully!');
 
         $this->logFinalProcess($this->startTime);
     }
@@ -226,15 +222,15 @@ class MigrationPlatform
      */
     private function init(string $projectID_MB, int $projectID_Brizy): void
     {
-        Utils::log('-------------------------------------------------------------------------------------- []', 4, '');
-        Utils::log('Start Process!', 4, 'MIGRATION');
+        \MBMigration\Core\Logger::instance()->info('-------------------------------------------------------------------------------------- []');
+        \MBMigration\Core\Logger::instance()->info('Start Process!');
 
         Utils::init($this->cache);
 
         $this->startTime = microtime(true);
 
         $this->cache->set('migrationID', $this->migrationID);
-        Utils::log('Migration ID: '.$this->migrationID, 4, 'MIGRATION');
+        \MBMigration\Core\Logger::instance()->info('Migration ID: '.$this->migrationID);
 
         $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
 
@@ -258,12 +254,8 @@ class MigrationPlatform
         $this->finalSuccess['progress'] = $this->cache->get('Status');
         $this->finalSuccess['processTime'] = round($executionTime, 1);
 
-        if (!Config::$devMode) {
-            Utils::keepItClean();
-        }
-
-        Utils::log('Work time: '.$this->Time($executionTime).' (seconds: '.round($executionTime, 1).')', 1, 'PROCESS');
-        Utils::log('END', 1, "PROCESS");
+        \MBMigration\Core\Logger::instance()->info('Work time: '.$this->Time($executionTime).' (seconds: '.round($executionTime, 1).')');
+        \MBMigration\Core\Logger::instance()->info('END');
     }
 
     /**
@@ -306,7 +298,7 @@ class MigrationPlatform
      */
     private function collector($page): void
     {
-        Utils::log('Take page | ID: '.$page['id'], 4, 'MAIN Foreach');
+        \MBMigration\Core\Logger::instance()->info('Take page | ID: '.$page['id']);
 
         $this->cache->set('tookPage', $page);
         ExecutionTimer::start();
@@ -328,17 +320,9 @@ class MigrationPlatform
 
             $newPage = $this->creteNewPage($page['slug'], $page['name'], $title, $page['protectedPage']);
             if (!$newPage) {
-                Utils::log(
-                    'Failed created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
-                    2,
-                    'creteNewPage'
-                );
+                \MBMigration\Core\Logger::instance()->warning('Failed created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
             } else {
-                Utils::log(
-                    'Success created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
-                    1,
-                    'creteNewPage'
-                );
+                \MBMigration\Core\Logger::instance()->info('Success created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
                 $collectionItem = $newPage;
             }
         }
@@ -348,33 +332,21 @@ class MigrationPlatform
         if (!empty($preparedSectionOfThePage)) {
             $this->runPageBuilder($preparedSectionOfThePage);
         } else {
-            Utils::log(
-                'Set default page template | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
-                1,
-                'Foreach'
-            );
+            \MBMigration\Core\Logger::instance()->info('Set default page template | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
             $this->runPageBuilder($preparedSectionOfThePage);
         }
     }
 
     private function getItemsFromPage(array $page)
     {
-        Utils::log(
-            'Parent Page id: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
-            1,
-            'getItemsFromPage'
-        );
+        \MBMigration\Core\Logger::instance()->info('Parent Page id: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
 
         $child = $this->parser->getSectionsPage($page['id']);
         if (!empty($child)) {
             $sections = [];
             foreach ($child as $value) {
 
-                Utils::log(
-                    'Collection of item id: '.$value['id'].' -> Parent page id:'.$page['id'],
-                    1,
-                    'getItemsFromPage'
-                );
+                \MBMigration\Core\Logger::instance()->info('Collection of item id: '.$value['id'].' -> Parent page id:'.$page['id']);
 
                 $items = [
                     'sectionId' => $value['id'],
@@ -399,11 +371,7 @@ class MigrationPlatform
             }
             $result = $sections;
         } else {
-            Utils::log(
-                'Empty parent page | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
-                1,
-                'getItemsFromPage'
-            );
+            \MBMigration\Core\Logger::instance()->info('Empty parent page | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
             $result = false;
         }
 
@@ -415,7 +383,7 @@ class MigrationPlatform
      */
     private function createMenuStructure(): void
     {
-        Utils::log('Create menu structure', 1, 'createMenuStructure');
+        \MBMigration\Core\Logger::instance()->info('Create menu structure');
 
         $parentPages = $this->cache->get('menuList');
         $design = $this->cache->get('design');
@@ -517,7 +485,7 @@ class MigrationPlatform
                 return $collectionItems;
             }
         }
-        Utils::log('Page does not exist |  Slug: '.$slug, 1, 'getCollectionItem');
+        \MBMigration\Core\Logger::instance()->info('Page does not exist |  Slug: '.$slug);
 
         return false;
     }
@@ -556,7 +524,7 @@ class MigrationPlatform
 
     private function setCurrentPageOnWork($collectionItem): void
     {
-        Utils::log('Set the current page to work: '.$collectionItem, 1, 'setCurrentPageOnWork');
+        \MBMigration\Core\Logger::instance()->info('Set the current page to work: '.$collectionItem);
         $this->cache->set('currentPageOnWork', $collectionItem);
     }
 
@@ -566,7 +534,7 @@ class MigrationPlatform
     private function creteNewPage($slug, $title, $seoTitle, $protectedPage = false, $setActivePage = true)
     {
         if ($this->pageCheck($slug)) {
-            Utils::log('Request to create a new page: '.$slug, 1, 'creteNewPage');
+            \MBMigration\Core\Logger::instance()->info('Request to create a new page: '.$slug);
             $collectionItem = $this->QueryBuilder->createCollectionItem(
                 $this->cache->get('mainCollectionType'),
                 $slug,
@@ -604,7 +572,7 @@ class MigrationPlatform
         ];
 
         $res = $this->QueryBuilder->updateCollectionItem($itemsID, $slug, [], 'published', [], $title, $seo);
-        Utils::log('Page name is Rename', 1, 'renameSlug');
+        \MBMigration\Core\Logger::instance()->info('Page name is Rename');
 
         return $res;
     }
@@ -616,15 +584,15 @@ class MigrationPlatform
     {
 
         if (!$defaultPage) {
-            Utils::log('Start Builder', 4, 'RunPageBuilder');
+            \MBMigration\Core\Logger::instance()->info('Start Builder');
         } else {
-            Utils::log('Start Builder | create default Page', 4, 'RunPageBuilder');
+            \MBMigration\Core\Logger::instance()->info('Start Builder | create default Page');
         }
 
         $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
 
         if ($this->PageBuilder->run($preparedSectionOfThePage)) {
-            Utils::log('Page created successfully!', 1, 'PageBuilder');
+            \MBMigration\Core\Logger::instance()->info('Page created successfully!');
         }
     }
 
@@ -633,7 +601,7 @@ class MigrationPlatform
      */
     private function createBlankPages(array &$parentPages,  $projectTitle, $mainLevel = true)
     {
-        Utils::log('Start created pages', 1, 'createBlankPages');
+        \MBMigration\Core\Logger::instance()->info('Start created pages');
         $projectPages = $this->brizyApi->getAllProjectPages();
 
         $i = 0;
@@ -671,17 +639,9 @@ class MigrationPlatform
                 }
 
                 if (!$newPage) {
-                    Utils::log(
-                        'Failed created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
-                        2,
-                        'createBlankPages'
-                    );
+                    \MBMigration\Core\Logger::instance()->warning('Failed created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
                 } else {
-                    Utils::log(
-                        'Success created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug'],
-                        1,
-                        'createBlankPages'
-                    );
+                    \MBMigration\Core\Logger::instance()->info('Success created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
                     $page['collection'] = $newPage;
                 }
             } else {
@@ -707,7 +667,7 @@ class MigrationPlatform
         $uuid = $this->cache->get('settings')['uuid'];
         $prefix = substr($uuid, 0, 2);
         $url = Config::$MBMediaStaging."/".$prefix.'/'.$uuid.$folderload.$nameImage;
-        Utils::log('Created url pictures: '.$url.' Type folder '.$type, 1, 'getPisturesUrl');
+        \MBMigration\Core\Logger::instance()->info('Created url pictures: '.$url.' Type folder '.$type);
 
         return $url;
     }
@@ -717,25 +677,21 @@ class MigrationPlatform
      */
     private function uploadPicturesFromSections(array $sectionsItems): array
     {
-        Utils::log('Start upload image', 1, 'uploadPicturesFromSections');
+        \MBMigration\Core\Logger::instance()->info('Start upload image');
         foreach ($sectionsItems as &$section) {
             if ($this->checkArrayPath($section, 'settings/sections/background/photo')) {
                 if ($section['settings']['sections']['background']['photo'] != null) {
-                    Utils::log('Found background image', 1, 'uploadPicturesFromSections');
+                    \MBMigration\Core\Logger::instance()->info('Found background image');
                     $result = $this->brizyApi->createMedia(
                         $section['settings']['sections']['background']['photo'],
                         $this->projectId
                     );
                     if ($result) {
                         $result = json_decode($result['body'], true);
-                        Utils::log('Upload image response: '.json_encode($result), 1, 'uploadPicturesFromSections');
+                        \MBMigration\Core\Logger::instance()->info('Upload image response: '.json_encode($result));
                         $section['settings']['sections']['background']['photo'] = $result['name'];
                         $section['settings']['sections']['background']['filename'] = $result['filename'];
-                        Utils::log(
-                            'Success upload image fileName: '.$result['filename'].' srcName: '.$result['name'],
-                            1,
-                            'uploadPicturesFromSections'
-                        );
+                        \MBMigration\Core\Logger::instance()->info('Success upload image fileName: '.$result['filename'].' srcName: '.$result['name']);
                     }
                 } else {
                     $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
@@ -744,21 +700,17 @@ class MigrationPlatform
 
             if ($this->checkArrayPath($section, 'settings/background/photo')) {
                 if ($section['settings']['background']['photo'] != null) {
-                    Utils::log('Found background image', 1, 'uploadPicturesFromSections');
+                    \MBMigration\Core\Logger::instance()->info('Found background image');
                     $result = $this->brizyApi->createMedia(
                         $section['settings']['background']['photo'],
                         $this->projectId
                     );
                     if ($result) {
                         $result = json_decode($result['body'], true);
-                        Utils::log('Upload image response: '.json_encode($result), 1, 'uploadPicturesFromSections');
+                        \MBMigration\Core\Logger::instance()->info('Upload image response: '.json_encode($result));
                         $section['settings']['background']['photo'] = $result['name'];
                         $section['settings']['background']['filename'] = $result['filename'];
-                        Utils::log(
-                            'Success upload image fileName: '.$result['filename'].' srcName: '.$result['name'],
-                            1,
-                            'uploadPicturesFromSections'
-                        );
+                        \MBMigration\Core\Logger::instance()->info('Success upload image fileName: '.$result['filename'].' srcName: '.$result['name']);
                     }
                 } else {
                     $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
@@ -794,31 +746,27 @@ class MigrationPlatform
      */
     private function media(&$item, $section): void
     {
-        Utils::log('Found new image', 1, 'media');
+        \MBMigration\Core\Logger::instance()->info('Found new image');
         $downloadImageURL = $this->getPisturesUrl($item['content'], $section);
         $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
         if ($result) {
             if (array_key_exists('status', $result)) {
                 if ($result['status'] == 201) {
                     $result = json_decode($result['body'], true);
-                    Utils::log('Upload image response: '.json_encode($result), 1, 'media');
+                    \MBMigration\Core\Logger::instance()->info('Upload image response: '.json_encode($result));
                     $item['uploadStatus'] = true;
                     $item['imageFileName'] = $result['filename'];
                     $item['content'] = $result['name'];
-                    Utils::log(
-                        'Success upload image fileName: '.$result['filename'].' srcName: '.$result['name'],
-                        1,
-                        'media'
-                    );
+                    \MBMigration\Core\Logger::instance()->info('Success upload image fileName: '.$result['filename'].' srcName: '.$result['name']);
                 } else {
-                    Utils::log('Unexpected answer: '.json_encode($result), 3, 'media');
+                    \MBMigration\Core\Logger::instance()->critical('Unexpected answer: '.json_encode($result));
                 }
             } else {
-                Utils::log('Bad response: '.json_encode($result), 3, 'media');
+                \MBMigration\Core\Logger::instance()->critical('Bad response: '.json_encode($result));
             }
         } else {
             $item['uploadStatus'] = false;
-            Utils::log('The structure of the image is damaged', 3, 'media');
+            \MBMigration\Core\Logger::instance()->critical('The structure of the image is damaged');
         }
     }
 
@@ -888,14 +836,14 @@ class MigrationPlatform
     private function createDirectory($directoryPath): void
     {
         if (!is_dir($directoryPath)) {
-            Utils::log('Create Directory: ' . $directoryPath, 1, 'createDirectory');
+            \MBMigration\Core\Logger::instance()->info('Create Directory: ' . $directoryPath);
 
             $result = shell_exec("mkdir -p " . escapeshellarg($directoryPath));
 
             if ($result === null) {
-                Utils::log('Directory created successfully.', 1, 'createDirectory');
+                \MBMigration\Core\Logger::instance()->info('Directory created successfully.');
             } else {
-                Utils::log('Error creating directory: ' . $result, 3, 'createDirectory');
+                \MBMigration\Core\Logger::instance()->critical('Error creating directory: ' . $result);
             }
 
             if (!is_dir($directoryPath)) {
@@ -925,11 +873,6 @@ class MigrationPlatform
         }
     }
 
-    private function keepItClean()
-    {
-        Utils::keepItClean();
-    }
-
     private function createPalette(): void
     {
         $colorMapper = new ColorMapper();
@@ -955,7 +898,7 @@ class MigrationPlatform
     public function getLogs(): string
     {
         if ($this->finalSuccess['status'] === 'success') {
-            Utils::log(json_encode($this->errorDump->getDetailsMessage()), 0, 'DetailsMessage');
+            \MBMigration\Core\Logger::instance()->debug(json_encode($this->errorDump->getDetailsMessage()));
 
             return json_encode($this->finalSuccess);
         }

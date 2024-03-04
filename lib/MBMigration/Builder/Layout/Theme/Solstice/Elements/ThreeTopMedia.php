@@ -40,7 +40,7 @@ class ThreeTopMedia extends Element
      */
     protected function three_top_media(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "three_top_media_circle");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['three-top-media'];
 

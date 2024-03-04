@@ -28,18 +28,18 @@ class Tradition  extends Layout
 
         $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
 
-        Utils::log('Connected!', 4, 'Tradition Builder');
+        \MBMigration\Core\Logger::instance()->info('Connected!');
         $this->jsonDecode = $this->loadKit($this->layoutName);
 
         $menuList = $this->cache->get('menuList');
 
         if($menuList['create'] == false) {
             if ($this->createMenu($menuList)) {
-                Utils::log('Success create MENU', 1, $this->layoutName . "] [__construct");
+                \MBMigration\Core\Logger::instance()->info('Success create MENU');
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                Utils::log("Failed create MENU", 2, $this->layoutName . "] [__construct");
+                \MBMigration\Core\Logger::instance()->warning("Failed create MENU");
             }
         }
         $this->createFooter($menuList);
@@ -47,7 +47,7 @@ class Tradition  extends Layout
 
     private function createMenu($menuList)
     {
-        Utils::log('Create block menu', 1, $this->layoutName . "] [createMenu");
+        \MBMigration\Core\Logger::instance()->info('Create block menu');
         $decoded = $this->jsonDecode['blocks']['menu'];
         $block = json_decode($decoded['main'], true);
         $lgoItem = $this->cache->get('mainSection')['header']['items'];
@@ -105,7 +105,7 @@ class Tradition  extends Layout
 
     private function left_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['left-media'];
         $block = json_decode($decoded, true);
 
@@ -135,7 +135,7 @@ class Tradition  extends Layout
     }
     private function right_media(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $decoded = $this->jsonDecode['blocks']['right-media'];
         $block = json_decode($decoded, true);
@@ -163,7 +163,7 @@ class Tradition  extends Layout
 
     private function full_media($encode): bool|string
     {
-        Utils::log('Create full media', 1, $this->layoutName . "] [full_media");
+        \MBMigration\Core\Logger::instance()->info('Create full media');
         $decoded = $this->jsonDecode['blocks']['full-media'];
         $block = json_decode($decoded, true);
 
@@ -200,7 +200,7 @@ class Tradition  extends Layout
 
     private function full_text(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['full-text'];
         if($this->checkArrayPath($encoded, 'settings/sections/background/photoOption'))
         {
@@ -227,7 +227,7 @@ class Tradition  extends Layout
                 }
             }
         } else {
-            Utils::log('Set background', 1, $this->layoutName . "] [full_text");
+            \MBMigration\Core\Logger::instance()->info('Set background');
             $block = json_decode($decoded['background'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
@@ -251,7 +251,7 @@ class Tradition  extends Layout
 
     private function parallaxScroll(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text (parallaxScroll)");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
         if(!empty($encoded['settings']['sections']['background'])) {
@@ -261,7 +261,7 @@ class Tradition  extends Layout
             $block['value']['items'][0]['value']['bgImageSrc']      = $encoded['settings']['sections']['background']['photo'];
 
         } else {
-            Utils::log('Set background', 1, $this->layoutName . "] [full_text (parallaxScroll)");
+            \MBMigration\Core\Logger::instance()->info('Set background');
             $block = json_decode($decoded['background'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
@@ -290,7 +290,7 @@ class Tradition  extends Layout
 
     private function left_media_circle(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media_circle");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
 
@@ -317,7 +317,7 @@ class Tradition  extends Layout
 
     private function top_media_diamond(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [top_media_diamond");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
@@ -331,7 +331,7 @@ class Tradition  extends Layout
 
     private function grid_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $objItem = new ItemBuilder($decoded['item']);
@@ -404,7 +404,7 @@ class Tradition  extends Layout
 
     private function list_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['list-layout'];
 
         $block = json_decode($decoded['main'], true);
@@ -456,7 +456,7 @@ class Tradition  extends Layout
 
     private function gallery_layout(array $encoded): bool|string
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $encoded['items'] = $this->sortByOrderBy($encoded['items']);
 
@@ -486,7 +486,7 @@ class Tradition  extends Layout
 
     private function create_Default_Page()
     {
-        Utils::log('Create structure default page', 1, $this->layoutName . "] [top_media_diamond");
+        \MBMigration\Core\Logger::instance()->info('Create structure default page');
 
         //$decoded = $this->jsonDecode['blocks']['defaultBlocks'];
 
@@ -494,7 +494,7 @@ class Tradition  extends Layout
 
     private function createFooter(): void
     {
-        Utils::log('Create Footer', 1, $this->layoutName . "] [createFooter");
+        \MBMigration\Core\Logger::instance()->info('Create Footer');
         $encoded = $this->cache->get('mainSection')['footer'];
         $decoded = $this->jsonDecode['blocks']['footer'];
         $block = json_decode($decoded, true);
@@ -562,7 +562,7 @@ class Tradition  extends Layout
 // brz-text-lg-left
     private function replaceTitleTag($html, $type = ''): string
     {
-        Utils::log('Replace Title Tag: '. $html, 1, $this->layoutName . "] [replaceTitleTag");
+        \MBMigration\Core\Logger::instance()->info('Replace Title Tag: '. $html);
         if(empty($html))
             return '';
         $doc = new DOMDocument();
@@ -616,7 +616,7 @@ class Tradition  extends Layout
     }
 
     private function replaceParagraphs($html, $type = ''): string {
-        Utils::log('Replace Paragraph: '. $html, 1, $this->layoutName . "] [replaceParagraphs");
+        \MBMigration\Core\Logger::instance()->info('Replace Paragraph: '. $html);
         if(empty($html)){
             return '';
         }
@@ -834,10 +834,10 @@ class Tradition  extends Layout
             if(!isset($params)){
                 $params = $this->jsonDecode;
             }
-            Utils::log('Call method ' . $verifiedMethodName , 1, $this->layoutName . "] [callDynamicMethod");
+            \MBMigration\Core\Logger::instance()->info('Call method ' . $verifiedMethodName);
             return call_user_func_array(array($this, $verifiedMethodName), [$params]);
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist', 2, $this->layoutName . "] [callDynamicMethod");
+        \MBMigration\Core\Logger::instance()->warning('Method ' . $verifiedMethodName . ' does not exist');
         return false;
     }
 

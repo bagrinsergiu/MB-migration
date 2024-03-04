@@ -31,7 +31,7 @@ class LeftMedia extends Element
      */
     protected function LeftMedia(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "left_media");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $options = [];
 

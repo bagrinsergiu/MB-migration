@@ -35,7 +35,7 @@ class GalleryLayout extends Element
         $rotatorSpeed = 5;
 
 
-        Utils::log('Create bloc', 1, "gallery_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);

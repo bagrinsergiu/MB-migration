@@ -80,7 +80,7 @@ class BrowserPHP implements BrowserInterface
         try {
             $this->page->navigate($url)->waitForNavigation();
         } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
 
         return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
@@ -91,7 +91,7 @@ class BrowserPHP implements BrowserInterface
         try {
             //$this->page->close();
         } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
     }
 
@@ -100,7 +100,7 @@ class BrowserPHP implements BrowserInterface
         try {
             $this->browser->close();
         } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
     }
 }

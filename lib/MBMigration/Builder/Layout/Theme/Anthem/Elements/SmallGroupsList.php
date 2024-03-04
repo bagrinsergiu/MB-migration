@@ -41,7 +41,7 @@ class SmallGroupsList extends Element
      */
     protected function SmallGroupsList(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "small-groups-list");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $options = [];
 

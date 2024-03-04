@@ -25,7 +25,7 @@ class August extends Layout
         $this->cache = $cache;
         $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
 
-        Utils::log('Connected!', 4, 'August Builder');
+        \MBMigration\Core\Logger::instance()->info('Connected!');
 
         $this->jsonDecode = $this->loadKit($this->layoutName);
 
@@ -33,11 +33,11 @@ class August extends Layout
 
         if ($menuList['create'] == false) {
             if ($this->createMenu($menuList)) {
-                Utils::log('Success create MENU', 1, $this->layoutName . "] [__construct");
+                \MBMigration\Core\Logger::instance()->info('Success create MENU');
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                Utils::log("Failed create MENU", 2, $this->layoutName . "] [__construct");
+                \MBMigration\Core\Logger::instance()->warning("Failed create MENU");
                 throw new Exception('Failed create MENU');
             }
         }
@@ -46,7 +46,7 @@ class August extends Layout
 
     protected function createMenu($menuList): bool
     {
-        Utils::log('Create block menu', 1, $this->layoutName . "] [createMenu");
+        \MBMigration\Core\Logger::instance()->info('Create block menu');
 
         $this->cache->set('currentSectionData', $menuList);
         $lgoItem = $this->cache->get('header', 'mainSection');
@@ -129,7 +129,7 @@ class August extends Layout
 
     protected function left_media(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $objBlock = new ItemBuilder();
 
@@ -146,7 +146,7 @@ class August extends Layout
         }
 
         if ($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            Utils::log('Set background', 1, $this->layoutName . "] [left_media");
+            \MBMigration\Core\Logger::instance()->info('Set background');
 
             $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
             $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
@@ -184,7 +184,7 @@ class August extends Layout
 
     protected function right_media(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [right_media");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $objBlock = new ItemBuilder();
@@ -226,7 +226,7 @@ class August extends Layout
 
     protected function full_media(array $sectionData)
     {
-        Utils::log('Create full media', 1, $this->layoutName . "] [full_media");
+        \MBMigration\Core\Logger::instance()->info('Create full media');
 
         $objBlock = new ItemBuilder();
 
@@ -303,7 +303,7 @@ class August extends Layout
 
     protected function full_text(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [full_text");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $objBlock = new ItemBuilder();
 
@@ -343,7 +343,7 @@ class August extends Layout
                 }
             }
         } else {
-            Utils::log('Set background', 1, $this->layoutName . "] [full_text");
+            \MBMigration\Core\Logger::instance()->info('Set background');
 
             $objBlock->newItem($decoded['background']);
 
@@ -372,7 +372,7 @@ class August extends Layout
 
     protected function two_horizontal_text($sectionData)
     {
-        Utils::log('Create full media', 1, $this->layoutName . "] [two-horizontal-text");
+        \MBMigration\Core\Logger::instance()->info('Create full media');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['two-horizontal-text'];
         $block = json_decode($decoded, true);
@@ -413,7 +413,7 @@ class August extends Layout
 
     protected function left_media_circle(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [left_media_circle");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
@@ -445,7 +445,7 @@ class August extends Layout
 
     protected function top_media_diamond(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [top_media_diamond");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
@@ -459,7 +459,7 @@ class August extends Layout
 
     protected function grid_layout(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [grid_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $objItem = new ItemBuilder();
         $objBlock = new ItemBuilder();
@@ -634,7 +634,7 @@ class August extends Layout
 
     protected function gallery_layout(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [gallery_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);
@@ -655,7 +655,7 @@ class August extends Layout
 
     protected function three_top_media_circle(array $sectionData)
     {
-        Utils::log('Create bloc', 1, $this->layoutName . "] [three_top_media_circle");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['three-top-media-circle'];
 
@@ -671,7 +671,7 @@ class August extends Layout
         $objBlock->item(0)->setting('bgColorPalette', '');
 
         if ($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            Utils::log('Set background', 1, $this->layoutName . "] [three_top_media_circle");
+            \MBMigration\Core\Logger::instance()->info('Set background');
 
             $background = $this->getKeyRecursive('background', 'sections', $sectionData);
 
@@ -728,7 +728,7 @@ class August extends Layout
 
     protected function create_Default_Page()
     {
-        Utils::log('Create structure default page', 1, $this->layoutName . "] [top_media_diamond");
+        \MBMigration\Core\Logger::instance()->info('Create structure default page');
 
         //$decoded = $this->jsonDecode['blocks']['defaultBlocks'];
 
@@ -736,7 +736,7 @@ class August extends Layout
 
     protected function createFooter()
     {
-        Utils::log('Create Footer', 1, $this->layoutName . "] [createFooter");
+        \MBMigration\Core\Logger::instance()->info('Create Footer');
         $sectionData = $this->cache->get('mainSection')['footer'];
         $decoded = $this->jsonDecode['blocks']['footer'];
 
@@ -779,12 +779,12 @@ class August extends Layout
             if (!isset($params)) {
                 $params = $this->jsonDecode;
             }
-            Utils::log('Call method ' . $verifiedMethodName, 1, $this->layoutName . "] [callDynamicMethod");
+            \MBMigration\Core\Logger::instance()->info('Call method ' . $verifiedMethodName);
             $result = call_user_func_array(array($this, $verifiedMethodName), [$params]);
             $this->cache->set('callMethodResult', $result);
             return $result;
         }
-        Utils::log('Method ' . $verifiedMethodName . ' does not exist. Page: ' . $marker, 2, $this->layoutName . "] [callDynamicMethod");
+        \MBMigration\Core\Logger::instance()->warning('Method ' . $verifiedMethodName . ' does not exist. Page: ' . $marker);
         return false;
     }
 

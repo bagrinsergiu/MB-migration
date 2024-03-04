@@ -101,7 +101,7 @@ class Utils
             foreach ($deleteFolders as $directory) {
                 self::removeDir($directory);
             }
-            Utils::log('Derictories removed success', 1, 'KeepItClean');
+            \MBMigration\Core\Logger::instance()->info('Derictories removed success');
         }
     }
 

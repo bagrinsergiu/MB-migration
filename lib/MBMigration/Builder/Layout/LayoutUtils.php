@@ -313,7 +313,7 @@ class LayoutUtils extends builderUtils
                                 $result[] = ['icon' => $iconNameBrizy, 'href' => $href];
                             }
                         } else {
-                            Utils::log('Icons Attribute not found', 3, "replaceTitleTag");
+                            \MBMigration\Core\Logger::instance()->critical('Icons Attribute not found');
                         }
                     }
                 }
@@ -371,7 +371,7 @@ class LayoutUtils extends builderUtils
             if (!$icoName) {
                 $icoName = $this->getIcon($iconCode);
                 if (!$icoName) {
-                    Utils::log('icons were not found: '.$name, 3, "checkExistIcon");
+                    \MBMigration\Core\Logger::instance()->critical('icons were not found: '.$name);
 
                     return $result;
                 }
@@ -391,7 +391,7 @@ class LayoutUtils extends builderUtils
                 if ($this->getIcon($hostName) !== false) {
                     $result = $hostName;
                 } else {
-                    Utils::log('icons were not found', 3, "checkExistIcon");
+                    \MBMigration\Core\Logger::instance()->critical('icons were not found');
                 }
             }
         }
@@ -776,7 +776,7 @@ class LayoutUtils extends builderUtils
      */
     protected function replaceTitleTag($html, $options = [], $type = '', $position = ''): array
     {
-        Utils::log('Replace Title Tag ', 1, "] [replaceTitleTag");
+        \MBMigration\Core\Logger::instance()->info('Replace Title Tag ');
         if (empty($html)) {
             return [
                 'text' => '',
@@ -892,7 +892,7 @@ class LayoutUtils extends builderUtils
      */
     protected function replaceParagraphs($html, $type = '', $position = '', $options = []): array
     {
-        Utils::log('Replace Paragraph', 1, "] [replaceParagraphs");
+        \MBMigration\Core\Logger::instance()->info('Replace Paragraph');
         if (empty($html)) {
             return ['text' => ''];
         }
@@ -1014,7 +1014,7 @@ class LayoutUtils extends builderUtils
      */
     protected function loadKit($layoutName = '', $fileName = '')
     {
-        Utils::log('Open file json BlocksKit', 1, "] [loadKit");
+        \MBMigration\Core\Logger::instance()->info('Open file json BlocksKit');
         $file = __DIR__;
         if ($fileName === '' && $layoutName === '') {
             $file .= '/globalBlocksKit.json';
@@ -1032,15 +1032,15 @@ class LayoutUtils extends builderUtils
             $fileContent = file_get_contents($file);
 
             if (empty($fileContent)) {
-                Utils::log('File '.$file.' empty', 2, "] [loadKit");
+                \MBMigration\Core\Logger::instance()->warning('File '.$file.' empty');
                 throw new Exception('File '.$file.' empty');
             }
-            Utils::log('File exist: '.$file, 1, "] [loadKit");
+            \MBMigration\Core\Logger::instance()->info('File exist: '.$file);
 
             return json_decode($fileContent, true);
 
         } else {
-            Utils::log('File does not exist. Path: '.$file, 2, "] [loadKit");
+            \MBMigration\Core\Logger::instance()->warning('File does not exist. Path: '.$file);
             throw new Exception('File does not exist. Path: '.$file);
         }
     }

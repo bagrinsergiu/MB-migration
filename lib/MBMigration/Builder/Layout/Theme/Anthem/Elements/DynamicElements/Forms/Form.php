@@ -24,7 +24,7 @@ class Form extends DynamicElement
      */
     protected function formElement(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "Form");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $options = [];
 

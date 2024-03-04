@@ -36,7 +36,7 @@ class TwoHorizontalText extends Element
      */
     protected function TwoHorizontalText($sectionData)
     {
-        Utils::log('Create full media', 1, "] [two-horizontal-text");
+        \MBMigration\Core\Logger::instance()->info('Create full media');
 
         $options = [];
 

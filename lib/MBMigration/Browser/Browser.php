@@ -86,7 +86,7 @@ class Browser implements BrowserInterface
             $this->page->goto($url, ['timeout' => 120000, 'waitUntil' => 'networkidle0']);
             sleep(1);
         } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
 
         return new BrowserPage($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
@@ -98,7 +98,7 @@ class Browser implements BrowserInterface
             //$this->page->close();
             sleep(2);
         } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
     }
 
@@ -107,7 +107,7 @@ class Browser implements BrowserInterface
         try {
             $this->browser->close();
         } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
     }
 }

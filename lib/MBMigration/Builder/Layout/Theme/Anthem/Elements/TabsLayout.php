@@ -36,7 +36,7 @@ class TabsLayout extends Element
      * @throws \Exception
      */
     protected function TabsLayout(array $sectionData) {
-        Utils::log('Create bloc', 1, "tabs_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $options = ['elementType' => 'tabs_layout'];
 

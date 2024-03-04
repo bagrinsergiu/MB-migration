@@ -43,7 +43,7 @@ class FontsController extends builderUtils
      */
     public function upLoadFont($fontName): string
     {
-        Utils::log("Create FontName $fontName", 1, "upLoadFont");
+        \MBMigration\Core\Logger::instance()->info("Create FontName $fontName");
         $KitFonts = $this->getPathFont($fontName);
         if ($KitFonts) {
             $responseDataAddedNewFont = $this->BrizyApi->createFonts(
@@ -128,7 +128,7 @@ class FontsController extends builderUtils
     public function getFontsMap(): void
     {
         $this->layoutName = 'FontsController';
-        Utils::log("Download fonts map", 1, "downloadMapFontsFromUrl");
+        \MBMigration\Core\Logger::instance()->info("Download fonts map");
         if (Config::$urlJsonKits && Config::$devMode === false) {
             $createUrlForFileFontsMap = Config::$urlJsonKits.'/fonts/fonts.json';
             $this->fontsMap = $this->loadJsonFromUrl($createUrlForFileFontsMap);

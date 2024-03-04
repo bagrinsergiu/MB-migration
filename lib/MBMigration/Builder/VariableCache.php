@@ -13,7 +13,7 @@ class VariableCache
 
     private function __construct($cachePath)
     {
-        Utils::log('Initialization', 4, 'Cache');
+        \MBMigration\Core\Logger::instance()->info('Initialization');
         $this->cachePath = rtrim($cachePath, '/');
         $this->cache = ['OBJECTS' => []];
     }
@@ -199,7 +199,7 @@ class VariableCache
 
     public function init()
     {
-        Utils::log('Initialization', 4, 'Cache');
+        \MBMigration\Core\Logger::instance()->info('Initialization');
 
         $this->cache = [];
 

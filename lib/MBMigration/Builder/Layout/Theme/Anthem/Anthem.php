@@ -60,7 +60,7 @@ class Anthem extends LayoutUtils
 
 //        ThemePreProcess::treeMenu();
 
-        Utils::log('Connected!', 4, $this->layoutName.' Builder');
+        \MBMigration\Core\Logger::instance()->info('Connected!');
 
         $this->jsonDecode = $this->loadKit($this->layoutName);
 
@@ -75,11 +75,11 @@ class Anthem extends LayoutUtils
                 $brizyAPI
             );
             if ($headElement) {
-                Utils::log('Success create MENU', 1, $this->layoutName."] [__construct");
+                \MBMigration\Core\Logger::instance()->info('Success create MENU');
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                Utils::log("Failed create MENU", 2, $this->layoutName."] [__construct");
+                \MBMigration\Core\Logger::instance()->warning("Failed create MENU");
                 throw new Exception('Failed create MENU');
             }
         }
@@ -134,7 +134,7 @@ class Anthem extends LayoutUtils
 //                ['menu' => $resultFind, 'activePage' => $slug]
 //            );
 //        }
-        Utils::log('Current Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+        \MBMigration\Core\Logger::instance()->info('Current Page: '.$itemsID.' | Slug: '.$slug);
         $this->cache->update('createdFirstSection', false, 'flags');
         $this->cache->update('Success', '++', 'Status');
 //        $this->browser->close();
@@ -149,11 +149,7 @@ class Anthem extends LayoutUtils
                     $decodeBlock = json_decode($blockData, true);
                     $itemsData['items'][] = $decodeBlock;
                 } else {
-                    Utils::log(
-                        'CallMethod return null. input data: '.json_encode($section).' | Slug: '.$slug,
-                        2,
-                        'PageBuilder'
-                    );
+                    \MBMigration\Core\Logger::instance()->warning('CallMethod return null. input data: '.json_encode($section).' | Slug: '.$slug);
                 }
             }
         }
@@ -162,12 +158,12 @@ class Anthem extends LayoutUtils
 
         $pageData = json_encode($itemsData);
 
-        Utils::log('Request to send content to the page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+        \MBMigration\Core\Logger::instance()->info('Request to send content to the page: '.$itemsID.' | Slug: '.$slug);
 
 
         $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
 
-        Utils::log('Content added to the page successfully: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+        \MBMigration\Core\Logger::instance()->info('Content added to the page successfully: '.$itemsID.' | Slug: '.$slug);
 
         return true;
     }
@@ -180,7 +176,7 @@ class Anthem extends LayoutUtils
         $elementName = $this->replaceInName($methodName);
 
         if (method_exists($this, $elementName)) {
-            Utils::log('Call Element '.$elementName, 1, $this->layoutName."] [callMethod");
+            \MBMigration\Core\Logger::instance()->info('Call Element '.$elementName);
             $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
         } else {
@@ -191,11 +187,7 @@ class Anthem extends LayoutUtils
                 $params
             );
             if (!$result) {
-                Utils::log(
-                    'Element '.$elementName.' does not exist. Page: '.$marker,
-                    2,
-                    $this->layoutName."] [callMethod"
-                );
+                \MBMigration\Core\Logger::instance()->warning('Element '.$elementName.' does not exist. Page: '.$marker);
             }
         }
 
@@ -219,7 +211,7 @@ class Anthem extends LayoutUtils
         $browserPage->ExtractHover($selectorButton);
 
         foreach ($SectionPage as &$section) {
-            Utils::log('Extract Data'.$section['sectionId'], 1, 'ExtractDataFromPage');
+            \MBMigration\Core\Logger::instance()->info('Extract Data'.$section['sectionId']);
 
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
 

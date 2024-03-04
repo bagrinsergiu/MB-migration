@@ -40,7 +40,7 @@ class LivestreamLayout extends Element
      */
     protected function LivestreamLayout(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "full_text");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $options = [];
 

@@ -36,7 +36,7 @@ class LeftMediaCircle extends Element
      */
     protected function LeftMediaCircle(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "LeftMediaCircle");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
 
         $options = [];
 

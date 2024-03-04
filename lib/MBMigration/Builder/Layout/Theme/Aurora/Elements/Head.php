@@ -33,7 +33,7 @@ class Head extends Element
 
     private function Menu($menuList): bool
     {
-        Utils::log('Create block menu', 1, "] [createMenu");
+        \MBMigration\Core\Logger::instance()->info('Create block menu');
 
         $options = [];
 

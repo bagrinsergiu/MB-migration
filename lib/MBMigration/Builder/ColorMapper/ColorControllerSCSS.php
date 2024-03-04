@@ -32,7 +32,7 @@ class ColorControllerSCSS
             }
         }
         catch (Exception|SassException $e) {
-            Utils::MESSAGES_POOL($e->getMessage());
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
     }
 

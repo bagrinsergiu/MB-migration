@@ -37,7 +37,7 @@ class GalleryLayout extends Element
         $objBlock = new ItemBuilder();
         $objSlide = new ItemBuilder();
 
-        Utils::log('Create bloc', 1, "gallery_layout");
+        \MBMigration\Core\Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);

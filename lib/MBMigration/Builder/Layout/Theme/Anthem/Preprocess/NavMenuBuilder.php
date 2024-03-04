@@ -21,7 +21,7 @@ class NavMenuBuilder
 
     public function createMenuStructure(): void
     {
-        Utils::log('Create menu structure', 1, 'createMenuStructure');
+        \MBMigration\Core\Logger::instance()->info('Create menu structure');
 
         $parentPages = $this->cache->get('menuList');
         $mainMenu = $this->transformToBrizyMenu($parentPages['list']);

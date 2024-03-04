@@ -36,7 +36,7 @@ class FourHorizontalText extends Element
      */
     protected function FourHorizontalText($sectionData)
     {
-        Utils::log('Create four horizontal text', 1, "four-horizontal-text");
+        \MBMigration\Core\Logger::instance()->info('Create four horizontal text');
 
         $options = [];
 

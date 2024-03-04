@@ -10,7 +10,7 @@ class Footer
 
     protected function createFooter()
     {
-        Utils::log('Create Footer', 1, $this->layoutName . "] [createFooter");
+        \MBMigration\Core\Logger::instance()->info('Create Footer');
 
         $options = [];
         $imageAdd = false;
