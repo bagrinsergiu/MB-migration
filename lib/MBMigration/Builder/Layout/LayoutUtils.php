@@ -736,44 +736,6 @@ class LayoutUtils extends builderUtils
     /**
      * @throws DOMException
      */
-    private function replaceDivWithParagraph($html)
-    {
-        $dom = new DOMDocument();
-        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-
-        $divs = $dom->getElementsByTagName('div');
-
-        foreach ($divs as $div) {
-            $p = $dom->createElement('p');
-            foreach ($div->attributes as $attribute) {
-                $p->setAttribute($attribute->name, $attribute->value);
-            }
-
-            while ($div->firstChild) {
-                $child = $div->firstChild;
-                $div->removeChild($child);
-                $p->appendChild($child);
-            }
-
-            $div->parentNode->replaceChild($p, $div);
-        }
-
-        return $dom->saveHTML();
-    }
-
-    protected function removeSemicolon($string)
-    {
-        if (substr($string, -1) === ';') {
-            $string = substr($string, 0, -1);
-        }
-
-        return $string;
-    }
-
-
-    /**
-     * @throws DOMException
-     */
     protected function replaceTitleTag($html, $options = [], $type = '', $position = ''): array
     {
         Logger::instance()->info('Replace Title Tag ');
@@ -970,43 +932,6 @@ class LayoutUtils extends builderUtils
         }
 
         return $result;
-    }
-
-    protected function integrationOfTheWrapperItem(array &$block, array $section, string $path): void
-    {
-        if ($section['item_type'] === 'title') {
-            $content = $this->replaceTitleTag($section['content'], 'brz-text-lg-center');
-            $position = 0;
-        } else {
-            $content = $this->replaceParagraphs($section['content'], 'brz-text-lg-center');
-            $position = null;
-        }
-        $wrapper = $this->itemWrapperRichText($content, [], true);
-        $this->insertElementAtPosition($block, $path, $wrapper, $position);
-    }
-
-    protected function marginAndPaddingOffset(&$block, $settings = [])
-    {
-        $imageOffset = ['Bloom'];
-        $designName = $this->cache->get('design', 'settings');
-
-
-        if (in_array($designName, $imageOffset)) {
-            $flags = $this->cache->get('createdFirstSection', 'flags');
-            if (!$flags) {
-                $block['value']['marginTop'] = -200;
-                $block['value']['marginTopSuffix'] = "px";
-                $block['value']['tempMarginTop'] = -200;
-                $block['value']['tempMarginTopSuffix'] = "px";
-                $block['value']['marginType'] = "ungrouped";
-
-                $block['value']['paddingTop'] = 250;
-                $block['value']['paddingTopSuffix'] = "px";
-                $block['value']['tempPaddingTop'] = 250;
-                $block['value']['tempPaddingTopSuffix'] = "px";
-            }
-            $this->cache->update('createdFirstSection', true, 'flags');
-        }
     }
 
     /**

@@ -6,7 +6,6 @@ use MBMigration\Core\Logger;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\Checking;
-use MBMigration\Builder\ColorMapper\ColorMapper;
 use MBMigration\Builder\DebugBackTrace;
 use MBMigration\Builder\Layout\Common\MenuBuilderFactory;
 use MBMigration\Builder\PageBuilder;
@@ -175,7 +174,7 @@ class MigrationPlatform
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
         }
 
-        $this->createPalette();
+//        $this->createPalette();
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
             $this->updateColorSection($mainSection);
@@ -874,15 +873,15 @@ class MigrationPlatform
         }
     }
 
-    private function createPalette(): void
-    {
-        $colorMapper = new ColorMapper();
-        $colorKit = $this->colorPalette();
-        $design = $this->cache->get('design', 'settings');
-        $this->cache->set('subpalette', [], 'parameter');
-        $subPalette = $colorMapper->getPalette('Anthem', $colorKit);
-        $this->cache->update('subpalette', $subPalette, 'parameter');
-    }
+//    private function createPalette(): void
+//    {
+//        $colorMapper = new ColorMapper();
+//        $colorKit = $this->colorPalette();
+//        $design = $this->cache->get('design', 'settings');
+//        $this->cache->set('subpalette', [], 'parameter');
+//        $subPalette = $colorMapper->getPalette('Anthem', $colorKit);
+//        $this->cache->update('subpalette', $subPalette, 'parameter');
+//    }
 
     /**
      * @throws Exception

@@ -8,7 +8,6 @@ use MBMigration\Builder\Checking;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\LayoutUtils;
-use MBMigration\Parser\JS;
 
 abstract class Element extends LayoutUtils
 {
