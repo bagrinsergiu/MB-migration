@@ -2,15 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Common\Element;
 
-use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\ElementInterface;
-use MBMigration\Layer\Graph\QueryBuilder;
 
 abstract class PhotoTextElement extends AbstractElement
 {

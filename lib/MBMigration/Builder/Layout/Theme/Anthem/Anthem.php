@@ -2,18 +2,17 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem;
 
+use MBMigration\Core\Logger;
 use Exception;
 use MBMigration\Browser\BrowserPHP;
 use MBMigration\Browser\BrowserPagePHP;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\LayoutUtils;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\Items\SubMenu;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\FamilyTreeMenu;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
 class Anthem extends LayoutUtils
@@ -60,7 +59,7 @@ class Anthem extends LayoutUtils
 
 //        ThemePreProcess::treeMenu();
 
-        \MBMigration\Core\Logger::instance()->info('Connected!');
+        Logger::instance()->info('Connected!');
 
         $this->jsonDecode = $this->loadKit($this->layoutName);
 
@@ -75,11 +74,11 @@ class Anthem extends LayoutUtils
                 $brizyAPI
             );
             if ($headElement) {
-                \MBMigration\Core\Logger::instance()->info('Success create MENU');
+                Logger::instance()->info('Success create MENU');
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                \MBMigration\Core\Logger::instance()->warning("Failed create MENU");
+                Logger::instance()->warning("Failed create MENU");
                 throw new Exception('Failed create MENU');
             }
         }
@@ -134,7 +133,7 @@ class Anthem extends LayoutUtils
 //                ['menu' => $resultFind, 'activePage' => $slug]
 //            );
 //        }
-        \MBMigration\Core\Logger::instance()->info('Current Page: '.$itemsID.' | Slug: '.$slug);
+        Logger::instance()->info('Current Page: '.$itemsID.' | Slug: '.$slug);
         $this->cache->update('createdFirstSection', false, 'flags');
         $this->cache->update('Success', '++', 'Status');
 //        $this->browser->close();
@@ -149,7 +148,7 @@ class Anthem extends LayoutUtils
                     $decodeBlock = json_decode($blockData, true);
                     $itemsData['items'][] = $decodeBlock;
                 } else {
-                    \MBMigration\Core\Logger::instance()->warning('CallMethod return null. input data: '.json_encode($section).' | Slug: '.$slug);
+                    Logger::instance()->warning('CallMethod return null. input data: '.json_encode($section).' | Slug: '.$slug);
                 }
             }
         }
@@ -158,12 +157,12 @@ class Anthem extends LayoutUtils
 
         $pageData = json_encode($itemsData);
 
-        \MBMigration\Core\Logger::instance()->info('Request to send content to the page: '.$itemsID.' | Slug: '.$slug);
+        Logger::instance()->info('Request to send content to the page: '.$itemsID.' | Slug: '.$slug);
 
 
         $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
 
-        \MBMigration\Core\Logger::instance()->info('Content added to the page successfully: '.$itemsID.' | Slug: '.$slug);
+        Logger::instance()->info('Content added to the page successfully: '.$itemsID.' | Slug: '.$slug);
 
         return true;
     }
@@ -176,7 +175,7 @@ class Anthem extends LayoutUtils
         $elementName = $this->replaceInName($methodName);
 
         if (method_exists($this, $elementName)) {
-            \MBMigration\Core\Logger::instance()->info('Call Element '.$elementName);
+            Logger::instance()->info('Call Element '.$elementName);
             $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
         } else {
@@ -187,7 +186,7 @@ class Anthem extends LayoutUtils
                 $params
             );
             if (!$result) {
-                \MBMigration\Core\Logger::instance()->warning('Element '.$elementName.' does not exist. Page: '.$marker);
+                Logger::instance()->warning('Element '.$elementName.' does not exist. Page: '.$marker);
             }
         }
 
@@ -211,7 +210,7 @@ class Anthem extends LayoutUtils
         $browserPage->ExtractHover($selectorButton);
 
         foreach ($SectionPage as &$section) {
-            \MBMigration\Core\Logger::instance()->info('Extract Data'.$section['sectionId']);
+            Logger::instance()->info('Extract Data'.$section['sectionId']);
 
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
 

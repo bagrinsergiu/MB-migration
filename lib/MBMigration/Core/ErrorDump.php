@@ -107,7 +107,7 @@ class ErrorDump
     private function createDirectory($directoryPath): void
     {
         if (!is_dir($directoryPath)) {
-            \MBMigration\Core\Logger::instance()->debug('Create Directory: ' . $directoryPath);
+            Logger::instance()->debug('Create Directory: ' . $directoryPath);
             mkdir($directoryPath, 0777, true);
         }
     }
@@ -162,8 +162,8 @@ class ErrorDump
         fclose($dump_handle);
         $log_entry = date('Y-m-d H:i:s') . ": Error occurred, dump created in file $dump_file\n";
         error_log($log_entry, 3, $this->log_file);
-        \MBMigration\Core\Logger::instance()->debug('FATAL ' . $this->projectId);
-        \MBMigration\Core\Logger::instance()->debug('Details: ' . $dump_file);
-        \MBMigration\Core\Logger::instance()->debug('');
+        Logger::instance()->debug('FATAL ' . $this->projectId);
+        Logger::instance()->debug('Details: ' . $dump_file);
+        Logger::instance()->debug('');
     }
 }

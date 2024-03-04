@@ -2,11 +2,13 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
+use Exception;
+use MBMigration\Core\Logger;
+use DOMDocument;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyEmbedCodeComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Core\Utils;
 
 trait RichTextAble
 {
@@ -41,8 +43,8 @@ trait RichTextAble
                     $elementContext,
                     $browserPage
                 );
-            } catch (\Exception $e) {
-                \MBMigration\Core\Logger::instance()->info($e->getMessage());
+            } catch (Exception $e) {
+                Logger::instance()->info($e->getMessage());
             }
         }
 
@@ -82,8 +84,8 @@ trait RichTextAble
                         $browserPage
                     );
                 }
-            } catch (\Exception $e) {
-                \MBMigration\Core\Logger::instance()->info($e->getMessage());
+            } catch (Exception $e) {
+                Logger::instance()->info($e->getMessage());
             }
 
 
@@ -125,8 +127,8 @@ trait RichTextAble
                     $elementContext,
                     $browserPage
                 );
-            } catch (\Exception $e) {
-                \MBMigration\Core\Logger::instance()->info($e->getMessage());
+            } catch (Exception $e) {
+                Logger::instance()->info($e->getMessage());
             }
         }
 
@@ -253,7 +255,7 @@ trait RichTextAble
 
     private function findEmbeddedElements($html): array
     {
-        $dom = new \DOMDocument();
+        $dom = new DOMDocument();
         $dom->loadHTML(
             "<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>{$html}</body></html>",
             LIBXML_BIGLINES | LIBXML_NOBLANKS | LIBXML_NONET | LIBXML_NOERROR | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_PARSEHUGE

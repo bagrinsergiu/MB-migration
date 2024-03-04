@@ -2,10 +2,11 @@
 
 namespace MBMigration\Builder\ColorMapper;
 
+use Exception;
 class ColorController
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function result($methodName, $colorData, $options = null)
     {
@@ -26,7 +27,7 @@ class ColorController
                 $contrast = new ContrastCalculate();
                 return $contrast->getContrastingColor($colorData);
             default:
-                throw new \Exception("Unknown Element");
+                throw new Exception("Unknown Element");
         }
     }
 

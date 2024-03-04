@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Utils;
 
+use DOMException;
 use DOMDocument;
 use DOMElement;
 
@@ -27,7 +28,7 @@ class HtmlHandler
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getNewHtml()
     {
@@ -256,7 +257,7 @@ class HtmlHandler
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     private function replaceDivWithParagraph($html) {
         $dom = new DOMDocument();
@@ -352,7 +353,7 @@ class HtmlHandler
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     private function processNode($node, DOMDocument $newDoc)
     {

@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Zion;
 
+use MBMigration\Core\Logger;
 use DOMDocument;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Layout;
@@ -26,7 +27,7 @@ class Zion extends Layout
         $this->layoutName = 'Zion';
         $this->textPosition = ['center' => ' brz-text-lg-center', 'left' => ' brz-text-lg-left', 'right' => ' brz-text-lg-right'];
 
-        \MBMigration\Core\Logger::instance()->info('Connected!');
+        Logger::instance()->info('Connected!');
 
         $this->jsonDecode = $this->loadKit($this->layoutName);
 
@@ -34,11 +35,11 @@ class Zion extends Layout
 
         if($menuList['create'] == false) {
             if ($this->createMenu($menuList)) {
-                \MBMigration\Core\Logger::instance()->info('Success create MENU');
+                Logger::instance()->info('Success create MENU');
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                \MBMigration\Core\Logger::instance()->warning("Failed create MENU");
+                Logger::instance()->warning("Failed create MENU");
             }
         }
         $this->createFooter($menuList);
@@ -46,7 +47,7 @@ class Zion extends Layout
 
     private function createMenu($menuList)
     {
-        \MBMigration\Core\Logger::instance()->info('Create block menu');
+        Logger::instance()->info('Create block menu');
         $decoded = $this->jsonDecode['blocks']['menu'];
         $block = json_decode($decoded['main'], true);
         $lgoItem = $this->cache->get('mainSection')['header']['items'];
@@ -104,7 +105,7 @@ class Zion extends Layout
 
     private function left_media(array $encoded): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['left-media'];
         $block = json_decode($decoded, true);
 
@@ -134,7 +135,7 @@ class Zion extends Layout
     }
     private function right_media(array $encoded): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
 
         $decoded = $this->jsonDecode['blocks']['right-media'];
         $block = json_decode($decoded, true);
@@ -162,7 +163,7 @@ class Zion extends Layout
 
     private function full_media($encode): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create full media');
+        Logger::instance()->info('Create full media');
         $decoded = $this->jsonDecode['blocks']['full-media'];
         $block = json_decode($decoded, true);
 
@@ -199,7 +200,7 @@ class Zion extends Layout
 
     private function full_text(array $encoded): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['full-text'];
         if($this->checkArrayPath($encoded, 'settings/sections/background/photoOption'))
         {
@@ -226,7 +227,7 @@ class Zion extends Layout
                 }
             }
         } else {
-            \MBMigration\Core\Logger::instance()->info('Set background');
+            Logger::instance()->info('Set background');
             $block = json_decode($decoded['background'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
@@ -250,7 +251,7 @@ class Zion extends Layout
 
     private function parallaxScroll(array $encoded): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['full-text'];
 
         if(!empty($encoded['settings']['sections']['background'])) {
@@ -260,7 +261,7 @@ class Zion extends Layout
             $block['value']['items'][0]['value']['bgImageSrc']      = $encoded['settings']['sections']['background']['photo'];
 
         } else {
-            \MBMigration\Core\Logger::instance()->info('Set background');
+            Logger::instance()->info('Set background');
             $block = json_decode($decoded['background'], true);
 
             $block['value']['items'][0]['value']['bgImageFileName'] = $encoded['settings']['sections']['background']['filename'];
@@ -289,7 +290,7 @@ class Zion extends Layout
 
     private function left_media_circle(array $encoded): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['left-media-circle'];
         $block = json_decode($decoded, true);
 
@@ -316,7 +317,7 @@ class Zion extends Layout
 
     private function top_media_diamond(array $encoded): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
 
         $decoded = $this->jsonDecode['blocks']['top-media-diamond'];
 
@@ -330,7 +331,7 @@ class Zion extends Layout
 
     private function grid_layout(array $encoded): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['grid-layout'];
 
         $objItem = new ItemBuilder($decoded['item']);
@@ -403,7 +404,7 @@ class Zion extends Layout
 
     private function list_layout(array $encoded): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $decoded = $this->jsonDecode['blocks']['list-layout'];
 
         $block = json_decode($decoded['main'], true);
@@ -455,7 +456,7 @@ class Zion extends Layout
 
     private function gallery_layout(array $encoded): bool|string
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
 
         $encoded['items'] = $this->sortByOrderBy($encoded['items']);
 
@@ -485,7 +486,7 @@ class Zion extends Layout
 
     private function create_Default_Page()
     {
-        \MBMigration\Core\Logger::instance()->info('Create structure default page');
+        Logger::instance()->info('Create structure default page');
 
         //$decoded = $this->jsonDecode['blocks']['defaultBlocks'];
 
@@ -493,7 +494,7 @@ class Zion extends Layout
 
     private function createFooter(): void
     {
-        \MBMigration\Core\Logger::instance()->info('Create Footer');
+        Logger::instance()->info('Create Footer');
         $encoded = $this->cache->get('mainSection')['footer'];
         $decoded = $this->jsonDecode['blocks']['footer'];
         $block = json_decode($decoded, true);
@@ -561,7 +562,7 @@ class Zion extends Layout
 // brz-text-lg-left
     private function replaceTitleTag($html, $type = ''): string
     {
-        \MBMigration\Core\Logger::instance()->info('Replace Title Tag: '. $html);
+        Logger::instance()->info('Replace Title Tag: '. $html);
         if(empty($html))
             return '';
         $doc = new DOMDocument();
@@ -615,7 +616,7 @@ class Zion extends Layout
     }
 
     private function replaceParagraphs($html, $type = ''): string {
-        \MBMigration\Core\Logger::instance()->info('Replace Paragraph: '. $html);
+        Logger::instance()->info('Replace Paragraph: '. $html);
         if(empty($html)){
             return '';
         }
@@ -833,10 +834,10 @@ class Zion extends Layout
             if(!isset($params)){
                 $params = $this->jsonDecode;
             }
-            \MBMigration\Core\Logger::instance()->info('Call method ' . $verifiedMethodName);
+            Logger::instance()->info('Call method ' . $verifiedMethodName);
             return call_user_func_array(array($this, $verifiedMethodName), [$params]);
         }
-        \MBMigration\Core\Logger::instance()->warning('Method ' . $verifiedMethodName . ' does not exist');
+        Logger::instance()->warning('Method ' . $verifiedMethodName . ' does not exist');
         return false;
     }
 

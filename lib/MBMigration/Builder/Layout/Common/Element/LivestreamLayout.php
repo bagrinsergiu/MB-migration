@@ -7,7 +7,6 @@ use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\ElementDataInterface;
 
 class LivestreamLayout extends AbstractElement
 {

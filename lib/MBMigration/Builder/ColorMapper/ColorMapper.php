@@ -2,13 +2,14 @@
 
 namespace MBMigration\Builder\ColorMapper;
 
-use MBMigration\Core\Utils;
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ColorMapper\ColorControllerSCSS;
 
 class ColorMapper
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function Anthem (array $colorKit): array
     {
@@ -886,10 +887,10 @@ class ColorMapper
     public function getPalette (string $design, array $colorKit)
     {
         if (method_exists($this, $design)) {
-            \MBMigration\Core\Logger::instance()->info('Call method ' . $design);
+            Logger::instance()->info('Call method ' . $design);
             return call_user_func_array(array($this, $design), [$colorKit]);
         }
-        \MBMigration\Core\Logger::instance()->warning('Method ' . $design . ' does not exist');
+        Logger::instance()->warning('Method ' . $design . ' does not exist');
         return false;
     }
 }

@@ -2,15 +2,16 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons;
 
+use DOMException;
+use Exception;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElement;
-use MBMigration\Parser\JS;
 
 class GridMediaLayout extends DynamicElement
 {
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -18,8 +19,8 @@ class GridMediaLayout extends DynamicElement
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     private function GridMediaLayout(array $sectionData)
     {

@@ -2,10 +2,10 @@
 
 namespace MBMigration\Builder\Layout;
 
+use MBMigration\Core\Logger;
+use DOMException;
 use Exception;
-use MBMigration\Builder\Checking;
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Core\Utils;
 
 class Layout extends LayoutUtils
 {
@@ -17,7 +17,7 @@ class Layout extends LayoutUtils
     protected function full_text(array $sectionData)
     {
         $jsonDecode = $this->initData();
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
 
         $objBlock = new ItemBuilder();
 
@@ -59,7 +59,7 @@ class Layout extends LayoutUtils
                 }
             }
         } else {
-            \MBMigration\Core\Logger::instance()->info('Set background');
+            Logger::instance()->info('Set background');
 
             $objBlock->newItem($decoded['background']);
 
@@ -92,7 +92,7 @@ class Layout extends LayoutUtils
     protected function full_media(array $sectionData)
     {
         $jsonGlobal = $this->initData();
-        \MBMigration\Core\Logger::instance()->info('Create full media');
+        Logger::instance()->info('Create full media');
 
         $objBlock = new ItemBuilder();
 
@@ -168,14 +168,14 @@ class Layout extends LayoutUtils
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     protected function top_media(array $sectionData) {
 
         $jsonGlobal = $this->initData();
 
-        \MBMigration\Core\Logger::instance()->info('Create full media');
+        Logger::instance()->info('Create full media');
 
         $objBlock = new ItemBuilder();
 
@@ -269,7 +269,7 @@ class Layout extends LayoutUtils
     protected function left_media(array $sectionData)
     {
         $jsonDecode = $this->initData();
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
 
         $objBlock = new ItemBuilder();
 
@@ -286,7 +286,7 @@ class Layout extends LayoutUtils
         }
 
         if ($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            \MBMigration\Core\Logger::instance()->info('Set background');
+            Logger::instance()->info('Set background');
 
             $objBlock->item(0)->setting('bgImageFileName', $sectionData['settings']['sections']['background']['filename']);
             $objBlock->item(0)->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
@@ -328,7 +328,7 @@ class Layout extends LayoutUtils
     protected function right_media(array $sectionData)
     {
         $jsonDecode = $this->initData();
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $objBlock = new ItemBuilder();
@@ -376,7 +376,7 @@ class Layout extends LayoutUtils
     {
         $jsonDecode = $this->initData();
 
-        \MBMigration\Core\Logger::instance()->info('Create full media');
+        Logger::instance()->info('Create full media');
 
         $options = [];
 
@@ -460,13 +460,13 @@ class Layout extends LayoutUtils
 
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function three_horizontal_text($sectionData)
     {
         $jsonDecode = $this->initData();
 
-        \MBMigration\Core\Logger::instance()->info('Create full media');
+        Logger::instance()->info('Create full media');
 
         $options = [];
 
@@ -565,14 +565,14 @@ class Layout extends LayoutUtils
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     protected function four_horizontal_text($sectionData)
     {
         $jsonDecode = $this->initData();
 
-        \MBMigration\Core\Logger::instance()->info('Create full media');
+        Logger::instance()->info('Create full media');
 
         $options = [];
 
@@ -694,7 +694,7 @@ class Layout extends LayoutUtils
     protected function gallery_layout(array $sectionData)
     {
         $jsonDecode = $this->initData();
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);
@@ -721,7 +721,7 @@ class Layout extends LayoutUtils
     protected function list_layout(array $sectionData){
 
         $jsonDecode = $this->initData();
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $jsonDecode['blocks']['list-layout'];
 
@@ -881,14 +881,14 @@ class Layout extends LayoutUtils
     protected function parallaxScroll(array $sectionData)
     {
         $jsonDecode = $this->initData();
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $objBlock = new ItemBuilder();
 
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $jsonDecode['blocks']['full-text'];
         
         if ($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            \MBMigration\Core\Logger::instance()->info('Set background');
+            Logger::instance()->info('Set background');
 
             $objBlock->newItem($decoded['parallax-scroll']);
 

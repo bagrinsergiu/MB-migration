@@ -2,12 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Aurora;
 
+use MBMigration\Core\Logger;
 use Exception;
-use MBMigration\Builder\Layout\ElementsController;
 use MBMigration\Builder\Layout\LayoutUtils;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
 class Aurora extends LayoutUtils implements ThemeInterface
 {
@@ -38,7 +37,7 @@ class Aurora extends LayoutUtils implements ThemeInterface
 
         $this->cache = VariableCache::getInstance();
 
-        \MBMigration\Core\Logger::instance()->info('Connected!');
+        Logger::instance()->info('Connected!');
 
         $this->jsonDecode = $this->loadKit($this->layoutName);
 
@@ -47,11 +46,11 @@ class Aurora extends LayoutUtils implements ThemeInterface
         if ($menuList['create'] === false) {
             $headElement = AuroraElementsController::getElement('head', $this->jsonDecode, $menuList);
             if ($headElement) {
-                \MBMigration\Core\Logger::instance()->info('Success create MENU');
+                Logger::instance()->info('Success create MENU');
                 $menuList['create'] = true;
                 $this->cache->set('menuList', $menuList);
             } else {
-                \MBMigration\Core\Logger::instance()->warning("Failed create MENU");
+                Logger::instance()->warning("Failed create MENU");
                 throw new Exception('Failed create MENU');
             }
         }
@@ -80,7 +79,7 @@ class Aurora extends LayoutUtils implements ThemeInterface
         $itemsData = [];
         $itemsData['items'][] = json_decode($this->cache->get('menuBlock'), true);
 
-        \MBMigration\Core\Logger::instance()->info('Current Page: '.$itemsID.' | Slug: '.$slug);
+        Logger::instance()->info('Current Page: '.$itemsID.' | Slug: '.$slug);
         $this->cache->update('createdFirstSection', false, 'flags');
         $this->cache->update('Success', '++', 'Status');
 
@@ -94,7 +93,7 @@ class Aurora extends LayoutUtils implements ThemeInterface
                     $decodeBlock = json_decode($blockData, true);
                     $itemsData['items'][] = $decodeBlock;
                 } else {
-                    \MBMigration\Core\Logger::instance()->warning('CallMethod return null. input data: '.json_encode($section).' | Slug: '.$slug);
+                    Logger::instance()->warning('CallMethod return null. input data: '.json_encode($section).' | Slug: '.$slug);
                 }
             }
         }
@@ -103,12 +102,12 @@ class Aurora extends LayoutUtils implements ThemeInterface
 
         $pageData = json_encode($itemsData);
 
-        \MBMigration\Core\Logger::instance()->info('Request to send content to the page: '.$itemsID.' | Slug: '.$slug);
+        Logger::instance()->info('Request to send content to the page: '.$itemsID.' | Slug: '.$slug);
 
 
         $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
 
-        \MBMigration\Core\Logger::instance()->info('Content added to the page successfully: '.$itemsID.' | Slug: '.$slug);
+        Logger::instance()->info('Content added to the page successfully: '.$itemsID.' | Slug: '.$slug);
 
         return true;
     }
@@ -121,13 +120,13 @@ class Aurora extends LayoutUtils implements ThemeInterface
         $elementName = $this->replaceInName($methodName);
 
         if (method_exists($this, $elementName)) {
-            \MBMigration\Core\Logger::instance()->info('Call Element '.$elementName);
+            Logger::instance()->info('Call Element '.$elementName);
             $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
         } else {
             $result = AuroraElementsController::getElement($elementName, $this->jsonDecode, $params);
             if (!$result) {
-                \MBMigration\Core\Logger::instance()->warning('Element '.$elementName.' does not exist. Page: '.$marker);
+                Logger::instance()->warning('Element '.$elementName.' does not exist. Page: '.$marker);
             }
         }
 

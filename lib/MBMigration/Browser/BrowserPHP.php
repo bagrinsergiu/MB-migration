@@ -2,13 +2,13 @@
 
 namespace MBMigration\Browser;
 
+use Monolog\Logger;
+use Exception;
 use HeadlessChromium\BrowserFactory;
 use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 use Monolog\Handler\StreamHandler;
 use Nesk\Puphpeteer\Puppeteer;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 class BrowserPHP implements BrowserInterface
 {
@@ -36,7 +36,7 @@ class BrowserPHP implements BrowserInterface
         LoggerInterface $logger = null
     ) {
         if (is_null($logger)) {
-            $logger = new \Monolog\Logger('my_logger');
+            $logger = new Logger('my_logger');
             $logger->pushHandler(new StreamHandler('php://stdout', $_ENV['CHROME_LOG_LEVEL']));
         }
 
@@ -79,7 +79,7 @@ class BrowserPHP implements BrowserInterface
 
         try {
             $this->page->navigate($url)->waitForNavigation();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
 
@@ -90,7 +90,7 @@ class BrowserPHP implements BrowserInterface
     {
         try {
             //$this->page->close();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
     }
@@ -99,7 +99,7 @@ class BrowserPHP implements BrowserInterface
     {
         try {
             $this->browser->close();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
     }

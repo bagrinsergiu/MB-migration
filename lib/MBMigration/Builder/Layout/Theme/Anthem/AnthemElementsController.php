@@ -2,15 +2,14 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem;
 
+use DOMException;
 use Exception;
-use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventCalendarLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventGalleryLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventGridLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Forms\Form;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Groups\GroupsList;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons\ListMediaLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Footer;
@@ -33,14 +32,13 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\ThreeHorizontalText;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\ThreeTopMediaCircle;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\TopMedia;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\TwoHorizontalText;
-use MBMigration\Layer\Brizy\BrizyAPI;
 
 
 class AnthemElementsController
 {
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public static function getElement($elementName, $jsonKitElements, $browserPage, array $elementData = [], $brizyAPI = null)
     {
@@ -68,7 +66,7 @@ class AnthemElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     private static function switchGlobalElements($elementName, $jsonKitElements, $elementData, $browserPage, $brizyAPI)
     {
@@ -87,7 +85,7 @@ class AnthemElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     private static function switchElements($elementName, $jsonKitElements, $elementData)
@@ -171,7 +169,7 @@ class AnthemElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     private static function switchDynamicElements($elementName, $jsonKitElements, $elementData)

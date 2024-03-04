@@ -2,7 +2,7 @@
 
 namespace MBMigration\Parser\JsParse;
 
-use MBMigration\Core\Utils;
+use MBMigration\Core\Logger;
 
 class JSCode
 {
@@ -59,7 +59,7 @@ class JSCode
         $path = __DIR__ . '/js/' . $fileName . '.js';
 
         if (!file_exists($path)) {
-            \MBMigration\Core\Logger::instance()->info("File dont exist: " . $path);
+            Logger::instance()->info("File dont exist: " . $path);
             return false;
         }
 

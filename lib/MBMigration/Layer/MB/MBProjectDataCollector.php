@@ -2,6 +2,7 @@
 
 namespace MBMigration\Layer\MB;
 
+use MBMigration\Core\Logger;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\DebugBackTrace;
@@ -9,7 +10,6 @@ use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 use MBMigration\Layer\DataSource\DBConnector;
 
 class MBProjectDataCollector
@@ -43,7 +43,7 @@ class MBProjectDataCollector
      */
     public function __construct()
     {
-        \MBMigration\Core\Logger::instance()->info('Initialization');
+        Logger::instance()->info('Initialization');
         $this->cache = VariableCache::getInstance();
 
         $this->siteId = $this->cache->get('projectId_MB');
@@ -61,7 +61,7 @@ class MBProjectDataCollector
                 ]
         ];
 
-        \MBMigration\Core\Logger::instance()->info('READY');
+        Logger::instance()->info('READY');
     }
 
 
@@ -70,11 +70,11 @@ class MBProjectDataCollector
      */
     public function getDesignSite()
     {
-        \MBMigration\Core\Logger::instance()->info('Get Design');
+        Logger::instance()->info('Get Design');
         $settingSite = $this->db->requestArray("SELECT design_uuid from sites WHERE id = ".$this->siteId);
         if (empty($settingSite)) {
-            \MBMigration\Core\Logger::instance()->info(self::trace(0).'Message: MB project not found');
-            \MBMigration\Core\Logger::instance()->critical('MB project not found');
+            Logger::instance()->info(self::trace(0).'Message: MB project not found');
+            Logger::instance()->critical('MB project not found');
 
             return false;
         }
@@ -93,13 +93,13 @@ class MBProjectDataCollector
 
         self::checkUUID($projectUUID_MB);
 
-        \MBMigration\Core\Logger::instance()->info('Get id by uuId');
+        Logger::instance()->info('Get id by uuId');
 
         $db = new DBConnector();
         $settingSite = $db->requestArray("SELECT id from sites WHERE uuid = '".$projectUUID_MB."'");
         if (empty($settingSite)) {
-            \MBMigration\Core\Logger::instance()->info(self::trace(0).'Message: MB project not found');
-            \MBMigration\Core\Logger::instance()->critical('MB project not found');
+            Logger::instance()->info(self::trace(0).'Message: MB project not found');
+            Logger::instance()->critical('MB project not found');
 
             throw new Exception("MB project not found with uuid: $projectUUID_MB");
         }
@@ -112,11 +112,11 @@ class MBProjectDataCollector
      */
     private static function checkUUID($uuid)
     {
-        \MBMigration\Core\Logger::instance()->info('Unique id check');
+        Logger::instance()->info('Unique id check');
         $uuidPattern = '/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/';
 
         if (!preg_match($uuidPattern, $uuid)) {
-            \MBMigration\Core\Logger::instance()->info(self::trace(0)."Invalid UUID: $uuid");
+            Logger::instance()->info(self::trace(0)."Invalid UUID: $uuid");
             throw new Exception("Invalid UUID: $uuid");
         }
     }
@@ -127,7 +127,7 @@ class MBProjectDataCollector
      */
     public function getSite()
     {
-        \MBMigration\Core\Logger::instance()->info('Get site');
+        Logger::instance()->info('Get site');
 
         $siteData = $this->db->requestOne(
             "
@@ -149,8 +149,8 @@ class MBProjectDataCollector
         );
 
         if (empty($siteData)) {
-            \MBMigration\Core\Logger::instance()->info(self::trace(0).'Message: MB project not found');
-            \MBMigration\Core\Logger::instance()->critical('MB project not found');
+            Logger::instance()->info(self::trace(0).'Message: MB project not found');
+            Logger::instance()->critical('MB project not found');
 
             return false;
         }
@@ -309,7 +309,7 @@ class MBProjectDataCollector
      */
     public function getMainSection(): array
     {
-        \MBMigration\Core\Logger::instance()->info('Get main Section');
+        Logger::instance()->info('Get main Section');
         $result = [];
         $requestMainSections = $this->db->request(
             "SELECT * FROM sections WHERE site_id =  ".$this->siteId." and (page_id isnull or page_id = 0) ORDER BY position"
@@ -400,7 +400,7 @@ class MBProjectDataCollector
 
     public function getPages(): array
     {
-        \MBMigration\Core\Logger::instance()->info('Get parent pages');
+        Logger::instance()->info('Get parent pages');
         $result = [];
 
         $allPages = $this->db->request(
@@ -459,14 +459,14 @@ class MBProjectDataCollector
      */
     public function getParentPages(): array
     {
-        \MBMigration\Core\Logger::instance()->info('Get parent pages');
+        Logger::instance()->info('Get parent pages');
         $result = [];
         $requestPageSite = $this->db->request(
             "SELECT id, slug, name, position, settings, landing, hidden, password_protected FROM pages WHERE site_id = ".$this->siteId." AND parent_id IS NULL ORDER BY parent_id ASC, position"
         );
 
         if (empty($requestPageSite)) {
-            \MBMigration\Core\Logger::instance()->warning('MB project pages not found');
+            Logger::instance()->warning('MB project pages not found');
 
             return $result;
         }
@@ -504,7 +504,7 @@ class MBProjectDataCollector
      */
     private function getChildPages($parentId): array
     {
-        \MBMigration\Core\Logger::instance()->info('Get child pages');
+        Logger::instance()->info('Get child pages');
         $result = [];
 
         $pagesSite = $this->db->request(
@@ -536,7 +536,7 @@ class MBProjectDataCollector
      */
     public function getChildFromPages($parenId): array
     {
-        \MBMigration\Core\Logger::instance()->info('Get child from pages');
+        Logger::instance()->info('Get child from pages');
         $result = [];
 
         $pagesSite = $this->db->request(
@@ -620,14 +620,14 @@ class MBProjectDataCollector
      */
     private function getItemLink(int $itemId): array
     {
-        \MBMigration\Core\Logger::instance()->info('Check link for item: '.$itemId);
+        Logger::instance()->info('Check link for item: '.$itemId);
         $requestLinkIdToPages = $this->db->request("SELECT * FROM links WHERE item_id  = ".$itemId);
         if (!empty($requestLinkIdToPages)) {
             if (!is_null($requestLinkIdToPages[0]['page_id'])) {
                 $requestItemLink = $this->db->request(
                     "SELECT slug FROM pages WHERE id  = ".$requestLinkIdToPages[0]['page_id']
                 );
-                \MBMigration\Core\Logger::instance()->info('Get link for item: '.$requestItemLink[0]['slug']);
+                Logger::instance()->info('Get link for item: '.$requestItemLink[0]['slug']);
 
                 return [
                     'detail' => $requestItemLink[0]['slug'],
@@ -665,7 +665,7 @@ class MBProjectDataCollector
     {
         $result = [];
         if ($this->cache->exist($sectionId['id'])) {
-            \MBMigration\Core\Logger::instance()->info('Get item from cache | Section id: '.$sectionId['id']);
+            Logger::instance()->info('Get item from cache | Section id: '.$sectionId['id']);
 
             return $this->cache->get($sectionId['id'], 'Sections');
         }
@@ -695,7 +695,7 @@ class MBProjectDataCollector
             "
         );
         foreach ($requestItemsFromSection as $sectionsItems) {
-            \MBMigration\Core\Logger::instance()->info('Get item | id: '.$sectionsItems['id'].' from section id: '.$sectionId['id']);
+            Logger::instance()->info('Get item | id: '.$sectionsItems['id'].' from section id: '.$sectionId['id']);
             $settings = '';
             $uploadedFont = [];
 

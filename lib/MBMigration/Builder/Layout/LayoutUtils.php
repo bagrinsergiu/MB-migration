@@ -2,14 +2,14 @@
 
 namespace MBMigration\Builder\Layout;
 
+use MBMigration\Core\Logger;
+use DOMException;
 use DOMDocument;
 use Exception;
 use InvalidArgumentException;
 use MBMigration\Builder\Utils\builderUtils;
 use MBMigration\Builder\Utils\HtmlHandler;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 
 class LayoutUtils extends builderUtils
 {
@@ -313,7 +313,7 @@ class LayoutUtils extends builderUtils
                                 $result[] = ['icon' => $iconNameBrizy, 'href' => $href];
                             }
                         } else {
-                            \MBMigration\Core\Logger::instance()->critical('Icons Attribute not found');
+                            Logger::instance()->critical('Icons Attribute not found');
                         }
                     }
                 }
@@ -371,7 +371,7 @@ class LayoutUtils extends builderUtils
             if (!$icoName) {
                 $icoName = $this->getIcon($iconCode);
                 if (!$icoName) {
-                    \MBMigration\Core\Logger::instance()->critical('icons were not found: '.$name);
+                    Logger::instance()->critical('icons were not found: '.$name);
 
                     return $result;
                 }
@@ -391,7 +391,7 @@ class LayoutUtils extends builderUtils
                 if ($this->getIcon($hostName) !== false) {
                     $result = $hostName;
                 } else {
-                    \MBMigration\Core\Logger::instance()->critical('icons were not found');
+                    Logger::instance()->critical('icons were not found');
                 }
             }
         }
@@ -704,7 +704,7 @@ class LayoutUtils extends builderUtils
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function replaceString($htmlString, $option = []): array
     {
@@ -734,7 +734,7 @@ class LayoutUtils extends builderUtils
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     private function replaceDivWithParagraph($html)
     {
@@ -772,11 +772,11 @@ class LayoutUtils extends builderUtils
 
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function replaceTitleTag($html, $options = [], $type = '', $position = ''): array
     {
-        \MBMigration\Core\Logger::instance()->info('Replace Title Tag ');
+        Logger::instance()->info('Replace Title Tag ');
         if (empty($html)) {
             return [
                 'text' => '',
@@ -888,11 +888,11 @@ class LayoutUtils extends builderUtils
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function replaceParagraphs($html, $type = '', $position = '', $options = []): array
     {
-        \MBMigration\Core\Logger::instance()->info('Replace Paragraph');
+        Logger::instance()->info('Replace Paragraph');
         if (empty($html)) {
             return ['text' => ''];
         }
@@ -1014,7 +1014,7 @@ class LayoutUtils extends builderUtils
      */
     protected function loadKit($layoutName = '', $fileName = '')
     {
-        \MBMigration\Core\Logger::instance()->info('Open file json BlocksKit');
+        Logger::instance()->info('Open file json BlocksKit');
         $file = __DIR__;
         if ($fileName === '' && $layoutName === '') {
             $file .= '/globalBlocksKit.json';
@@ -1032,15 +1032,15 @@ class LayoutUtils extends builderUtils
             $fileContent = file_get_contents($file);
 
             if (empty($fileContent)) {
-                \MBMigration\Core\Logger::instance()->warning('File '.$file.' empty');
+                Logger::instance()->warning('File '.$file.' empty');
                 throw new Exception('File '.$file.' empty');
             }
-            \MBMigration\Core\Logger::instance()->info('File exist: '.$file);
+            Logger::instance()->info('File exist: '.$file);
 
             return json_decode($fileContent, true);
 
         } else {
-            \MBMigration\Core\Logger::instance()->warning('File does not exist. Path: '.$file);
+            Logger::instance()->warning('File does not exist. Path: '.$file);
             throw new Exception('File does not exist. Path: '.$file);
         }
     }

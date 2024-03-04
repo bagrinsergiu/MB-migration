@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
+use MBMigration\Builder\Layout\Theme\Bloom\ElementFactory;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Layer\Brizy\BrizyAPI;
@@ -45,7 +46,7 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
 
         switch ($design) {
             case 'Bloom':
-                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Bloom\ElementFactory(
+                return self::$instances[$design] = new ElementFactory(
                     $this->blockKit, $this->browserPage,$this->queryBuilder, $this->brizyAPIClient
                 );
             case 'Voyage':

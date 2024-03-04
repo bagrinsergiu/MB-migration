@@ -2,9 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
 class GalleryLayout extends Element
 {
@@ -22,7 +23,7 @@ class GalleryLayout extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getElement($elementData)
     {
@@ -35,7 +36,7 @@ class GalleryLayout extends Element
         $rotatorSpeed = 5;
 
 
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);

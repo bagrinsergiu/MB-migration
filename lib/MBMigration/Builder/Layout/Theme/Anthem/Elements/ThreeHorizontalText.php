@@ -2,10 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMException;
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class ThreeHorizontalText extends Element
 {
@@ -23,7 +24,7 @@ class ThreeHorizontalText extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -32,12 +33,12 @@ class ThreeHorizontalText extends Element
 
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     protected function ThreeHorizontalText($sectionData)
     {
-        \MBMigration\Core\Logger::instance()->info('Create full media');
+        Logger::instance()->info('Create full media');
 
         $options = [];
 
@@ -113,7 +114,7 @@ class ThreeHorizontalText extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $objBlock, $level = 0)
     {

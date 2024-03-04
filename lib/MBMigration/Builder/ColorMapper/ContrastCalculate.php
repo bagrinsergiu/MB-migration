@@ -2,12 +2,13 @@
 
 namespace MBMigration\Builder\ColorMapper;
 
+use Exception;
 class ContrastCalculate
 {
 
     /**
-     * @throws \Exception
-     */
+        * @throws Exception
+        */
        public function getContrastingColor($color, $threshold = 50, $lightColor = '#ffffff', $darkColor = '#2a2a2a') {
 
         if(!is_array($color))
@@ -74,7 +75,7 @@ class ContrastCalculate
 
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function hexToRgb(string $hex): array
     {

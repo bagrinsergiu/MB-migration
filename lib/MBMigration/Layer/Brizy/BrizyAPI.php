@@ -2,6 +2,8 @@
 
 namespace MBMigration\Layer\Brizy;
 
+use MBMigration\Core\Logger;
+use Psr\Http\Message\ResponseInterface;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -29,7 +31,7 @@ class BrizyAPI extends Utils
      */
     public function __construct()
     {
-        \MBMigration\Core\Logger::instance()->info('Initialization');
+        Logger::instance()->info('Initialization');
         $this->projectToken = $this->check(Config::$mainToken, 'Config not initialized');
         $this->cacheBR = VariableCache::getInstance();
     }
@@ -141,25 +143,25 @@ class BrizyAPI extends Utils
     {
         $nameFunction = __FUNCTION__;
 
-        \MBMigration\Core\Logger::instance()->info('get Token');
+        Logger::instance()->info('get Token');
 
         $result = $this->httpClient('GET', $this->createUrlApiProject($projectid));
         if ($result['status'] > 200) {
-            \MBMigration\Core\Logger::instance()->warning('Response: '.json_encode($result));
-            \MBMigration\Core\Logger::instance()->info('Response: '.json_encode($result));
+            Logger::instance()->warning('Response: '.json_encode($result));
+            Logger::instance()->info('Response: '.json_encode($result));
             throw new Exception('Bad Response from Brizy');
         }
         $resultDecode = json_decode($result['body'], true);
 
         if (!is_array($resultDecode)) {
-            \MBMigration\Core\Logger::instance()->warning('Bad Response');
-            \MBMigration\Core\Logger::instance()->info('Bad Response from Brizy'.json_encode($result));
+            Logger::instance()->warning('Bad Response');
+            Logger::instance()->info('Bad Response from Brizy'.json_encode($result));
             throw new Exception('Bad Response from Brizy');
         }
         if (array_key_exists('code', $result)) {
             if ($resultDecode['code'] == 500) {
-                \MBMigration\Core\Logger::instance()->error('Error getting token');
-                \MBMigration\Core\Logger::instance()->info('Getting token'.json_encode($result));
+                Logger::instance()->error('Error getting token');
+                Logger::instance()->info('Getting token'.json_encode($result));
                 throw new Exception('getting token');
             }
         }
@@ -198,11 +200,11 @@ class BrizyAPI extends Utils
         }
         $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
         $mime_type = mime_content_type($pathToFileName);
-        \MBMigration\Core\Logger::instance()->info('Mime type image; '.$mime_type);
+        Logger::instance()->info('Mime type image; '.$mime_type);
         if ($this->getFileExtension($mime_type)) {
             $file_contents = file_get_contents($pathToFileName);
             if (!$file_contents) {
-                \MBMigration\Core\Logger::instance()->warning('Failed get contents image!!! path: '.$pathToFileName);
+                Logger::instance()->warning('Failed get contents image!!! path: '.$pathToFileName);
             }
             $base64_content = base64_encode($file_contents);
 
@@ -222,7 +224,7 @@ class BrizyAPI extends Utils
      */
     public function createGlobalBlock($data, $position, $rules)
     {
-        \MBMigration\Core\Logger::instance()->info('Create Global Block');
+        Logger::instance()->info('Create Global Block');
 
         $requestData['project'] = Utils::$cache->get('projectId_Brizy');
         $requestData['status'] = 'publish';
@@ -281,7 +283,7 @@ class BrizyAPI extends Utils
     {
         $fonts = [];
         foreach ($KitFonts as $fontWeight => $pathToFonts) {
-            \MBMigration\Core\Logger::instance()->info("Request to Upload font name: $fontsName, font weight: $fontWeight");
+            Logger::instance()->info("Request to Upload font name: $fontsName, font weight: $fontWeight");
             foreach ($pathToFonts as $pathToFont) {
                 $fileExtension = $this->getExtensionFromFileString($pathToFont);
                 if (Config::$urlJsonKits && Config::$devMode === false) {
@@ -326,7 +328,7 @@ class BrizyAPI extends Utils
      */
     public function addFontAndUpdateProject(array $data): string
     {
-        \MBMigration\Core\Logger::instance()->info('Add font '.$data['family'].' in project and update project');
+        Logger::instance()->info('Add font '.$data['family'].' in project and update project');
         $containerID = Utils::$cache->get('projectId_Brizy');
 
         $projectFullData = $this->getProjectContainer($containerID, true);
@@ -372,10 +374,10 @@ class BrizyAPI extends Utils
      */
     public function setMetaDate()
     {
-        \MBMigration\Core\Logger::instance()->info('Check metaDate settings');
+        Logger::instance()->info('Check metaDate settings');
         if (Config::$metaData) {
 
-            \MBMigration\Core\Logger::instance()->info('Create links between projects');
+            Logger::instance()->info('Create links between projects');
 
             $projectId_MB = Utils::$cache->get('projectId_MB');
             $projectId_Brizy = Utils::$cache->get('projectId_Brizy');
@@ -530,7 +532,7 @@ class BrizyAPI extends Utils
 
     public function getAllProjectPages(): array
     {
-        \MBMigration\Core\Logger::instance()->info('Get All Pages from projects');
+        Logger::instance()->info('Get All Pages from projects');
         static $result;
 
         if (!empty($result)) {
@@ -566,18 +568,18 @@ class BrizyAPI extends Utils
      */
     public function createMenu($data)
     {
-        \MBMigration\Core\Logger::instance()->info('Request to create menu');
+        Logger::instance()->info('Request to create menu');
         $result = $this->httpClient('POST', $this->createPrivateUrlAPI('menu'), [
             'project' => $data['project'],
             'name' => $data['name'],
             'data' => $data['data'],
         ]);
         if ($result['status'] !== 201) {
-            \MBMigration\Core\Logger::instance()->warning('Failed menu');
+            Logger::instance()->warning('Failed menu');
 
             return false;
         }
-        \MBMigration\Core\Logger::instance()->info('Created menu');
+        Logger::instance()->info('Created menu');
 
         return json_decode($result['body'], true);
     }
@@ -645,7 +647,7 @@ class BrizyAPI extends Utils
 
     private function downloadImage($url): string
     {
-        \MBMigration\Core\Logger::instance()->info('Loading a picture');
+        Logger::instance()->info('Loading a picture');
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $image_data = curl_exec($ch);
@@ -658,7 +660,7 @@ class BrizyAPI extends Utils
         $path = Config::$pathTmp.$this->nameFolder.'/media/'.$file_name;
         $status = file_put_contents($path, $image_data);
         if (!$status) {
-            \MBMigration\Core\Logger::instance()->warning('Failed to load image!!! path: '.$path);
+            Logger::instance()->warning('Failed to load image!!! path: '.$path);
         }
 
         return $path;
@@ -691,7 +693,7 @@ class BrizyAPI extends Utils
 
     private function isUrlOrFile($urlOrPath): string
     {
-        \MBMigration\Core\Logger::instance()->info('Check image address');
+        Logger::instance()->info('Check image address');
         if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
             return $this->downloadImage($urlOrPath);
         } else {
@@ -718,7 +720,7 @@ class BrizyAPI extends Utils
         $uri = '',
         array $options = [],
         $contentType = false
-    ): \Psr\Http\Message\ResponseInterface {
+    ): ResponseInterface {
         $client = new Client();
         $headers = [
             'x-auth-user-token' => Config::$mainToken,
@@ -809,23 +811,23 @@ class BrizyAPI extends Utils
                 $statusCode = $response->getStatusCode();
                 $body = $response->getBody()->getContents();
 
-                \MBMigration\Core\Logger::instance()->critical(json_encode(['status' => $statusCode, 'body' => $body]));
+                Logger::instance()->critical(json_encode(['status' => $statusCode, 'body' => $body]));
                 if ($statusCode > 200) {
-                    \MBMigration\Core\Logger::instance()->info("Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body]));
+                    Logger::instance()->info("Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body]));
                 }
-                \MBMigration\Core\Logger::instance()->info("Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body]));
+                Logger::instance()->info("Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body]));
 
                 return ['status' => $statusCode, 'body' => $body];
             } else {
-                \MBMigration\Core\Logger::instance()->info("Error: GuzzleException Message:".json_encode(['status' => false, 'body' => 'Request timed out.']));
-                \MBMigration\Core\Logger::instance()->critical(json_encode(['status' => false, 'body' => 'Request timed out.']));
+                Logger::instance()->info("Error: GuzzleException Message:".json_encode(['status' => false, 'body' => 'Request timed out.']));
+                Logger::instance()->critical(json_encode(['status' => false, 'body' => 'Request timed out.']));
 
                 return ['status' => false, 'body' => 'Request timed out.'];
             }
         } catch (GuzzleException $e) {
-            \MBMigration\Core\Logger::instance()->info("Error: GuzzleException Message:".json_encode($e->getMessage()));
-            \MBMigration\Core\Logger::instance()->info("Error: GuzzleException Message: code".$statusCode."Response: ".$body);
-            \MBMigration\Core\Logger::instance()->critical(json_encode(['status' => false, 'body' => $e->getMessage()]));
+            Logger::instance()->info("Error: GuzzleException Message:".json_encode($e->getMessage()));
+            Logger::instance()->info("Error: GuzzleException Message: code".$statusCode."Response: ".$body);
+            Logger::instance()->critical(json_encode(['status' => false, 'body' => $e->getMessage()]));
 
             return ['status' => false, 'body' => $e->getMessage()];
         }

@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder;
 
+use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
@@ -11,7 +12,6 @@ use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Layout\Common\KitLoader;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use Psr\Log\LoggerInterface;
 
@@ -91,7 +91,7 @@ class PageBuilder
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
 
-            \MBMigration\Core\Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
+            Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
             $this->sendStatus($slug, ExecutionTimer::stop());
 
             return true;
@@ -101,12 +101,12 @@ class PageBuilder
             $browserPage = $this->browser->openPage($url, $design);
             $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
-                \MBMigration\Core\Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
+                Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
                 $this->sendStatus($slug, ExecutionTimer::stop());
 
                 return true;
             } else {
-                \MBMigration\Core\Logger::instance()->info('Fail Build Page: '.$itemsID.' | Slug: '.$slug);
+                Logger::instance()->info('Fail Build Page: '.$itemsID.' | Slug: '.$slug);
 
                 return false;
             }

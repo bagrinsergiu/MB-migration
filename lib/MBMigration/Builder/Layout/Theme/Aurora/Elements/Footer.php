@@ -2,10 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Aurora\Elements;
 
+use MBMigration\Core\Logger;
 use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 use MBMigration\Parser\JS;
 
 class Footer extends Element
@@ -35,7 +35,7 @@ class Footer extends Element
      */
     protected function Footer(): bool
     {
-        \MBMigration\Core\Logger::instance()->info('Create Footer');
+        Logger::instance()->info('Create Footer');
 
         $sectionData = $this->cache->get('mainSection')['footer'];
 

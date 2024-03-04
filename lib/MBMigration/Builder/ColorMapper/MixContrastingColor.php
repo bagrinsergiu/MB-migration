@@ -2,11 +2,12 @@
 
 namespace MBMigration\Builder\ColorMapper;
 
+use Exception;
 class MixContrastingColor extends ContrastCalculate
 {
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function result($color1, $threshold = 50): string
     {

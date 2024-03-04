@@ -2,10 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Aurora\Elements;
 
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 use MBMigration\Parser\JS;
 
 class Head extends Element
@@ -33,7 +33,7 @@ class Head extends Element
 
     private function Menu($menuList): bool
     {
-        \MBMigration\Core\Logger::instance()->info('Create block menu');
+        Logger::instance()->info('Create block menu');
 
         $options = [];
 

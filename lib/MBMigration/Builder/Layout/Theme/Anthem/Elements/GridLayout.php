@@ -2,10 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMException;
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class GridLayout extends Element
 {
@@ -22,7 +23,7 @@ class GridLayout extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -30,12 +31,12 @@ class GridLayout extends Element
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     protected function GridLayout(array $sectionData)
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
 
         $objItem = new ItemBuilder();
         $objBlock = new ItemBuilder();

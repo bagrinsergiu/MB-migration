@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Menu;
 
+use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPagePHP;
 use MBMigration\Builder\PageBuilder;
 use MBMigration\Builder\Utils\TextTools;
@@ -41,7 +42,7 @@ class MenuHandler
 
     public function createMenuStructure($selector)
     {
-        \MBMigration\Core\Logger::instance()->info('Create menu structure');
+        Logger::instance()->info('Create menu structure');
 
         $parentPages = $this->cache->get('menuList');
 

@@ -2,9 +2,9 @@
 
 namespace MBMigration\Builder\ColorMapper;
 
+use MBMigration\Core\Logger;
 use Exception;
 use MBMigration\Builder\Utils\ColorUtility;
-use MBMigration\Core\Utils;
 use ScssPhp\ScssPhp\Exception\SassException;
 
 class ColorControllerSCSS
@@ -28,11 +28,11 @@ class ColorControllerSCSS
             case "getContrastingColor":
                 return $colorUtility->getContrastingColor($colorData);
             default:
-                throw new \Exception("Unknown Element");
+                throw new Exception("Unknown Element");
             }
         }
         catch (Exception|SassException $e) {
-            \MBMigration\Core\Logger::instance()->info($e->getMessage());
+            Logger::instance()->info($e->getMessage());
         }
     }
 

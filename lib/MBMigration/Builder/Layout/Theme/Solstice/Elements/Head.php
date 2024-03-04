@@ -2,13 +2,13 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
+use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPage;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 use MBMigration\Parser\JS;
 
 class Head extends Element
@@ -59,7 +59,7 @@ class Head extends Element
 
     private function Menu($menuList)
     {
-        \MBMigration\Core\Logger::instance()->info('Create block menu');
+        Logger::instance()->info('Create block menu');
 
         $options = [];
 

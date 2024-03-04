@@ -2,8 +2,6 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage;
 
-use MBMigration\Builder\Layout\Common\MenuBuilderInterface;
-
 class MenuBuilder extends \MBMigration\Builder\Layout\Common\MenuBuilder
 {
     const MORE_MENU_ITEM_LABEL = 'More';

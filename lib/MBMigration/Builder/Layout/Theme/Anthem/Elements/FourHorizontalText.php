@@ -2,9 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMException;
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 use MBMigration\Parser\JS;
 
 class FourHorizontalText extends Element
@@ -23,7 +25,7 @@ class FourHorizontalText extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -31,12 +33,12 @@ class FourHorizontalText extends Element
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     protected function FourHorizontalText($sectionData)
     {
-        \MBMigration\Core\Logger::instance()->info('Create four horizontal text');
+        Logger::instance()->info('Create four horizontal text');
 
         $options = [];
 
@@ -184,7 +186,7 @@ class FourHorizontalText extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function richTextCreator($objBlock, $item, $currentPageURL, $fontsFamily, $itemLevel = [0, 0])
     {

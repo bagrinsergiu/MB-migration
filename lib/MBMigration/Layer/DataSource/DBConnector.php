@@ -2,9 +2,8 @@
 
 namespace MBMigration\Layer\DataSource;
 
+use MBMigration\Core\Logger;
 use Exception;
-use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 use MBMigration\Layer\DataSource\driver\PostgresSQL;
 
 class DBConnector
@@ -15,11 +14,11 @@ class DBConnector
      * @throws Exception
      */
     public function __construct() {
-        \MBMigration\Core\Logger::instance()->info('Initialization');
+        Logger::instance()->info('Initialization');
 
         $this->connection = new PostgresSQL();
 
-        \MBMigration\Core\Logger::instance()->info('READY');
+        Logger::instance()->info('READY');
     }
 
     /**

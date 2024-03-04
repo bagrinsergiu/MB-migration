@@ -2,10 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMException;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class AccordionLayout extends Element
 {
@@ -23,7 +23,7 @@ class AccordionLayout extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -31,10 +31,10 @@ class AccordionLayout extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function AccordionLayout(array $sectionData) {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
 
         $options = [];
 

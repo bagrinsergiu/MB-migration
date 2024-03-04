@@ -2,6 +2,7 @@
 
 namespace MBMigration\Core;
 
+use Exception;
 use Monolog\Handler\StreamHandler;
 use Psr\Log\LoggerInterface;
 
@@ -20,7 +21,7 @@ class Logger extends \Monolog\Logger
     static public function instance(): LoggerInterface
     {
         if (!self::$instance) {
-            throw new \Exception('Please initialize logger first.');
+            throw new Exception('Please initialize logger first.');
         }
 
         return self::$instance;

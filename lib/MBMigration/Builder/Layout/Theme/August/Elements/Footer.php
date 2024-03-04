@@ -2,15 +2,15 @@
 
 namespace MBMigration\Builder\Layout\Theme\August\Elements;
 
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Core\Utils;
 
 class Footer
 {
 
     protected function createFooter()
     {
-        \MBMigration\Core\Logger::instance()->info('Create Footer');
+        Logger::instance()->info('Create Footer');
 
         $options = [];
         $imageAdd = false;

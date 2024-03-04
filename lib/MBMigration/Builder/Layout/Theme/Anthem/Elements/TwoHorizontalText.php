@@ -2,11 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use Exception;
+use MBMigration\Core\Logger;
 use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class TwoHorizontalText extends Element
 {
@@ -32,11 +32,11 @@ class TwoHorizontalText extends Element
 
     /**
      * @throws DOMException
-     * @throws \Exception
+     * @throws Exception
      */
     protected function TwoHorizontalText($sectionData)
     {
-        \MBMigration\Core\Logger::instance()->info('Create full media');
+        Logger::instance()->info('Create full media');
 
         $options = [];
 
@@ -128,27 +128,26 @@ class TwoHorizontalText extends Element
     /**
      * @throws \Exception
      */
-//    private function textCreation($itemID, $content, $options, $objBlock, $setId = 0)
-//    {
-//        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
-//        if(!is_array($richText)) {
-//            $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
-//        } else {
-//            if(!empty($richText['text'])) {
-//                $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
-//            }
-//
-//            if(!empty($richText['embeds']['persist'])) {
-//                $result = $this->findEmbeddedPasteDivs($content);
-//                foreach ($result as $item) {
-//                    $objBlock->item(0)->item(0)->item($setId)->addItem($this->embedCode($item));
-//                }
-//            }
-//        }
-//    }
-
+    //    private function textCreation($itemID, $content, $options, $objBlock, $setId = 0)
+    //    {
+    //        $richText = JS::RichText($itemID, $options['currentPageURL'], $options['fontsFamily']);
+    //        if(!is_array($richText)) {
+    //            $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
+    //        } else {
+    //            if(!empty($richText['text'])) {
+    //                $objBlock->item(0)->item(0)->item($setId)->addItem($this->itemWrapperRichText($richText));
+    //            }
+    //
+    //            if(!empty($richText['embeds']['persist'])) {
+    //                $result = $this->findEmbeddedPasteDivs($content);
+    //                foreach ($result as $item) {
+    //                    $objBlock->item(0)->item(0)->item($setId)->addItem($this->embedCode($item));
+    //                }
+    //            }
+    //        }
+    //    }
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $objBlock, $setId = 0)
     {

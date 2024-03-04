@@ -2,12 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
+use Exception;
+use MBMigration\Core\Logger;
 use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class Footer extends Element
 {
@@ -33,11 +33,11 @@ class Footer extends Element
 
     /**
      * @throws DOMException
-     * @throws \Exception
+     * @throws Exception
      */
     protected function Footer(): bool
     {
-        \MBMigration\Core\Logger::instance()->info('Create Footer');
+        Logger::instance()->info('Create Footer');
 
         $sectionData = $this->cache->get('mainSection')['footer'];
 
@@ -102,7 +102,7 @@ class Footer extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $objBlock)
     {

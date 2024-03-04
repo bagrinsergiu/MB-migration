@@ -2,7 +2,8 @@
 
 namespace MBMigration\Parser;
 
-use MBMigration\Core\Utils;
+use MBMigration\Core\Logger;
+use Exception;
 use MBMigration\Parser\JsParse\JSCode;
 use Nesk\Puphpeteer\Puppeteer;
 
@@ -13,7 +14,7 @@ class JS
 
     public static function StylesColorExtractor($sectionID, $pageUrl, array $styleProperties = [])
     {
-        \MBMigration\Core\Logger::instance()->info('Styles Extractor');
+        Logger::instance()->info('Styles Extractor');
         $properties = ['background-color', 'opacity', 'border-bottom-color'];
         $result = ['background-color' => '#ffffff', 'opacity' => 1];
 
@@ -65,7 +66,7 @@ class JS
 
     public static function imageStylesExtractor(int $sectionID, $pageUrl)
     {
-        \MBMigration\Core\Logger::instance()->info('Image Styles Extractor');
+        Logger::instance()->info('Image Styles Extractor');
         $data = [
             'selector' => '[data-id="'.$sectionID.'"]',
         ];
@@ -84,7 +85,7 @@ class JS
 
     public static function StylesPaddingExtractor(int $sectionID, $pageUrl, array $styleProperties = []): array
     {
-        \MBMigration\Core\Logger::instance()->info('Styles Extractor');
+        Logger::instance()->info('Styles Extractor');
 
         $result = ['padding-bottom' => 15, 'padding-top' => 15, 'padding-left' => 0, 'padding-right' => 0];
 
@@ -105,10 +106,10 @@ class JS
         $padding = self::Run($sectionID);
 
         if (!empty($padding['error'])) {
-            \MBMigration\Core\Logger::instance()->info($padding['error']);
+            Logger::instance()->info($padding['error']);
         }
         if (!empty($padding['style'])) {
-            \MBMigration\Core\Logger::instance()->info('success');
+            Logger::instance()->info('success');
 
             $style = $padding['style'];
 
@@ -125,7 +126,7 @@ class JS
     public static function stylesMenuExtractor(int $sectionID, $pageUrl, array $fontFamilies)
     {
 
-        \MBMigration\Core\Logger::instance()->info('Styles Extractor From Menu');
+        Logger::instance()->info('Styles Extractor From Menu');
 
         $data = [
             'selector' => '[data-id="'.$sectionID.'"]',
@@ -139,10 +140,10 @@ class JS
 
 
         if (!empty($result['warns'])) {
-            \MBMigration\Core\Logger::instance()->info($result['warns']);
+            Logger::instance()->info($result['warns']);
         }
         if (!empty($result['menu'])) {
-            \MBMigration\Core\Logger::instance()->info('success');
+            Logger::instance()->info('success');
 
             return $result['menu'];
         }
@@ -187,13 +188,13 @@ class JS
         $RichText = self::Run($blockID);
 
         if (!empty($RichText['warns'])) {
-            \MBMigration\Core\Logger::instance()->info($RichText['warns']);
+            Logger::instance()->info($RichText['warns']);
         }
 
         if (!empty($RichText['error'])) {
-            \MBMigration\Core\Logger::instance()->info($RichText['error']);
+            Logger::instance()->info($RichText['error']);
         } else {
-            \MBMigration\Core\Logger::instance()->info('success');
+            Logger::instance()->info('success');
         }
 
         if (!empty($RichText['text']) && (empty($RichText['embeds']) && empty($RichText['icons']) && empty($RichText['buttons']))) {
@@ -211,12 +212,12 @@ class JS
     private static function Run($id)
     {
         if (empty(self::$CODE)) {
-            \MBMigration\Core\Logger::instance()->info('JS:CODE is empty');
+            Logger::instance()->info('JS:CODE is empty');
 
             return '';
         }
         try {
-            \MBMigration\Core\Logger::instance()->info('style parse from page');
+            Logger::instance()->info('style parse from page');
             $puppeteer = new Puppeteer();
             $browser = $puppeteer->launch([
                 "headless" => "new",
@@ -246,8 +247,8 @@ class JS
             $browser->close();
 
             return json_decode($result, true);
-        } catch (\Exception $e) {
-            \MBMigration\Core\Logger::instance()->info($e->getMessage());
+        } catch (Exception $e) {
+            Logger::instance()->info($e->getMessage());
 
             return '';
         }

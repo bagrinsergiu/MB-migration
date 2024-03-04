@@ -2,11 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use Exception;
+use MBMigration\Core\Logger;
 use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class RightMedia extends Element
 {
@@ -29,11 +29,11 @@ class RightMedia extends Element
 
     /**
      * @throws DOMException
-     * @throws \Exception
+     * @throws Exception
      */
     protected function RightMedia(array $sectionData)
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $options = [];

@@ -2,9 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMException;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 use MBMigration\Parser\JS;
 
 class RightMediaCircle extends Element
@@ -23,7 +24,7 @@ class RightMediaCircle extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -31,11 +32,11 @@ class RightMediaCircle extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function RightMediaCircle(array $sectionData)
     {
-        \MBMigration\Core\Logger::instance()->info('Create bloc');
+        Logger::instance()->info('Create bloc');
 
         $options = [];
 
