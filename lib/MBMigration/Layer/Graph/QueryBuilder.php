@@ -1571,8 +1571,7 @@ class QueryBuilder
         try {
             return $this->client->runQuery($query, $resultsAsArray, $variables);
         } catch (Exception $e) {
-            Logger::instance()->error('Failed query!! Message:'.json_encode($e->getMessage()));
-            Logger::instance()->info($e->getMessage());
+            Logger::instance()->error('Failed query!! Message:'.$e->getMessage());
             throw new Exception('The client received an error.');
         }
     }

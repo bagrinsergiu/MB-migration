@@ -656,7 +656,8 @@ class MBProjectDataCollector
             LEFT JOIN public.links l on i.id = l.item_id
             LEFT JOIN public.pages p on l.page_id = p.id
             WHERE i.group is not null
-              and i.section_id = {$sectionId['id']}
+              and i.section_id = {$sectionId['id']} 
+              and i.trashed_at is NULL
             ORDER BY i.parent_id DESC, order_by    
             "
         );

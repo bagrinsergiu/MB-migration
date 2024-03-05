@@ -614,7 +614,7 @@ class MigrationPlatform
                 } else {
                     if (!array_key_exists($page['slug'], $projectPages['listPages'])) {
                         $updateNameResult = $this->renameSlug(
-                            $projectPages['listPages']['home'],
+                            $projectPages['listPages'][$page['slug']],
                             $page['slug'],
                             $page['name'],
                             $title
@@ -653,7 +653,7 @@ class MigrationPlatform
         $uuid = $this->cache->get('settings')['uuid'];
         $prefix = substr($uuid, 0, 2);
         $url = Config::$MBMediaStaging."/".$prefix.'/'.$uuid.$folderload.$nameImage;
-        Logger::instance()->info('Created url pictures: '.$url.' Type folder '.$type);
+        Logger::instance()->debug('Created url pictures: '.$url.' Type folder '.$type);
 
         return $url;
     }

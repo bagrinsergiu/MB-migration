@@ -692,7 +692,6 @@ class BrizyAPI extends Utils
 
     private function isUrlOrFile($urlOrPath): string
     {
-        Logger::instance()->info('Check image address');
         if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
             return $this->downloadImage($urlOrPath);
         } else {
