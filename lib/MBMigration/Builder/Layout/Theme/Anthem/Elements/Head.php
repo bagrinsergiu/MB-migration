@@ -114,7 +114,7 @@ class Head extends Element
 
         $position = '{"align":"top","top":0,"bottom":0}';
         $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
-
+        $this->brizyAPI->deleteAllGlobalBlocks();
         $this->brizyAPI->createGlobalBlock(json_encode($block), $position, $rules);
         return json_decode(json_encode($block), true);
     }

@@ -248,10 +248,10 @@ class Anthem extends LayoutUtils
                         $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
 
                     } else {
-
                         switch ($item['category']) {
                             case "list":
                             case "tab":
+                            case "accordion":
                                 $this->ExtractItemContent($item['item'], $browserPage);
 
                                 foreach ($item['item'] as $listItem) {
@@ -412,9 +412,7 @@ class Anthem extends LayoutUtils
             'brizy.getAccordion',
             [
                 'selector' => '[data-id="'.$sectionId.'"]',
-                'styleProperties' => [
-                    'border-color',
-                ],
+                'styleProperties' => [],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
             ]
