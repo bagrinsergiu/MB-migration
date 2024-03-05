@@ -252,6 +252,7 @@ class BrizyAPI extends Utils
         if($response['status']==200) {
             $globalBlocks = json_decode($response['body'], true);
             foreach($globalBlocks as $block) {
+                Logger::instance()->debug("Delete global block {$block['id']}");
                 $response = $this->httpClient('DELETE', $url."/".$block['id']);
             }
         }

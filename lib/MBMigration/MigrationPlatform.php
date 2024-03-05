@@ -268,10 +268,10 @@ class MigrationPlatform
                     continue;
                 }
 
-                // there a pages that have only one section only and de same slug as home page..
-                if ( array_key_exists('category', $settings) && $settings['category']=='text' ) {
-                    continue;
-                }
+//                // there a pages that have only one section only and de same slug as home page..
+//                if ( array_key_exists('category', $settings) && $settings['category']=='text' ) {
+//                    continue;
+//                }
             }
 
             if (!empty($page['child'])) {

@@ -76,7 +76,7 @@ class AccordionLayout extends Element
             foreach ($section['item'] as $item) {
                 if ($item['category'] === 'text') {
                     if ($item['item_type'] === 'accordion_title') {
-                        $this->textCreation($item, $objItem);
+                        $objItem->setting('labelText', preg_replace('/<[^>]*>/', '', $item['content']));
                     }
                 }
             }
@@ -92,11 +92,11 @@ class AccordionLayout extends Element
         }
         $objList->item(0)->setting('bgColorHex', $sectionData['style']['background-color']);
 
-//        if(!empty($sectionData['style']['accordion'])){
-//            foreach ( $sectionData['style']['accordion'] as $key => $value){
-//                $objList->item(0)->setting($key, $value);
-//            }
-//        }
+        if(!empty($sectionData['style']['accordion'])){
+            foreach ( $sectionData['style']['accordion'] as $key => $value){
+                $objList->item(0)->setting($key, $value);
+            }
+        }
 
 
         $objBlock->item(0)->addItem($objList->get());
