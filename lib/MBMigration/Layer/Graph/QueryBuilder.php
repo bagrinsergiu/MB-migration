@@ -347,7 +347,7 @@ class QueryBuilder
         }
 
         if($protectedPage) {
-            $variables['input']['itemPassword'] = "876543";
+            $variables['input']['itemPassword'] = $_ENV['DEFAULT_PAGE_PASSWORD'] ?? "876543";
             $variables['input']['visibility'] = 'passwordProtected';
         }
 

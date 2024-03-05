@@ -10,7 +10,7 @@ interface Model {
     defaultFamily: string;
 }
 
-const pxToEm = (lineHeightValue: string, fontSize: string | Number) :number => {
+const pxToEm = (lineHeightValue: string, fontSize: string | number) :number => {
     if (!lineHeightValue.includes("px")) return parseInt(lineHeightValue);
     const value = parseInt(lineHeightValue);
     return value / ((value / Number(fontSize)) * value);
