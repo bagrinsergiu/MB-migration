@@ -533,7 +533,6 @@ class BrizyAPI extends Utils
 
     public function getAllProjectPages(): array
     {
-        Logger::instance()->info('Get All Pages from projects');
         static $result;
 
         if (!empty($result)) {

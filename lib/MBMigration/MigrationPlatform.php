@@ -184,14 +184,13 @@ class MigrationPlatform
 
         if (true || !$this->cache->get('menuList')) {
             $projectTitle = $this->cache->get('settings')['title'];
-
+            Logger::instance()->info('Start create blank pages');
             $this->createBlankPages(
                 $parentPages,
                 $projectTitle,
                 true,
                 $this->brizyApi->getAllProjectPages()
             );
-
             $this->cache->set('menuList', [
                 'id' => null,
                 'uid' => null,
@@ -590,8 +589,6 @@ class MigrationPlatform
      */
     private function createBlankPages(array &$parentPages, $projectTitle, $mainLevel, $projectPages)
     {
-        Logger::instance()->info('Start create blank pages');
-
         $i = 0;
         foreach ($parentPages as &$page) {
             $createdPage = false;
