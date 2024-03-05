@@ -294,8 +294,6 @@ class MigrationPlatform
      */
     private function collector($page): void
     {
-        Logger::instance()->info('Take page | ID: '.$page['id']);
-
         $this->cache->set('tookPage', $page);
         ExecutionTimer::start();
 
@@ -520,7 +518,7 @@ class MigrationPlatform
 
     private function setCurrentPageOnWork($collectionItem): void
     {
-        Logger::instance()->info('Set the current page to work: '.$collectionItem);
+        Logger::instance()->debug('Set the current page to work: '.$collectionItem);
         $this->cache->set('currentPageOnWork', $collectionItem);
     }
 
@@ -530,7 +528,7 @@ class MigrationPlatform
     private function creteNewPage($slug, $title, $seoTitle, $protectedPage = false, $setActivePage = true)
     {
         if ($this->pageCheck($slug)) {
-            Logger::instance()->info('Request to create a new page: '.$slug);
+            Logger::instance()->debug('Request to create a new page: '.$slug);
             $collectionItem = $this->QueryBuilder->createCollectionItem(
                 $this->cache->get('mainCollectionType'),
                 $slug,
@@ -681,10 +679,10 @@ class MigrationPlatform
                     );
                     if ($result) {
                         $result = json_decode($result['body'], true);
-                        Logger::instance()->info('Upload image response: '.json_encode($result));
+                        Logger::instance()->debug('Upload image response: '.json_encode($result));
                         $section['settings']['sections']['background']['photo'] = $result['name'];
                         $section['settings']['sections']['background']['filename'] = $result['filename'];
-                        Logger::instance()->info('Success upload image fileName: '.$result['filename'].' srcName: '.$result['name']);
+                        Logger::instance()->debug('Success upload image',$result);
                     }
                 } else {
                     $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
@@ -703,7 +701,7 @@ class MigrationPlatform
                         Logger::instance()->info('Upload image response: '.json_encode($result));
                         $section['settings']['background']['photo'] = $result['name'];
                         $section['settings']['background']['filename'] = $result['filename'];
-                        Logger::instance()->info('Success upload image fileName: '.$result['filename'].' srcName: '.$result['name']);
+                        Logger::instance()->info('Success upload image fileName',$result);
                     }
                 } else {
                     $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
@@ -739,18 +737,18 @@ class MigrationPlatform
      */
     private function media(&$item, $section): void
     {
-        Logger::instance()->info('Found new image');
         $downloadImageURL = $this->getPisturesUrl($item['content'], $section);
+        Logger::instance()->debug('Found new image',[$downloadImageURL]);
         $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
         if ($result) {
             if (array_key_exists('status', $result)) {
                 if ($result['status'] == 201) {
                     $result = json_decode($result['body'], true);
-                    Logger::instance()->info('Upload image response: '.json_encode($result));
+                    Logger::instance()->debug('Upload image response: '.json_encode($result));
                     $item['uploadStatus'] = true;
                     $item['imageFileName'] = $result['filename'];
                     $item['content'] = $result['name'];
-                    Logger::instance()->info('Success upload image fileName: '.$result['filename'].' srcName: '.$result['name']);
+                    Logger::instance()->debug('Success upload image fileName',$result);
                 } else {
                     Logger::instance()->critical('Unexpected answer: '.json_encode($result));
                 }

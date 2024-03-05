@@ -200,7 +200,7 @@ class BrizyAPI extends Utils
         }
         $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
         $mime_type = mime_content_type($pathToFileName);
-        Logger::instance()->info('Mime type image; '.$mime_type);
+        Logger::instance()->debug('Mime type image; '.$mime_type);
         if ($this->getFileExtension($mime_type)) {
             $file_contents = file_get_contents($pathToFileName);
             if (!$file_contents) {
@@ -647,7 +647,6 @@ class BrizyAPI extends Utils
 
     private function downloadImage($url): string
     {
-        Logger::instance()->info('Loading a picture');
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $image_data = curl_exec($ch);
