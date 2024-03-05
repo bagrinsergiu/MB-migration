@@ -14,11 +14,7 @@ class DBConnector
      * @throws Exception
      */
     public function __construct() {
-        Logger::instance()->info('Initialization');
-
         $this->connection = new PostgresSQL();
-
-        Logger::instance()->info('READY');
     }
 
     /**

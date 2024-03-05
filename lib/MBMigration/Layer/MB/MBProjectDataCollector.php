@@ -43,7 +43,7 @@ class MBProjectDataCollector
      */
     public function __construct()
     {
-        Logger::instance()->info('Initialization');
+        Logger::instance()->debug('MBProjectDataCollector Initialization');
         $this->cache = VariableCache::getInstance();
 
         $this->siteId = $this->cache->get('projectId_MB');
@@ -60,8 +60,6 @@ class MBProjectDataCollector
                 "\"Helvetica Neue\", HelveticaNeue, Helvetica, Arial, sans-serif",
                 ]
         ];
-
-        Logger::instance()->info('READY');
     }
 
 

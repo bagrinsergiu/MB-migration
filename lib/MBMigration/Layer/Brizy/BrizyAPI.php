@@ -31,7 +31,7 @@ class BrizyAPI extends Utils
      */
     public function __construct()
     {
-        Logger::instance()->info('Initialization');
+        Logger::instance()->debug('BrizyAPI Initialization');
         $this->projectToken = $this->check(Config::$mainToken, 'Config not initialized');
         $this->cacheBR = VariableCache::getInstance();
     }
@@ -224,7 +224,7 @@ class BrizyAPI extends Utils
      */
     public function createGlobalBlock($data, $position, $rules)
     {
-        Logger::instance()->info('Create Global Block');
+        Logger::instance()->debug('Create Global Block',[$position,$rules]);
 
         $requestData['project'] = Utils::$cache->get('projectId_Brizy');
         $requestData['status'] = 'publish';

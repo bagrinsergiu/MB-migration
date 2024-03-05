@@ -58,7 +58,7 @@ class PageBuilder
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
         if ($design !== 'Anthem' && $design !== 'Solstice') {
-            $this->browser = BrowserPHP::instance($layoutBasePath,$this->logger);
+            $this->browser = BrowserPHP::instance($layoutBasePath, $this->logger);
             $browserPage = $this->browser->openPage($url, $design);
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder, $this->brizyAPI);
@@ -90,10 +90,8 @@ class PageBuilder
             $pageData = json_encode($brizySections);
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
-
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
-            $this->sendStatus($slug, ExecutionTimer::stop());
-
+            Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
             return true;
 
         } else {
@@ -102,8 +100,7 @@ class PageBuilder
             $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                 Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
-                $this->sendStatus($slug, ExecutionTimer::stop());
-
+                Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
                 return true;
             } else {
                 Logger::instance()->info('Fail Build Page: '.$itemsID.' | Slug: '.$slug);
@@ -111,16 +108,6 @@ class PageBuilder
                 return false;
             }
         }
-    }
-
-    private function sendStatus($pageName, $executeTime): void
-    {
-        if (Config::$devMode !== true) {
-            return;
-        }
-        echo " => Current Page: {$pageName} | Status: ".json_encode(
-                $this->cache->get('Status')
-            )."| Time: $executeTime \n";
     }
 
     public function closeBrowser()

@@ -13,7 +13,7 @@ class VariableCache
 
     private function __construct($cachePath)
     {
-        Logger::instance()->info('Initialization');
+        Logger::instance()->debug('VariableCache initialization');
         $this->cachePath = rtrim($cachePath, '/');
         $this->cache = ['OBJECTS' => []];
     }
@@ -199,8 +199,6 @@ class VariableCache
 
     public function init()
     {
-        Logger::instance()->info('Initialization');
-
         $this->cache = [];
 
         $this->cache['OBJECTS'] = [];

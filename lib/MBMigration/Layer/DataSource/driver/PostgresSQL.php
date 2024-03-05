@@ -17,7 +17,7 @@ class PostgresSQL
      */
     public function __construct()
     {
-        Logger::instance()->info('Initialization');
+        Logger::instance()->debug('PostgresSQL Initialization');
 
         $config = Config::$configPostgreSQL;
 
@@ -33,14 +33,12 @@ class PostgresSQL
             );
 
             $this->connection->setAttribute(PDO::ATTR_TIMEOUT, 20);
-
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            Logger::instance()->info('Connection success');
+            Logger::instance()->debug('Connection success');
         } catch (PDOException $e) {
-            Logger::instance()->info($e->getMessage());
+            Logger::instance()->error($e->getMessage());
             throw new Exception("Database connection failed: ".$e->getMessage());
         }
-        Logger::instance()->info('READY');
     }
 
     /**
@@ -49,22 +47,19 @@ class PostgresSQL
     public function request($sql)
     {
         if (!$this->connection) {
-            Logger::instance()->warning('Not connected to the database.');
-            Logger::instance()->info('Not connected to the database');
+            Logger::instance()->error('Not connected to the database.');
             throw new Exception("Not connected to the database.");
         }
         try {
             $statement = $this->connection->query($sql);
 
             if (Config::getDevOptions('log_SqlQuery')) {
-                Logger::instance()->info('success Request: '.json_encode($sql));
+                Logger::instance()->debug('success Request: '.json_encode($sql));
             }
 
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            Logger::instance()->info($e->getMessage());
-            Logger::instance()->info('MySql Request: '.json_encode($sql));
-            Logger::instance()->warning("Query execution : ".$e->getMessage());
+            Logger::instance()->error($e->getMessage(),[$sql]);
             throw new Exception("Query execution failed: ".$e->getMessage().' Request: '.json_encode($sql));
         }
     }

@@ -69,7 +69,6 @@ class MigrationPlatform
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
         register_shutdown_function([$this->errorDump, 'handleFatalError']);
-        Logger::instance()->info('initialization');
 
         $this->finalSuccess['status'] = 'start';
 
@@ -178,13 +177,12 @@ class MigrationPlatform
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
             $this->updateColorSection($mainSection);
-            Logger::instance()->info('Upload Logo menu');
+            Logger::instance()->debug('Upload section pictures');
             $mainSection = $this->uploadPicturesFromSections($mainSection);
             $this->cache->set('mainSection', $mainSection);
         }
 
         if (true || !$this->cache->get('menuList')) {
-            Logger::instance()->info('Start created pages');
             $projectTitle = $this->cache->get('settings')['title'];
 
             $this->createBlankPages($parentPages, $projectTitle);
@@ -222,8 +220,7 @@ class MigrationPlatform
      */
     private function init(string $projectID_MB, int $projectID_Brizy): void
     {
-        Logger::instance()->info('-------------------------------------------------------------------------------------- []');
-        Logger::instance()->info('Start Process!');
+        Logger::instance()->info('Starting the migration for '.$projectID_MB.' to '.$projectID_Brizy);
 
         Utils::init($this->cache);
 
@@ -255,7 +252,6 @@ class MigrationPlatform
         $this->finalSuccess['processTime'] = round($executionTime, 1);
 
         Logger::instance()->info('Work time: '.$this->Time($executionTime).' (seconds: '.round($executionTime, 1).')');
-        Logger::instance()->info('END');
     }
 
     /**
@@ -320,9 +316,9 @@ class MigrationPlatform
 
             $newPage = $this->creteNewPage($page['slug'], $page['name'], $title, $page['protectedPage']);
             if (!$newPage) {
-                Logger::instance()->warning('Failed created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
+                Logger::instance()->warning('Failed created page',$page);
             } else {
-                Logger::instance()->info('Success created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
+                Logger::instance()->info('Success created page',$page);
                 $collectionItem = $newPage;
             }
         }
@@ -572,7 +568,6 @@ class MigrationPlatform
         ];
 
         $res = $this->QueryBuilder->updateCollectionItem($itemsID, $slug, [], 'published', [], $title, $seo);
-        Logger::instance()->info('Page name is Rename');
 
         return $res;
     }
@@ -580,7 +575,7 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function runPageBuilder($preparedSectionOfThePage, $defaultPage = false): void
+    private function runPageBuilder($preparedSectionOfThePage, $defaultPage = false): bool
     {
 
         if (!$defaultPage) {
@@ -591,9 +586,7 @@ class MigrationPlatform
 
         $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
 
-        if ($this->PageBuilder->run($preparedSectionOfThePage)) {
-            Logger::instance()->info('Page created successfully!');
-        }
+        return $this->PageBuilder->run($preparedSectionOfThePage);
     }
 
     /**
@@ -601,7 +594,7 @@ class MigrationPlatform
      */
     private function createBlankPages(array &$parentPages,  $projectTitle, $mainLevel = true)
     {
-        Logger::instance()->info('Start created pages');
+        Logger::instance()->info('Start create blank pages');
         $projectPages = $this->brizyApi->getAllProjectPages();
 
         $i = 0;
@@ -639,9 +632,9 @@ class MigrationPlatform
                 }
 
                 if (!$newPage) {
-                    Logger::instance()->warning('Failed created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
+                    Logger::instance()->warning('Failed created page',$page);
                 } else {
-                    Logger::instance()->info('Success created pages | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
+                    Logger::instance()->info('Success created page',$page);
                     $page['collection'] = $newPage;
                 }
             } else {
@@ -836,13 +829,11 @@ class MigrationPlatform
     private function createDirectory($directoryPath): void
     {
         if (!is_dir($directoryPath)) {
-            Logger::instance()->info('Create Directory: ' . $directoryPath);
+            Logger::instance()->debug('Create Directory: ' . $directoryPath);
 
             $result = shell_exec("mkdir -p " . escapeshellarg($directoryPath));
 
-            if ($result === null) {
-                Logger::instance()->info('Directory created successfully.');
-            } else {
+            if ($result !== null) {
                 Logger::instance()->critical('Error creating directory: ' . $result);
             }
 
