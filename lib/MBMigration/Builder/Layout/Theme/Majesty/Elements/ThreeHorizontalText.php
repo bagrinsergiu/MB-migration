@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
+use Exception;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
@@ -18,7 +19,7 @@ class ThreeHorizontalText extends AbstractElement
 
     /**
      * @throws BrowserScriptException
-     * @throws \Exception
+     * @throws Exception
      */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {

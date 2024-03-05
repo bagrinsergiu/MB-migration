@@ -2,6 +2,8 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons;
 
+use Exception;
+use DOMException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElement;
 use MBMigration\Builder\VariableCache;
@@ -10,7 +12,7 @@ class ListMediaLayout extends DynamicElement
 {
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getElement(array $elementData = [])
     {
@@ -19,8 +21,8 @@ class ListMediaLayout extends DynamicElement
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     protected function listMedia(array $sectionData) {
 

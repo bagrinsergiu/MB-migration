@@ -2,9 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
 class GalleryLayout extends Element
 {
@@ -22,7 +23,7 @@ class GalleryLayout extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getElement($elementData)
     {
@@ -37,7 +38,7 @@ class GalleryLayout extends Element
         $objBlock = new ItemBuilder();
         $objSlide = new ItemBuilder();
 
-        Utils::log('Create bloc', 1, "gallery_layout");
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $sectionData['items'] = $this->sortByOrderBy($sectionData['items']);

@@ -1,41 +1,62 @@
-import { Literal } from "utils";
+import {Literal} from "utils";
 
 export interface Entry {
-  selector: string;
-  families: Record<string, string>;
-  defaultFamily: string;
+    selector: string;
+    families: Record<string, string>;
+    defaultFamily: string;
 }
 
+
+export interface MenuItemSelector {
+    selector: string;
+    pseudoEl: string;
+}
+
+export interface MenuItemElement {
+    item: Element;
+    pseudoEl: string;
+}
+
+export interface MenuItemEntry {
+    hover: boolean
+    itemSelector:  MenuItemSelector;
+    itemBgSelector:  MenuItemSelector;
+    itemPaddingSelector:  MenuItemSelector;
+    families: Record<string, string>;
+    defaultFamily: string;
+}
+
+
 export interface MenuEntry {
-  sectionSelector: string;
-  itemSelector: string;
-  subItemSelector: string;
-  families: Record<string, string>;
-  defaultFamily: string;
+    sectionSelector: string;
+    itemSelector: string;
+    subItemSelector: string;
+    families: Record<string, string>;
+    defaultFamily: string;
 }
 
 
 export interface OutputData {
-  data: unknown;
-  warns?: Record<string, Record<string, string>>;
+    data: unknown;
+    warns?: Record<string, Record<string, string>>;
 }
 
 interface Data {
-  data: unknown;
-  warns?: Record<string, Record<string, string>>;
+    data: unknown;
+    warns?: Record<string, Record<string, string>>;
 }
 
 interface Error {
-  error: string;
+    error: string;
 }
 
 export type Output = Data | Error;
 
 export interface ElementModel {
-  type: string;
-  value: Record<string, Literal | Array<ElementModel | string>>;
+    type: string;
+    value: Record<string, Literal | Array<ElementModel | string>>;
 }
 
 export interface EmbedModel {
-  type: "EmbedCode";
+    type: "EmbedCode";
 }

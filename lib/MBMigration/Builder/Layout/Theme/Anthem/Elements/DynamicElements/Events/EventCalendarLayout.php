@@ -3,6 +3,8 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events;
 
 
+use DOMException;
+use Exception;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElement;
 
@@ -15,8 +17,8 @@ class EventCalendarLayout extends DynamicElement
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     private function Calendar(array $sectionData)
     {

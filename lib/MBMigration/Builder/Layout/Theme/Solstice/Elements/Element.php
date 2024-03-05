@@ -2,14 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
+use MBMigration\Core\Logger;
 use Exception;
 use MBMigration\Builder\Checking;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\LayoutUtils;
-use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 abstract class Element extends LayoutUtils
 {
@@ -20,7 +18,7 @@ abstract class Element extends LayoutUtils
      */
     protected function initData()
     {
-        Utils::log('initData!', 4, 'Main Layout');
+        Logger::instance()->info('initData!');
         return $this->loadKit();
     }
 
@@ -79,7 +77,7 @@ abstract class Element extends LayoutUtils
     protected function backgroundImages(ItemBuilder $objBlock, array $sectionData): void
     {
         if($this->checkArrayPath($sectionData, 'settings/sections/background')) {
-            Utils::log('Set background Images', 1, "backgroundImages");
+            Logger::instance()->info('Set background Images');
 
             if($this->checkArrayPath($sectionData, 'settings/sections/background/filename') &&
                 $this->checkArrayPath($sectionData, 'settings/sections/background/photo')) {
@@ -189,7 +187,7 @@ abstract class Element extends LayoutUtils
 
     protected function createCollectionItems($mainCollectionType, $slug, $title)
     {
-        Utils::log('Create Detail Page: ' . $title, 1, "createDetailPage");
+        Logger::instance()->info('Create Detail Page: ' . $title);
         if($this->pageCheck($slug)) {
             $QueryBuilder = $this->cache->getClass('QueryBuilder');
             $createdCollectionItem = $QueryBuilder->createCollectionItem($mainCollectionType, $slug, $title);

@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
+use Exception;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
@@ -52,7 +53,7 @@ trait DanationsAble
                     $brizySection->getValue()->add_items([$brizyDonationButton]);
                     break;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
         }
 

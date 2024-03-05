@@ -46,7 +46,7 @@ abstract class AbstractTheme implements ThemeInterface
             $this->themeContext->getDefaultFamily()
         );
 
-        $brizyPage->addItem($elementFactory->getElement('head')->transformToItem($elementContext));
+        $elementFactory->getElement('head')->transformToItem($elementContext);
 
         foreach ($mbPageSections as $mbPageSection) {
             $elementName = $mbPageSection['typeSection'];
@@ -71,21 +71,19 @@ abstract class AbstractTheme implements ThemeInterface
             }
         }
 
-        $brizyPage->addItem(
-            $elementFactory->getElement('footer')
-                ->transformToItem(
-                    ElementContext::instance(
-                        $this,
-                        $this->themeContext,
-                        $this->themeContext->getMbFooterSection(),
-                        $brizyComponent,
-                        $this->themeContext->getBrizyMenuEntity(),
-                        $this->themeContext->getBrizyMenuItems(),
-                        $this->themeContext->getFamilies(),
-                        $this->themeContext->getDefaultFamily()
-                    )
+        $elementFactory->getElement('footer')
+            ->transformToItem(
+                ElementContext::instance(
+                    $this,
+                    $this->themeContext,
+                    $this->themeContext->getMbFooterSection(),
+                    $brizyComponent,
+                    $this->themeContext->getBrizyMenuEntity(),
+                    $this->themeContext->getBrizyMenuItems(),
+                    $this->themeContext->getFamilies(),
+                    $this->themeContext->getDefaultFamily()
                 )
-        );
+            );
 
         $brizyPage = $this->afterTransformBlocks($brizyPage, $mbPageSections);
 

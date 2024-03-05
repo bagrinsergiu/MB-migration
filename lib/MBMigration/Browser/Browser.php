@@ -2,8 +2,9 @@
 
 namespace MBMigration\Browser;
 
+use Monolog\Logger;
+use Exception;
 use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 use Monolog\Handler\StreamHandler;
 use Nesk\Puphpeteer\Puppeteer;
 use Psr\Log\LoggerInterface;
@@ -32,7 +33,7 @@ class Browser implements BrowserInterface
     private function __construct($scriptPath, LoggerInterface $logger = null)
     {
         if(is_null($logger)) {
-            $logger = new \Monolog\Logger('my_logger');
+            $logger = new Logger('my_logger');
             $logger->pushHandler(new StreamHandler('php://stdout', LogLevel::DEBUG));
         }
 
@@ -71,10 +72,6 @@ class Browser implements BrowserInterface
 
     public function openPage($url, $theme): BrowserPageInterface
     {
-        if (Config::$devMode) {
-            echo "\nOpen page: {$url}\n";
-        }
-
         if (!isset($this->page)) {
             $this->page = $this->browser->newPage();
             sleep(1);
@@ -85,8 +82,8 @@ class Browser implements BrowserInterface
         try {
             $this->page->goto($url, ['timeout' => 120000, 'waitUntil' => 'networkidle0']);
             sleep(1);
-        } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+        } catch (Exception $e) {
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
 
         return new BrowserPage($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
@@ -97,8 +94,8 @@ class Browser implements BrowserInterface
         try {
             //$this->page->close();
             sleep(2);
-        } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+        } catch (Exception $e) {
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
     }
 
@@ -106,8 +103,8 @@ class Browser implements BrowserInterface
     {
         try {
             $this->browser->close();
-        } catch (\Exception $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error');
+        } catch (Exception $e) {
+            \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
     }
 }

@@ -2,16 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use DOMException;
+use MBMigration\Core\Logger;
+use Exception;
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
-use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
-use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
 class ThreeTopMedia extends Element
 {
@@ -28,7 +24,7 @@ class ThreeTopMedia extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData)
     {
@@ -36,11 +32,11 @@ class ThreeTopMedia extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function three_top_media(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "three_top_media_circle");
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['three-top-media'];
 
@@ -111,7 +107,7 @@ class ThreeTopMedia extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $objBlock)
     {

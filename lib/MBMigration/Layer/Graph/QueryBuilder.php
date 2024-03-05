@@ -2,15 +2,14 @@
 
 namespace MBMigration\Layer\Graph;
 
+use MBMigration\Core\Logger;
+use Exception;
 use MBMigration\Builder\VariableCache;
 use GraphQL\Client;
 use GraphQL\InlineFragment;
 use GraphQL\Mutation;
 use GraphQL\Query;
-use GraphQL\RawObject;
 use GraphQL\Variable;
-use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 
 class QueryBuilder
 {
@@ -32,7 +31,7 @@ class QueryBuilder
     {
         $token = $this->session;
         if (!$token) {
-            Utils::log('Token was not found', 1, 'QueryBuilder');
+            Logger::instance()->info('Token was not found');
         }
 
         $this->client = $this->getClient([
@@ -55,12 +54,12 @@ class QueryBuilder
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function createEditor($title, $url, $hidden = false)
     {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $mutation = (new Mutation('createCollectionEditor'))
@@ -98,7 +97,7 @@ class QueryBuilder
         $showInMenu = true
     ) {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $mutation = (new Mutation('createCollectionType'))
@@ -163,7 +162,7 @@ class QueryBuilder
     public function getCollectionTypes($withFieldsSet = true)
     {
         if (!$this->client) {
-            Utils::log('Client was not init.', 2, 'getCollectionTypes');
+            Logger::instance()->warning('Client was not init.');
         }
 
         static $result;
@@ -226,12 +225,12 @@ class QueryBuilder
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCollectionType($collection_type_id)
     {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $query = (new Query('collectionType'))
@@ -288,7 +287,7 @@ class QueryBuilder
      * @param array $fields
      * @param string $status
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function createCollectionItem(
         $collection_type_id,
@@ -301,7 +300,7 @@ class QueryBuilder
         $pageData = '{"items":[]}'
     ) {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $mutation = (new Mutation('createCollectionItem'))
@@ -348,7 +347,7 @@ class QueryBuilder
         }
 
         if($protectedPage) {
-            $variables['input']['itemPassword'] = "876543";
+            $variables['input']['itemPassword'] = $_ENV['DEFAULT_PAGE_PASSWORD'] ?? "876543";
             $variables['input']['visibility'] = 'passwordProtected';
         }
 
@@ -362,12 +361,12 @@ class QueryBuilder
      * @param int $page
      * @param int $limit
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCollectionItems(array $collection_type_ids, $page = 1, $limit = 1000, $withFields = true)
     {
         if (!$this->client) {
-            Utils::log('Client was not init.', 2, 'getCollectionItems');
+            Logger::instance()->warning('Client was not init.');
         }
 
         $selectionSet = [];
@@ -456,12 +455,12 @@ class QueryBuilder
      * @param int $page
      * @param int $limit
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCollectionItemsByReference($reference, $page = 1, $limit = 1000)
     {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $query = (new Query('referencedCollectionItems'))
@@ -531,7 +530,7 @@ class QueryBuilder
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateCollectionItem(
         $collection_item_id,
@@ -543,7 +542,7 @@ class QueryBuilder
         $seo = null
     ) {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $mutation = (new Mutation('updateCollectionItem'))
@@ -608,12 +607,12 @@ class QueryBuilder
     /**
      * @param $collection_item_id
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCollectionItem($collection_item_id)
     {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $query = (new Query('collectionItem'))
@@ -725,12 +724,12 @@ class QueryBuilder
     /**
      * @param $slug
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCollectionItemBySlug($slug)
     {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $query = (new Query('collectionItemBySlug'))
@@ -797,7 +796,7 @@ class QueryBuilder
     public function getCollectionTypeBySlug($slug)
     {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $query = (new Query('collectionTypeBySlug'))
@@ -821,7 +820,7 @@ class QueryBuilder
      * @param $appUrl
      * @param $token
      * @return array|mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function createCmsApplication($title, $appUrl, array $token)
     {
@@ -946,7 +945,7 @@ class QueryBuilder
     public function getMetafieldByName($name)
     {
         if (!$this->client) {
-            throw new \Exception('Client was not init.');
+            throw new Exception('Client was not init.');
         }
 
         $query = (new Query('metafieldByName'))
@@ -1565,16 +1564,16 @@ class QueryBuilder
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function runQuery($query, $resultsAsArray = false, $variables = [])
     {
         try {
             return $this->client->runQuery($query, $resultsAsArray, $variables);
-        } catch (\Exception $e) {
-            Utils::log('Failed query!! Message:'.json_encode($e->getMessage()), 5, 'runQuery');
-            Utils::MESSAGES_POOL($e->getMessage());
-            throw new \Exception('The client received an error.');
+        } catch (Exception $e) {
+            Logger::instance()->error('Failed query!! Message:'.json_encode($e->getMessage()));
+            Logger::instance()->info($e->getMessage());
+            throw new Exception('The client received an error.');
         }
     }
 

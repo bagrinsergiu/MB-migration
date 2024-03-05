@@ -2,13 +2,13 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use Exception;
+use MBMigration\Core\Logger;
 use DOMException;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
-use MBMigration\Parser\JS;
 
 class Footer extends Element
 {
@@ -39,12 +39,12 @@ class Footer extends Element
 
     /**
      * @throws DOMException
-     * @throws \Exception
+     * @throws Exception
      * @throws GuzzleException
      */
     protected function Footer(): bool
     {
-        Utils::log('Create Footer', 1, "] [createFooter");
+        Logger::instance()->info('Create Footer');
 
         $sectionData = $this->cache->get('mainSection')['footer'];
 
@@ -117,7 +117,7 @@ class Footer extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $objBlock)
     {

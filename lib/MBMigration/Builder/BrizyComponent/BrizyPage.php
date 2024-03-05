@@ -2,14 +2,16 @@
 
 namespace MBMigration\Builder\BrizyComponent;
 
-class BrizyPage implements \JsonSerializable
+use JsonSerializable;
+use Exception;
+class BrizyPage implements JsonSerializable
 {
     private $items;
 
     public function __construct($data = [])
     {
         if (!is_array($data)) {
-            throw new \Exception('Wrong data format provided for BrizyPage');
+            throw new Exception('Wrong data format provided for BrizyPage');
         }
 
         $this->items = $data;

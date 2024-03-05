@@ -2,7 +2,9 @@
 
 namespace MBMigration\Builder\BrizyComponent;
 
-class BrizyComponentPage extends \MBMigration\Builder\BrizyComponent\BrizyComponent implements \JsonSerializable
+use JsonSerializable;
+use Exception;
+class BrizyComponentPage extends BrizyComponent implements JsonSerializable
 {
     private $fields;
 
@@ -42,7 +44,7 @@ class BrizyComponentPage extends \MBMigration\Builder\BrizyComponent\BrizyCompon
     public function get($field, $value)
     {
         if(!isset($this->fields[$field])) {
-            throw new \Exception();
+            throw new Exception();
         }
 
         return $this->fields[$field];

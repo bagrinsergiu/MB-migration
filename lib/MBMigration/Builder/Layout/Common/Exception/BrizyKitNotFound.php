@@ -2,7 +2,8 @@
 
 namespace MBMigration\Builder\Layout\Common\Exception;
 
-class BrizyKitNotFound extends \Exception
+use Exception;
+class BrizyKitNotFound extends Exception
 {
     public function __construct(string $message = "Brizy kit element not found", int $code = 0, ?Throwable $previous = null)
     {

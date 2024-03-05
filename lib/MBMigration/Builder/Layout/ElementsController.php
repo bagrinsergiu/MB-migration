@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout;
 
+use DOMException;
 use Exception;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Head;
@@ -11,7 +12,7 @@ class ElementsController
 {
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public static function getElement($elementName, $jsonKitElements, array $elementData = [])
     {
@@ -34,7 +35,7 @@ class ElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     private static function switchGlobalElements($elementName, $jsonKitElements, $elementData): bool
     {
@@ -51,7 +52,7 @@ class ElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     private static function switchElements($elementName, $jsonKitElements, $elementData){
@@ -113,7 +114,7 @@ class ElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     private static function switchDynamicElements($elementName, $jsonKitElements, $elementData){

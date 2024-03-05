@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements;
 
+use Exception;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\VariableCache;
 
@@ -23,7 +24,7 @@ abstract class DynamicElement extends Element implements DynamicElementInterface
     protected $jsonDecodeAnthem;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(array $ElementOptions = [])
     {

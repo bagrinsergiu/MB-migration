@@ -2,38 +2,26 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice;
 
+use MBMigration\Builder\Layout\Theme\Solstice\DynamicElements\Sermons\ListMediaLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\DynamicElements\Events\EventCalendarLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\DynamicElements\Events\EventListLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\DynamicElements\Events\EventGalleryLayout;
+use DOMException;
 use Exception;
-use MBMigration\Browser\BrowserPageInterface;
-use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
-use MBMigration\Builder\Layout\Common\ElementInterface;
-use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\TopMedia;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\EventCalendarLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\EventGalleryLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\EventListLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\EventTileLayout;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\FullMedia;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\FullText;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\FullWidthForm;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\GridLayout;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Head;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\LeftFormWithText;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\LeftMedia;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\LeftMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\ListLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\ListMediaLayout;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\ThreeTopMedia;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\LivestreamLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\PrayerForm;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\PrayerList;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\RightFormWithText;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\RightMedia;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\RightMediaOverlap;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\SmallGroupsGrid;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\SmallGroupsList;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\TabsLayout;
 
@@ -41,7 +29,7 @@ class SolsticeElementsController
 {
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public static function getElement($elementName, $jsonKitElements, $browserPage, array $elementData = [])
     {
@@ -69,7 +57,7 @@ class SolsticeElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     private static function switchGlobalElements($elementName, $jsonKitElements, $elementData, $browserPage)
     {
@@ -88,7 +76,7 @@ class SolsticeElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     private static function switchElements($elementName, $jsonKitElements, $elementData)
@@ -172,7 +160,7 @@ class SolsticeElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     private static function switchDynamicElements($elementName, $jsonKitElements, $elementData)
@@ -195,7 +183,7 @@ class SolsticeElementsController
 
                 return $element->getElement($elementData);
             case "list_media_layout":
-                $element = new DynamicElements\Sermons\ListMediaLayout();
+                $element = new ListMediaLayout();
 
                 return $element->getElement($elementData);
             case "grid_media_layout":
@@ -204,11 +192,11 @@ class SolsticeElementsController
                 return $element->getElement($elementData);
 
             case "event_calendar_layout":
-                $element = new DynamicElements\Events\EventCalendarLayout();
+                $element = new EventCalendarLayout();
 
                 return $element->getElement($elementData);
             case "event_list_layout":
-                $element = new DynamicElements\Events\EventListLayout();
+                $element = new EventListLayout();
 
                 return $element->getElement($elementData);
             case "event_tile_layout":
@@ -216,7 +204,7 @@ class SolsticeElementsController
 
                 return $element->getElement($elementData);
             case "event_gallery_layout":
-                $element = new DynamicElements\Events\EventGalleryLayout();
+                $element = new EventGalleryLayout();
 
                 return $element->getElement($elementData);
             default:

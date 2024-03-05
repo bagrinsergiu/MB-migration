@@ -2,7 +2,6 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
-use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
 final class ElementContext implements ElementContextInterface

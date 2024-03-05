@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder;
 
+use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
@@ -11,8 +12,8 @@ use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Layout\Common\KitLoader;
 use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
+use Psr\Log\LoggerInterface;
 
 class PageBuilder
 {
@@ -25,11 +26,13 @@ class PageBuilder
      * @var BrizyAPI
      */
     private $brizyAPI;
+    private LoggerInterface $logger;
 
-    public function __construct(BrizyAPI $brizyAPI)
+    public function __construct(BrizyAPI $brizyAPI, LoggerInterface $logger)
     {
         $this->cache = VariableCache::getInstance();
         $this->brizyAPI = $brizyAPI;
+        $this->logger = $logger;
     }
 
     /**
@@ -55,10 +58,10 @@ class PageBuilder
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
         if ($design !== 'Anthem' && $design !== 'Solstice') {
-            $this->browser = BrowserPHP::instance($layoutBasePath);
+            $this->browser = BrowserPHP::instance($layoutBasePath, $this->logger);
             $browserPage = $this->browser->openPage($url, $design);
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-            $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder);
+            $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder, $this->brizyAPI);
             $themeElementFactory = $layoutElementFactory->getFactory($design);
             $brizyMenuEntity = $this->cache->get('menuList');
             $brizyMenuItems = $this->cache->get('brizyMenuItems');
@@ -87,35 +90,24 @@ class PageBuilder
             $pageData = json_encode($brizySections);
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
-
-            Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
-            $this->sendStatus($slug, ExecutionTimer::stop());
-
+            Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
+            Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
             return true;
 
         } else {
-            $this->browser = BrowserPHP::instance($layoutBasePath);
+            $this->browser = BrowserPHP::instance($layoutBasePath, $this->logger);
             $browserPage = $this->browser->openPage($url, $design);
             $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
-                Utils::log('Success Build Page : '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
-                $this->sendStatus($slug, ExecutionTimer::stop());
+                Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
+                Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
                 return true;
             } else {
-                Utils::log('Fail Build Page: '.$itemsID.' | Slug: '.$slug, 1, 'PageBuilder');
+                Logger::instance()->info('Fail Build Page: '.$itemsID.' | Slug: '.$slug);
+
                 return false;
             }
         }
-    }
-
-    private function sendStatus($pageName, $executeTime): void
-    {
-        if (Config::$devMode !== true) {
-            return;
-        }
-        echo " => Current Page: {$pageName} | Status: ".json_encode(
-                $this->cache->get('Status')
-            )."| Time: $executeTime \n";
     }
 
     public function closeBrowser()

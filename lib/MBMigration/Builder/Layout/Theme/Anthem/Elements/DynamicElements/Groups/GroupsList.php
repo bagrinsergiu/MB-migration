@@ -2,9 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Groups;
 
+use DOMException;
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
 class GroupsList
 {
@@ -26,7 +28,7 @@ class GroupsList
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -35,13 +37,13 @@ class GroupsList
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     protected function SmallGroupsList(array $sectionData)
     {
         return
-        Utils::log('Create bloc', 1, "small-groups-list");
+        Logger::instance()->info('Create bloc');
 
         $options = [];
 
@@ -107,7 +109,7 @@ class GroupsList
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $content, $options, $objBlock)
     {

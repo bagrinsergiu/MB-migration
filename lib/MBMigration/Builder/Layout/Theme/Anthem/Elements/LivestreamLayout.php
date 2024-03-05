@@ -2,9 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMException;
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
 class LivestreamLayout extends Element
 {
@@ -26,7 +28,7 @@ class LivestreamLayout extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -35,12 +37,12 @@ class LivestreamLayout extends Element
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     protected function LivestreamLayout(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "full_text");
+        Logger::instance()->info('Create bloc');
 
         $options = [];
 
@@ -102,7 +104,7 @@ class LivestreamLayout extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $objBlock, $style)
     {

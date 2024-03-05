@@ -2,9 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
 class RightMedia extends Element
 {
@@ -27,11 +28,11 @@ class RightMedia extends Element
 
     /**
      * @throws DOMException
-     * @throws \Exception
+     * @throws Exception
      */
     protected function RightMedia(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "right_media");
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
 
         $options = [];

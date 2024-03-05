@@ -2,10 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMException;
+use MBMigration\Core\Logger;
+use Exception;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class ThreeTopMediaCircle extends Element
 {
@@ -22,7 +23,7 @@ class ThreeTopMediaCircle extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData)
     {
@@ -30,11 +31,11 @@ class ThreeTopMediaCircle extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function three_top_media_circle(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "three_top_media_circle");
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['three-top-media-circle'];
 
@@ -148,7 +149,7 @@ class ThreeTopMediaCircle extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $objBlock)
     {

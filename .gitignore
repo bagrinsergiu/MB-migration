@@ -11,3 +11,6 @@ bin/.ssh/*.key
 phpunit.xml
 var/cache/*
 var/log/*
+
+
+lib/MBMigration/Builder/Layout/Theme/*/Assets/dist/*

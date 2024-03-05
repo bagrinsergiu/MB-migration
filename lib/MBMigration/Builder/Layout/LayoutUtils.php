@@ -2,14 +2,14 @@
 
 namespace MBMigration\Builder\Layout;
 
+use MBMigration\Core\Logger;
+use DOMException;
 use DOMDocument;
 use Exception;
 use InvalidArgumentException;
 use MBMigration\Builder\Utils\builderUtils;
 use MBMigration\Builder\Utils\HtmlHandler;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 
 class LayoutUtils extends builderUtils
 {
@@ -313,7 +313,7 @@ class LayoutUtils extends builderUtils
                                 $result[] = ['icon' => $iconNameBrizy, 'href' => $href];
                             }
                         } else {
-                            Utils::log('Icons Attribute not found', 3, "replaceTitleTag");
+                            Logger::instance()->critical('Icons Attribute not found');
                         }
                     }
                 }
@@ -371,7 +371,7 @@ class LayoutUtils extends builderUtils
             if (!$icoName) {
                 $icoName = $this->getIcon($iconCode);
                 if (!$icoName) {
-                    Utils::log('icons were not found: '.$name, 3, "checkExistIcon");
+                    Logger::instance()->critical('icons were not found: '.$name);
 
                     return $result;
                 }
@@ -391,7 +391,7 @@ class LayoutUtils extends builderUtils
                 if ($this->getIcon($hostName) !== false) {
                     $result = $hostName;
                 } else {
-                    Utils::log('icons were not found', 3, "checkExistIcon");
+                    Logger::instance()->critical('icons were not found');
                 }
             }
         }
@@ -704,7 +704,7 @@ class LayoutUtils extends builderUtils
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function replaceString($htmlString, $option = []): array
     {
@@ -734,49 +734,11 @@ class LayoutUtils extends builderUtils
     }
 
     /**
-     * @throws \DOMException
-     */
-    private function replaceDivWithParagraph($html)
-    {
-        $dom = new DOMDocument();
-        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-
-        $divs = $dom->getElementsByTagName('div');
-
-        foreach ($divs as $div) {
-            $p = $dom->createElement('p');
-            foreach ($div->attributes as $attribute) {
-                $p->setAttribute($attribute->name, $attribute->value);
-            }
-
-            while ($div->firstChild) {
-                $child = $div->firstChild;
-                $div->removeChild($child);
-                $p->appendChild($child);
-            }
-
-            $div->parentNode->replaceChild($p, $div);
-        }
-
-        return $dom->saveHTML();
-    }
-
-    protected function removeSemicolon($string)
-    {
-        if (substr($string, -1) === ';') {
-            $string = substr($string, 0, -1);
-        }
-
-        return $string;
-    }
-
-
-    /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function replaceTitleTag($html, $options = [], $type = '', $position = ''): array
     {
-        Utils::log('Replace Title Tag ', 1, "] [replaceTitleTag");
+        Logger::instance()->info('Replace Title Tag ');
         if (empty($html)) {
             return [
                 'text' => '',
@@ -888,11 +850,11 @@ class LayoutUtils extends builderUtils
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     protected function replaceParagraphs($html, $type = '', $position = '', $options = []): array
     {
-        Utils::log('Replace Paragraph', 1, "] [replaceParagraphs");
+        Logger::instance()->info('Replace Paragraph');
         if (empty($html)) {
             return ['text' => ''];
         }
@@ -972,49 +934,12 @@ class LayoutUtils extends builderUtils
         return $result;
     }
 
-    protected function integrationOfTheWrapperItem(array &$block, array $section, string $path): void
-    {
-        if ($section['item_type'] === 'title') {
-            $content = $this->replaceTitleTag($section['content'], 'brz-text-lg-center');
-            $position = 0;
-        } else {
-            $content = $this->replaceParagraphs($section['content'], 'brz-text-lg-center');
-            $position = null;
-        }
-        $wrapper = $this->itemWrapperRichText($content, [], true);
-        $this->insertElementAtPosition($block, $path, $wrapper, $position);
-    }
-
-    protected function marginAndPaddingOffset(&$block, $settings = [])
-    {
-        $imageOffset = ['Bloom'];
-        $designName = $this->cache->get('design', 'settings');
-
-
-        if (in_array($designName, $imageOffset)) {
-            $flags = $this->cache->get('createdFirstSection', 'flags');
-            if (!$flags) {
-                $block['value']['marginTop'] = -200;
-                $block['value']['marginTopSuffix'] = "px";
-                $block['value']['tempMarginTop'] = -200;
-                $block['value']['tempMarginTopSuffix'] = "px";
-                $block['value']['marginType'] = "ungrouped";
-
-                $block['value']['paddingTop'] = 250;
-                $block['value']['paddingTopSuffix'] = "px";
-                $block['value']['tempPaddingTop'] = 250;
-                $block['value']['tempPaddingTopSuffix'] = "px";
-            }
-            $this->cache->update('createdFirstSection', true, 'flags');
-        }
-    }
-
     /**
      * @throws Exception
      */
     protected function loadKit($layoutName = '', $fileName = '')
     {
-        Utils::log('Open file json BlocksKit', 1, "] [loadKit");
+        Logger::instance()->info('Open file json BlocksKit');
         $file = __DIR__;
         if ($fileName === '' && $layoutName === '') {
             $file .= '/globalBlocksKit.json';
@@ -1032,15 +957,15 @@ class LayoutUtils extends builderUtils
             $fileContent = file_get_contents($file);
 
             if (empty($fileContent)) {
-                Utils::log('File '.$file.' empty', 2, "] [loadKit");
+                Logger::instance()->warning('File '.$file.' empty');
                 throw new Exception('File '.$file.' empty');
             }
-            Utils::log('File exist: '.$file, 1, "] [loadKit");
+            Logger::instance()->info('File exist: '.$file);
 
             return json_decode($fileContent, true);
 
         } else {
-            Utils::log('File does not exist. Path: '.$file, 2, "] [loadKit");
+            Logger::instance()->warning('File does not exist. Path: '.$file);
             throw new Exception('File does not exist. Path: '.$file);
         }
     }

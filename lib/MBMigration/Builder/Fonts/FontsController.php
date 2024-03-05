@@ -2,11 +2,12 @@
 
 namespace MBMigration\Builder\Fonts;
 
+use Exception;
+use MBMigration\Core\Logger;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\Utils\builderUtils;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
 class FontsController extends builderUtils
@@ -26,7 +27,7 @@ class FontsController extends builderUtils
     private $cache;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct($projectId)
     {
@@ -38,12 +39,12 @@ class FontsController extends builderUtils
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      * @throws GuzzleException
      */
     public function upLoadFont($fontName): string
     {
-        Utils::log("Create FontName $fontName", 1, "upLoadFont");
+        Logger::instance()->info("Create FontName $fontName");
         $KitFonts = $this->getPathFont($fontName);
         if ($KitFonts) {
             $responseDataAddedNewFont = $this->BrizyApi->createFonts(
@@ -123,12 +124,12 @@ class FontsController extends builderUtils
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getFontsMap(): void
     {
         $this->layoutName = 'FontsController';
-        Utils::log("Download fonts map", 1, "downloadMapFontsFromUrl");
+        Logger::instance()->info("Download fonts map");
         if (Config::$urlJsonKits && Config::$devMode === false) {
             $createUrlForFileFontsMap = Config::$urlJsonKits.'/fonts/fonts.json';
             $this->fontsMap = $this->loadJsonFromUrl($createUrlForFileFontsMap);

@@ -36,9 +36,9 @@ class ElementFactory  extends AbstractThemeElementFactory
     {
         switch ($name) {
             case 'footer':
-                return new Footer($this->blockKit['blocks']['footer'], $this->browserPage);
+                return new Footer($this->blockKit['blocks']['footer'], $this->browserPage,$this->brizyApiClient);
             case 'head':
-                return new Head($this->blockKit['blocks']['menu'], $this->browserPage);
+                return new Head($this->blockKit['blocks']['menu'], $this->browserPage,$this->brizyApiClient);
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $this->browserPage);
             case 'two-right-media-circle':
