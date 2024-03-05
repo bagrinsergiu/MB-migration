@@ -7,7 +7,6 @@ use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\Element\FullTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class FourHorizontalText extends AbstractElement

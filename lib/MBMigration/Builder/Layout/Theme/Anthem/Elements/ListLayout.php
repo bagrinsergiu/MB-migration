@@ -2,11 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMException;
+use Exception;
+use MBMigration\Core\Logger;
 use DOMDocument;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class ListLayout extends Element
 {
@@ -23,7 +24,7 @@ class ListLayout extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -31,12 +32,12 @@ class ListLayout extends Element
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     protected function ListLayout(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "list_layout");
+        Logger::instance()->info('Create bloc');
         $this->cache->set('currentSectionData', $sectionData);
         $decoded = $this->jsonDecode['blocks']['list-layout'];
 

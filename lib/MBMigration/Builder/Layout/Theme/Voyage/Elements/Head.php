@@ -3,11 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\Cacheable;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\Element\HeadElement;
-use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Utils\ColorConverter;
 
 class Head extends HeadElement
 {
@@ -45,20 +41,33 @@ class Head extends HeadElement
         $menuComponent->getValue()->set_iconPosition('right');
     }
 
-    public function getThemeMenuItemSelector(): string
+    public function getThemeMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li:not(.selected) a";
+        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
-    public function getThemeParentMenuItemSelector(): string
+    public function getThemeParentMenuItemSelector(): array
     {
-        return "#main-navigation>ul>li.has-sub>a";
-        //return "#main-navigation>ul>li:has(.sub-navigation):first-child a";
+        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
     }
 
-    public function getThemeSubMenuItemSelector(): string
+    public function getThemeSubMenuItemSelector(): array
     {
-        //return "#main-navigation>ul>li:has(.sub-navigation):first-child .sub-navigation a:first-child";
-        return "#main-navigation>ul>li.has-sub .sub-navigation>li>a";
+        return ["selector" => "#main-navigation>ul>li.has-sub .sub-navigation>li>a", "pseudoEl" => ""];
+    }
+
+    public function getThemeMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getThemeSubMenuItemBGSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.has-sub .sub-navigation", "pseudoEl" => ":before"];
+    }
+
+    public function getThemeMenuItemPaddingSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
     }
 }

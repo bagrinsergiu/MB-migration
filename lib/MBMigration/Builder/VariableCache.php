@@ -2,8 +2,8 @@
 
 namespace MBMigration\Builder;
 
-use MBMigration\Builder\Utils\JsonRepairer;
-use MBMigration\Core\Utils;
+use MBMigration\Core\Logger;
+use InvalidArgumentException;
 
 class VariableCache
 {
@@ -13,7 +13,7 @@ class VariableCache
 
     private function __construct($cachePath)
     {
-        Utils::log('Initialization', 4, 'Cache');
+        Logger::instance()->debug('VariableCache initialization');
         $this->cachePath = rtrim($cachePath, '/');
         $this->cache = ['OBJECTS' => []];
     }
@@ -189,7 +189,7 @@ class VariableCache
         if (is_string($data)) {
             $decodedData = json_decode($data, true);
             if ($decodedData === null && json_last_error() !== JSON_ERROR_NONE) {
-                throw new \InvalidArgumentException('Invalid JSON data');
+                throw new InvalidArgumentException('Invalid JSON data');
             }
             $this->cache = $decodedData;
         } elseif (is_array($data)) {
@@ -199,8 +199,6 @@ class VariableCache
 
     public function init()
     {
-        Utils::log('Initialization', 4, 'Cache');
-
         $this->cache = [];
 
         $this->cache['OBJECTS'] = [];

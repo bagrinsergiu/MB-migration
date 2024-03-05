@@ -2,8 +2,8 @@
 namespace MBMigration\Builder\Utils;
 
 
+use MBMigration\Core\Logger;
 use Exception;
-use MBMigration\Core\Utils;
 
 class builderUtils
 {
@@ -24,18 +24,18 @@ class builderUtils
         curl_close($curl);
 
         if ($response === false) {
-            Utils::log('Download error: ' . json_encode($error), 3, "] [loadJsonFromUrl");
+            Logger::instance()->critical('Download error: ' . json_encode($error));
             throw new Exception('Download error: ' . json_encode($error) . 'url:' . $url);
         }
 
         $data = json_decode($response, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            Utils::log('JSON decoding error: ' . json_encode(json_last_error_msg()), 3, "] [loadJsonFromUrl");
+            Logger::instance()->critical('JSON decoding error: ' . json_encode(json_last_error_msg()));
             throw new Exception('JSON decoding error: ' . json_encode(json_last_error_msg()) . 'url:' . $url);
         }
 
-        Utils::log('JSON success download from: ' . json_encode($url), 1, "] [loadJsonFromUrl");
+        Logger::instance()->info('JSON success download from: ' . json_encode($url));
         return $data;
     }
 

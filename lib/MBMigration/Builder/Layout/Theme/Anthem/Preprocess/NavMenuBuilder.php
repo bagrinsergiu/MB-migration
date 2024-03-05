@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Preprocess;
 
+use MBMigration\Core\Logger;
 use MBMigration\Builder\Utils\TextTools;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -21,7 +22,7 @@ class NavMenuBuilder
 
     public function createMenuStructure(): void
     {
-        Utils::log('Create menu structure', 1, 'createMenuStructure');
+        Logger::instance()->info('Create menu structure');
 
         $parentPages = $this->cache->get('menuList');
         $mainMenu = $this->transformToBrizyMenu($parentPages['list']);

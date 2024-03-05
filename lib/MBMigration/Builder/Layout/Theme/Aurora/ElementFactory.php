@@ -6,10 +6,11 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\ThemeElementFactoryInterface;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 class ElementFactory extends AbstractThemeElementFactory
 {
-    static public function instance($blockKit, BrowserPageInterface $browserPage): ThemeElementFactoryInterface
+    static public function instance($blockKit, BrowserPageInterface $browserPage, BrizyAPI $brizyAPI): ThemeElementFactoryInterface
     {
         static $instance = null;
 
@@ -17,7 +18,7 @@ class ElementFactory extends AbstractThemeElementFactory
             return $instance;
         }
 
-        return $instance = new self($blockKit, $browserPage);
+        return $instance = new self($blockKit, $browserPage, $brizyAPI);
     }
 
     public function getElement($name): ElementInterface

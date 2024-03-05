@@ -2,10 +2,11 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use DOMException;
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
-use MBMigration\Parser\JS;
 
 class FullText extends Element
 {
@@ -27,7 +28,7 @@ class FullText extends Element
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -36,12 +37,12 @@ class FullText extends Element
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     protected function FullText(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "full_text");
+        Logger::instance()->info('Create bloc');
 
         $options = [];
 
@@ -107,7 +108,7 @@ class FullText extends Element
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $objBlock, $style)
     {

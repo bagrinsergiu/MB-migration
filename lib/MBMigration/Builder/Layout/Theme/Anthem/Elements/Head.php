@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPagePHP;
 use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
@@ -9,11 +10,8 @@ use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Menu\MenuHandler;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\PathSlugExtractor;
-use MBMigration\Builder\Utils\UrlBuilder;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
-use MBMigration\Parser\JS;
 
 class Head extends Element
 {
@@ -65,7 +63,7 @@ class Head extends Element
 
     private function Menu($menuList)
     {
-        Utils::log('Create block menu', 1, "] [createMenu");
+        Logger::instance()->info('Create block menu');
 
         $options = [];
 

@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Aurora;
 
+use DOMException;
 use Exception;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\DynamicElements\Events\EventCalendarLayout;
@@ -34,7 +35,7 @@ class AuroraElementsController
 {
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public static function getElement($elementName, $jsonKitElements, array $elementData = [])
     {
@@ -57,7 +58,7 @@ class AuroraElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     private static function switchGlobalElements($elementName, $jsonKitElements, $elementData): bool
     {
@@ -74,7 +75,7 @@ class AuroraElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     private static function switchElements($elementName, $jsonKitElements, $elementData){
@@ -136,7 +137,7 @@ class AuroraElementsController
     }
 
     /**
-     * @throws \DOMException
+     * @throws DOMException
      * @throws Exception
      */
     private static function switchDynamicElements($elementName, $jsonKitElements, $elementData){

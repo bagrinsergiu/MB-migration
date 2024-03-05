@@ -2,15 +2,16 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Forms;
 
+use DOMException;
+use Exception;
+use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElement;
-use MBMigration\Builder\VariableCache;
-use MBMigration\Core\Utils;
 
 class Form extends DynamicElement
 {
     /**
-     * @throws \DOMException
+     * @throws DOMException
      */
     public function getElement(array $elementData = [])
     {
@@ -19,12 +20,12 @@ class Form extends DynamicElement
     }
 
     /**
-     * @throws \DOMException
-     * @throws \Exception
+     * @throws DOMException
+     * @throws Exception
      */
     protected function formElement(array $sectionData)
     {
-        Utils::log('Create bloc', 1, "Form");
+        Logger::instance()->info('Create bloc');
 
         $options = [];
 
@@ -87,7 +88,7 @@ class Form extends DynamicElement
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function textCreation($sectionData, $objBlock)
     {

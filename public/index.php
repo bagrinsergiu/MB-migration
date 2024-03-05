@@ -61,7 +61,8 @@ return static function (array $context, Request $request): Response {
 
     # start the DB tunnel
     try {
-        $migrationPlatform = new \MBMigration\MigrationPlatform($config, $mb_page_slug);
+        $logger = \MBMigration\Core\Logger::initialize($context['LOG_LEVEL'],$context['LOG_FILE_PATH']);
+        $migrationPlatform = new \MBMigration\MigrationPlatform($config, $logger, $mb_page_slug);
         $result = $migrationPlatform->start($mb_project_uuid, $brz_project_id);
     } catch (Exception $e) {
         return new JsonResponse(['error' => $e->getMessage()], 400);

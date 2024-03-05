@@ -3,10 +3,7 @@
 namespace MBMigration\Browser;
 
 use Exception;
-use MBMigration\Core\Utils;
-use Nesk\Puphpeteer\Puppeteer;
 use Nesk\Rialto\Data\JsFunction;
-use Nesk\Rialto\Exceptions\Node\FatalException;
 
 class BrowserPage implements BrowserPageInterface
 {
@@ -46,7 +43,7 @@ class BrowserPage implements BrowserPageInterface
     private function getScriptBody($jsScript): string
     {
         if (!file_exists($this->scriptPath."/".$jsScript)) {
-            throw new \Exception($this->scriptPath."/".$jsScript." not found.");
+            throw new Exception($this->scriptPath."/".$jsScript." not found.");
         }
 
         $code = file_get_contents($this->scriptPath."/".$jsScript)." return output.default; ";

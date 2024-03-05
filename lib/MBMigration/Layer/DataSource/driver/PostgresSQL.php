@@ -2,9 +2,9 @@
 
 namespace MBMigration\Layer\DataSource\driver;
 
+use MBMigration\Core\Logger;
 use Exception;
 use MBMigration\Core\Config;
-use MBMigration\Core\Utils;
 use PDO;
 use PDOException;
 
@@ -17,7 +17,7 @@ class PostgresSQL
      */
     public function __construct()
     {
-        Utils::log('Initialization', 4, 'PostgresSQL');
+        Logger::instance()->debug('PostgresSQL Initialization');
 
         $config = Config::$configPostgreSQL;
 
@@ -33,14 +33,12 @@ class PostgresSQL
             );
 
             $this->connection->setAttribute(PDO::ATTR_TIMEOUT, 20);
-
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            Utils::log('Connection success', 4, 'PostgresSQL');
+            Logger::instance()->debug('Connection success');
         } catch (PDOException $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error', 'PostgresSQL');
+            Logger::instance()->error($e->getMessage());
             throw new Exception("Database connection failed: ".$e->getMessage());
         }
-        Utils::log('READY', 4, 'PostgresSQL Module');
     }
 
     /**
@@ -49,22 +47,19 @@ class PostgresSQL
     public function request($sql)
     {
         if (!$this->connection) {
-            Utils::log('Not connected to the database.', 2, 'PostgresSQL');
-            Utils::MESSAGES_POOL('Not connected to the database', 'error', 'PostgresSQL');
+            Logger::instance()->error('Not connected to the database.');
             throw new Exception("Not connected to the database.");
         }
         try {
             $statement = $this->connection->query($sql);
 
             if (Config::getDevOptions('log_SqlQuery')) {
-                Utils::MESSAGES_POOL('success Request: '.json_encode($sql), 'Request', 'PostgresSQL');
+                Logger::instance()->debug('success Request: '.json_encode($sql));
             }
 
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            Utils::MESSAGES_POOL($e->getMessage(), 'error', 'PostgresSQL');
-            Utils::MESSAGES_POOL('MySql Request: '.json_encode($sql), 'Failed Request', 'PostgresSQL');
-            Utils::log("Query execution : ".$e->getMessage(), 2, 'PostgresSQL');
+            Logger::instance()->error($e->getMessage(),[$sql]);
             throw new Exception("Query execution failed: ".$e->getMessage().' Request: '.json_encode($sql));
         }
     }

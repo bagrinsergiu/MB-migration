@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
 
+use Exception;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
@@ -124,7 +125,7 @@ class Footer extends FooterElement
             $brizyComponent->getValue()
                 ->set_bgColorHex($backgroundColorHex)
                 ->set_bgColorOpacity($backgroundOpacity);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
         }
     }

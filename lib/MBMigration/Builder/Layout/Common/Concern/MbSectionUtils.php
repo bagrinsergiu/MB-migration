@@ -2,12 +2,6 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
-use MBMigration\Browser\BrowserPage;
-use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\BrizyComponent\BrizyComponentValue;
-use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Utils\ColorConverter;
-
 trait MbSectionUtils
 {
     protected function getItemByType($section, $itemType)

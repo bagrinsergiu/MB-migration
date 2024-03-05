@@ -5,13 +5,10 @@ namespace MBMigration\Builder\Layout\Common\Element;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\Cacheable;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\ElementInterface;
-use MBMigration\Builder\Utils\ColorConverter;
-use MBMigration\Layer\Graph\QueryBuilder;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 abstract class FooterElement extends AbstractElement
 {
@@ -20,12 +17,26 @@ abstract class FooterElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
+    protected BrizyAPI $brizyAPIClient;
+
+    public function __construct($brizyKit, BrowserPageInterface $browserPage, BrizyAPI $brizyAPI)
+    {
+        parent::__construct($brizyKit, $browserPage);
+
+        $this->brizyAPIClient = $brizyAPI;
+    }
+
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
             $this->beforeTransformToItem($data);
             $component = $this->internalTransformToItem($data);
             $this->afterTransformToItem($component);
+
+            $position = '{"align":"bottom","top":1,"bottom":1}';
+            $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
+
+            $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
 
             return $component;
         });

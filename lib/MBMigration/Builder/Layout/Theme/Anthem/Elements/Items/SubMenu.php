@@ -7,7 +7,6 @@ use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\Utils\TextTools;
 use MBMigration\Builder\VariableCache;
-use MBMigration\Parser\JS;
 
 class SubMenu extends Element
 {

@@ -107,7 +107,7 @@ class ErrorDump
     private function createDirectory($directoryPath): void
     {
         if (!is_dir($directoryPath)) {
-            Utils::log('Create Directory: ' . $directoryPath, 7, 'createDirectory');
+            Logger::instance()->debug('Create Directory: ' . $directoryPath);
             mkdir($directoryPath, 0777, true);
         }
     }
@@ -162,9 +162,8 @@ class ErrorDump
         fclose($dump_handle);
         $log_entry = date('Y-m-d H:i:s') . ": Error occurred, dump created in file $dump_file\n";
         error_log($log_entry, 3, $this->log_file);
-        Utils::keepItClean();
-        Utils::log('FATAL ' . $this->projectId, 7, 'createDump');
-        Utils::log('Details: ' . $dump_file, 7, 'createDump');
-        Utils::log('', 7, 'END] -= PROCESS =- [END');
+        Logger::instance()->debug('FATAL ' . $this->projectId);
+        Logger::instance()->debug('Details: ' . $dump_file);
+        Logger::instance()->debug('');
     }
 }

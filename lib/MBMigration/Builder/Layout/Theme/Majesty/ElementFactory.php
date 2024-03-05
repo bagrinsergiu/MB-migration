@@ -5,27 +5,10 @@ namespace MBMigration\Builder\Layout\Theme\Majesty;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\EventCalendarLayout;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\EventGridLayout;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\Footer;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\FullMedia;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\FullText;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\ThreeHorizontalText;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\GridLayout;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\Head;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\LeftMedia;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\LeftMediaOverlap;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\ListLayout;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\ListMediaLayout;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\PrayerForm;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\RightMedia;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\RightMediaOverlap;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\SmallGroupsList;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\TabsLayout;
 
 class ElementFactory  extends AbstractThemeElementFactory
 {

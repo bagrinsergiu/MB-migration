@@ -2,7 +2,9 @@
 
 namespace MBMigration\Builder\BrizyComponent;
 
-class BrizyComponentValue implements \JsonSerializable
+use JsonSerializable;
+use Exception;
+class BrizyComponentValue implements JsonSerializable
 {
     private $fields;
     public function __construct($data, $parent = null)
@@ -44,7 +46,7 @@ class BrizyComponentValue implements \JsonSerializable
     public function get($field, $value)
     {
         if (!isset($this->fields[$field])) {
-            throw new \Exception();
+            throw new Exception();
         }
 
         return $this->fields[$field];
