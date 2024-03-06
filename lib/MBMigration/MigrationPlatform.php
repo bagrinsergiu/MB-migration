@@ -176,7 +176,7 @@ class MigrationPlatform
 //        $this->createPalette();
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
-            $this->updateColorSection($mainSection);
+//            $this->updateColorSection($mainSection);
             Logger::instance()->debug('Upload section pictures');
             $mainSection = $this->uploadPicturesFromSections($mainSection);
             $this->cache->set('mainSection', $mainSection);
@@ -645,7 +645,7 @@ class MigrationPlatform
         }
     }
 
-    private function getPisturesUrl($nameImage, $type)
+    private function getPicturesUrl($nameImage, $type): string
     {
         $folder = ['gallery-layout' => '/gallery/slides/'];
 
@@ -737,7 +737,7 @@ class MigrationPlatform
      */
     private function media(&$item, $section): void
     {
-        $downloadImageURL = $this->getPisturesUrl($item['content'], $section);
+        $downloadImageURL = $this->getPicturesUrl($item['content'], $section);
         Logger::instance()->debug('Found new image',[$downloadImageURL]);
         $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
         if ($result) {
@@ -850,17 +850,17 @@ class MigrationPlatform
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 
-    private function updateColorSection(array &$mainSection): void
-    {
-        foreach ($mainSection as $item => &$value) {
-            if (is_array($value)) {
-                $this->updateColorSection($value);
-            }
-            if ($item === 'subpalette') {
-                $value = $this->getColorFromPalette($value);
-            }
-        }
-    }
+//    private function updateColorSection(array &$mainSection): void
+//    {
+//        foreach ($mainSection as $item => &$value) {
+//            if (is_array($value)) {
+//                $this->updateColorSection($value);
+//            }
+//            if ($item === 'subpalette') {
+//                $value = $this->getColorFromPalette($value);
+//            }
+//        }
+//    }
 
 //    private function createPalette(): void
 //    {
