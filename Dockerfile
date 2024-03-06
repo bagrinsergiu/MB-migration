@@ -54,7 +54,10 @@ COPY .docker/nginx/nginx.conf /etc/nginx/sites-enabled/default
 COPY .docker/entrypoint.sh /usr/local/bin/docker-entrypoint
 COPY --from=stage_composer /vendor ./
 COPY . ./
-COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/*/Assets/dist ./
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/dist lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/dist lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/dist lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Ember/Assets/dist lib/MBMigration/Builder/Layout/Theme/Ember/Assets/dist
 
 ENTRYPOINT ["tini", "docker-entrypoint", "--"]
 
