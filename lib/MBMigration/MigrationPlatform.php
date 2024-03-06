@@ -737,6 +737,7 @@ class MigrationPlatform
                     $item['uploadStatus'] = true;
                     $item['imageFileName'] = $result['filename'];
                     $item['content'] = $result['name'];
+                    $item['settings'] = array_merge(json_decode($result['metadata'],true),$item['settings']);
                     Logger::instance()->debug('Success upload image fileName',$result);
                 } else {
                     Logger::instance()->critical('Unexpected answer: '.json_encode($result));

@@ -76,15 +76,31 @@ abstract class GalleryLayout extends AbstractElement
             $brizyComponentValue->set_imageExtension($mbItem['settings']['slide']['extension']);
         }
 
-        $brizyComponentValue->set_imageWidth(1000);
+        $brizyComponentValue->set_widthSuffix('px');
+        $brizyComponentValue->set_heightSuffix('px');
+        $brizyComponentValue->set_mobiletWidthSuffix('px');
+        $brizyComponentValue->set_mobiletHeightSuffix('px');
+        $brizyComponentValue->set_tabletWidthSuffix('px');
+        $brizyComponentValue->set_tabletHeightSuffix('px');
 
         if (isset($mbItem['settings']['slide']['slide_width'])) {
             $brizyComponentValue->set_imageWidth($mbItem['settings']['slide']['slide_width']);
-            $brizyComponentValue->set_widthSuffix('px');
+            $brizyComponentValue->set_tabletWidth($mbItem['settings']['slide']['slide_width']);
+            $brizyComponentValue->set_mobileWidth($mbItem['settings']['slide']['slide_width']);
+        } else {
+            $brizyComponentValue->set_imageWidth($mbItem['settings']['width']);
+            $brizyComponentValue->set_tabletWidth($mbItem['settings']['width']);
+            $brizyComponentValue->set_mobileWidth($mbItem['settings']['width']);
         }
+
         if (isset($mbItem['settings']['slide']['slide_height'])) {
             $brizyComponentValue->set_imageHeight($mbItem['settings']['slide']['slide_height']);
-            $brizyComponentValue->set_heightSuffix('px');
+            $brizyComponentValue->set_tabletHeight($mbItem['settings']['slide']['slide_height']);
+            $brizyComponentValue->set_mobileHeight($mbItem['settings']['slide']['slide_height']);
+        } else {
+            $brizyComponentValue->set_imageHeight($mbItem['settings']['height']);
+            $brizyComponentValue->set_tabletHeight($mbItem['settings']['height']);
+            $brizyComponentValue->set_mobileHeight($mbItem['settings']['height']);
         }
 
         return $brizySectionItem;
@@ -107,7 +123,7 @@ abstract class GalleryLayout extends AbstractElement
             if (filter_var($mbItem['link'], FILTER_VALIDATE_EMAIL)) {
                 $linkType = 'mail';
             }
-            if (filter_var($mbItem['link']  , FILTER_VALIDATE_URL)) {
+            if (filter_var($mbItem['link'], FILTER_VALIDATE_URL)) {
                 $linkType = 'link';
             }
             if ($this->checkPhoneNumber($mbItem['link'])) {
