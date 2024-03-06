@@ -149,20 +149,20 @@ class BrizyAPI extends Utils
         if ($result['status'] > 200) {
             Logger::instance()->warning('Response: '.json_encode($result));
             Logger::instance()->info('Response: '.json_encode($result));
-            throw new Exception('Bad Response from Brizy');
+            throw new Exception('Bad Response from Brizy: '.json_encode($result));
         }
         $resultDecode = json_decode($result['body'], true);
 
         if (!is_array($resultDecode)) {
             Logger::instance()->warning('Bad Response');
             Logger::instance()->info('Bad Response from Brizy'.json_encode($result));
-            throw new Exception('Bad Response from Brizy');
+            throw new Exception('Bad Response from Brizy: '.json_encode($result));
         }
         if (array_key_exists('code', $result)) {
             if ($resultDecode['code'] == 500) {
                 Logger::instance()->error('Error getting token');
                 Logger::instance()->info('Getting token'.json_encode($result));
-                throw new Exception('getting token');
+                throw new Exception('getting token: '.json_encode($result));
             }
         }
 
