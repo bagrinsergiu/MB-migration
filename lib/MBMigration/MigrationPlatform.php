@@ -459,18 +459,6 @@ class MigrationPlatform
         }
     }
 
-    private function getColorFromPalette(string $color)
-    {
-        $subPalette = $this->cache->get('subpalette', 'parameter');
-        foreach ($subPalette as $key => $palette) {
-            if ($key === $color) {
-                return $palette;
-            }
-        }
-
-        return false;
-    }
-
     private function getCollectionItem($slug)
     {
         $ListPages = $this->cache->get('ListPages');
@@ -849,28 +837,6 @@ class MigrationPlatform
 
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
-
-//    private function updateColorSection(array &$mainSection): void
-//    {
-//        foreach ($mainSection as $item => &$value) {
-//            if (is_array($value)) {
-//                $this->updateColorSection($value);
-//            }
-//            if ($item === 'subpalette') {
-//                $value = $this->getColorFromPalette($value);
-//            }
-//        }
-//    }
-
-//    private function createPalette(): void
-//    {
-//        $colorMapper = new ColorMapper();
-//        $colorKit = $this->colorPalette();
-//        $design = $this->cache->get('design', 'settings');
-//        $this->cache->set('subpalette', [], 'parameter');
-//        $subPalette = $colorMapper->getPalette('Anthem', $colorKit);
-//        $this->cache->update('subpalette', $subPalette, 'parameter');
-//    }
 
     /**
      * @throws Exception

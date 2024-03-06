@@ -154,9 +154,6 @@ class MBProjectDataCollector
         }
 
         $parameter = json_decode($siteData['parameter'], true);
-        if (!array_key_exists('palette', $parameter)) {
-            $parameter['palette'] = $this->getPalettes($siteData['palette_uuid']);
-        }
 
         $siteData['parameter'] = $parameter;
         $siteData['fonts'] = $this->getFonts($parameter, $siteData['font_theme_uuid']);
@@ -371,31 +368,6 @@ class MBProjectDataCollector
         return $result;
     }
 
-    /**
-     * @throws Exception
-     */
-    private function getPalettes($paletteUUID): ?array
-    {
-        $palette = null;
-
-        if ($paletteUUID === null) {
-            return $palette;
-        }
-
-        $palettes = $this->db->requestArray("SELECT id from palettes WHERE uuid = '$paletteUUID'");
-        $colorsKit = $this->db->requestArray(
-            "SELECT * from colors WHERE palette_id = '".$palettes[0]['id']."' ORDER BY position"
-        );
-        foreach ($colorsKit as $color) {
-            $palette[] = [
-                'tag' => $color['tag'],
-                'color' => $color['color'],
-            ];
-        }
-
-        return $palette;
-    }
-
     public function getPages(): array
     {
         Logger::instance()->info('Get parent pages');
@@ -580,10 +552,6 @@ class MBProjectDataCollector
 //                "SELECT name, category, settings FROM section_layouts WHERE uuid  = '".$pageSections['section_layout_uuid']."'"
 //            );
             $settings = json_decode($pageSections['settings'], true);
-
-            if (!array_key_exists('color', $settings)) {
-                $settings['color'] = $this->cache->get('subpalette', 'parameter')['subpalette1'];
-            }
 
             $result[] = [
                 'id' => $pageSections['id'],
