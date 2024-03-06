@@ -76,6 +76,8 @@ abstract class GalleryLayout extends AbstractElement
             $brizyComponentValue->set_imageExtension($mbItem['settings']['slide']['extension']);
         }
 
+        $brizyComponentValue->set_imageWidth(1000);
+
         if (isset($mbItem['settings']['slide']['slide_width'])) {
             $brizyComponentValue->set_imageWidth($mbItem['settings']['slide']['slide_width']);
             $brizyComponentValue->set_widthSuffix('px');

@@ -143,8 +143,6 @@ class BrizyAPI extends Utils
     {
         $nameFunction = __FUNCTION__;
 
-        Logger::instance()->info('get Token');
-
         $result = $this->httpClient('GET', $this->createUrlApiProject($projectid));
         if ($result['status'] > 200) {
             Logger::instance()->warning('Response: '.json_encode($result));

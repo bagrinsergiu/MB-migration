@@ -663,18 +663,15 @@ class MigrationPlatform
      */
     private function uploadPicturesFromSections(array $sectionsItems): array
     {
-        Logger::instance()->info('Start upload image');
         foreach ($sectionsItems as &$section) {
             if ($this->checkArrayPath($section, 'settings/sections/background/photo')) {
                 if ($section['settings']['sections']['background']['photo'] != null) {
-                    Logger::instance()->info('Found background image');
                     $result = $this->brizyApi->createMedia(
                         $section['settings']['sections']['background']['photo'],
                         $this->projectId
                     );
                     if ($result) {
                         $result = json_decode($result['body'], true);
-                        Logger::instance()->debug('Upload image response: '.json_encode($result));
                         $section['settings']['sections']['background']['photo'] = $result['name'];
                         $section['settings']['sections']['background']['filename'] = $result['filename'];
                         Logger::instance()->debug('Success upload image',$result);
@@ -686,14 +683,12 @@ class MigrationPlatform
 
             if ($this->checkArrayPath($section, 'settings/background/photo')) {
                 if ($section['settings']['background']['photo'] != null) {
-                    Logger::instance()->info('Found background image');
                     $result = $this->brizyApi->createMedia(
                         $section['settings']['background']['photo'],
                         $this->projectId
                     );
                     if ($result) {
                         $result = json_decode($result['body'], true);
-                        Logger::instance()->info('Upload image response: '.json_encode($result));
                         $section['settings']['background']['photo'] = $result['name'];
                         $section['settings']['background']['filename'] = $result['filename'];
                         Logger::instance()->info('Success upload image fileName',$result);
@@ -739,7 +734,6 @@ class MigrationPlatform
             if (array_key_exists('status', $result)) {
                 if ($result['status'] == 201) {
                     $result = json_decode($result['body'], true);
-                    Logger::instance()->debug('Upload image response: '.json_encode($result));
                     $item['uploadStatus'] = true;
                     $item['imageFileName'] = $result['filename'];
                     $item['content'] = $result['name'];
