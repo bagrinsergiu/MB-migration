@@ -162,7 +162,7 @@ class BrizyAPI extends Utils
             if ($resultDecode['code'] == 500) {
                 Logger::instance()->error('Error getting token');
                 Logger::instance()->info('Getting token'.json_encode($result));
-                throw new Exception('getting token');
+                throw new Exception('getting token: '.json_encode($result));
             }
         }
 
