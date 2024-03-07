@@ -611,16 +611,16 @@ class MigrationPlatform
 
         } else {
             // delete $this->buildPage only
-            if ($existingBrizyPages['listPages'][$this->buildPage]) {
-                $this->graphApiBrizy->deleteCollectionItem($this->buildPage);
-            }
+//            if ($existingBrizyPages['listPages'][$this->buildPage]) {
+//                $this->QueryBuilder->deleteCollectionItem($this->buildPage);
+//            }
         }
 
         foreach ($mbPages as $i => &$page) {
             $title = $projectTitle.' | '.$page['name'];
 
             if (!empty($page['child'])) {
-                $this->createBlankPages($page['child'], $projectTitle, false, $projectPages);
+                $this->createBlankPages($page['child'], $projectTitle, false, $existingBrizyPages);
             }
 
             // create the page if it is not found in the current page list
