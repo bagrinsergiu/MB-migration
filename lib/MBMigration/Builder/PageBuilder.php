@@ -41,9 +41,11 @@ class PageBuilder
     public function run($preparedSectionOfThePage): bool
     {
         $itemsID = $this->cache->get('currentPageOnWork');
+        $brizyContainerId =  $this->cache->get('container',);
         $mainCollectionType = $this->cache->get('mainCollectionType');
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
+        $fontController = new FontsController($brizyContainerId);
 
         $fontFamily = FontsController::getFontsFamily();
 
@@ -61,7 +63,7 @@ class PageBuilder
             $this->browser = BrowserPHP::instance($layoutBasePath, $this->logger);
             $browserPage = $this->browser->openPage($url, $design);
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-            $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder, $this->brizyAPI);
+            $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder, $this->brizyAPI, $fontController);
             $themeElementFactory = $layoutElementFactory->getFactory($design);
             $brizyMenuEntity = $this->cache->get('menuList');
             $brizyMenuItems = $this->cache->get('brizyMenuItems');

@@ -241,6 +241,10 @@ class BrizyAPI extends Utils
         return false;
     }
 
+    public function deletePage($url) {
+        $requestData['project'] = Utils::$cache->get('projectId_Brizy');
+    }
+
     public function deleteAllGlobalBlocks()
     {
         $url = $this->createPrivateUrlAPI('globalBlocks');

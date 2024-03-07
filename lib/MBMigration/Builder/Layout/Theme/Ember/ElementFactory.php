@@ -38,7 +38,7 @@ class ElementFactory extends AbstractThemeElementFactory
     {
         switch ($name) {
             case 'head':
-                return new Head($this->blockKit['blocks']['menu'], $this->browserPage,$this->brizyApiClient);
+                return new Head($this->blockKit['blocks']['menu'], $this->browserPage,$this->brizyApiClient, $this->fontsController);
             case 'footer':
                 return new Footer($this->blockKit['blocks']['footer'], $this->browserPage,$this->brizyApiClient);
             case 'left-media':

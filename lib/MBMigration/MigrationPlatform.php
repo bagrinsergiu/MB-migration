@@ -167,7 +167,9 @@ class MigrationPlatform
         $parentPages = $this->parser->getPages();
 
         if (empty($parentPages)) {
-            Logger::instance()->info('MB project not found, migration did not start, process completed without errors!');
+            Logger::instance()->info(
+                'MB project not found, migration did not start, process completed without errors!'
+            );
             $this->logFinalProcess($this->startTime, false);
 
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
@@ -264,12 +266,12 @@ class MigrationPlatform
      */
     private function launch($parentPages): void
     {
-        foreach ($parentPages as $i=>$page) {
+        foreach ($parentPages as $i => $page) {
 //            if($page['hidden']){ continue; }
 
             if (!empty($page['parentSettings'])) {
                 $settings = json_decode($page['parentSettings'], true);
-                if (array_key_exists('external_url', $settings)  ) {
+                if (array_key_exists('external_url', $settings)) {
                     continue;
                 }
 
@@ -319,9 +321,9 @@ class MigrationPlatform
 
             $newPage = $this->creteNewPage($page['slug'], $page['name'], $title, $page['protectedPage']);
             if (!$newPage) {
-                Logger::instance()->warning('Failed created page',$page);
+                Logger::instance()->warning('Failed created page', $page);
             } else {
-                Logger::instance()->info('Success created page',$page);
+                Logger::instance()->info('Success created page', $page);
                 $collectionItem = $newPage;
             }
         }
@@ -331,14 +333,18 @@ class MigrationPlatform
         if (!empty($preparedSectionOfThePage)) {
             $this->runPageBuilder($preparedSectionOfThePage);
         } else {
-            Logger::instance()->info('Set default page template | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
+            Logger::instance()->info(
+                'Set default page template | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
+            );
             $this->runPageBuilder($preparedSectionOfThePage);
         }
     }
 
     private function getItemsFromPage(array $page)
     {
-        Logger::instance()->info('Parent Page id: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
+        Logger::instance()->info(
+            'Parent Page id: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
+        );
 
         $child = $this->parser->getSectionsPage($page['id']);
         if (!empty($child)) {
@@ -370,7 +376,9 @@ class MigrationPlatform
             }
             $result = $sections;
         } else {
-            Logger::instance()->info('Empty parent page | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']);
+            Logger::instance()->info(
+                'Empty parent page | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
+            );
             $result = false;
         }
 
@@ -587,57 +595,59 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function createBlankPages(array &$parentPages, $projectTitle, $mainLevel, $projectPages)
+    private function createBlankPages(array &$mbPages, $projectTitle, $mainLevel, $existingBrizyPages)
     {
-        $i = 0;
-        foreach ($parentPages as &$page) {
-            $createdPage = false;
+        if (!$this->buildPage) {
+            // delete all naher
+            Logger::instance()->debug('Delete all collection items');
+            foreach ($existingBrizyPages['listPages'] as $slug => $uri) {
+                try {
+                    $this->QueryBuilder->deleteCollectionItem($uri);
+                } catch (\Exception $e) {
+                    Logger::instance()->warning('Failed to delete the '.$uri.' '.$e->getMessage());
+                }
+            }
+            $existingBrizyPages['listPages'] = [];
+
+        } else {
+            // delete $this->buildPage only
+            if ($existingBrizyPages['listPages'][$this->buildPage]) {
+                $this->graphApiBrizy->deleteCollectionItem($this->buildPage);
+            }
+        }
+
+        foreach ($mbPages as $i => &$page) {
             $title = $projectTitle.' | '.$page['name'];
 
             if (!empty($page['child'])) {
-                $this->createBlankPages($page['child'],  $projectTitle, false, $projectPages);
+                $this->createBlankPages($page['child'], $projectTitle, false, $projectPages);
             }
 
-            if ($page['landing'] == true) {
-                if ($i != 0 || !$mainLevel) {
-                    if (!array_key_exists($page['slug'], $projectPages['listPages'])) {
-                        $newPage = $this->creteNewPage(
-                            $page['slug'],
-                            $page['name'],
-                            $title,
-                            $page['protectedPage']
-                        );
-                        $createdPage = true;
+            // create the page if it is not found in the current page list
+            if (!isset($existingBrizyPages['listPages'][$this->buildPage])) {
+
+                // create the page
+                if ($page['landing'] == true) {
+                    $newPage = $this->creteNewPage(
+                        $page['slug'],
+                        $page['name'],
+                        $title,
+                        $page['protectedPage']
+                    );
+                    if ($newPage === false) {
+                        Logger::instance()->warning('Failed created page', $page);
                     } else {
-                        $newPage = $projectPages['listPages'][$page['slug']];
+                        Logger::instance()->debug('Success created page', $page);
+                        $page['collection'] = $newPage;
                     }
                 } else {
-                    if (!array_key_exists($page['slug'], $projectPages['listPages'])) {
-                        $updateNameResult = $this->renameSlug(
-                            $projectPages['listPages'][$page['slug']],
-                            $page['slug'],
-                            $page['name'],
-                            $title
-                        );
-                        $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
-                    } else {
-                        $newPage = $projectPages['listPages'][$page['slug']];
+                    if (!empty($page['child'])) {
+                        $page['collection'] = $page['child'][0]['collection'];
                     }
                 }
-
-                if ($createdPage) {
-                    Logger::instance()->info('Success created page',$page);
-                }
-
-                $page['collection'] = $newPage;
-            } else {
-                if (!empty($page['child'])) {
-                    $page['collection'] = $page['child'][0]['collection'];
-                }
             }
-
-            $i++;
         }
+
     }
 
     private function getPicturesUrl($nameImage, $type): string
@@ -663,6 +673,7 @@ class MigrationPlatform
      */
     private function uploadPicturesFromSections(array $sectionsItems): array
     {
+        Logger::instance()->debug('Start uploading section images');
         foreach ($sectionsItems as &$section) {
             if ($this->checkArrayPath($section, 'settings/sections/background/photo')) {
                 if ($section['settings']['sections']['background']['photo'] != null) {
@@ -674,7 +685,7 @@ class MigrationPlatform
                         $result = json_decode($result['body'], true);
                         $section['settings']['sections']['background']['photo'] = $result['name'];
                         $section['settings']['sections']['background']['filename'] = $result['filename'];
-                        Logger::instance()->debug('Success upload image',$result);
+                        Logger::instance()->debug('Success upload image', $result);
                     }
                 } else {
                     $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
@@ -691,7 +702,7 @@ class MigrationPlatform
                         $result = json_decode($result['body'], true);
                         $section['settings']['background']['photo'] = $result['name'];
                         $section['settings']['background']['filename'] = $result['filename'];
-                        Logger::instance()->info('Success upload image fileName',$result);
+                        Logger::instance()->info('Success upload image fileName', $result);
                     }
                 } else {
                     $this->checkItemForMediaFiles($section['items'], $section['typeSection']);
@@ -728,7 +739,7 @@ class MigrationPlatform
     private function media(&$item, $section): void
     {
         $downloadImageURL = $this->getPicturesUrl($item['content'], $section);
-        Logger::instance()->debug('Found new image',[$downloadImageURL]);
+        Logger::instance()->debug('Found new image', [$downloadImageURL]);
         $result = $this->brizyApi->createMedia($downloadImageURL, $this->projectId);
         if ($result) {
             if (array_key_exists('status', $result)) {
@@ -738,7 +749,7 @@ class MigrationPlatform
                     $item['imageFileName'] = $result['filename'];
                     $item['content'] = $result['name'];
                     $item['settings'] = array_merge(json_decode($result['metadata'],true),$item['settings']);
-                    Logger::instance()->debug('Success upload image fileName',$result);
+                    Logger::instance()->debug('Success upload image fileName', $result);
                 } else {
                     Logger::instance()->critical('Unexpected answer: '.json_encode($result));
                 }
@@ -817,12 +828,12 @@ class MigrationPlatform
     private function createDirectory($directoryPath): void
     {
         if (!is_dir($directoryPath)) {
-            Logger::instance()->debug('Create Directory: ' . $directoryPath);
+            Logger::instance()->debug('Create Directory: '.$directoryPath);
 
-            $result = shell_exec("mkdir -p " . escapeshellarg($directoryPath));
+            $result = shell_exec("mkdir -p ".escapeshellarg($directoryPath));
 
             if ($result !== null) {
-                Logger::instance()->critical('Error creating directory: ' . $result);
+                Logger::instance()->critical('Error creating directory: '.$result);
             }
 
             if (!is_dir($directoryPath)) {

@@ -117,6 +117,13 @@ final class ThemeContext implements ThemeContextInterface
         return $this->families;
     }
 
+    public function setFamilies($families): self
+    {
+        $this->families = $families;
+
+        return $this;
+    }
+
     public function getDefaultFamily(): string
     {
         return $this->defaultFamily;

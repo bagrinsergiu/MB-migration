@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Common\Element;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\Cacheable;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
@@ -16,12 +17,18 @@ abstract class HeadElement extends AbstractElement
     use SectionStylesAble;
 
     protected BrizyAPI $brizyAPIClient;
+    private FontsController $fontsController;
 
-    public function __construct($brizyKit, BrowserPageInterface $browserPage, BrizyAPI $brizyAPI)
-    {
+    public function __construct(
+        $brizyKit,
+        BrowserPageInterface $browserPage,
+        BrizyAPI $brizyAPI,
+        FontsController $fontsController
+    ) {
         parent::__construct($brizyKit, $browserPage);
 
         $this->brizyAPIClient = $brizyAPI;
+        $this->fontsController = $fontsController;
     }
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
@@ -46,7 +53,8 @@ abstract class HeadElement extends AbstractElement
         $headStyles = $this->extractBlockBrowserData(
             $data->getMbSection()['sectionId'],
             $data->getFontFamilies(),
-            $data->getDefaultFontFamily()
+            $data->getDefaultFontFamily(),
+            $data
         );
 
         $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -165,7 +173,8 @@ abstract class HeadElement extends AbstractElement
     protected function extractBlockBrowserData(
         $sectionId,
         $families,
-        $defaultFamilies
+        $defaultFamilies,
+        ElementContextInterface $elementContext
     ): array {
         $hoverMenuItemStyles = [];
         $hoverMenuSubItemStyles = [];
@@ -180,6 +189,27 @@ abstract class HeadElement extends AbstractElement
         );
 
         $menuItemSelector = $this->getThemeMenuItemSelector();
+        $menuFont = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $menuItemSelector['selector'],
+                'styleProperties' => ['font-family'],
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
+            ]
+        );
+
+        // check if the font exists and upload it if not.
+        $fontFamily = $this->transliterateFontFamily($menuFont['data']['font-family']);
+        if (!isset($families[$fontFamily])) {
+            $fontName = $this->fisrtFontFamily($menuFont['data']['font-family']);
+            $uid = $this->fontsController->upLoadFont($fontName);
+            $families[$fontFamily] = $uid;
+            $elementContext->getThemeContext()->setFamilies($families);
+        }
+        $elementContext->getThemeContext()->setFamilies($families);
+
+        // -------------------------------------
         $menuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
             'itemSelector' => $menuItemSelector,
             'itemBgSelector' => $this->getThemeMenuItemBgSelector(),

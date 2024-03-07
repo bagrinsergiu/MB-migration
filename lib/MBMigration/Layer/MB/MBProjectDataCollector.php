@@ -112,7 +112,7 @@ class MBProjectDataCollector
         $uuidPattern = '/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/';
 
         if (!preg_match($uuidPattern, $uuid)) {
-            Logger::instance()->info(self::trace(0)."Invalid UUID: $uuid");
+            Logger::instance()->error(self::trace(0)."Invalid UUID: $uuid");
             throw new Exception("Invalid UUID: $uuid");
         }
     }
@@ -664,7 +664,7 @@ class MBProjectDataCollector
             "
         );
         foreach ($requestItemsFromSection as $sectionsItems) {
-            Logger::instance()->info('Get item | id: '.$sectionsItems['id'].' from section id: '.$sectionId['id']);
+            Logger::instance()->debug('Get item | id: '.$sectionsItems['id'].' from section id: '.$sectionId['id']);
             $settings = '';
             $uploadedFont = [];
 

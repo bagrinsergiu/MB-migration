@@ -28,7 +28,7 @@ abstract class GalleryLayout extends AbstractElement
         $arrows = $mbSection['settings']['sections']['gallery']['arrows'] ?? true;
         $markers = $mbSection['settings']['sections']['gallery']['markers'] ?? true;
         $autoplay = count($mbSection['items']) <= 1 ? false : $declaredAutoplay;
-        $animation = $mbSection['settings']['sections']['gallery']['transition'] ?? 'Slide';
+        //$animation = $mbSection['settings']['sections']['gallery']['transition'] ?? 'Slide';
 
         $slideDuration = 0.5;
         $transitionDuration = 0.1;

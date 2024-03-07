@@ -2,6 +2,7 @@
 
 namespace MBMigration\Layer\Graph;
 
+use GraphQL\Results;
 use MBMigration\Core\Logger;
 use Exception;
 use MBMigration\Builder\VariableCache;
@@ -167,8 +168,9 @@ class QueryBuilder
 
         static $result;
 
-        if(!empty($result))
+        if (!empty($result)) {
             return $result;
+        }
 
         $query = (new Query('collectionTypes'))
             ->setOperationName('collectionTypes')
@@ -346,7 +348,7 @@ class QueryBuilder
             $variables['input']['seo'] = $seoValue;
         }
 
-        if($protectedPage) {
+        if ($protectedPage) {
             $variables['input']['itemPassword'] = $_ENV['DEFAULT_PAGE_PASSWORD'] ?? "876543";
             $variables['input']['visibility'] = 'passwordProtected';
         }
@@ -354,6 +356,41 @@ class QueryBuilder
         $results = $this->runQuery($mutation, true, $variables);
 
         return $results->getData()['createCollectionItem']['collectionItem'];
+    }
+
+    public function deleteCollectionItem($collectionItemUri)
+    {
+        if (!$this->client) {
+            Logger::instance()->warning('Client was not init.');
+        }
+
+        $mutation = (new Mutation('deleteCollectionItem'))
+            ->setOperationName('deleteCollectionItem')
+            ->setVariables([new Variable('input', 'deleteCollectionItemInput', true)])
+            ->setArguments(['input' => '$input'])
+            ->setSelectionSet(
+                [
+                    (new Query('collectionItem'))->setSelectionSet(
+                        [
+                            'id',
+                        ]
+                    ),
+                ]
+            );
+
+        $variables = [
+            'input' => [
+                'id' => $collectionItemUri,
+            ],
+        ];
+        $t = (string)$mutation;
+
+        /**
+         * @var Results $results ;
+         */
+        $results = $this->runQuery($mutation, true, $variables);
+
+        return $results->getData()['deleteCollectionItem']['collectionItem'];
     }
 
     /**
@@ -1568,12 +1605,7 @@ class QueryBuilder
      */
     private function runQuery($query, $resultsAsArray = false, $variables = [])
     {
-        try {
-            return $this->client->runQuery($query, $resultsAsArray, $variables);
-        } catch (Exception $e) {
-            Logger::instance()->error('Failed query!! Message:'.$e->getMessage());
-            throw new Exception('The client received an error.');
-        }
+        return $this->client->runQuery($query, $resultsAsArray, $variables);
     }
 
     public function cloneData($source, $target, array $token)
