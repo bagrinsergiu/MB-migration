@@ -4,8 +4,10 @@ namespace MBMigration\Builder\Layout\Common;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyPage;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Core\Logger;
 
 abstract class AbstractTheme implements ThemeInterface
 {
@@ -65,8 +67,8 @@ abstract class AbstractTheme implements ThemeInterface
 
                 $brizySection = $element->transformToItem($elementContext);
                 $brizyPage->addItem($brizySection);
-            } catch (ElementNotFound|BrowserScriptException $e) {
-                printf("\nException: %s", $e->getMessage());
+            } catch (ElementNotFound|BrowserScriptException|BadJsonProvided $e) {
+                Logger::instance()->error( $e->getMessage(), $e->getTrace() );
                 continue;
             }
         }

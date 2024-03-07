@@ -87,7 +87,7 @@ abstract class GalleryLayout extends AbstractElement
             $brizyComponentValue->set_imageWidth($mbItem['settings']['slide']['slide_width']);
             $brizyComponentValue->set_tabletWidth($mbItem['settings']['slide']['slide_width']);
             $brizyComponentValue->set_mobileWidth($mbItem['settings']['slide']['slide_width']);
-        } else {
+        } elseif (isset($mbItem['settings']['width'])) {
             $brizyComponentValue->set_imageWidth($mbItem['settings']['width']);
             $brizyComponentValue->set_tabletWidth($mbItem['settings']['width']);
             $brizyComponentValue->set_mobileWidth($mbItem['settings']['width']);
@@ -97,7 +97,7 @@ abstract class GalleryLayout extends AbstractElement
             $brizyComponentValue->set_imageHeight($mbItem['settings']['slide']['slide_height']);
             $brizyComponentValue->set_tabletHeight($mbItem['settings']['slide']['slide_height']);
             $brizyComponentValue->set_mobileHeight($mbItem['settings']['slide']['slide_height']);
-        } else {
+        } elseif (isset($mbItem['settings']['height'])) {
             $brizyComponentValue->set_imageHeight($mbItem['settings']['height']);
             $brizyComponentValue->set_tabletHeight($mbItem['settings']['height']);
             $brizyComponentValue->set_mobileHeight($mbItem['settings']['height']);

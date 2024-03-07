@@ -297,6 +297,7 @@ class QueryBuilder
         $title = null,
         $seo = null,
         bool $protectedPage = false,
+        $isHome=false,
         $status = 'published',
         array $fields = [],
         $pageData = '{"items":[]}'
@@ -337,6 +338,7 @@ class QueryBuilder
                 'status' => $status,
                 'fields' => $fields,
                 'pageData' => $pageData,
+                'isHomepage' => $isHome,
             ],
         ];
 

@@ -184,14 +184,16 @@ class MigrationPlatform
             $this->cache->set('mainSection', $mainSection);
         }
 
-        if (true || !$this->cache->get('menuList')) {
+        if (!$this->cache->get('menuList')) {
             $projectTitle = $this->cache->get('settings')['title'];
             Logger::instance()->info('Start create blank pages');
+            $existingBrizyPages = $this->brizyApi->getAllProjectPages();
+            $existingBrizyPages = $this->deleteAllBrizyCollectionItems($existingBrizyPages);
             $this->createBlankPages(
                 $parentPages,
                 $projectTitle,
                 true,
-                $this->brizyApi->getAllProjectPages()
+                $existingBrizyPages
             );
             $this->cache->set('menuList', [
                 'id' => null,
@@ -330,6 +332,8 @@ class MigrationPlatform
 
         $this->setCurrentPageOnWork($collectionItem);
 
+        Logger::instance()->info('Start Builder for page',$page);
+
         if (!empty($preparedSectionOfThePage)) {
             $this->runPageBuilder($preparedSectionOfThePage);
         } else {
@@ -393,6 +397,7 @@ class MigrationPlatform
         Logger::instance()->info('Create menu structure');
 
         $parentPages = $this->cache->get('menuList');
+
         $design = $this->cache->get('design');
         $brizyProject = $this->cache->get('projectId_Brizy');
         $fonts = $this->cache->get('fonts', 'settings');
@@ -412,6 +417,7 @@ class MigrationPlatform
             'list' => $parentPages['list'],
             'data' => $result['data'] ?? '',
         ]);
+
     }
 
     private function transformToBrizyMenu(array $parentMenu): array
@@ -526,20 +532,30 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function creteNewPage($slug, $title, $seoTitle, $protectedPage = false, $setActivePage = true)
-    {
-        if ($this->pageCheck($slug)) {
-            Logger::instance()->debug('Request to create a new page: '.$slug);
-            $collectionItem = $this->QueryBuilder->createCollectionItem(
-                $this->cache->get('mainCollectionType'),
-                $slug,
-                $title,
-                $seoTitle,
-                $protectedPage
-            );
-            $slug = $collectionItem['slug']; // the slug can be renamed as brizy has some restrictions like slug: blog.
-            $this->getAllPage();
+    private function creteNewPage(
+        $slug,
+        $title,
+        $seoTitle,
+        $protectedPage = false,
+        $setActivePage = true,
+        $isHome = false
+    ) {
+        Logger::instance()->debug('Request to create a new page: '.$slug);
+        $collectionItem = $this->QueryBuilder->createCollectionItem(
+            $this->cache->get('mainCollectionType'),
+            $slug,
+            $title,
+            $seoTitle,
+            $protectedPage,
+            $isHome
+        );
+
+        if ($isHome) {
+            $this->brizyApi->getProjectHomePage($this->projectID_Brizy, $collectionItem['id']);
         }
+
+        $slug = $collectionItem['slug']; // the slug can be renamed as brizy has some restrictions like slug: blog.
+        $this->getAllPage();
 
         $mainCollectionItem = $this->getCollectionItem($slug);
         if ($mainCollectionItem) {
@@ -556,46 +572,11 @@ class MigrationPlatform
     }
 
     /**
+     * @param $existingBrizyPages
+     * @return mixed
      * @throws Exception
      */
-    private function renameSlug($itemsID, $slug, string $title, string $seoTitle)
-    {
-        $seo = [
-            'enableIndexing' => true,
-            'title' => $seoTitle,
-        ];
-
-        return $this->QueryBuilder->updateCollectionItem(
-            $itemsID,
-            $slug,
-            [],
-            'published',
-            [],
-            $title,
-            $seo);
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function runPageBuilder($preparedSectionOfThePage, $defaultPage = false): bool
-    {
-
-        if (!$defaultPage) {
-            Logger::instance()->info('Start Builder');
-        } else {
-            Logger::instance()->info('Start Builder | create default Page');
-        }
-
-        $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
-
-        return $this->PageBuilder->run($preparedSectionOfThePage);
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function createBlankPages(array &$mbPages, $projectTitle, $mainLevel, $existingBrizyPages)
+    protected function deleteAllBrizyCollectionItems($existingBrizyPages)
     {
         if (!$this->buildPage) {
             // delete all naher
@@ -616,6 +597,46 @@ class MigrationPlatform
 //            }
         }
 
+        return $existingBrizyPages;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function renameSlug($itemsID, $slug, string $title, string $seoTitle)
+    {
+        $seo = [
+            'enableIndexing' => true,
+            'title' => $seoTitle,
+        ];
+
+        return $this->QueryBuilder->updateCollectionItem(
+            $itemsID,
+            $slug,
+            [],
+            'published',
+            [],
+            $title,
+            $seo
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function runPageBuilder($preparedSectionOfThePage, $defaultPage = false): bool
+    {
+
+        $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
+
+        return $this->PageBuilder->run($preparedSectionOfThePage);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function createBlankPages(array &$mbPages, $projectTitle, $mainLevel, $existingBrizyPages)
+    {
         foreach ($mbPages as $i => &$page) {
             $title = $projectTitle.' | '.$page['name'];
 
@@ -624,28 +645,30 @@ class MigrationPlatform
             }
 
             // create the page if it is not found in the current page list
-            if (!isset($existingBrizyPages['listPages'][$this->buildPage])) {
+            //if (!isset($existingBrizyPages['listPages'][$this->buildPage])) {
+            // create the page
+            if ($page['landing'] == true) {
+                $newPage = $this->creteNewPage(
+                    $page['slug'],
+                    $page['name'],
+                    $title,
+                    $page['protectedPage'],
+                    false,
+                    $page['position'] == 1 && !$page['parent_id'] && $page['landing']
+                );
 
-                // create the page
-                if ($page['landing'] == true) {
-                    $newPage = $this->creteNewPage(
-                        $page['slug'],
-                        $page['name'],
-                        $title,
-                        $page['protectedPage']
-                    );
-                    if ($newPage === false) {
-                        Logger::instance()->warning('Failed created page', $page);
-                    } else {
-                        Logger::instance()->debug('Success created page', $page);
-                        $page['collection'] = $newPage;
-                    }
+                if ($newPage === false) {
+                    Logger::instance()->warning('Failed created page', $page);
                 } else {
-                    if (!empty($page['child'])) {
-                        $page['collection'] = $page['child'][0]['collection'];
-                    }
+                    Logger::instance()->debug('Success created page', $page);
+                    $page['collection'] = $newPage;
+                }
+            } else {
+                if (!empty($page['child'])) {
+                    $page['collection'] = $page['child'][0]['collection'];
                 }
             }
+            //}
         }
 
     }
@@ -748,7 +771,7 @@ class MigrationPlatform
                     $item['uploadStatus'] = true;
                     $item['imageFileName'] = $result['filename'];
                     $item['content'] = $result['name'];
-                    $item['settings'] = array_merge(json_decode($result['metadata'],true),$item['settings']);
+                    $item['settings'] = array_merge(json_decode($result['metadata'], true), $item['settings']);
                     Logger::instance()->debug('Success upload image fileName', $result);
                 } else {
                     Logger::instance()->critical('Unexpected answer: '.json_encode($result));

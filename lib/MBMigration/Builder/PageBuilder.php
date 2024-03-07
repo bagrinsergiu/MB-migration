@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder;
 
+use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
@@ -86,6 +87,9 @@ class PageBuilder
                 $slug
             );
 
+            /**
+             * @var ThemeInterface $_WorkClassTemplate;
+             */
             $_WorkClassTemplate = new $workClass($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
