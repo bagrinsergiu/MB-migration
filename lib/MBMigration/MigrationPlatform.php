@@ -185,7 +185,13 @@ class MigrationPlatform
         if (true || !$this->cache->get('menuList')) {
             $projectTitle = $this->cache->get('settings')['title'];
 
-            $this->createBlankPages($parentPages, $projectTitle);
+            $this->createBlankPages(
+                $parentPages,
+                $projectTitle,
+                true,
+                $this->brizyApi->getAllProjectPages()
+            );
+
             $this->cache->set('menuList', [
                 'id' => null,
                 'uid' => null,
@@ -547,15 +553,19 @@ class MigrationPlatform
      */
     private function renameSlug($itemsID, $slug, string $title, string $seoTitle)
     {
-
         $seo = [
             'enableIndexing' => true,
             'title' => $seoTitle,
         ];
 
-        $res = $this->QueryBuilder->updateCollectionItem($itemsID, $slug, [], 'published', [], $title, $seo);
-
-        return $res;
+        return $this->QueryBuilder->updateCollectionItem(
+            $itemsID,
+            $slug,
+            [],
+            'published',
+            [],
+            $title,
+            $seo);
     }
 
     /**
@@ -578,17 +588,17 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function createBlankPages(array &$parentPages,  $projectTitle, $mainLevel = true)
+    private function createBlankPages(array &$parentPages, $projectTitle, $mainLevel, $projectPages)
     {
         Logger::instance()->info('Start create blank pages');
-        $projectPages = $this->brizyApi->getAllProjectPages();
 
         $i = 0;
         foreach ($parentPages as &$page) {
+            $createdPage = false;
             $title = $projectTitle.' | '.$page['name'];
 
             if (!empty($page['child'])) {
-                $this->createBlankPages($page['child'],  $projectTitle, false);
+                $this->createBlankPages($page['child'],  $projectTitle, false, $projectPages);
             }
 
             if ($page['landing'] == true) {
@@ -600,29 +610,29 @@ class MigrationPlatform
                             $title,
                             $page['protectedPage']
                         );
+                        $createdPage = true;
                     } else {
                         $newPage = $projectPages['listPages'][$page['slug']];
                     }
                 } else {
-//                    if (!array_key_exists($pages['slug'], $projectPages['listPages'])) {
-                    $updateNameResult = $this->renameSlug(
-                        $projectPages['listPages']['home'],
-                        $page['slug'],
-                        $page['name'],
-                        $title
-                    );
-                    $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
-//                    } else {
-//                        $newPage = $projectPages['listPages'][$pages['slug']];
-//                    }
+                    if (!array_key_exists($page['slug'], $projectPages['listPages'])) {
+                        $updateNameResult = $this->renameSlug(
+                            $projectPages['listPages']['home'],
+                            $page['slug'],
+                            $page['name'],
+                            $title
+                        );
+                        $newPage = $updateNameResult['updateCollectionItem']['collectionItem']['id'];
+                    } else {
+                        $newPage = $projectPages['listPages'][$page['slug']];
+                    }
                 }
 
-                if (!$newPage) {
-                    Logger::instance()->warning('Failed created page',$page);
-                } else {
+                if ($createdPage) {
                     Logger::instance()->info('Success created page',$page);
-                    $page['collection'] = $newPage;
                 }
+
+                $page['collection'] = $newPage;
             } else {
                 if (!empty($page['child'])) {
                     $page['collection'] = $page['child'][0]['collection'];
