@@ -188,7 +188,9 @@ class MigrationPlatform
             $projectTitle = $this->cache->get('settings')['title'];
             Logger::instance()->info('Start create blank pages');
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
-            $existingBrizyPages = $this->deleteAllBrizyCollectionItems($existingBrizyPages);
+            if (!$this->buildPage) {
+                $existingBrizyPages = $this->deleteAllBrizyCollectionItems($existingBrizyPages);
+            }
             $this->createBlankPages(
                 $parentPages,
                 $projectTitle,
@@ -332,7 +334,7 @@ class MigrationPlatform
 
         $this->setCurrentPageOnWork($collectionItem);
 
-        Logger::instance()->info('Start Builder for page',$page);
+        Logger::instance()->info('Start Builder for page', $page);
 
         if (!empty($preparedSectionOfThePage)) {
             $this->runPageBuilder($preparedSectionOfThePage);
@@ -642,6 +644,12 @@ class MigrationPlatform
 
             if (!empty($page['child'])) {
                 $this->createBlankPages($page['child'], $projectTitle, false, $existingBrizyPages);
+            }
+
+            // this will avoid creating the new page when a single pate is migated
+            // on single page migratin the pages are not deleted
+            if (isset($existingBrizyPages[$page['slug']])) {
+                continue;
             }
 
             // create the page if it is not found in the current page list
