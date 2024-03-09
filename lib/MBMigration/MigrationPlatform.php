@@ -594,14 +594,6 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function runPageBuilder($preparedSectionOfThePage, $defaultPage = false): bool
-    {
-        return $this->PageBuilder->run($preparedSectionOfThePage);
-    }
-
-    /**
-     * @throws Exception
-     */
     private function createBlankPages(array &$mbPages, $projectTitle, $mainLevel, $existingBrizyPages)
     {
         foreach ($mbPages as $i => &$page) {

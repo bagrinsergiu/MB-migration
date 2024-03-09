@@ -61,7 +61,7 @@ return static function (array $context, Request $request): Response {
 
     # start the DB tunnel
     try {
-        $logger = \MBMigration\Core\Logger::initialize($context['LOG_LEVEL'],$context['LOG_FILE_PATH']);
+        $logger = \MBMigration\Core\Logger::initialize("brizy-$brz_project_id", $context['LOG_LEVEL'],$context['LOG_FILE_PATH']);
         $migrationPlatform = new \MBMigration\MigrationPlatform($config, $logger, $mb_page_slug);
         $result = $migrationPlatform->start($mb_project_uuid, $brz_project_id);
     } catch (Exception $e) {

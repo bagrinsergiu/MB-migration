@@ -3,6 +3,7 @@
 namespace MBMigration\Browser;
 
 use Exception;
+use MBMigration\Core\Logger;
 use Nesk\Rialto\Data\JsFunction;
 
 class BrowserPage implements BrowserPageInterface
@@ -30,6 +31,7 @@ class BrowserPage implements BrowserPageInterface
 
             return $result;
         } catch (Exception $e) {
+            Logger::instance()->critical($e->getMessage(),$e->getTrace());
             return ['error' => $e->getMessage()]; // element not found
         }
     }

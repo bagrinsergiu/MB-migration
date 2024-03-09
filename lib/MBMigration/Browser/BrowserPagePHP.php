@@ -4,6 +4,7 @@ namespace MBMigration\Browser;
 
 use Exception;
 use HeadlessChromium\Page;
+use MBMigration\Core\Logger;
 
 class BrowserPagePHP implements BrowserPageInterface
 {
@@ -35,6 +36,7 @@ class BrowserPagePHP implements BrowserPageInterface
 
             return $result;
         } catch (Exception $e) {
+            Logger::instance()->critical($e->getMessage(),$e->getTrace());
             return ['error' => $e->getMessage()]; // element not found
         }
     }
@@ -66,6 +68,7 @@ class BrowserPagePHP implements BrowserPageInterface
                     break;
             }
         } catch (Exception $e) {
+            Logger::instance()->critical($e->getMessage(),$e->getTrace());
             return false; // element not found
         }
         usleep(500000);
