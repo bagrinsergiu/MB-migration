@@ -637,7 +637,7 @@ class MBProjectDataCollector
 
             return $this->cache->get($sectionId['id'], 'Sections');
         }
-
+        Logger::instance()->debug('Getting items for sectionId: '.$sectionId['id']);
         $requestItemsFromSection = $this->db->request(
         //'SELECT * FROM items WHERE "group" is not null and section_id = '.$sectionId['id'].' ORDER BY parent_id DESC, order_by'
             "
@@ -663,8 +663,8 @@ class MBProjectDataCollector
             ORDER BY i.parent_id DESC, order_by    
             "
         );
+        Logger::instance()->debug('Found items: '.count($requestItemsFromSection));
         foreach ($requestItemsFromSection as $sectionsItems) {
-            Logger::instance()->debug('Get item | id: '.$sectionsItems['id'].' from section id: '.$sectionId['id']);
             $settings = '';
             $uploadedFont = [];
 

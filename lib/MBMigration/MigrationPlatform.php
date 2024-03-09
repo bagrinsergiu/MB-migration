@@ -84,12 +84,12 @@ class MigrationPlatform
                 $this->cache->loadDump($projectID_MB, $projectID_Brizy);
                 $this->run($projectID_MB, $projectID_Brizy);
                 $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
-            } catch (Exception $e) {
-                Logger::instance()->info($e->getMessage());
+            } catch (GuzzleException $e) {
+                Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
                 throw $e;
-            } catch (GuzzleException $e) {
-                Logger::instance()->info($e->getMessage());
+            } catch (Exception $e) {
+                Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
                 throw $e;
             }
@@ -214,9 +214,10 @@ class MigrationPlatform
             echo $this->cache->get('design', 'settings')."\n";
         }
 
-        $this->launch($parentPages);
-
-        if ($this->PageBuilder) {
+        try {
+            $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
+            $this->launch($parentPages);
+        } finally {
             $this->PageBuilder->closeBrowser();
         }
 
@@ -333,32 +334,20 @@ class MigrationPlatform
         }
 
         $this->setCurrentPageOnWork($collectionItem);
-
-        Logger::instance()->info('Start Builder for page', $page);
-
-        if (!empty($preparedSectionOfThePage)) {
-            $this->runPageBuilder($preparedSectionOfThePage);
-        } else {
-            Logger::instance()->info(
-                'Set default page template | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
-            );
-            $this->runPageBuilder($preparedSectionOfThePage);
-        }
+        Logger::instance()->info('Run Page Builder for page', $page);
+        $this->PageBuilder->run($preparedSectionOfThePage);
     }
 
     private function getItemsFromPage(array $page)
     {
         Logger::instance()->info(
-            'Parent Page id: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
+            'Getting MB page items for page: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
         );
 
         $child = $this->parser->getSectionsPage($page['id']);
         if (!empty($child)) {
             $sections = [];
             foreach ($child as $value) {
-
-                Logger::instance()->info('Collection of item id: '.$value['id'].' -> Parent page id:'.$page['id']);
-
                 $items = [
                     'sectionId' => $value['id'],
                     'typeSection' => $value['typeSection'],
@@ -582,12 +571,12 @@ class MigrationPlatform
     {
         if (!$this->buildPage) {
             // delete all naher
-            Logger::instance()->debug('Delete all collection items');
+            Logger::instance()->debug('Delete all collection items', [count($existingBrizyPages['listPages'])]);
             foreach ($existingBrizyPages['listPages'] as $slug => $uri) {
                 try {
                     $this->QueryBuilder->deleteCollectionItem($uri);
                 } catch (\Exception $e) {
-                    Logger::instance()->warning('Failed to delete the '.$uri.' '.$e->getMessage());
+                    Logger::instance()->warning('Failed to delete:'.$uri.' '.$e->getMessage(), $e->getTrace());
                 }
             }
             $existingBrizyPages['listPages'] = [];
@@ -605,32 +594,8 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function renameSlug($itemsID, $slug, string $title, string $seoTitle)
-    {
-        $seo = [
-            'enableIndexing' => true,
-            'title' => $seoTitle,
-        ];
-
-        return $this->QueryBuilder->updateCollectionItem(
-            $itemsID,
-            $slug,
-            [],
-            'published',
-            [],
-            $title,
-            $seo
-        );
-    }
-
-    /**
-     * @throws Exception
-     */
     private function runPageBuilder($preparedSectionOfThePage, $defaultPage = false): bool
     {
-
-        $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
-
         return $this->PageBuilder->run($preparedSectionOfThePage);
     }
 
@@ -693,10 +658,8 @@ class MigrationPlatform
 
         $uuid = $this->cache->get('settings')['uuid'];
         $prefix = substr($uuid, 0, 2);
-        $url = Config::$MBMediaStaging."/".$prefix.'/'.$uuid.$folderload.$nameImage;
-        Logger::instance()->debug('Created url pictures: '.$url.' Type folder '.$type);
 
-        return $url;
+        return Config::$MBMediaStaging."/".$prefix.'/'.$uuid.$folderload.$nameImage;
     }
 
     /**

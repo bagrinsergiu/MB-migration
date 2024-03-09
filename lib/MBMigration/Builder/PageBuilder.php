@@ -61,7 +61,7 @@ class PageBuilder
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
         if ($design !== 'Anthem' && $design !== 'Solstice') {
-            $this->browser = BrowserPHP::instance($layoutBasePath, $this->logger);
+            $this->browser = BrowserPHP::instance($layoutBasePath);
             $browserPage = $this->browser->openPage($url, $design);
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder, $this->brizyAPI, $fontController);
@@ -101,7 +101,7 @@ class PageBuilder
             return true;
 
         } else {
-            $this->browser = BrowserPHP::instance($layoutBasePath, $this->logger);
+            $this->browser = BrowserPHP::instance($layoutBasePath);
             $browserPage = $this->browser->openPage($url, $design);
             $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
             if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {

@@ -783,7 +783,7 @@ class BrizyAPI extends Utils
 
             $options = [
                 'headers' => $headers,
-                'timeout' => 60,
+                'timeout' => 0,
                 'connect_timeout' => 50,
             ];
 
