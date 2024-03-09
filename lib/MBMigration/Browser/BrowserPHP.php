@@ -38,7 +38,7 @@ class BrowserPHP implements BrowserInterface
     ) {
         if (is_null($logger)) {
             $logger = new Logger('browser');
-            $logger->pushHandler(new StreamHandler('php://stdout', $_ENV['CHROME_LOG_LEVEL']));
+            $logger->pushHandler(new StreamHandler($_ENV['CHROME_LOG_FILE_PATH'], $_ENV['CHROME_LOG_LEVEL']));
         }
 
         $browserFactory = new BrowserFactory($chromeExecutable);
@@ -48,7 +48,7 @@ class BrowserPHP implements BrowserInterface
             'windowSize' => [1920, 2000],
             //'enableImages' => true,
             'debugLogger' => $logger,
-            'keepAlive' => true,
+            'keepAlive' => false,
             'noSandbox' => true,
             'customFlags' => [
                 '--single-process',

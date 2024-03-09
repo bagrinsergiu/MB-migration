@@ -201,6 +201,7 @@ trait RichTextAble
             switch ($textItem['type']) {
                 case 'EmbedCode':
                     //wrapper
+                    if(!isset($embeddedElements[$embeddIndex]))  break;
                     $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embeddedElements[$embeddIndex++]);
                     $cssClass = 'custom-align-'.random_int(0, 10000);
                     $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);

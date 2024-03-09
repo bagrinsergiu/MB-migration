@@ -48,10 +48,12 @@ abstract class AbstractTheme implements ThemeInterface
             $this->themeContext->getDefaultFamily()
         );
 
+        Logger::instance()->debug("Handling [head] page section.");
         $elementFactory->getElement('head')->transformToItem($elementContext);
 
         foreach ($mbPageSections as $mbPageSection) {
             $elementName = $mbPageSection['typeSection'];
+            Logger::instance()->debug("Handling [$elementName] page section.");
             try {
                 $element = $elementFactory->getElement($elementName);
                 $elementContext = ElementContext::instance(
@@ -68,10 +70,11 @@ abstract class AbstractTheme implements ThemeInterface
                 $brizySection = $element->transformToItem($elementContext);
                 $brizyPage->addItem($brizySection);
             } catch (ElementNotFound|BrowserScriptException|BadJsonProvided $e) {
-                Logger::instance()->error( $e->getMessage(), $e->getTrace() );
+                Logger::instance()->error($e->getMessage(), $e->getTrace());
                 continue;
             }
         }
+
 
         $elementFactory->getElement('footer')
             ->transformToItem(
@@ -86,7 +89,7 @@ abstract class AbstractTheme implements ThemeInterface
                     $this->themeContext->getDefaultFamily()
                 )
             );
-
+        Logger::instance()->debug("Handling [footer] page section.");
         $brizyPage = $this->afterTransformBlocks($brizyPage, $mbPageSections);
 
         return $brizyPage;
