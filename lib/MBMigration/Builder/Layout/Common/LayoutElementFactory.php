@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Theme\Bloom\ElementFactory;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
@@ -26,13 +27,15 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
     private QueryBuilder $queryBuilder;
 
     private BrizyAPI $brizyAPIClient;
+    private FontsController $fontsController;
 
-    public function __construct($blockKit, BrowserPageInterface $browserPage, QueryBuilder $queryBuilder, BrizyAPI $brizyAPIClient)
+    public function __construct($blockKit, BrowserPageInterface $browserPage, QueryBuilder $queryBuilder, BrizyAPI $brizyAPIClient, FontsController $fontsController)
     {
         $this->blockKit = $blockKit;
         $this->browserPage = $browserPage;
         $this->queryBuilder = $queryBuilder;
         $this->brizyAPIClient = $brizyAPIClient;
+        $this->fontsController = $fontsController;
     }
 
     /**
@@ -47,27 +50,27 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
         switch ($design) {
             case 'Bloom':
                 return self::$instances[$design] = new ElementFactory(
-                    $this->blockKit, $this->browserPage,$this->queryBuilder, $this->brizyAPIClient
+                    $this->blockKit, $this->browserPage,$this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
             case 'Voyage':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Voyage\ElementFactory(
-                    $this->blockKit, $this->browserPage,$this->queryBuilder, $this->brizyAPIClient
+                    $this->blockKit, $this->browserPage,$this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
             case 'Aurora':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Aurora\ElementFactory(
-                    $this->blockKit, $this->browserPage, $this->queryBuilder, $this->brizyAPIClient
+                    $this->blockKit, $this->browserPage, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
 //            case 'Solstice':
 //                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Solstice\ElementFactory(
-//                    $this->blockKit, $this->browserPage, $this->queryBuilder, $this->brizyAPIClient
+//                    $this->blockKit, $this->browserPage, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
 //                );
             case 'Majesty':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Majesty\ElementFactory(
-                    $this->blockKit, $this->browserPage, $this->queryBuilder, $this->brizyAPIClient
+                    $this->blockKit, $this->browserPage, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
             case 'Ember':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Ember\ElementFactory(
-                    $this->blockKit, $this->browserPage, $this->queryBuilder, $this->brizyAPIClient
+                    $this->blockKit, $this->browserPage, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
             default:
                 throw new ElementNotFound("The Element Factory [{$design}] was not found.");

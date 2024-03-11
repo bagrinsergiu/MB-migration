@@ -1,5 +1,6 @@
 import { Output } from "../types/type";
 import { createData } from "../utils/getData";
+import { getDataByEntry } from "../utils/getDataByEntry";
 import { Literal } from "utils";
 
 export interface Data {
@@ -9,10 +10,13 @@ export interface Data {
   styleProperties: Array<string>;
 }
 
-export const styleExtractor = (entry: Data): Output => {
+export const styleExtractor = (_entry: Data): Output => {
+  const entry = window.isDev ? getDataByEntry(_entry) : _entry;
+
   const { selector, styleProperties } = entry;
+
   const data: Record<string, Literal> = {};
-  const element = document.querySelector(selector);
+  const element = selector ? document.querySelector(selector) : undefined;
 
   if (!element) {
     return {
@@ -22,9 +26,10 @@ export const styleExtractor = (entry: Data): Output => {
 
   const computedStyles = getComputedStyle(element);
 
-  styleProperties.forEach((styleName) => {
-    data[styleName] = computedStyles.getPropertyValue(styleName);
-  });
+  if (styleProperties)
+    styleProperties.forEach((styleName: string) => {
+      data[styleName] = computedStyles.getPropertyValue(styleName);
+    });
 
   return createData({ data });
 };

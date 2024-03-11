@@ -2,6 +2,7 @@ import { getGlobalMenuModel } from "../utils/getGlobalMenuModel";
 import { getModel } from "./utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
+import { getDataByEntry } from "elements/src/utils/getDataByEntry";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { prefixed } from "utils/src/models/prefixed";
 
@@ -107,21 +108,22 @@ const getSubMenuV = (data: Required<NavData>) => {
   };
 };
 
-const run = (entry: Entry): Output => {
-  const { selector, families, defaultFamily } = entry;
-  const node = document.querySelector(selector);
+const run = (_entry: Entry): Output => {
+  const entry = window.isDev ? getDataByEntry(_entry) : _entry;
 
-  if (!node) {
+  const { selector, families, defaultFamily } = entry;
+
+  if (!selector) {
     return {
-      error: `Element with selector ${entry.selector} not found`
+      error: "Selector not found"
     };
   }
 
-  const header = node;
+  const header = document.querySelector(selector);
 
   if (!header) {
     return {
-      error: `Element with selector ${entry.selector} has no header`
+      error: `Element with selector ${selector} has no header`
     };
   }
 
@@ -129,7 +131,7 @@ const run = (entry: Entry): Output => {
 
   if (!nav) {
     return {
-      error: `Element with selector ${entry.selector} has no nav`
+      error: `Element with selector ${selector} has no nav`
     };
   }
 

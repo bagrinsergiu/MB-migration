@@ -114,7 +114,7 @@ class Config
         self::$graphqlToken = $this->checkSettings('graphqlToken');
 
         self::$urlAPI = self::$cloud_host.'/api';
-        self::$urlProjectAPI = self::$cloud_host.'/projects/{project}';
+        self::$urlProjectAPI = self::$urlAPI.'/projects/{project}';
         self::$urlGetApiToken = self::$cloud_host.'/api/projects/{project}/token';
         self::$urlGraphqlAPI = self::$cloud_host.'/graphql/{ProjectId}';
 

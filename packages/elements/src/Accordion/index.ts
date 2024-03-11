@@ -1,3 +1,4 @@
+import { getDataByEntry } from "../utils/getDataByEntry";
 import { getModel } from "../utils/getModel";
 import { Entry, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
@@ -51,20 +52,27 @@ const getAccordionV = (data: NavData) => {
   };
 };
 
-export const getAccordion = (entry: Entry): Output => {
+export const getAccordion = (_entry: Entry): Output => {
+  const entry = window.isDev ? getDataByEntry(_entry) : _entry;
+
   const { selector, families, defaultFamily } = entry;
-  const node = document.querySelector(selector);
-  if (!node) {
+
+  if (!selector) {
     return {
-      error: `Element with selector ${entry.selector} not found`
+      error: "Selector not found"
     };
   }
-  const list = node.querySelector(".accordion-list");
+
+  const node = document.querySelector(selector);
+
+  const list = node?.querySelector(".accordion-list");
+
   if (!list) {
     return {
-      error: `Element with selector ${entry.selector} has no accordion list`
+      error: `Element with selector ${selector} has no accordion list`
     };
   }
+
   const data = getAccordionV({ list, selector, families, defaultFamily });
 
   return createData({ data });

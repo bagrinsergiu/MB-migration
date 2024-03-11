@@ -68,7 +68,7 @@ class MBProjectDataCollector
      */
     public function getDesignSite()
     {
-        Logger::instance()->info('Get Design');
+
         $settingSite = $this->db->requestArray("SELECT design_uuid from sites WHERE id = ".$this->siteId);
         if (empty($settingSite)) {
             Logger::instance()->info(self::trace(0).'Message: MB project not found');
@@ -80,6 +80,7 @@ class MBProjectDataCollector
             "SELECT name from designs WHERE uuid = '".$settingSite[0]['design_uuid']."'"
         );
 
+        Logger::instance()->info('Site design: '.$designSite[0]['name']);
         return $designSite[0]['name'];
     }
 
@@ -90,8 +91,6 @@ class MBProjectDataCollector
     {
 
         self::checkUUID($projectUUID_MB);
-
-        Logger::instance()->info('Get id by uuId');
 
         $db = new DBConnector();
         $settingSite = $db->requestArray("SELECT id from sites WHERE uuid = '".$projectUUID_MB."'");
@@ -110,11 +109,10 @@ class MBProjectDataCollector
      */
     private static function checkUUID($uuid)
     {
-        Logger::instance()->info('Unique id check');
         $uuidPattern = '/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/';
 
         if (!preg_match($uuidPattern, $uuid)) {
-            Logger::instance()->info(self::trace(0)."Invalid UUID: $uuid");
+            Logger::instance()->error(self::trace(0)."Invalid UUID: $uuid");
             throw new Exception("Invalid UUID: $uuid");
         }
     }
@@ -125,7 +123,7 @@ class MBProjectDataCollector
      */
     public function getSite()
     {
-        Logger::instance()->info('Get site');
+
 
         $siteData = $this->db->requestOne(
             "
@@ -157,6 +155,8 @@ class MBProjectDataCollector
 
         $siteData['parameter'] = $parameter;
         $siteData['fonts'] = $this->getFonts($parameter, $siteData['font_theme_uuid']);
+
+        Logger::instance()->info('MB Site info obtained',[$siteData['id'],$siteData['uuid'],$siteData['name']]);
 
         return $siteData;
     }
@@ -304,7 +304,7 @@ class MBProjectDataCollector
      */
     public function getMainSection(): array
     {
-        Logger::instance()->info('Get main Section');
+        Logger::instance()->info('Obtaining the main section');
         $result = [];
         $requestMainSections = $this->db->request(
             "SELECT * FROM sections WHERE site_id =  ".$this->siteId." and (page_id isnull or page_id = 0) ORDER BY position"
@@ -370,7 +370,7 @@ class MBProjectDataCollector
 
     public function getPages(): array
     {
-        Logger::instance()->info('Get parent pages');
+
         $result = [];
 
         $allPages = $this->db->request(
@@ -417,6 +417,8 @@ class MBProjectDataCollector
 
         $result = getPagesByParent(null, $allPages);
         $this->cache->set('ParentPages', $result);
+
+        Logger::instance()->info(count($result).' pages found.');
 
         return $result;
 
@@ -635,7 +637,7 @@ class MBProjectDataCollector
 
             return $this->cache->get($sectionId['id'], 'Sections');
         }
-
+        Logger::instance()->debug('Getting items for sectionId: '.$sectionId['id']);
         $requestItemsFromSection = $this->db->request(
         //'SELECT * FROM items WHERE "group" is not null and section_id = '.$sectionId['id'].' ORDER BY parent_id DESC, order_by'
             "
@@ -656,12 +658,13 @@ class MBProjectDataCollector
             LEFT JOIN public.links l on i.id = l.item_id
             LEFT JOIN public.pages p on l.page_id = p.id
             WHERE i.group is not null
-              and i.section_id = {$sectionId['id']}
+              and i.section_id = {$sectionId['id']} 
+              and i.trashed_at is NULL
             ORDER BY i.parent_id DESC, order_by    
             "
         );
+        Logger::instance()->debug('Found items: '.count($requestItemsFromSection));
         foreach ($requestItemsFromSection as $sectionsItems) {
-            Logger::instance()->info('Get item | id: '.$sectionsItems['id'].' from section id: '.$sectionId['id']);
             $settings = '';
             $uploadedFont = [];
 

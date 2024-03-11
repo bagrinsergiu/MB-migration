@@ -17,6 +17,7 @@ class BrowserPHP implements BrowserInterface
      */
     private $browser;
     private $scriptPath;
+
     private $page = null;
 
     static public function instance($scriptPath, LoggerInterface $logger = null)
@@ -36,8 +37,8 @@ class BrowserPHP implements BrowserInterface
         LoggerInterface $logger = null
     ) {
         if (is_null($logger)) {
-            $logger = new Logger('my_logger');
-            $logger->pushHandler(new StreamHandler('php://stdout', $_ENV['CHROME_LOG_LEVEL']));
+            $logger = new Logger('browser');
+            $logger->pushHandler(new StreamHandler($_ENV['CHROME_LOG_FILE_PATH'], $_ENV['CHROME_LOG_LEVEL']));
         }
 
         $browserFactory = new BrowserFactory($chromeExecutable);
@@ -47,7 +48,7 @@ class BrowserPHP implements BrowserInterface
             'windowSize' => [1920, 2000],
             //'enableImages' => true,
             'debugLogger' => $logger,
-            'keepAlive' => true,
+            'keepAlive' => false,
             'noSandbox' => true,
             'customFlags' => [
                 '--single-process',
@@ -76,7 +77,7 @@ class BrowserPHP implements BrowserInterface
         try {
             $this->page->navigate($url)->waitForNavigation();
         } catch (Exception $e) {
-            \MBMigration\Core\Logger::instance()->info($e->getMessage());
+            \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
         }
 
         return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
@@ -85,9 +86,9 @@ class BrowserPHP implements BrowserInterface
     public function closePage(): void
     {
         try {
-            //$this->page->close();
+           // $this->page->close();
         } catch (Exception $e) {
-            \MBMigration\Core\Logger::instance()->info($e->getMessage());
+            \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
         }
     }
 
@@ -96,7 +97,7 @@ class BrowserPHP implements BrowserInterface
         try {
             $this->browser->close();
         } catch (Exception $e) {
-            \MBMigration\Core\Logger::instance()->info($e->getMessage());
+            \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
         }
     }
 }

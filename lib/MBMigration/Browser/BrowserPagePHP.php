@@ -4,6 +4,7 @@ namespace MBMigration\Browser;
 
 use Exception;
 use HeadlessChromium\Page;
+use MBMigration\Core\Logger;
 
 class BrowserPagePHP implements BrowserPageInterface
 {
@@ -19,15 +20,15 @@ class BrowserPagePHP implements BrowserPageInterface
         $this->scriptPath = $scriptPath;
         $this->page->addScriptTag([
             'content' => $this->getScriptBody("index.js"),
-        ])->waitForResponse();
+        ])->waitForResponse(50000);
     }
 
     public function evaluateScript($jsScript, $params): array
     {
         try {
             $result = $this->page->callFunction($jsScript, [(object)$params])
-                ->waitForResponse(5000)
-                ->getReturnValue(5000);
+                ->waitForResponse(50000)
+                ->getReturnValue(50000);
 
             if (!$result) {
                 $result = [];
@@ -35,6 +36,7 @@ class BrowserPagePHP implements BrowserPageInterface
 
             return $result;
         } catch (Exception $e) {
+            Logger::instance()->critical($e->getMessage(),$e->getTrace());
             return ['error' => $e->getMessage()]; // element not found
         }
     }
@@ -66,6 +68,7 @@ class BrowserPagePHP implements BrowserPageInterface
                     break;
             }
         } catch (Exception $e) {
+            Logger::instance()->critical($e->getMessage(),$e->getTrace());
             return false; // element not found
         }
         usleep(500000);
@@ -104,7 +107,7 @@ class BrowserPagePHP implements BrowserPageInterface
                 $selector,
                 $attributes,
             ]
-        )->waitForResponse(5000);
+        )->waitForResponse(50000);
     }
 
     public function setNodeAttribute($selector, array $attributes)
@@ -122,7 +125,7 @@ class BrowserPagePHP implements BrowserPageInterface
                 $selector,
                 $attributes,
             ]
-        )->waitForResponse(5000);
+        )->waitForResponse(50000);
     }
 
     public function screenshot($path)

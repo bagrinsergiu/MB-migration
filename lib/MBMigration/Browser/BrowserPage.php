@@ -3,6 +3,7 @@
 namespace MBMigration\Browser;
 
 use Exception;
+use MBMigration\Core\Logger;
 use Nesk\Rialto\Data\JsFunction;
 
 class BrowserPage implements BrowserPageInterface
@@ -30,6 +31,7 @@ class BrowserPage implements BrowserPageInterface
 
             return $result;
         } catch (Exception $e) {
+            Logger::instance()->critical($e->getMessage(),$e->getTrace());
             return ['error' => $e->getMessage()]; // element not found
         }
     }
@@ -54,7 +56,7 @@ class BrowserPage implements BrowserPageInterface
     /**
      * @return mixed
      */
-    public function triggerEvent($eventNameMethod, $elementSelector): bool
+    public function triggerEvent($eventNameMethod, $elementSelector, $params=[]): bool
     {
         try {
 //            $result = $this->page->tryCatch->waitForSelector($elementSelector, ['timeout' => 60000]);
@@ -112,8 +114,6 @@ class BrowserPage implements BrowserPageInterface
         );
 
         $this->page->waitForSelector($selector);
-
-        $this->page->screenshot(['path' =>  __DIR__ . 'testImage.png']);
     }
 
     public function setNodeAttribute($selector, array $attributes)
@@ -133,7 +133,5 @@ class BrowserPage implements BrowserPageInterface
         );
 
         $this->page->waitForSelector($selector);
-
-        $this->page->screenshot(['path' =>  __DIR__ . 'testImageAttr.png']);
     }
 }

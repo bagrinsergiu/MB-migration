@@ -43,6 +43,7 @@ trait BrizyQueryBuilderAware
                 $title,
                 false,
                 false,
+                false,
                 'published',
                 [],
                 json_encode($pageData)
@@ -56,5 +57,17 @@ trait BrizyQueryBuilderAware
         }
 
         return $collectionItem;
+    }
+
+    public static function uriToId($uri)
+    {
+        $match = [];
+        preg_match("/^\/.+?\/(?<id>\d+)\/?$/", $uri, $match);
+
+        if (isset($match['id'])) {
+            return $match['id'];
+        }
+
+        return null;
     }
 }

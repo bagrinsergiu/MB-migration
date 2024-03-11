@@ -57,15 +57,36 @@ return static function (array $context, Request $request): Response {
         return new JsonResponse(['error' => 'Invalid brz_project_id'], 400);
     }
 
+    $logger = \MBMigration\Core\Logger::initialize(
+        "brizy-$brz_project_id",
+        $context['LOG_LEVEL'],
+        $context['LOG_FILE_PATH']
+    );
+
     $mb_page_slug = $request->get('mb_page_slug') ?? '';
+    $lockFile = $context['CACHE_PATH']."/".$mb_project_uuid."-".$brz_project_id.".lock";
+
+    if (file_exists($lockFile)) {
+        \MBMigration\Core\Logger::instance()->warning('The process migration is already running.', [$lockFile]);
+
+        return new JsonResponse(['error' => 'The process migration is already running.'], 400);
+    }
 
     # start the DB tunnel
     try {
-        $logger = \MBMigration\Core\Logger::initialize($context['LOG_LEVEL'],$context['LOG_FILE_PATH']);
+
+
+        // create lock file
+        file_put_contents($lockFile, $mb_project_uuid."-".$brz_project_id);
+        \MBMigration\Core\Logger::instance()->info('Creating lock file', [$lockFile]);
+
         $migrationPlatform = new \MBMigration\MigrationPlatform($config, $logger, $mb_page_slug);
         $result = $migrationPlatform->start($mb_project_uuid, $brz_project_id);
     } catch (Exception $e) {
         return new JsonResponse(['error' => $e->getMessage()], 400);
+    } finally {
+        \MBMigration\Core\Logger::instance()->info('Releasing lock file', [$lockFile]);
+        unlink($lockFile);
     }
 
     return new JsonResponse($migrationPlatform->getLogs());

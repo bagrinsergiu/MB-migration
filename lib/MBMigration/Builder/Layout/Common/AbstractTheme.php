@@ -4,8 +4,10 @@ namespace MBMigration\Builder\Layout\Common;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyPage;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Core\Logger;
 
 abstract class AbstractTheme implements ThemeInterface
 {
@@ -46,10 +48,12 @@ abstract class AbstractTheme implements ThemeInterface
             $this->themeContext->getDefaultFamily()
         );
 
+        Logger::instance()->debug("Handling [head] page section.");
         $elementFactory->getElement('head')->transformToItem($elementContext);
 
         foreach ($mbPageSections as $mbPageSection) {
             $elementName = $mbPageSection['typeSection'];
+            Logger::instance()->debug("Handling [$elementName] page section.");
             try {
                 $element = $elementFactory->getElement($elementName);
                 $elementContext = ElementContext::instance(
@@ -65,11 +69,12 @@ abstract class AbstractTheme implements ThemeInterface
 
                 $brizySection = $element->transformToItem($elementContext);
                 $brizyPage->addItem($brizySection);
-            } catch (ElementNotFound|BrowserScriptException $e) {
-                printf("\nException: %s", $e->getMessage());
+            } catch (ElementNotFound|BrowserScriptException|BadJsonProvided $e) {
+                Logger::instance()->error($e->getMessage(), $e->getTrace());
                 continue;
             }
         }
+
 
         $elementFactory->getElement('footer')
             ->transformToItem(
@@ -84,7 +89,7 @@ abstract class AbstractTheme implements ThemeInterface
                     $this->themeContext->getDefaultFamily()
                 )
             );
-
+        Logger::instance()->debug("Handling [footer] page section.");
         $brizyPage = $this->afterTransformBlocks($brizyPage, $mbPageSections);
 
         return $brizyPage;

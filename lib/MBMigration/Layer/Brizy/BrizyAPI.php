@@ -41,7 +41,6 @@ class BrizyAPI extends Utils
      */
     public function getProjectMetadata($projectId)
     {
-
         $url = $this->createUrlAPI('projects').'/'.$projectId;
 
         $result = $this->httpClient('GET', $url);
@@ -57,6 +56,13 @@ class BrizyAPI extends Utils
 
         return json_decode($result['metadata'], true);
 
+    }
+
+    public function getProjectHomePage($projectId, $homePageId)
+    {
+        $url = $this->createUrlProject($projectId);
+        $result = $this->httpClient('PUT', $url, ['index_item_id' => $homePageId, 'is_autosave' => false]);
+        return $result['status']==200;
     }
 
     /**
@@ -143,8 +149,6 @@ class BrizyAPI extends Utils
     {
         $nameFunction = __FUNCTION__;
 
-        Logger::instance()->info('get Token');
-
         $result = $this->httpClient('GET', $this->createUrlApiProject($projectid));
         if ($result['status'] > 200) {
             Logger::instance()->warning('Response: '.json_encode($result));
@@ -224,7 +228,7 @@ class BrizyAPI extends Utils
      */
     public function createGlobalBlock($data, $position, $rules)
     {
-        Logger::instance()->debug('Create Global Block',[$position,$rules]);
+        Logger::instance()->debug('Create Global Block', [$position, $rules]);
 
         $requestData['project'] = Utils::$cache->get('projectId_Brizy');
         $requestData['status'] = 'publish';
@@ -243,15 +247,20 @@ class BrizyAPI extends Utils
         return false;
     }
 
+    public function deletePage($url)
+    {
+        $requestData['project'] = Utils::$cache->get('projectId_Brizy');
+    }
+
     public function deleteAllGlobalBlocks()
     {
         $url = $this->createPrivateUrlAPI('globalBlocks');
         $requestData['project'] = Utils::$cache->get('projectId_Brizy');
-        $requestData['fields'] = ['id','uid'];
+        $requestData['fields'] = ['id', 'uid'];
         $response = $this->httpClient('GET', $url, $requestData);
-        if($response['status']==200) {
+        if ($response['status'] == 200) {
             $globalBlocks = json_decode($response['body'], true);
-            foreach($globalBlocks as $block) {
+            foreach ($globalBlocks as $block) {
                 Logger::instance()->debug("Delete global block {$block['id']}");
                 $response = $this->httpClient('DELETE', $url."/".$block['id']);
             }
@@ -533,7 +542,6 @@ class BrizyAPI extends Utils
 
     public function getAllProjectPages(): array
     {
-        Logger::instance()->info('Get All Pages from projects');
         static $result;
 
         if (!empty($result)) {
@@ -599,7 +607,7 @@ class BrizyAPI extends Utils
     {
         $urlProjectAPI = Utils::strReplace(Config::$urlProjectAPI, '{project}', $projectId);
 
-        return $urlProjectAPI.Config::$endPointApi[$endPoint];
+        return $urlProjectAPI;
     }
 
     private function createPrivateUrlAPI($endPoint): string
@@ -693,7 +701,6 @@ class BrizyAPI extends Utils
 
     private function isUrlOrFile($urlOrPath): string
     {
-        Logger::instance()->info('Check image address');
         if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
             return $this->downloadImage($urlOrPath);
         } else {
@@ -776,7 +783,7 @@ class BrizyAPI extends Utils
 
             $options = [
                 'headers' => $headers,
-                'timeout' => 60,
+                'timeout' => 0,
                 'connect_timeout' => 50,
             ];
 
@@ -794,7 +801,9 @@ class BrizyAPI extends Utils
                 $url = $url.'/'.$data;
             }
 
-            if ($method === 'PUT' && isset($data)) {
+            if ($method === 'PUT' && isset($data) && $headers['Content-Type'] == 'application/x-www-form-urlencoded') {
+                $options['form_params'] = $data;
+            } else if ($method === 'PUT' && isset($data)) {
                 $options['json'] = $data;
             }
 
@@ -813,13 +822,19 @@ class BrizyAPI extends Utils
 
                 Logger::instance()->critical(json_encode(['status' => $statusCode, 'body' => $body]));
                 if ($statusCode > 200) {
-                    Logger::instance()->info("Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body]));
+                    Logger::instance()->info(
+                        "Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body])
+                    );
                 }
-                Logger::instance()->info("Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body]));
+                Logger::instance()->info(
+                    "Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body])
+                );
 
                 return ['status' => $statusCode, 'body' => $body];
             } else {
-                Logger::instance()->info("Error: GuzzleException Message:".json_encode(['status' => false, 'body' => 'Request timed out.']));
+                Logger::instance()->info(
+                    "Error: GuzzleException Message:".json_encode(['status' => false, 'body' => 'Request timed out.'])
+                );
                 Logger::instance()->critical(json_encode(['status' => false, 'body' => 'Request timed out.']));
 
                 return ['status' => false, 'body' => 'Request timed out.'];

@@ -15,6 +15,7 @@ interface ThemeContextInterface
     public function getBrowserPage(): BrowserPageInterface;
 
     public function getFamilies(): array;
+    public function setFamilies($families): self;
 
     public function getDefaultFamily(): string;
 

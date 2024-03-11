@@ -4,6 +4,8 @@ namespace MBMigration\Builder\BrizyComponent;
 
 use JsonSerializable;
 use Exception;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
+
 class BrizyComponent implements JsonSerializable
 {
     protected $type;
@@ -14,7 +16,7 @@ class BrizyComponent implements JsonSerializable
     public function __construct($data,$parent=null)
     {
         if (!is_array($data)) {
-            throw new Exception('Wrong data format provided for BrizyComponent');
+            throw new BadJsonProvided('Wrong data format provided for BrizyComponent');
         }
 
         $this->type = $data['type'] ?? '';

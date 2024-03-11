@@ -19,8 +19,7 @@ class MenuBuilder implements MenuBuilderInterface
         $this->brizyApi = $brizyApi;
         $this->fonts = $fonts;
 
-        $settingsTextTransform = $fonts;
-        foreach ($settingsTextTransform as $itemTextTransform) {
+        foreach ($fonts as $itemTextTransform) {
             if (isset($itemTextTransform['name']) && $itemTextTransform['name'] === 'main_nav') {
                 $this->textTransform = $itemTextTransform['text_transform'] ?? 'none';
                 break;
@@ -80,6 +79,7 @@ class MenuBuilder implements MenuBuilderInterface
         $newItem = [
             "uid" => Utils::getNameHash(),
             "isNewTab" => $this->checkOpenInNewTab($settings),
+            'isIndex'=>$item['position']==1 && !$item['parent_id'] && $item['landing'],
             "label" => TextTools::transformText($item['name'], $this->textTransform),
             "items" => [],
         ];

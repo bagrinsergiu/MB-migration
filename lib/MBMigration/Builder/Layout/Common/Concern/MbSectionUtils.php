@@ -46,4 +46,22 @@ trait MbSectionUtils
 
         return $items;
     }
+
+    protected function transliterateFontFamily($fontName): string
+    {
+        $inputString = str_replace(["\"", "'", ' '], ['', '', '_'], $fontName);
+
+        $inputString = str_replace(',', '', $inputString);
+
+        return strtolower($inputString);
+    }
+
+    protected function fisrtFontFamily($fontName): string
+    {
+        $inputString = explode(',',  $fontName);
+
+        $inputString = str_replace(["\"", "'", ' '], ['', '', '_'], $inputString[0]);
+
+        return strtolower($inputString);
+    }
 }

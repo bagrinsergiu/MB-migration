@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder;
 
+use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
@@ -41,9 +42,11 @@ class PageBuilder
     public function run($preparedSectionOfThePage): bool
     {
         $itemsID = $this->cache->get('currentPageOnWork');
+        $brizyContainerId = $this->cache->get('container',);
         $mainCollectionType = $this->cache->get('mainCollectionType');
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
+        $fontController = new FontsController($brizyContainerId);
 
         $fontFamily = FontsController::getFontsFamily();
 
@@ -57,56 +60,74 @@ class PageBuilder
 
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
-        if ($design !== 'Anthem' && $design !== 'Solstice') {
-            $this->browser = BrowserPHP::instance($layoutBasePath, $this->logger);
-            $browserPage = $this->browser->openPage($url, $design);
-            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-            $layoutElementFactory = new LayoutElementFactory($brizyKit, $browserPage, $queryBuilder, $this->brizyAPI);
-            $themeElementFactory = $layoutElementFactory->getFactory($design);
-            $brizyMenuEntity = $this->cache->get('menuList');
-            $brizyMenuItems = $this->cache->get('brizyMenuItems');
-            $headItem = $this->cache->get('header', 'mainSection');
-            $footerItem = $this->cache->get('footer', 'mainSection');
+        $this->browser = BrowserPHP::instance($layoutBasePath);
 
-            $themeContext = new ThemeContext(
-                $design,
-                $browserPage,
-                $brizyKit,
-                $brizyMenuEntity,
-                $brizyMenuItems,
-                $headItem,
-                $footerItem,
-                $fontFamily['kit'],
-                $fontFamily['Default'],
-                $themeElementFactory,
-                $mainCollectionType,
-                $itemsID,
-                $slug
-            );
+        try {
+            if ($design !== 'Anthem' && $design !== 'Solstice') {
+                $browserPage = $this->browser->openPage($url, $design);
+                $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
+                $layoutElementFactory = new LayoutElementFactory(
+                    $brizyKit,
+                    $browserPage,
+                    $queryBuilder,
+                    $this->brizyAPI,
+                    $fontController
+                );
+                $themeElementFactory = $layoutElementFactory->getFactory($design);
+                $brizyMenuEntity = $this->cache->get('menuList');
+                $brizyMenuItems = $this->cache->get('brizyMenuItems');
+                $headItem = $this->cache->get('header', 'mainSection');
+                $footerItem = $this->cache->get('footer', 'mainSection');
 
-            $_WorkClassTemplate = new $workClass($themeContext);
-            $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
+                $themeContext = new ThemeContext(
+                    $design,
+                    $browserPage,
+                    $brizyKit,
+                    $brizyMenuEntity,
+                    $brizyMenuItems,
+                    $headItem,
+                    $footerItem,
+                    $fontFamily['kit'],
+                    $fontFamily['Default'],
+                    $themeElementFactory,
+                    $mainCollectionType,
+                    $itemsID,
+                    $slug
+                );
 
-            $pageData = json_encode($brizySections);
-            $queryBuilder = $this->cache->getClass('QueryBuilder');
-            $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
-            Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
-            Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
-            return true;
+                /**
+                 * @var ThemeInterface $_WorkClassTemplate ;
+                 */
+                $_WorkClassTemplate = new $workClass($themeContext);
+                $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
-        } else {
-            $this->browser = BrowserPHP::instance($layoutBasePath, $this->logger);
-            $browserPage = $this->browser->openPage($url, $design);
-            $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
-            if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
+                $pageData = json_encode($brizySections);
+                $queryBuilder = $this->cache->getClass('QueryBuilder');
+                $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
                 Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
                 Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
-                return true;
-            } else {
-                Logger::instance()->info('Fail Build Page: '.$itemsID.' | Slug: '.$slug);
 
-                return false;
+                return true;
+
+            } else {
+                $browserPage = $this->browser->openPage($url, $design);
+                $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
+                if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
+                    Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
+                    Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
+
+                    return true;
+                } else {
+                    Logger::instance()->info('Fail Build Page: '.$itemsID.' | Slug: '.$slug);
+
+                    return false;
+                }
             }
+        } catch (\Exception $e) {
+            Logger::instance()->critical('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
+            throw $e;
+        } finally {
+            $this->browser->closePage();
         }
     }
 
