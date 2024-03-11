@@ -59,8 +59,14 @@ export const buttonSelector = ".sites-button:not(.nav-menu-button)";
 export const embedSelector = ".embedded-paste";
 
 export const extractUrlWithoutDomain = (url: string) => {
-  const urlWithoutDomain = new URL(url).pathname;
-  return urlWithoutDomain;
+  const urlObject = new URL(url);
+
+  const _url =
+    urlObject.origin === window.location.origin
+      ? urlObject.pathname
+      : urlObject.href;
+
+  return _url;
 };
 
 export const getHref = mPipe(
