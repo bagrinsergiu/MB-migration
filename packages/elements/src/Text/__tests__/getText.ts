@@ -179,7 +179,7 @@ const ex3: Data = {
               }
             }
           ],
-          horizontalAlign: "center"
+          horizontalAlign: undefined
         }
       },
       {
@@ -538,7 +538,7 @@ const ex8: Data = {
               }
             }
           ],
-          horizontalAlign: "center"
+          horizontalAlign: undefined
         }
       },
       {
@@ -587,7 +587,7 @@ const ex8: Data = {
               }
             }
           ],
-          horizontalAlign: "center"
+          horizontalAlign: undefined
         }
       },
       {
@@ -979,7 +979,179 @@ const ex13: Data = {
     ]
   }
 };
+//#endregion
 
+//#region Example 14 (Footer with Icons, Button and text)
+const ex14: Data = {
+  html: `<div class="text-content text-0 editable" data-id="12866076" data-category="text"><div><p style="text-align: center; font-size: 1.0638em;">Follow us on:&nbsp;&nbsp;<a class="socialIconLink cloverlinks" style="font-size: 1.875em; color: rgb(94, 111, 224);" href="https://www.facebook.com/ConnectionMillen" data-location="external" data-button="false" data-detail="https://www.facebook.com/ConnectionMillen" data-category="link" target="_blank"><span data-icon="facebook"><span class="clovericons fab" aria-hidden="true"></span><span class="sr-only">Facebook</span></span></a><a class="socialIconLink cloverlinks" href="https://www.facebook.com/ConnectionMillen" data-location="external" data-button="false" data-detail="https://www.facebook.com/ConnectionMillen" data-category="link" target="_blank" style="font-size: 1.0638em; letter-spacing: 0.01em; background-color: rgb(80, 80, 80);"> </a>  &nbsp;&nbsp;<a class="socialIconLink cloverlinks" href="https://www.instagram.com/connectionchurchmillen/" data-location="external" data-button="false" data-detail="https://www.instagram.com/connectionchurchmillen/" data-category="link" target="_blank" style="letter-spacing: 0.01em; background-color: rgb(80, 80, 80); font-size: 1.875em;"><span data-icon="instagram"><span class="clovericons fab" style="color: rgb(214, 46, 4); font-size: 1em;" aria-hidden="true"></span><span class="sr-only">Instagram</span></span> </a> <a class="socialIconLink cloverlinks" style="color: rgb(250, 3, 3); font-size: 1.625em;" href="https://www.youtube.com/@ConnectionChurchMillen" data-location="external" data-button="false" data-detail="https://www.youtube.com/@ConnectionChurchMillen" data-category="link" target="_blank"><span data-socialicon="youtube"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">youtube</span></span></a></p><p style="text-align: center; font-size: 1.0638em;">&nbsp; &nbsp; &nbsp;&nbsp;<br></p><p>Connect with us:&nbsp;</p><div><p><span class="clovercustom" style="font-size: 10pt; font-weight: 700;">Church Office Address</span></p><p><span class="clovercustom" style="font-size: 10pt;">1178 E. Winthrope Ave. Millen, GA 30442</span></p><p style="font-weight: 500; font-size: 0.9973em;"><br></p><p style="font-weight: 500; font-size: 0.9973em;">Sunday Service</p><p style="font-weight: 300;">Located in the cafeteria behind Jenkins County High School off North Ave.&nbsp;</p><p style="font-weight: 300;"><a href="https://maps.app.goo.gl/Sb33XGmMfvqtsSAt5" data-location="external" data-button="true" data-detail="https://maps.app.goo.gl/Sb33XGmMfvqtsSAt5" data-category="link" target="_blank" class="cloverlinks sites-button" role="button">Click Here for Directions</a></p><p><span class="clovercustom" style="font-size: 10pt;"><br></span></p></div></div></div>`,
+  //prettier-ignore
+  entry: {...entry, selector: "[data-id=\"12866076\"]"},
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-0_0"><span>Follow us on:&nbsp;&nbsp;</span><a style="color: rgb(94, 111, 224); " href="https://www.facebook.com/ConnectionMillen" data-location="external" data-button="false" data-detail="https://www.facebook.com/ConnectionMillen" data-category="link" target="_blank"></a><a href="https://www.facebook.com/ConnectionMillen" data-location="external" data-button="false" data-detail="https://www.facebook.com/ConnectionMillen" data-category="link" target="_blank" style=""> </a>  &nbsp;&nbsp;<a href="https://www.instagram.com/connectionchurchmillen/" data-location="external" data-button="false" data-detail="https://www.instagram.com/connectionchurchmillen/" data-category="link" target="_blank" style=""> </a> <a style="color: rgb(250, 3, 3); " href="https://www.youtube.com/@ConnectionChurchMillen" data-location="external" data-button="false" data-detail="https://www.youtube.com/@ConnectionChurchMillen" data-category="link" target="_blank"></a></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                padding: 7,
+                customSize: 26,
+                name: "facebook",
+                type: "fa",
+                linkExternal: "https://www.facebook.com/ConnectionMillen",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                padding: 7,
+                bgColorHex: "#505050",
+                bgColorOpacity: undefined,
+                bgColorPalette: "",
+                colorHex: "#d62e04",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                name: "instagram",
+                type: "fa",
+                linkExternal:
+                  "https://www.instagram.com/connectionchurchmillen/",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                padding: 7,
+                customSize: 26,
+                name: "youtube",
+                type: "fa",
+                linkExternal: "https://www.youtube.com/@ConnectionChurchMillen",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0">&nbsp; &nbsp; &nbsp;&nbsp;<br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span>Connect with us:&nbsp;</span></p><p class="brz-fs-lg-10 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 700; ">Church Office Address</span></p><p class="brz-fs-lg-10 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style="">1178 E. Winthrope Ave. Millen, GA 30442</span></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 500; ">Sunday Service</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">Located in the cafeteria behind Jenkins County High School off North Ave.&nbsp;</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                text: "Click Here for Directions",
+                borderStyle: "none",
+                linkExternal: "https://maps.app.goo.gl/Sb33XGmMfvqtsSAt5",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span style=""><br></span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 15 (Text with nested nodes)
+const ex15: Data = {
+  html: `<div class="text-content text-1 editable" data-id="24610452" data-category="text"><div><p style="text-align: center; font-size: 2.1277em; font-weight: 500;"><u>Who's your one for 2024?</u></p><div dir="auto" style="text-align: center; font-size: 2.1277em; font-weight: 500;">Who's the one you are praying for this year to know Jesus?<div dir="auto">Who's the one you are investing in this year?<div dir="auto">Who's the one you are allowing to invest in you this year?</div><div dir="auto"><br></div><div dir="auto" style="font-size: 0.8125em; font-style: italic;">If you would like to tell us stories of your journey, we'd love to hear them!!&nbsp; <a href="https://docs.google.com/forms/d/1_AX6wHW5zGDd6082vCXVTC2QQbmFufL8ABmFqdQKU6Q/edit#settings" data-location="external" data-button="false" data-detail="https://docs.google.com/forms/d/1_AX6wHW5zGDd6082vCXVTC2QQbmFufL8ABmFqdQKU6Q/edit#settings" data-category="link" target="_blank" class="cloverlinks">Click Here</a> to share.</div><div dir="auto" style="font-size: 0.8125em; font-style: italic;">If you need some help finding someone to invest in or to invest in you, <a href="https://docs.google.com/forms/d/1LA-3CfWM4edzYng-vC26G5cNWddGtuUVAXkiYCAoWm8/edit" data-location="external" data-button="false" data-detail="https://docs.google.com/forms/d/1LA-3CfWM4edzYng-vC26G5cNWddGtuUVAXkiYCAoWm8/edit" data-category="link" target="_blank" class="cloverlinks">click here</a> and let us walk with you and help you on your journey.</div></div></div></div></div>`,
+  //prettier-ignore
+  entry: {...entry, selector: "[data-id=\"24610452\"]"},
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-2 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><u><span>Who\'s your one for 2024?</span></u></p><p class="brz-fs-lg-2 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-NaN brz-text-lg-center brz-ls-lg-NaN_0"><span style="font-weight: 500; ">Who\'s the one you are praying for this year to know Jesus?</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span>Who\'s the one you are investing in this year?</span></p><p dir="auto" class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><span>Who\'s the one you are allowing to invest in you this year?</span></p><p dir="auto" class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p dir="auto" class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><em>If you would like to tell us stories of your journey, we\'d love to hear them!!&nbsp; </em><a href="https://docs.google.com/forms/d/1_AX6wHW5zGDd6082vCXVTC2QQbmFufL8ABmFqdQKU6Q/edit#settings" data-location="external" data-button="false" data-detail="https://docs.google.com/forms/d/1_AX6wHW5zGDd6082vCXVTC2QQbmFufL8ABmFqdQKU6Q/edit#settings" data-category="link" target="_blank"><span>Click Here</span></a><em> to share.</em></p><p dir="auto" class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-text-lg-left brz-ls-lg-NaN_0"><em>If you need some help finding someone to invest in or to invest in you, </em><a href="https://docs.google.com/forms/d/1LA-3CfWM4edzYng-vC26G5cNWddGtuUVAXkiYCAoWm8/edit" data-location="external" data-button="false" data-detail="https://docs.google.com/forms/d/1LA-3CfWM4edzYng-vC26G5cNWddGtuUVAXkiYCAoWm8/edit" data-category="link" target="_blank"><span>click here</span></a><em> and let us walk with you and help you on your journey.</em></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
 //#endregion
 
 describe.each([
@@ -995,7 +1167,9 @@ describe.each([
   ex10,
   ex11,
   ex12,
-  ex13
+  ex13,
+  ex14,
+  ex15
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;

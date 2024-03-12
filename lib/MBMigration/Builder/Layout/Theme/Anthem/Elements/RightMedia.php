@@ -109,6 +109,9 @@ class RightMedia extends Element
             }
         }
 
+        $objBlock->item()->item()->item()->setting('paddingRight', 60);
+        $objBlock->item()->item()->item()->setting('paddingLeft', 5);
+
         foreach ($sectionData['items'] as $item) {
             if ($item['category'] == 'text') {
                 if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {

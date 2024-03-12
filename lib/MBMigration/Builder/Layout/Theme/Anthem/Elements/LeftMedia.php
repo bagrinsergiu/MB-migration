@@ -85,6 +85,10 @@ class LeftMedia extends Element
                 }
             }
         }
+
+        $objBlock->item()->item()->item(1)->setting('paddingLeft', 60);
+        $objBlock->item()->item()->item(1)->setting('paddingRight', 5);
+
         foreach ($sectionData['items'] as $item) {
             if($item['category'] == 'text') {
                 if($item['item_type']=='title' && $this->showHeader($sectionData)) {
