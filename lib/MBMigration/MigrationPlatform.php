@@ -320,21 +320,9 @@ class MigrationPlatform
         }
 
         $collectionItem = $this->getCollectionItem($page['slug']);
-        if (!$collectionItem) {
-            $ProjectTitle = $this->cache->get('settings')['title'];
-            $title = $ProjectTitle.' | '.$page['name'];
-
-            $newPage = $this->creteNewPage($page['slug'], $page['name'], $title, $page['protectedPage']);
-            if (!$newPage) {
-                Logger::instance()->warning('Failed created page', $page);
-            } else {
-                Logger::instance()->info('Success created page', $page);
-                $collectionItem = $newPage;
-            }
-        }
 
         $this->setCurrentPageOnWork($collectionItem);
-        Logger::instance()->info('Run Page Builder for page', $page);
+        Logger::instance()->info('Run Page Builder for page', ['slug'=>$page['slug'],'name'=>$page['name']]);
         $this->PageBuilder->run($preparedSectionOfThePage);
     }
 

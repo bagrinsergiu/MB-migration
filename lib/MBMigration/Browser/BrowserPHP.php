@@ -70,7 +70,9 @@ class BrowserPHP implements BrowserInterface
 
     public function openPage($url, $theme): BrowserPageInterface
     {
-        if (!isset($this->page)) {
+        \MBMigration\Core\Logger::instance()->info('Opening: '. $url);
+
+        if (!$this->page) {
             $this->page = $this->browser->createPage();
         }
 

@@ -81,7 +81,7 @@ trait DanationsAble
             'brizy.getStyles',
             [
                 'selector' => $selector,
-                'STYLE_PROPERTIES' => [
+                'styleProperties' => [
                     'font-family',
                     'font-size',
                     'font-weight',
@@ -107,8 +107,8 @@ trait DanationsAble
                     'border-top-right-radius',
                     'background-color',
                 ],
-                'FAMILIES' => $data->getFontFamilies(),
-                'DEFAULT_FAMILY' => $data->getDefaultFontFamily(),
+                'families' => $data->getFontFamilies(),
+                'defaultFamily' => $data->getDefaultFontFamily(),
             ]
         );
 
