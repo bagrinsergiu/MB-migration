@@ -31,11 +31,6 @@ return static function (array $context, Request $request): Response {
         ],
         //'previewBaseHost' => 'staging.cloversites.com',
         'previewBaseHost' => $context['MB_PREVIEW_HOST'],
-        'metaData' => [
-            'secret' => 'CSIWESNiYhpHAyyeOuIrfzHwwEMeFi68',
-            'MBAccountID' => '9a1438f1-0fe5-47dd-9324-da224d34a63f',
-            'MBVisitorID' => '79bce594-4bc0-40ba-83c4-1d35e6a0dbcd',
-        ],
     ];
 
     try {

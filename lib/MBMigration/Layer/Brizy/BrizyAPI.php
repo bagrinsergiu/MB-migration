@@ -236,6 +236,7 @@ class BrizyAPI extends Utils
         $requestData['rules'] = $rules;
         $requestData['dataVersion'] = 0;
         $requestData['data'] = $data;
+        $requestData['meta'] = '{"type":"normal","extraFontStyles":[],"_thumbnailSrc":17339266,"_thumbnailWidth":600,"_thumbnailHeight":138,"_thumbnailTime":1710341890936}';
         $requestData['is_autosave'] = 0;
         $requestData['uid'] = self::generateCharID(12);
 
