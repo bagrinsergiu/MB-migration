@@ -58,14 +58,6 @@ class ListMediaLayout extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        // create details page
-        $headElement = $data->getThemeContext()->getElementFactory()->getElement('head');
-        $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbHeadSection());
-        $headBlock = $headElement->internalTransformToItem($elementContext);
-
-        $footerElement = $data->getThemeContext()->getElementFactory()->getElement('footer');
-        $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbFooterSection());
-        $footerBlock = $footerElement->internalTransformToItem($elementContext);
 
         if ($this->canShowHeader($data->getMbSection()) || $this->canShowBody($data->getMbSection())) {
             $value = $brizySection->getItemValueWithDepth(0, 1, 0, 0, 0);
@@ -77,9 +69,7 @@ class ListMediaLayout extends AbstractElement
             $collectionTypeUri,
             [
                 'items' => [
-                    $headBlock,
                     $detailsSection,
-                    $footerBlock,
                 ],
             ]
         );

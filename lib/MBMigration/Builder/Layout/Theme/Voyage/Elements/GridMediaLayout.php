@@ -58,24 +58,12 @@ class GridMediaLayout extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        // header
-        $headElement = $data->getThemeContext()->getElementFactory()->getElement('head');
-        $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbHeadSection());
-        $headBlock = $headElement->internalTransformToItem($elementContext);
-
-        $footerElement = $data->getThemeContext()->getElementFactory()->getElement('footer');
-        $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbFooterSection());
-        $footerBlock = $footerElement->internalTransformToItem($elementContext);
-        // footer
-
         // create details page
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
         $detailCollectionItem = $this->createDetailsCollectionItem(
             $data->getThemeContext()->getBrizyCollectionTypeURI(),
             [
-                $headBlock,
                 $detailsSection,
-                $footerBlock,
             ]
         );
 

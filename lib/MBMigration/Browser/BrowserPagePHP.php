@@ -73,7 +73,6 @@ class BrowserPagePHP implements BrowserPageInterface
 
             return false; // element not found
         }
-        usleep(500000);
         return true; // element found
     }
 

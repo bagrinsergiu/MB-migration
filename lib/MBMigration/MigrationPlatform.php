@@ -214,6 +214,9 @@ class MigrationPlatform
             echo $this->cache->get('design', 'settings')."\n";
         }
 
+        // lets dump the cache there.
+        $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
+
         try {
             $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
             $this->launch($parentPages);
