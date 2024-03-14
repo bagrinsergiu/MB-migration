@@ -51,9 +51,11 @@ const getMenuV = (data: NavData) => {
     families: data.families,
     defaultFamily: data.defaultFamily
   });
+  const mMenu = prefixed(v, "mMenu");
   const globalModel = getGlobalMenuModel();
 
   return {
+    ...mMenu,
     ...globalModel,
     ...v,
     itemPadding: isNaN(itemPadding) ? 10 : itemPadding
