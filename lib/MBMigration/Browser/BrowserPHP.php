@@ -14,12 +14,15 @@ use Psr\Log\LoggerInterface;
 class BrowserPHP implements BrowserInterface
 {
     /**
-     * @var Puppeteer
+     * @var \HeadlessChromium\Browser
      */
     private $browser;
     private $scriptPath;
 
-    private $page = null;
+    /**
+     * @var Page|null
+     */
+    private ?Page $page = null;
 
     static public function instance($scriptPath, LoggerInterface $logger = null)
     {
@@ -51,7 +54,7 @@ class BrowserPHP implements BrowserInterface
             'debugLogger' => $logger,
             'keepAlive' => false,
             'noSandbox' => true,
-            'connectionDelay' => 1,
+            'connectionDelay' => 0.5,
             'disableNotifications' => true,
             'customFlags' => [
                 //'--single-process',
@@ -64,8 +67,7 @@ class BrowserPHP implements BrowserInterface
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-web-security',
-            ],
-            'excludedSwitches' => ['--disable-background-networking'],
+            ]
         ]);
 
         $this->scriptPath = $scriptPath;
@@ -76,28 +78,15 @@ class BrowserPHP implements BrowserInterface
         \MBMigration\Core\Logger::instance()->info('Opening: '.$url);
 
         if (!$this->page) {
+            \MBMigration\Core\Logger::instance()->info('Creating a new browser tab.');
             $this->page = $this->browser->createPage();
         }
-        $imageName = str_replace(["/",":"],"",$url);
-        $this->page->screenshot([
-            'format' => 'jpeg',  // default to 'png' - possible values: 'png', 'jpeg', 'webp'
-            'quality' => 80,      // only when format is 'jpeg' or 'webp' - default 100
-            'optimizeForSpeed' => true,
-             'captureBeyondViewport' => true,// default to 'false' - Optimize image encoding for speed, not for resulting size
-        ])->saveToFile('/project/var/cache/before-'.$imageName.".png");
 
         try {
-            $this->page->navigate($url)->waitForNavigation(Page::NETWORK_IDLE);
+            $this->page->navigate($url)->waitForNavigation(Page::LOAD);
         } catch (Exception $e) {
             \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
         }
-
-        $this->page->screenshot([
-            'format' => 'jpeg',  // default to 'png' - possible values: 'png', 'jpeg', 'webp'
-            'quality' => 80,      // only when format is 'jpeg' or 'webp' - default 100
-            'optimizeForSpeed' => true,
-             'captureBeyondViewport' => true, // default to 'false' - Optimize image encoding for speed, not for resulting size
-        ])->saveToFile('/project/var/cache/after-'.$imageName.".png");
 
         return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
     }
@@ -105,7 +94,10 @@ class BrowserPHP implements BrowserInterface
     public function closePage(): void
     {
         try {
-            // $this->page->close();
+            \MBMigration\Core\Logger::instance()->info('Closing the page');
+            $this->page->close();
+            sleep(2);
+            $this->page = null;
         } catch (Exception $e) {
             \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
         }
@@ -115,6 +107,7 @@ class BrowserPHP implements BrowserInterface
     {
         try {
             $this->browser->close();
+            $this->browser = null;
         } catch (Exception $e) {
             \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
         }

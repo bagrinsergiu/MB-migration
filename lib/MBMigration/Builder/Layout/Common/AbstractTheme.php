@@ -34,6 +34,7 @@ abstract class AbstractTheme implements ThemeInterface
         $brizyPage = new BrizyPage;
         $brizyComponent = new BrizyComponent(['value' => ['items' => []]]);
         $elementFactory = $this->themeContext->getElementFactory();
+        $browserPage = $this->themeContext->getBrowserPage();
 
         $brizyPage = $this->beforeTransformBlocks($brizyPage, $mbPageSections);
 
@@ -49,13 +50,13 @@ abstract class AbstractTheme implements ThemeInterface
         );
 
         Logger::instance()->debug("Handling [head] page section.");
-        $elementFactory->getElement('head')->transformToItem($elementContext);
+        $elementFactory->getElement('head', $browserPage)->transformToItem($elementContext);
 
         foreach ($mbPageSections as $mbPageSection) {
             $elementName = $mbPageSection['typeSection'];
             Logger::instance()->debug("Handling [$elementName] page section.");
             try {
-                $element = $elementFactory->getElement($elementName);
+                $element = $elementFactory->getElement($elementName,$browserPage);
                 $elementContext = ElementContext::instance(
                     $this,
                     $this->themeContext,
@@ -76,7 +77,7 @@ abstract class AbstractTheme implements ThemeInterface
         }
 
 
-        $elementFactory->getElement('footer')
+        $elementFactory->getElement('footer',$browserPage)
             ->transformToItem(
                 ElementContext::instance(
                     $this,
