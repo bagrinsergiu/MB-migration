@@ -22,9 +22,9 @@ COPY .docker/conf.d/php.ini $PHP_FPM_INI_DIR/conf.d/php.ini
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libzip-dev libxml2-dev libpq-dev libcurl4-openssl-dev nginx zip unzip curl vim libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev libx11-xcb1 libasound2 && \
-    curl -LO http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_121.0.6167.184-1_amd64.deb && \
-    apt-get install --no-install-recommends -y ./google-chrome-stable_121.0.6167.184-1_amd64.deb && \
-    rm google-chrome-stable_121.0.6167.184-1_amd64.deb && \
+    curl -LO http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_122.0.6261.128-1_amd64.deb && \
+    apt-get install --no-install-recommends -y ./google-chrome-stable_122.0.6261.128-1_amd64.deb && \
+    rm google-chrome-stable_122.0.6261.128-1_amd64.deb && \
     rm -rf /var/lib/apt/lists/* && \
     docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-configure gd \
