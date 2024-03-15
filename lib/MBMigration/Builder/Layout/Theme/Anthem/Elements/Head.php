@@ -263,6 +263,8 @@ class Head extends Element
             "borderBottomRightRadiusSuffix"=> "px",
             "borderBottomLeftRadius"=> 4,
             "borderBottomLeftRadiusSuffix"=> "px",
+            "mobileMMenuSize"=> 24,
+            "mobileMMenuSizeSuffix"=> "px",
         ];
 
         $result['data'] = array_merge_recursive($result['data'], $defOptions);
