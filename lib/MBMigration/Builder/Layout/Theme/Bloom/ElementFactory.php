@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Bloom;
 
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
@@ -33,7 +34,7 @@ use MBMigration\Builder\Layout\Theme\Bloom\Elements\TwoRightMediaCircle;
 
 class ElementFactory  extends AbstractThemeElementFactory
 {
-    public function getElement($name, BrowserPage $browserPage): ElementInterface
+    public function getElement($name, BrowserPageInterface $browserPage): ElementInterface
     {
         switch ($name) {
             case 'footer':

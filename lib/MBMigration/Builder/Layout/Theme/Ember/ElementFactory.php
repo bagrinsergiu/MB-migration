@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Ember;
 
 use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
@@ -35,7 +36,7 @@ use MBMigration\Builder\Layout\Theme\Ember\Elements\LivestreamLayout;
 
 class ElementFactory extends AbstractThemeElementFactory
 {
-    public function getElement($name, BrowserPage $browserPage): ElementInterface
+    public function getElement($name, BrowserPageInterface $browserPage): ElementInterface
     {
         switch ($name) {
             case 'head':
