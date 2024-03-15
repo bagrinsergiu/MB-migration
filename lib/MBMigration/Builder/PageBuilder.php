@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder;
 
+use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
@@ -64,7 +65,15 @@ class PageBuilder
 
         try {
             if ($design !== 'Anthem' && $design !== 'Solstice') {
-                $browserPage = $this->browser->openPage($url, $design);
+
+                try {
+                    $browserPage = $this->browser->openPage($url, $design);
+                } catch (OperationTimedOut $e) {
+                    Logger::instance()->critical($e->getMessage());
+                    $this->browser = BrowserPHP::instance($layoutBasePath);
+                    $browserPage = $this->browser->openPage($url, $design);
+                }
+
                 $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
                 $layoutElementFactory = new LayoutElementFactory(
                     $brizyKit,

@@ -189,7 +189,9 @@ class MigrationPlatform
             Logger::instance()->info('Start create blank pages');
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
             if (!$this->buildPage) {
-                $existingBrizyPages = $this->deleteAllBrizyCollectionItems($existingBrizyPages);
+                $existingBrizyPages['listPages'] = $this->deleteAllBrizyCollectionItems(
+                    $existingBrizyPages['listPages']
+                );
             }
             $this->createBlankPages(
                 $parentPages,
@@ -324,9 +326,17 @@ class MigrationPlatform
 
         $collectionItem = $this->getCollectionItem($page['slug']);
 
-        $this->setCurrentPageOnWork($collectionItem);
-        Logger::instance()->info('Run Page Builder for page', ['slug'=>$page['slug'],'name'=>$page['name']]);
-        $this->PageBuilder->run($preparedSectionOfThePage);
+        if ($collectionItem) {
+            $this->setCurrentPageOnWork($collectionItem);
+            Logger::instance()->info('Run Page Builder for page', ['slug' => $page['slug'], 'name' => $page['name']]);
+            $this->PageBuilder->run($preparedSectionOfThePage);
+        } else {
+            Logger::instance()->info(
+                'Failed to run collector for page: '.$page['slug'].'. The collection item was not found.'
+            );
+        }
+
+
     }
 
     private function getItemsFromPage(array $page)
@@ -539,6 +549,10 @@ class MigrationPlatform
         $slug = $collectionItem['slug']; // the slug can be renamed as brizy has some restrictions like slug: blog.
         $this->getAllPage();
 
+        $entities = $this->cache->get('ListPages');
+        $entities[$slug] = $collectionItem['id'];
+        $this->cache->set('ListPages',$entities);
+
         $mainCollectionItem = $this->getCollectionItem($slug);
         if ($mainCollectionItem) {
             if ($setActivePage) {
@@ -560,24 +574,16 @@ class MigrationPlatform
      */
     protected function deleteAllBrizyCollectionItems($existingBrizyPages)
     {
-        if (!$this->buildPage) {
-            // delete all naher
-            Logger::instance()->debug('Delete all collection items', [count($existingBrizyPages['listPages'])]);
-            foreach ($existingBrizyPages['listPages'] as $slug => $uri) {
-                try {
-                    $this->QueryBuilder->deleteCollectionItem($uri);
-                } catch (\Exception $e) {
-                    Logger::instance()->warning('Failed to delete:'.$uri.' '.$e->getMessage(), $e->getTrace());
-                }
+        // delete all naher
+        Logger::instance()->debug('Delete all collection items', [count($existingBrizyPages)]);
+        foreach ($existingBrizyPages as $slug => $uri) {
+            try {
+                $this->QueryBuilder->deleteCollectionItem($uri);
+            } catch (\Exception $e) {
+                Logger::instance()->warning('Failed to delete:'.$uri.' '.$e->getMessage(), $e->getTrace());
             }
-            $existingBrizyPages['listPages'] = [];
-
-        } else {
-            // delete $this->buildPage only
-//            if ($existingBrizyPages['listPages'][$this->buildPage]) {
-//                $this->QueryBuilder->deleteCollectionItem($this->buildPage);
-//            }
         }
+        $existingBrizyPages = [];
 
         return $existingBrizyPages;
     }
@@ -610,7 +616,7 @@ class MigrationPlatform
                     $title,
                     $page['protectedPage'],
                     false,
-                    $page['position'] == 1 && !$page['parent_id'] && $page['landing']
+                    $page['position'] == 1 && !$page['parent_id']
                 );
 
                 if ($newPage === false) {

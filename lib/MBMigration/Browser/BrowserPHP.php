@@ -26,13 +26,7 @@ class BrowserPHP implements BrowserInterface
 
     static public function instance($scriptPath, LoggerInterface $logger = null)
     {
-        static $instance = null;
-
-        if ($instance) {
-            return $instance;
-        }
-
-        return $instance = new self($scriptPath, '/usr/bin/google-chrome', $logger);
+        return new self($scriptPath, '/usr/bin/google-chrome', $logger);
     }
 
     private function __construct(
@@ -67,7 +61,7 @@ class BrowserPHP implements BrowserInterface
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-web-security',
-            ]
+            ],
         ]);
 
         $this->scriptPath = $scriptPath;
@@ -75,18 +69,16 @@ class BrowserPHP implements BrowserInterface
 
     public function openPage($url, $theme): BrowserPageInterface
     {
-        \MBMigration\Core\Logger::instance()->info('Opening: '.$url);
+        \MBMigration\Core\Logger::instance()->debug('Opening a new page');
 
         if (!$this->page) {
-            \MBMigration\Core\Logger::instance()->info('Creating a new browser tab.');
+            \MBMigration\Core\Logger::instance()->debug('Creating a new browser tab.');
             $this->page = $this->browser->createPage();
         }
 
-        try {
-            $this->page->navigate($url)->waitForNavigation(Page::LOAD);
-        } catch (Exception $e) {
-            \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
-        }
+        \MBMigration\Core\Logger::instance()->debug('Navigate to: '.$url);
+        $this->page->navigate($url)->waitForNavigation(Page::LOAD, 60000);
+
 
         return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
     }
