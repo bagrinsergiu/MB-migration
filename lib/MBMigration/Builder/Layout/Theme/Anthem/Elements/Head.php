@@ -96,9 +96,7 @@ class Head extends Element
 
         $this->setColorBackground($objBlock, $options);
 
-        $this->setParseOptions($objBlock, $options, [
-            'borderRadius' => 10,
-        ]);
+        $this->setParseOptions($objBlock, $options);
 
 
         $MenuHandler = new MenuHandler($this->browserPage);
@@ -254,6 +252,17 @@ class Head extends Element
             'activeSubMenuColorHex' => $result['data']['hoverColorHex'] ?? '#827777',
             'menuPadding' => 5,
             'menuPaddingBottom' => 5,
+            "borderRadiusType"=> "grouped",
+            "borderRadius"=> 4,
+            "borderRadiusSuffix"=> "px",
+            "borderTopLeftRadius"=> 4,
+            "borderTopLeftRadiusSuffix"=> "px",
+            "borderTopRightRadius"=> 4,
+            "borderTopRightRadiusSuffix"=> "px",
+            "borderBottomRightRadius"=> 4,
+            "borderBottomRightRadiusSuffix"=> "px",
+            "borderBottomLeftRadius"=> 4,
+            "borderBottomLeftRadiusSuffix"=> "px",
         ];
 
         $result['data'] = array_merge_recursive($result['data'], $defOptions);
