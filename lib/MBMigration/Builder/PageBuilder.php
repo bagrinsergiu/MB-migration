@@ -61,8 +61,6 @@ class PageBuilder
 
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
-        $this->browser = BrowserPHP::instance($layoutBasePath);
-
         try {
             if ($design !== 'Anthem' && $design !== 'Solstice') {
 
@@ -119,7 +117,14 @@ class PageBuilder
                 return true;
 
             } else {
-                $browserPage = $this->browser->openPage($url, $design);
+                try {
+                    $browserPage = $this->browser->openPage($url, $design);
+                } catch (OperationTimedOut $e) {
+                    Logger::instance()->critical($e->getMessage());
+                    $this->browser = BrowserPHP::instance($layoutBasePath);
+                    $browserPage = $this->browser->openPage($url, $design);
+                }
+
                 $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
                 if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                     Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
@@ -137,12 +142,7 @@ class PageBuilder
             throw $e;
         } finally {
             $this->browser->closePage();
+            $this->browser->closeBrowser();
         }
     }
-
-    public function closeBrowser()
-    {
-        $this->browser->closeBrowser();
-    }
-
 }

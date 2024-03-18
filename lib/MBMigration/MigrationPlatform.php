@@ -219,12 +219,8 @@ class MigrationPlatform
         // lets dump the cache there.
         $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
 
-        try {
-            $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
-            $this->launch($parentPages);
-        } finally {
-            $this->PageBuilder->closeBrowser();
-        }
+        $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
+        $this->launch($parentPages);
 
         Logger::instance()->info('Project migration completed successfully!');
 
@@ -551,7 +547,7 @@ class MigrationPlatform
 
         $entities = $this->cache->get('ListPages');
         $entities[$slug] = $collectionItem['id'];
-        $this->cache->set('ListPages',$entities);
+        $this->cache->set('ListPages', $entities);
 
         $mainCollectionItem = $this->getCollectionItem($slug);
         if ($mainCollectionItem) {
