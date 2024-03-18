@@ -78,8 +78,8 @@ abstract class GalleryLayout extends AbstractElement
 
         $brizyComponentValue->set_widthSuffix('px');
         $brizyComponentValue->set_heightSuffix('px');
-        $brizyComponentValue->set_mobiletWidthSuffix('px');
-        $brizyComponentValue->set_mobiletHeightSuffix('px');
+        $brizyComponentValue->set_mobileWidthSuffix('px');
+        $brizyComponentValue->set_mobileHeightSuffix('px');
         $brizyComponentValue->set_tabletWidthSuffix('px');
         $brizyComponentValue->set_tabletHeightSuffix('px');
 

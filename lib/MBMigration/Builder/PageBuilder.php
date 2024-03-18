@@ -61,6 +61,7 @@ class PageBuilder
 
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
+        $this->browser = BrowserPHP::instance($layoutBasePath);
         try {
             if ($design !== 'Anthem' && $design !== 'Solstice') {
 
@@ -141,8 +142,10 @@ class PageBuilder
             Logger::instance()->critical('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
             throw $e;
         } finally {
-            $this->browser->closePage();
-            $this->browser->closeBrowser();
+            if ($this->browser) {
+                $this->browser->closePage();
+                $this->browser->closeBrowser();
+            }
         }
     }
 }
