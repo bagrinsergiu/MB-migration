@@ -36,7 +36,8 @@ class BrowserPagePHP implements BrowserPageInterface
 
             return $result;
         } catch (Exception $e) {
-            Logger::instance()->critical($e->getMessage(),$e->getTrace());
+            Logger::instance()->critical("evaluateScript: ".$e->getMessage(), [$jsScript, $params]);
+
             return ['error' => $e->getMessage()]; // element not found
         }
     }
@@ -68,10 +69,10 @@ class BrowserPagePHP implements BrowserPageInterface
                     break;
             }
         } catch (Exception $e) {
-            Logger::instance()->critical($e->getMessage(),$e->getTrace());
+            Logger::instance()->critical("triggerEvent: ".$e->getMessage(), [$eventNameMethod,$elementSelector, $params]);
+
             return false; // element not found
         }
-        usleep(500000);
         return true; // element found
     }
 

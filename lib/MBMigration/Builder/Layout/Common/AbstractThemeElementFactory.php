@@ -16,10 +16,7 @@ abstract class  AbstractThemeElementFactory implements ThemeElementFactoryInterf
      * @var array
      */
     protected $blockKit;
-    /**
-     * @var BrowserPageInterface
-     */
-    protected $browserPage;
+
 
 
     /**
@@ -29,10 +26,9 @@ abstract class  AbstractThemeElementFactory implements ThemeElementFactoryInterf
     protected FontsController $fontsController;
 
 
-    public function __construct($blockKit, BrowserPageInterface $browserPage, QueryBuilder $queryBuilder, BrizyAPI $brizyApiClient, FontsController $fontsController)
+    public function __construct($blockKit, QueryBuilder $queryBuilder, BrizyAPI $brizyApiClient, FontsController $fontsController)
     {
         $this->blockKit = $blockKit;
-        $this->browserPage = $browserPage;
         $this->brizyApiClient = $brizyApiClient;
         $this->fontsController = $fontsController;
 

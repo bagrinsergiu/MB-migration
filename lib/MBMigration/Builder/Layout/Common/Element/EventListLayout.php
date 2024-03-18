@@ -46,24 +46,12 @@ abstract class EventListLayout extends AbstractElement
             array_merge([$brizySectionHead], $brizyComponent->getValue()->get_items())
         );
 
-        // header
-        $headElement = $data->getThemeContext()->getElementFactory()->getElement('head');
-        $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbHeadSection()); // the foot should be already cached.. so no nee to build the right context
-        $headBlock = $headElement->internalTransformToItem($elementContext);
-
-        // footer
-        $footerElement = $data->getThemeContext()->getElementFactory()->getElement('footer');
-        $elementContext = $data->instanceWithMBSection($data->getThemeContext()->getMbFooterSection()); // the foot should be already cached.. so no nee to build the right context
-        $footerBlock = $footerElement->internalTransformToItem($elementContext);
-
        // create details page
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
         $detailCollectionItem = $this->createDetailsCollectionItem(
             $data->getThemeContext()->getBrizyCollectionTypeURI(),
             [
-                $headBlock,
                 $detailsSection,
-                $footerBlock,
             ]
         );
 

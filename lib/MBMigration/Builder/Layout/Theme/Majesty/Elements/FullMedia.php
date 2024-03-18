@@ -51,25 +51,15 @@ class FullMedia extends AbstractElement
         $brizySection->getItemValueWithDepth(0, 0)
             ->set_marginType("ungrouped")
             ->set_margin(0)
-            ->set_tempMargin(0)
             ->set_marginSuffix("px")
-            ->set_tempMarginSuffix("px")
             ->set_marginTop(10)
-            ->set_tempMarginTop(10)
             ->set_marginTopSuffix("px")
-            ->set_tempMarginTopSuffix("px")
             ->set_marginRight(0)
-            ->set_tempMarginRight(0)
             ->set_marginRightSuffix("px")
-            ->set_tempMarginRightSuffix("px")
             ->set_marginBottom(30)
-            ->set_tempMarginBottom(30)
             ->set_marginBottomSuffix("px")
-            ->set_tempMarginBottomSuffix("px")
             ->set_marginLeft(0)
-            ->set_tempMarginLeft(0)
-            ->set_marginLeftSuffix("px")
-            ->set_tempMarginLeftSuffix("px");
+            ->set_marginLeftSuffix("px");
 
         $image = $brizySection->getItemValueWithDepth(0, 0, 0);
 

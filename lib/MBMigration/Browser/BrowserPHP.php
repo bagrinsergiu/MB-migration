@@ -2,6 +2,7 @@
 
 namespace MBMigration\Browser;
 
+use HeadlessChromium\Page;
 use Monolog\Logger;
 use Exception;
 use HeadlessChromium\BrowserFactory;
@@ -13,22 +14,19 @@ use Psr\Log\LoggerInterface;
 class BrowserPHP implements BrowserInterface
 {
     /**
-     * @var Puppeteer
+     * @var \HeadlessChromium\Browser
      */
     private $browser;
     private $scriptPath;
 
-    private $page = null;
+    /**
+     * @var Page|null
+     */
+    private ?Page $page = null;
 
     static public function instance($scriptPath, LoggerInterface $logger = null)
     {
-        static $instance = null;
-
-        if ($instance) {
-            return $instance;
-        }
-
-        return $instance = new self($scriptPath, '/usr/bin/google-chrome', $logger);
+        return new self($scriptPath, '/usr/bin/google-chrome', $logger);
     }
 
     private function __construct(
@@ -50,8 +48,10 @@ class BrowserPHP implements BrowserInterface
             'debugLogger' => $logger,
             'keepAlive' => false,
             'noSandbox' => true,
+            'connectionDelay' => 0.5,
+            'disableNotifications' => true,
             'customFlags' => [
-                '--single-process',
+                //'--single-process',
                 '--no-zygote',
                 '--disable-setuid-sandbox',
                 '--disable-canvas-aa',
@@ -62,7 +62,6 @@ class BrowserPHP implements BrowserInterface
                 '--disable-setuid-sandbox',
                 '--disable-web-security',
             ],
-            //'excludedSwitches'=>['--disable-background-networking']
         ]);
 
         $this->scriptPath = $scriptPath;
@@ -70,15 +69,16 @@ class BrowserPHP implements BrowserInterface
 
     public function openPage($url, $theme): BrowserPageInterface
     {
-        if (!isset($this->page)) {
+        \MBMigration\Core\Logger::instance()->debug('Opening a new page');
+
+        if (!$this->page) {
+            \MBMigration\Core\Logger::instance()->debug('Creating a new browser tab.');
             $this->page = $this->browser->createPage();
         }
 
-        try {
-            $this->page->navigate($url)->waitForNavigation();
-        } catch (Exception $e) {
-            \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
-        }
+        \MBMigration\Core\Logger::instance()->debug('Navigate to: '.$url);
+        $this->page->navigate($url)->waitForNavigation(Page::LOAD, 60000);
+
 
         return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
     }
@@ -86,7 +86,10 @@ class BrowserPHP implements BrowserInterface
     public function closePage(): void
     {
         try {
-           // $this->page->close();
+            \MBMigration\Core\Logger::instance()->info('Closing the page');
+            $this->page->close();
+            sleep(2);
+            $this->page = null;
         } catch (Exception $e) {
             \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
         }
@@ -96,6 +99,7 @@ class BrowserPHP implements BrowserInterface
     {
         try {
             $this->browser->close();
+            $this->browser = null;
         } catch (Exception $e) {
             \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
         }

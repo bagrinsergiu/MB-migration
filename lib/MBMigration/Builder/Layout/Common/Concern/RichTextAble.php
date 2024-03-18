@@ -244,11 +244,18 @@ trait RichTextAble
                 ->set_imageFileName($mbSectionItem['imageFileName'])
                 ->set_imageSrc($mbSectionItem['content'])
                 ->set_width((int)$sizes['width'])
+                ->set_tabletWidth((int)$sizes['width'])
+                ->set_mobileWidth((int)$sizes['width'])
                 ->set_height((int)$sizes['height'])
+                ->set_tabletHeight((int)$sizes['height'])
+                ->set_mobileHeight((int)$sizes['height'])
                 ->set_imageWidth($mbSectionItem['settings']['image']['width'])
                 ->set_imageHeight($mbSectionItem['settings']['image']['height'])
                 ->set_widthSuffix($sizeUnit)
-                ->set_heightSuffix($sizeUnit);
+                ->set_heightSuffix($sizeUnit)
+                ->set_tabletHeightSuffix($sizeUnit)
+                ->set_mobileWidthSuffix($sizeUnit)
+                ->set_mobileHeightSuffix($sizeUnit);
         }
 
         return $brizyComponent;

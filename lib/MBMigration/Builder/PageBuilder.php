@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder;
 
+use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
@@ -61,10 +62,17 @@ class PageBuilder
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
         $this->browser = BrowserPHP::instance($layoutBasePath);
-
         try {
             if ($design !== 'Anthem' && $design !== 'Solstice') {
-                $browserPage = $this->browser->openPage($url, $design);
+
+                try {
+                    $browserPage = $this->browser->openPage($url, $design);
+                } catch (OperationTimedOut $e) {
+                    Logger::instance()->critical($e->getMessage());
+                    $this->browser = BrowserPHP::instance($layoutBasePath);
+                    $browserPage = $this->browser->openPage($url, $design);
+                }
+
                 $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
                 $layoutElementFactory = new LayoutElementFactory(
                     $brizyKit,
@@ -110,7 +118,14 @@ class PageBuilder
                 return true;
 
             } else {
-                $browserPage = $this->browser->openPage($url, $design);
+                try {
+                    $browserPage = $this->browser->openPage($url, $design);
+                } catch (OperationTimedOut $e) {
+                    Logger::instance()->critical($e->getMessage());
+                    $this->browser = BrowserPHP::instance($layoutBasePath);
+                    $browserPage = $this->browser->openPage($url, $design);
+                }
+
                 $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
                 if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                     Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
@@ -127,13 +142,10 @@ class PageBuilder
             Logger::instance()->critical('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
             throw $e;
         } finally {
-            $this->browser->closePage();
+            if ($this->browser) {
+                $this->browser->closePage();
+                $this->browser->closeBrowser();
+            }
         }
     }
-
-    public function closeBrowser()
-    {
-        $this->browser->closeBrowser();
-    }
-
 }

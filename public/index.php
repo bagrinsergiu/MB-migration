@@ -69,8 +69,6 @@ return static function (array $context, Request $request): Response {
 
     # start the DB tunnel
     try {
-
-
         // create lock file
         file_put_contents($lockFile, $mb_project_uuid."-".$brz_project_id);
         \MBMigration\Core\Logger::instance()->info('Creating lock file', [$lockFile]);

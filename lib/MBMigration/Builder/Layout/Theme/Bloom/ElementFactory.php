@@ -2,6 +2,8 @@
 
 namespace MBMigration\Builder\Layout\Theme\Bloom;
 
+use MBMigration\Browser\BrowserPage;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
@@ -32,71 +34,71 @@ use MBMigration\Builder\Layout\Theme\Bloom\Elements\TwoRightMediaCircle;
 
 class ElementFactory  extends AbstractThemeElementFactory
 {
-    public function getElement($name): ElementInterface
+    public function getElement($name, BrowserPageInterface $browserPage): ElementInterface
     {
         switch ($name) {
             case 'footer':
-                return new Footer($this->blockKit['blocks']['footer'], $this->browserPage,$this->brizyApiClient);
+                return new Footer($this->blockKit['blocks']['footer'], $browserPage,$this->brizyApiClient);
             case 'head':
-                return new Head($this->blockKit['blocks']['menu'], $this->browserPage,$this->brizyApiClient, $this->fontsController);
+                return new Head($this->blockKit['blocks']['menu'], $browserPage,$this->brizyApiClient, $this->fontsController);
             case 'left-media-circle':
-                return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $this->browserPage);
+                return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
             case 'two-right-media-circle':
-                return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $this->browserPage);
+                return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
             case 'left-media':
-                return new LeftMedia($this->blockKit['blocks']['left-media'], $this->browserPage);
+                return new LeftMedia($this->blockKit['blocks']['left-media'], $browserPage);
             case 'right-media':
-                return new RightMedia($this->blockKit['blocks']['right-media'], $this->browserPage);
+                return new RightMedia($this->blockKit['blocks']['right-media'], $browserPage);
             case 'gallery-layout':
-                return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $this->browserPage);
+                return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $browserPage);
             case 'full-text':
-                return new FullText($this->blockKit['blocks']['full-text'], $this->browserPage);
+                return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
             case 'small-groups-list':
-                return new SmallGroupsList($this->blockKit['blocks']['small-groups-list'], $this->browserPage);
+                return new SmallGroupsList($this->blockKit['blocks']['small-groups-list'], $browserPage);
             case 'tabs-layout':
-                return new TabsLayout($this->blockKit['blocks']['tabs-layout'], $this->browserPage);
+                return new TabsLayout($this->blockKit['blocks']['tabs-layout'], $browserPage);
             case 'grid-layout':
-                return new GridLayout($this->blockKit['blocks']['grid-layout'], $this->browserPage);
+                return new GridLayout($this->blockKit['blocks']['grid-layout'], $browserPage);
             case 'list-layout':
-                return new ListLayout($this->blockKit['blocks']['list-layout'], $this->browserPage);
+                return new ListLayout($this->blockKit['blocks']['list-layout'], $browserPage);
             case 'prayer-form':
-                return new PrayerForm($this->blockKit['blocks']['prayer-form'], $this->browserPage);
+                return new PrayerForm($this->blockKit['blocks']['prayer-form'], $browserPage);
             case 'full-width-form':
-                return new FullWidthForm($this->blockKit['blocks']['form'], $this->browserPage);
+                return new FullWidthForm($this->blockKit['blocks']['form'], $browserPage);
             case 'left-form-with-text':
-                return new LeftForm($this->blockKit['blocks']['form'], $this->browserPage);
+                return new LeftForm($this->blockKit['blocks']['form'], $browserPage);
             case 'right-form-with-text':
-                return new RightForm($this->blockKit['blocks']['form'], $this->browserPage);
+                return new RightForm($this->blockKit['blocks']['form'], $browserPage);
             case 'accordion-layout':
-                return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $this->browserPage);
+                return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $browserPage);
             case 'event-list-layout':
-                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $this->browserPage, $this->getQueryBuilder());
+                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $browserPage, $this->getQueryBuilder());
             case 'event-tile-layout':
-                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $this->browserPage);
+                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
             case 'event-gallery-layout':
-                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $this->browserPage);
+                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $browserPage);
             case 'event-calendar-layout':
-                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $this->browserPage);
+                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage);
 
 
 //            case 'prayer-list':
-//                return new PrayerList($this->blockKit['blocks']['prayer-list'], $this->browserPage);
+//                return new PrayerList($this->blockKit['blocks']['prayer-list'], $browserPage);
 //            case 'livestream-layout':
-//                return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $this->browserPage);
+//                return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $browserPage);
 //            case 'small-groups-grid':
-//                return new SmallGroupsGrid($this->blockKit['blocks']['small-groups-grid'], $this->browserPage);
+//                return new SmallGroupsGrid($this->blockKit['blocks']['small-groups-grid'], $browserPage);
 //            case 'right-form-with-text':
-//                return new RightFormWithText($this->blockKit['blocks']['right-form-with-text'], $this->browserPage);
+//                return new RightFormWithText($this->blockKit['blocks']['right-form-with-text'], $browserPage);
 //            case 'left-form-with-text':
-//                return new LeftFormWithText($this->blockKit['blocks']['left-form-with-text'], $this->browserPage);
+//                return new LeftFormWithText($this->blockKit['blocks']['left-form-with-text'], $browserPage);
 //            case 'full-width-form':
-//                return new FullWidthForm($this->blockKit['blocks']['full-width-form'], $this->browserPage);
+//                return new FullWidthForm($this->blockKit['blocks']['full-width-form'], $browserPage);
             case 'grid-media-layout':
-                return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $this->browserPage, $this->getQueryBuilder());
+                return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $browserPage, $this->getQueryBuilder());
             case 'list-media-layout':
-                return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $this->browserPage, $this->getQueryBuilder());
+                return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $browserPage, $this->getQueryBuilder());
             case 'full-media':
-                return new FullMedia($this->blockKit['blocks']['full-media'], $this->browserPage);
+                return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);
             default:
                 throw new ElementNotFound("The Element [{$name}] was not found.");
         }
