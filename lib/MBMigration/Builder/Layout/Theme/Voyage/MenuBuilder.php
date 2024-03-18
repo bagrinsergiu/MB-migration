@@ -5,7 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Voyage;
 class MenuBuilder extends \MBMigration\Builder\Layout\Common\MenuBuilder
 {
     const MORE_MENU_ITEM_LABEL = 'More';
-    const MAIN_MENU_ITEM_MAX_COUNT = 6;
+    const MAIN_MENU_ITEM_MAX_COUNT = 7;
 
     public function transformToBrizyMenu(array $menuItems): array
     {
