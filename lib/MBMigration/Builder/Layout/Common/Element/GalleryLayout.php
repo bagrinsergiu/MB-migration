@@ -50,9 +50,9 @@ abstract class GalleryLayout extends AbstractElement
         $brizySectionItems = [];
         foreach ($mbSection['items'] as $mbItem) {
             $brizySectionItem = new BrizyComponent($slideJson);
-            $brizySectionItem = $this->getSlideImageComponent($brizySectionItem);
-            $brizySectionItem = $this->setSlideImage($brizySectionItem, $mbItem);
-            $brizySectionItem = $this->setSlideLinks($brizySectionItem, $mbItem);
+            $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
+            $this->setSlideImage($brizySectionItemImage, $mbItem);
+            $this->setSlideLinks($brizySectionItemImage, $mbItem);
             $brizySectionItems[] = $brizySectionItem;
         }
 
