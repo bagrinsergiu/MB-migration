@@ -67,6 +67,48 @@ class EventCalendarLayout extends DynamicElement
             }
         }
 
+        foreach ($sectionData['head'] as $headItem)
+        {
+            if ($headItem['item_type'] === 'title' && $this->showBody($sectionData)) {
+                $blockHead = true;
+                $this->textCreation($headItem, $objHead);
+            }
+            $objHead->item()->addItem($this->wrapperLine(
+                [
+                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                ]
+            ));
+        }
+
+        foreach ($sectionData['head'] as $headItem)
+        {
+            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
+                $blockHead = true;
+                $this->textCreation($headItem, $objHead);
+            }
+        }
+
+        foreach ($sectionData['items'] as $headItem)
+        {
+            if ($headItem['item_type'] === 'title' && $this->showBody($sectionData)) {
+                $blockHead = true;
+                $this->textCreation($headItem, $objHead);
+            }
+            $objHead->item()->addItem($this->wrapperLine(
+                [
+                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                ]
+            ));
+        }
+
+        foreach ($sectionData['items'] as $headItem)
+        {
+            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
+                $blockHead = true;
+                $this->textCreation($headItem, $objHead);
+            }
+        }
+
         $mainCollectionType = $this->cache->get('mainCollectionType');
 
         if($blockHead) {
@@ -79,11 +121,40 @@ class EventCalendarLayout extends DynamicElement
         $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
-        $objBlock->item()->item()->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
+        $objBlock->item()->item(1)->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
         $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName);
         return json_encode($block);
+    }
+
+    private function textCreation($sectionData, $objBlock)
+    {
+        $i = 0;
+        foreach ($sectionData['brzElement'] as $textItem) {
+            switch ($textItem['type']) {
+                case 'EmbedCode':
+                    if(!empty($sectionData['content'])) {
+                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
+                        if(is_array($embedCode)){
+                            $objBlock->item()->addItem($this->embedCode($embedCode[$i]));
+                        }
+                        $i++;
+                    }
+                    break;
+                case 'Cloneable':
+                    foreach ($textItem['value']['items'] as &$iconItem) {
+                        if ($iconItem['type'] == 'Button') {
+                            $iconItem['value']['borderStyle'] = "none";
+                        }
+                    }
+                    $objBlock->item()->addItem($textItem);
+                    break;
+                case 'Wrapper':
+                    $objBlock->item()->addItem($textItem);
+                    break;
+            }
+        }
     }
 }

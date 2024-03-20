@@ -50,8 +50,8 @@ class GridMediaLayout extends DynamicElement
         {
             if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
-                $this->textCreation($headItem, $objBlock);
-                $objBlock->item()->addItem($this->wrapperLine(
+                $this->textCreation($headItem, $objHead);
+                $objHead->item()->addItem($this->wrapperLine(
                     [
                         'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
                     ]
@@ -63,7 +63,28 @@ class GridMediaLayout extends DynamicElement
         {
             if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
                 $blockHead = true;
-                $this->textCreation($headItem, $objBlock);
+                $this->textCreation($headItem, $objHead);
+            }
+        }
+
+        foreach ($sectionData['items'] as $headItem)
+        {
+            if ($headItem['item_type'] === 'title' && $this->showBody($sectionData)) {
+                $this->textCreation($headItem, $objHead);
+                $blockHead = true;
+                $objHead->item()->addItem($this->wrapperLine(
+                    [
+                        'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                    ]
+                ));
+            }
+        }
+
+        foreach ($sectionData['items'] as $headItem)
+        {
+            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
+                $blockHead = true;
+                $this->textCreation($headItem, $objHead);
             }
         }
 
@@ -79,9 +100,9 @@ class GridMediaLayout extends DynamicElement
         $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
-        $objBlock->item()->item()->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
+        $objBlock->item()->item(1)->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
 
-        $objBlock->item()->item()->item()->setting('defaultCategory', $currentPageSlug);
+        $objBlock->item()->item(1)->item()->setting('defaultCategory', $currentPageSlug);
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
