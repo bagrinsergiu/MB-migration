@@ -115,7 +115,12 @@ class ItemBuilder
             $a_value = [$this->arrayToObject($value)];
             $mainArray = $this->item->value->items;
             if (is_array($mainArray)) {
-                array_splice($mainArray, $position, 0, $a_value);
+                if ($position === 0) {
+                    array_unshift($mainArray, ...$a_value);
+                } else {
+                    array_splice($mainArray, $position, 0, $a_value);
+                }
+                $this->item->value->items = $mainArray;
                 $this->begin();
             } else {
                 $mainArray = [$this->arrayToObject($value)];

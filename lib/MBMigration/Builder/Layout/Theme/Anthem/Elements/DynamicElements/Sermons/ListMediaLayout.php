@@ -68,6 +68,27 @@ class ListMediaLayout extends DynamicElement
             }
         }
 
+        foreach ($sectionData['items'] as $headItem)
+        {
+            if ($headItem['item_type'] === 'title' && $this->showBody($sectionData)) {
+                $blockHead = true;
+                $this->textCreation($headItem, $objBlock);
+            }
+            $objBlock->item()->addItem($this->wrapperLine(
+                [
+                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                ]
+            ));
+        }
+
+        foreach ($sectionData['items'] as $headItem)
+        {
+            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
+                $blockHead = true;
+                $this->textCreation($headItem, $objBlock);
+            }
+        }
+
         $mainCollectionType = $this->cache->get('mainCollectionType');
 
         if($blockHead) {

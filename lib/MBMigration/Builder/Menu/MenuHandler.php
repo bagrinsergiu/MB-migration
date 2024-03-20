@@ -116,7 +116,7 @@ class MenuHandler
     {
         $style = [];
         $textTransform = $browserPage->evaluateScript(
-            'brizy.StyleExtractor.js',
+            'brizy.getStyles',
             [
                 'selector' => $selector,
                 'styleProperties' => [

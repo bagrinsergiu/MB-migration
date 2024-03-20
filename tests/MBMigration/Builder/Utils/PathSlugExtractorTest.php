@@ -23,6 +23,11 @@ class PathSlugExtractorTest extends TestCase
                 ['slug' => 'team', 'child' => []],
                 ]
             ],
+            ['slug' => 'about-us', 'child' => [
+                ['slug' => 'about', 'child' => []],
+                ['slug' => 'team', 'child' => []],
+                ]
+            ],
             ['slug' => 'contact', 'child' => []],
         ];
 
@@ -37,6 +42,10 @@ class PathSlugExtractorTest extends TestCase
         // test 'about/team' path
         $result = PathSlugExtractor::getOrderedPathString($data, 'about');
         $this->assertEquals('about/about', $result);
+
+        // test 'about/team' path
+        $result = PathSlugExtractor::getOrderedPathString($data, 'about');
+        $this->assertEquals('about-us/about', $result);
 
         // test 'contact' path
         $result = PathSlugExtractor::getOrderedPathString($data, 'contact');
