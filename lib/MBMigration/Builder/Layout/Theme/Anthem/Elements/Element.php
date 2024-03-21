@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
+use MBMigration\Builder\Media\MediaController;
 use MBMigration\Core\Logger;
 use DOMDocument;
 use Exception;
@@ -606,6 +607,53 @@ abstract class Element extends LayoutUtils
         }
 
         return false;
+    }
+
+    public function link($objItem, $item): void
+    {
+        $sectionItem = [];
+        $slash = '';
+        if ($item['new_window']) {
+            $sectionItem['new_window'] = 'on';
+        } else {
+            $sectionItem['new_window'] = 'off';
+        }
+
+        switch ($this->detectLinkType($item['link'])) {
+            case 'mail':
+                $objItem->item()->item()->setting('linkType', 'external');
+                $objItem->item()->item()->setting('linkExternal', 'mailto:'.$item['link']);
+                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
+                break;
+            case 'phone':
+                $objItem->item()->item()->setting('linkType', 'external');
+                $objItem->item()->item()->setting('linkExternal', 'tel:'.$item['link']);
+                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
+                break;
+            case 'string':
+            case 'link':
+                $urlComponents = parse_url($item['link']);
+
+                if (!empty($urlComponents['host'])) {
+                    $slash = '';
+                } else {
+                    $slash = '/';
+                }
+
+                if(MediaController::is_doc($item['link'])){
+                    $item['link'] = MediaController::getURLDoc($item['link']);
+                }
+
+                $objItem->item()->item()->setting('linkType', 'external');
+                $objItem->item()->item()->setting('linkExternal', $slash.$item['link']);
+                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
+                break;
+            default:
+                $objItem->item()->item()->setting('linkType', 'external');
+                $objItem->item()->item()->setting('linkExternal', $slash.$item['link']);
+                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
+                break;
+        }
     }
 
     private function styleIframes($html)

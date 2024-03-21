@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use DOMException;
+use MBMigration\Builder\Media\MediaController;
 use MBMigration\Core\Logger;
 use Exception;
 use MBMigration\Builder\ItemBuilder;
@@ -71,44 +72,7 @@ class ThreeTopMediaCircle extends Element
                     $objItem->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
 
                     if ($item['link'] != '') {
-                        $sectionItem = [];
-                        if ($item['new_window']) {
-                            $sectionItem['new_window'] = 'on';
-                        } else {
-                            $sectionItem['new_window'] = 'off';
-                        }
-
-                        switch ($this->detectLinkType($item['link'])) {
-                            case 'mail':
-                                $objItem->item()->item()->setting('linkType', 'external');
-                                $objItem->item()->item()->setting('linkExternal', 'mailto:'.$item['link']);
-                                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
-                                break;
-                            case 'phone':
-                                $objItem->item()->item()->setting('linkType', 'external');
-                                $objItem->item()->item()->setting('linkExternal', 'tel:'.$item['link']);
-                                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
-                                break;
-                            case 'string':
-                            case 'link':
-                                $urlComponents = parse_url($item['link']);
-
-                                if (!empty($urlComponents['host'])) {
-                                    $slash = '';
-                                } else {
-                                    $slash = '/';
-                                }
-
-                                $objItem->item()->item()->setting('linkType', 'external');
-                                $objItem->item()->item()->setting('linkExternal', $slash.$item['link']);
-                                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
-                                break;
-                            default:
-                                $objItem->item()->item()->setting('linkType', 'external');
-                                $objItem->item()->item()->setting('linkExternal', $slash.$item['link']);
-                                $objItem->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
-                                break;
-                        }
+                        $this->link($objItem, $item);
                     }
 
                     $objBlock->item(0)->item(0)->addItem($objItem->get());

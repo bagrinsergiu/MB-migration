@@ -90,17 +90,23 @@ class FullText extends Element
         }
 
         if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
-
-            if (isset($sectionData['settings']['sections']['donations']['url']) &&
-                isset($sectionData['settings']['sections']['donations']['text'])) {
-
+            if ($sectionData['settings']['sections']['donations']['new_window'] ?? false) {
+                $sectionItem['new_window'] = 'on';
+            } else {
+                $sectionItem['new_window'] = 'off';
+            }
+            if (isset($sectionData['settings']['sections']['donations']['url'])) {
                 $buttonOptions = [
                     'linkExternal' => $sectionData['settings']['sections']['donations']['url'],
-                    'text' => $sectionData['settings']['sections']['donations']['text']
+                    'text' => $sectionData['settings']['sections']['donations']['text'] ?? $sectionData['settings']['layout']['donations']['text'],
+                    'linkExternalBlank' => $sectionItem['new_window']
                 ];
-                $position = $sectionData['settings']['sections']['donations']['alignment']?? 'left';
+                $position = $sectionData['settings']['sections']['donations']['alignment'] ?? 'left';
 
                 $objBlock->item()->addItem($this->button($buttonOptions, $position));
+            }
+            if (isset($sectionData['settings']['sections']['donations']['text'])) {
+                // to do
             }
         }
 

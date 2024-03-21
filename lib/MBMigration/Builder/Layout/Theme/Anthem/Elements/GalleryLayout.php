@@ -81,44 +81,7 @@ class GalleryLayout extends Element
             $objSlide->newItem($decoded['itemSlide']);
 
             if (!empty($item['link'])) {
-                $sectionItem = [];
-                if ($item['new_window']) {
-                    $sectionItem['new_window'] = 'on';
-                } else {
-                    $sectionItem['new_window'] = 'off';
-                }
-
-                switch ($this->detectLinkType($item['link'])) {
-                    case 'mail':
-                        $objSlide->item()->item()->setting('linkType', 'external');
-                        $objSlide->item()->item()->setting('linkExternal', 'mailto:'.$item['link']);
-                        $objSlide->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
-                        break;
-                    case 'phone':
-                        $objSlide->item()->item()->setting('linkType', 'external');
-                        $objSlide->item()->item()->setting('linkExternal', 'tel:'.$item['link']);
-                        $objSlide->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
-                        break;
-                    case 'string':
-                    case 'link':
-                        $urlComponents = parse_url($item['link']);
-
-                        if (!empty($urlComponents['host'])) {
-                            $slash = '';
-                        } else {
-                            $slash = '/';
-                        }
-
-                        $objSlide->item()->item()->setting('linkType', 'external');
-                        $objSlide->item()->item()->setting('linkExternal', $slash.$item['link']);
-                        $objSlide->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
-                        break;
-                    default:
-                        $objSlide->item()->item()->setting('linkType', 'external');
-                        $objSlide->item()->item()->setting('linkExternal', $slash.$item['link']);
-                        $objSlide->item()->item()->setting('linkExternalBlank', $sectionItem['new_window']);
-                        break;
-                }
+                $this->link($objSlide, $item);
             }
 
             $imageWidth = 1500;
