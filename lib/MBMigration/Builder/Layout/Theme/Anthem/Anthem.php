@@ -138,7 +138,22 @@ class Anthem extends LayoutUtils
         $this->cache->update('Success', '++', 'Status');
 //        $this->browser->close();
 
+        // list of elements that are processed once for a page
+        $elementsList = ['event'];
+        $processedItems = [];
+
         foreach ($preparedSectionOfThePage as $section) {
+
+            $elementName = explode("-", $section['typeSection']);
+
+            if (in_array($elementName[0], $elementsList)) {
+                if (!in_array($elementName[0], $processedItems)) {
+                    $processedItems[] = $elementName[0];
+                } else {
+                    continue;
+                }
+            }
+
             $blockData = $this->callMethod($section['typeSection'], $section, $slug);
 
             if ($blockData === true) {
@@ -148,7 +163,7 @@ class Anthem extends LayoutUtils
                     $decodeBlock = json_decode($blockData, true);
                     $itemsData['items'][] = $decodeBlock;
                 } else {
-                    Logger::instance()->warning('CallMethod return null. input data: '.json_encode($section).' | Slug: '.$slug);
+                    Logger::instance()->warning('CallMethod return null. input data: ' . json_encode($section) . ' | Slug: ' . $slug);
                 }
             }
         }
