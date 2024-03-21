@@ -895,12 +895,29 @@ const ex13: Data = {
                 text: "Get Baptized",
                 borderStyle: "none",
                 linkExternal: "/contact-us/decision-form",
-                linkExternalBlank: "off",
-                linkType: "external"
+                linkType: "external",
+                linkExternalBlank: "off"
               }
             }
           ],
           horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-34 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0_1"><span style="font-weight: 700; ">How can I help?</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>We need dedicated volunteers to help prepare the baptismal every Baptismal Sunday.&nbsp; This includes set-up, tear-down, and providing necessary support to the ones being baptized.&nbsp;</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style=""><br></span></p>'
+              }
+            }
+          ]
         }
       },
       {
@@ -918,46 +935,12 @@ const ex13: Data = {
                 borderStyle: "none",
                 linkExternal:
                   "https://docs.google.com/forms/d/1Bt4ajELyGHt1jYtkf7X9QG_FTKcqX0p5r9xcxSCckYk/edit",
-                linkExternalBlank: "on",
-                linkType: "external"
+                linkType: "external",
+                linkExternalBlank: "on"
               }
             }
           ],
           horizontalAlign: undefined
-        }
-      },
-      {
-        type: "Wrapper",
-        value: {
-          _id: "1",
-          _styles: ["wrapper", "wrapper--richText"],
-          items: [
-            {
-              type: "RichText",
-              value: {
-                _id: "1",
-                _styles: ["richText"],
-                text: '<center><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style=""><span style=""></span></span></p> <p class="brz-fs-lg-34 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0_1"><span style="font-weight: 700; ">How can I help?</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>We need dedicated volunteers to help prepare the baptismal every Baptismal Sunday.&nbsp; This includes set-up, tear-down, and providing necessary support to the ones being baptized.&nbsp;</span><br></p> <p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style=""><br></span></p> <p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"></p></center>'
-              }
-            }
-          ]
-        }
-      },
-      {
-        type: "Wrapper",
-        value: {
-          _id: "1",
-          _styles: ["wrapper", "wrapper--richText"],
-          items: [
-            {
-              type: "RichText",
-              value: {
-                _id: "1",
-                _styles: ["richText"],
-                text: '<center><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style=""><span style=""></span></span></p> <p class="brz-fs-lg-34 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0_1"><span style="font-weight: 700; ">How can I help?</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>We need dedicated volunteers to help prepare the baptismal every Baptismal Sunday.&nbsp; This includes set-up, tear-down, and providing necessary support to the ones being baptized.&nbsp;</span><br></p> <p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style=""><br></span></p> <p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"></p></center>'
-              }
-            }
-          ]
         }
       },
       {
@@ -1320,6 +1303,37 @@ everlasting life and the other to everlasting damnation. (Matthew 25:46; Mark
 
 //#endregion
 
+//#region Example 19 (Button surrounded by text)
+
+const ex19: Data = {
+  html: `<div class="text-content text-1 editable" data-id="23300332" data-category="text"><div><p style="text-align: justify;"><span class="clovercustom" style="font-size: 1rem; letter-spacing: normal;">Hello and welcome to Connection Church Millen! </span><span class="clovercustom" style="font-size: 16px; letter-spacing: normal;">&nbsp;</span><span class="clovercustom" style="font-size: 1rem; letter-spacing: normal;">We are so glad that you have joined us.&nbsp; If you are new here, we would like to thank you for coming and worshiping with us. If you haven't filled out one of our Connect Cards yet, we would really</span><span style="font-size: 16px; letter-spacing: normal;"> love to learn a little more about you!</span><span class="clovercustom" style="font-size: 16px; letter-spacing: normal;">&nbsp;</span><span style="font-size: 1rem; letter-spacing: normal;">. If you would please follow this link <a style="font-size: 0.9375em;" href="/contact-us/first-time-guest" data-location="existing" data-button="true" data-detail="891913" data-category="link" target="_blank" class="cloverlinks sites-button" role="button">HERE.</a> We 'd love to find out what brought you here and what your experience was like.&nbsp; As well, every Sunday morning we have our Next Steps table available to find out about what YOUR next steps may be as a follower of Christ.</span><span style="font-size: 1rem; letter-spacing: normal;"> Thanks again for joining us and please make sure you follow us online on Facebook and Instagram (see links at bottom of page) and visit here often for all the latest info. Keep scrolling below to see all of our current announcements.</span></p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"23300332\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-justify brz-ls-lg-0"><span style="">Hello and welcome to Connection Church Millen! </span><span style="">&nbsp;</span><span style="">We are so glad that you have joined us.&nbsp; If you are new here, we would like to thank you for coming and worshiping with us. If you haven\'t filled out one of our Connect Cards yet, we would really</span><span style=""> love to learn a little more about you!</span><span style="">&nbsp;</span><span style="">. If you would please follow this link <a style="" href="/contact-us/first-time-guest" data-location="existing" data-button="true" data-detail="891913" data-category="link" target="_blank" role="button"><span>HERE.</span></a> We \'d love to find out what brought you here and what your experience was like.&nbsp; As well, every Sunday morning we have our Next Steps table available to find out about what YOUR next steps may be as a follower of Christ.</span><span style=""> Thanks again for joining us and please make sure you follow us online on Facebook and Instagram (see links at bottom of page) and visit here often for all the latest info. Keep scrolling below to see all of our current announcements.</span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -1338,7 +1352,8 @@ describe.each([
   ex15,
   ex16,
   ex17,
-  ex18
+  ex18,
+  ex19
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
