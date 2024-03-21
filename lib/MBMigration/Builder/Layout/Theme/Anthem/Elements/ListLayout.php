@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use DOMException;
 use Exception;
+use MBMigration\Builder\Media\MediaController;
 use MBMigration\Core\Logger;
 use DOMDocument;
 use MBMigration\Builder\ItemBuilder;
@@ -149,9 +150,8 @@ class ListLayout extends Element
                         $objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
                     }
 
-                    if ($item['link'] != '') {
-                        $objImage->item(0)->item(0)->setting('linkType', 'external');
-                        $objImage->item(0)->item(0)->setting('linkExternal', $item['link']);
+                    if (!empty($item['link'])) {
+                        $this->link($objItem, $item);
                     }
 
                     $objImage->item(0)->setting('mobileHorizontalAlign', 'center');
