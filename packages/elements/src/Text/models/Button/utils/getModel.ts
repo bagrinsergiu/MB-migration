@@ -61,8 +61,11 @@ export const getStyleModel = (node: Element): Record<string, Literal> => {
       bgColorOpacity: getBgColorOpacity(bgColor, opacity),
       bgColorPalette: "",
       ...(getBgColorOpacity(bgColor, opacity) === 0
-        ? { bgColorType: "none" }
-        : { bgColorType: "solid" })
+        ? { bgColorType: "none", hoverBgColorType: "none" }
+        : { bgColorType: "solid", hoverBgColorType: "solid" }),
+      hoverBgColorHex: bgColor.hex,
+      hoverBgColorOpacity: 0.8,
+      hoverBgColorPalette: ""
     }),
     ...(borderWidth === undefined && { borderStyle: "none" })
   };
