@@ -151,7 +151,7 @@ class ListLayout extends Element
                     }
 
                     if (!empty($item['link'])) {
-                        $this->link($objItem, $item);
+                        $this->link($objImage, $item);
                     }
 
                     $objImage->item(0)->setting('mobileHorizontalAlign', 'center');
