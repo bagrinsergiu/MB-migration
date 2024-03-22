@@ -201,17 +201,8 @@ class AnthemElementsController
                 return $element->getElement($elementData);
 
             case "event_calendar_layout":
-                $element = new EventCalendarLayout();
-
-                return $element->getElement($elementData);
             case "event_list_layout":
-                $element = new EventListLayout();
-
-                return $element->getElement($elementData);
             case "event_tile_layout":
-                $element = new EventGridLayout();
-
-                return $element->getElement($elementData);
             case "event_gallery_layout":
                 $element = new EventGalleryLayout();
 

@@ -1,4 +1,8 @@
-import { textAlign } from "../../../utils/common";
+import {
+  defaultMobileLineHeight,
+  defaultTabletLineHeight,
+  textAlign
+} from "../../../utils/common";
 import { getLetterSpacing } from "../../../utils/styles/getLetterSpacing";
 import { getLineHeight } from "../../../utils/styles/getLineHeight";
 import { Literal } from "utils";
@@ -50,6 +54,8 @@ export const stylesToClasses = (
         const size = Math.round(Num.readInt(value) ?? 1);
         const lineHeight = getLineHeight(`${size}`, fontSize);
         classes.push(`brz-lh-lg-${lineHeight}`);
+        classes.push(`brz-lh-sm-${defaultTabletLineHeight}`);
+        classes.push(`brz-lh-xs-${defaultMobileLineHeight}`);
         break;
       }
       default:
