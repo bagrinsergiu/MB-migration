@@ -113,7 +113,7 @@ const ex2: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: `<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Please </span><span style="font-weight: 700; ">Request Online Directory Account</span><span> to create a User Account to login into the Directory portal.&nbsp; &nbsp;Please insert your Name, Address, Phone and Email, so we can update our records.&nbsp; &nbsp;Please be patient with us, we are getting our records in order and it make take a couple days before you get an email with your login credentials.&nbsp;</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 700; ">Directory </span><span>will redirect to </span><span style="font-weight: 400; "><span style="font-weight: 700; ">Shelby Next Membership</span> at <a href="https://fbcterry.shelbynextchms.com" data-location="external" data-detail="https://fbcterry.shelbynextchms.com" data-category="link" target="_blank"><span>https://fbcterry.shelbynextchms.com</span></a></span><span>.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Other ways to access </span><span style="font-weight: 700; ">Shelby Next Membership</span><span> can be found at your Apple App Store or Google Play Store.&nbsp;</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>For mobile apps, change </span><span style="font-weight: 700; ">domain</span><span>.shelbynextchms.com to </span><u><span style="font-weight: 700; ">fbcterry</span><span>.shelbynextchms.com</span></u><span>.&nbsp;&nbsp;</span></p><ul><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a href="https://apps.apple.com/us/app/shelbynext-membership/id996581065" data-category="link" data-location="external" data-detail="https://apps.apple.com/us/app/shelbynext-membership/id996581065" target="_self"><span>iPhone/iPad app for Shelby Next Membership</span></a>  </li><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a href="https://play.google.com/store/apps/details?id=com.ministrybrands.shelbynext" data-category="link" data-location="external" data-detail="https://play.google.com/store/apps/details?id=com.ministrybrands.shelbynext" target="_self"><span>Android app for Shelby Next Membership</span></a>   <p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p></li></ul><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0_0"><span style="font-weight: 700; ">Calendar </span><span>is our Church-wide calendar.</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>`
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Please </span><span style="font-weight: 700; ">Request Online Directory Account</span><span> to create a User Account to login into the Directory portal.&nbsp; &nbsp;Please insert your Name, Address, Phone and Email, so we can update our records.&nbsp; &nbsp;Please be patient with us, we are getting our records in order and it make take a couple days before you get an email with your login credentials.&nbsp;</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 700; ">Directory </span><span>will redirect to </span><span style="font-weight: 400; "><span style="font-weight: 700; ">Shelby Next Membership</span> at <a href="https://fbcterry.shelbynextchms.com" data-location="external" data-detail="https://fbcterry.shelbynextchms.com" data-category="link" target="_blank"><span>https://fbcterry.shelbynextchms.com</span></a></span><span>.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Other ways to access </span><span style="font-weight: 700; ">Shelby Next Membership</span><span> can be found at your Apple App Store or Google Play Store.&nbsp;</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>For mobile apps, change </span><span style="font-weight: 700; ">domain</span><span>.shelbynextchms.com to </span><u><span style="font-weight: 700; ">fbcterry</span><span>.shelbynextchms.com</span></u><span>.&nbsp;&nbsp;</span></p><ul> <li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"> <a href="https://apps.apple.com/us/app/shelbynext-membership/id996581065" data-category="link" data-location="external" data-detail="https://apps.apple.com/us/app/shelbynext-membership/id996581065" target="_self"><span>iPhone/iPad app for Shelby Next Membership</span></a>  </li> <li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"> <a href="https://play.google.com/store/apps/details?id=com.ministrybrands.shelbynext" data-category="link" data-location="external" data-detail="https://play.google.com/store/apps/details?id=com.ministrybrands.shelbynext" target="_self"><span>Android app for Shelby Next Membership</span></a>   <p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p> </li> </ul><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0_0"><span style="font-weight: 700; ">Calendar </span><span>is our Church-wide calendar.</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
               }
             }
           ]
@@ -1214,6 +1214,111 @@ const ex17: Data = {
 
 //#endregion
 
+//#region Example 18 (Fixed the space between words)
+
+const ex18: Data = {
+  html: `<div class="text-content text-1 editable" data-id="13228982" data-category="text"><div><p>
+
+
+
+
+
+
+
+
+<style>
+
+</style>
+
+
+
+
+
+
+</p><p>
+
+
+
+
+
+
+
+
+<style>
+
+</style>
+
+
+
+
+
+
+</p><p style="font-size: 1.6622em; color: rgb(2, 78, 105);"><span class="clovercustom" style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400;">THE
+INERRANCY OF THE BIBLE</span></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">The scriptures, which include the Old and New
+Testaments, are divinely inspired and represent the infallible and
+authoritative word of God in all matters of faith and conduct. (2 Timothy
+3:15-17; 1 Thessalonians 2:13; 2 Peter 1:21)<br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.6622em; color: rgb(2, 78, 105);"><span class="clovercustom" style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400;">BELIEF IN
+THE ONE TRUE GOD</span></p><p style="color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">There is
+one eternal God, existent in three persons- God the Father, God the Son, and
+God the Holy Spirit. (Deuteronomy 6:4; Isaiah 43:10-11; Matthew 28:19; Luke
+3:22)</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="color: rgb(2, 78, 105);"><span lang="EN-US" class="clovercustom" style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 1.6622em;">JESUS
+CHRIST IS FULLY GOD AND FULLY MAN</span></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">The Lord
+Jesus Christ is the eternal Son of God. Born of a virgin. (Matthew 1:23; Luke
+1:31-35) Lived a sinless life. (Hebrews 7:26; 1 Peter 2:22; Hebrews 4:15) Died
+on the cross to atone for our sins. (1 Corinthians 15:3; 2 Corinthians 5:21)
+Physically rose from the dead. (Acts 1:9; Acts 2:32; Hebrews 1:3) Now sits at
+the right hand of His Father. (Acts 2:33; Hebrews 10:12) He will return to
+earth in power and glory (Zechariah 14:5; Matthew 24:27; Revelation 19:11-14)</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 1.6622em; color: rgb(2, 78, 105);">SALVATION</p><p style="color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">Man's only
+hope of redemption is through the shed blood of Jesus Christ. We are saved by
+grace through faith when we accept Jesus Christ as our Lord and Savior, and we
+are cleansed from sin through repentance and regeneration of the Holy Spirit.
+(John 3:3; Luke 24:46-47; Romans 10:13; Ephesians 2:8; Titus 3:5-7; John 6:63)</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 1.6622em; color: rgb(2, 78, 105);">HOLY SPIRIT</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">The Holy
+Spirit, our abiding Helper, Teacher and Guide, indwells and empowers every
+believer in Jesus Christ. (Romans 8:11; Romans 8:26-27; John 14:16-17; Isaiah
+61; Acts 1:8; 1 Corinthians 2:10)</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 1.6622em; color: rgb(2, 78, 105);">THE CHURCH</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">We believe
+the church is the body of Christ, the fellowship of all believers. Christians
+have been called out from the world to obey the teachings of Christ and serve
+as His ambassadors and co-laborers. (Matthew 18:18-20; John 15:19-20; Ephesians
+1:22-23; Ephesians 5:23; 1 Corinthians 3:9; 2 Corinthians 5:20)</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 1.6622em; color: rgb(2, 78, 105);">BAPTISM</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">While we
+recognize that the act of Baptism is observed in varying ways amongst different
+fellowships, it is our conviction and practice to baptize new believers by
+submersion. (Matthew 28:19; Acts 10:47)</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 1.6622em; color: rgb(2, 78, 105);">HOLY
+COMMUNION</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">The Lord’s
+Supper is a symbolic act of obedience in which we partake of the bread and the
+fruit of the vine, remembering the death of Jesus and anticipating His second
+coming. (1 Corinthians 11:23-26)</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 1.6622em; color: rgb(2, 78, 105);">ETERNITY</p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);"><br></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">There will
+be a final judgment and the resurrection of both the saved and the lost; one to
+everlasting life and the other to everlasting damnation. (Matthew 25:46; Mark
+9:43-48; Revelation 19:20, Revelation 21:8)</p><p><style>
+
+</style></p></div></div>`,
+  //prettier-ignore
+  entry: {...entry, selector: "[data-id=\"13228982\"]"},
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"> <style> </style> </p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"> <style> </style> </p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; color: rgb(2, 78, 105); ">THE INERRANCY OF THE BIBLE</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); ">The scriptures, which include the Old and New Testaments, are divinely inspired and represent the infallible and authoritative word of God in all matters of faith and conduct. (2 Timothy 3:15-17; 1 Thessalonians 2:13; 2 Peter 1:21)</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; color: rgb(2, 78, 105); ">BELIEF IN THE ONE TRUE GOD</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); ">There is one eternal God, existent in three persons- God the Father, God the Son, and God the Holy Spirit. (Deuteronomy 6:4; Isaiah 43:10-11; Matthew 28:19; Luke 3:22)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span lang="EN-US" style="font-weight: 400; color: rgb(2, 78, 105); ">JESUS CHRIST IS FULLY GOD AND FULLY MAN</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); ">The Lord Jesus Christ is the eternal Son of God. Born of a virgin. (Matthew 1:23; Luke 1:31-35) Lived a sinless life. (Hebrews 7:26; 1 Peter 2:22; Hebrews 4:15) Died on the cross to atone for our sins. (1 Corinthians 15:3; 2 Corinthians 5:21) Physically rose from the dead. (Acts 1:9; Acts 2:32; Hebrews 1:3) Now sits at the right hand of His Father. (Acts 2:33; Hebrews 10:12) He will return to earth in power and glory (Zechariah 14:5; Matthew 24:27; Revelation 19:11-14)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); font-weight: 400; ">SALVATION</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); ">Man\'s only hope of redemption is through the shed blood of Jesus Christ. We are saved by grace through faith when we accept Jesus Christ as our Lord and Savior, and we are cleansed from sin through repentance and regeneration of the Holy Spirit. (John 3:3; Luke 24:46-47; Romans 10:13; Ephesians 2:8; Titus 3:5-7; John 6:63)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); font-weight: 400; ">HOLY SPIRIT</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); ">The Holy Spirit, our abiding Helper, Teacher and Guide, indwells and empowers every believer in Jesus Christ. (Romans 8:11; Romans 8:26-27; John 14:16-17; Isaiah 61; Acts 1:8; 1 Corinthians 2:10)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); font-weight: 400; ">THE CHURCH</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); ">We believe the church is the body of Christ, the fellowship of all believers. Christians have been called out from the world to obey the teachings of Christ and serve as His ambassadors and co-laborers. (Matthew 18:18-20; John 15:19-20; Ephesians 1:22-23; Ephesians 5:23; 1 Corinthians 3:9; 2 Corinthians 5:20)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); font-weight: 400; ">BAPTISM</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); ">While we recognize that the act of Baptism is observed in varying ways amongst different fellowships, it is our conviction and practice to baptize new believers by submersion. (Matthew 28:19; Acts 10:47)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); font-weight: 400; ">HOLY COMMUNION</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); ">The Lord’s Supper is a symbolic act of obedience in which we partake of the bread and the fruit of the vine, remembering the death of Jesus and anticipating His second coming. (1 Corinthians 11:23-26)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); font-weight: 400; ">ETERNITY</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(2, 78, 105); ">There will be a final judgment and the resurrection of both the saved and the lost; one to everlasting life and the other to everlasting damnation. (Matthew 25:46; Mark 9:43-48; Revelation 19:20, Revelation 21:8)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-NaN brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><style> </style></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -1231,7 +1336,8 @@ describe.each([
   ex14,
   ex15,
   ex16,
-  ex17
+  ex17,
+  ex18
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
