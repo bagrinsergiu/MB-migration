@@ -250,6 +250,9 @@ class Head extends Element
 
         $defOptions = [
             'activeSubMenuColorHex' => $result['data']['hoverColorHex'] ?? '#827777',
+            'hoverSubMenuBgColorHex' => $result['data']['subMenuBgColorHex'] ?? '#827777',
+            'hoverSubMenuColorHex' => $result['data']['subMenuColorHex'] ?? '#827777',
+            'subMenuColorOpacity' => 0.75,
             'menuPadding' => 5,
             'menuPaddingBottom' => 5,
             "borderRadiusType"=> "grouped",
