@@ -71,16 +71,20 @@ export const getStyleModel = (node: Element): Record<string, Literal> => {
   };
 };
 
-export const getModel = (node: Element): ElementModel => {
+export const getModel = (
+  node: Element,
+  urlMap: Record<string, string>
+): ElementModel => {
+  let iconModel: Record<string, Literal> = {};
   const isLink = node.tagName === "A";
+
   const modelStyle = getStyleModel(node);
   const globalModel = getGlobalButtonModel();
   const textTransform = getTransform(getNodeStyle(node));
-  let iconModel: Record<string, Literal> = {};
   const icon = node.querySelector(iconSelector);
 
   if (icon) {
-    const model = getIconModel(icon);
+    const model = getIconModel(icon, urlMap);
     const name = Str.read(model.value.name);
 
     // Remove the html for Icon
@@ -110,6 +114,9 @@ export const getModel = (node: Element): ElementModel => {
     }
   }
 
+  const href = getHref(node);
+  const mappedHref = href && urlMap[href] !== undefined ? urlMap[href] : href;
+
   return {
     type: "Button",
     value: {
@@ -120,7 +127,7 @@ export const getModel = (node: Element): ElementModel => {
       ...modelStyle,
       ...iconModel,
       ...(isLink && {
-        linkExternal: getHref(node),
+        linkExternal: mappedHref,
         linkType: "external",
         linkExternalBlank: targetType
       })

@@ -2324,16 +2324,21 @@ export const getStyleModel = (node: Element) => {
   };
 };
 
-export function getModel(node: Element): ElementModel {
+export function getModel(
+  node: Element,
+  urlMap: Record<string, string>
+): ElementModel {
   const parentNode = getParentElementOfTextNode(node);
   const isIconText = parentNode?.nodeName === "#text";
   const iconNode = isIconText ? node : parentNode;
-  const parentElement = node.parentElement;
-  const isLink = parentElement?.tagName === "A" || node.tagName === "A";
-  const parentHref = getHref(parentElement) ?? getHref(node) ?? "";
   const modelStyle = getStyleModel(node);
   const iconCode = iconNode?.textContent?.charCodeAt(0);
   const globalModel = getGlobalIconModel();
+
+  const parentElement = node.parentElement;
+  const isLink = parentElement?.tagName === "A" || node.tagName === "A";
+  const href = getHref(parentElement) ?? getHref(node) ?? "";
+  const mappedHref = href && urlMap[href] !== undefined ? urlMap[href] : href;
 
   return {
     type: "Icon",
@@ -2347,7 +2352,7 @@ export function getModel(node: Element): ElementModel {
       name: iconCode ? codeToBuilderMap[iconCode] ?? defaultIcon : defaultIcon,
       type: iconCode ? "fa" : "glyph",
       ...(isLink && {
-        linkExternal: parentHref,
+        linkExternal: mappedHref,
         linkType: "external",
         linkExternalBlank: "on"
       })
