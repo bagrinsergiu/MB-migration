@@ -69,7 +69,7 @@ class GridMediaLayout extends DynamicElement
 
         foreach ($sectionData['items'] as $headItem)
         {
-            if ($headItem['item_type'] === 'title' && $this->showBody($sectionData)) {
+            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $this->textCreation($headItem, $objHead);
                 $blockHead = true;
                 $objHead->item()->addItem($this->wrapperLine(
