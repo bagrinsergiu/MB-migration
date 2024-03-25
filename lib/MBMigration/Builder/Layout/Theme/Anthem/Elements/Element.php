@@ -613,7 +613,7 @@ abstract class Element extends LayoutUtils
     {
         $sectionItem = [];
         $slash = '';
-        if ($item['new_window']) {
+        if (!$item['new_window']) {
             $sectionItem['new_window'] = 'on';
         } else {
             $sectionItem['new_window'] = 'off';
@@ -632,16 +632,17 @@ abstract class Element extends LayoutUtils
                 break;
             case 'string':
             case 'link':
-                $urlComponents = parse_url($item['link']);
-
-                if (!empty($urlComponents['host'])) {
-                    $slash = '';
-                } else {
-                    $slash = '/';
-                }
 
                 if(MediaController::is_doc($item['link'])){
                     $item['link'] = MediaController::getURLDoc($item['link']);
+                }
+
+                $urlComponents = parse_url($item['link']);
+
+                if (!empty($urlComponents['host']) || ($urlComponents['scheme'] === 'https' || $urlComponents['scheme'] === 'http')) {
+                    $slash = '';
+                } else {
+                    $slash = '/';
                 }
 
                 $objItem->item()->item()->setting('linkType', 'external');
