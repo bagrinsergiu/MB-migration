@@ -57,6 +57,7 @@ class MigrationPlatform
      */
     private $PageBuilder;
     private LoggerInterface $logger;
+    private array $pageMapping;
 
     use checking;
     use DebugBackTrace;
@@ -193,12 +194,14 @@ class MigrationPlatform
                     $existingBrizyPages['listPages']
                 );
             }
+
             $this->createBlankPages(
                 $parentPages,
                 $projectTitle,
                 true,
                 $existingBrizyPages
             );
+
             $this->cache->set('menuList', [
                 'id' => null,
                 'uid' => null,
@@ -207,6 +210,7 @@ class MigrationPlatform
                 'list' => $parentPages,
                 'data' => "",
             ]);
+
             $this->createMenuStructure();
         } else {
             $parentPages = $this->cache->get('menuList')['list'];
@@ -220,6 +224,9 @@ class MigrationPlatform
         $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
 
         $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
+
+        $this->pageMapping = $this->PageBuilder->getPageMapping($parentPages);
+
         $this->launch($parentPages);
 
         Logger::instance()->info('Project migration completed successfully!');
@@ -325,7 +332,7 @@ class MigrationPlatform
         if ($collectionItem) {
             $this->setCurrentPageOnWork($collectionItem);
             Logger::instance()->info('Run Page Builder for page', ['slug' => $page['slug'], 'name' => $page['name']]);
-            $this->PageBuilder->run($preparedSectionOfThePage);
+            $this->PageBuilder->run($preparedSectionOfThePage, $pageMapping);
         } else {
             Logger::instance()->info(
                 'Failed to run collector for page: '.$page['slug'].'. The collection item was not found.'

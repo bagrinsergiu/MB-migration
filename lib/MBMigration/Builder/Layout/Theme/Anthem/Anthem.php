@@ -42,6 +42,10 @@ class Anthem extends LayoutUtils
      * @var BrowserPHP
      */
     private $browser;
+    /**
+     * @var mixed|null
+     */
+    private $pageMapping;
 
     /**
      * @throws Exception
@@ -64,6 +68,8 @@ class Anthem extends LayoutUtils
         $this->jsonDecode = $this->loadKit($this->layoutName);
 
         $menuList = $this->cache->get('menuList');
+
+        $this->pageMapping = $this->cache->get('pageMapping');
 
         if (empty($menuList['create'])) {
             $headElement = AnthemElementsController::getElement(
