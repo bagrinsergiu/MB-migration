@@ -332,7 +332,7 @@ class MigrationPlatform
         if ($collectionItem) {
             $this->setCurrentPageOnWork($collectionItem);
             Logger::instance()->info('Run Page Builder for page', ['slug' => $page['slug'], 'name' => $page['name']]);
-            $this->PageBuilder->run($preparedSectionOfThePage, $pageMapping);
+            $this->PageBuilder->run($preparedSectionOfThePage, $this->pageMapping);
         } else {
             Logger::instance()->info(
                 'Failed to run collector for page: '.$page['slug'].'. The collection item was not found.'
