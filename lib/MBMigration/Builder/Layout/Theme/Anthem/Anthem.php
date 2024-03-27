@@ -323,6 +323,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -357,6 +358,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -398,6 +400,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -436,6 +439,7 @@ class Anthem extends LayoutUtils
                 'styleProperties' => [],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -459,6 +463,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -481,6 +486,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -517,6 +523,7 @@ class Anthem extends LayoutUtils
             'selector' => '[data-id="'.$mbSectionItemId.'"]',
             'families' => $this->fontFamily['kit'],
             'defaultFamily' => $this->fontFamily['Default'],
+            'urlMap' => $this->pageMapping,
         ]);
 
         if (array_key_exists('error', $richTextBrowserData)) {
