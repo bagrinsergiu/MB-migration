@@ -11,12 +11,14 @@ export const getData = (): Entry => {
             "proxima_nova_proxima_nova_regular_sans-serif": "uid1111",
             "helvetica_neue_helveticaneue_helvetica_arial_sans-serif": "uid2222"
           },
-          defaultFamily: "lato"
+          defaultFamily: "lato",
+          urlMap: {}
         }
       : {
           selector: SELECTOR,
           families: FAMILIES,
-          defaultFamily: DEFAULT_FAMILY
+          defaultFamily: DEFAULT_FAMILY,
+          urlMap: {}
         };
   } catch (e) {
     const familyMock = {
@@ -26,7 +28,8 @@ export const getData = (): Entry => {
     const mock: Entry = {
       selector: ".my-div",
       families: familyMock,
-      defaultFamily: "lato"
+      defaultFamily: "lato",
+      urlMap: {}
     };
 
     throw new Error(

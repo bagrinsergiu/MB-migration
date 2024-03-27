@@ -73,9 +73,7 @@ export const extractUrlWithoutDomain = (url: string) => {
   return _url;
 };
 
-export const getHref = mPipe(
-  Obj.readKey("href"),
-  Str.read,
+export const getHref = mPipe(Obj.readKey("href"), Str.read,
   extractUrlWithoutDomain
 );
 

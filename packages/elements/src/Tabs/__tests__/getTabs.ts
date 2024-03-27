@@ -6,7 +6,8 @@ import { beforeEach, describe, expect, test } from "@jest/globals";
 const entry: Entry = {
   selector: "test",
   defaultFamily: "lato",
-  families: {}
+  families: {},
+  urlMap: {}
 };
 
 interface Data {

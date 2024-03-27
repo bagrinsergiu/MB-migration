@@ -44,7 +44,7 @@ export const getText = (_entry: Entry): Output => {
           break;
         }
         case "button": {
-          const models = getButtonModel(node);
+          const models = getButtonModel(node, entry.urlMap);
           data.push(...models);
           break;
         }
@@ -54,7 +54,7 @@ export const getText = (_entry: Entry): Output => {
           break;
         }
         case "icon": {
-          const models = getIconModel(node);
+          const models = getIconModel(node, entry.urlMap);
           data.push(...models);
           break;
         }
