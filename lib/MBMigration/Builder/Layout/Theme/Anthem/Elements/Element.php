@@ -155,12 +155,12 @@ abstract class Element extends LayoutUtils
      */
     protected function defaultOptionsForElement($element, &$options): void
     {
-        $loadOptions = json_decode($element['options'], true);
-        $positionOption = [
-            'title' => $loadOptions['title']['textPosition'],
-            'body' => $loadOptions['body']['textPosition'],
-        ];
-        $options = array_merge($options, ['textPosition' => $positionOption]);
+//        $loadOptions = json_decode($element['options'], true);
+//        $positionOption = [
+//            'title' => $loadOptions['title']['textPosition'],
+//            'body' => $loadOptions['body']['textPosition'],
+//        ];
+//        $options = array_merge($options, ['textPosition' => $positionOption]);
     }
 
     /**
