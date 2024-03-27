@@ -21,4 +21,9 @@ class UrlBuilder {
     {
         return $this->domain . '/' . $this->path;
     }
+
+    public function build_path(): string
+    {
+        return $this->domain . '/' . $this->path;
+    }
 }

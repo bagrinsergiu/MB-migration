@@ -225,7 +225,7 @@ class MigrationPlatform
 
         $this->PageBuilder = new PageBuilder($this->brizyApi, $this->logger);
 
-        $this->pageMapping = $this->PageBuilder->getPageMapping($parentPages);
+        $this->pageMapping = $this->PageBuilder->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
         $this->launch($parentPages);
 

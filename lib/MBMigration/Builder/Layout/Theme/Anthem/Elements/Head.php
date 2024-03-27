@@ -249,7 +249,7 @@ class Head extends Element
         $result = $this->ExtractMenuStyle($this->browserPage, $options['sectionID']);
 
         $defOptions = [
-            'activeSubMenuColorHex' => $result['data']['hoverColorHex'] ?? '#827777',
+            'activeSubMenuColorHex' => $result['data']['subMenuColorHex'] ?? '#827777',
             'hoverSubMenuBgColorHex' => $result['data']['subMenuBgColorHex'] ?? '#827777',
             'hoverSubMenuColorHex' => $result['data']['subMenuColorHex'] ?? '#827777',
             'subMenuColorOpacity' => 0.75,

@@ -6,7 +6,7 @@ use MBMigration\Builder\VariableCache;
 
 class PathSlugExtractor
 {
-    public static function getFullUrl($slug): string
+    public static function getFullUrl($slug, bool $getPath = false): string
     {
         $cache = VariableCache::getInstance();
         $treePages = $cache->get('ParentPages');
@@ -16,6 +16,10 @@ class PathSlugExtractor
         $urlBuilder = new UrlBuilder($domain);
 
         $pathPages = self::getOrderedPathString($treePages, $slug);
+
+        if ($getPath){
+            return $pathPages;
+        }
 
         return $urlBuilder->setPath($pathPages)->build();
     }

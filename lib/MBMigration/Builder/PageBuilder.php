@@ -151,22 +151,23 @@ class PageBuilder
         }
     }
 
-    public function getPageMapping($parentPages)
+    public function getPageMapping($parentPages, $projectID_Brizy, BrizyAPI $brizyApi): array
     {
         $mapping = [];
-        $this->pageMapping($parentPages, $mapping);
+        $domain = $brizyApi->getDomain($projectID_Brizy);
+        $this->pageMapping($parentPages, $mapping, $domain);
 
         return $mapping;
     }
 
-    private function pageMapping($parentPages, array &$mapping)
+    private function pageMapping($parentPages, array &$mapping, $domain)
     {
         foreach ($parentPages as $page)
         {
             if (!empty($page['child'])){
-                $this->pageMapping($page['child'],$mapping);
+                $this->pageMapping($page['child'],$mapping, $domain);
             }
-            $mapping[PathSlugExtractor::getFullUrl($page['slug'])] = '/'.$page['slug'];
+            $mapping['/'.PathSlugExtractor::getFullUrl($page['slug'], true)] = $domain.'/'.$page['slug'];
         }
     }
 }
