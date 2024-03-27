@@ -385,7 +385,7 @@ class MBProjectDataCollector
                        hidden,
                        (CASE WHEN (password_protected IS NULL OR password_protected IS FALSE) THEN false ELSE true END) as protectedPage
                 FROM pages
-                WHERE site_id = {$this->siteId} and trashed_at is null and hidden is false"
+                WHERE site_id = {$this->siteId} and trashed_at is null"
         );
 
         $allPages = array_map(function ($page) {
