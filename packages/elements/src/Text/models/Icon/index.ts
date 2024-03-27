@@ -6,7 +6,10 @@ import { findNearestBlockParent } from "utils/src/dom/findNearestBlockParent";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { getParentElementOfTextNode } from "utils/src/dom/getParentElementOfTextNode";
 
-export function getIconModel(node: Element): Array<ElementModel> {
+export function getIconModel(
+  node: Element,
+  urlMap: Record<string, string>
+): Array<ElementModel> {
   const icons = node.querySelectorAll(iconSelector);
   const groups = new Map();
 
@@ -16,7 +19,7 @@ export function getIconModel(node: Element): Array<ElementModel> {
     const isIconText = parentNode?.nodeName === "#text";
     const iconNode = isIconText ? node : parentNode;
     const style = iconNode ? getNodeStyle(iconNode) : {};
-    const model = getModel(icon);
+    const model = getModel(icon, urlMap);
     const group = groups.get(parentElement) ?? { value: { items: [] } };
 
     const wrapperModel = createCloneableModel({

@@ -62,7 +62,7 @@ class ListMediaLayout extends DynamicElement
 
         foreach ($sectionData['head'] as $headItem)
         {
-            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
+            if ($headItem['item_type'] === 'body' && $this->showHeader($sectionData)) {
                 $blockHead = true;
                 $this->textCreation($headItem, $objBlock);
             }

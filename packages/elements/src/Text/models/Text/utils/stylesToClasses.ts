@@ -1,10 +1,10 @@
 import {
+  defaultDesktopLineHeight,
   defaultMobileLineHeight,
   defaultTabletLineHeight,
   textAlign
 } from "../../../utils/common";
 import { getLetterSpacing } from "../../../utils/styles/getLetterSpacing";
-import { getLineHeight } from "../../../utils/styles/getLineHeight";
 import { Literal } from "utils";
 import * as Num from "utils/src/reader/number";
 
@@ -49,20 +49,9 @@ export const stylesToClasses = (
         break;
       }
       case "line-height": {
-        const _value = value as string;
-        const size = Math.round(Num.readInt(_value) ?? 1);
-
-        if (_value && _value.includes("em")) {
-          classes.push(`brz-lh-lg-${size}`);
-        } else {
-          const fontSize = _value && _value.replace("px", "");
-          const lineHeight = getLineHeight(`${size}`, fontSize);
-
-          classes.push(`brz-lh-lg-${lineHeight}`);
-          classes.push(`brz-lh-sm-${defaultTabletLineHeight}`);
-          classes.push(`brz-lh-xs-${defaultMobileLineHeight}`);
-        }
-
+        classes.push(`brz-lh-lg-${defaultDesktopLineHeight}`);
+        classes.push(`brz-lh-sm-${defaultTabletLineHeight}`);
+        classes.push(`brz-lh-xs-${defaultMobileLineHeight}`);
         break;
       }
       default:

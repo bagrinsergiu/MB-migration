@@ -12,11 +12,12 @@ import { uuid } from "utils/src/uuid";
 interface Data {
   node: Element;
   families: Record<string, string>;
+  urlMap: Record<string, string>;
   defaultFamily: string;
 }
 
 export const getTextModel = (data: Data): ElementModel => {
-  const { node: _node, families, defaultFamily } = data;
+  const { node: _node, families, defaultFamily, urlMap } = data;
   let node = _node;
 
   // Transform all inside div to P
@@ -48,7 +49,22 @@ export const getTextModel = (data: Data): ElementModel => {
   // Remove all empty P with [ \n ]
   node = removeEmptyNodes(node);
 
-  const text = node.innerHTML;
+  let text = node.innerHTML;
+  let match;
+
+  const regex = /href="(.*?)"/g;
+
+  while ((match = regex.exec(text))) {
+    const hrefValue = match[1];
+
+    if (urlMap[hrefValue]) {
+      const mappedValue = urlMap[hrefValue];
+
+      if (mappedValue === hrefValue) {
+        text = text.replace(match[0], `href="${mappedValue}"`);
+      }
+    }
+  }
 
   return createWrapperModel({
     _styles: ["wrapper", "wrapper--richText"],

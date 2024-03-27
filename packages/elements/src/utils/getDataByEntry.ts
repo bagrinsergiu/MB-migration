@@ -8,6 +8,7 @@ interface Output {
   styleProperties?: string[];
   list?: Element | undefined;
   nav?: Element | undefined;
+  urlMap: Record<string, string>;
 }
 
 export const getDataByEntry = (input: Output): Output => {
@@ -31,7 +32,8 @@ export const getDataByEntry = (input: Output): Output => {
         ...(nav ? { nav: undefined } : {}),
         ...(itemSelector ? { itemSelector: "" } : {}),
         ...(subItemSelector ? { subItemSelector: "" } : {}),
-        ...(sectionSelector ? { sectionSelector: "" } : {})
+        ...(sectionSelector ? { sectionSelector: "" } : {}),
+        urlMap: {}
       }
     : input;
 };

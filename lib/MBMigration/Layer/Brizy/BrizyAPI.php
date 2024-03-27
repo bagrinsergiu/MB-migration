@@ -513,6 +513,21 @@ class BrizyAPI extends Utils
 
     }
 
+    public function getDomain($projectID)
+    {
+        $url = $this->createPrivateUrlAPI('projects').'/'.$projectID.'/domain';
+        $result = $this->httpClient('GET', $url);
+
+        $value = json_decode($result['body'], true);
+
+        if (!empty($value['name'])) {
+            return $value['name'];
+        }
+
+        return false;
+
+    }
+
     /**
      * @throws Exception
      */

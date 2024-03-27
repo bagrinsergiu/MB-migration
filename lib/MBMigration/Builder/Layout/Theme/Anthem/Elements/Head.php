@@ -43,6 +43,10 @@ class Head extends Element
     private $brizyAPI;
 
     const SELECTOR = "#main-navigation li:not(.selected) a";
+    /**
+     * @var mixed|null
+     */
+    private $pageMapping;
 
     public function __construct($jsonKitElements, $browser, BrizyAPI $brizyAPI)
     {
@@ -69,6 +73,7 @@ class Head extends Element
 
         $this->cache->set('currentSectionData', $menuList);
         $headItem = $this->cache->get('header', 'mainSection');
+        $this->pageMapping = $this->cache->get('pageMapping');
         $section = $this->jsonDecode['blocks']['menu'];
 
         $treePages = $this->cache->get('ParentPages');
@@ -249,7 +254,7 @@ class Head extends Element
         $result = $this->ExtractMenuStyle($this->browserPage, $options['sectionID']);
 
         $defOptions = [
-            'activeSubMenuColorHex' => $result['data']['hoverColorHex'] ?? '#827777',
+            'activeSubMenuColorHex' => $result['data']['subMenuColorHex'] ?? '#827777',
             'hoverSubMenuBgColorHex' => $result['data']['subMenuBgColorHex'] ?? '#827777',
             'hoverSubMenuColorHex' => $result['data']['subMenuColorHex'] ?? '#827777',
             'subMenuColorOpacity' => 0.75,
@@ -310,6 +315,7 @@ class Head extends Element
                 'selector' => '[data-id="' . $sectionId . '"]',
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
     }
@@ -324,6 +330,7 @@ class Head extends Element
                 'styleProperties' => ['background-color', 'opacity', 'border-bottom-color'],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -344,6 +351,7 @@ class Head extends Element
                 'styleProperties' => [],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 

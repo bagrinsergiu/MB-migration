@@ -1,4 +1,5 @@
 import { MenuItemElement } from "../../types/type";
+import { dicKeyForDevices } from "./dicKeyForDevices";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { toCamelCase } from "utils/src/text/toCamelCase";
@@ -54,24 +55,25 @@ export const getModel = (data: Model) => {
         const value = pxToEm(String(styles[key]), styles["font-size"]);
 
         if (isNaN(value)) {
-          dic[toCamelCase(key)] = 1;
+          Object.assign(dic, dicKeyForDevices(key, 1));
         } else {
-          dic[toCamelCase(key)] = value;
+          Object.assign(dic, dicKeyForDevices(key, value));
         }
         break;
       }
       case "font-size": {
-        dic[toCamelCase(key)] = parseInt(`${styles[key]}`);
+        Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
         break;
       }
       case "letter-spacing": {
         const value = styles[key];
         if (value === "normal") {
-          dic[toCamelCase(key)] = 0;
+          dicKeyForDevices(key, 0);
         } else {
           // Remove 'px' and any extra whitespace
           const letterSpacingValue = `${value}`.replace(/px/g, "").trim();
-          dic[toCamelCase(key)] = +letterSpacingValue;
+          Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
+          dicKeyForDevices(key, +letterSpacingValue);
         }
         break;
       }

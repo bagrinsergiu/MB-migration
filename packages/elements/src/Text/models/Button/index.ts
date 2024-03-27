@@ -5,14 +5,17 @@ import { getModel } from "./utils/getModel";
 import { findNearestBlockParent } from "utils/src/dom/findNearestBlockParent";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
-export function getButtonModel(node: Element): Array<ElementModel> {
+export function getButtonModel(
+  node: Element,
+  urlMap: Record<string, string>
+): Array<ElementModel> {
   const buttons = node.querySelectorAll(buttonSelector);
   const groups = new Map();
 
   buttons.forEach((button) => {
     const parentElement = findNearestBlockParent(button);
     const style = getNodeStyle(button);
-    const model = getModel(button);
+    const model = getModel(button, urlMap);
     const group = groups.get(parentElement) ?? { value: { items: [] } };
 
     const wrapperModel = createCloneableModel({

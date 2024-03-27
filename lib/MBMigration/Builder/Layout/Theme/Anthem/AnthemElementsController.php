@@ -204,7 +204,7 @@ class AnthemElementsController
             case "event_list_layout":
             case "event_tile_layout":
             case "event_gallery_layout":
-                $element = new EventGalleryLayout();
+                $element = new EventCalendarLayout();
 
                 return $element->getElement($elementData);
             case "prayer_list":

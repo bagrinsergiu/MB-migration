@@ -24,7 +24,7 @@ class EventCalendarLayout extends DynamicElement
     {
         $slug = 'event-calendar';
         $title = 'Event Calendar';
-        $elementName = 'EventCalendarLayout';
+        $elementName = 'EventGalleryLayout'; //'EventCalendarLayout';
 
         $objBlock = new ItemBuilder();
         $objHead  = new ItemBuilder();
@@ -69,7 +69,7 @@ class EventCalendarLayout extends DynamicElement
 
         foreach ($sectionData['head'] as $headItem)
         {
-            if ($headItem['item_type'] === 'title' && $this->showBody($sectionData)) {
+            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
                 $this->textCreation($headItem, $objHead);
             }
@@ -90,7 +90,7 @@ class EventCalendarLayout extends DynamicElement
 
         foreach ($sectionData['items'] as $headItem)
         {
-            if ($headItem['item_type'] === 'title' && $this->showBody($sectionData)) {
+            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
                 $this->textCreation($headItem, $objHead);
             }

@@ -18,6 +18,8 @@ export const allowedTags = [
 
 export const exceptExtractingStyle = ["UL", "OL"];
 
+export const defaultDesktopLineHeight = "1_3";
+
 export const defaultTabletLineHeight = "1_2";
 
 export const defaultMobileLineHeight = "1_2";
@@ -73,9 +75,7 @@ export const extractUrlWithoutDomain = (url: string) => {
   return _url;
 };
 
-export const getHref = mPipe(
-  Obj.readKey("href"),
-  Str.read,
+export const getHref = mPipe(Obj.readKey("href"), Str.read,
   extractUrlWithoutDomain
 );
 

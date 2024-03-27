@@ -29,6 +29,7 @@ class PageBuilder
      */
     private $brizyAPI;
     private LoggerInterface $logger;
+    private string $domain;
 
     public function __construct(BrizyAPI $brizyAPI, LoggerInterface $logger)
     {
@@ -40,7 +41,7 @@ class PageBuilder
     /**
      * @throws ElementNotFound
      */
-    public function run($preparedSectionOfThePage): bool
+    public function run($preparedSectionOfThePage, $pageMapping): bool
     {
         $itemsID = $this->cache->get('currentPageOnWork');
         $brizyContainerId = $this->cache->get('container',);
@@ -54,6 +55,7 @@ class PageBuilder
         $url = PathSlugExtractor::getFullUrl($slug);
 
         $this->cache->set('CurrentPageURL', $url);
+        $this->cache->set('pageMapping', $pageMapping);
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
 
@@ -146,6 +148,26 @@ class PageBuilder
                 $this->browser->closePage();
                 $this->browser->closeBrowser();
             }
+        }
+    }
+
+    public function getPageMapping($parentPages, $projectID_Brizy, BrizyAPI $brizyApi): array
+    {
+        $mapping = [];
+        $domain = $brizyApi->getDomain($projectID_Brizy);
+        $this->pageMapping($parentPages, $mapping, $domain);
+
+        return $mapping;
+    }
+
+    private function pageMapping($parentPages, array &$mapping, $domain)
+    {
+        foreach ($parentPages as $page)
+        {
+            if (!empty($page['child'])){
+                $this->pageMapping($page['child'],$mapping, $domain);
+            }
+            $mapping['/'.PathSlugExtractor::getFullUrl($page['slug'], true)] = $domain.'/'.$page['slug'];
         }
     }
 }

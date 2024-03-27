@@ -8,6 +8,7 @@ export interface Data {
   families: Record<string, string>;
   defaultFamily: string;
   styleProperties: Array<string>;
+  urlMap: Record<string, string>;
 }
 
 export const styleExtractor = (_entry: Data): Output => {

@@ -42,6 +42,10 @@ class Anthem extends LayoutUtils
      * @var BrowserPHP
      */
     private $browser;
+    /**
+     * @var mixed|null
+     */
+    private $pageMapping;
 
     /**
      * @throws Exception
@@ -64,6 +68,8 @@ class Anthem extends LayoutUtils
         $this->jsonDecode = $this->loadKit($this->layoutName);
 
         $menuList = $this->cache->get('menuList');
+
+        $this->pageMapping = $this->cache->get('pageMapping');
 
         if (empty($menuList['create'])) {
             $headElement = AnthemElementsController::getElement(
@@ -317,6 +323,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -351,6 +358,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -392,6 +400,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -430,6 +439,7 @@ class Anthem extends LayoutUtils
                 'styleProperties' => [],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -453,6 +463,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -475,6 +486,7 @@ class Anthem extends LayoutUtils
                 ],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
             ]
         );
 
@@ -511,6 +523,7 @@ class Anthem extends LayoutUtils
             'selector' => '[data-id="'.$mbSectionItemId.'"]',
             'families' => $this->fontFamily['kit'],
             'defaultFamily' => $this->fontFamily['Default'],
+            'urlMap' => $this->pageMapping,
         ]);
 
         if (array_key_exists('error', $richTextBrowserData)) {
