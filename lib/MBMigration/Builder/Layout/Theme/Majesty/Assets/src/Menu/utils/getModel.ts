@@ -1,3 +1,4 @@
+import { dicKeyForDevices } from "elements/src/Menu/utils/dicKeyForDevices";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { toCamelCase } from "utils/src/text/toCamelCase";
@@ -54,24 +55,24 @@ export const getModel = (data: Model) => {
       case "line-height": {
         const value = parseInt(`${styles[key]}`);
         if (isNaN(value)) {
-          dic[toCamelCase(key)] = 1;
+          Object.assign(dic, dicKeyForDevices(key, 1));
         } else {
-          dic[toCamelCase(key)] = value;
+          Object.assign(dicKeyForDevices(key, value));
         }
         break;
       }
       case "font-size": {
-        dic[toCamelCase(key)] = parseInt(`${styles[key]}`);
+        Object.assign(dicKeyForDevices(key, parseInt(`${styles[key]}`)));
         break;
       }
       case "letter-spacing": {
         const value = styles[key];
         if (value === "normal") {
-          dic[toCamelCase(key)] = 0;
+          Object.assign(dicKeyForDevices(key, 0));
         } else {
           // Remove 'px' and any extra whitespace
           const letterSpacingValue = `${value}`.replace(/px/g, "").trim();
-          dic[toCamelCase(key)] = +letterSpacingValue;
+          Object.assign(dicKeyForDevices(key, +letterSpacingValue));
         }
         break;
       }
