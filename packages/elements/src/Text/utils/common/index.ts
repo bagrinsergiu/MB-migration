@@ -18,6 +18,8 @@ export const allowedTags = [
 
 export const exceptExtractingStyle = ["UL", "OL"];
 
+export const defaultDesktopLineHeight = "1_3";
+
 export const defaultTabletLineHeight = "1_2";
 
 export const defaultMobileLineHeight = "1_2";
