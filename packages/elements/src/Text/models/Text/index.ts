@@ -55,14 +55,11 @@ export const getTextModel = (data: Data): ElementModel => {
   const regex = /href="(.*?)"/g;
 
   while ((match = regex.exec(text))) {
-    const hrefValue = match[1];
+    const href = match[1];
+    const mappedValue = urlMap[href];
 
-    if (urlMap[hrefValue]) {
-      const mappedValue = urlMap[hrefValue];
-
-      if (mappedValue === hrefValue) {
-        text = text.replace(match[0], `href="${mappedValue}"`);
-      }
+    if (mappedValue) {
+      text = text.replace(match[0], `href="${mappedValue}"`);
     }
   }
 
