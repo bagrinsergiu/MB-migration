@@ -69,11 +69,13 @@ function appendNodeStyles(node: HTMLElement, targetNode: HTMLElement) {
   });
 }
 
-function removeNestedDivs(node: HTMLElement, cssText: string) {
+function removeNestedDivs(node: HTMLElement) {
   Array.from(node.childNodes).forEach((child) => {
-    if (child instanceof HTMLElement && child.nodeName === "DIV") {
-      removeNestedDivs(child, cssText);
-
+    if (
+      child instanceof HTMLElement &&
+      (child.nodeName === "DIV" || child.nodeName === "CENTER")
+    ) {
+      removeNestedDivs(child);
       // in case if there is no div or p inside of node should stop flattening
       const tagsToFlatten = ["DIV", "P"];
       const hasDivOrPChildren = Array.from(child.children).find((node) =>
@@ -105,19 +107,19 @@ const flattenNode = (node: Element) => {
   const _node = node.cloneNode(true) as HTMLElement;
   node.parentElement?.append(_node);
 
-  removeNestedDivs(_node, _node.style.cssText);
+  removeNestedDivs(_node);
 
   _node.remove();
 
   return _node;
 };
 
-export const getContainerStackWithNodes = (node: Element): Container => {
+export const getContainerStackWithNodes = (parentNode: Element): Container => {
   const container = document.createElement("div");
   const stack = new Stack();
   let appendNewText = false;
 
-  const flatNode = flattenNode(node);
+  const flatNode = flattenNode(parentNode);
 
   flatNode.childNodes.forEach((node) => {
     const _node = node.cloneNode(true);
@@ -144,18 +146,42 @@ export const getContainerStackWithNodes = (node: Element): Container => {
         // Check the button first because
         // inside button can be icons
         if (buttons.length > 0) {
-          appendNewText = true;
-          let appendedButton = false;
+          // check for non empty nodes which are not inside buttons
+          const container = document.createElement("div");
+          container.innerHTML = _node.innerHTML;
 
-          _node.childNodes.forEach((node) => {
-            if (node instanceof HTMLElement) {
-              const container = document.createElement("div");
-              container.append(node.cloneNode(true));
+          const innerButtons = container.querySelectorAll(buttonSelector);
+          innerButtons.forEach((btn) => btn.remove());
 
-              if (container.querySelector(buttonSelector)) {
-                if (!appendedButton) {
-                  stack.append(_node, { type: "button" });
-                  appendedButton = true;
+          const onlyButtons =
+            (container.textContent?.trim() ?? "").length === 0;
+
+          if (onlyButtons) {
+            appendNewText = true;
+            let appendedButton = false;
+            parentNode.parentElement?.append(_node);
+
+            _node.childNodes.forEach((node) => {
+              if (node instanceof HTMLElement) {
+                const container = document.createElement("div");
+                container.append(node.cloneNode(true));
+                appendNodeStyles(node, node);
+
+                if (container.querySelector(buttonSelector)) {
+                  // if latest appended is icon, icons must be wrapped in same node
+                  if (appendedButton) {
+                    stack.set(node);
+                  } else {
+                    stack.append(node, { type: "button" });
+                    appendedButton = true;
+                  }
+                } else {
+                  const text = node.textContent;
+
+                  if (text?.trim()) {
+                    extractInnerText(node, stack, buttonSelector);
+                    appendedButton = false;
+                  }
                 }
               } else {
                 const text = node.textContent;
@@ -164,16 +190,13 @@ export const getContainerStackWithNodes = (node: Element): Container => {
                   extractInnerText(_node, stack, buttonSelector);
                 }
               }
-            } else {
-              const text = node.textContent;
-
-              if (text?.trim()) {
-                extractInnerText(_node, stack, buttonSelector);
-              }
-            }
-          });
-          return;
+            });
+            _node.remove();
+            return;
+          }
+          _node.remove();
         }
+
         if (icons.length > 0) {
           appendNewText = true;
           let appendedIcon = false;
@@ -195,7 +218,7 @@ export const getContainerStackWithNodes = (node: Element): Container => {
                 const text = node.textContent;
 
                 if (text?.trim()) {
-                  extractInnerText(_node, stack, iconSelector);
+                  extractInnerText(node, stack, iconSelector);
                   appendedIcon = false;
                 }
               }
@@ -235,7 +258,7 @@ export const getContainerStackWithNodes = (node: Element): Container => {
     container.append(node);
   });
 
-  node.parentElement?.append(container);
+  parentNode.parentElement?.append(container);
 
   const destroy = () => {
     container.remove();
