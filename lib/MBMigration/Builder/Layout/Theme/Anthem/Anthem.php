@@ -107,6 +107,7 @@ class Anthem extends LayoutUtils
 
         $itemsID = $this->cache->get('currentPageOnWork');
         $slug = $this->cache->get('tookPage')['slug'];
+        $pageId = $this->cache->get('tookPage')['id'];
         $parentPages = $this->cache->get('menuList');
 
         $resultFind = FamilyTreeMenu::findParentByChildSlug($parentPages['list'], $slug);
@@ -115,7 +116,7 @@ class Anthem extends LayoutUtils
         } else {
             $activeParentPage = $slug;
         }
-        $url = PathSlugExtractor::getFullUrl($slug);
+        $url = PathSlugExtractor::getFullUrlById($pageId);
         $this->browserPage = $this->browser->openPage($url, 'Anthem');
         $this->cache->set('CurrentPageURL', $url);
 
