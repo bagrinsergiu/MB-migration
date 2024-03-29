@@ -15,7 +15,25 @@ class PathSlugExtractor
 
         $urlBuilder = new UrlBuilder($domain);
 
-        $pathPages = self::getOrderedPathString($treePages, $slug);
+        $pathPages = self::getOrderedPathString($treePages, $slug, 'slug');
+
+        if ($getPath){
+            return $pathPages;
+        }
+
+        return $urlBuilder->setPath($pathPages)->build();
+    }
+
+    public static function getFullUrlById($slug, bool $getPath = false): string
+    {
+        $cache = VariableCache::getInstance();
+        $treePages = $cache->get('ParentPages');
+
+        $domain = $cache->get('settings')['domain'];
+
+        $urlBuilder = new UrlBuilder($domain);
+
+        $pathPages = self::getOrderedPathString($treePages, $slug, 'id');
 
         if ($getPath){
             return $pathPages;
@@ -56,23 +74,23 @@ class PathSlugExtractor
         return ['slug' => $deepestSlug, 'depth' => $maxDepth];
     }
 
-    public static function findElementBySlugAndOrder($data, $slug, $path = []) {
+    public static function findElementBySlugAndOrder($data, $slug, $findBy) {
         foreach ($data as $item) {
-            if ($item['slug'] === $slug) {
+            if ($item[$findBy] === $slug) {
                 if (!empty($item['child'])) {
-                    $result = self::findElementBySlugAndOrder($item['child'], $slug);
+                    $result = self::findElementBySlugAndOrder($item['child'], $slug, $findBy);
                     if ($result !== null) {
-                        array_unshift($result, $item['slug']);
+                        array_unshift($result, $item[$findBy]);
                         return $result;
                     }
                 }
-                return [$item['slug']];
+                return [$item[$findBy]];
             }
 
             if (!empty($item['child'])) {
-                $result = self::findElementBySlugAndOrder($item['child'], $slug);
+                $result = self::findElementBySlugAndOrder($item['child'], $slug, $findBy);
                 if ($result !== null) {
-                    array_unshift($result, $item['slug']);
+                    array_unshift($result, $item[$findBy]);
                     return $result;
                 }
             }
@@ -81,14 +99,14 @@ class PathSlugExtractor
         return null;
     }
 
-    private static function getOrderedPath($data, $slug) {
-        $path = self::findElementBySlugAndOrder($data, $slug);
+    private static function getOrderedPath($data, $slug, $findBy) {
+        $path = self::findElementBySlugAndOrder($data, $slug, $findBy);
 
         if ($path) {
             $orderedPath = [];
             foreach ($path as $slug) {
                 foreach ($data as $item) {
-                    if ($item['slug'] === $slug) {
+                    if ($item[$findBy] === $slug) {
                         $orderedPath[] = $item;
                         $data = $item['child'];
                         break;
@@ -101,9 +119,9 @@ class PathSlugExtractor
         return null;
     }
 
-    public static function getOrderedPathString($data, $slug): ?string
+    public static function getOrderedPathString($data, $slug, $findBy): ?string
     {
-        $orderedPath = self::getOrderedPath($data, $slug);
+        $orderedPath = self::getOrderedPath($data, $slug, $findBy);
 
         if ($orderedPath) {
             $pathArray = array_map(function ($item) {
