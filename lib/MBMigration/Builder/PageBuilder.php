@@ -48,11 +48,12 @@ class PageBuilder
         $mainCollectionType = $this->cache->get('mainCollectionType');
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
+        $pageId = $this->cache->get('tookPage')['id'];
         $fontController = new FontsController($brizyContainerId);
 
         $fontFamily = FontsController::getFontsFamily();
 
-        $url = PathSlugExtractor::getFullUrl($slug);
+        $url = PathSlugExtractor::getFullUrlById($pageId);
 
         $this->cache->set('CurrentPageURL', $url);
         $this->cache->set('pageMapping', $pageMapping);
