@@ -5,6 +5,7 @@ import { removeAllStylesFromHTML } from "../../utils/dom/removeAllStylesFromHTML
 import { removeEmptyNodes } from "../../utils/dom/removeEmptyNodes";
 import { transformDivsToParagraphs } from "../../utils/dom/transformDivsToParagraphs";
 import { copyParentColorToChild } from "../../utils/styles/copyParentColorToChild";
+import { encodeLinks } from "../../utils/styles/encodeLinks";
 import { getTypographyStyles } from "../../utils/styles/getTypographyStyles";
 import { stylesToClasses } from "./utils/stylesToClasses";
 import { uuid } from "utils/src/uuid";
@@ -25,6 +26,9 @@ export const getTextModel = (data: Data): ElementModel => {
 
   // Copy Parent Color to Child, from <p> to <span>
   node = copyParentColorToChild(node);
+
+  // encode all links
+  node = encodeLinks(node, urlMap);
 
   // Get all ours style for Builder [font-family, font-size, line-height, .etc]
   const styles = getTypographyStyles(node);
@@ -49,22 +53,7 @@ export const getTextModel = (data: Data): ElementModel => {
   // Remove all empty P with [ \n ]
   node = removeEmptyNodes(node);
 
-  let text = node.innerHTML;
-  let match;
-
-  const regex = /href="(.*?)"/g;
-
-  while ((match = regex.exec(text))) {
-    const hrefValue = match[1];
-
-    if (urlMap[hrefValue]) {
-      const mappedValue = urlMap[hrefValue];
-
-      if (mappedValue === hrefValue) {
-        text = text.replace(match[0], `href="${mappedValue}"`);
-      }
-    }
-  }
+  const text = node.innerHTML;
 
   return createWrapperModel({
     _styles: ["wrapper", "wrapper--richText"],

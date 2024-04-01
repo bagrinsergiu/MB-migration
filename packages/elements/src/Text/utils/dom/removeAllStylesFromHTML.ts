@@ -29,7 +29,12 @@ export function removeStylesExceptFontWeightAndColor(
       const property = styleProperties[i].trim();
 
       // Check if the property is font-weight or color
-      if (property.startsWith("font-weight") || property.startsWith("color")) {
+      const validStyles = ["font-weight", "color", "background-color"];
+      const hasProperty = validStyles.some((style) =>
+        property.startsWith(style)
+      );
+
+      if (hasProperty) {
         newStyle += property + "; ";
       }
     }
