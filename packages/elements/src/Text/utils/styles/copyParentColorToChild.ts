@@ -97,6 +97,10 @@ export function copyColorStyleToTextNodes(element: Element): void {
       innerElement.style.color = computedStyles.color;
     }
 
+    if (computedStyles.backgroundColor) {
+      innerElement.style.backgroundColor = computedStyles.backgroundColor;
+    }
+
     if (computedStyles.fontWeight) {
       innerElement.style.fontWeight = computedStyles.fontWeight;
     }

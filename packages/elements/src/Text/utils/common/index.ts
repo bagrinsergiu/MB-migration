@@ -75,7 +75,9 @@ export const extractUrlWithoutDomain = (url: string) => {
   return _url;
 };
 
-export const getHref = mPipe(Obj.readKey("href"), Str.read,
+export const getHref = mPipe(
+  Obj.readKey("href"),
+  Str.read,
   extractUrlWithoutDomain
 );
 
@@ -88,4 +90,8 @@ export const normalizeOpacity = (color: Color): Color => {
     hex,
     opacity: hex === "#ffffff" && opacity === "1" ? "0.99" : opacity
   };
+};
+
+export const encodeToString = <T>(value: T): string => {
+  return encodeURIComponent(JSON.stringify(value));
 };
