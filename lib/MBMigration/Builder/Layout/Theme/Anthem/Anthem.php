@@ -256,6 +256,23 @@ class Anthem extends LayoutUtils
                 ) ?? [];
             }
 
+            if ($section['category'] === 'donation') {
+
+                $style = [];
+                $buttonStyle = $this->ExtractStyleDonateButton(
+                    $browserPage,
+                    $section['sectionId']
+                ) ?? [];
+                $style = array_merge($style, $buttonStyle);
+
+                $buttonStyle  = $this->ExtractStyleDonateButtonStyle(
+                    $browserPage,
+                    $section['sectionId']
+                ) ?? [];
+                $style = array_merge($style, $buttonStyle);
+                $section['style']['donation']['button'] = $style;
+            }
+
             if (!empty($section['items'])) {
                 foreach ($section['items'] as &$item) {
                     if ($item['category'] === 'text') {
@@ -473,6 +490,90 @@ class Anthem extends LayoutUtils
         }
 
         return $sectionStyles['data'] ?? [];
+    }
+    private function ExtractStyleDonateButton($browserPage, int $sectionId): array
+    {
+        $sectionStyles = $browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => '[data-id="'.$sectionId.'"] .sites-button-text',
+                'styleProperties' => [
+                    'color',
+                    'text-transform',
+                ],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return [];
+        }
+
+        if (isset($sectionStyles['data'])) {
+            $opacityIsSet = false;
+            foreach ($sectionStyles['data'] as $key => $value) {
+                $convertedData = ColorConverter::convertColor(str_replace("px", "", $value));
+                if (is_array($convertedData)) {
+                    $style[$key] = $convertedData['color'];
+                    $style['opacity'] = $convertedData['opacity'];
+                    $opacityIsSet = true;
+                } else {
+                    if ($opacityIsSet && $key == 'opacity') {
+                        continue;
+                    } else {
+                        $style[$key] = $convertedData;
+                    }
+                }
+            }
+        } else {
+            return [];
+        }
+
+        return $style;
+    }
+
+    private function ExtractStyleDonateButtonStyle($browserPage, int $sectionId): array
+    {
+        $sectionStyles = $browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => '[data-id="'.$sectionId.'"] .sites-button',
+                'styleProperties' => [
+                    'background-color',
+                ],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return [];
+        }
+
+        if (isset($sectionStyles['data'])) {
+            $opacityIsSet = false;
+            foreach ($sectionStyles['data'] as $key => $value) {
+                $convertedData = ColorConverter::convertColor(str_replace("px", "", $value));
+                if (is_array($convertedData)) {
+                    $style[$key] = $convertedData['color'];
+                    $style['opacity'] = $convertedData['opacity'];
+                    $opacityIsSet = true;
+                } else {
+                    if ($opacityIsSet && $key == 'opacity') {
+                        continue;
+                    } else {
+                        $style[$key] = $convertedData;
+                    }
+                }
+            }
+        } else {
+            return [];
+        }
+
+        return $style;
     }
 
     private function ExtractStylePage($browserPage): array
