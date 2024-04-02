@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use DOMException;
 use Exception;
+use MBMigration\Builder\Utils\TextTools;
 use MBMigration\Core\Logger;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\VariableCache;
@@ -98,8 +99,16 @@ class FullText extends Element
             if (isset($sectionData['settings']['sections']['donations']['url'])) {
                 $buttonOptions = [
                     'linkExternal' => $sectionData['settings']['sections']['donations']['url'],
-                    'text' => $sectionData['settings']['sections']['donations']['text'] ?? $sectionData['settings']['layout']['donations']['text'],
-                    'linkExternalBlank' => $sectionItem['new_window']
+                    'text' => TextTools::transformText(
+                        $sectionData['settings']['sections']['donations']['text'] ?? $sectionData['settings']['layout']['donations']['text'],
+                        $sectionData['style']['donation']['button']['text-transform'] ?? 'normal'),
+                    'linkExternalBlank' => $sectionItem['new_window'],
+
+                    'bgColorHex' => $sectionData['style']['donation']['button']['background-color'] ?? '#024E69',
+                    'hoverBgColorHex' => $sectionData['style']['donation']['button']['background-color'] ?? '#024E69',
+
+                    'borderStyle' => 'none',
+                    'hoverBorderStyle' => 'none',
                 ];
                 $position = $sectionData['settings']['sections']['donations']['alignment'] ?? 'left';
 
