@@ -122,6 +122,8 @@ class EventCalendarLayout extends DynamicElement
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
         $objBlock->item()->item(1)->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
+        $objBlock->item()->item(1)->item()->setting('featuredViewOrder', 3);
+        $objBlock->item()->item(1)->item()->setting('calendarViewOrder', 1);
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
