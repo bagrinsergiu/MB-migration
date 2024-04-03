@@ -6,7 +6,7 @@ export function encodeLinks(node: Element, urlMap: Record<string, string>) {
   links.map((link) => {
     const href = getHref(link);
     const mappedHref = href && urlMap[href] !== undefined ? urlMap[href] : href;
-    const target = getTarget(node);
+    const target = getTarget(link);
     const targetType = target === "_self" ? "off" : "on";
 
     link.dataset.href = encodeToString({
@@ -15,7 +15,7 @@ export function encodeLinks(node: Element, urlMap: Record<string, string>) {
       external: mappedHref,
       externalBlank: targetType,
       externalRel: "off",
-      externalType: "linkExternal",
+      externalType: "external",
       population: "",
       populationEntityId: "",
       populationEntityType: "",
