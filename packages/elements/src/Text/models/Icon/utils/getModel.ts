@@ -60,10 +60,6 @@ export const getStyleModel = (node: Element) => {
       bgColorOpacity: bgColor.opacity,
       bgColorPalette: "",
 
-      hoverBgColorHex: bgColor.hex,
-      hoverBgColorOpacity: 0.8,
-      hoverBgColorPalette: "",
-
       padding: 7
     })
   };
