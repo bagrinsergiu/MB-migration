@@ -61,10 +61,16 @@ class LeftMediaCircle extends Element
             }
             if ($item['category'] == 'text') {
                 if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objBlock->item()->item()->item(1)->item()->item()->setText($richText);
 
-                    $objBlock->item()->item()->item(1)->item()->addItem($this->itemWrapperRichText($richText));
+                    $this->textCreation(
+                        $item,
+                        $objBlock->item()->item()->item(1)->item()
+                    );
+
+//                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+//                    $objBlock->item()->item()->item(1)->item()->item()->setText($richText);
+//
+//                    $objBlock->item()->item()->item(1)->item()->addItem($this->itemWrapperRichText($richText));
                     $objBlock->item()->item()->item(1)->item()->addItem(
                         $this->wrapperLine(
                             [
@@ -75,9 +81,12 @@ class LeftMediaCircle extends Element
 
                 }
                 if ($item['item_type'] == 'body' && $this->showHeader($sectionData)) {
-                    $this->textCreation($item, $objBlock);
-                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
-                    $objBlock->item()->item()->item(1)->item(1)->item()->setText($richText);
+                    $this->textCreation(
+                        $item,
+                        $objBlock->item()->item()->item(1)->item(1)
+                    );
+//                    $richText = JS::RichText($item['id'], $options['currentPageURL'], $options['fontsFamily']);
+//                    $objBlock->item()->item()->item(1)->item(1)->item()->setText($richText);
                 }
             }
         }
@@ -86,7 +95,7 @@ class LeftMediaCircle extends Element
         return json_encode($block);
     }
 
-    private function textCreation($sectionData, $objBlock)
+    private function textCreation($sectionData, ItemBuilder $objBlock)
     {
         $i = 0;
         foreach ($sectionData['brzElement'] as $textItem) {
@@ -95,14 +104,14 @@ class LeftMediaCircle extends Element
                     if (!empty($sectionData['content'])) {
                         $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
                         if (is_array($embedCode)) {
-                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
+                            $objBlock->addItem($this->embedCode($embedCode[$i]));
                         }
                         $i++;
                     }
                     break;
                 case 'Cloneable':
                 case 'Wrapper':
-                    $objBlock->item(0)->addItem($textItem);
+                    $objBlock->addItem($textItem);
                     break;
             }
         }

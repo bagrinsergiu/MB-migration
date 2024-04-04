@@ -187,5 +187,28 @@ class ArrayManipulator
         return $result;
     }
 
+    public static function sortArrayByPosition($array)
+    {
+        usort($array, function ($a, $b) {
+            return $a['position'] - $b['position'];
+        });
+
+        return $array;
+    }
+
+    public static function checkArrayPath($array, $path): bool
+    {
+        $keys = explode('/', $path);
+        $current = $array;
+
+        foreach ($keys as $key) {
+            if (!isset($current[$key])) {
+                return false;
+            }
+            $current = $current[$key];
+        }
+
+        return true;
+    }
 
 }

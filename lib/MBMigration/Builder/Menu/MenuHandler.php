@@ -2,9 +2,11 @@
 
 namespace MBMigration\Builder\Menu;
 
+use Exception;
+use MBMigration\Builder\Layout\Common\MenuBuilderFactory;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPagePHP;
-use MBMigration\Builder\PageBuilder;
+use MBMigration\Builder\PageController;
 use MBMigration\Builder\Utils\TextTools;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Utils;
@@ -26,7 +28,7 @@ class MenuHandler
      */
     private $projectID_Brizy;
     /**
-     * @var PageBuilder
+     * @var PageController
      */
     private $browserPage;
 
@@ -38,6 +40,38 @@ class MenuHandler
         
         $this->brizyApi = $this->cache->getClass('brizyApi');
         $this->projectID_Brizy = $this->cache->get('projectId_Brizy');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function createMenuList(): void
+    {
+        $cache = VariableCache::getInstance();
+
+        Logger::instance()->info('Create menu structure');
+
+        $parentPages = $cache->get('menuList');
+
+        $design = $cache->get('design');
+        $brizyProject = $cache->get('projectId_Brizy');
+        $fonts = $cache->get('fonts', 'settings');
+        $brizyApi = $cache->get('brizyApi');
+
+        $menuBuilder = MenuBuilderFactory::instanceOfThemeMenuBuilder($design, $brizyProject, $brizyApi, $fonts);
+        $menuStructure = $menuBuilder->transformToBrizyMenu($parentPages['list']);
+        $result = $menuBuilder->createBrizyMenu('mainMenu', $menuStructure);
+
+        $cache->set('brizyMenuItems', $menuStructure);
+
+        $cache->set('menuList', [
+            'id' => $result['id'] ?? null,
+            'uid' => $result['uid'] ?? null,
+            'name' => $result['name'] ?? null,
+            'create' => false,
+            'list' => $parentPages['list'],
+            'data' => $result['data'] ?? '',
+        ]);
     }
 
     public function createMenuStructure($selector)
@@ -71,6 +105,8 @@ class MenuHandler
 
         return $menuList;
     }
+
+
 
     private function transformToBrizyMenu(array $parentMenu, $textTransform = 'none'): array
     {
