@@ -33,7 +33,9 @@ class EventGridLayout extends DynamicElement
         if($this->checkArrayPath($sectionData, 'settings/sections/color/bg')) {
             $blockBg = $sectionData['settings']['sections']['color']['bg'];
             $objBlock->item(0)->setting('bgColorPalette','');
+            $objBlock->item(0)->setting('mobileBgColorPalette', '');
             $objBlock->item(0)->setting('bgColorHex', $blockBg);
+            $objBlock->item(0)->setting('mobileBgColorHex', $blockBg);
         }
 
         $blockHead = false;
