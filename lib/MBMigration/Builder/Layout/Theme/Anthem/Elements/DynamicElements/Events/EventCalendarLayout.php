@@ -35,7 +35,7 @@ class EventCalendarLayout extends DynamicElement
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);
 
-        if($this->checkArrayPath($sectionData, 'settings/sections/color/bg')) {
+        if($this->checkArrayPath($sectionData, 'style/background-color')) {
             $blockBg = $sectionData['style']['background-color'];
             $objBlock->item(0)->setting('bgColorPalette','');
             $objBlock->item(0)->setting('mobileBgColorPalette', '');
