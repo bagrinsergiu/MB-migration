@@ -83,22 +83,18 @@ class MigrationPlatform
 
     public function start(string $projectID_MB, int $projectID_Brizy = 0): bool
     {
-        if ($projectID_MB == 'sample') {
-            Logger::instance()->info(json_encode(JS::RichText(8152825, 'https://www.crosspointcoc.org/')));
-        } else {
-            try {
-                $this->cache->loadDump($projectID_MB, $projectID_Brizy);
-                $this->run($projectID_MB, $projectID_Brizy);
-                $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
-            } catch (GuzzleException $e) {
-                Logger::instance()->critical($e->getMessage(), $e->getTrace());
+        try {
+            $this->cache->loadDump($projectID_MB, $projectID_Brizy);
+            $this->run($projectID_MB, $projectID_Brizy);
+            $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
+        } catch (GuzzleException $e) {
+            Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
-                throw $e;
-            } catch (Exception $e) {
-                Logger::instance()->critical($e->getMessage(), $e->getTrace());
+            throw $e;
+        } catch (Exception $e) {
+            Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
-                throw $e;
-            }
+            throw $e;
         }
 
         return true;
