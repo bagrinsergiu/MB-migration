@@ -403,6 +403,23 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
+    protected function wrapperSermon($options)
+    {
+        $jsonDecode = $this->initData();
+        $decoded = $jsonDecode['global']['wrapper--sermonLayout'];
+        $block = new ItemBuilder($decoded['main']);
+        foreach ($options as $key => $value) {
+            $block->item()->setting($key, $value);
+        }
+
+        $result = $block->get();
+
+        return json_decode(json_encode($result), true);
+    }
+
+    /**
+     * @throws Exception
+     */
     protected function wrapperLine(array $options = [])
     {
         $defOptions = [

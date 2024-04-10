@@ -73,12 +73,12 @@ class ListMediaLayout extends DynamicElement
             if ($headItem['item_type'] === 'title' && $this->showBody($sectionData)) {
                 $blockHead = true;
                 $this->textCreation($headItem, $objBlock);
+                $objBlock->item()->addItem($this->wrapperLine(
+                    [
+                        'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                    ]
+                ));
             }
-            $objBlock->item()->addItem($this->wrapperLine(
-                [
-                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
-                ]
-            ));
         }
 
         foreach ($sectionData['items'] as $headItem)
@@ -92,18 +92,21 @@ class ListMediaLayout extends DynamicElement
         $mainCollectionType = $this->cache->get('mainCollectionType');
 
         if($blockHead) {
-            $objBlock->item(0)->addItem($objHead->get(), 0);
-            $objBlock->item()->item(1)->item()->setting('source', $mainCollectionType);
-        } else {
-            $objBlock->item()->item()->item()->setting('source', $mainCollectionType);
+            $objBlock->item()->addItem($objHead->get(), 0);
         }
 
         $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
-        $objBlock->item()->item()->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
 
-        $objBlock->item()->item()->item()->setting('defaultCategory', $currentPageSlug);
+        $objBlock->item()->addItem(
+            $this->wrapperSermon(
+                [
+                    'source' => $mainCollectionType,
+                    'detailPage' => "{{placeholder content='$placeholder'}}",
+                    'defaultCategory' => $currentPageSlug
+                ])
+        );
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
