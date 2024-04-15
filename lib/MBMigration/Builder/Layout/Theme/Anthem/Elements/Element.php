@@ -654,13 +654,7 @@ abstract class Element extends LayoutUtils
                     $item['link'] = MediaController::getURLDoc($item['link']);
                 }
 
-                $urlComponents = parse_url($item['link']);
-
-                if (!empty($urlComponents['host']) || ($urlComponents['scheme'] === 'https' || $urlComponents['scheme'] === 'http')) {
-                    $slash = '';
-                } else {
-                    $slash = '/';
-                }
+                $slash = $this->processURL($item['link']);
 
                 $objItem->item()->item()->setting('linkType', 'external');
                 $objItem->item()->item()->setting('linkExternal', $slash.$item['link']);
@@ -731,6 +725,19 @@ abstract class Element extends LayoutUtils
         }
 
         return $color;
+    }
+    private function processURL($url): string
+    {
+        $urlComponents = parse_url($url);
+
+        $hasHost = isset($urlComponents['host']);
+        $isValidScheme = isset($urlComponents['scheme']) && ($urlComponents['scheme'] === 'https' || $urlComponents['scheme'] === 'http');
+
+        if ($hasHost || $isValidScheme) {
+            return '';
+        } else {
+            return '/';
+        }
     }
 
 }
