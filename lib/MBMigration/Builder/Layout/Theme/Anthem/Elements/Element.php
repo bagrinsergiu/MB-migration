@@ -630,7 +630,7 @@ abstract class Element extends LayoutUtils
     {
         $sectionItem = [];
         $slash = '';
-        if (!$item['new_window']) {
+        if ($item['new_window'] === true) {
             $sectionItem['new_window'] = 'on';
         } else {
             $sectionItem['new_window'] = 'off';
