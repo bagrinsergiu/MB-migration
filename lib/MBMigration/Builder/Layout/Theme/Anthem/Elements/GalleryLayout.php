@@ -63,14 +63,12 @@ class GalleryLayout extends Element
 
         $colorArrows = $this->getContrastColor($bodyBgColor);
         $block['value']['sliderArrowsColorHex'] = $colorArrows;
-        $block['value']['sliderArrowsColorOpacity'] = 1;
+        $block['value']['sliderArrowsColorOpacity'] = 0.75;
         $block['value']['sliderArrowsColorPalette'] = '';
 
-        $block['value']['hoverSliderArrowsColorHex'] = '#7f7c7c';
+        $block['value']['hoverSliderArrowsColorHex'] = $colorArrows;
         $block['value']['hoverSliderArrowsColorOpacity'] = 1;
         $block['value']['hoverSliderArrowsColorPalette'] = '';
-
-
 
         foreach ($sectionData['items'] as $item){
             if(!$item['uploadStatus']) {
@@ -95,7 +93,8 @@ class GalleryLayout extends Element
         return json_encode($block);
     }
 
-    private function getContrastColor($hexColor) {
+    private function getContrastColor($hexColor): string
+    {
         $hexColor = str_replace('#', '', $hexColor);
 
         $r = hexdec(substr($hexColor, 0, 2));
