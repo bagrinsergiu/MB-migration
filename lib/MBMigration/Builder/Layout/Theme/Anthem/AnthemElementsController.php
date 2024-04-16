@@ -10,6 +10,7 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\Even
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventGridLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Forms\Form;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Prayer\PrayerForm;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons\ListMediaLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Footer;
@@ -209,7 +210,7 @@ class AnthemElementsController
                 return $element->getElement($elementData);
             case "prayer_list":
             case "prayer_form":
-                $element = new Form();
+                $element = new PrayerForm();
 
                 return $element->getElement($elementData);
             default:
