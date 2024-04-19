@@ -294,6 +294,19 @@ class Anthem extends LayoutUtils
                                 $this->ExtractItemContent($item['item'], $browserPage);
 
                                 foreach ($item['item'] as $listItem) {
+                                    if ($listItem['category']=== "photo"){
+                                        $target = $this->ExtractTargetLinkFromPhoto(
+                                            $browserPage,
+                                            $listItem['id']
+                                        ) ?? '_blank';
+
+                                        if ($target === '_blank') {
+                                            $listItem['new_window'] = true;
+                                        } else {
+                                            $listItem['new_window'] = false;
+                                        }
+                                    }
+
                                     if ($item['item_type'] == 'title') {
                                         $section['style']['border'] = $this->ExtractBorderColorFromItem(
                                             $browserPage,
@@ -532,6 +545,48 @@ class Anthem extends LayoutUtils
         }
 
         return $style;
+    }
+
+    private function ExtractTargetLinkFromPhoto($browserPage, int $sectionId): string
+    {
+        $sectionStyles = $browserPage->evaluateScript(
+            'brizy.getAttributes',
+            [
+                'selector' => '[data-id="'.$sectionId.'"] .photo-container a',
+                'attributeNames' => [
+                    'target',
+                ],
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return '_blank';
+        }
+
+        if (isset($sectionStyles['data'])) {
+            $opacityIsSet = false;
+            foreach ($sectionStyles['data'] as $key => $value) {
+                $convertedData = ColorConverter::convertColor(str_replace("px", "", $value));
+                if (is_array($convertedData)) {
+                    $style[$key] = $convertedData['color'];
+                    $style['opacity'] = $convertedData['opacity'];
+                    $opacityIsSet = true;
+                } else {
+                    if ($opacityIsSet && $key == 'opacity') {
+                        continue;
+                    } else {
+                        $style[$key] = $convertedData;
+                    }
+                }
+            }
+        } else {
+            return '_blank';
+        }
+
+        return $style['target'] ?? '_blank';
     }
 
     private function ExtractStyleDonateButtonStyle($browserPage, int $sectionId): array
