@@ -126,6 +126,10 @@ class Head extends Element
     {
         $treeMenu = [];
         foreach ($menuList as $item) {
+            if ($item['hidden'] == true) {
+                continue;
+            }
+
             $blockMenu['value']['itemId'] = $item['collection'];
             $blockMenu['value']['title'] = $item['name'];
             if ($item['slug'] == 'home') {
@@ -140,7 +144,14 @@ class Head extends Element
             }
             $blockMenu['value']['items'] = $this->creatingMenuTree($item['child'], $blockMenu);
             if ($item['landing'] == false) {
-                $blockMenu['value']['url'] = $blockMenu['value']['items'][0]['value']['url'];
+                $i = 0;
+                foreach ($item['child'] as $child) {
+                    if ($child['hidden'] == false) {
+                        $blockMenu['value']['url'] = $blockMenu['value']['items'][$i]['value']['url'];
+                        break;
+                    }
+                    $i++;
+                }
             }
 
             $encodeItem = json_encode($blockMenu);
