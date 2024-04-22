@@ -1,1 +1,4 @@
-export { styleExtractor as run } from "elements/src/StyleExtractor";
+export {
+  styleExtractor as run,
+  attributesExtractor as attributeRun
+} from "elements/src/StyleExtractor";

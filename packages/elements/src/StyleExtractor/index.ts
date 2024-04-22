@@ -9,6 +9,7 @@ export interface Data {
   defaultFamily: string;
   styleProperties: Array<string>;
   urlMap: Record<string, string>;
+  attributeNames?: string[];
 }
 
 export const styleExtractor = (_entry: Data): Output => {
@@ -32,5 +33,24 @@ export const styleExtractor = (_entry: Data): Output => {
       data[styleName] = computedStyles.getPropertyValue(styleName);
     });
 
+  return createData({ data });
+};
+
+export const attributesExtractor = (_entry: Data): Output => {
+  const entry = window.isDev ? getDataByEntry(_entry) : _entry;
+
+  const { selector, attributeNames = [] } = entry;
+
+  const data: Record<string, string | null> = {};
+  const element = selector ? document.querySelector(selector) : undefined;
+
+  if (!element) {
+    return {
+      error: `Element with selector ${selector} not found`
+    };
+  }
+  attributeNames.forEach((attr: string) => {
+    data[attr] = element.getAttribute(attr);
+  });
   return createData({ data });
 };
