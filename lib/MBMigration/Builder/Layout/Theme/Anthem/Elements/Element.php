@@ -130,7 +130,7 @@ abstract class Element extends LayoutUtils
                 $objBlock->item()->setting('bgImageSrc', $sectionData['settings']['sections']['background']['photo']);
                 $objBlock->item()->setting(
                     'bgColorOpacity',
-                    $this->convertToNumeric($sectionData['settings']['sections']['background']['opacity'] ?? 1)
+                    $this->convertToNumeric($sectionData['style']['opacity_div']['opacity'] ?? 1)
                 );
             }
         }
