@@ -22,7 +22,7 @@ class Anthem extends LayoutUtils
      */
     protected $jsonDecode;
 
-    protected $layoutName;
+    protected string $layoutName;
 
     /**
      * @var VariableCache
@@ -36,12 +36,12 @@ class Anthem extends LayoutUtils
     /**
      * @var array
      */
-    private $fontFamily;
+    private array $fontFamily;
 
     /**
      * @var BrowserPHP
      */
-    private $browser;
+    private BrowserPHP $browser;
     /**
      * @var mixed|null
      */
@@ -181,7 +181,6 @@ class Anthem extends LayoutUtils
 
         Logger::instance()->info('Request to send content to the page: '.$itemsID.' | Slug: '.$slug);
 
-
         $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
 
         Logger::instance()->info('Content added to the page successfully: '.$itemsID.' | Slug: '.$slug);
@@ -275,47 +274,58 @@ class Anthem extends LayoutUtils
 
             if (!empty($section['items'])) {
                 foreach ($section['items'] as &$item) {
-                    if ($item['category'] === 'text') {
+                    switch ($item['category']) {
+                        case "text":
+                            if (isset($item['item_type']) && $item['item_type'] == 'title') {
+                                $section['style']['border'] = $this->ExtractBorderColorFromItem(
+                                    $browserPage,
+                                    $item['sectionId'] ?? $item['id']
+                                ) ?? [];
+                            }
 
-                        if (isset($item['item_type']) && $item['item_type'] == 'title') {
-                            $section['style']['border'] = $this->ExtractBorderColorFromItem(
+                            $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
+                            break;
+                        case "photo":
+                            $target = $this->ExtractTargetLinkFromPhoto(
                                 $browserPage,
-                                $item['id']
-                            ) ?? [];
-                        }
+                                $item['sectionId'] ?? $item['id']
+                            ) ?? '_blank';
 
-                        $item['brzElement'] = $this->ExtractTextContent($browserPage, $item[$nameSectionId]);
+                            if ($target === '_blank') {
+                                $item['new_window'] = true;
+                            } else {
+                                $item['new_window'] = false;
+                            }
+                            break;
+                        case "list":
+                        case "tab":
+                        case "accordion":
+                            $this->ExtractItemContent($item['item'], $browserPage);
 
-                    } else {
-                        switch ($item['category']) {
-                            case "list":
-                            case "tab":
-                            case "accordion":
-                                $this->ExtractItemContent($item['item'], $browserPage);
+                            foreach ($item['item'] as $listItem) {
+                                if ($listItem['category']=== "photo") {
+                                    $target = $this->ExtractTargetLinkFromPhoto(
+                                        $browserPage,
+                                        $listItem['sectionId'] ?? $listItem['id']
+                                    ) ?? '_blank';
 
-                                foreach ($item['item'] as $listItem) {
-                                    if ($listItem['category']=== "photo"){
-                                        $target = $this->ExtractTargetLinkFromPhoto(
-                                            $browserPage,
-                                            $listItem['id']
-                                        ) ?? '_blank';
-
-                                        if ($target === '_blank') {
-                                            $listItem['new_window'] = true;
-                                        } else {
-                                            $listItem['new_window'] = false;
-                                        }
-                                    }
-
-                                    if ($item['item_type'] == 'title') {
-                                        $section['style']['border'] = $this->ExtractBorderColorFromItem(
-                                            $browserPage,
-                                            $listItem['sectionId']
-                                        ) ?? [];
+                                    if ($target === '_blank') {
+                                        $listItem['new_window'] = true;
+                                    } else {
+                                        $listItem['new_window'] = false;
                                     }
                                 }
-                        }
+
+                                if ($item['item_type'] == 'title') {
+                                    $section['style']['border'] = $this->ExtractBorderColorFromItem(
+                                        $browserPage,
+                                        $listItem['sectionId']
+                                    ) ?? [];
+                                }
+                            }
+                            break;
                     }
+
                 }
             }
             if (!empty($section['head'])) {
