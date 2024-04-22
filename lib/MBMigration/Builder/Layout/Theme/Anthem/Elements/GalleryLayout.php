@@ -62,6 +62,7 @@ class GalleryLayout extends Element
         }
 
         $colorArrows = $this->getContrastColor($bodyBgColor);
+
         $block['value']['sliderArrowsColorHex'] = $colorArrows;
         $block['value']['sliderArrowsColorOpacity'] = 0.75;
         $block['value']['sliderArrowsColorPalette'] = '';
@@ -69,6 +70,14 @@ class GalleryLayout extends Element
         $block['value']['hoverSliderArrowsColorHex'] = $colorArrows;
         $block['value']['hoverSliderArrowsColorOpacity'] = 1;
         $block['value']['hoverSliderArrowsColorPalette'] = '';
+
+        $block['value']['sliderDotsColorHex'] = $colorArrows;
+        $block['value']['sliderDotsColorOpacity'] = 0.75;
+        $block['value']['sliderDotsColorPalette'] = '';
+
+        $block['value']['hoverSliderDotsColorHex'] = $colorArrows;
+        $block['value']['hoverSliderDotsColorOpacity'] = 1;
+        $block['value']['hoverSliderDotsColorPalette'] = '';
 
         foreach ($sectionData['items'] as $item){
             if(!$item['uploadStatus']) {
