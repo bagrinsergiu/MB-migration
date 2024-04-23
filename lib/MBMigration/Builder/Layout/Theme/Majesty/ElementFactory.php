@@ -49,7 +49,7 @@ class ElementFactory  extends AbstractThemeElementFactory
 //            case 'event-tile-layout':
 //                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
 //            case 'event-calendar-layout':
-//                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage);
+//                return new EventLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage);
             case 'gallery-layout':
                 return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $browserPage);
             case 'three-horizontal-text':
