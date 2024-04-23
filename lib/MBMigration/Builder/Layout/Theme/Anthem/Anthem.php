@@ -302,7 +302,7 @@ class Anthem extends LayoutUtils
                         case "accordion":
                             $this->ExtractItemContent($item['item'], $browserPage);
 
-                            foreach ($item['item'] as $listItem) {
+                            foreach ($item['item'] as &$listItem) {
                                 if ($listItem['category']=== "photo") {
                                     $target = $this->ExtractTargetLinkFromPhoto(
                                         $browserPage,
