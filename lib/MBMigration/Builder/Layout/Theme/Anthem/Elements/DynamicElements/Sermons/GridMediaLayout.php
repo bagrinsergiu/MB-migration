@@ -97,12 +97,34 @@ class GridMediaLayout extends DynamicElement
             $objBlock->item()->item()->item()->setting('source', $mainCollectionType);
         }
 
-        $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
+        $collectionItemsForDetailPage = $this->cache->get('sermonsDetailPage');
+
+        if(!$collectionItemsForDetailPage) {
+            $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
+            $this->cache->set('sermonsDetailPage', $collectionItemsForDetailPage);
+        }
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
         $objBlock->item()->item(1)->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
 
         $objBlock->item()->item(1)->item()->setting('defaultCategory', $currentPageSlug);
+
+        $objBlock->item()->item(1)->item()->setting('titleColorHex', "#1e1eb7");
+        $objBlock->item()->item(1)->item()->setting('titleColorOpacity', 1);
+        $objBlock->item()->item(1)->item()->setting('titleColorPalette', "");
+
+        $objBlock->item()->item(1)->item()->setting('hoverTitleColorHex', "#1e1eb7");
+        $objBlock->item()->item(1)->item()->setting('hoverTitleColorOpacity', 0.7);
+        $objBlock->item()->item(1)->item()->setting('hoverTitleColorPalette', "");
+
+        $objBlock->item()->item(1)->item()->setting('metaLinksColorHex', "#3d79ff");
+        $objBlock->item()->item(1)->item()->setting('metaLinksColorOpacity', 1);
+        $objBlock->item()->item(1)->item()->setting('metaLinksColorPalette', "");
+
+        $objBlock->item()->item(1)->item()->setting('hoverMetaLinksColorHex', "#3d79ff");
+        $objBlock->item()->item(1)->item()->setting('hoverMetaLinksColorOpacity', 0.7);
+        $objBlock->item()->item(1)->item()->setting('hoverMetaLinksColorPalette', "");
+
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 

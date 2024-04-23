@@ -9,7 +9,7 @@ use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElement;
 
 
-class EventCalendarLayout extends DynamicElement
+class EventLayout extends DynamicElement
 {
     public function getElement(array $elementData)
     {
@@ -24,7 +24,7 @@ class EventCalendarLayout extends DynamicElement
     {
         $slug = 'event-calendar';
         $title = 'Event Calendar';
-        $elementName = 'EventGalleryLayout'; //'EventCalendarLayout';
+        $elementName = 'EventGalleryLayout'; //'EventLayout';
 
         $objBlock = new ItemBuilder();
         $objHead  = new ItemBuilder();
@@ -44,42 +44,18 @@ class EventCalendarLayout extends DynamicElement
         }
 
         $blockHead = false;
-        foreach ($sectionData['head'] as $headItem)
-        {
-            if($headItem['category'] !== 'text') { continue; }
-
-            $show_header = true;
-            $show_body = true;
-
-            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                $show_header = $sectionData['settings']['sections']['list']['show_header'];
-            }
-            if($this->checkArrayPath($sectionData, 'settings/sections/list/show_header')){
-                $show_body = $sectionData['settings']['sections']['list']['show_body'];
-            }
-
-            if ($headItem['item_type'] === 'title' && $show_header) {
-                $blockHead = true;
-                $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])), 0);
-            }
-
-            if ($headItem['item_type'] === 'body' && $show_body) {
-                $blockHead = true;
-                $objHead->item()->addItem($this->itemWrapperRichText($this->replaceString($headItem['content'], [ 'sectionType' => 'brz-tp-lg-heading1', 'bgColor' => $blockBg])));
-            }
-        }
 
         foreach ($sectionData['head'] as $headItem)
         {
             if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
                 $blockHead = true;
                 $this->textCreation($headItem, $objHead);
+                $objHead->item()->addItem($this->wrapperLine(
+                    [
+                        'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
+                    ]
+                ));
             }
-            $objHead->item()->addItem($this->wrapperLine(
-                [
-                    'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
-                ]
-            ));
         }
 
         foreach ($sectionData['head'] as $headItem)
@@ -120,7 +96,12 @@ class EventCalendarLayout extends DynamicElement
             $objBlock->item()->item()->item()->setting('source', $mainCollectionType);
         }
 
-        $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
+        $collectionItemsForDetailPage = $this->cache->get('eventDetailPage');
+
+        if(!$collectionItemsForDetailPage) {
+            $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
+            $this->cache->set('eventDetailPage', $collectionItemsForDetailPage);
+        }
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
         $objBlock->item()->item(1)->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
@@ -133,6 +114,9 @@ class EventCalendarLayout extends DynamicElement
         return json_encode($block);
     }
 
+    /**
+     * @throws Exception
+     */
     private function textCreation($sectionData, $objBlock)
     {
         $i = 0;

@@ -5,7 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem;
 use DOMException;
 use Exception;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventCalendarLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventGalleryLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventGridLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventListLayout;
@@ -200,12 +200,11 @@ class AnthemElementsController
                 $element = new GridMediaLayout();
 
                 return $element->getElement($elementData);
-
             case "event_calendar_layout":
             case "event_list_layout":
             case "event_tile_layout":
             case "event_gallery_layout":
-                $element = new EventCalendarLayout();
+                $element = new EventLayout();
 
                 return $element->getElement($elementData);
             case "prayer_list":
