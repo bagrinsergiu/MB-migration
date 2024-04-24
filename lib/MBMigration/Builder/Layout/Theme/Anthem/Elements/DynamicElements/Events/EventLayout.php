@@ -11,6 +11,9 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElem
 
 class EventLayout extends DynamicElement
 {
+    /**
+     * @throws DOMException
+     */
     public function getElement(array $elementData)
     {
         return $this->Calendar($elementData);
@@ -24,7 +27,7 @@ class EventLayout extends DynamicElement
     {
         $slug = 'event-calendar';
         $title = 'Event Calendar';
-        $elementName = 'EventGalleryLayout'; //'EventLayout';
+        $elementName = 'EventLayout';
 
         $objBlock = new ItemBuilder();
         $objHead  = new ItemBuilder();
@@ -104,7 +107,7 @@ class EventLayout extends DynamicElement
         }
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
-        $objBlock->item()->item(1)->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
+        $objBlock->item()->item(1)->item()->setting('eventDetailPage', "{{placeholder content='$placeholder'}}");
         $objBlock->item()->item(1)->item()->setting('featuredViewOrder', 3);
         $objBlock->item()->item(1)->item()->setting('calendarViewOrder', 1);
 
