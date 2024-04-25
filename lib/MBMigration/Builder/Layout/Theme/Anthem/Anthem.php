@@ -317,6 +317,10 @@ class Anthem extends LayoutUtils
                                 }
                             }
                             break;
+                        case "media":
+                            $result = $browserPage->hasNode('[data-id="'.$item['id'].'"]');
+
+                            $a= 1+3;
                     }
 
                 }
