@@ -28,39 +28,19 @@ use Psr\Log\LoggerInterface;
 
 class MigrationPlatform
 {
-    protected $cache;
-    protected $projectId;
-
-    /**
-     * @var MBProjectDataCollector
-     */
-    private $parser;
-    /**
-     * @var QueryBuilder
-     */
-    private $QueryBuilder;
-
-    /**
-     * @var BrizyApi
-     */
-    private $brizyApi;
+    protected VariableCache $cache;
+    protected string $projectId;
+    private MBProjectDataCollector $parser;
+    private QueryBuilder $QueryBuilder;
+    private BrizyApi $brizyApi;
     private $projectID_Brizy;
     private $startTime;
     private $graphApiBrizy;
-    private $migrationID;
-    /**
-     * @var ErrorDump
-     */
-    private $errorDump;
-    /**
-     * @var mixed
-     */
-    private $finalSuccess;
-    private $buildPage;
-    /**
-     * @var PageController
-     */
-    private $pageController;
+    private string $migrationID;
+    private ErrorDump $errorDump;
+    private array $finalSuccess;
+    private string $buildPage;
+    private PageController $pageController;
     private LoggerInterface $logger;
     private array $pageMapping;
 
