@@ -221,8 +221,13 @@ class PageController
                     $page['collection'] = $newPage;
                 }
             } else {
-                if (!empty($page['child'])) {
-                    $page['collection'] = $page['child'][0]['collection'];
+                if (!empty($page['child']) && !$page['hidden']) {
+                    foreach ($page['child'] as $child) {
+                        if (!$child['hidden']) {
+                            $page['collection'] = $child['collection'];
+                            break;
+                        }
+                    }
                 }
             }
             //}

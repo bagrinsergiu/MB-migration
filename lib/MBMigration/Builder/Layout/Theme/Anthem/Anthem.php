@@ -33,14 +33,7 @@ class Anthem extends LayoutUtils
      * @var mixed
      */
     private $browserPage;
-    /**
-     * @var array
-     */
     private array $fontFamily;
-
-    /**
-     * @var BrowserPHP
-     */
     private BrowserPHP $browser;
     /**
      * @var mixed|null

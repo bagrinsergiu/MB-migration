@@ -15,22 +15,13 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 class MenuHandler
 {
 
-    /**
-     * @var BrizyAPI
-     */
-    private $brizyApi;
-    /**
-     * @var VariableCache
-     */
-    private $cache;
+    private BrizyAPI $brizyApi;
+    private VariableCache $cache;
     /**
      * @var mixed|null
      */
     private $projectID_Brizy;
-    /**
-     * @var PageController
-     */
-    private $browserPage;
+    private BrowserPagePHP $browserPage;
 
     public function __construct(BrowserPagePHP $browserPage)
     {
@@ -74,6 +65,9 @@ class MenuHandler
         ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function createMenuStructure($selector)
     {
         Logger::instance()->info('Create menu structure');
