@@ -1,3 +1,4 @@
+import { dom } from "./Dom";
 import { getMenuItem, getSubMenuItem } from "./Menu";
 import {
   attributeRun as getAttributes,
@@ -10,5 +11,6 @@ window.brizy = {
   getSubMenuItem,
   getAttributes,
   getStyles,
-  getText
+  getText,
+  dom
 };
