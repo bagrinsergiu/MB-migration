@@ -17,7 +17,11 @@ export const getNodeText = (entry: Data): Output => {
   const element = document.querySelector(selector);
 
   if (element) {
-    return createData({ data: element.textContent });
+    const data = {
+      contain: element.textContent
+    };
+
+    return createData({ data });
   }
 
   return {
