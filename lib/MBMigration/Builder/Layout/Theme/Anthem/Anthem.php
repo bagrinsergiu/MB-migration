@@ -318,12 +318,12 @@ class Anthem extends LayoutUtils
                             }
                             break;
                         case "media":
-                            $section['style']['mediaGridContainer'] =  $this->hasNode(
+                            $section['settings']['mediaGridContainer'] =  $this->hasNode(
                                 $browserPage,
                                 $section['sectionId'] ?? $section['id'],
                                 '.media-grid-container');
-                            if (!$section['style']['mediaGridContainer']) {
-                                $section['style']['containTitle'] = $this->getNodeText(
+                            if (!$section['settings']['mediaGridContainer']) {
+                                $section['settings']['containTitle'] = $this->getNodeText(
                                     $browserPage,
                                     $section['sectionId'] ?? $section['id'],
                                     ".media-video-title");

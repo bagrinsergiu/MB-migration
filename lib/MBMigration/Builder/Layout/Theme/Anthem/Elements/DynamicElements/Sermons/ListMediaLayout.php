@@ -108,6 +108,12 @@ class ListMediaLayout extends DynamicElement
                 ])
         );
 
+        if($sectionData['settings']['mediaGridContainer']) {
+            $objBlock->item()->setting('searchParam', $sectionData['settings']['containTitle'] ?? '');
+        }
+
+        $objBlock->item()->setting('searchParam', $sectionData[]);
+
         $block = $this->replaceIdWithRandom($objBlock->get());
 
         $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName);
