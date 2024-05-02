@@ -1,7 +1,7 @@
-import { Output } from "../types/type";
-import { createData } from "../utils/getData";
-import { getDataByEntry } from "../utils/getDataByEntry";
-import { Literal } from "utils";
+import {Output} from "../types/type";
+import {createData} from "../utils/getData";
+import {getDataByEntry} from "../utils/getDataByEntry";
+import {Literal} from "utils";
 
 export interface Data {
   selector: string;
@@ -54,3 +54,44 @@ export const attributesExtractor = (_entry: Data): Output => {
   });
   return createData({ data });
 };
+
+export const hasNode = (_entry: Data): Output => {
+  const entry = window.isDev ? getDataByEntry(_entry) : _entry;
+
+  const { selector} = entry;
+
+  const data: Record<string, string | null> = {};
+
+  if (!selector) {
+    return {
+      error: `Selector not found`
+    };
+  }
+
+  data['hasNode'] = document.querySelector(selector) ? 'true' : 'false';
+
+  return createData({ data });
+};
+
+export const getNodeText = (_entry: Data): Output => {
+  const entry = window.isDev ? getDataByEntry(_entry) : _entry;
+
+  const { selector} = entry;
+
+  const data: Record<string, string | null> = {};
+
+  if (!selector) {
+    return {
+      error: `Selector not found`
+    };
+  }
+
+  const element = document.querySelector(selector);
+
+  if (element) {
+    data['textNode'] = element.textContent;
+  }
+
+  return createData({ data });
+};
+

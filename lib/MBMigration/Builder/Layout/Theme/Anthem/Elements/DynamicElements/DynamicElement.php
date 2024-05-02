@@ -8,16 +8,9 @@ use MBMigration\Builder\VariableCache;
 
 abstract class DynamicElement extends Element implements DynamicElementInterface
 {
-
-    /**
-     * @var VariableCache
-     */
     protected $cache;
     protected $jsonDecode;
-    /**
-     * @var array
-     */
-    protected $elementOptions;
+    protected array $elementOptions;
     /**
      * @var mixed
      */

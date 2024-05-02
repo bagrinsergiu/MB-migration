@@ -1,4 +1,5 @@
 import { run as getAccordion } from "./Accordion";
+import { dom } from "./Dom";
 import { run as globalMenuExtractor } from "./GlobalMenu";
 import { run as getImage } from "./Image";
 import { run as getMenu } from "./Menu";
@@ -17,5 +18,6 @@ window.brizy = {
   getText,
   getImage,
   getAccordion,
-  getTabs
+  getTabs,
+  dom
 };

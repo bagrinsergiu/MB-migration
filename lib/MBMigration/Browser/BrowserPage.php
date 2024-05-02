@@ -116,6 +116,38 @@ class BrowserPage implements BrowserPageInterface
         $this->page->waitForSelector($selector);
     }
 
+    public function getNodeText($selector)
+    {
+        $this->evaluateScript("function (selector) {
+            var element = document.querySelector(selector);
+            if (element) {
+               return element.textContent;
+            }
+            return null;
+        }
+        ",
+            [
+                'selector' => $selector,
+            ]
+        );
+
+        $this->page->waitForSelector($selector);
+    }
+
+    public function hasNode($selector)
+    {
+        $this->evaluateScript("function (selector) {
+           return document.querySelector(selector) !== null;
+        }
+        ",
+            [
+                'selector' => $selector,
+            ]
+        );
+
+        $this->page->waitForSelector($selector);
+    }
+
     public function setNodeAttribute($selector, array $attributes)
     {
         $this->evaluateScript("function (selector, attributes) {

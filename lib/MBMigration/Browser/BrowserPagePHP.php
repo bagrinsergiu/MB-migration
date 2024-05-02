@@ -92,6 +92,53 @@ class BrowserPagePHP implements BrowserPageInterface
         }
     }
 
+    public function hasNode($selector)
+    {
+        try {
+            $result = $this->page->callFunction("function (selector) {
+           return document.querySelector(selector) !== null;
+        }
+        ",
+                [
+                    'selector' => $selector,
+                ]
+            )
+                ->waitForResponse(50000)
+                ->getReturnValue(50000);
+        } catch (Exception $e) {
+            Logger::instance()->critical("evaluateScript: ".$e->getMessage());
+
+            return ['error' => $e->getMessage()]; // element not found
+        }
+
+        return $result;
+    }
+
+    public function getNodeText($selector)
+    {
+        try {
+            $result = $this->page->callFunction("function (selector) {
+            var element = document.querySelector(selector);
+            if (element) {
+               return element.textContent;
+            }
+            return null;
+        }
+        ",
+                [
+                    'selector' => $selector,
+                ]
+            )->waitForResponse(50000)
+                ->getReturnValue(50000);
+        } catch (Exception $e) {
+            Logger::instance()->critical("evaluateScript: ".$e->getMessage());
+
+            return ['error' => $e->getMessage()]; // element not found
+        }
+
+        return $result;
+    }
+
     public function setNodeStyles($selector, array $attributes)
     {
         $this->page->callFunction(

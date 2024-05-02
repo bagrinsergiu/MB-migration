@@ -317,6 +317,18 @@ class Anthem extends LayoutUtils
                                 }
                             }
                             break;
+                        case "media":
+                            $section['settings']['mediaGridContainer'] =  $this->hasNode(
+                                $browserPage,
+                                $section['sectionId'] ?? $section['id'],
+                                '.media-grid-container');
+                            if (!$section['settings']['mediaGridContainer']) {
+                                $section['settings']['containTitle'] = $this->getNodeText(
+                                    $browserPage,
+                                    $section['sectionId'] ?? $section['id'],
+                                    ".media-video-title");
+                            }
+                            break;
                     }
 
                 }
@@ -675,6 +687,42 @@ class Anthem extends LayoutUtils
         }
 
         return $style;
+    }
+
+    private function hasNode($browserPage, int $sectionId, string $selector): bool
+    {
+        $style = [];
+        $sectionStyles = $browserPage->evaluateScript(
+            'brizy.dom.hasNode',
+            [
+                'selector' => '[data-id="'.$sectionId.'"] '.$selector,
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return false;
+        }
+
+        return $sectionStyles['data']['hasNode'] ?? false;
+    }
+
+    private function getNodeText($browserPage, int $sectionId, string $selector)
+    {
+        $style = [];
+
+        $selector = '[data-id="'.$sectionId.'"] '.$selector;
+        $sectionStyles = $browserPage->evaluateScript(
+            'brizy.dom.getNodeText',
+            [
+                'selector' => $selector,
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return false;
+        }
+
+        return $sectionStyles['data']['contain'] ?? false;
     }
 
     private function ExtractTextContent($browserPage, int $mbSectionItemId)
