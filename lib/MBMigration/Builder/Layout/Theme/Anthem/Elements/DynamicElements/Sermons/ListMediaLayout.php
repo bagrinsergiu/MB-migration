@@ -112,8 +112,6 @@ class ListMediaLayout extends DynamicElement
             $objBlock->item()->setting('searchParam', $sectionData['settings']['containTitle'] ?? '');
         }
 
-        $objBlock->item()->setting('searchParam', $sectionData[]);
-
         $block = $this->replaceIdWithRandom($objBlock->get());
 
         $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName);
