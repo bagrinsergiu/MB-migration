@@ -70,41 +70,46 @@ function appendNodeStyles(node: HTMLElement, targetNode: HTMLElement) {
 }
 
 function removeNestedDivs(node: HTMLElement) {
-  Array.from(node.childNodes).forEach((child) => {
-    if (
-      child instanceof HTMLElement &&
-      (child.nodeName === "DIV" || child.nodeName === "CENTER")
-    ) {
-      removeNestedDivs(child);
-      // in case if there is no div or p inside of node should stop flattening
-      const tagsToFlatten = ["DIV", "P"];
-      const hasDivOrPChildren = Array.from(child.children).find((node) =>
-        tagsToFlatten.includes(node.nodeName)
-      );
-      if (!hasDivOrPChildren) return;
+  const embeddedPasteExists = node.querySelectorAll(embedSelector).length > 0;
 
-      // insert granchild to child parent node and remove child
-      Array.from(child.childNodes).forEach((grandchild) => {
-        if (grandchild instanceof HTMLElement) {
-          appendNodeStyles(grandchild, grandchild);
+  if (!embeddedPasteExists) {
+    Array.from(node.childNodes).forEach((child) => {
+      if (
+        child instanceof HTMLElement &&
+        (child.nodeName === "DIV" || child.nodeName === "CENTER")
+      ) {
+        removeNestedDivs(child);
+        // in case if there is no div or p inside of node should stop flattening
+        const tagsToFlatten = ["DIV", "P"];
+        const hasDivOrPChildren = Array.from(child.children).find((node) =>
+          tagsToFlatten.includes(node.nodeName)
+        );
+        if (!hasDivOrPChildren) return;
 
-          node.insertBefore(grandchild, child);
-        } else if (grandchild.textContent?.trim()) {
-          const containerOfNode = document.createElement("div");
-          appendNodeStyles(child, containerOfNode);
-          containerOfNode.append(grandchild);
+        // insert granchild to child parent node and remove child
+        Array.from(child.childNodes).forEach((grandchild) => {
+          if (grandchild instanceof HTMLElement) {
+            appendNodeStyles(grandchild, grandchild);
 
-          node.insertBefore(containerOfNode, child);
-        }
-      });
+            node.insertBefore(grandchild, child);
+          } else if (grandchild.textContent?.trim()) {
+            const containerOfNode = document.createElement("div");
+            appendNodeStyles(child, containerOfNode);
+            containerOfNode.append(grandchild);
 
-      node.removeChild(child);
-    }
-  });
+            node.insertBefore(containerOfNode, child);
+          }
+        });
+
+        node.removeChild(child);
+      }
+    });
+  }
 }
 
 const flattenNode = (node: Element) => {
   const _node = node.cloneNode(true) as HTMLElement;
+
   node.parentElement?.append(_node);
 
   removeNestedDivs(_node);
