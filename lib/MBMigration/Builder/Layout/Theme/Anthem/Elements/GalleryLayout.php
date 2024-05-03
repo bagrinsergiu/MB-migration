@@ -79,24 +79,37 @@ class GalleryLayout extends Element
         $block['value']['hoverSliderDotsColorOpacity'] = 1;
         $block['value']['hoverSliderDotsColorPalette'] = '';
 
-        foreach ($sectionData['items'] as $item){
-            if(!$item['uploadStatus']) {
-                continue;
-            }
+        if (isset($sectionData['settings']['sections']['background']['video'])){
 
-            if(!empty($sectionData['settings']['sections']['gallery']['max_width']) &&
-                !empty($sectionData['settings']['sections']['gallery']['max_height'])){
-                $slide['value']['bgImageWidth']  = $sectionData['settings']['sections']['gallery']['max_width'];
-                $slide['value']['bgImageHeight'] = $sectionData['settings']['sections']['gallery']['max_height'];
-            }
-
-//                $slide['value']['bgSize']          = 'contain';
-            $slide['value']['bgImageSrc']      = $item['content'];
-            $slide['value']['bgImageFileName'] = $item['imageFileName'];
-            $slide['value']['customCSS'] = 'element{background:' . $bodyBgColor . '}';
-
+            $slide['value']['media'] = "video";
+            $slide['value']['bgVideoType'] = "url";
+            $slide['value']['bgVideoCustom'] = "";
+            $slide['value']['bgVideo'] = $sectionData['settings']['sections']['background']['video'];
+            $slide['value']['bgVideoLoop'] = "on";
+            $slide['value']['linkType'] = "external";
 
             $this->insertElementAtPosition($block, 'value/items', $slide);
+        } else {
+
+            foreach ($sectionData['items'] as $item){
+                if(!$item['uploadStatus']) {
+                    continue;
+                }
+
+                if(!empty($sectionData['settings']['sections']['gallery']['max_width']) &&
+                    !empty($sectionData['settings']['sections']['gallery']['max_height'])){
+                    $slide['value']['bgImageWidth']  = $sectionData['settings']['sections']['gallery']['max_width'];
+                    $slide['value']['bgImageHeight'] = $sectionData['settings']['sections']['gallery']['max_height'];
+                }
+
+//                $slide['value']['bgSize']          = 'contain';
+                $slide['value']['bgImageSrc']      = $item['content'];
+                $slide['value']['bgImageFileName'] = $item['imageFileName'];
+                $slide['value']['customCSS'] = 'element{background:' . $bodyBgColor . '}';
+
+                $this->insertElementAtPosition($block, 'value/items', $slide);
+            }
+
         }
         $block = $this->replaceIdWithRandom($block);
         return json_encode($block);
