@@ -241,6 +241,32 @@ class Anthem extends LayoutUtils
                 ) ?? [];
             }
 
+            if ($section['typeSection'] === 'grid-media-layout') {
+                $section['style']['sermon']['bg'] = $this->ExtractSermonBorderColor(
+                    $section['sectionId'],
+                    ['background-color'],
+                    '.media-player-container .media-player'
+                ) ?? [];
+
+                $section['style']['sermon']['pagination-normal'] = $this->ExtractSermonBorderColor(
+                    $section['sectionId'],
+                    ['color'],
+                    '.pagination .previous a'
+                ) ?? [];
+
+                $section['style']['sermon']['opacity-pagination-normal'] = $this->ExtractSermonBorderColor(
+                    $section['sectionId'],
+                    ['opacity'],
+                    '.pagination .previous a'
+                ) ?? [];
+
+                $section['style']['sermon']['pagination-active'] = $this->ExtractSermonBorderColor(
+                    $section['sectionId'],
+                    ['color'],
+                    '.pagination .active a'
+                ) ?? [];
+            }
+
             if ($section['typeSection'] === 'accordion-layout') {
                 $section['style']['accordion'] = $this->ExtractAccordion(
                     $browserPage,
@@ -475,6 +501,33 @@ class Anthem extends LayoutUtils
 
         return $style;
     }
+
+    private function ExtractSermonBorderColor(int $sectionId, $properties, string $selector)
+    {
+        $sectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => '[data-id="'.$sectionId.'"] ' . $selector,
+                'styleProperties' => $properties,
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return '';
+        }
+
+        if (isset($sectionStyles['data'])) {
+            foreach ($sectionStyles['data'] as $key => $value) {
+                return ColorConverter::convertColor(str_replace("px", "", $value));
+            }
+        }
+
+        return '';
+    }
+
     private function ExtractAccordion($browserPage, int $sectionId): array
     {
         $style = [];
