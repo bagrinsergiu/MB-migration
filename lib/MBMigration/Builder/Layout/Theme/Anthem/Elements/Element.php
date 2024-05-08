@@ -35,6 +35,11 @@ abstract class Element extends LayoutUtils
                 $objBlock->item()->setting('bgColorOpacity', 0);
                 $objBlock->setting('mobileFullHeight', "custom");
                 $objBlock->setting('mobileSectionHeight', 213);
+            } else if ($sectionData['settings']['sections']['background']['photoOption'] === 'fill' ) {
+                $objBlock->item()->setting('bgAttachment', 'none');
+                $objBlock->item()->setting('bgColorOpacity', 0);
+                $objBlock->setting('mobileFullHeight', "custom");
+                $objBlock->setting('mobileSectionHeight', 213);
             }
         }
     }
