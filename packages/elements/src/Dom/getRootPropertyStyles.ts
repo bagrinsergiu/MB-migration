@@ -1,18 +1,18 @@
-import {Output} from "../types/type";
-import {createData} from "../utils/getData";
+import { Output } from "../types/type";
+import { createData } from "../utils/getData";
 
 export const getRootPropertyStyles = (): Output => {
-  const data = {};
+  const data: { [key: string]: string } = {}; // Define the type for 'data'
   const styleSheets = document.styleSheets;
 
   for (let i = 0; i < styleSheets.length; i++) {
     const styleSheet = styleSheets[i];
 
     if (!styleSheet.href) {
-      const cssRules = styleSheet.cssRules || styleSheet.rules;
+      const cssRules = (styleSheet as CSSStyleSheet).cssRules || (styleSheet as CSSStyleSheet).rules;
 
       for (let j = 0; j < cssRules.length; j++) {
-        const rule = cssRules[j];
+        const rule = cssRules[j] as CSSStyleRule; // Narrow down to CSSStyleRule
 
         if (rule.selectorText === ":root") {
           const declarations = rule.style;
@@ -27,5 +27,5 @@ export const getRootPropertyStyles = (): Output => {
     }
   }
 
-  return createData({data});
+  return createData({ data });
 };
