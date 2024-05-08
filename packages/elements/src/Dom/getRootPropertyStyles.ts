@@ -1,12 +1,8 @@
 import { Output } from "../types/type";
 import { createData } from "../utils/getData";
 
-interface Data {
-    selector?: string;
-}
-
-export const getRootStyles = (): Output => {
-    const rootStyles = {};
+export const getRootPropertyStyles = (): Output => {
+    const data = {};
     const styleSheets = document.styleSheets;
 
     for (let i = 0; i < styleSheets.length; i++) {
@@ -24,12 +20,12 @@ export const getRootStyles = (): Output => {
                     for (let k = 0; k < declarations.length; k++) {
                         const property = declarations[k];
                         const value = declarations.getPropertyValue(property);
-                        rootStyles[property] = value;
+                        data[property] = value;
                     }
                 }
             }
         }
     }
 
-    return createData({ rootStyles });
+    return createData({ data });
 };
