@@ -1337,6 +1337,57 @@ const ex19: Data = {
 
 //#endregion
 
+//#region Example 20 (Check embedded code)
+
+const ex20: Data = {
+  html: `<div class="text-content text-1 editable" data-id="16715709" data-category="text"><div><div class="embedded-paste" contenteditable="false" data-src="<div style=&quot;position: relative; padding-bottom: 56.25%; height: 0;&quot;><iframe src=&quot;https://c.streamhoster.com/embed/list/WwsdHp/9bUVcw1smfm/qbfVoIpsOkx_2_1&quot; style=&quot;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot; allow=&quot;autoplay; fullscreen;&quot;></iframe></div>"><div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://c.streamhoster.com/embed/list/WwsdHp/9bUVcw1smfm/qbfVoIpsOkx_2_1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allow="autoplay; fullscreen;"></iframe></div></div></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"16715709\"]" },
+  output: {
+    data: [
+      {
+        type: "EmbedCode"
+      }
+    ]
+  }
+};
+
+//#endregion
+
+//#region Example 21 (Check embedded code and richtext)
+
+const ex21: Data = {
+  html: `<div class="text-content text-1 editable" data-id="18004075" data-category="text"><div><p>We're pleased to welcome you to the Antioch Christian Church LIVE Stream page. We hope you enjoy our services and special occasions from wherever you are. Whenever possible, we hope you take the time to join us in person for our live in-person services.</p><p><br></p><p><br></p><div class="embedded-paste" contenteditable="false" data-src="<div style=&quot;position: relative; padding-bottom: 56.25%; height: 0;&quot;><iframe src=&quot;https://c.streamhoster.com/embed/media/WwsdHp/9bUVcw1smfm/iim6hLsYxHA_5&quot; style=&quot;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot; allow=&quot;autoplay; fullscreen;&quot;></iframe></div>"><div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://c.streamhoster.com/embed/media/WwsdHp/9bUVcw1smfm/iim6hLsYxHA_5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allow="autoplay; fullscreen;"></iframe></div></div></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"18004075\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>We\'re pleased to welcome you to the Antioch Christian Church LIVE Stream page. We hope you enjoy our services and special occasions from wherever you are. Whenever possible, we hope you take the time to join us in person for our live in-person services.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "EmbedCode"
+      }
+    ]
+  }
+};
+
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -1356,7 +1407,9 @@ describe.each([
   ex16,
   ex17,
   ex18,
-  ex19
+  ex19,
+  ex20,
+  ex21
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
