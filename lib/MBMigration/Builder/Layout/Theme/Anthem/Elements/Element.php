@@ -35,6 +35,11 @@ abstract class Element extends LayoutUtils
                 $objBlock->item()->setting('bgColorOpacity', 0);
                 $objBlock->setting('mobileFullHeight', "custom");
                 $objBlock->setting('mobileSectionHeight', 213);
+            } else if ($sectionData['settings']['sections']['background']['photoOption'] === 'fill' ) {
+                $objBlock->item()->setting('bgAttachment', 'none');
+                $objBlock->item()->setting('bgColorOpacity', 0);
+                $objBlock->setting('mobileFullHeight', "custom");
+                $objBlock->setting('mobileSectionHeight', 213);
             }
         }
     }
@@ -255,7 +260,7 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function createDetailPage($itemsID, $slug, string $elementName): void
+    protected function createDetailPage($itemsID, $slug, string $elementName, $palette): void
     {
 
         $itemsData = [];
@@ -264,9 +269,20 @@ abstract class Element extends LayoutUtils
 
         if ($this->checkArrayPath($jsonDecode, "dynamic/$elementName")) {
             $decoded = $jsonDecode['dynamic'][$elementName];
+            $detail = new ItemBuilder();
+
+            $detail->newItem($decoded['detail']);
         } else {
             throw new Exception('Element not found');
         }
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorHex', $palette['btn-bg']);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg']);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
 
         $itemsData['items'][] = json_decode($decoded['detail'], true);
 

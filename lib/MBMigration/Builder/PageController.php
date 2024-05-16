@@ -141,6 +141,9 @@ class PageController
                 }
 
                 $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
+
+                $this->cache->set('palettes', $_WorkClassTemplate->getPalettes());
+
                 if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                     Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
                     Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());

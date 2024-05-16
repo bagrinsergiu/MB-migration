@@ -125,10 +125,26 @@ class GridMediaLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('hoverMetaLinksColorOpacity', 0.7);
         $objBlock->item()->item(1)->item()->setting('hoverMetaLinksColorPalette', "");
 
+        $objBlock->item()->item(1)->item()->setting('filterBgColorHex', $sectionData['style']['sermon']['bg'] ?? '#616161');
+        $objBlock->item()->item(1)->item()->setting('filterBgColorOpacity', floatval($sectionData['style']['sermon']['bg-opacity'] ?? 1) );
+        $objBlock->item()->item(1)->item()->setting('filterBgColorPalette', '');
+
+        $objBlock->item()->item(1)->item()->setting('paginationColorHex', $sectionData['style']['sermon']['pagination-normal'] ?? '#707070');
+        $objBlock->item()->item(1)->item()->setting('paginationColorOpacity', floatval($sectionData['style']['sermon']['opacity-pagination-normal'] ?? 1));
+        $objBlock->item()->item(1)->item()->setting('paginationColorPalette', '');
+
+        $objBlock->item()->item(1)->item()->setting('activePaginationColorHex', $sectionData['style']['sermon']['pagination-active'] ?? "#131313" );
+        $objBlock->item()->item(1)->item()->setting('activePaginationColorOpacity', 1);
+        $objBlock->item()->item(1)->item()->setting('activePaginationColorPalette', '');
+
+        $objBlock->item()->item(1)->item()->setting('hoverPaginationColorHex', $sectionData['style']['sermon']['pagination-normal'] ?? "#707070");
+        $objBlock->item()->item(1)->item()->setting('hoverPaginationColorOpacity', 0.75);
+        $objBlock->item()->item(1)->item()->setting('hoverPaginationColorPalette', '');
+
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
-        $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName);
+        $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName, $sectionData['settings']['palette']);
         return json_encode($block);
     }
 

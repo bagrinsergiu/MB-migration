@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem;
 
+use MBMigration\Builder\Utils\ColorUtility;
 use MBMigration\Core\Logger;
 use Exception;
 use MBMigration\Browser\BrowserPHP;
@@ -207,6 +208,21 @@ class Anthem extends LayoutUtils
         return $result;
     }
 
+    public function getPalettes(): array
+    {
+        $RootPropertyStyles = $this->browserPage->evaluateScript('brizy.dom.getRootPropertyStyles', []);
+
+        if (array_key_exists('error', $RootPropertyStyles)) {
+            return [];
+        }
+
+        if (!isset($RootPropertyStyles['data'])) {
+            return [];
+        }
+
+        return ColorUtility::parseSubpalettes($RootPropertyStyles['data']);
+    }
+
     /**
      * Extract data from a page and update the SectionPage array with the extracted data.
      *
@@ -228,6 +244,8 @@ class Anthem extends LayoutUtils
 
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
 
+            $section['settings']['palette'] = $this->detectAndGetSubpalette($section['sectionId']);
+
             $section['style']['opacity_div'] = $this->ExtractStyleSectionOpacity(
                 $browserPage,
                 $section['sectionId']
@@ -238,6 +256,32 @@ class Anthem extends LayoutUtils
                 $section['style']['vertical-border'] = $this->ExtractBorderColorForTHT(
                     $browserPage,
                     $section['sectionId']
+                ) ?? [];
+            }
+
+            if ($section['typeSection'] === 'grid-media-layout') {
+                $section['style']['sermon']['bg'] = $this->ExtractSermonBorderColor(
+                    $section['sectionId'],
+                    ['background-color'],
+                    '.media-player-container .media-player'
+                ) ?? [];
+
+                $section['style']['sermon']['pagination-normal'] = $this->ExtractSermonBorderColor(
+                    $section['sectionId'],
+                    ['color'],
+                    '.pagination .previous a'
+                ) ?? [];
+
+                $section['style']['sermon']['opacity-pagination-normal'] = $this->ExtractSermonBorderColor(
+                    $section['sectionId'],
+                    ['opacity'],
+                    '.pagination .previous a'
+                ) ?? [];
+
+                $section['style']['sermon']['pagination-active'] = $this->ExtractSermonBorderColor(
+                    $section['sectionId'],
+                    ['color'],
+                    '.pagination .active a'
                 ) ?? [];
             }
 
@@ -475,6 +519,33 @@ class Anthem extends LayoutUtils
 
         return $style;
     }
+
+    private function ExtractSermonBorderColor(int $sectionId, $properties, string $selector)
+    {
+        $sectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => '[data-id="'.$sectionId.'"] ' . $selector,
+                'styleProperties' => $properties,
+                'families' => $this->fontFamily['kit'],
+                'defaultFamily' => $this->fontFamily['Default'],
+                'urlMap' => $this->pageMapping,
+            ]
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return '';
+        }
+
+        if (isset($sectionStyles['data'])) {
+            foreach ($sectionStyles['data'] as $key => $value) {
+                return ColorConverter::convertColor(str_replace("px", "", $value));
+            }
+        }
+
+        return '';
+    }
+
     private function ExtractAccordion($browserPage, int $sectionId): array
     {
         $style = [];
@@ -494,6 +565,24 @@ class Anthem extends LayoutUtils
         }
 
         return $sectionStyles['data'];
+    }
+
+    private function detectAndGetSubpalette(int $sectionId)
+    {
+        $detectSubpalette = $this->browserPage->evaluateScript('brizy.dom.detectSubpalette', ['selector' => '[data-id="'.$sectionId.'"]' ]);
+        $palette = $detectSubpalette['data'] ?? 'subpalette1';
+        $palettes  = $this->cache->get('palettes');
+
+        if (array_key_exists($palette ?? 'subpalette1', $palettes)) {
+            $return = $palettes[$palette];
+            return $return;
+        }
+
+        if (array_key_exists('error', $detectSubpalette)) {
+            return false;
+        }
+
+        return false;
     }
 
 
