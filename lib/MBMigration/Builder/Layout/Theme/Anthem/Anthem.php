@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem;
 
+use MBMigration\Builder\Utils\ColorUtility;
 use MBMigration\Core\Logger;
 use Exception;
 use MBMigration\Browser\BrowserPHP;
@@ -207,6 +208,21 @@ class Anthem extends LayoutUtils
         return $result;
     }
 
+    public function getPalettes(): array
+    {
+        $RootPropertyStyles = $this->browserPage->evaluateScript('brizy.dom.getRootPropertyStyles', []);
+
+        if (array_key_exists('error', $RootPropertyStyles)) {
+            return [];
+        }
+
+        if (!isset($RootPropertyStyles['data'])) {
+            return [];
+        }
+
+        return ColorUtility::parseSubpalettes($RootPropertyStyles['data']);
+    }
+
     /**
      * Extract data from a page and update the SectionPage array with the extracted data.
      *
@@ -227,6 +243,8 @@ class Anthem extends LayoutUtils
             Logger::instance()->info('Extract Data'.$section['sectionId']);
 
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
+
+            $section['settings']['palette'] = $this->detectAndGetSubpalette($section['sectionId']);
 
             $section['style']['opacity_div'] = $this->ExtractStyleSectionOpacity(
                 $browserPage,
@@ -547,6 +565,24 @@ class Anthem extends LayoutUtils
         }
 
         return $sectionStyles['data'];
+    }
+
+    private function detectAndGetSubpalette(int $sectionId)
+    {
+        $detectSubpalette = $this->browserPage->evaluateScript('brizy.dom.detectSubpalette', ['selector' => '[data-id="'.$sectionId.'"]' ]);
+        $palette = $detectSubpalette['data'] ?? 'subpalette1';
+        $palettes  = $this->cache->get('palettes');
+
+        if (array_key_exists($palette ?? 'subpalette1', $palettes)) {
+            $return = $palettes[$palette];
+            return $return;
+        }
+
+        if (array_key_exists('error', $detectSubpalette)) {
+            return false;
+        }
+
+        return false;
     }
 
 

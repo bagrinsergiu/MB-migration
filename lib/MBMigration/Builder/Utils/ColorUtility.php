@@ -40,7 +40,7 @@ class ColorUtility
 
             \$option1Contrast: abs(\$baseLumLight - \$option1LumLight);
             \$option2Contrast: abs(\$baseLumLight - \$option2LumLight);
-    
+
             @if (\$option1Contrast > \$option2Contrast) {
                 @return \$option1;
             } @else {
@@ -62,7 +62,8 @@ class ColorUtility
     /**
      * @throws SassException
      */
-    public function chooseLesserContrast($base, $option1, $option2) {
+    public function chooseLesserContrast($base, $option1, $option2)
+    {
         $scssCode = "
         @function strip-unit(\$value) {
             @return \$value / (\$value * 0 + 1);
@@ -86,7 +87,7 @@ class ColorUtility
                 @return $option1;
             }
         }
-        
+
         root {
             color:  chooseLargerContrast($base, $option1, $option2);
         }
@@ -107,7 +108,7 @@ class ColorUtility
                 \$amount: (saturation(\$color) * (100 - \$percent)) / 100;
                 @return desaturate(\$color, saturation(\$color) - \$amount);
             }
-            
+
             root {
                 color: desaturateByPercent($color, $percent);
             }
@@ -132,11 +133,11 @@ class ColorUtility
                     @return \$lightColor;
                 }
             }
-            
+
             @function mixContrastingColor(\$color, \$threshold: 50%) {
                 @return mix(\$color, getContrastingColor(\$color), \$threshold);
             }
-            
+
             root {
                 color: mixContrastingColor($color, $threshold);
             }
@@ -162,7 +163,7 @@ class ColorUtility
                     @return \$lightColor;
                 }
             }
-            
+
              root {
                 color: getContrastingColor($color, $lightColor, $darkColor);
             }
@@ -175,15 +176,16 @@ class ColorUtility
         return $color;
     }
 
-    private function getColorFromRootCSS($css) {
+    private function getColorFromRootCSS($css)
+    {
 
         preg_match('/root\s*{\s*color\s*:\s*([^;}]+)\s*;?\s*}/i', $css, $matches);
 
         $ColorCalculate = $matches[1];
-        if(isset($ColorCalculate)) {
+        if (isset($ColorCalculate)) {
             $nameColor = $this->colorNameToHex($ColorCalculate);
 
-            if($nameColor){
+            if ($nameColor) {
                 $colorResult = $nameColor;
             } else {
                 $colorResult = $ColorCalculate;
@@ -195,7 +197,8 @@ class ColorUtility
         return $colorResult;
     }
 
-    function colorNameToHex($colorName) {
+    function colorNameToHex($colorName)
+    {
         $colors = $this->nameColor();
 
         $colorNameLower = strtolower($colorName);
@@ -207,7 +210,29 @@ class ColorUtility
         }
     }
 
-    private function nameColor(){
+    public static function parseSubpalettes($arraySubpalette): array
+    {
+        $result = [];
+
+        foreach ($arraySubpalette as $key => $value) {
+
+            $parts = explode('-', str_replace('--', '', $key));
+            $subpalette = $parts[0];
+
+            if (!isset($result[$subpalette])) {
+                $result[$subpalette] = [];
+            }
+
+            $subKey = implode('-', array_slice($parts, 1));
+
+            $result[$subpalette][$subKey] = $value;
+        }
+
+        return $result;
+    }
+
+    private function nameColor()
+    {
         return [
             'aliceblue' => '#F0F8FF',
             'antiquewhite' => '#FAEBD7',
