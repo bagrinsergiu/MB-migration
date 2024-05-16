@@ -144,6 +144,8 @@ class PageController
 
                 $this->cache->set('palettes', $_WorkClassTemplate->getPalettes());
 
+                $_WorkClassTemplate->buildGlobalSection();
+
                 if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
                     Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
                     Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());

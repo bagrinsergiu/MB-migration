@@ -40,6 +40,7 @@ class Anthem extends LayoutUtils
      * @var mixed|null
      */
     private $pageMapping;
+    private BrizyAPI $brizyAPI;
 
     /**
      * @throws Exception
@@ -47,6 +48,8 @@ class Anthem extends LayoutUtils
     public function __construct($browserPage, $browser, BrizyAPI $brizyAPI)
     {
         $this->layoutName = 'Anthem';
+
+        $this->brizyAPI = $brizyAPI;
 
         $this->cache = VariableCache::getInstance();
 
@@ -61,9 +64,16 @@ class Anthem extends LayoutUtils
 
         $this->jsonDecode = $this->loadKit($this->layoutName);
 
-        $menuList = $this->cache->get('menuList');
-
         $this->pageMapping = $this->cache->get('pageMapping');
+    }
+
+    /**
+     * @throws \DOMException
+     * @throws Exception
+     */
+    public function buildGlobalSection()
+    {
+        $menuList = $this->cache->get('menuList');
 
         if (empty($menuList['create'])) {
             $headElement = AnthemElementsController::getElement(
@@ -71,7 +81,7 @@ class Anthem extends LayoutUtils
                 $this->jsonDecode,
                 $this->browser,
                 ['menu' => $menuList, 'activePage' => ''],
-                $brizyAPI
+                $this->brizyAPI
             );
             if ($headElement) {
                 Logger::instance()->info('Success create MENU');
@@ -88,8 +98,9 @@ class Anthem extends LayoutUtils
             $this->ExtractDataFromPage($MainSectionData, $this->browserPage, 'sectionId');
             $this->cache->set('mainSection', $MainSectionData);
 
-            AnthemElementsController::getElement('footer', $this->jsonDecode, $this->browserPage, [], $brizyAPI);
+            AnthemElementsController::getElement('footer', $this->jsonDecode, $this->browserPage, [], $this->brizyAPI);
         }
+
     }
 
     /**
@@ -570,12 +581,15 @@ class Anthem extends LayoutUtils
     private function detectAndGetSubpalette(int $sectionId)
     {
         $detectSubpalette = $this->browserPage->evaluateScript('brizy.dom.detectSubpalette', ['selector' => '[data-id="'.$sectionId.'"]' ]);
-        $palette = $detectSubpalette['data'] ?? 'subpalette1';
-        $palettes  = $this->cache->get('palettes');
+        if($detectSubpalette['data'] === false) {
+            $palette = 'subpalette1';
+        } else {
+            $palette = $detectSubpalette['data'];
+        }
+        $palettes = $this->cache->get('palettes');
 
-        if (array_key_exists($palette ?? 'subpalette1', $palettes)) {
-            $return = $palettes[$palette];
-            return $return;
+        if (array_key_exists($palette, $palettes)) {
+            return $palettes[$palette];
         }
 
         if (array_key_exists('error', $detectSubpalette)) {

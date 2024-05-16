@@ -284,7 +284,7 @@ abstract class Element extends LayoutUtils
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
 
-        $itemsData['items'][] = json_decode($decoded['detail'], true);
+        $itemsData['items'][] = $detail->get();
 
         $pageData = json_encode($itemsData);
 
