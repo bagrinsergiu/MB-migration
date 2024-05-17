@@ -276,11 +276,11 @@ abstract class Element extends LayoutUtils
             throw new Exception('Element not found');
         }
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorHex', $palette['btn-bg']);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
         $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorOpacity', 1);
         $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorPalette', "");
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg']);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
 
