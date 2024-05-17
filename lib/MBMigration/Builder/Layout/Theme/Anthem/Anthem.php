@@ -550,7 +550,11 @@ class Anthem extends LayoutUtils
 
         if (isset($sectionStyles['data'])) {
             foreach ($sectionStyles['data'] as $key => $value) {
-                return ColorConverter::convertColor(str_replace("px", "", $value));
+                if ($key == 'opacity') {
+                    return floatval($value);
+                } else {
+                    return ColorConverter::convertColor(str_replace("px", "", $value));
+                }
             }
         }
 

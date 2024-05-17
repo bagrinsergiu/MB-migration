@@ -109,6 +109,10 @@ class GridMediaLayout extends DynamicElement
 
         $objBlock->item()->item(1)->item()->setting('defaultCategory', $currentPageSlug);
 
+        $objBlock->item()->item(1)->item()->setting('parentCategory', $currentPageSlug);
+
+        $objBlock->item()->item(1)->item()->setting('showCategoryFilter', "off");
+
         $objBlock->item()->item(1)->item()->setting('titleColorHex', "#1e1eb7");
         $objBlock->item()->item(1)->item()->setting('titleColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('titleColorPalette', "");
