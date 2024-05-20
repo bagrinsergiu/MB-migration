@@ -16,7 +16,7 @@ return static function (array $context, Request $request): Response {
     }
 
     $settings = [
-        'devMode' => 'dev',
+        'devMode' => $context['APP_ENV'] == 'dev',
         'db' => [
             'dbHost' => $context['MB_DB_HOST'],
             'dbPort' => $context['MB_DB_PORT'],
