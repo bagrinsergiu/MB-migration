@@ -193,9 +193,6 @@ class AnthemElementsController
 
                 return $element->getElement($elementData);
             case "list_media_layout":
-                $element = new ListMediaLayout();
-
-                return $element->getElement($elementData);
             case "grid_media_layout":
                 $element = new GridMediaLayout();
 
