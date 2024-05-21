@@ -145,7 +145,7 @@ class Anthem extends LayoutUtils
 //                ['menu' => $resultFind, 'activePage' => $slug]
 //            );
 //        }
-        Logger::instance()->info('Current Page: '.$itemsID.' | Slug: '.$slug);
+        Logger::instance()->info('Current Page: ' . $itemsID . ' | Slug: ' . $slug);
         $this->cache->update('createdFirstSection', false, 'flags');
         $this->cache->update('Success', '++', 'Status');
 //        $this->browser->close();
@@ -184,11 +184,11 @@ class Anthem extends LayoutUtils
 
         $pageData = json_encode($itemsData);
 
-        Logger::instance()->info('Request to send content to the page: '.$itemsID.' | Slug: '.$slug);
+        Logger::instance()->info('Request to send content to the page: ' . $itemsID . ' | Slug: ' . $slug);
 
         $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
 
-        Logger::instance()->info('Content added to the page successfully: '.$itemsID.' | Slug: '.$slug);
+        Logger::instance()->info('Content added to the page successfully: ' . $itemsID . ' | Slug: ' . $slug);
 
         return true;
     }
@@ -201,7 +201,7 @@ class Anthem extends LayoutUtils
         $elementName = $this->replaceInName($methodName);
 
         if (method_exists($this, $elementName)) {
-            Logger::instance()->info('Call Element '.$elementName);
+            Logger::instance()->info('Call Element ' . $elementName);
             $result = call_user_func_array(array($this, $elementName), [$params]);
             $this->cache->set('callMethodResult', $result);
         } else {
@@ -212,7 +212,7 @@ class Anthem extends LayoutUtils
                 $params
             );
             if (!$result) {
-                Logger::instance()->warning('Element '.$elementName.' does not exist. Page: '.$marker);
+                Logger::instance()->warning('Element ' . $elementName . ' does not exist. Page: ' . $marker);
             }
         }
 
@@ -251,7 +251,7 @@ class Anthem extends LayoutUtils
         $browserPage->ExtractHover($selectorButton);
 
         foreach ($SectionPage as &$section) {
-            Logger::instance()->info('Extract Data'.$section['sectionId']);
+            Logger::instance()->info('Extract Data' . $section['sectionId']);
 
             $section['style'] = $this->ExtractStyleSection($browserPage, $section['sectionId']);
 
@@ -270,7 +270,23 @@ class Anthem extends LayoutUtils
                 ) ?? [];
             }
 
-            if ($section['typeSection'] === 'grid-media-layout') {
+            if ($section['typeSection'] === 'grid-media-layout' or $section['typeSection'] === 'list-media-layout') {
+
+                if ($section['typeSection'] === 'grid-media-layout') {
+                    $section['style']['sermon']['text'] = $this->ExtractSermonBorderColor(
+                        $section['sectionId'],
+                        ['color'],
+                        '.media-player-container .media-grid header'
+                    ) ?? [];
+                } else if ($section['typeSection'] === 'list-media-layout') {
+                    $section['style']['sermon']['text'] = $this->ExtractSermonBorderColor(
+                        $section['sectionId'],
+                        ['color'],
+                        '.media-player-container .media-list header'
+                    ) ?? [];
+                }
+
+
                 $section['style']['sermon']['bg'] = $this->ExtractSermonBorderColor(
                     $section['sectionId'],
                     ['background-color'],
@@ -312,7 +328,7 @@ class Anthem extends LayoutUtils
                 ) ?? [];
                 $style = array_merge($style, $buttonStyle);
 
-                $buttonStyle  = $this->ExtractStyleDonateButtonStyle(
+                $buttonStyle = $this->ExtractStyleDonateButtonStyle(
                     $browserPage,
                     $section['sectionId']
                 ) ?? [];
@@ -351,7 +367,7 @@ class Anthem extends LayoutUtils
                             $this->ExtractItemContent($item['item'], $browserPage);
 
                             foreach ($item['item'] as &$listItem) {
-                                if ($listItem['category']=== "photo") {
+                                if ($listItem['category'] === "photo") {
                                     $target = $this->ExtractTargetLinkFromPhoto(
                                         $browserPage,
                                         $listItem['sectionId'] ?? $listItem['id']
@@ -373,7 +389,7 @@ class Anthem extends LayoutUtils
                             }
                             break;
                         case "media":
-                            $section['settings']['mediaGridContainer'] =  $this->hasNode(
+                            $section['settings']['mediaGridContainer'] = $this->hasNode(
                                 $browserPage,
                                 $section['sectionId'] ?? $section['id'],
                                 '.media-grid-container');
@@ -411,7 +427,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="' . $sectionId . '"]',
                 'styleProperties' => [
                     'background-color',
                     'opacity',
@@ -453,7 +469,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="' . $sectionId . '"]',
                 'styleProperties' => [
                     'border-bottom-color',
                 ],
@@ -495,7 +511,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"] .group-0',
+                'selector' => '[data-id="' . $sectionId . '"] .group-0',
                 'styleProperties' => [
                     'border-color',
                 ],
@@ -536,7 +552,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"] ' . $selector,
+                'selector' => '[data-id="' . $sectionId . '"] ' . $selector,
                 'styleProperties' => $properties,
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
@@ -567,7 +583,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.getAccordion',
             [
-                'selector' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id="' . $sectionId . '"]',
                 'styleProperties' => [],
                 'families' => $this->fontFamily['kit'],
                 'defaultFamily' => $this->fontFamily['Default'],
@@ -584,8 +600,8 @@ class Anthem extends LayoutUtils
 
     private function detectAndGetSubpalette(int $sectionId)
     {
-        $detectSubpalette = $this->browserPage->evaluateScript('brizy.dom.detectSubpalette', ['selector' => '[data-id="'.$sectionId.'"]' ]);
-        if($detectSubpalette['data'] === false) {
+        $detectSubpalette = $this->browserPage->evaluateScript('brizy.dom.detectSubpalette', ['selector' => '[data-id="' . $sectionId . '"]']);
+        if ($detectSubpalette['data'] === false) {
             $palette = 'subpalette1';
         } else {
             $palette = $detectSubpalette['data'];
@@ -610,7 +626,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"] .bg-opacity',
+                'selector' => '[data-id="' . $sectionId . '"] .bg-opacity',
                 'styleProperties' => [
                     'opacity',
                 ],
@@ -626,12 +642,13 @@ class Anthem extends LayoutUtils
 
         return $sectionStyles['data'] ?? [];
     }
+
     private function ExtractStyleDonateButton($browserPage, int $sectionId): array
     {
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"] .sites-button-text',
+                'selector' => '[data-id="' . $sectionId . '"] .sites-button-text',
                 'styleProperties' => [
                     'color',
                     'text-transform',
@@ -674,7 +691,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.getAttributes',
             [
-                'selector' => '[data-id="'.$sectionId.'"] .photo-container a',
+                'selector' => '[data-id="' . $sectionId . '"] .photo-container a',
                 'attributeNames' => [
                     'target',
                 ],
@@ -716,7 +733,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"] .sites-button',
+                'selector' => '[data-id="' . $sectionId . '"] .sites-button',
                 'styleProperties' => [
                     'background-color',
                 ],
@@ -802,7 +819,7 @@ class Anthem extends LayoutUtils
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.dom.hasNode',
             [
-                'selector' => '[data-id="'.$sectionId.'"] '.$selector,
+                'selector' => '[data-id="' . $sectionId . '"] ' . $selector,
             ]
         );
 
@@ -817,7 +834,7 @@ class Anthem extends LayoutUtils
     {
         $style = [];
 
-        $selector = '[data-id="'.$sectionId.'"] '.$selector;
+        $selector = '[data-id="' . $sectionId . '"] ' . $selector;
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.dom.getNodeText',
             [
@@ -835,7 +852,7 @@ class Anthem extends LayoutUtils
     private function ExtractTextContent($browserPage, int $mbSectionItemId)
     {
         $richTextBrowserData = $browserPage->evaluateScript('brizy.getText', [
-            'selector' => '[data-id="'.$mbSectionItemId.'"]',
+            'selector' => '[data-id="' . $mbSectionItemId . '"]',
             'families' => $this->fontFamily['kit'],
             'defaultFamily' => $this->fontFamily['Default'],
             'urlMap' => $this->pageMapping,

@@ -113,11 +113,11 @@ class GridMediaLayout extends DynamicElement
 
         $objBlock->item()->item(1)->item()->setting('showCategoryFilter', "off");
 
-        $objBlock->item()->item(1)->item()->setting('titleColorHex', $sectionData['settings']['palette']['text'] ?? "#1e1eb7");
+        $objBlock->item()->item(1)->item()->setting('titleColorHex', $sectionData['style']['sermon']['text'] ?? "#1e1eb7");
         $objBlock->item()->item(1)->item()->setting('titleColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('titleColorPalette', "");
 
-        $objBlock->item()->item(1)->item()->setting('hoverTitleColorHex', $sectionData['settings']['palette']['text'] ?? "#1e1eb7");
+        $objBlock->item()->item(1)->item()->setting('hoverTitleColorHex', $sectionData['style']['sermon']['text'] ?? "#1e1eb7");
         $objBlock->item()->item(1)->item()->setting('hoverTitleColorOpacity', 0.7);
         $objBlock->item()->item(1)->item()->setting('hoverTitleColorPalette', "");
 
