@@ -16,7 +16,7 @@ return static function (array $context, Request $request): Response {
     }
 
     $settings = [
-        'devMode' => $context['APP_ENV'] == 'dev',
+        'devMode' => 'dev',
         'db' => [
             'dbHost' => $context['MB_DB_HOST'],
             'dbPort' => $context['MB_DB_PORT'],
@@ -32,6 +32,13 @@ return static function (array $context, Request $request): Response {
         //'previewBaseHost' => 'staging.cloversites.com',
         'previewBaseHost' => $context['MB_PREVIEW_HOST'],
     ];
+    $mb_site_id = $request->get('mb_site_id') ?? '';
+    $mb_secret = $request->get('mb_secret') ?? '';
+
+    if(!empty($mb_site_id) && !empty($mb_secret)) {
+        $settings['metaData']['mb_site_id'] = $mb_site_id;
+        $settings['metaData']['mb_secret'] = $mb_secret;
+    }
 
     try {
         $config = new Config(
@@ -59,6 +66,10 @@ return static function (array $context, Request $request): Response {
     );
 
     $mb_page_slug = $request->get('mb_page_slug') ?? '';
+
+    $mb_site_id = $request->get('site_id') ?? '';
+    $mb_secret = $request->get('secret') ?? '';
+
     $lockFile = $context['CACHE_PATH']."/".$mb_project_uuid."-".$brz_project_id.".lock";
 
     if (file_exists($lockFile)) {

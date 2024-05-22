@@ -308,7 +308,7 @@ class Config
         if(isset(self::$settings['metaData'])) {
             $metaData = self::$settings['metaData'];
             if (!empty($metaData)) {
-                $requiredFields = ['secret', 'MBAccountID', 'MBVisitorID'];
+                $requiredFields = ['mb_site_id', 'mb_secret'];
 
                 foreach ($requiredFields as $field) {
                     if (empty($metaData[$field])) {
