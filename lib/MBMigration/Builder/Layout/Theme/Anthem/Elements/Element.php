@@ -284,6 +284,14 @@ abstract class Element extends LayoutUtils
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
 
+        $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorPalette', "");
+
         $itemsData['items'][] = $detail->get();
 
         $pageData = json_encode($itemsData);

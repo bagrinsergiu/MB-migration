@@ -90,7 +90,7 @@ class AccordionLayout extends Element
             }
             $objList->item(0)->addItem($objItem->get());
         }
-        $objList->item(0)->setting('bgColorHex', $sectionData['style']['background-color']);
+        $objList->item(0)->setting('bgColorHex', $sectionData['style']['background-color'] ?? '#FFFFFF');
 
         if(!empty($sectionData['style']['accordion'])){
             foreach ( $sectionData['style']['accordion'] as $key => $value){

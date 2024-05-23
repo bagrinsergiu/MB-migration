@@ -390,18 +390,18 @@ class BrizyAPI extends Utils
 
             Logger::instance()->info('Create links between projects');
 
-            $projectId_MB = Utils::$cache->get('projectId_MB');
             $projectId_Brizy = Utils::$cache->get('projectId_Brizy');
 
-            $metadata['site_id'] = $projectId_MB;
-            $metadata['secret'] = Config::$metaData['secret'];
-            $metadata['MBAccountID'] = Config::$metaData['MBAccountID'];
-            $metadata['MBVisitorID'] = Config::$metaData['MBVisitorID'];
+            $metadata['site_id'] = Config::$metaData['mb_site_id'];
+            $metadata['secret'] = Config::$metaData['mb_secret'];
+            $metadata['MBAccountID'] = Config::$metaData['MBAccountID'] ?? '';
+            $metadata['MBVisitorID'] = Config::$metaData['MBVisitorID'] ?? '';
             $metadata['MBThemeName'] = Utils::$cache->get('design', 'settings');
 
             $url = $this->createUrlAPI('projects').'/'.$projectId_Brizy;
 
-            $this->request('PATCH', $url, ['form_params' => ['metadata' => json_encode($metadata)]]);
+            $result = $this->request('PATCH', $url, ['form_params' => ['metadata' => json_encode($metadata)]]);
+            $statusCode = $result->getStatusCode();
         }
     }
 
