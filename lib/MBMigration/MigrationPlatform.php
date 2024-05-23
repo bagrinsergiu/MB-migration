@@ -201,11 +201,11 @@ class MigrationPlatform
             $projectTitle = $this->cache->get('settings')['title'];
             Logger::instance()->info('Start create blank pages');
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
-            if (!$this->buildPage) {
+//            if (!$this->buildPage) {
                 $existingBrizyPages['listPages'] = $this->pageController->deleteAllPages(
                     $existingBrizyPages['listPages']
                 );
-            }
+//            }
 
             $this->pageController->createBlankPages(
                 $parentPages,
