@@ -198,7 +198,6 @@ class MigrationPlatform
         }
 
         if (!$this->cache->get('menuList')) {
-            $projectTitle = $this->cache->get('settings')['title'];
             Logger::instance()->info('Start create blank pages');
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
 //            if (!$this->buildPage) {
@@ -209,7 +208,6 @@ class MigrationPlatform
 
             $this->pageController->createBlankPages(
                 $parentPages,
-                $projectTitle,
                 $existingBrizyPages
             );
 

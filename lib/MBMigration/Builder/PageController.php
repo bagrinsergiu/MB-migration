@@ -191,13 +191,13 @@ class PageController
     /**
      * @throws Exception
      */
-    public function createBlankPages(array &$mbPages, $projectTitle, $existingBrizyPages)
+    public function createBlankPages(array &$mbPages, $existingBrizyPages)
     {
         foreach ($mbPages as $i => &$page) {
-            $title = $projectTitle.' | '.$page['name'];
+            $title = $page['name'];
 
             if (!empty($page['child'])) {
-                $this->createBlankPages($page['child'], $projectTitle, $existingBrizyPages);
+                $this->createBlankPages($page['child'], $existingBrizyPages);
             }
 
             // this will avoid creating the new page when a single pate is migated
