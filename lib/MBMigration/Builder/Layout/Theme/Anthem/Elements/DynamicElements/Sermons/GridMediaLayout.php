@@ -145,6 +145,10 @@ class GridMediaLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('hoverPaginationColorOpacity', 0.75);
         $objBlock->item()->item(1)->item()->setting('hoverPaginationColorPalette', '');
 
+        $objBlock->item()->item(1)->item()->setting('resultsHeadingColorHex', $sectionData['style']['sermon']['text'] ?? "#1e1eb7");
+        $objBlock->item()->item(1)->item()->setting('resultsHeadingColorOpacity', 1);
+        $objBlock->item()->item(1)->item()->setting('resultsHeadingColorPalette', '');
+
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
