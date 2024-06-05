@@ -77,7 +77,7 @@ class BrowserPHP implements BrowserInterface
         }
 
         \MBMigration\Core\Logger::instance()->debug('Navigate to: '.$url);
-        $this->page->navigate($url)->waitForNavigation(Page::LOAD, 60000);
+        $this->page->navigate($url)->waitForNavigation(Page::NETWORK_IDLE, 60000);
 
 
         return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
