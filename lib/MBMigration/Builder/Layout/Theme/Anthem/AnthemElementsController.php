@@ -6,13 +6,10 @@ use DOMException;
 use Exception;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventGalleryLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventGridLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Events\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Forms\Form;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Prayer\PrayerForm;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons\GridMediaLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons\ListMediaLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Sermons\SermonFeatured;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\FourHorizontalText;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullMedia;
@@ -132,10 +129,6 @@ class AnthemElementsController
                 $element = new AccordionLayout($jsonKitElements);
 
                 return $element->getElement($elementData);
-            case "grid_media_layout":
-                $element = new GridMediaLayout($jsonKitElements);
-
-                return $element->getElement($elementData);
             case "right_media_circle":
                 $element = new RightMediaCircle($jsonKitElements);
 
@@ -194,7 +187,12 @@ class AnthemElementsController
                 return $element->getElement($elementData);
             case "list_media_layout":
             case "grid_media_layout":
-                $element = new GridMediaLayout();
+
+                if ($elementData['settings']['mediaGridContainer'] === true){
+                    $element = new GridMediaLayout($jsonKitElements);
+                } else {
+                    $element = new SermonFeatured($jsonKitElements);
+                }
 
                 return $element->getElement($elementData);
             case "event_calendar_layout":

@@ -272,43 +272,41 @@ class Anthem extends LayoutUtils
 
             if ($section['typeSection'] === 'grid-media-layout' or $section['typeSection'] === 'list-media-layout') {
 
+                $section['style']['sermon']['text'] = $this->ExtractSermonStyle(
+                    $section['sectionId'],
+                    ['color'],
+                    '.media-player-container .media-header .text-content'
+                ) ?? [];
+
+
                 if ($section['typeSection'] === 'grid-media-layout') {
-                    $section['style']['sermon']['text'] = $this->ExtractSermonBorderColor(
+
+                    $section['style']['sermon']['pagination-normal'] = $this->ExtractSermonStyle(
                         $section['sectionId'],
                         ['color'],
-                        '.media-player-container .media-grid header'
+                        '.pagination .previous a'
                     ) ?? [];
+
+                    $section['style']['sermon']['opacity-pagination-normal'] = $this->ExtractSermonStyle(
+                        $section['sectionId'],
+                        ['opacity'],
+                        '.pagination .previous a'
+                    ) ?? [];
+
+                    $section['style']['sermon']['pagination-active'] = $this->ExtractSermonStyle(
+                        $section['sectionId'],
+                        ['color'],
+                        '.pagination .active a'
+                    ) ?? [];
+
                 } else if ($section['typeSection'] === 'list-media-layout') {
-                    $section['style']['sermon']['text'] = $this->ExtractSermonBorderColor(
-                        $section['sectionId'],
-                        ['color'],
-                        '.media-player-container .media-list header'
-                    ) ?? [];
+
                 }
 
-
-                $section['style']['sermon']['bg'] = $this->ExtractSermonBorderColor(
+                $section['style']['sermon']['bg'] = $this->ExtractSermonStyle(
                     $section['sectionId'],
                     ['background-color'],
                     '.media-player-container .media-player'
-                ) ?? [];
-
-                $section['style']['sermon']['pagination-normal'] = $this->ExtractSermonBorderColor(
-                    $section['sectionId'],
-                    ['color'],
-                    '.pagination .previous a'
-                ) ?? [];
-
-                $section['style']['sermon']['opacity-pagination-normal'] = $this->ExtractSermonBorderColor(
-                    $section['sectionId'],
-                    ['opacity'],
-                    '.pagination .previous a'
-                ) ?? [];
-
-                $section['style']['sermon']['pagination-active'] = $this->ExtractSermonBorderColor(
-                    $section['sectionId'],
-                    ['color'],
-                    '.pagination .active a'
                 ) ?? [];
             }
 
@@ -547,8 +545,10 @@ class Anthem extends LayoutUtils
         return $style;
     }
 
-    private function ExtractSermonBorderColor(int $sectionId, $properties, string $selector)
+    private function ExtractSermonStyle(int $sectionId, $properties, string $selector)
     {
+
+        $result = $this->isNodeInDom($sectionId, $selector);
         $sectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
@@ -900,6 +900,23 @@ class Anthem extends LayoutUtils
         } else {
             return [];
         }
+    }
+
+    public function isNodeInDom(int $sectionId, string $selector): bool
+    {
+        $trueCount = 0;
+        $timeSleep = 5;
+
+        while ($trueCount < 5) {
+            $hasNode = $this->hasNode($this->browserPage, $sectionId, $selector);
+            if ($hasNode === true){
+                return true;
+            }
+
+            sleep($timeSleep);
+            $trueCount++;
+        }
+        return false;
     }
 
 }

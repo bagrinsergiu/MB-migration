@@ -25,8 +25,6 @@ class SermonFeatured extends DynamicElement
     private function SermonFeatured(array $sectionData)
     {
         $options = [];
-        $slug = 'sermon-grid';
-        $title = 'Sermon Featured';
         $elementName = 'SermonFeatured';
 
         $currentPageSlug = $this->cache->get('tookPage')['slug'];
@@ -88,34 +86,11 @@ class SermonFeatured extends DynamicElement
             }
         }
 
-        $mainCollectionType = $this->cache->get('mainCollectionType');
+        $objBlock->item(0)->addItem($objHead->get(), 0);
 
-        if($blockHead) {
-            $objBlock->item(0)->addItem($objHead->get(), 0);
-            $objBlock->item()->item(1)->item()->setting('source', $mainCollectionType);
-        } else {
-            $objBlock->item()->item()->item()->setting('source', $mainCollectionType);
-        }
+        $objBlock->item()->item(1)->item()->setting('sermonSlug', $this->createSlug($sectionData['settings']['containTitle']));
+        $objBlock->item()->item(2)->item()->setting('sermonSlug', $this->createSlug($sectionData['settings']['containTitle']));
 
-        $collectionItemsForDetailPage = $this->cache->get('sermonsDetailPage');
-
-        if(!$collectionItemsForDetailPage) {
-            $collectionItemsForDetailPage = $this->createCollectionItems($mainCollectionType, $slug, $title);
-            $this->cache->set('sermonsDetailPage', $collectionItemsForDetailPage);
-        }
-
-        $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
-        $objBlock->item()->item(1)->item()->setting('detailPage', "{{placeholder content='$placeholder'}}");
-
-        $objBlock->item()->item(1)->item()->setting('defaultCategory', $currentPageSlug);
-
-        $objBlock->item()->item(1)->item()->setting('parentCategory', $currentPageSlug);
-
-        $objBlock->item()->item(1)->item()->setting('showCategoryFilter', "off");
-
-        if($sectionData['settings']['mediaGridContainer'] === false){
-            $objBlock->item()->item(1)->item()->setting('searchValue', $sectionData['settings']['containTitle']);
-        }
 
         $objBlock->item()->item(1)->item()->setting('titleColorHex', $sectionData['settings']['palette']['link'] ?? "#1e1eb7");
         $objBlock->item()->item(1)->item()->setting('titleColorOpacity', 1);
@@ -133,30 +108,28 @@ class SermonFeatured extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('hoverMetaLinksColorOpacity', 0.7);
         $objBlock->item()->item(1)->item()->setting('hoverMetaLinksColorPalette', "");
 
-        $objBlock->item()->item(1)->item()->setting('filterBgColorHex', $sectionData['style']['sermon']['bg'] ?? '#616161');
-        $objBlock->item()->item(1)->item()->setting('filterBgColorOpacity', floatval($sectionData['style']['sermon']['bg-opacity'] ?? 1) );
-        $objBlock->item()->item(1)->item()->setting('filterBgColorPalette', '');
+        $objBlock->item()->item(2)->item()->setting('colorHex', $sectionData['style']['sermon']['text'] ?? "#ebeff2");
+        $objBlock->item()->item(2)->item()->setting('colorOpacity', 1);
+        $objBlock->item()->item(2)->item()->setting('colorPalette', "");
 
-        $objBlock->item()->item(1)->item()->setting('paginationColorHex', $sectionData['style']['sermon']['pagination-normal'] ?? '#707070');
-        $objBlock->item()->item(1)->item()->setting('paginationColorOpacity', floatval($sectionData['style']['sermon']['opacity-pagination-normal'] ?? 1));
-        $objBlock->item()->item(1)->item()->setting('paginationColorPalette', '');
+        $objBlock->item()->item(2)->item()->setting('titleColorHex', $sectionData['style']['sermon']['text'] ?? "#ebeff2");
+        $objBlock->item()->item(2)->item()->setting('titleColorOpacity', 1);
+        $objBlock->item()->item(2)->item()->setting('titleColorPalette', "");
 
-        $objBlock->item()->item(1)->item()->setting('activePaginationColorHex', $sectionData['style']['sermon']['pagination-active'] ?? "#131313" );
-        $objBlock->item()->item(1)->item()->setting('activePaginationColorOpacity', 1);
-        $objBlock->item()->item(1)->item()->setting('activePaginationColorPalette', '');
+        $objBlock->item()->item(2)->item()->setting('hoverTitleColorHex', $sectionData['style']['sermon']['text'] ?? "#ebeff2");
+        $objBlock->item()->item(2)->item()->setting('hoverTitleColorOpacity', 1);
+        $objBlock->item()->item(2)->item()->setting('hoverTitleColorPalette', "");
 
-        $objBlock->item()->item(1)->item()->setting('hoverPaginationColorHex', $sectionData['style']['sermon']['pagination-normal'] ?? "#707070");
-        $objBlock->item()->item(1)->item()->setting('hoverPaginationColorOpacity', 0.75);
-        $objBlock->item()->item(1)->item()->setting('hoverPaginationColorPalette', '');
+        $objBlock->item()->item(2)->item()->setting('previewColorHex', $sectionData['style']['sermon']['text'] ?? "#ebeff2");
+        $objBlock->item()->item(2)->item()->setting('previewColorOpacity', 1);
+        $objBlock->item()->item(2)->item()->setting('previewColorPalette', "");
 
-        $objBlock->item()->item(1)->item()->setting('resultsHeadingColorHex', $sectionData['style']['sermon']['text'] ?? "#1e1eb7");
-        $objBlock->item()->item(1)->item()->setting('resultsHeadingColorOpacity', 1);
-        $objBlock->item()->item(1)->item()->setting('resultsHeadingColorPalette', '');
-
+        $objBlock->item()->item(2)->item()->setting('parentBgColorHex', $sectionData['style']['sermon']['bg'] ?? '#505050');
+        $objBlock->item()->item(2)->item()->setting('parentBgColorOpacity', 1);
+        $objBlock->item()->item(2)->item()->setting('parentBgColorPalette', "");
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
-        $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName, $sectionData['settings']['palette'] ?? []);
         return json_encode($block);
     }
 
@@ -191,72 +164,4 @@ class SermonFeatured extends DynamicElement
             }
         }
     }
-
-    public static function createSlug($string)
-    {
-        $string = trim($string);
-
-        $pattern = [
-            '$(à|á|â|ã|ä|å|À|Á|Â|Ã|Ä|Å|æ|Æ)$',
-            '$(è|é|é|ê|ë|È|É|Ê|Ë)$',
-            '$(ì|í|î|ï|Ì|Í|Î|Ï)$',
-            '$(ò|ó|ô|õ|ö|ø|Ò|Ó|Ô|Õ|Ö|Ø|œ|Œ)$',
-            '$(ù|ú|û|ü|Ù|Ú|Û|Ü)$',
-            '$(ñ|Ñ)$',
-            '$(ý|ÿ|Ý|Ÿ)$',
-            '$(ç|Ç)$',
-            '$(ð|Ð)$',
-            '$(ß)$'
-        ];
-
-        $replacement = [
-            'a',
-            'e',
-            'i',
-            'o',
-            'u',
-            'n',
-            'y',
-            'c',
-            'd',
-            's'
-        ];
-
-        $string =  preg_replace($pattern, $replacement, $string);
-
-        $string = htmlentities($string, ENT_QUOTES, "UTF-8");
-
-        $search = [
-            '@(&(#?))[a-zA-Z0-9]{1,7}(;)@'
-        ];
-
-        $replace = array(
-            ''
-        );
-
-        $string = preg_replace($search, $replace, $string);
-
-        $search = [
-            '@<script[^>]*?>.*?</script>@si',
-            '@<[\/\!]*?[^<>]*?>@si',
-            '@(\s-\s)@',
-            '@[\s]{1,99}@',
-            '@—@',
-            '@[\\\/)({}^\@\[\]|!#$%*+=~`?.,_;:]@'
-        ];
-
-        $replace = [
-            '',
-            '',
-            '-',
-            '-',
-            '-',
-            ''
-        ];
-
-        $string = preg_replace($search, $replace, $string);
-
-        return strtolower($string);
-    }
-
 }
