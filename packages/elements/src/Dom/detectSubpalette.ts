@@ -1,16 +1,13 @@
-import { Output } from "../types/type";
+import { Entry, Output } from "../types/type";
 
-interface Data {
-  selector?: string;
-}
+const subpalettes = [
+  "subpalette1",
+  "subpalette2",
+  "subpalette3",
+  "subpalette4"
+];
 
-export const detectSubpalette = (entry: Data): Output => {
-  const subpalettes = [
-    "subpalette1",
-    "subpalette2",
-    "subpalette3",
-    "subpalette4"
-  ];
+export const detectSubpalette = (entry: Entry): Output => {
   const { selector } = entry;
 
   if (!selector) {

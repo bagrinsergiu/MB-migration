@@ -39,7 +39,7 @@ export interface OutputData {
   warns?: Record<string, Record<string, string>>;
 }
 
-interface Data {
+export interface Data {
   data: unknown;
   warns?: Record<string, Record<string, string>>;
 }

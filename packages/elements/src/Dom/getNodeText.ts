@@ -1,11 +1,7 @@
-import { Output } from "../types/type";
+import { Entry, Output } from "../types/type";
 import { createData } from "../utils/getData";
 
-interface Data {
-  selector?: string;
-}
-
-export const getNodeText = (entry: Data): Output => {
+export const getNodeText = (entry: Entry): Output => {
   const { selector } = entry;
 
   if (!selector) {
