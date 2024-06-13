@@ -143,6 +143,10 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('listItemTitleColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('listItemTitleColorPalette', '');
 
+        $objBlock->item()->item(1)->item()->setting('hoverListItemTitleColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('hoverListItemTitleColorOpacity', 0.75);
+        $objBlock->item()->item(1)->item()->setting('hoverListItemTitleColorPalette', '');
+
         $objBlock->item()->item(1)->item()->setting('listItemMetaColorHex', $sectionData['settings']['palette']['text']);
         $objBlock->item()->item(1)->item()->setting('listItemMetaColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('listItemMetaColorPalette', '');
@@ -160,6 +164,10 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('groupingDateColorPalette', '');
 
         $objBlock->item()->item(1)->item()->setting('titleColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('hoverTitleColorOpacity', 0.75);
+        $objBlock->item()->item(1)->item()->setting('hoverTitleColorPalette', '');
+
+        $objBlock->item()->item(1)->item()->setting('hoverTitleColorHex', $sectionData['settings']['palette']['text']);
         $objBlock->item()->item(1)->item()->setting('titleColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('titleColorPalette', '');
 

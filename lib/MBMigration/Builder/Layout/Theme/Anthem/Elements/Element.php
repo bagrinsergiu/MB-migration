@@ -276,7 +276,7 @@ abstract class Element extends LayoutUtils
             throw new Exception('Element not found');
         }
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showPreviousPage', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showPreviousPage', 'on');
 
         $detail->item()->item(1)->item()->item()->item()->setting('titleColorHex', $palette['text'] ?? '#171727');
         $detail->item()->item(1)->item()->item()->item()->setting('titleColorOpacity', 1);
@@ -338,6 +338,14 @@ abstract class Element extends LayoutUtils
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorPalette', "");
 
         $itemsData['items'][] = $detail->get();
 
