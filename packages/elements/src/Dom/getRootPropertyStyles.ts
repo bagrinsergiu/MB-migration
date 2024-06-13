@@ -9,7 +9,9 @@ export const getRootPropertyStyles = (): Output => {
     const styleSheet = styleSheets[i];
 
     if (!styleSheet.href) {
-      const cssRules = (styleSheet as CSSStyleSheet).cssRules || (styleSheet as CSSStyleSheet).rules;
+      const cssRules =
+        (styleSheet as CSSStyleSheet).cssRules ||
+        (styleSheet as CSSStyleSheet).rules;
 
       for (let j = 0; j < cssRules.length; j++) {
         const rule = cssRules[j] as CSSStyleRule; // Narrow down to CSSStyleRule
