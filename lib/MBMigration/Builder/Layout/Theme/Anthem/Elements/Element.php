@@ -276,13 +276,44 @@ abstract class Element extends LayoutUtils
             throw new Exception('Element not found');
         }
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorOpacity', 1);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorPalette', "");
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showPreviousPage', 'on');
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
+        $detail->item()->item(1)->item()->item()->item()->setting('titleColorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('titleColorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('titleColorPalette', '');
+
+        $detail->item()->item(1)->item()->item()->item()->setting('colorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('colorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('colorPalette', '');
+
+        $detail->item()->item(1)->item()->item()->item()->setting('previewColorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('previewColorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('previewColorPalette', '');
+
+        $detail->item()->item(1)->item()->item()->item()->setting('detailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('detailButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('detailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item()->item()->item()->setting('metaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('metaLinksColorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('metaLinksColorPalette', "");
+
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverMetaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverMetaLinksColorOpacity', 0.75);
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverMetaLinksColorPalette', "");
+
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('colorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('colorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('colorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('dateColorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('dateColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('dateColorPalette', "");
 
         $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorHex', $palette['link'] ?? '#171727');
         $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorOpacity', 1);
@@ -291,6 +322,30 @@ abstract class Element extends LayoutUtils
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorHex', $palette['link'] ?? '#171727');
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorOpacity', 0.75);
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorPalette', "");
 
         $itemsData['items'][] = $detail->get();
 
@@ -761,6 +816,73 @@ abstract class Element extends LayoutUtils
         } else {
             return '/';
         }
+    }
+
+    protected function createSlug($string): string
+    {
+        $string = trim($string);
+
+        $pattern = [
+            '$(à|á|â|ã|ä|å|À|Á|Â|Ã|Ä|Å|æ|Æ)$',
+            '$(è|é|é|ê|ë|È|É|Ê|Ë)$',
+            '$(ì|í|î|ï|Ì|Í|Î|Ï)$',
+            '$(ò|ó|ô|õ|ö|ø|Ò|Ó|Ô|Õ|Ö|Ø|œ|Œ)$',
+            '$(ù|ú|û|ü|Ù|Ú|Û|Ü)$',
+            '$(ñ|Ñ)$',
+            '$(ý|ÿ|Ý|Ÿ)$',
+            '$(ç|Ç)$',
+            '$(ð|Ð)$',
+            '$(ß)$'
+        ];
+
+        $replacement = [
+            'a',
+            'e',
+            'i',
+            'o',
+            'u',
+            'n',
+            'y',
+            'c',
+            'd',
+            's'
+        ];
+
+        $string =  preg_replace($pattern, $replacement, $string);
+
+        $string = htmlentities($string, ENT_QUOTES, "UTF-8");
+
+        $search = [
+            '@(&(#?))[a-zA-Z0-9]{1,7}(;)@'
+        ];
+
+        $replace = array(
+            ''
+        );
+
+        $string = preg_replace($search, $replace, $string);
+
+        $search = [
+            '@<script[^>]*?>.*?</script>@si',
+            '@<[\/\!]*?[^<>]*?>@si',
+            '@(\s-\s)@',
+            '@[\s]{1,99}@',
+            '@—@',
+            '@[\\\/)({}^\@\[\]|!#$%*+=~`?.,_;:]@'
+        ];
+
+        $replace = [
+            '',
+            '',
+            '-',
+            '-',
+            '-',
+            ''
+        ];
+
+        $string = preg_replace($search, $replace, $string);
+
+        return strtolower($string);
     }
 
 }
