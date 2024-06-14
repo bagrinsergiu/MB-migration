@@ -57,7 +57,14 @@ const extractInnerText = (node: Node, stack: Stack, selector: string): void => {
     const text = _node.textContent;
 
     if (text && text.trim()) {
-      stack.append(_node, { type: "text" });
+      let appendedItem = _node;
+      if (_node.tagName !== "P") {
+        const container = document.createElement("p");
+        container.append(_node.cloneNode(true));
+        appendedItem = container;
+      }
+
+      stack.append(appendedItem, { type: "text" });
     }
   }
 };
