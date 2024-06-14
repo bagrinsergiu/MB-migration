@@ -1388,6 +1388,36 @@ const ex21: Data = {
 
 //#endregion
 
+//#region Example 22 (Wrap Link inside P tag)
+
+const ex22: Data = {
+  html: `<div class="text-content text-0 editable" data-id="24125822" data-category="text"><div><div><p style="text-align: center; font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400;"><a style="font-size: 2.1875em; font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400;" href="https://www.tiktok.com/@friendshipbaptisthp?lang=en" data-location="external" data-button="false" data-detail="https://www.tiktok.com/@friendshipbaptisthp?lang=en" data-category="link" target="_blank" class="cloverlinks">TikTok</a></p></div></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"24125822\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><a style="font-weight: 400; " data-location="external" data-button="false" data-detail="https://www.tiktok.com/@friendshipbaptisthp?lang=en" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.tiktok.com%2F%40friendshipbaptisthp%3Flang%3Den%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="font-weight: 400; ">TikTok</span></a></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -1409,7 +1439,8 @@ describe.each([
   ex18,
   ex19,
   ex20,
-  ex21
+  ex21,
+  ex22
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
