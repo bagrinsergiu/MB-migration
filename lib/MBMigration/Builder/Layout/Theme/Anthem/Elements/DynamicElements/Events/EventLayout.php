@@ -139,6 +139,10 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('eventsColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('eventsColorPalette', '');
 
+        $objBlock->item()->item(1)->item()->setting('hoverEventsColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('hoverEventsColorOpacity', 0.75);
+        $objBlock->item()->item(1)->item()->setting('hoverEventsColorPalette', '');
+
         $objBlock->item()->item(1)->item()->setting('listItemTitleColorHex', $sectionData['settings']['palette']['text']);
         $objBlock->item()->item(1)->item()->setting('listItemTitleColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('listItemTitleColorPalette', '');
