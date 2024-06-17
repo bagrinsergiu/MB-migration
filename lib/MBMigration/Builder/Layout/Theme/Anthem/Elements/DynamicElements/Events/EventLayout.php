@@ -190,7 +190,7 @@ class EventLayout extends DynamicElement
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
-        $this->createDetailPage($collectionItemsForDetailPage, $slug, $elementName, $sectionData['settings']['palette'] ?? []);
+        $this->createEventDetailPage($collectionItemsForDetailPage, $slug, $elementName, $sectionData['settings']['palette'] ?? []);
         return json_encode($block);
     }
 
