@@ -214,6 +214,11 @@ class ColorUtility
     {
         $result = [];
 
+        $replaces = [
+            '#fff'=> '#ffffff',
+            '#000'=> '#000000'
+        ];
+
         foreach ($arraySubpalette as $key => $value) {
 
             $parts = explode('-', str_replace('--', '', $key));
@@ -224,6 +229,13 @@ class ColorUtility
             }
 
             $subKey = implode('-', array_slice($parts, 1));
+
+            foreach ($replaces as $name => $color){
+                if ($name === $value){
+                    $value = $color;
+                    break;
+                }
+            }
 
             $result[$subpalette][$subKey] = $value;
         }

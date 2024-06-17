@@ -260,7 +260,7 @@ abstract class Element extends LayoutUtils
     /**
      * @throws Exception
      */
-    protected function createDetailPage($itemsID, $slug, string $elementName, $palette): void
+    protected function createEventDetailPage($itemsID, $slug, string $elementName, $palette): void
     {
 
         $itemsData = [];
@@ -276,7 +276,24 @@ abstract class Element extends LayoutUtils
             throw new Exception('Element not found');
         }
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showPreviousPage', 'on');
+        $detail->item()->item(1)->item()->item()->item()->setting('showImage', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showTitle', 'on');
+        $detail->item()->item(1)->item()->item()->item()->setting('showDescription', 'on');
+        $detail->item()->item(1)->item()->item()->item()->setting('showSubscribeToEvent', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showPreviousPage', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showCoordinatorPhone', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showMetaIcons', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showGroup', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showDate', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showCategory', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showMetaHeadings', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showLocation', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showRoom', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showCoordinator', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showCoordinatorEmail', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showCost', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showWebsite', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showRegistration', 'off');
 
         $detail->item()->item(1)->item()->item()->item()->setting('titleColorHex', $palette['text'] ?? '#171727');
         $detail->item()->item(1)->item()->item()->item()->setting('titleColorOpacity', 1);
@@ -306,6 +323,24 @@ abstract class Element extends LayoutUtils
         $detail->item()->item(1)->item()->item()->item()->setting('hoverMetaLinksColorOpacity', 0.75);
         $detail->item()->item(1)->item()->item()->item()->setting('hoverMetaLinksColorPalette', "");
 
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showImage', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showTitle', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showDescription', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showSubscribeToEvent', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showPreviousPage', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showCoordinatorPhone', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showMetaIcons', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showGroup', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showDate', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showCategory', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showMetaHeadings', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showLocation', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showRoom', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showCoordinator', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showCoordinatorEmail', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showCost', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showWebsite', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showRegistration', 'on');
 
         $detail->item()->item(1)->item(1)->item()->item()->setting('colorHex', $palette['text'] ?? '#171727');
         $detail->item()->item(1)->item(1)->item()->item()->setting('colorOpacity', 1);
@@ -322,6 +357,109 @@ abstract class Element extends LayoutUtils
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorHex', $palette['link'] ?? '#171727');
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorOpacity', 0.75);
         $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorPalette', "");
+
+        $itemsData['items'][] = $detail->get();
+
+        $pageData = json_encode($itemsData);
+
+        $QueryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+    }
+
+    protected function createSermonsDetailPage($itemsID, $slug, string $elementName, $palette): void
+    {
+
+        $itemsData = [];
+        $jsonDecode = $this->initData();
+        $QueryBuilder = $this->cache->getClass('QueryBuilder');
+
+        if ($this->checkArrayPath($jsonDecode, "dynamic/$elementName")) {
+            $decoded = $jsonDecode['dynamic'][$elementName];
+            $detail = new ItemBuilder();
+
+            $detail->newItem($decoded['detail']);
+        } else {
+            throw new Exception('Element not found');
+        }
+
+        $detail->item()->item(1)->item()->item()->item()->setting('showImage', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showDate', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showMetaHeadings', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showLocation', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showRoom', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showCoordinator', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showCoordinatorEmail', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showCost', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showWebsite', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('calendarViewOrder', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showRegistration', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showSubscribeToEvent', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showCoordinatorPhone', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showGroup', 'off');
+        $detail->item()->item(1)->item()->item()->item()->setting('showPreviousPage', 'off');
+
+        $detail->item()->item(1)->item()->item()->item()->setting('titleColorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('titleColorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('titleColorPalette', '');
+
+        $detail->item()->item(1)->item()->item()->item()->setting('colorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('colorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('colorPalette', '');
+
+        $detail->item()->item(1)->item()->item()->item()->setting('previewColorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('previewColorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('previewColorPalette', '');
+
+        $detail->item()->item(1)->item()->item()->item()->setting('detailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('detailButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('detailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item()->item()->item()->setting('metaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('metaLinksColorOpacity', 1);
+        $detail->item()->item(1)->item()->item()->item()->setting('metaLinksColorPalette', "");
+
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverMetaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverMetaLinksColorOpacity', 0.75);
+        $detail->item()->item(1)->item()->item()->item()->setting('hoverMetaLinksColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showImage', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showTitle', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showDescription', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showSubscribeToEvent', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showPreviousPage', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showMetaIcons', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showGroup', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showCoordinatorPhone', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showWebsite', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('calendarViewOrder', 'off');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('showRegistration', 'on');
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('colorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('colorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('colorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item()->item()->setting('dateColorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('dateColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('dateColorPalette', "");
 
         $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorHex', $palette['link'] ?? '#171727');
         $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorOpacity', 1);
