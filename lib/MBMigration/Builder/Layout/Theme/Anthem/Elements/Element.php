@@ -336,60 +336,73 @@ abstract class Element extends LayoutUtils
         $detail->item()->item(1)->item()->item()->item()->setting('hoverSubscribeEventButtonBgColorPalette', "");
 
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showImage', 'off');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showTitle', 'off');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showDescription', 'off');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showSubscribeToEvent', 'off');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showPreviousPage', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showCoordinatorPhone', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showMetaIcons', 'off');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showGroup', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showDate', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showCategory', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showMetaHeadings', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showLocation', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showRoom', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showCoordinator', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showCoordinatorEmail', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showCost', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showWebsite', 'on');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('showRegistration', 'on');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('borderColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->setting('borderColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->setting('borderColorPalette', '');
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('colorHex', $palette['text'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('colorOpacity', 1);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('colorPalette', "");
+        $detail->item()->item(1)->item(1)->item()->item()->item()->item()->setting('textBgColorHex', $palette['btn-text'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->item()->item()->setting('textBgColorPalette', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->item()->item()->setting('textBgColorPalette', '');
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('dateColorHex', $palette['text'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('dateColorOpacity', 1);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('dateColorPalette', "");
+        $detail->item()->item(1)->item(1)->item()->item()->item()->item()->setting('colorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item()->item()->item()->item()->setting('colorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item()->item()->item()->item()->setting('colorPalette', '');
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorHex', $palette['link'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorOpacity', 1);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('metaLinksColorPalette', "");
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorHex', $palette['link'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorOpacity', 0.75);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverMetaLinksColorPalette', "");
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showImage', 'off');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showTitle', 'off');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showDescription', 'off');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showSubscribeToEvent', 'off');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showPreviousPage', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showCoordinatorPhone', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showMetaIcons', 'off');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showGroup', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showDate', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showCategory', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showMetaHeadings', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showLocation', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showRoom', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showCoordinator', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showCoordinatorEmail', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showCost', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showWebsite', 'on');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('showRegistration', 'on');
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorOpacity', 1);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('detailButtonBgColorPalette', "");
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('colorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('colorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('colorPalette', "");
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonColorHex', $palette['btn-text'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonColorOpacity', 1);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonColorPalette', "");
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('dateColorHex', $palette['text'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('dateColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('dateColorPalette', "");
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverDetailButtonBgColorPalette', "");
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('metaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('metaLinksColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('metaLinksColorPalette', "");
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorOpacity', 1);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('subscribeEventButtonBgColorPalette', "");
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('hoverMetaLinksColorHex', $palette['link'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('hoverMetaLinksColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('hoverMetaLinksColorPalette', "");
 
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorOpacity', 0.75);
-        $detail->item()->item(1)->item(1)->item()->item()->setting('hoverSubscribeEventButtonBgColorPalette', "");
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('detailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('detailButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('detailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('subscribeEventButtonColorHex', $palette['btn-text'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('subscribeEventButtonColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('subscribeEventButtonColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('hoverDetailButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('hoverDetailButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('hoverDetailButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('subscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('subscribeEventButtonBgColorOpacity', 1);
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('subscribeEventButtonBgColorPalette', "");
+
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('hoverSubscribeEventButtonBgColorHex', $palette['btn-bg'] ?? '#171727');
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('hoverSubscribeEventButtonBgColorOpacity', 0.75);
+        $detail->item()->item(1)->item(1)->item(1)->item()->setting('hoverSubscribeEventButtonBgColorPalette', "");
 
         $itemsData['items'][] = $detail->get();
 
