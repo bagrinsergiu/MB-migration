@@ -154,7 +154,8 @@ trait RichTextAble
                     $brizyComponent,
                     $browserPage,
                     $families,
-                    $default_fonts
+                    $default_fonts,
+                    $data->getThemeContext()->getUrlMap()
                 );
                 break;
             case 'photo':
@@ -184,10 +185,11 @@ trait RichTextAble
         BrizyComponent $brizySection,
         BrowserPageInterface $browserPage,
         $families = [],
-        $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
+        $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+        $urlMap = []
     ) {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
-        $richTextBrowserData = $this->extractTexts('[data-id="'.$sectionId.'"]', $browserPage, $families, $defaultFont);
+        $richTextBrowserData = $this->extractTexts('[data-id="'.$sectionId.'"]', $browserPage, $families, $defaultFont, $urlMap);
         $styles = $this->getDomElementStyles(
             '[data-id="'.$sectionId.'"]',
             ['text-align', 'font-family'],

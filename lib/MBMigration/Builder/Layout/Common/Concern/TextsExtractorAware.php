@@ -11,12 +11,14 @@ trait TextsExtractorAware
         $selectorSectionStyles,
         BrowserPageInterface $browserPage,
         $families = [],
-        $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
+        $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+        $urlMap = []
     ) {
         $richTextBrowserData = $browserPage->evaluateScript('brizy.getText', [
             'selector' => $selectorSectionStyles,
             'families' => $families,
             'defaultFamily' => $defaultFont,
+            'urlMap'=>$urlMap
         ]);
 
         if (isset($richTextBrowserData['error'])) {

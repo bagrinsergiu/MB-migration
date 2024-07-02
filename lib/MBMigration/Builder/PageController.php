@@ -114,7 +114,8 @@ class PageController
                     $themeElementFactory,
                     $mainCollectionType,
                     $itemsID,
-                    $slug
+                    $slug,
+                    $pageMapping
                 );
 
                 /**

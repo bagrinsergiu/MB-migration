@@ -32,4 +32,6 @@ interface ThemeContextInterface
     public function getBrizyMenuItems(): array;
 
     public function getSlug(): string;
+
+    public function getUrlMap(): array;
 }
