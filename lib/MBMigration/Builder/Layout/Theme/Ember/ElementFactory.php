@@ -68,7 +68,7 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'event-tile-layout':
                 return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage, $this->getQueryBuilder());
             case 'event-calendar-layout':
-                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage);
+//                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage);
             case 'event-gallery-layout':
                 return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $browserPage);
             case 'full-width-form':

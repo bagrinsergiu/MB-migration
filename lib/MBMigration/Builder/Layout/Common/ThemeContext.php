@@ -61,6 +61,7 @@ final class ThemeContext implements ThemeContextInterface
     private $slug;
     private array $brizyMenuEntity;
     private array $brizyMenuItems;
+    private array $urlMap = [];
 
     public function __construct(
         string $layoutName,
@@ -75,7 +76,8 @@ final class ThemeContext implements ThemeContextInterface
         ThemeElementFactoryInterface $elementFactory,
         string $brizyCollectionTypeURI,
         string $brizyCollectionItemURI,
-        string $slug
+        string $slug,
+        array $urlMap
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
@@ -90,6 +92,7 @@ final class ThemeContext implements ThemeContextInterface
         $this->slug = $slug;
         $this->brizyMenuEntity = $brizyMenuEntity;
         $this->brizyMenuItems = $brizyMenuItems;
+        $this->urlMap = $urlMap;
     }
 
     public function getLayoutName(): string
@@ -162,5 +165,10 @@ final class ThemeContext implements ThemeContextInterface
     public function getBrizyMenuItems(): array
     {
         return $this->brizyMenuItems;
+    }
+
+    public function getUrlMap(): array
+    {
+        return $this->urlMap;
     }
 }
