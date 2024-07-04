@@ -140,7 +140,8 @@ trait RichTextAble
      */
     protected function handleRichTextItem(
         ElementContextInterface $data,
-        BrowserPageInterface $browserPage
+        BrowserPageInterface $browserPage,
+        $selector = null
     ) {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -155,7 +156,8 @@ trait RichTextAble
                     $browserPage,
                     $families,
                     $default_fonts,
-                    $data->getThemeContext()->getUrlMap()
+                    $data->getThemeContext()->getUrlMap(),
+                    $selector
                 );
                 break;
             case 'photo':
@@ -186,12 +188,13 @@ trait RichTextAble
         BrowserPageInterface $browserPage,
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
-        $urlMap = []
+        $urlMap = [],
+        $selector = null
     ) {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
-        $richTextBrowserData = $this->extractTexts('[data-id="'.$sectionId.'"]', $browserPage, $families, $defaultFont, $urlMap);
+        $richTextBrowserData = $this->extractTexts($selector ?? '[data-id="'.$sectionId.'"]', $browserPage, $families, $defaultFont, $urlMap);
         $styles = $this->getDomElementStyles(
-            '[data-id="'.$sectionId.'"]',
+            $selector ?? '[data-id="'.$sectionId.'"]',
             ['text-align', 'font-family'],
             $browserPage,
             $families,

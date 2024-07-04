@@ -173,13 +173,45 @@ class TabsLayout extends Element
         $paragraphs = $dom->getElementsByTagName('p');
 
         foreach ($paragraphs as $paragraph) {
-            $filteredText = preg_replace('/[^\p{L}\p{N}\s]/u', '', $paragraph->nodeValue);
+            $filteredText = $this->replaceLetters($paragraph->nodeValue);
+            $filteredText = preg_replace('/[^\p{L}\p{N}\s]/u', '', $filteredText);
             $text .= $filteredText . ' ';
         }
 
         libxml_use_internal_errors(false);
 
         return trim($text);
+    }
+
+    private function replaceLetters($string): string
+    {
+        $pattern = [
+            '/(à|á|â|ã|ä|å|À|Á|Â|Ã|Ä|Å|æ|Æ)/u',
+            '/(è|é|é|ê|ë|È|É|Ê|Ë)/u',
+            '/(ì|í|î|ï|Ì|Í|Î|Ï)/u',
+            '/(ò|ó|ô|õ|ö|ø|Ò|Ó|Ô|Õ|Ö|Ø|œ|Œ)/u',
+            '/(ù|ú|û|ü|Ù|Ú|Û|Ü)/u',
+            '/(ñ|Ñ)/u',
+            '/(ý|ÿ|Ý|Ÿ)/u',
+            '/(ç|Ç)/u',
+            '/(ð|Ð)/u',
+            '/(ß)/u'
+        ];
+
+        $replacement = [
+            'a',
+            'e',
+            'i',
+            'o',
+            'u',
+            'n',
+            'y',
+            'c',
+            'd',
+            's'
+        ];
+
+        return preg_replace($pattern, $replacement, $string);
     }
 
 }

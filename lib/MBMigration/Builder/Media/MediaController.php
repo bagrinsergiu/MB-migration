@@ -37,7 +37,8 @@ class MediaController
      */
     public static function media(&$item, $section, $projectId, BrizyAPI $brizyApi): void
     {
-        $downloadImageURL = self::getPicturesUrl($item['content'], $section);
+        $parts = explode(".", $item['content']);
+        $downloadImageURL = self::getPicturesUrl($parts[0].'@2x.'.$parts[1], $section);
         Logger::instance()->debug('Found new image', [$downloadImageURL]);
         $result = $brizyApi->createMedia($downloadImageURL, $projectId);
         if ($result) {

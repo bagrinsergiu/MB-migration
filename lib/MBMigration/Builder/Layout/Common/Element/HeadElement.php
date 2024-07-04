@@ -140,7 +140,8 @@ abstract class HeadElement extends AbstractElement
 
         $component->getValue()
             ->set_imageSrc($imageLogo['imageSrc'])
-            ->set_imageFileName($imageLogo['imageFileName']);
+            ->set_imageFileName($imageLogo['imageFileName'])
+            ->set_sizeType('original');
 
         return $component;
     }

@@ -21,6 +21,11 @@ final class ElementContext implements ElementContextInterface
     private $fontFamilies;
 
     /**
+     * @var array
+     */
+    private $selector;
+
+    /**
      * @var string
      */
     private $defaultFontFamily;
