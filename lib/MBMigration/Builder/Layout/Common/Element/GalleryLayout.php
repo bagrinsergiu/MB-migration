@@ -22,6 +22,7 @@ abstract class GalleryLayout extends AbstractElement
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
+        $videoJson = json_decode($this->brizyKit['video'], true);
 
         $declaredAutoplay = $mbSection['settings']['sections']['gallery']['autoplay'] ?? true;
 
@@ -48,12 +49,31 @@ abstract class GalleryLayout extends AbstractElement
             ->set_animationDelay($slideDuration * 1000);
 
         $brizySectionItems = [];
-        foreach ($mbSection['items'] as $mbItem) {
-            $brizySectionItem = new BrizyComponent($slideJson);
-            $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
-            $this->setSlideImage($brizySectionItemImage, $mbItem);
-            $this->setSlideLinks($brizySectionItemImage, $mbItem);
+
+        if (isset($mbSection['settings']['sections']['background']['video'])){
+            $brizySectionItem = new BrizyComponent($videoJson);
+            $brizyComponentValue = $brizySectionItem->getValue();
+            $brizyComponentValue
+                ->set_media('video')
+                ->set_bgVideoType('url')
+                ->set_bgVideoCustom('')
+                ->set_bgVideo($mbSection['settings']['sections']['background']['video'])
+                ->set_bgVideoLoop('on')
+                ->set_linkType('external');
             $brizySectionItems[] = $brizySectionItem;
+
+            $brizySection->getValue()
+                ->set_fullHeight('custom')
+                ->set_sectionHeight($mbSection['settings']['sections']['gallery']['max_height']);
+
+        } else {
+            foreach ($mbSection['items'] as $mbItem) {
+                $brizySectionItem = new BrizyComponent($slideJson);
+                $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
+                $this->setSlideImage($brizySectionItemImage, $mbItem);
+                $this->setSlideLinks($brizySectionItemImage, $mbItem);
+                $brizySectionItems[] = $brizySectionItem;
+            }
         }
 
         $brizySection->getValue()->set_items($brizySectionItems);
