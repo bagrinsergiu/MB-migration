@@ -41,6 +41,8 @@ class FourHorizontalText extends AbstractElement
             $this->handleRichTextItem($tmpElementContext, $this->browserPage);
             $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($bodies[$i], $brizyColumn);
             $this->handleRichTextItem($tmpElementContext, $this->browserPage);
+            $buttonSelector = $mbSection['sectionId'];
+            $this->handleRichTextItem($tmpElementContext, $this->browserPage, "[data-id='$buttonSelector'] .group-$i > a");
             $columns[] = $brizyColumn;
         }
         $brizySection->getItemValueWithDepth(0,0)->add_items($columns);
