@@ -22,7 +22,7 @@ export const getText = (_entry: Entry): Output => {
     };
   }
 
-  node = node.children[0];
+  node = node.tagName !== "BUTTON" ? node.children[0] : node?.parentElement;
 
   if (!node) {
     return {
