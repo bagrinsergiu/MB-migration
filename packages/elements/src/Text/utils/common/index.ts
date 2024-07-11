@@ -61,7 +61,7 @@ export function shouldExtractElement(
 
 export const iconSelector =
   "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
-export const buttonSelector = ".sites-button:not(.nav-menu-button)";
+export const buttonSelector = ".sites-button:not(.nav-menu-button), button";
 export const embedSelector = ".embedded-paste";
 
 export const extractUrlWithoutDomain = (url: string) => {

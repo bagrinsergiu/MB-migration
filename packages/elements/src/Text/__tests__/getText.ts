@@ -1418,6 +1418,40 @@ const ex22: Data = {
 };
 //#endregion
 
+//#region Example 23 (Button structure 1)
+const ex23: Data = {
+  html: `<a href="/about-us/who-we-are" data-category="link" data-location="existing" data-detail="1313014" data-url="/about-us/who-we-are"><button class="sites-button editable" data-id="24286133" data-category="button" tabindex="-1"><div class="sites-button-text">More</div></button></a>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"24286133\"]" },
+  output: {
+    data: [
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                text: "More",
+                borderStyle: "none",
+                linkExternal: "/about-us/who-we-are",
+                linkType: "external",
+                linkExternalBlank: "on"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -1440,7 +1474,8 @@ describe.each([
   ex19,
   ex20,
   ex21,
-  ex22
+  ex22,
+  ex23
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
