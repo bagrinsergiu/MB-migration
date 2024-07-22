@@ -651,6 +651,7 @@ class BrizyAPI extends Utils
     {
         $extensions = array(
             'image/x-icon' => 'ico',
+            'image/vnd.microsoft.icon' => 'ico',
             'image/jpeg' => 'jpg',
             'image/png' => 'png',
             'image/gif' => 'gif',

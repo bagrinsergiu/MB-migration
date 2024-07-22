@@ -8,6 +8,7 @@ use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Brizy\BrizyAPI;
+use MBMigration\Layer\Graph\QueryBuilder;
 
 class MediaController
 {
@@ -66,7 +67,10 @@ class MediaController
     {
         $cache = VariableCache::getInstance();
 
-        $folder = ['gallery-layout' => '/gallery/slides/'];
+        $folder = [
+            'gallery-layout' => '/gallery/slides/',
+            'favicons' => '/favicons/',
+        ];
 
         if (array_key_exists($type, $folder)) {
             $folderLoad = $folder[$type];
@@ -78,6 +82,26 @@ class MediaController
         $prefix = substr($uuid, 0, 2);
 
         return Config::$MBMediaStaging."/".$prefix.'/'.$uuid.$folderLoad.$nameImage;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function setFavicon($favicon, $projectId, BrizyAPI $brizyApi, QueryBuilder $QueryBuilder)
+    {
+        if ($favicon != null) {
+            $parts = explode(".", $favicon);
+            $downloadImageURL = self::getPicturesUrl($parts[0].'.'.$parts[1], 'favicons');
+            $resultImgeUpload = $brizyApi->createMedia($downloadImageURL, $projectId);
+            if ($resultImgeUpload) {
+                if (array_key_exists('status', $resultImgeUpload)) {
+                    if ($resultImgeUpload['status'] == 201) {
+                        $result = json_decode($resultImgeUpload['body'], true);
+                        $QueryBuilder->updateFaviconMetafield($result['name']);
+                    }
+                }
+            }
+        }
     }
 
     /**

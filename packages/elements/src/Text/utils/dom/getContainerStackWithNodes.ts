@@ -114,10 +114,37 @@ function removeNestedDivs(node: HTMLElement) {
   }
 }
 
-const flattenNode = (node: Element) => {
-  const _node = node.cloneNode(true) as HTMLElement;
+const copyClassList = (
+  sourceElement: HTMLElement,
+  targetElement: HTMLElement
+) => {
+  sourceElement.classList.forEach((className) => {
+    targetElement.classList.add(className);
+  });
+};
 
-  node.parentElement?.append(_node);
+const flattenNode = (node: Element) => {
+  let _node = node.cloneNode(true) as HTMLElement;
+  const parentElement = node.parentElement;
+
+  if (_node.tagName === "A" && parentElement) {
+    const parentWrapper = document.createElement("div");
+    const wrapper = document.createElement("p");
+    parentWrapper.appendChild(wrapper);
+    const btn = _node.querySelector("button");
+
+    if (btn) {
+      copyClassList(btn, _node);
+      _node.innerHTML = btn.innerHTML;
+      btn.remove();
+    }
+
+    wrapper.appendChild(_node);
+    _node = parentWrapper;
+    parentElement.appendChild(_node);
+  } else {
+    parentElement?.append(_node);
+  }
 
   removeNestedDivs(_node);
 
