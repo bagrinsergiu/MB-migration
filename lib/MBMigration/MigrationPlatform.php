@@ -190,6 +190,8 @@ class MigrationPlatform
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
         }
 
+        MediaController::setFavicon($settings['favicon'], $this->projectId, $this->brizyApi, $this->QueryBuilder);
+
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
             Logger::instance()->debug('Upload section pictures');
