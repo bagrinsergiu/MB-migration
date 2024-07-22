@@ -175,6 +175,25 @@ class FontsController extends builderUtils
         return $fontFamily;
     }
 
+    static public function getFontsFamilyFromName($name): string
+    {
+        $fontFamily = 'google';
+        $cache = VariableCache::getInstance();
+        $fonts = $cache->get('fonts', 'settings');
+        foreach ($fonts as $font) {
+            if (isset($font['name']) && $font['name'] === $name) {
+                return $font['uuid'];
+            }
+        }
+        foreach ($fonts as $font) {
+            if (isset($font['name']) && $font['name'] === 'main_text') {
+                return $font['uuid'];
+            }
+        }
+
+        return $fontFamily;
+    }
+
     protected function checkArrayPath($array, $path, $check = ''): bool
     {
         $keys = explode('/', $path);
