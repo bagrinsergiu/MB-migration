@@ -40,7 +40,25 @@ abstract class GalleryLayout extends AbstractElement
             $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
         }
 
+        $colorArrows = $this->getContrastColor('#ffffff');
+
         $brizySection->getValue()
+            ->set_sliderArrowsColorHex($colorArrows)
+            ->set_sliderArrowsColorOpacity(0.75)
+            ->set_sliderArrowsColorPalette('')
+
+            ->set_hoverSliderArrowsColorHex($colorArrows)
+            ->set_hoverSliderArrowsColorOpacity(1)
+            ->set_hoverSliderArrowsColorPalette('')
+
+            ->set_sliderDotsColorHex($colorArrows)
+            ->set_sliderDotsColorOpacity(0.75)
+            ->set_sliderDotsColorPalette('')
+
+            ->set_hoverSliderDotsColorHex($colorArrows)
+            ->set_hoverSliderDotsColorOpacity(1)
+            ->set_hoverSliderDotsColorPalette('')
+
             ->set_sliderDots($markers ? "circle" : "none")
             ->set_sliderArrows($arrows ? "heavy" : "none")
             ->set_sliderAutoPlay($autoplay ? "on" : "off")
@@ -193,6 +211,19 @@ abstract class GalleryLayout extends AbstractElement
 
             return false;
         }
+    }
+
+    private function getContrastColor($hexColor): string
+    {
+        $hexColor = str_replace('#', '', $hexColor);
+
+        $r = hexdec(substr($hexColor, 0, 2));
+        $g = hexdec(substr($hexColor, 2, 2));
+        $b = hexdec(substr($hexColor, 4, 2));
+
+        $brightness = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+        return $brightness > 125 ? '#000000' : '#FFFFFF';
     }
 
 

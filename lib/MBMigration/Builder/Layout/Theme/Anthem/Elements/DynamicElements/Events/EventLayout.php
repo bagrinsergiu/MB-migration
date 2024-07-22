@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\Event
 
 use DOMException;
 use Exception;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\DynamicElements\DynamicElement;
 
@@ -37,6 +38,8 @@ class EventLayout extends DynamicElement
 
         $objBlock->newItem($decoded['main']);
         $objHead->newItem($decoded['head']);
+
+        $fonts = FontsController::getFontsFamilyFromName('main_text');
 
         if($this->checkArrayPath($sectionData, 'style/background-color')) {
             $blockBg = $sectionData['style']['background-color'];
@@ -108,12 +111,22 @@ class EventLayout extends DynamicElement
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
         $objBlock->item()->item(1)->item()->setting('eventDetailPage', "{{placeholder content='$placeholder'}}");
+
         $objBlock->item()->item(1)->item()->setting('featuredViewOrder', 3);
         $objBlock->item()->item(1)->item()->setting('calendarViewOrder', 1);
+
+        $objBlock->item()->item(1)->item()->setting('dateTypographyLineHeight', 1.6);
+        $objBlock->item()->item(1)->item()->setting('eventsTypographyLineHeight', 1.5);
+
+        $objBlock->item()->item(1)->item()->setting('dateTypographyFontStyle', '');
+        $objBlock->item()->item(1)->item()->setting('dateTypographyFontFamily', 1.5);
 
         $objBlock->item()->item(1)->item()->setting('resultsHeadingColorHex', $sectionData['settings']['palette']['text']);
         $objBlock->item()->item(1)->item()->setting('resultsHeadingColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('resultsHeadingColorPalette', '');
+
+        $objBlock->item()->item(1)->item()->setting('resultsHeadingTypographyFontFamilyType', $fonts);
+        $objBlock->item()->item(1)->item()->setting('resultsHeadingTypographyFontStyle', '');
 
         $objBlock->item()->item(1)->item()->setting('listPaginationArrowsColorHex', $sectionData['settings']['palette']['text']);
         $objBlock->item()->item(1)->item()->setting('listPaginationArrowsColorOpacity', 1);
@@ -159,7 +172,7 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('listItemDateColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('listItemDateColorPalette', '');
 
-        $objBlock->item()->item(1)->item()->setting('listTitleColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('listTitleColorHex', $sectionData['settings']['palette']['btn-text']);
         $objBlock->item()->item(1)->item()->setting('listTitleColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('listTitleColorPalette', '');
 
@@ -179,9 +192,9 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('dateColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('dateColorPalette', '');
 
-        $objBlock->item()->item(1)->item()->setting('listItemDateBgColorHex', '#000000');
-        $objBlock->item()->item(1)->item()->setting('listItemDateBgColorOpacity', 0);
-        $objBlock->item()->item(1)->item()->setting('listItemDateBgColorType', 'none');
+        $objBlock->item()->item(1)->item()->setting('listItemDateBgColorHex', $sectionData['settings']['palette']['btn-bg']);
+        $objBlock->item()->item(1)->item()->setting('listItemDateBgColorOpacity', 1);
+        $objBlock->item()->item(1)->item()->setting('listItemDateBgColorType', 'solid');
         $objBlock->item()->item(1)->item()->setting('listItemDateBgColorPalette', '');
 
         $objBlock->item()->item(1)->item()->setting('detailButtonBgColorHex', $sectionData['settings']['palette']['btn-bg']);
@@ -191,6 +204,18 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('detailButtonGradientColorHex', $sectionData['settings']['palette']['btn-text']);
         $objBlock->item()->item(1)->item()->setting('detailButtonGradientColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('detailButtonGradientColorPalette', '');
+
+        $objBlock->item()->item(1)->item()->setting('hoverViewColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('hoverViewColorOpacity', 0.7);
+        $objBlock->item()->item(1)->item()->setting('hoverViewColorPalette', '');
+
+        $objBlock->item()->item(1)->item()->setting('viewColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('viewColorOpacity', 1);
+        $objBlock->item()->item(1)->item()->setting('viewColorPalette', '');
+
+        $objBlock->item()->item(1)->item()->setting('layoutViewTypographyFontFamily', $fonts);
+        $objBlock->item()->item(1)->item()->setting('layoutViewTypographyFontStyle', '');
+        $objBlock->item()->item(1)->item()->setting('layoutViewTypographyFontFamilyType', 'upload');
 
         $block = $this->replaceIdWithRandom($objBlock->get());
 
