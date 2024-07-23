@@ -1452,6 +1452,58 @@ const ex23: Data = {
 };
 //#endregion
 
+//#region Example 23 (Voyage button border)
+const ex24: Data = {
+  html: `<div class="text-content text-1 editable" data-id="20010041" data-category="text"><div><p><br></p><p style="font-size: 1.0013em; color: rgb(0, 0, 0);"><span class="clovercustom" style="font-weight: 600;">Timberwood Church is a Bible-based church designed to help people experience </span><span class="clovercustom" style="font-weight: 600;">God’s goodness in their lives.</span>&nbsp;</p><p style="font-size: 1.0013em; color: rgb(0, 0, 0);">Through teaching and contemporary musical worship, we seek to make the timeless truth of the Bible relevant for everyday life.&nbsp;</p><p style="font-size: 1.0013em; color: rgb(0, 0, 0);">The purpose of Timberwood Church is to honor God by making more disciples for Jesus Christ.</p><p style="font-size: 1.1264em; font-weight: 600; line-height: 1.625;"><br></p><p style="font-weight: 600; line-height: 1.625; font-size: 1.5019em;"><span class="clovercustom" style="font-size: 1.1666em; font-style: italic; color: rgb(105, 142, 179);">We invite you to worship, serve, and celebrate with us!</span><br><span class="clovercustom" style="color: rgb(0, 0, 0);">Sunday services are at 9 a.m. and 10:30 a.m.</span></p><p style="font-size: 1.1264em; font-weight: 600; line-height: 1.625;"><br></p><p style="font-size: 1.1264em; font-weight: 600; line-height: 1.625;"><a href="https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&amp;usp=sharing" class="sites-button cloverlinks" role="button" data-location="external" data-detail="https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&amp;usp=sharing" data-category="button" target="_blank">Visit our Prayer Path</a> </p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"20010041\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; color: rgb(0, 0, 0); ">Timberwood Church is a Bible-based church designed to help people experience </span><span style="font-weight: 600; color: rgb(0, 0, 0); ">God’s goodness in their lives.</span>&nbsp;</p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 0, 0); ">Through teaching and contemporary musical worship, we seek to make the timeless truth of the Bible relevant for everyday life.&nbsp;</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 0, 0); ">The purpose of Timberwood Church is to honor God by making more disciples for Jesus Christ.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><em style="color: rgb(105, 142, 179); font-weight: 600; ">We invite you to worship, serve, and celebrate with us!</em><br><span style="color: rgb(0, 0, 0); font-weight: 600; ">Sunday services are at 9 a.m. and 10:30 a.m.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                linkExternal:
+                  "https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&usp=sharing",
+                linkExternalBlank: "on",
+                linkType: "external",
+                text: "Visit our Prayer Path"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -1475,7 +1527,8 @@ describe.each([
   ex20,
   ex21,
   ex22,
-  ex23
+  ex23,
+  ex24
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
