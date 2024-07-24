@@ -37,6 +37,19 @@ trait SectionStylesAble
 
     }
 
+    protected function obtainPsevdoElementStyles(ElementContextInterface $data, BrowserPageInterface $browserPage, $selector, $psevdoElement): array
+    {
+        $mbSectionItem = $data->getMbSection();
+        $families = $data->getFontFamilies();
+        $defaultFont = $data->getDefaultFontFamily();
+        $selector = '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"] '. $selector;
+        $properties = [
+            'color',
+        ];
+
+        return $this->getDomPsevdoElement($selector, $psevdoElement, $properties, $browserPage, $families, $defaultFont);
+    }
+
     protected function handleSectionStyles(
         ElementContextInterface $data,
         BrowserPageInterface $browserPage

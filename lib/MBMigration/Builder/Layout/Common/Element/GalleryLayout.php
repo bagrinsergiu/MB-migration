@@ -21,6 +21,8 @@ abstract class GalleryLayout extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
+        $color = $this->obtainPsevdoElementStyles($elementContext, $this->browserPage, '.slick-next', ':before');
+
         $slideJson = json_decode($this->brizyKit['slide'], true);
         $videoJson = json_decode($this->brizyKit['video'], true);
 

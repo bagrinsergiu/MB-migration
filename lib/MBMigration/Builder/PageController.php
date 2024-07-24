@@ -53,6 +53,7 @@ class PageController
 
     /**
      * @throws ElementNotFound
+     * []
      */
     public function run($preparedSectionOfThePage, $pageMapping): bool
     {
