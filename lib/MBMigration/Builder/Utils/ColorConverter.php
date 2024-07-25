@@ -92,6 +92,31 @@ final class ColorConverter
         return $color;
     }
 
+    public static function convertColorRgbToHex($color): array
+    {
+        $style = [];
+        $opacityIsSet = false;
+        if(is_array($color)){
+            foreach ($color as $key => $value) {
+                $convertedData = self::convertColor(str_replace("px", "", $value));
+                if (is_array($convertedData)) {
+                    $style[$key] = $convertedData['color'];
+                    $style['opacity'] = $convertedData['opacity'];
+                    $opacityIsSet = true;
+                } else {
+                    if ($opacityIsSet && $key == 'opacity') {
+                        continue;
+                    } else {
+                        $style[$key] = $convertedData;
+                    }
+                }
+            }
+        } else {
+            $style = self::convertColor(str_replace("px", "", $color));
+        }
+        return $style;
+    }
+
    public static function convertStyle($sectionStyles, &$style, $section = 'data')
     {
         if (isset($sectionStyles['data'])) {

@@ -4,6 +4,7 @@ namespace MBMigration\Builder;
 
 use Exception;
 use HeadlessChromium\Exception\OperationTimedOut;
+use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
@@ -23,6 +24,7 @@ class PageController
 {
     use Checking;
     use DebugBackTrace;
+    use GlobalStylePalette;
 
     private $cache;
     /**
@@ -51,6 +53,7 @@ class PageController
 
     /**
      * @throws ElementNotFound
+     * []
      */
     public function run($preparedSectionOfThePage, $pageMapping): bool
     {
@@ -100,6 +103,7 @@ class PageController
                 $brizyMenuItems = $this->cache->get('brizyMenuItems');
                 $headItem = $this->cache->get('header', 'mainSection');
                 $footerItem = $this->cache->get('footer', 'mainSection');
+                $palette = $this->getRootPalette($browserPage);
 
                 $themeContext = new ThemeContext(
                     $design,
@@ -115,7 +119,8 @@ class PageController
                     $mainCollectionType,
                     $itemsID,
                     $slug,
-                    $pageMapping
+                    $pageMapping,
+                    $palette
                 );
 
                 /**

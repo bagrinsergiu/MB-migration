@@ -34,4 +34,6 @@ interface ThemeContextInterface
     public function getSlug(): string;
 
     public function getUrlMap(): array;
+
+    public function getPalette(): array;
 }

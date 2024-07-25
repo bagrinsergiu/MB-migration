@@ -6,6 +6,7 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Core\Logger;
 
 abstract class GalleryLayout extends AbstractElement
@@ -20,6 +21,10 @@ abstract class GalleryLayout extends AbstractElement
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $color = $this->obtainPsevdoElementStyles($elementContext, $this->browserPage, '.slick-next', ':before');
+        $colorArrows = ColorConverter::convertColorRgbToHex($color);
+        $colorArrows = $colorArrows['color'] ?? '#FFFFFF';
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
         $videoJson = json_decode($this->brizyKit['video'], true);
@@ -39,8 +44,6 @@ abstract class GalleryLayout extends AbstractElement
         if (isset($mbSection['settings']['sections']['gallery']['transition_duration'])) {
             $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
         }
-
-        $colorArrows = $this->getContrastColor('#ffffff');
 
         $brizySection->getValue()
             ->set_sliderArrowsColorHex($colorArrows)

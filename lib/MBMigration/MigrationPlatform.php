@@ -286,7 +286,7 @@ class MigrationPlatform
         $this->cache->set('tookPage', $page);
         ExecutionTimer::start();
 
-        if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
+         if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
             $preparedSectionOfThePage = $this->pageController->getItemsFromPage($page);
             if (!$preparedSectionOfThePage) {
                 return;

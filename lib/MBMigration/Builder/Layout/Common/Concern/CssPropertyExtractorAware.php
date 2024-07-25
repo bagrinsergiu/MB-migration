@@ -13,16 +13,24 @@ trait CssPropertyExtractorAware
         $styles,
         BrowserPageInterface  $browserPage,
         $families = [],
-        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
+        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+        $psevdoElement = null
     ) {
+
+        $params = [
+            'selector' => $selectorSectionStyles,
+            'styleProperties' => $styles,
+            'families' => $families,
+            'defaultFamily' => $default_fonts,
+        ];
+
+        if(isset($psevdoElement)){
+            $params['psevdoElement'] = $psevdoElement;
+        }
+
         $elementStyles = $browserPage->evaluateScript(
             $scriptName,
-            [
-                'selector' => $selectorSectionStyles,
-                'styleProperties' => $styles,
-                'families' => $families,
-                'defaultFamily' => $default_fonts,
-            ]
+            $params
         );
 
         if (isset($elementStyles['error'])) {
@@ -53,6 +61,26 @@ trait CssPropertyExtractorAware
             $browserPage,
             $families,
             $default_fonts
+        );
+    }
+
+    protected function getDomPsevdoElement(
+        $selectorSectionStyles,
+        $psevdoElement,
+        $styles,
+        $browserPage,
+        $families = [],
+        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
+    ) {
+
+        return $this->evaluate(
+            'brizy.getStyles',
+            $selectorSectionStyles,
+            $styles,
+            $browserPage,
+            $families,
+            $default_fonts,
+            $psevdoElement
         );
     }
 
