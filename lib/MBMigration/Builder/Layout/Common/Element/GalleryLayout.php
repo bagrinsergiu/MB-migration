@@ -6,8 +6,12 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
+use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Core\Logger;
+use PHPUnit\Exception;
 
 abstract class GalleryLayout extends AbstractElement
 {
@@ -22,8 +26,18 @@ abstract class GalleryLayout extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        $color = $this->obtainPsevdoElementStyles($elementContext, $this->browserPage, '.slick-next', ':before');
-        $colorArrows = ColorConverter::convertColorRgbToHex($color);
+        try{
+            $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"] .slick-next';
+            $stylesProperties = [
+                'color'
+            ];
+
+            $colorArrows = $this->getDomElementStyles($selector, $stylesProperties, $this->browserPage, [], '','::before');
+        } catch (ElementNotFound|BrowserScriptException|BadJsonProvided $e){
+            $colorArrows = [];
+        }
+
+        $colorArrows = ColorConverter::convertColorRgbToHex($colorArrows);
         $colorArrows = $colorArrows['color'] ?? '#FFFFFF';
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
