@@ -28,17 +28,12 @@ abstract class GalleryLayout extends AbstractElement
 
         try{
             $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"] .slick-next';
-            $stylesProperties = [
-                'color'
-            ];
 
-            $colorArrows = $this->getDomElementStyles($selector, $stylesProperties, $this->browserPage, [], '','::before');
+            $colorArrowsStyles = $this->getDomElementStyles($selector, ['color'], $this->browserPage, [], '','::before');
+            $colorArrows = ColorConverter::convertColorRgbToHex($colorArrowsStyles['color']);
         } catch (ElementNotFound|BrowserScriptException|BadJsonProvided $e){
-            $colorArrows = [];
+            $colorArrows = '#FFFFFF';
         }
-
-        $colorArrows = ColorConverter::convertColorRgbToHex($colorArrows);
-        $colorArrows = $colorArrows['color'] ?? '#FFFFFF';
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
         $videoJson = json_decode($this->brizyKit['video'], true);
