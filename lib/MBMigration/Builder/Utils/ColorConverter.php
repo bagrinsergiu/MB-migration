@@ -92,7 +92,7 @@ final class ColorConverter
         return $color;
     }
 
-    public static function convertColorRgbToHex($color): array
+    public static function convertColorRgbToHex($color)
     {
         $style = [];
         $opacityIsSet = false;
