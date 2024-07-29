@@ -31,7 +31,7 @@ abstract class GalleryLayout extends AbstractElement
 
             $colorArrowsStyles = $this->getDomElementStyles($selector, ['color'], $this->browserPage, [], '','::before');
             $colorArrows = ColorConverter::convertColorRgbToHex($colorArrowsStyles['color']);
-        } catch (ElementNotFound|BrowserScriptException|BadJsonProvided $e){
+        } catch (Exception|ElementNotFound|BrowserScriptException|BadJsonProvided $e){
             $colorArrows = '#FFFFFF';
         }
 
@@ -45,14 +45,14 @@ abstract class GalleryLayout extends AbstractElement
         $autoplay = count($mbSection['items']) <= 1 ? false : $declaredAutoplay;
         //$animation = $mbSection['settings']['sections']['gallery']['transition'] ?? 'Slide';
 
-        $slideDuration = 0.5;
-        $transitionDuration = 0.1;
-        if (isset($mbSection['settings']['sections']['gallery']['slide_duration'])) {
-            $slideDuration = (float)$mbSection['settings']['sections']['gallery']['slide_duration'] ?? 0.5;
-        }
-        if (isset($mbSection['settings']['sections']['gallery']['transition_duration'])) {
-            $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
-        }
+//        $slideDuration = 0.5;
+//        $transitionDuration = 0.1;
+//        if (isset($mbSection['settings']['sections']['gallery']['slide_duration'])) {
+//            $slideDuration = (float)$mbSection['settings']['sections']['gallery']['slide_duration'] ?? 0.5;
+//        }
+//        if (isset($mbSection['settings']['sections']['gallery']['transition_duration'])) {
+//            $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
+//        }
 
         $brizySection->getValue()
             ->set_sliderArrowsColorHex($colorArrows)
@@ -74,9 +74,9 @@ abstract class GalleryLayout extends AbstractElement
             ->set_sliderDots($markers ? "circle" : "none")
             ->set_sliderArrows($arrows ? "heavy" : "none")
             ->set_sliderAutoPlay($autoplay ? "on" : "off")
-            ->set_animationName($autoplay ? 'slideInRight' : 'none') // as there is only one animation matc
-            ->set_animationDuration($transitionDuration * 1000)
-            ->set_animationDelay($slideDuration * 1000);
+            ->set_animationName($autoplay ? 'slideInRight' : 'none');// as there is only one animation matc
+//            ->set_animationDuration($transitionDuration * 1000)
+//            ->set_animationDelay($slideDuration * 1000);
 
         $brizySectionItems = [];
 
