@@ -27,9 +27,9 @@ final class ThemeContext implements ThemeContextInterface
     private $browserPage;
 
     /**
-     * @var RootPalette
+     * @var RootPalettesHandler
      */
-    private $palette;
+    private $rootPalettes;
 
     /**
      * @var array
@@ -83,7 +83,7 @@ final class ThemeContext implements ThemeContextInterface
         string $brizyCollectionItemURI,
         string $slug,
         array $urlMap,
-        RootPalette $palette
+        RootPalettesHandler $RootPalettes
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
@@ -99,7 +99,7 @@ final class ThemeContext implements ThemeContextInterface
         $this->brizyMenuEntity = $brizyMenuEntity;
         $this->brizyMenuItems = $brizyMenuItems;
         $this->urlMap = $urlMap;
-        $this->palette = $palette;
+        $this->rootPalettes = $RootPalettes;
     }
 
     public function getLayoutName(): string
@@ -179,8 +179,8 @@ final class ThemeContext implements ThemeContextInterface
         return $this->urlMap;
     }
 
-    public function getRootPalette(): RootPalette
+    public function getRootPalettes(): RootPalettesHandler
     {
-        return $this->palette;
+        return $this->rootPalettes;
     }
 }

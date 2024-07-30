@@ -6,7 +6,6 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
-use MBMigration\Builder\Layout\Common\Concern\NodePropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
@@ -20,7 +19,6 @@ abstract class EventCalendarLayout extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use BrizyQueryBuilderAware;
-    use NodePropertyExtractorAware;
 
     /**
      * @param $brizyKit
@@ -46,9 +44,9 @@ abstract class EventCalendarLayout extends AbstractElement
         $mbSection = $data->getMbSection();
 
         $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
-        $sectionSubPalette = $this->getDomSubPalette($selector, $this->browserPage);
+        $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
 
-        $sectionPalette = $data->getThemeContext()->getRootPalette()->getSubPaletteByName($sectionSubPalette);
+        $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
 
         $fonts = FontsController::getFontsFamilyFromName('main_text');
 

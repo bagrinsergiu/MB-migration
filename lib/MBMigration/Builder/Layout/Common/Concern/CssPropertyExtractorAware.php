@@ -66,6 +66,21 @@ trait CssPropertyExtractorAware
         );
     }
 
+    protected function getNodeSubPalette(
+        $selectorSectionStyles,
+        $browserPage
+    ) {
+        return $this->evaluate(
+            'brizy.dom.detectSubpalette',
+            $selectorSectionStyles,
+            $styles = [],
+            $browserPage,
+            $families = [],
+            $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+            $pseudoElement = null
+        );
+    }
+
     protected function getDomElementSizes(
         $selectorSectionStyles,
         $browserPage,

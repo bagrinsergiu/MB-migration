@@ -6,30 +6,27 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorUtility;
 
-class RootPalette implements RootPaletteInterface
+class RootPalettesExtractor implements RootPalettesExtractorInterface
 {
     private array $rootPalette = [];
+
+    private BrowserPageInterface $browserPage;
 
     /**
      * @throws BrowserScriptException
      */
     public function __construct(BrowserPageInterface $browserPage)
     {
-        if(empty($this->rootPalette)) {
-            $this->rootPalette = ColorUtility::parseSubpalettes(
-                $this->evaluate($browserPage)
-            );
-        }
-
+        $this->browserPage = $browserPage;
         return $this;
     }
 
     /**
      * @throws BrowserScriptException
      */
-    protected function evaluate(BrowserPageInterface $browserPage) :array
+    public function ExtractRootPalettes(): RootPalettesExtractor
     {
-        $elementStyles = $browserPage->evaluateScript('brizy.dom.getRootPropertyStyles', []);
+        $elementStyles = $this->browserPage->evaluateScript('brizy.dom.getRootPropertyStyles', []);
 
         if (isset($elementStyles['error'])) {
             throw new BrowserScriptException($elementStyles['error']);
@@ -41,15 +38,16 @@ class RootPalette implements RootPaletteInterface
             );
         }
 
-        return $elementStyles['data'];
+        $this->rootPalette = ColorUtility::parseSubpalettes(
+            $elementStyles['data']
+        );
+
+        return $this;
     }
 
-    public function getSubPaletteByName($name): array
+    public function getRootPalettes(): array
     {
-        if (array_key_exists($name, $this->rootPalette)) {
-            return $this->rootPalette[$name];
-        }
-        return $this->rootPalette['subpalette1'] ?? [];
+        return $this->rootPalette ?? [];
     }
 
 }

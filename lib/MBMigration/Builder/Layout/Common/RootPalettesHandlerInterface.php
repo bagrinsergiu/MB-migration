@@ -2,9 +2,8 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
-use MBMigration\Browser\BrowserPageInterface;
-
-interface RootPaletteInterface
+interface RootPalettesHandlerInterface
 {
+    public function getSubPalettes(): array;
     public function getSubPaletteByName($name): array;
 }
