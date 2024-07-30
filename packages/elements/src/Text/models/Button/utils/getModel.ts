@@ -26,6 +26,11 @@ const getBgColor = mPipe(
 );
 
 const getBorderWidth = mPipe(Obj.readKey("border-width"), Num.read);
+const getBorderRadius = mPipe(
+  Obj.readKey("border-top-left-radius"),
+  Str.read,
+  parseFloat
+);
 const getTransform = mPipe(Obj.readKey("text-transform"), Str.read);
 const getText = pipe(Obj.readKey("text"), Str.read, onNullish("BUTTON"));
 
@@ -43,6 +48,7 @@ export const getStyleModel = (node: Element): Record<string, Literal> => {
   const bgColor = getBgColor(style);
   const opacity = +style.opacity;
   const borderWidth = getBorderWidth(style);
+  const borderRadius = getBorderRadius(style);
 
   return {
     ...(color && {
@@ -67,6 +73,7 @@ export const getStyleModel = (node: Element): Record<string, Literal> => {
       hoverBgColorOpacity: 0.8,
       hoverBgColorPalette: ""
     }),
+    ...(borderRadius && { borderRadiusType: "custom", borderRadius }),
     ...(borderWidth === undefined && { borderStyle: "none" })
   };
 };
