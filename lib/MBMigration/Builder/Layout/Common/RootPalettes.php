@@ -2,13 +2,13 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
-class RootPalettesHandler implements RootPalettesHandlerInterface
+class RootPalettes implements RootPalettesInterface
 {
     private array $rootPalettes;
 
-    public function __construct(RootPalettesExtractor $RootPalettes)
+    public function __construct(array $rootPalettes)
     {
-        $this->rootPalettes = $RootPalettes->getRootPalettes();
+        $this->rootPalettes = $rootPalettes;
         return $this;
     }
 

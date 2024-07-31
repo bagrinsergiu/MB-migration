@@ -6,7 +6,7 @@ use Exception;
 use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
-use MBMigration\Builder\Layout\Common\RootPalettesHandler;
+use MBMigration\Builder\Layout\Common\RootPalettes;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
@@ -106,7 +106,6 @@ class PageController
                 $headItem = $this->cache->get('header', 'mainSection');
                 $footerItem = $this->cache->get('footer', 'mainSection');
                 $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
-                $RootPalettes = new RootPalettesHandler($RootPalettesExtracted->ExtractRootPalettes());
 
                 $themeContext = new ThemeContext(
                     $design,
@@ -123,7 +122,7 @@ class PageController
                     $itemsID,
                     $slug,
                     $pageMapping,
-                    $RootPalettes
+                    $RootPalettesExtracted->extractRootPalettes()
                 );
 
                 /**

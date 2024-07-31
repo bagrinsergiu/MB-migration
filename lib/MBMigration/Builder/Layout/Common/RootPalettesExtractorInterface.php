@@ -6,6 +6,5 @@ use MBMigration\Browser\BrowserPageInterface;
 
 interface RootPalettesExtractorInterface
 {
-    public function ExtractRootPalettes(): RootPalettesExtractor;
-    public function getRootPalettes(): array;
+    public function ExtractRootPalettes(): RootPalettes;
 }

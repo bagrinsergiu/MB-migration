@@ -8,30 +8,22 @@ use MBMigration\Builder\Utils\ColorUtility;
 
 class RootPalettesExtractor implements RootPalettesExtractorInterface
 {
-    private array $rootPalette = [];
-
-    private static ?array $storedPalette = null;
+    private static RootPalettes $storedPalette;
 
     private BrowserPageInterface $browserPage;
 
-    /**
-     * @throws BrowserScriptException
-     */
     public function __construct(BrowserPageInterface $browserPage)
     {
         $this->browserPage = $browserPage;
-        if (self::$storedPalette !== null) {
-            $this->rootPalette = self::$storedPalette;
-        }
     }
 
     /**
      * @throws BrowserScriptException
      */
-    public function ExtractRootPalettes(): RootPalettesExtractor
+    public function extractRootPalettes(): RootPalettes
     {
         if (self::$storedPalette !== null) {
-            return $this;
+            return self::$storedPalette;
         }
 
         $elementStyles = $this->browserPage->evaluateScript('brizy.dom.getRootPropertyStyles', []);
@@ -46,18 +38,10 @@ class RootPalettesExtractor implements RootPalettesExtractorInterface
             );
         }
 
-        $this->rootPalette = ColorUtility::parseSubpalettes(
+        $rootPalettes = ColorUtility::parseSubpalettes(
             $elementStyles['data']
         );
 
-        self::$storedPalette = $this->rootPalette;
-
-        return $this;
+        return self::$storedPalette =  new RootPalettes($rootPalettes);
     }
-
-    public function getRootPalettes(): array
-    {
-        return $this->rootPalette ?? [];
-    }
-
 }
