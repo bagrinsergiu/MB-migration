@@ -10,6 +10,8 @@ class RootPalettesExtractor implements RootPalettesExtractorInterface
 {
     private array $rootPalette = [];
 
+    private static ?array $storedPalette = null;
+
     private BrowserPageInterface $browserPage;
 
     /**
@@ -18,7 +20,9 @@ class RootPalettesExtractor implements RootPalettesExtractorInterface
     public function __construct(BrowserPageInterface $browserPage)
     {
         $this->browserPage = $browserPage;
-        return $this;
+        if (self::$storedPalette !== null) {
+            $this->rootPalette = self::$storedPalette;
+        }
     }
 
     /**
@@ -26,6 +30,10 @@ class RootPalettesExtractor implements RootPalettesExtractorInterface
      */
     public function ExtractRootPalettes(): RootPalettesExtractor
     {
+        if (self::$storedPalette !== null) {
+            return $this;
+        }
+
         $elementStyles = $this->browserPage->evaluateScript('brizy.dom.getRootPropertyStyles', []);
 
         if (isset($elementStyles['error'])) {
@@ -41,6 +49,8 @@ class RootPalettesExtractor implements RootPalettesExtractorInterface
         $this->rootPalette = ColorUtility::parseSubpalettes(
             $elementStyles['data']
         );
+
+        self::$storedPalette = $this->rootPalette;
 
         return $this;
     }
