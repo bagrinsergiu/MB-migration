@@ -11,12 +11,14 @@ interface MenuItemData {
   item: MenuItemElement;
   itemBg: MenuItemElement;
   itemPadding: MenuItemElement;
+  itemMobile: MenuItemElement;
   families: Record<string, string>;
   defaultFamily: string;
 }
 
 const getV = (entry: MenuItemData) => {
-  const { item, itemBg, itemPadding, families, defaultFamily } = entry;
+  const { item, itemBg, itemPadding, itemMobile, families, defaultFamily } =
+    entry;
 
   const model = {
     "font-family": undefined,
@@ -61,7 +63,19 @@ const getV = (entry: MenuItemData) => {
     defaultFamily: defaultFamily
   });
 
-  return { ...v, ...mMenu, ...bgV, ...paddingV };
+  const mobileModel = {
+    "m-menu-icon-color-hex": undefined,
+    "m-menu-icon-color-opacity": undefined
+  };
+
+  const mobileV = getModel({
+    node: itemMobile,
+    modelDefaults: mobileModel,
+    families: families,
+    defaultFamily: defaultFamily
+  });
+
+  return { ...v, ...mMenu, ...bgV, ...paddingV, ...mobileV };
 };
 
 const getHoverV = (entry: MenuItemData) => {
@@ -98,6 +112,7 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
     itemSelector,
     itemBgSelector,
     itemPaddingSelector,
+    itemMobileSelector,
     hover,
     families,
     defaultFamily
@@ -107,6 +122,7 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
   const itemPaddingElement = document.querySelector(
     itemPaddingSelector.selector
   );
+  const itemMobileElement = document.querySelector(itemMobileSelector.selector);
 
   if (!itemElement) {
     return {
@@ -123,6 +139,11 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
       error: `Element with selector "${itemPaddingSelector}" not found`
     };
   }
+  if (!itemMobileElement) {
+    return {
+      error: `Element with selector "${itemPaddingSelector}" not found`
+    };
+  }
 
   const item = { item: itemElement, pseudoEl: itemSelector.pseudoEl };
   const itemBg = { item: itemBgElement, pseudoEl: itemBgSelector.pseudoEl };
@@ -130,12 +151,33 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
     item: itemPaddingElement,
     pseudoEl: itemPaddingSelector.pseudoEl
   };
+
+  const _mobileNavButton =
+    itemMobileElement.querySelector("#mobile-nav-button") ?? itemMobileElement;
+  const itemMobile = {
+    item: _mobileNavButton,
+    pseudoEl: itemSelector.pseudoEl
+  };
   let data = {};
 
   if (!hover) {
-    data = getV({ item, itemBg, itemPadding, families, defaultFamily });
+    data = getV({
+      item,
+      itemBg,
+      itemPadding,
+      itemMobile,
+      families,
+      defaultFamily
+    });
   } else {
-    data = getHoverV({ item, itemBg, itemPadding, families, defaultFamily });
+    data = getHoverV({
+      item,
+      itemBg,
+      itemPadding,
+      itemMobile,
+      families,
+      defaultFamily
+    });
   }
 
   return createData({ data });
