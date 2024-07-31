@@ -8,7 +8,7 @@ use MBMigration\Builder\Utils\ColorUtility;
 
 class RootPalettesExtractor implements RootPalettesExtractorInterface
 {
-    private static RootPalettes $storedPalette;
+    private static $storedPalette;
 
     private BrowserPageInterface $browserPage;
 

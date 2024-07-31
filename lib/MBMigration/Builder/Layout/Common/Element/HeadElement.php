@@ -190,6 +190,8 @@ abstract class HeadElement extends AbstractElement
         );
 
         $menuItemSelector = $this->getThemeMenuItemSelector();
+        $itemMobileSelector = $this->getThemeMenuItemMobileSelector();
+
         $menuFont = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
@@ -213,6 +215,7 @@ abstract class HeadElement extends AbstractElement
         // -------------------------------------
         $menuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
             'itemSelector' => $menuItemSelector,
+            'itemMobileSelector' => $itemMobileSelector,
             'itemBgSelector' => $this->getThemeMenuItemBgSelector(),
             'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
             'families' => $families,
@@ -278,6 +281,8 @@ abstract class HeadElement extends AbstractElement
     abstract protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent;
 
     abstract protected function getThemeMenuItemSelector(): array;
+
+    abstract protected function getThemeMenuItemMobileSelector(): array;
 
     abstract protected function getThemeParentMenuItemSelector(): array;
 
