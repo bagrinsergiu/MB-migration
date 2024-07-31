@@ -78,15 +78,13 @@ export const getModel = (data: Model) => {
         break;
       }
       case "hover-color-hex":
-      case "color-hex":
-      case "m-menu-icon-color-hex": {
+      case "color-hex": {
         const toHex = parseColorString(`${styles["color"]}`);
         dic[toCamelCase(key)] = toHex?.hex ?? "#ffffff";
         break;
       }
       case "hover-color-opacity":
-      case "color-opacity":
-      case "m-menu-icon-color-opacity": {
+      case "color-opacity": {
         const toHex = parseColorString(`${styles["color"]}`);
         dic[toCamelCase(key)] = toHex?.opacity ?? 1;
         dic[toCamelCase(key)] = styles["opacity"] ?? undefined;
