@@ -16,6 +16,10 @@ const v = {
   "line-height": undefined,
   "letter-spacing": undefined,
   "font-style": "",
+  uppercase: false,
+  borderColorHex: undefined,
+  borderColorOpacity: 1,
+  borderWidth: 1,
   colorHex: undefined,
   colorOpacity: 1
 };
@@ -84,6 +88,35 @@ export const getModel = (data: Model) => {
         const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
 
         dic[toCamelCase(key)] = +(toHex?.opacity ?? opacity);
+        break;
+      }
+      case "uppercase": {
+        const value = `${styles["text-transform"]}`;
+        const isUppercase = value === "uppercase" ? "true" : "false";
+
+        dic[toCamelCase(key)] = isUppercase;
+        break;
+      }
+      case "borderColorHex": {
+        const toHex = parseColorString(`${styles["border-bottom-color"]}`);
+
+        dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
+        break;
+      }
+      case "borderColorOpacity": {
+        const toHex = parseColorString(`${styles["border-bottom-color"]}`);
+        const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
+
+        dic[toCamelCase(key)] = +(toHex?.opacity ?? opacity);
+        break;
+      }
+      case "borderWidth": {
+        const borderWidth = `${styles["border-bottom-width"]}`.replace(
+          /px/g,
+          ""
+        );
+
+        dic[toCamelCase(key)] = +(borderWidth ?? 1);
         break;
       }
       default: {
