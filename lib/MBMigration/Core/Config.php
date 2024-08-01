@@ -124,6 +124,7 @@ class Config
         self::$pathLogFile = 'php://stdout';
 
         self::$endPointApi = [
+            'clearcompileds' => '/clearcompileds',
             'globalBlocks' => '/global_blocks',
             'team_members' => '/team_members',
             'menus/create' => '/menus/create',

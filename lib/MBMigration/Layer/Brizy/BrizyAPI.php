@@ -471,6 +471,25 @@ class BrizyAPI extends Utils
         return $result[$filter];
     }
 
+    public function clearCompileds($projectId)
+        {
+            $result = $this->httpClient('POST', $this->createPrivateUrlAPI('projects').'/'.$projectId.'/clearcompileds', [
+                'project' => $projectId,
+            ]);
+
+            if (!isset($filter)) {
+                return $result;
+            }
+
+            $result = json_decode($result['body'], true);
+
+            if (!is_array($result)) {
+                return false;
+            }
+
+            return $result[$filter];
+        }
+
 
     /**
      * @throws Exception

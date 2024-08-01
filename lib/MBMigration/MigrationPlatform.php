@@ -238,6 +238,8 @@ class MigrationPlatform
 
         $this->launch($parentPages);
 
+        $this->brizyApi->clearCompileds($projectID_Brizy);
+
         Logger::instance()->info('Project migration completed successfully!');
 
         $this->logFinalProcess($this->startTime);
