@@ -91,4 +91,9 @@ class Head extends HeadElement
             ->set_bgColorHex($backgroundColorHex)
             ->set_bgColorOpacity($opacity);
     }
+
+    protected function getThemeMenuItemMobileSelector(): array
+    {
+        return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
+    }
 }

@@ -42,6 +42,6 @@ class RootPalettesExtractor implements RootPalettesExtractorInterface
             $elementStyles['data']
         );
 
-        return self::$storedPalette =  new RootPalettes($rootPalettes);
+        return self::$storedPalette = new RootPalettes($rootPalettes);
     }
 }
