@@ -190,7 +190,7 @@ class MigrationPlatform
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
         }
 
-        MediaController::setFavicon($settings['favicon'], $this->projectId, $this->brizyApi, $this->QueryBuilder);
+        MediaController::setFavicon($settings['favicon'] ?? null, $this->projectId, $this->brizyApi, $this->QueryBuilder);
 
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
@@ -237,6 +237,8 @@ class MigrationPlatform
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
         $this->launch($parentPages);
+
+        $this->brizyApi->clearCompileds($projectID_Brizy);
 
         Logger::instance()->info('Project migration completed successfully!');
 

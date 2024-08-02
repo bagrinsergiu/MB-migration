@@ -16,7 +16,7 @@ export interface Data {
 export const styleExtractor = (_entry: Data): Output => {
   const entry = window.isDev ? getDataByEntry(_entry) : _entry;
 
-  const { selector, psevdoElement, styleProperties } = entry;
+  const { selector, pseudoElement, styleProperties } = entry;
 
   const data: Record<string, Literal> = {};
   const element = selector ? document.querySelector(selector) : undefined;
@@ -27,7 +27,7 @@ export const styleExtractor = (_entry: Data): Output => {
     };
   }
 
-  const computedStyles = getComputedStyle(element, psevdoElement);
+  const computedStyles = getComputedStyle(element, pseudoElement);
 
   if (styleProperties)
     styleProperties.forEach((styleName: string) => {

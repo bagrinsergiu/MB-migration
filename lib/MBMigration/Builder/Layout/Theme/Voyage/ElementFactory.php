@@ -62,13 +62,13 @@ class ElementFactory  extends AbstractThemeElementFactory
             case 'right-form-with-text':
                 return new RightForm($this->blockKit['blocks']['form'], $browserPage);
             case 'event-list-layout':
-                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $browserPage, $this->getQueryBuilder());
+//                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $browserPage, $this->getQueryBuilder());
             case 'event-grid-layout':
-                return new EventGridLayout($this->blockKit['blocks']['event-grid-layout'], $browserPage, $this->getQueryBuilder());
+//                return new EventGridLayout($this->blockKit['blocks']['event-grid-layout'], $browserPage, $this->getQueryBuilder());
 //            case 'event-gallery-layout':
 //                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $browserPage);
             case 'event-tile-layout':
-                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
+//                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
             case 'event-calendar-layout':
                 return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage, $this->getQueryBuilder());
             case 'gallery-layout':

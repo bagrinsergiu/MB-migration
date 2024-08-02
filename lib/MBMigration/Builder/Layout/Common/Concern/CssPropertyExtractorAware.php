@@ -14,7 +14,7 @@ trait CssPropertyExtractorAware
         BrowserPageInterface  $browserPage,
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
-        $psevdoElement = null
+        $pseudoElement = null
     ) {
 
         $params = [
@@ -24,8 +24,8 @@ trait CssPropertyExtractorAware
             'defaultFamily' => $default_fonts,
         ];
 
-        if(isset($psevdoElement)){
-            $params['psevdoElement'] = $psevdoElement;
+        if(isset($pseudoElement)){
+            $params['pseudoElement'] = $pseudoElement;
         }
 
         $elementStyles = $browserPage->evaluateScript(
@@ -51,26 +51,8 @@ trait CssPropertyExtractorAware
         $styles,
         $browserPage,
         $families = [],
-        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
-    ) {
-
-        return $this->evaluate(
-            'brizy.getStyles',
-            $selectorSectionStyles,
-            $styles,
-            $browserPage,
-            $families,
-            $default_fonts
-        );
-    }
-
-    protected function getDomPsevdoElement(
-        $selectorSectionStyles,
-        $psevdoElement,
-        $styles,
-        $browserPage,
-        $families = [],
-        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
+        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+        $pseudoElement = null
     ) {
 
         return $this->evaluate(
@@ -80,7 +62,22 @@ trait CssPropertyExtractorAware
             $browserPage,
             $families,
             $default_fonts,
-            $psevdoElement
+            $pseudoElement
+        );
+    }
+
+    protected function getNodeSubPalette(
+        $selectorSectionStyles,
+        $browserPage
+    ) {
+        return $this->evaluate(
+            'brizy.dom.detectSubpalette',
+            $selectorSectionStyles,
+            $styles = [],
+            $browserPage,
+            $families = [],
+            $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+            $pseudoElement = null
         );
     }
 

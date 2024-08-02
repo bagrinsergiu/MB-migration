@@ -35,5 +35,5 @@ interface ThemeContextInterface
 
     public function getUrlMap(): array;
 
-    public function getPalette(): array;
+    public function getRootPalettes(): RootPalettesInterface;
 }

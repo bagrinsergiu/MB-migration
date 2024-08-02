@@ -6,8 +6,12 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
+use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Core\Logger;
+use PHPUnit\Exception;
 
 abstract class GalleryLayout extends AbstractElement
 {
@@ -22,9 +26,14 @@ abstract class GalleryLayout extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        $color = $this->obtainPsevdoElementStyles($elementContext, $this->browserPage, '.slick-next', ':before');
-        $colorArrows = ColorConverter::convertColorRgbToHex($color);
-        $colorArrows = $colorArrows['color'] ?? '#FFFFFF';
+        try{
+            $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"] .slick-next';
+
+            $colorArrowsStyles = $this->getDomElementStyles($selector, ['color'], $this->browserPage, [], '','::before');
+            $colorArrows = ColorConverter::convertColorRgbToHex($colorArrowsStyles['color']);
+        } catch (Exception|ElementNotFound|BrowserScriptException|BadJsonProvided $e){
+            $colorArrows = '#FFFFFF';
+        }
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
         $videoJson = json_decode($this->brizyKit['video'], true);
@@ -36,14 +45,14 @@ abstract class GalleryLayout extends AbstractElement
         $autoplay = count($mbSection['items']) <= 1 ? false : $declaredAutoplay;
         //$animation = $mbSection['settings']['sections']['gallery']['transition'] ?? 'Slide';
 
-        $slideDuration = 0.5;
-        $transitionDuration = 0.1;
-        if (isset($mbSection['settings']['sections']['gallery']['slide_duration'])) {
-            $slideDuration = (float)$mbSection['settings']['sections']['gallery']['slide_duration'] ?? 0.5;
-        }
-        if (isset($mbSection['settings']['sections']['gallery']['transition_duration'])) {
-            $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
-        }
+//        $slideDuration = 0.5;
+//        $transitionDuration = 0.1;
+//        if (isset($mbSection['settings']['sections']['gallery']['slide_duration'])) {
+//            $slideDuration = (float)$mbSection['settings']['sections']['gallery']['slide_duration'] ?? 0.5;
+//        }
+//        if (isset($mbSection['settings']['sections']['gallery']['transition_duration'])) {
+//            $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
+//        }
 
         $brizySection->getValue()
             ->set_sliderArrowsColorHex($colorArrows)
@@ -65,9 +74,9 @@ abstract class GalleryLayout extends AbstractElement
             ->set_sliderDots($markers ? "circle" : "none")
             ->set_sliderArrows($arrows ? "heavy" : "none")
             ->set_sliderAutoPlay($autoplay ? "on" : "off")
-            ->set_animationName($autoplay ? 'slideInRight' : 'none') // as there is only one animation matc
-            ->set_animationDuration($transitionDuration * 1000)
-            ->set_animationDelay($slideDuration * 1000);
+            ->set_animationName($autoplay ? 'slideInRight' : 'none');// as there is only one animation matc
+//            ->set_animationDuration($transitionDuration * 1000)
+//            ->set_animationDelay($slideDuration * 1000);
 
         $brizySectionItems = [];
 

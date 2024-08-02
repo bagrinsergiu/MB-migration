@@ -16,6 +16,8 @@ export const allowedTags = [
   "LI"
 ];
 
+export const ignoreStyleExtracting = ["A"];
+
 export const exceptExtractingStyle = ["UL", "OL"];
 
 export const defaultDesktopLineHeight = "1_3";
