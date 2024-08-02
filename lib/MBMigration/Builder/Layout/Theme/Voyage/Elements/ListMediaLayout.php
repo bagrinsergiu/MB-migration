@@ -35,6 +35,13 @@ class ListMediaLayout extends AbstractElement
         $detailsSection = new BrizyComponent(json_decode($this->brizyKit['details'], true));
         $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0, 0, 0));
 
+        $mbSection = $data->getMbSection();
+
+        $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
+
+        $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
+
         $this->handleRichTextHeadFromItems(
             $elementContext,
             $this->browserPage,
@@ -77,6 +84,43 @@ class ListMediaLayout extends AbstractElement
         $brizySection->getItemValueWithDepth(0, 1, 0, 0, 0)
             ->set_source($collectionTypeUri)
             ->set_detailPage("{{ brizy_dc_url_post id=\"".$detailCollectionItem['id']."\" }}")
+
+            ->set_titleColorHex()
+            ->set_titleColorOpacity()
+            ->set_titleColorPalette()
+
+            ->set_hoverTitleColorHex()
+            ->set_hoverTitleColorOpacity()
+            ->set_hoverTitleColorPalette()
+
+            ->set_metaLinksColorHex()
+            ->set_metaLinksColorOpacity()
+            ->set_metaLinksColorPalette()
+
+            ->set_hoverMetaLinksColorHex()
+            ->set_hoverMetaLinksColorOpacity()
+            ->set_hoverMetaLinksColorPalette()
+
+            ->set_filterBgColorHex()
+            ->set_filterBgColorOpacity()
+            ->set_filterBgColorPalette()
+
+            ->set_paginationColorHex()
+            ->set_paginationColorOpacity()
+            ->set_paginationColorPalette()
+
+            ->set_activePaginationColorHex()
+            ->set_activePaginationColorOpacity()
+            ->set_activePaginationColorPalette()
+
+            ->set_hoverPaginationColorHex()
+            ->set_hoverPaginationColorOpacity()
+            ->set_hoverPaginationColorPalette()
+
+            ->set_resultsHeadingColorHex()
+            ->set_resultsHeadingColorOpacity()
+            ->set_resultsHeadingColorPalette()
+
             ->set_defaultCategory($data->getThemeContext()->getSlug());
 
         return $brizySection;
