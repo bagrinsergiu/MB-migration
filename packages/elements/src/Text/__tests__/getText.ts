@@ -56,6 +56,10 @@ const ex1: Data = {
                 _styles: ["button"],
                 text: "I'm New ",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontSize: 1.6153,
+                fontWeight: 600,
                 iconName: "arrow-alt-circle-right",
                 linkExternal: "/about-us/who-we-are",
                 linkType: "external",
@@ -313,6 +317,8 @@ const ex5: Data = {
                 _styles: ["button"],
                 text: "LINK",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
                 linkExternal: "http://google.com/",
                 linkType: "external",
                 linkExternalBlank: "on"
@@ -403,6 +409,8 @@ const ex6: Data = {
                 _styles: ["button"],
                 text: "google",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
                 linkExternal: "http://google.com/",
                 linkType: "external",
                 linkExternalBlank: "on"
@@ -690,6 +698,8 @@ const ex9: Data = {
                 _styles: ["button"],
                 text: "google",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
                 linkExternal: "http://google.com/",
                 linkType: "external",
                 linkExternalBlank: "on"
@@ -712,6 +722,8 @@ const ex9: Data = {
                 _styles: ["button"],
                 text: "google",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
                 linkExternal: "http://google.com/",
                 linkType: "external",
                 linkExternalBlank: "on"
@@ -764,6 +776,10 @@ const ex10: Data = {
                 _styles: ["button"],
                 text: "I'm New ",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontSize: 1.6153,
+                fontWeight: 600,
                 iconName: "arrow-alt-circle-right",
                 linkExternal: "/about-us/who-we-are",
                 linkExternalBlank: "off",
@@ -894,6 +910,8 @@ const ex13: Data = {
                 _styles: ["button"],
                 text: "Get Baptized",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
                 linkExternal: "/contact-us/decision-form",
                 linkType: "external",
                 linkExternalBlank: "off"
@@ -933,6 +951,8 @@ const ex13: Data = {
                 _styles: ["button"],
                 text: "join the baptism support team",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
                 linkExternal:
                   "https://docs.google.com/forms/d/1Bt4ajELyGHt1jYtkf7X9QG_FTKcqX0p5r9xcxSCckYk/edit",
                 linkType: "external",
@@ -1081,6 +1101,8 @@ const ex14: Data = {
                 _styles: ["button"],
                 text: "Click Here for Directions",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
                 linkExternal: "https://maps.app.goo.gl/Sb33XGmMfvqtsSAt5",
                 linkType: "external",
                 linkExternalBlank: "on"
@@ -1438,6 +1460,8 @@ const ex23: Data = {
                 _styles: ["button"],
                 text: "More",
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
                 linkExternal: "/about-us/who-we-are",
                 linkType: "external",
                 linkExternalBlank: "on"
@@ -1489,11 +1513,49 @@ const ex24: Data = {
                 _id: "1",
                 _styles: ["button"],
                 borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
                 linkExternal:
                   "https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&usp=sharing",
                 linkExternalBlank: "on",
                 linkType: "external",
                 text: "Visit our Prayer Path"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 23 (Voyage button border)
+const ex25: Data = {
+  html: `<div class="text-content text-1 editable" data-id="25409950" data-category="text" id="accordion-25409945-body" role="region" aria-labelledby="accordion-25409945-title"><div><p><a href="https://f4c1f8a9.churchtrac.com/connect" class="sites-button cloverlinks" role="button" data-location="external" data-detail="https://f4c1f8a9.churchtrac.com/connect" data-category="button" target="_blank">make a donation</a><br></p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"25409950\"]" },
+  output: {
+    data: [
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                linkExternal: "https://f4c1f8a9.churchtrac.com/connect",
+                linkExternalBlank: "on",
+                linkType: "external",
+                text: "make a donation"
               }
             }
           ]
@@ -1528,7 +1590,8 @@ describe.each([
   ex21,
   ex22,
   ex23,
-  ex24
+  ex24,
+  ex25
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
