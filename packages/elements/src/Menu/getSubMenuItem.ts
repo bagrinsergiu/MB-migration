@@ -1,4 +1,5 @@
 import { getModel } from "./utils/getModel";
+import { toMenuItemElement } from "./utils/toMenuItemElement";
 import {
   MenuItemElement,
   MenuItemEntry,
@@ -76,7 +77,11 @@ const getHoverV = (entry: MenuItemData) => {
     families: families,
     defaultFamily: defaultFamily
   });
-  return { ...prefixed(v, "hoverSubMenu"), ...prefixed(bgV, "hoverSubMenu") };
+  return {
+    ...prefixed(v, "hoverSubMenu"),
+    ...prefixed(v, "activeSubMenu"),
+    ...prefixed(bgV, "hoverSubMenu")
+  };
 };
 
 const getSubMenuItem = (entry: MenuItemEntry): Output => {
@@ -97,11 +102,16 @@ const getSubMenuItem = (entry: MenuItemEntry): Output => {
   }
 
   const item = { item: itemElement, pseudoEl: itemSelector.pseudoEl };
+  const itemHover = toMenuItemElement({
+    node: itemElement,
+    selector: itemSelector,
+    targetSelector: "li > a"
+  }) ?? { item: itemElement, pseudoEl: itemSelector.pseudoEl };
   const itemBg = { item: itemBgElement, pseudoEl: itemBgSelector.pseudoEl };
 
   let data = {};
   if (!hover) data = getV({ item, itemBg, families, defaultFamily });
-  else data = getHoverV({ item, itemBg, families, defaultFamily });
+  else data = getHoverV({ item: itemHover, itemBg, families, defaultFamily });
 
   return createData({ data });
 };
