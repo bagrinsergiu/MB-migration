@@ -74,6 +74,7 @@ abstract class GalleryLayout extends AbstractElement
             ->set_sliderDots($markers ? "circle" : "none")
             ->set_sliderArrows($arrows ? "heavy" : "none")
             ->set_sliderAutoPlay($autoplay ? "on" : "off")
+            ->set_sliderAutoPlaySpeed(5)
             ->set_animationName($autoplay ? 'slideInRight' : 'none');// as there is only one animation matc
 //            ->set_animationDuration($transitionDuration * 1000)
 //            ->set_animationDelay($slideDuration * 1000);
