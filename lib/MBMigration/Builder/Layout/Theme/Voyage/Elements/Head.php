@@ -38,7 +38,9 @@ class Head extends HeadElement
     {
         // because of a fantastic idea to not have the option the place the icon per menu item
         $menuComponent = $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
-        $menuComponent->getValue()->set_iconPosition('right');
+        $menuComponent->getValue()
+            ->set_iconPosition('right')
+            ->set_letterSpacing(1.5);
     }
 
     public function getThemeMenuItemSelector(): array
