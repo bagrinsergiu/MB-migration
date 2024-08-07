@@ -72,35 +72,42 @@ export const getModel = (data: Model) => {
         } else {
           // Remove 'px' and any extra whitespace
           const letterSpacingValue = `${value}`.replace(/px/g, "").trim();
-          Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
-          dicKeyForDevices(key, +letterSpacingValue);
+          Object.assign(dic, dicKeyForDevices(key, letterSpacingValue));
         }
         break;
       }
       case "hover-color-hex":
       case "color-hex":
-      case "m-menu-icon-color-hex": {
+      case "active-color-hex": {
         const toHex = parseColorString(`${styles["color"]}`);
         dic[toCamelCase(key)] = toHex?.hex ?? "#ffffff";
         break;
       }
       case "hover-color-opacity":
       case "color-opacity":
-      case "m-menu-icon-color-opacity": {
+      case "active-color-opacity": {
         const toHex = parseColorString(`${styles["color"]}`);
-        dic[toCamelCase(key)] = toHex?.opacity ?? 1;
-        dic[toCamelCase(key)] = styles["opacity"] ?? undefined;
+        const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
+
+        dic[toCamelCase(key)] = +(toHex?.opacity ?? opacity);
         break;
       }
       case "bg-color-hex":
-      case "menu-bg-color-hex": {
+      case "menu-bg-color-hex":
+      case "m-menu-icon-color-hex":
+      case "m-menu-bg-color-hex": {
         const toHex = parseColorString(`${styles["background-color"]}`);
         dic[toCamelCase(key)] = toHex?.hex ?? "#ffffff";
         break;
       }
-      case "bg-color-opacity": {
+      case "bg-color-opacity":
+      case "menu-bg-color-opacity":
+      case "m-menu-icon-color-opacity":
+      case "m-menu-bg-color-opacity": {
         const toHex = parseColorString(`${styles["background-color"]}`);
-        dic[toCamelCase(key)] = toHex?.opacity ?? 1;
+        const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
+
+        dic[toCamelCase(key)] = +(toHex?.opacity ?? opacity);
         break;
       }
       default: {

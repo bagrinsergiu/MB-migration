@@ -1,4 +1,5 @@
 import { getModel } from "./utils/getModel";
+import { toMenuItemElement } from "./utils/toMenuItemElement";
 import {
   MenuItemElement,
   MenuItemEntry,
@@ -11,13 +12,13 @@ interface MenuItemData {
   item: MenuItemElement;
   itemBg: MenuItemElement;
   itemPadding: MenuItemElement;
-  itemMobile?: MenuItemElement;
+  itemMobileIcon?: MenuItemElement;
   families: Record<string, string>;
   defaultFamily: string;
 }
 
 const getV = (entry: MenuItemData) => {
-  const { item, itemBg, itemPadding, itemMobile, families, defaultFamily } =
+  const { item, itemBg, itemPadding, itemMobileIcon, families, defaultFamily } =
     entry;
 
   const model = {
@@ -42,7 +43,9 @@ const getV = (entry: MenuItemData) => {
 
   const bgModel = {
     "menu-bg-color-hex": undefined,
-    "menu-bg-color-opacity": 1
+    "menu-bg-color-opacity": 1,
+    "m-menu-bg-color-hex": undefined,
+    "m-menu-bg-color-opacity": 1
   };
 
   const bgV = getModel({
@@ -63,26 +66,26 @@ const getV = (entry: MenuItemData) => {
     defaultFamily: defaultFamily
   });
 
-  const mobileModel = {
+  const mobileIconV = {};
+
+  const mobileIconModel = {
     "m-menu-icon-color-hex": undefined,
     "m-menu-icon-color-opacity": undefined
   };
 
-  const mobileV = {};
-
-  if (itemMobile) {
+  if (itemMobileIcon) {
     Object.assign(
-      mobileV,
+      mobileIconV,
       getModel({
-        node: itemMobile,
-        modelDefaults: mobileModel,
+        node: itemMobileIcon,
+        modelDefaults: mobileIconModel,
         families: families,
         defaultFamily: defaultFamily
       })
     );
   }
 
-  return { ...v, ...mMenu, ...bgV, ...paddingV, ...mobileV };
+  return { ...v, ...mMenu, ...bgV, ...paddingV, ...mobileIconV };
 };
 
 const getHoverV = (entry: MenuItemData) => {
@@ -90,7 +93,9 @@ const getHoverV = (entry: MenuItemData) => {
 
   const model = {
     "hover-color-hex": undefined,
-    "hover-color-opacity": undefined
+    "hover-color-opacity": 1,
+    "active-color-hex": undefined,
+    "active-color-opacity": 1
   };
 
   const v = getModel({
@@ -100,6 +105,7 @@ const getHoverV = (entry: MenuItemData) => {
     defaultFamily: defaultFamily
   });
 
+  const mMenu = prefixed(v, "mMenu");
   const bgModel = {
     "hover-menu-bg-color-hex": undefined,
     "hover-menu-bg-color-opacity": undefined
@@ -111,7 +117,7 @@ const getHoverV = (entry: MenuItemData) => {
     families: families,
     defaultFamily: defaultFamily
   });
-  return { ...v, ...bgV };
+  return { ...v, ...bgV, ...mMenu };
 };
 
 const getMenuItem = (entry: MenuItemEntry): Output => {
@@ -129,7 +135,7 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
   const itemPaddingElement = document.querySelector(
     itemPaddingSelector.selector
   );
-  let itemMobileElement;
+  let itemMobileElement = null;
 
   if (itemMobileSelector) {
     itemMobileElement = document.querySelector(itemMobileSelector.selector);
@@ -151,25 +157,21 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
     };
   }
 
-  const item = { item: itemElement, pseudoEl: itemSelector.pseudoEl };
+  const item = toMenuItemElement({
+    node: itemElement,
+    selector: itemSelector,
+    targetSelector: "#main-navigation li:not(.selected) > a"
+  }) ?? { item: itemElement, pseudoEl: itemSelector.pseudoEl };
   const itemBg = { item: itemBgElement, pseudoEl: itemBgSelector.pseudoEl };
   const itemPadding = {
     item: itemPaddingElement,
     pseudoEl: itemPaddingSelector.pseudoEl
   };
-  let itemMobile;
-
-  if (itemMobileElement) {
-    const mobileNavButton =
-      itemMobileElement.querySelector("#mobile-nav-button");
-
-    if (mobileNavButton) {
-      itemMobile = {
-        item: mobileNavButton,
-        pseudoEl: itemSelector.pseudoEl
-      };
-    }
-  }
+  const itemMobileIcon = toMenuItemElement({
+    node: itemMobileElement,
+    selector: itemMobileSelector,
+    targetSelector: ".mobile-nav-icon > .first"
+  });
 
   let data = {};
 
@@ -178,7 +180,7 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
       item,
       itemBg,
       itemPadding,
-      itemMobile,
+      itemMobileIcon,
       families,
       defaultFamily
     });
