@@ -116,7 +116,7 @@ abstract class GalleryLayout extends AbstractElement
         return $brizySection;
     }
 
-    protected function setSlideImage(BrizyComponent $brizySectionItem, $mbItem, $properties): BrizyComponent
+    protected function setSlideImage(BrizyComponent $brizySectionItem, $mbItem, $properties = []): BrizyComponent
     {
         $brizyComponentValue = $brizySectionItem->getValue();
         Logger::instance()->debug('ImageSrc (content): '.$mbItem['content']);
