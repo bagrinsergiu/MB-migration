@@ -20,6 +20,8 @@ abstract class GalleryLayout extends AbstractElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $rotatorSpeed = 5;
+
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
@@ -77,15 +79,31 @@ abstract class GalleryLayout extends AbstractElement
             ->set_hoverSliderDotsColorPalette('')
 
             ->set_fullHeight('custom')
-            ->set_sectionHeight($mbSection['settings']['sections']['gallery']['max_height'] ?? 650)
+            ->set_sectionHeight(650)
+
+            ->set_mobileFullHeight('custom')
+            ->set_mobileSectionHeight(300)
+
+            ->set_tabletSectionHeight(450)
+            ->set_tabletSectionHeight(450)
 
             ->set_sliderDots($markers ? "circle" : "none")
             ->set_sliderArrows($arrows ? "heavy" : "none")
-            ->set_sliderAutoPlay($autoplay ? "on" : "off")
-            ->set_sliderAutoPlaySpeed(5)
-            ->set_animationName($autoplay ? 'slideInRight' : 'none');// as there is only one animation matc
+            ->set_sliderAutoPlay($autoplay ? "on" : "off");
+//            ->set_animationName($autoplay ? 'slideInRight' : 'none');// as there is only one animation matc
 //            ->set_animationDuration($transitionDuration * 1000)
 //            ->set_animationDelay($slideDuration * 1000);
+
+
+        if(isset($mbSection['settings']['sections']['gallery']['transition']) &&
+            $mbSection['settings']['sections']['gallery']['transition'] !== 'Slide') {
+            $brizySection->getValue()
+                ->set_sliderTransition('off');
+        } else {
+            $brizySection->getValue()
+                ->set_sliderTransition('on')
+                ->set_sliderAutoPlaySpeed($rotatorSpeed);
+        }
 
         $brizySectionItems = [];
 
@@ -141,28 +159,34 @@ abstract class GalleryLayout extends AbstractElement
 
         $brizyComponentValue->set_sizeType('original');
 
-        if (isset($mbItem['settings']['slide']['slide_width'])) {
-            $brizyComponentValue->set_width($mbItem['settings']['slide']['slide_width']);
-            $brizyComponentValue->set_bgImageWidth($mbItem['settings']['slide']['slide_width']);
-            $brizyComponentValue->set_tabletWidth($mbItem['settings']['slide']['slide_width']);
-            $brizyComponentValue->set_mobileWidth($mbItem['settings']['slide']['slide_width']);
-        } elseif (isset($mbItem['settings']['width'])) {
-            $brizyComponentValue->set_width($mbItem['settings']['width']);
-            $brizyComponentValue->set_bgImageWidth($mbItem['settings']['width']);
-            $brizyComponentValue->set_tabletWidth($mbItem['settings']['width']);
-            $brizyComponentValue->set_mobileWidth($mbItem['settings']['width']);
-        }
+        if (isset($mbItem['settings']['sections']['gallery']['max_width']) &&
+            isset($mbItem['settings']['sections']['gallery']['max_height'])) {
+            $brizyComponentValue->set_bgImageWidth($mbItem['settings']['sections']['gallery']['max_width']);
+            $brizyComponentValue->set_bgImageHeight($mbItem['settings']['sections']['gallery']['max_height']);
+        } else {
+            if (isset($mbItem['settings']['slide']['slide_width'])) {
+                $brizyComponentValue->set_width($mbItem['settings']['slide']['slide_width']);
+                $brizyComponentValue->set_bgImageWidth($mbItem['settings']['slide']['slide_width']);
+                $brizyComponentValue->set_tabletWidth($mbItem['settings']['slide']['slide_width']);
+                $brizyComponentValue->set_mobileWidth($mbItem['settings']['slide']['slide_width']);
+            } elseif (isset($mbItem['settings']['width'])) {
+                $brizyComponentValue->set_width($mbItem['settings']['width']);
+                $brizyComponentValue->set_bgImageWidth($mbItem['settings']['width']);
+                $brizyComponentValue->set_tabletWidth($mbItem['settings']['width']);
+                $brizyComponentValue->set_mobileWidth($mbItem['settings']['width']);
+            }
 
-        if (isset($mbItem['settings']['slide']['slide_height'])) {
-            $brizyComponentValue->set_height($mbItem['settings']['slide']['slide_height']);
-            $brizyComponentValue->set_bgImageHeight($mbItem['settings']['slide']['slide_height']);
-            $brizyComponentValue->set_tabletHeight($mbItem['settings']['slide']['slide_height']);
-            $brizyComponentValue->set_mobileHeight($mbItem['settings']['slide']['slide_height']);
-        } elseif (isset($mbItem['settings']['height'])) {
-            $brizyComponentValue->set_height($mbItem['settings']['height']);
-            $brizyComponentValue->set_bgImageHeight($mbItem['settings']['height']);
-            $brizyComponentValue->set_tabletHeight($mbItem['settings']['height']);
-            $brizyComponentValue->set_mobileHeight($mbItem['settings']['height']);
+            if (isset($mbItem['settings']['slide']['slide_height'])) {
+                $brizyComponentValue->set_height($mbItem['settings']['slide']['slide_height']);
+                $brizyComponentValue->set_bgImageHeight($mbItem['settings']['slide']['slide_height']);
+                $brizyComponentValue->set_tabletHeight($mbItem['settings']['slide']['slide_height']);
+                $brizyComponentValue->set_mobileHeight($mbItem['settings']['slide']['slide_height']);
+            } elseif (isset($mbItem['settings']['height'])) {
+                $brizyComponentValue->set_height($mbItem['settings']['height']);
+                $brizyComponentValue->set_bgImageHeight($mbItem['settings']['height']);
+                $brizyComponentValue->set_tabletHeight($mbItem['settings']['height']);
+                $brizyComponentValue->set_mobileHeight($mbItem['settings']['height']);
+            }
         }
 
         return $brizySectionItem;
