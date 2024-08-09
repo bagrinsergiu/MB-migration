@@ -190,12 +190,8 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           container.innerHTML = _node.innerHTML;
 
           const innerButtons = container.querySelectorAll(buttonSelector);
-          innerButtons.forEach((btn) => btn.remove());
 
-          const onlyButtons =
-            (container.textContent?.trim() ?? "").length === 0;
-
-          if (onlyButtons) {
+          if (innerButtons) {
             appendNewText = true;
             let appendedButton = false;
             parentNode.parentElement?.append(_node);

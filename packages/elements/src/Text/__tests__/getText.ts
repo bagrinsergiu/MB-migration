@@ -1487,7 +1487,81 @@ const ex19: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-justify brz-ls-lg-0"><span style="">Hello and welcome to Connection Church Millen! </span><span style="">&nbsp;</span><span style="">We are so glad that you have joined us.&nbsp; If you are new here, we would like to thank you for coming and worshiping with us. If you haven\'t filled out one of our Connect Cards yet, we would really</span><span style=""> love to learn a little more about you!</span><span style="">&nbsp;</span><span style="">. If you would please follow this link <a style="" data-location="existing" data-button="true" data-detail="891913" data-category="link" target="_blank" role="button" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22%2Fcontact-us%2Ffirst-time-guest%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>HERE.</span></a> We \'d love to find out what brought you here and what your experience was like.&nbsp; As well, every Sunday morning we have our Next Steps table available to find out about what YOUR next steps may be as a follower of Christ.</span><span style=""> Thanks again for joining us and please make sure you follow us online on Facebook and Instagram (see links at bottom of page) and visit here often for all the latest info. Keep scrolling below to see all of our current announcements.</span></p>'
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><span style="">Hello and welcome to Connection Church Millen! </span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><span style="">We are so glad that you have joined us.&nbsp; If you are new here, we would like to thank you for coming and worshiping with us. If you haven\'t filled out one of our Connect Cards yet, we would really</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-16 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><span style=""> love to learn a little more about you!</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontSize: 0,
+                fontStyle: "",
+                fontWeight: NaN,
+                letterSpacing: NaN,
+                lineHeight: 1,
+                linkExternal: "/contact-us/first-time-guest",
+                linkExternalBlank: "on",
+                linkType: "external",
+                mobileFontSize: 0,
+                mobileFontStyle: "",
+                mobileFontWeight: NaN,
+                mobileLetterSpacing: NaN,
+                mobileLineHeight: 1,
+                size: "custom",
+                tabletFontSize: 0,
+                tabletFontStyle: "",
+                tabletFontWeight: NaN,
+                tabletLetterSpacing: NaN,
+                tabletLineHeight: 1,
+                text: "HERE."
               }
             }
           ]
@@ -1632,7 +1706,7 @@ const ex23: Data = {
 };
 //#endregion
 
-//#region Example 23 (Voyage button border)
+//#region Example 24 (Voyage button border)
 const ex24: Data = {
   html: `<div class="text-content text-1 editable" data-id="20010041" data-category="text"><div><p><br></p><p style="font-size: 1.0013em; color: rgb(0, 0, 0);"><span class="clovercustom" style="font-weight: 600;">Timberwood Church is a Bible-based church designed to help people experience </span><span class="clovercustom" style="font-weight: 600;">God’s goodness in their lives.</span>&nbsp;</p><p style="font-size: 1.0013em; color: rgb(0, 0, 0);">Through teaching and contemporary musical worship, we seek to make the timeless truth of the Bible relevant for everyday life.&nbsp;</p><p style="font-size: 1.0013em; color: rgb(0, 0, 0);">The purpose of Timberwood Church is to honor God by making more disciples for Jesus Christ.</p><p style="font-size: 1.1264em; font-weight: 600; line-height: 1.625;"><br></p><p style="font-weight: 600; line-height: 1.625; font-size: 1.5019em;"><span class="clovercustom" style="font-size: 1.1666em; font-style: italic; color: rgb(105, 142, 179);">We invite you to worship, serve, and celebrate with us!</span><br><span class="clovercustom" style="color: rgb(0, 0, 0);">Sunday services are at 9 a.m. and 10:30 a.m.</span></p><p style="font-size: 1.1264em; font-weight: 600; line-height: 1.625;"><br></p><p style="font-size: 1.1264em; font-weight: 600; line-height: 1.625;"><a href="https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&amp;usp=sharing" class="sites-button cloverlinks" role="button" data-location="external" data-detail="https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&amp;usp=sharing" data-category="button" target="_blank">Visit our Prayer Path</a> </p></div></div>`,
   //prettier-ignore
@@ -1702,7 +1776,7 @@ const ex24: Data = {
 };
 //#endregion
 
-//#region Example 23 (Voyage button border)
+//#region Example 25 (Voyage button border)
 const ex25: Data = {
   html: `<div class="text-content text-1 editable" data-id="25409950" data-category="text" id="accordion-25409945-body" role="region" aria-labelledby="accordion-25409945-title"><div><p><a href="https://f4c1f8a9.churchtrac.com/connect" class="sites-button cloverlinks" role="button" data-location="external" data-detail="https://f4c1f8a9.churchtrac.com/connect" data-category="button" target="_blank">make a donation</a><br></p></div></div>`,
   //prettier-ignore
@@ -1754,6 +1828,171 @@ const ex25: Data = {
 };
 //#endregion
 
+//#region Example 26 ( Ember text ending with a button)
+const ex26: Data = {
+  html: `<header class="text-content text-1 title-text editable" data-id="23478396" data-category="text"><div><p>PRE-SCHOOL</p><p style="font-size: 0.75em;"><span class="clovercustom" style="font-size: 0.8333em;">Interested In Joining This Team?</span><a href="https://forms.ministryforms.net/viewForm.aspx?formId=10095747-3f27-49ab-a7a7-567fca858af3" data-location="external" data-button="true" data-detail="https://forms.ministryforms.net/viewForm.aspx?formId=10095747-3f27-49ab-a7a7-567fca858af3" data-category="link" target="_blank" class="cloverlinks sites-button" role="button" style="background-color: rgb(255, 255, 255); font-size: 0.8889em;">CLICK HERE</a></p></div></header>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"23478396\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>PRE-SCHOOL</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">Interested In Joining This Team?</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                bgColorHex: "#ffffff",
+                bgColorOpacity: 1,
+                bgColorPalette: "",
+                bgColorType: "solid",
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontSize: 0,
+                fontStyle: "",
+                fontWeight: NaN,
+                hoverBgColorHex: "#ffffff",
+                hoverBgColorOpacity: 0.8,
+                hoverBgColorPalette: "",
+                hoverBgColorType: "solid",
+                letterSpacing: NaN,
+                lineHeight: 1,
+                linkExternal:
+                  "https://forms.ministryforms.net/viewForm.aspx?formId=10095747-3f27-49ab-a7a7-567fca858af3",
+                linkExternalBlank: "on",
+                linkType: "external",
+                mobileFontSize: 0,
+                mobileFontStyle: "",
+                mobileFontWeight: NaN,
+                mobileLetterSpacing: NaN,
+                mobileLineHeight: 1,
+                size: "custom",
+                tabletFontSize: 0,
+                tabletFontStyle: "",
+                tabletFontWeight: NaN,
+                tabletLetterSpacing: NaN,
+                tabletLineHeight: 1,
+                text: "CLICK HERE"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 27 ( Ember text ending with a button)
+const ex27: Data = {
+  html: `<header class="text-content text-1 title-text editable" data-id="23478402" data-category="text"><div><p>BROADCAST VIDEO</p><p style="font-size: 0.625em;">Interested in joining this team?</p><p style="font-size: 0.625em;"><a href="https://forms.ministryforms.net/viewForm.aspx?formId=e6c65131-c32a-49ed-b8c6-e63634a7f0d2" data-location="external" data-button="true" data-detail="https://forms.ministryforms.net/viewForm.aspx?formId=e6c65131-c32a-49ed-b8c6-e63634a7f0d2" data-category="link" target="_blank" class="cloverlinks sites-button" role="button" style="font-size: 1.0667em;">CLICK HERE</a></p></div></header>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"23478402\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>BROADCAST VIDEO</span></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Interested in joining this team?</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontSize: 1,
+                fontStyle: "",
+                fontWeight: NaN,
+                letterSpacing: NaN,
+                lineHeight: 1,
+                linkExternal:
+                  "https://forms.ministryforms.net/viewForm.aspx?formId=e6c65131-c32a-49ed-b8c6-e63634a7f0d2",
+                linkExternalBlank: "on",
+                linkType: "external",
+                mobileFontSize: 1,
+                mobileFontStyle: "",
+                mobileFontWeight: NaN,
+                mobileLetterSpacing: NaN,
+                mobileLineHeight: 1,
+                size: "custom",
+                tabletFontSize: 1,
+                tabletFontStyle: "",
+                tabletFontWeight: NaN,
+                tabletLetterSpacing: NaN,
+                tabletLineHeight: 1,
+                text: "CLICK HERE"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -1779,7 +2018,9 @@ describe.each([
   ex22,
   ex23,
   ex24,
-  ex25
+  ex25,
+  ex26,
+  ex27
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
