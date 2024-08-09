@@ -153,6 +153,36 @@ const flattenNode = (node: Element) => {
   return _node;
 };
 
+const btnSurroundedByText = (node: Element, buttons: NodeListOf<Element>) => {
+  const childNodes = Array.from(node.childNodes);
+  let isSurrounded = false;
+
+  childNodes.forEach((_node, idx) => {
+    const isBtn = Array.from(buttons).some((button) =>
+      button.isSameNode(_node)
+    );
+
+    if (!isBtn) return;
+
+    const nextNode = childNodes[idx + 1];
+
+    if (!nextNode) {
+      isSurrounded = true;
+      return;
+    }
+
+    const isNextNodeBtn = Array.from(buttons).some((button) =>
+      button.isSameNode(nextNode)
+    );
+
+    if (isNextNodeBtn) return;
+
+    isSurrounded = true;
+  });
+
+  return isSurrounded;
+};
+
 export const getContainerStackWithNodes = (parentNode: Element): Container => {
   const container = document.createElement("div");
   const stack = new Stack();
@@ -190,10 +220,13 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           container.innerHTML = _node.innerHTML;
 
           const innerButtons = container.querySelectorAll(buttonSelector);
-          innerButtons.forEach((btn) => btn.remove());
 
-          const onlyButtons =
-            (container.textContent?.trim() ?? "").length === 0;
+          const onlyButtons = Array.from(innerButtons).some((btn) => {
+            if (btn.parentElement) {
+              return btnSurroundedByText(btn.parentElement, innerButtons);
+            }
+            return false;
+          });
 
           if (onlyButtons) {
             appendNewText = true;

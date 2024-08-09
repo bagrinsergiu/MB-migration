@@ -27,7 +27,16 @@ const getBgColor = mPipe(
   parseColorString
 );
 
-const getBorderWidth = mPipe(Obj.readKey("border-width"), Num.read);
+const getBorderWidth = mPipe(
+  Obj.readKey("border-top-width"),
+  Str.read,
+  parseFloat
+);
+const getBorderColor = mPipe(
+  Obj.readKey("border-top-color"),
+  Str.read,
+  parseColorString
+);
 const getBorderRadius = mPipe(
   Obj.readKey("border-top-left-radius"),
   Str.read,
@@ -61,6 +70,7 @@ export const getStyleModel = (
     defaultFamily,
     families
   });
+  const borderColor = getBorderColor(style);
 
   return {
     ...(color && {
@@ -86,7 +96,18 @@ export const getStyleModel = (
       hoverBgColorPalette: ""
     }),
     ...(borderRadius && { borderRadiusType: "custom", borderRadius }),
-    ...(borderWidth === undefined && { borderStyle: "none" }),
+    ...(borderWidth === undefined ? { borderStyle: "none" } : { borderWidth }),
+    ...(borderColor && {
+      borderColorHex: normalizeOpacity({
+        hex: borderColor.hex,
+        opacity: borderColor.opacity ?? "1"
+      }).hex,
+      borderColorOpacity: normalizeOpacity({
+        hex: borderColor.hex,
+        opacity: borderColor.opacity ?? "1"
+      }).opacity,
+      borderColorPalette: ""
+    }),
     ...(fontFamily && { fontFamily, fontFamilyType: "upload" }),
     ...(fontSize && { fontSize }),
     ...(fontWeight && { fontWeight })
