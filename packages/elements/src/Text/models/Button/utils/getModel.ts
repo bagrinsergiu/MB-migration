@@ -7,6 +7,8 @@ import {
   normalizeOpacity
 } from "../../../utils/common";
 import { getModel as getIconModel } from "../../Icon/utils/getModel";
+import { Data } from "../types";
+import { getFontStyles } from "./getFontStyles";
 import { mPipe } from "fp-utilities";
 import { Literal } from "utils";
 import { Color, parseColorString } from "utils/src/color/parseColorString";
@@ -42,13 +44,23 @@ const getBgColorOpacity = (color: Color, opacity: number): number => {
   return +(isNaN(opacity) ? color.opacity ?? 1 : opacity);
 };
 
-export const getStyleModel = (node: Element): Record<string, Literal> => {
+export const getStyleModel = (
+  node: Element,
+  defaultFamily?: Data["defaultFamily"],
+  families?: Data["families"]
+): Record<string, Literal> => {
   const style = getNodeStyle(node);
   const color = getColor(style);
   const bgColor = getBgColor(style);
   const opacity = +style.opacity;
   const borderWidth = getBorderWidth(style);
   const borderRadius = getBorderRadius(style);
+  const { fontFamily, fontSize, fontWeight } = getFontStyles({
+    node,
+    style,
+    defaultFamily,
+    families
+  });
 
   return {
     ...(color && {
@@ -67,25 +79,30 @@ export const getStyleModel = (node: Element): Record<string, Literal> => {
       bgColorOpacity: getBgColorOpacity(bgColor, opacity),
       bgColorPalette: "",
       ...(getBgColorOpacity(bgColor, opacity) === 0
-        ? { bgColorType: "none", hoverBgColorType: "none" }
+        ? { bgColorType: "none", hoverBgColorType: "solid" }
         : { bgColorType: "solid", hoverBgColorType: "solid" }),
       hoverBgColorHex: bgColor.hex,
       hoverBgColorOpacity: 0.8,
       hoverBgColorPalette: ""
     }),
     ...(borderRadius && { borderRadiusType: "custom", borderRadius }),
-    ...(borderWidth === undefined && { borderStyle: "none" })
+    ...(borderWidth === undefined && { borderStyle: "none" }),
+    ...(fontFamily && { fontFamily, fontFamilyType: "upload" }),
+    ...(fontSize && { fontSize }),
+    ...(fontWeight && { fontWeight })
   };
 };
 
-export const getModel = (
-  node: Element,
-  urlMap: Record<string, string>
-): ElementModel => {
+export const getModel = ({
+  node,
+  defaultFamily,
+  families,
+  urlMap
+}: Data): ElementModel => {
   let iconModel: Record<string, Literal> = {};
   const isLink = node.tagName === "A";
 
-  const modelStyle = getStyleModel(node);
+  const modelStyle = getStyleModel(node, defaultFamily, families);
   const globalModel = getGlobalButtonModel();
   const textTransform = getTransform(getNodeStyle(node));
   const icon = node.querySelector(iconSelector);

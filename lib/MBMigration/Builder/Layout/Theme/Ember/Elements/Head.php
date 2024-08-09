@@ -29,6 +29,10 @@ class Head extends HeadElement
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected)>a", "pseudoEl" => ""];
     }
+    public function getThemeMenuItemMobileSelector(): array
+    {
+        return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
+    }
 
     public function getThemeParentMenuItemSelector(): array
     {

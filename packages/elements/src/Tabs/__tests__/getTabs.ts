@@ -36,7 +36,8 @@ const ex1: Data = {
       fontWeight: undefined,
       letterSpacing: 0,
       lineHeight: 1,
-      navStyle: "style-3"
+      navStyle: "style-3",
+      uppercase: "false"
     }
   }
 };
@@ -44,7 +45,7 @@ const ex1: Data = {
 //#endregion
 
 describe.each([ex1])(
-  "testing 'getText' function nr %#",
+  "testing 'getTabs' function nr %#",
   ({ entry, output, html }) => {
     beforeEach(() => {
       document.body.innerHTML = html;
@@ -56,11 +57,11 @@ describe.each([ex1])(
   }
 );
 
-describe("testing 'getText' error function", () => {
+describe("testing 'getTabs' error function", () => {
   test.each<[Entry, Output]>([
     // Default
     [entry, { error: "Element with selector test not found" }]
-  ])("getText nr %#", (entry, output) => {
+  ])("getTabs nr %#", (entry, output) => {
     expect(getTabs(entry)).toStrictEqual(output);
   });
 });

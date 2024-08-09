@@ -8,7 +8,7 @@ class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
 {
     protected function getItemsPerRow(): int
     {
-        return 4;
+        return 3;
     }
 
     protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
