@@ -261,6 +261,27 @@ trait RichTextAble
                 ->set_tabletHeightSuffix($sizeUnit)
                 ->set_mobileWidthSuffix($sizeUnit)
                 ->set_mobileHeightSuffix($sizeUnit);
+
+            if ($mbSectionItem['link'] != '') {
+                $urlComponents = parse_url($mbSectionItem['link']);
+
+                if (!empty($urlComponents['host'])) {
+                    $slash = '';
+                } else {
+                    $slash = '/';
+                }
+                if ($mbSectionItem['new_window']) {
+                    $mbSectionItem['new_window'] = 'on';
+                } else {
+                    $mbSectionItem['new_window'] = 'off';
+                }
+
+                $brizyComponent->getValue()
+                    ->set_linkType('external')
+                    ->set_linkExternal($slash.$mbSectionItem['link'])
+                    ->set_imageFileName( $mbSectionItem['new_window']);
+            }
+
         }
 
         return $brizyComponent;
