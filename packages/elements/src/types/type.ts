@@ -22,7 +22,8 @@ export interface MenuItemEntry {
   itemSelector: MenuItemSelector;
   itemBgSelector: MenuItemSelector;
   itemPaddingSelector: MenuItemSelector;
-  itemMobileSelector?: MenuItemSelector;
+  itemMobileBtnSelector?: MenuItemSelector;
+  itemMobileNavSelector?: MenuItemSelector;
   families: Record<string, string>;
   defaultFamily: string;
 }

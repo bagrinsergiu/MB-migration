@@ -13,13 +13,21 @@ interface MenuItemData {
   itemBg: MenuItemElement;
   itemPadding: MenuItemElement;
   itemMobileIcon?: MenuItemElement;
+  itemMobileNav?: MenuItemElement;
   families: Record<string, string>;
   defaultFamily: string;
 }
 
 const getV = (entry: MenuItemData) => {
-  const { item, itemBg, itemPadding, itemMobileIcon, families, defaultFamily } =
-    entry;
+  const {
+    item,
+    itemBg,
+    itemPadding,
+    itemMobileIcon,
+    itemMobileNav,
+    families,
+    defaultFamily
+  } = entry;
 
   const model = {
     "font-family": undefined,
@@ -43,9 +51,7 @@ const getV = (entry: MenuItemData) => {
 
   const bgModel = {
     "menu-bg-color-hex": undefined,
-    "menu-bg-color-opacity": 1,
-    "m-menu-bg-color-hex": undefined,
-    "m-menu-bg-color-opacity": 1
+    "menu-bg-color-opacity": 1
   };
 
   const bgV = getModel({
@@ -66,7 +72,24 @@ const getV = (entry: MenuItemData) => {
     defaultFamily: defaultFamily
   });
 
-  const mobileIconV = {};
+  const mobileMenuV = {};
+
+  const mobileMenuModel = {
+    "m-menu-bg-color-hex": undefined,
+    "m-menu-bg-color-opacity": 1
+  };
+
+  if (itemMobileNav) {
+    Object.assign(
+      mobileMenuV,
+      getModel({
+        node: itemMobileNav,
+        modelDefaults: mobileMenuModel,
+        families: families,
+        defaultFamily: defaultFamily
+      })
+    );
+  }
 
   const mobileIconModel = {
     "m-menu-icon-color-hex": undefined,
@@ -75,7 +98,7 @@ const getV = (entry: MenuItemData) => {
 
   if (itemMobileIcon) {
     Object.assign(
-      mobileIconV,
+      mobileMenuV,
       getModel({
         node: itemMobileIcon,
         modelDefaults: mobileIconModel,
@@ -85,7 +108,7 @@ const getV = (entry: MenuItemData) => {
     );
   }
 
-  return { ...v, ...mMenu, ...bgV, ...paddingV, ...mobileIconV };
+  return { ...v, ...mMenu, ...bgV, ...paddingV, ...mobileMenuV };
 };
 
 const getHoverV = (entry: MenuItemData) => {
@@ -125,7 +148,8 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
     itemSelector,
     itemBgSelector,
     itemPaddingSelector,
-    itemMobileSelector,
+    itemMobileBtnSelector,
+    itemMobileNavSelector,
     hover,
     families,
     defaultFamily
@@ -135,10 +159,18 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
   const itemPaddingElement = document.querySelector(
     itemPaddingSelector.selector
   );
-  let itemMobileElement = null;
+  let itemMobileBtnElement = null;
+  let itemMobileNavElement = null;
 
-  if (itemMobileSelector) {
-    itemMobileElement = document.querySelector(itemMobileSelector.selector);
+  const hasMobileSelectors = itemMobileBtnSelector && itemMobileNavSelector;
+
+  if (hasMobileSelectors) {
+    itemMobileBtnElement = document.querySelector(
+      itemMobileBtnSelector.selector
+    );
+    itemMobileNavElement = document.querySelector(
+      itemMobileNavSelector.selector
+    );
   }
 
   if (!itemElement) {
@@ -157,20 +189,21 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
     };
   }
 
-  const item = toMenuItemElement({
-    node: itemElement,
-    selector: itemSelector,
-    targetSelector: "#main-navigation li:not(.selected) > a"
-  }) ?? { item: itemElement, pseudoEl: itemSelector.pseudoEl };
+  const item = { item: itemElement, pseudoEl: itemSelector.pseudoEl };
   const itemBg = { item: itemBgElement, pseudoEl: itemBgSelector.pseudoEl };
   const itemPadding = {
     item: itemPaddingElement,
     pseudoEl: itemPaddingSelector.pseudoEl
   };
   const itemMobileIcon = toMenuItemElement({
-    node: itemMobileElement,
-    selector: itemMobileSelector,
+    node: itemMobileBtnElement,
+    selector: itemMobileBtnSelector,
     targetSelector: ".mobile-nav-icon > .first"
+  });
+  const itemMobileNav = toMenuItemElement({
+    node: itemMobileNavElement,
+    selector: itemMobileNavSelector,
+    targetSelector: ".main-navigation"
   });
 
   let data = {};
@@ -181,6 +214,7 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
       itemBg,
       itemPadding,
       itemMobileIcon,
+      itemMobileNav,
       families,
       defaultFamily
     });
