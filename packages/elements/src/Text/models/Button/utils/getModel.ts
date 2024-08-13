@@ -8,10 +8,11 @@ import {
 } from "../../../utils/common";
 import { getModel as getIconModel } from "../../Icon/utils/getModel";
 import { Data } from "../types";
-import { getFontStyles } from "./getFontStyles";
+import { getFontModel } from "./getFontModel";
 import { mPipe } from "fp-utilities";
 import { Literal } from "utils";
 import { Color, parseColorString } from "utils/src/color/parseColorString";
+import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { pipe } from "utils/src/fp/pipe";
 import { onNullish } from "utils/src/onNullish";
@@ -35,6 +36,8 @@ const getBorderRadius = mPipe(
 );
 const getTransform = mPipe(Obj.readKey("text-transform"), Str.read);
 const getText = pipe(Obj.readKey("text"), Str.read, onNullish("BUTTON"));
+const getPaddingTB = mPipe(Obj.readKey("padding-top"), Str.read, parseInt);
+const getPaddingRL = mPipe(Obj.readKey("padding-left"), Str.read, parseInt);
 
 const getBgColorOpacity = (color: Color, opacity: number): number => {
   if (color.opacity && +color.opacity === 0) {
@@ -55,12 +58,9 @@ export const getStyleModel = (
   const opacity = +style.opacity;
   const borderWidth = getBorderWidth(style);
   const borderRadius = getBorderRadius(style);
-  const { fontFamily, fontSize, fontWeight } = getFontStyles({
-    node,
-    style,
-    defaultFamily,
-    families
-  });
+  const paddingTB = getPaddingTB(style);
+  const paddingRL = getPaddingRL(style);
+  const fontModel = getFontModel(node, defaultFamily, families);
 
   return {
     ...(color && {
@@ -87,9 +87,10 @@ export const getStyleModel = (
     }),
     ...(borderRadius && { borderRadiusType: "custom", borderRadius }),
     ...(borderWidth === undefined && { borderStyle: "none" }),
-    ...(fontFamily && { fontFamily, fontFamilyType: "upload" }),
-    ...(fontSize && { fontSize }),
-    ...(fontWeight && { fontWeight })
+    size: "custom",
+    ...(paddingTB && dicKeyForDevices("paddingTB", paddingTB)),
+    ...(paddingRL && dicKeyForDevices("paddingRL", paddingRL)),
+    ...fontModel
   };
 };
 
