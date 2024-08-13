@@ -39,13 +39,22 @@ class Head extends HeadElement
         // because of a fantastic idea to not have the option the place the icon per menu item
         $menuComponent = $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
         $menuComponent->getValue()
-            ->set_iconPosition('right')
-            ->set_letterSpacing(1.5);
+            ->set_iconPosition('right');
     }
 
     public function getThemeMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+    }
+
+    public function getThemeMobileBtnSelector(): array
+    {
+        return $this->getThemeMenuItemMobileSelector();
+    }
+
+    public function getThemeMobileNavSelector(): array
+    {
+        return ["selector" => "#mobile-navigation", "pseudoEl" => ""];
     }
 
     public function getThemeMenuItemMobileSelector(): array
