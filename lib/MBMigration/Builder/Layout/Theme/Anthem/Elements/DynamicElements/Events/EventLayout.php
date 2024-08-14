@@ -112,14 +112,28 @@ class EventLayout extends DynamicElement
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $collectionItemsForDetailPage . '" }}"');
         $objBlock->item()->item(1)->item()->setting('eventDetailPage', "{{placeholder content='$placeholder'}}");
 
+        $objBlock->item()->item(1)->item()->setting('eventDetailPageButtonText', 'Learn More');
+
+        $objBlock->item()->item(1)->item()->setting('titleTypographyLineHeight', 1.5);
+
+        $objBlock->item()->item(1)->item()->setting('listItemMetaTypographyLineHeight', 1.6);
+
         $objBlock->item()->item(1)->item()->setting('featuredViewOrder', 3);
         $objBlock->item()->item(1)->item()->setting('calendarViewOrder', 1);
 
-        $objBlock->item()->item(1)->item()->setting('dateTypographyLineHeight', 1.6);
+        $objBlock->item()->item(1)->item()->setting('dateTypographyLineHeight', 2.0);
         $objBlock->item()->item(1)->item()->setting('eventsTypographyLineHeight', 1.5);
 
         $objBlock->item()->item(1)->item()->setting('dateTypographyFontStyle', '');
         $objBlock->item()->item(1)->item()->setting('dateTypographyFontFamily', 1.5);
+
+        $objBlock->item()->item(1)->item()->setting('previewColorHex', '#f8f8f8');
+        $objBlock->item()->item(1)->item()->setting('previewColorOpacity', 1);
+        $objBlock->item()->item(1)->item()->setting('previewColorPalette', '');
+
+        $objBlock->item()->item(1)->item()->setting('hoverPreviewColorHex', '#f8f8f8');
+        $objBlock->item()->item(1)->item()->setting('hoverPreviewColorOpacity', 0.8);
+        $objBlock->item()->item(1)->item()->setting('hoverPreviewColorPalette', '');
 
         $objBlock->item()->item(1)->item()->setting('resultsHeadingColorHex', $sectionData['settings']['palette']['text']);
         $objBlock->item()->item(1)->item()->setting('resultsHeadingColorOpacity', 1);
@@ -168,11 +182,11 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('listItemMetaColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('listItemMetaColorPalette', '');
 
-        $objBlock->item()->item(1)->item()->setting('listItemDateColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('listItemDateColorHex', $sectionData['settings']['palette']['btn-text']);
         $objBlock->item()->item(1)->item()->setting('listItemDateColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('listItemDateColorPalette', '');
 
-        $objBlock->item()->item(1)->item()->setting('listTitleColorHex', $sectionData['settings']['palette']['btn-text']);
+        $objBlock->item()->item(1)->item()->setting('listTitleColorHex', $sectionData['settings']['palette']['text']);
         $objBlock->item()->item(1)->item()->setting('listTitleColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('listTitleColorPalette', '');
 

@@ -61,10 +61,11 @@ class BrowserPagePHP implements BrowserPageInterface
         try {
             switch ($eventNameMethod) {
                 case 'hover':
+                    $this->page->mouse()->move(1, 1);
                     $pos = $this->page->mouse()->find($elementSelector)->getPosition();
                     $this->page->mouse()->move($pos['x'], $pos['y']);
                     usleep(2000);
-                    $this->page->screenshot()->saveToFile('/project/var/page.jpg');
+                    //$this->page->screenshot()->saveToFile('/project/var/page.jpg');
                     break;
                 case 'click':
                     $this->page->mouse()->find($elementSelector)->click();
