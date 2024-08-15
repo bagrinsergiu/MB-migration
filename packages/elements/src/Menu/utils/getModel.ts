@@ -1,6 +1,6 @@
 import { MenuItemElement } from "../../types/type";
-import { dicKeyForDevices } from "./dicKeyForDevices";
 import { parseColorString } from "utils/src/color/parseColorString";
+import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { toCamelCase } from "utils/src/text/toCamelCase";
 

@@ -1,34 +1,54 @@
-import { parseColorString } from "utils/src/color/parseColorString";
+import { iconSelector } from "../../../utils/common";
+import { Data } from "../types";
+import { Literal } from "utils";
 import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
+import { recursiveGetNodes } from "utils/src/dom/recursiveGetNodes";
 import { toCamelCase } from "utils/src/text/toCamelCase";
 
-interface Model {
-  node: Element;
-  families: Record<string, string>;
-  defaultFamily: string;
+export function extractAllFontElementsStyles(
+  node: Element,
+  ignoredNodeSelector: string
+): Record<string, Literal> {
+  const filteredNode = node.cloneNode(true) as Element;
+  node.parentElement?.append(filteredNode);
+
+  const ignoredNodes = Array.from(
+    filteredNode.querySelectorAll(ignoredNodeSelector)
+  );
+  ignoredNodes.forEach((ignoredNode) => ignoredNode.remove());
+
+  const nodes = recursiveGetNodes(filteredNode);
+
+  const nodeStyles = nodes.reduce((acc, element) => {
+    const styles = getNodeStyle(element);
+
+    return { ...acc, ...styles };
+  }, {});
+
+  filteredNode.remove();
+  return nodeStyles;
 }
 
-const v = {
+const modelDefaults = {
   "font-family": undefined,
   "font-family-type": "uploaded",
   "font-weight": undefined,
   "font-size": undefined,
-  "line-height": undefined,
   "letter-spacing": undefined,
-  "font-style": "",
-  colorHex: undefined,
-  colorOpacity: 1,
-  activeColorHex: undefined,
-  activeColorOpacity: undefined
+  "line-height": undefined,
+  "font-style": ""
 };
 
-export const getModel = (data: Model) => {
-  const { node, families, defaultFamily } = data;
-  const styles = getNodeStyle(node);
+export const getFontModel = (
+  node: Element,
+  defaultFamily?: Data["defaultFamily"],
+  families?: Data["families"]
+) => {
+  const styles = extractAllFontElementsStyles(node, iconSelector);
   const dic: Record<string, string | number> = {};
 
-  Object.keys(v).forEach((key) => {
+  Object.keys(modelDefaults).forEach((key) => {
     switch (key) {
       case "font-family": {
         const value = `${styles[key]}`;
@@ -36,6 +56,8 @@ export const getModel = (data: Model) => {
           .replace(/['"\,]/g, "") // eslint-disable-line
           .replace(/\s/g, "_")
           .toLocaleLowerCase();
+
+        if (!families || !defaultFamily) return;
 
         if (!families[fontFamily]) {
           dic[toCamelCase(key)] = defaultFamily;
@@ -49,7 +71,15 @@ export const getModel = (data: Model) => {
         break;
       }
       case "font-style": {
-        dic[toCamelCase(key)] = "";
+        Object.assign(dic, dicKeyForDevices(key, ""));
+        break;
+      }
+      case "font-size": {
+        Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
+        break;
+      }
+      case "font-weight": {
+        Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
         break;
       }
       case "line-height": {
@@ -61,10 +91,6 @@ export const getModel = (data: Model) => {
         }
         break;
       }
-      case "font-size": {
-        Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
-        break;
-      }
       case "letter-spacing": {
         const value = styles[key];
         if (value === "normal") {
@@ -74,14 +100,6 @@ export const getModel = (data: Model) => {
           const letterSpacingValue = `${value}`.replace(/px/g, "").trim();
           Object.assign(dic, dicKeyForDevices(key, +letterSpacingValue));
         }
-        break;
-      }
-      case "colorHex": {
-        const toHex = parseColorString(`${styles["color"]}`);
-        dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
-        break;
-      }
-      case "colorOpacity": {
         break;
       }
       default: {
