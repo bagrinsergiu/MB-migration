@@ -97,3 +97,7 @@ export const normalizeOpacity = (color: Color): Color => {
 export const encodeToString = <T>(value: T): string => {
   return encodeURIComponent(JSON.stringify(value));
 };
+
+export const lineHeightToNumber = (value: string): number => {
+  return parseFloat(value.replace("_", "."));
+};

@@ -1,9 +1,16 @@
-import { iconSelector } from "../../../utils/common";
+import {
+  defaultDesktopLineHeight,
+  defaultMobileLineHeight,
+  defaultTabletLineHeight,
+  iconSelector,
+  lineHeightToNumber
+} from "../../../utils/common";
 import { Data } from "../types";
 import { Literal } from "utils";
 import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { recursiveGetNodes } from "utils/src/dom/recursiveGetNodes";
+import { capByPrefix } from "utils/src/text/capByPrefix";
 import { toCamelCase } from "utils/src/text/toCamelCase";
 
 export function extractAllFontElementsStyles(
@@ -83,12 +90,13 @@ export const getFontModel = (
         break;
       }
       case "line-height": {
-        const value = parseInt(`${styles[key]}`);
-        if (isNaN(value)) {
-          Object.assign(dic, dicKeyForDevices(key, 1));
-        } else {
-          Object.assign(dic, dicKeyForDevices(key, value));
-        }
+        dic[toCamelCase(key)] = lineHeightToNumber(defaultDesktopLineHeight);
+        dic[toCamelCase(capByPrefix("tablet", key))] = lineHeightToNumber(
+          defaultTabletLineHeight
+        );
+        dic[toCamelCase(capByPrefix("mobile", key))] = lineHeightToNumber(
+          defaultMobileLineHeight
+        );
         break;
       }
       case "letter-spacing": {
