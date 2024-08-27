@@ -26,7 +26,7 @@ class BrizyComponentValue implements JsonSerializable
             $this->set($field, $value);
         }
 
-        $this->set('_id', bin2hex(random_bytes(16)));
+        $this->set('_id', 'a'.bin2hex(random_bytes(16)));
     }
 
     public function set($field, $value)

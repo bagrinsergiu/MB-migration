@@ -1,3 +1,4 @@
+import { run as getAccordion } from "./Accordion";
 import { dom } from "./Dom";
 import { getMenuItem, getSubMenuItem } from "./Menu";
 import {
@@ -12,5 +13,6 @@ window.brizy = {
   getAttributes,
   getStyles,
   getText,
+  getAccordion,
   dom
 };

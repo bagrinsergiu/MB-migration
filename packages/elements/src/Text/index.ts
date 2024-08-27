@@ -12,7 +12,7 @@ type TextModel = ElementModel | EmbedModel;
 export const getText = (_entry: Entry): Output => {
   const entry = window.isDev ? getDataByEntry(_entry) : _entry;
 
-  const { selector } = entry;
+  const { selector, defaultFamily, families, urlMap } = entry;
 
   let node = selector ? document.querySelector(selector) : undefined;
 
@@ -26,7 +26,7 @@ export const getText = (_entry: Entry): Output => {
 
   if (!node) {
     return {
-      error: `Element with selector ${entry.selector} has no wrapper`
+      error: `Element with selector ${selector} has no wrapper`
     };
   }
 
@@ -44,7 +44,12 @@ export const getText = (_entry: Entry): Output => {
           break;
         }
         case "button": {
-          const models = getButtonModel(node, entry.urlMap);
+          const models = getButtonModel({
+            node,
+            urlMap,
+            defaultFamily,
+            families
+          });
           data.push(...models);
           break;
         }
@@ -54,7 +59,7 @@ export const getText = (_entry: Entry): Output => {
           break;
         }
         case "icon": {
-          const models = getIconModel(node, entry.urlMap);
+          const models = getIconModel(node, urlMap);
           data.push(...models);
           break;
         }

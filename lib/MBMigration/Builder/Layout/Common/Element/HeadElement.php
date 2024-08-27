@@ -218,16 +218,16 @@ abstract class HeadElement extends AbstractElement
             'itemMobileSelector' => $itemMobileSelector,
             'itemBgSelector' => $this->getThemeMenuItemBgSelector(),
             'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
+            'itemMobileBtnSelector' => $this->getThemeMobileBtnSelector(),
+            'itemMobileNavSelector' => $this->getThemeMobileNavSelector(),
             'families' => $families,
             'defaultFamily' => $defaultFamilies,
             'hover' => false,
         ]);
 
-        $this->browserPage->triggerEvent('hover', $menuItemSelector['selector']);
         $menuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', [
             'itemSelector' => $this->getThemeSubMenuItemSelector(),
             'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
-            'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
             'families' => $families,
             'defaultFamily' => $defaultFamilies,
             'hover' => false,
@@ -250,7 +250,6 @@ abstract class HeadElement extends AbstractElement
             $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', [
                 'itemSelector' => $this->getThemeSubMenuItemSelector(),
                 'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
-                'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,
                 'hover' => true,
@@ -287,6 +286,10 @@ abstract class HeadElement extends AbstractElement
     abstract protected function getThemeParentMenuItemSelector(): array;
 
     abstract protected function getThemeSubMenuItemSelector(): array;
+
+    abstract protected function getThemeMobileBtnSelector(): array;
+
+    abstract protected function getThemeMobileNavSelector(): array;
 
     abstract public function getThemeSubMenuItemBGSelector(): array;
 

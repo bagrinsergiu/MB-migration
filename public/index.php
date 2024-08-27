@@ -45,7 +45,7 @@ return static function (array $context, Request $request): Response {
             $context['BRIZY_CLOUD_HOST'],
             $context['LOG_PATH'],
             $context['CACHE_PATH'],
-            $context['BRIZY_CLOUD_TOKEN'],
+            $request->get('token') ?? $context['BRIZY_CLOUD_TOKEN'],
             $settings
         );
     } catch (Exception $e) {

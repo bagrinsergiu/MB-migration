@@ -1,5 +1,5 @@
-import { dicKeyForDevices } from "elements/src/Menu/utils/dicKeyForDevices";
 import { parseColorString } from "utils/src/color/parseColorString";
+import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { toCamelCase } from "utils/src/text/toCamelCase";
 

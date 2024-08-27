@@ -29,6 +29,10 @@ class Head extends HeadElement
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected)>a", "pseudoEl" => ""];
     }
+    public function getThemeMenuItemMobileSelector(): array
+    {
+        return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
+    }
 
     public function getThemeParentMenuItemSelector(): array
     {
@@ -53,6 +57,16 @@ class Head extends HeadElement
     public function getThemeMenuItemPaddingSelector(): array
     {
         return $this->getThemeParentMenuItemSelector();
+    }
+
+    public function getThemeMobileNavSelector(): array
+    {
+        return ["selector" => "#mobile-navigation", "pseudoEl" => ""];
+    }
+
+    public function getThemeMobileBtnSelector(): array
+    {
+        return $this->getThemeMenuItemMobileSelector();
     }
 
 }

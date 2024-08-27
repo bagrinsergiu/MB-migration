@@ -348,7 +348,8 @@ class MBProjectDataCollector
                 $item[] = [
                     'sectionId' => $itemsFromMainSections['id'],
                     'category' => $itemsFromMainSections['category'],
-                    'position' => $itemsFromMainSections['order_by'],
+                    'order_by' => $itemsFromMainSections['order_by'],
+                    'group' => $itemsFromMainSections['group'],
                     'settings' => json_decode($itemsFromMainSections['settings'], true),
                     'content' => $itemsFromMainSections['content'],
                 ];
@@ -642,24 +643,24 @@ class MBProjectDataCollector
             "
             SELECT
                 i.*,
-            
+
                 CASE
                 WHEN l.page_id is not null THEN p.slug
                 ELSE l.detail
                 END AS link,
-            
+
                 CASE
                 WHEN l.page_id is not null THEN null
                 ELSE l.settings->>'new_window'
                 END AS new_window
-            
+
             FROM items i
             LEFT JOIN public.links l on i.id = l.item_id
             LEFT JOIN public.pages p on l.page_id = p.id
             WHERE i.group is not null
-              and i.section_id = {$sectionId['id']} 
+              and i.section_id = {$sectionId['id']}
               and i.trashed_at is NULL
-            ORDER BY i.parent_id DESC, order_by    
+            ORDER BY i.parent_id DESC, order_by
             "
         );
         Logger::instance()->debug('Found items: '.count($requestItemsFromSection));

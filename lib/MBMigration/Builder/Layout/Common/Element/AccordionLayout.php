@@ -28,6 +28,8 @@ abstract class AccordionLayout extends AbstractElement
         foreach ($mbSection['items'] as $mbSectionItem) {
             $brizyAccordionItem = new BrizyComponent($itemJson);
             $brizyAccordionItem->getValue()->set_labelText(strip_tags($mbSectionItem['item'][0]['content']));
+            $brizyAccordionItem->getItemWithDepth(0)
+                ->set_bgColorHex();
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                 $mbSectionItem['item'][1],
                 $brizyAccordionItem

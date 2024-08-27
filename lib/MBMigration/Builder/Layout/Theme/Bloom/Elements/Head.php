@@ -96,4 +96,14 @@ class Head extends HeadElement
     {
         return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
     }
+
+    public function getThemeMobileNavSelector(): array
+    {
+        return ["selector" => "#mobile-navigation", "pseudoEl" => ""];
+    }
+
+    public function getThemeMobileBtnSelector(): array
+    {
+        return $this->getThemeMenuItemMobileSelector();
+    }
 }
