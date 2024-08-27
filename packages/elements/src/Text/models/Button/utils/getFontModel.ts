@@ -1,11 +1,10 @@
-import {
-  defaultDesktopLineHeight,
-  defaultMobileLineHeight,
-  defaultTabletLineHeight,
-  iconSelector,
-  lineHeightToNumber
-} from "../../../utils/common";
 import { Data } from "../types";
+import {
+  defaultDesktopNumberLineHeight,
+  defaultMobileNumberLineHeight,
+  defaultTabletNumberLineHeight,
+  iconSelector
+} from "elements/src/Text/utils/common";
 import { Literal } from "utils";
 import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
@@ -90,13 +89,11 @@ export const getFontModel = (
         break;
       }
       case "line-height": {
-        dic[toCamelCase(key)] = lineHeightToNumber(defaultDesktopLineHeight);
-        dic[toCamelCase(capByPrefix("tablet", key))] = lineHeightToNumber(
-          defaultTabletLineHeight
-        );
-        dic[toCamelCase(capByPrefix("mobile", key))] = lineHeightToNumber(
-          defaultMobileLineHeight
-        );
+        dic[toCamelCase(key)] = defaultDesktopNumberLineHeight;
+        dic[toCamelCase(capByPrefix("tablet", key))] =
+          defaultTabletNumberLineHeight;
+        dic[toCamelCase(capByPrefix("mobile", key))] =
+          defaultMobileNumberLineHeight;
         break;
       }
       case "letter-spacing": {

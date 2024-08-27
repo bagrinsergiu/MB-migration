@@ -1,5 +1,11 @@
+import {
+  defaultDesktopNumberLineHeight,
+  defaultMobileNumberLineHeight,
+  defaultTabletNumberLineHeight
+} from "elements/src/Text/utils/common";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
+import { capByPrefix } from "utils/src/text/capByPrefix";
 import { toCamelCase } from "utils/src/text/toCamelCase";
 
 interface Model {
@@ -54,12 +60,11 @@ export const getModel = (data: Model) => {
         break;
       }
       case "line-height": {
-        const value = parseInt(`${styles[key]}`);
-        if (isNaN(value)) {
-          dic[toCamelCase(key)] = 1;
-        } else {
-          dic[toCamelCase(key)] = value;
-        }
+        dic[toCamelCase(key)] = defaultDesktopNumberLineHeight;
+        dic[toCamelCase(capByPrefix("tablet", key))] =
+          defaultTabletNumberLineHeight;
+        dic[toCamelCase(capByPrefix("mobile", key))] =
+          defaultMobileNumberLineHeight;
         break;
       }
       case "font-size": {

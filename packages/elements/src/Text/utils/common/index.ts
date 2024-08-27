@@ -26,6 +26,12 @@ export const defaultTabletLineHeight = "1_2";
 
 export const defaultMobileLineHeight = "1_2";
 
+export const defaultDesktopNumberLineHeight = 1.3;
+
+export const defaultTabletNumberLineHeight = 1.2;
+
+export const defaultMobileNumberLineHeight = 1.2;
+
 export const extractedAttributes = [
   "font-size",
   "font-family",
@@ -96,8 +102,4 @@ export const normalizeOpacity = (color: Color): Color => {
 
 export const encodeToString = <T>(value: T): string => {
   return encodeURIComponent(JSON.stringify(value));
-};
-
-export const lineHeightToNumber = (value: string): number => {
-  return parseFloat(value.replace("_", "."));
 };
