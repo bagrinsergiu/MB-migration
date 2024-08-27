@@ -16,7 +16,7 @@ return static function (array $context, Request $request): Response {
     }
 
     $settings = [
-        'devMode' => $context['APP_ENV'] == 'dev',
+        'devMode' => 'dev',
         'db' => [
             'dbHost' => $context['MB_DB_HOST'],
             'dbPort' => $context['MB_DB_PORT'],
@@ -34,6 +34,13 @@ return static function (array $context, Request $request): Response {
     ];
     $mb_site_id = $request->get('mb_site_id') ?? '';
     $mb_secret = $request->get('mb_secret') ?? '';
+    $authorization_token = $request->get('token') ?? '';
+
+    if(isset($context['APP_AUTHORIZATION_TOKEN']) && !empty($context['APP_AUTHORIZATION_TOKEN'])) {
+        if($authorization_token !== $context['APP_AUTHORIZATION_TOKEN']) {
+            return new JsonResponse(['error' => 'Unauthorized'], 401);
+        }
+    }
 
     if(!empty($mb_site_id) && !empty($mb_secret)) {
         $settings['metaData']['mb_site_id'] = $mb_site_id;
@@ -45,7 +52,7 @@ return static function (array $context, Request $request): Response {
             $context['BRIZY_CLOUD_HOST'],
             $context['LOG_PATH'],
             $context['CACHE_PATH'],
-            $request->get('token') ?? $context['BRIZY_CLOUD_TOKEN'],
+            $context['BRIZY_CLOUD_TOKEN'],
             $settings
         );
     } catch (Exception $e) {
