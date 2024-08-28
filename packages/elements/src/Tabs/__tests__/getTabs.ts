@@ -35,7 +35,9 @@ const ex1: Data = {
       fontStyle: "",
       fontWeight: undefined,
       letterSpacing: 0,
-      lineHeight: 1,
+      lineHeight: 1.3,
+      mobileLineHeight: 1.2,
+      tabletLineHeight: 1.2,
       navStyle: "style-3",
       uppercase: "false"
     }

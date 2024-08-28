@@ -26,6 +26,12 @@ export const defaultTabletLineHeight = "1_2";
 
 export const defaultMobileLineHeight = "1_2";
 
+export const defaultDesktopNumberLineHeight = 1.3;
+
+export const defaultTabletNumberLineHeight = 1.2;
+
+export const defaultMobileNumberLineHeight = 1.2;
+
 export const extractedAttributes = [
   "font-size",
   "font-family",
