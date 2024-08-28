@@ -21,9 +21,35 @@ class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\Accordi
         $itemJson = json_decode($this->brizyKit['item'], true);
         $brizyAccordionItems = [];
 
+        foreach ($mbSection['items'] as $mbSectionItem) {
+            $brizyAccordionItemComponent = new BrizyComponent($itemJson);
+
+            $brizyAccordionItemComponent->getValue()->set_labelText(strip_tags($mbSectionItem['item'][0]['content']));
+
+            $brizyAccordionItem = $this->getAccordionSectionComponent($brizyAccordionItemComponent)->getValue();
+
+            $brizyAccordionItem
+                ->set_bgColorHex('#ffffff');
+
+            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                $mbSectionItem['item'][1],
+                $brizyAccordionItem
+            );
+            $this->handleRichTextItem($elementContext, $this->browserPage);
+            $brizyAccordionItems[] = $brizyAccordionItem;
+        }
+
+        $brizyAccordionComponent = $this->getAccordionParentComponent($brizySection)->getValue();
+        $brizyAccordionComponent->set_items($brizyAccordionItems);
+
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         return $brizySection;
+    }
+
+    protected function getAccordionSectionComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0);
     }
 
     protected function getSectionHeaderComponent(BrizyComponent $brizySection): BrizyComponent
