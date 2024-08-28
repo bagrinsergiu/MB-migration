@@ -4,6 +4,8 @@ namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\TextTools;
 
 class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\AccordionLayout
 {
@@ -11,8 +13,17 @@ class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\Accordi
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $mbSection = $data->getMbSection();
+        $families = $data->getFontFamilies();
+
+        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $backgroundColorStyles = ColorConverter::convertColorRgbToHex(
+            $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage));
+
+        $accordionElementStyles = $this->getAccordionElementStyles($sectionSelector, $this->browserPage, $families);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $this->handleSectionStyles($elementContext, $this->browserPage);
+
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionHeaderComponent($brizySection));
@@ -21,35 +32,43 @@ class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\Accordi
         $itemJson = json_decode($this->brizyKit['item'], true);
         $brizyAccordionItems = [];
 
+        $brizyAccordionComponent = $this->getAccordionParentComponent($brizySection)->getValue();
+
+        foreach ($accordionElementStyles as $key => $value) {
+            $propertiesName = 'set_'.$key;
+            $brizyAccordionComponent->$propertiesName($value);
+        }
+
         foreach ($mbSection['items'] as $mbSectionItem) {
             $brizyAccordionItemComponent = new BrizyComponent($itemJson);
 
-            $brizyAccordionItemComponent->getValue()->set_labelText(strip_tags($mbSectionItem['item'][0]['content']));
+            $lableText = TextTools::transformTextBool($mbSectionItem['item'][0]['content'],
+                    $accordionElementStyles['uppercase']);
 
-            $brizyAccordionItem = $this->getAccordionSectionComponent($brizyAccordionItemComponent)->getValue();
+            $brizyAccordionItemComponent->getValue()->set_labelText(strip_tags($lableText));
 
-            $brizyAccordionItem
-                ->set_bgColorHex('#ffffff');
+            $brizyAccordionItem = $this->getAccordionSectionComponent($brizyAccordionItemComponent);
+
+            $brizyAccordionItem->getValue()
+                ->set_bgColorHex($backgroundColorStyles['background-color']);
 
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                 $mbSectionItem['item'][1],
                 $brizyAccordionItem
             );
             $this->handleRichTextItem($elementContext, $this->browserPage);
-            $brizyAccordionItems[] = $brizyAccordionItem;
+
+            $brizyAccordionItems[] = $brizyAccordionItemComponent;
         }
 
-        $brizyAccordionComponent = $this->getAccordionParentComponent($brizySection)->getValue();
         $brizyAccordionComponent->set_items($brizyAccordionItems);
-
-        $this->handleSectionStyles($elementContext, $this->browserPage);
 
         return $brizySection;
     }
 
     protected function getAccordionSectionComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0);
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getSectionHeaderComponent(BrizyComponent $brizySection): BrizyComponent

@@ -14,4 +14,12 @@ class TextTools
         }
     }
 
+    public static function transformTextBool($text, $text_transform = false) {
+        if ($text_transform) {
+            return strtoupper($text);
+        } else {
+            return $text;
+        }
+    }
+
 }
