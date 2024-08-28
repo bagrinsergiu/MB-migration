@@ -66,6 +66,25 @@ trait CssPropertyExtractorAware
         );
     }
 
+    protected function getAccordionElementStyles(
+        $selectorSectionStyles,
+        $browserPage,
+        $families = [],
+        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+        $pseudoElement = null
+    ) {
+
+        return $this->evaluate(
+            'brizy.getAccordion',
+            $selectorSectionStyles,
+            [],
+            $browserPage,
+            $families,
+            $default_fonts,
+            $pseudoElement
+        );
+    }
+
     protected function getNodeSubPalette(
         $selectorSectionStyles,
         $browserPage
