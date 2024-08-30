@@ -25,8 +25,8 @@ class GridMediaLayout extends DynamicElement
     private function GridMediaLayout(array $sectionData)
     {
         $options = [];
-        $slug = 'sermon-grid';
-        $title = 'Sermon Grid';
+        $slug = 'sermon-detail';
+        $title = 'Sermon Detail';
         $elementName = 'GridMediaLayout';
 
         $currentPageSlug = $this->cache->get('tookPage')['slug'];
