@@ -100,6 +100,48 @@ trait CssPropertyExtractorAware
         );
     }
 
+    protected function hasNode(
+        $selectorSectionStyles,
+        $browserPage
+    ) {
+        $sectionStyles = $this->evaluate(
+            'brizy.dom.hasNode',
+            $selectorSectionStyles,
+            $styles = [],
+            $browserPage,
+            $families = [],
+            $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+            $pseudoElement = null
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return false;
+        }
+
+        return $sectionStyles['data']['hasNode'] ?? false;
+    }
+
+    protected function getNodeText(
+        $selectorSectionStyles,
+        $browserPage
+    ) {
+        $sectionStyles = $this->evaluate(
+            'brizy.dom.getNodeText',
+            $selectorSectionStyles,
+            $styles = [],
+            $browserPage,
+            $families = [],
+            $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+            $pseudoElement = null
+        );
+
+        if (array_key_exists('error', $sectionStyles)) {
+            return false;
+        }
+
+        return $sectionStyles['data']['contain'] ?? false;
+    }
+
     protected function getDomElementSizes(
         $selectorSectionStyles,
         $browserPage,
