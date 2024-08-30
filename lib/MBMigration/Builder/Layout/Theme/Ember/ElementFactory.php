@@ -8,7 +8,7 @@ use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Ember\Elements\EventCalendarLayout;
+use MBMigration\Builder\Layout\Theme\Ember\Elements\EventLayout;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\EventGalleryLayout;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\EventTileLayout;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\EventListLayout;

@@ -8,7 +8,7 @@ use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 
-abstract class  AbstractThemeElementFactory implements ThemeElementFactoryInterface
+abstract class AbstractThemeElementFactory implements ThemeElementFactoryInterface
 {
     use BrizyQueryBuilderAware;
 

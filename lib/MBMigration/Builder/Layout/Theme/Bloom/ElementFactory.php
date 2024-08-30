@@ -8,7 +8,7 @@ use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventCalendarLayout;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventGalleryLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventTileLayout;
@@ -24,7 +24,7 @@ use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMediaCircle;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\ListLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\ListMediaLayout;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\MediaLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\PrayerForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightMedia;
@@ -72,14 +72,13 @@ class ElementFactory  extends AbstractThemeElementFactory
             case 'accordion-layout':
                 return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $browserPage);
             case 'event-list-layout':
-                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $browserPage, $this->getQueryBuilder());
+//                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $browserPage, $this->getQueryBuilder());
             case 'event-tile-layout':
-                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
+//                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
             case 'event-gallery-layout':
-                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $browserPage);
+//                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $browserPage);
             case 'event-calendar-layout':
-                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage);
-
+                return new EventLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage, $this->getQueryBuilder());
 
 //            case 'prayer-list':
 //                return new PrayerList($this->blockKit['blocks']['prayer-list'], $browserPage);
@@ -93,10 +92,11 @@ class ElementFactory  extends AbstractThemeElementFactory
 //                return new LeftFormWithText($this->blockKit['blocks']['left-form-with-text'], $browserPage);
 //            case 'full-width-form':
 //                return new FullWidthForm($this->blockKit['blocks']['full-width-form'], $browserPage);
+
             case 'grid-media-layout':
-                return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $browserPage, $this->getQueryBuilder());
             case 'list-media-layout':
-                return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $browserPage, $this->getQueryBuilder());
+                return new MediaLayout($this->blockKit['blocks']['list-media-layout'], $browserPage, $this->getQueryBuilder());
+
             case 'full-media':
                 return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);
             default:

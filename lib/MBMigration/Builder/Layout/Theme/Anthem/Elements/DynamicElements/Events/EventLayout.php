@@ -121,7 +121,7 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('featuredViewOrder', 3);
         $objBlock->item()->item(1)->item()->setting('calendarViewOrder', 1);
 
-        $objBlock->item()->item(1)->item()->setting('dateTypographyLineHeight', 2.0);
+        $objBlock->item()->item(1)->item()->setting('dateTypographyLineHeight', 3.0);
         $objBlock->item()->item(1)->item()->setting('eventsTypographyLineHeight', 1.5);
 
         $objBlock->item()->item(1)->item()->setting('dateTypographyFontStyle', '');
@@ -170,11 +170,11 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('hoverEventsColorOpacity', 0.75);
         $objBlock->item()->item(1)->item()->setting('hoverEventsColorPalette', '');
 
-        $objBlock->item()->item(1)->item()->setting('listItemTitleColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('listItemTitleColorHex', $sectionData['settings']['palette']['link']);
         $objBlock->item()->item(1)->item()->setting('listItemTitleColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('listItemTitleColorPalette', '');
 
-        $objBlock->item()->item(1)->item()->setting('hoverListItemTitleColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('hoverListItemTitleColorHex', $sectionData['settings']['palette']['link']);
         $objBlock->item()->item(1)->item()->setting('hoverListItemTitleColorOpacity', 0.75);
         $objBlock->item()->item(1)->item()->setting('hoverListItemTitleColorPalette', '');
 
@@ -194,11 +194,11 @@ class EventLayout extends DynamicElement
         $objBlock->item()->item(1)->item()->setting('groupingDateColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('groupingDateColorPalette', '');
 
-        $objBlock->item()->item(1)->item()->setting('titleColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('hoverTitleColorHex', $sectionData['settings']['palette']['link']);
         $objBlock->item()->item(1)->item()->setting('hoverTitleColorOpacity', 0.75);
         $objBlock->item()->item(1)->item()->setting('hoverTitleColorPalette', '');
 
-        $objBlock->item()->item(1)->item()->setting('hoverTitleColorHex', $sectionData['settings']['palette']['text']);
+        $objBlock->item()->item(1)->item()->setting('titleColorHex', $sectionData['settings']['palette']['link']);
         $objBlock->item()->item(1)->item()->setting('titleColorOpacity', 1);
         $objBlock->item()->item(1)->item()->setting('titleColorPalette', '');
 

@@ -8,13 +8,12 @@ use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Layer\Graph\QueryBuilder;
 
-abstract class EventCalendarLayout extends AbstractElement
+abstract class EventLayout extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
@@ -71,7 +70,7 @@ abstract class EventCalendarLayout extends AbstractElement
             ->set_featuredViewOrder(3)
             ->set_calendarViewOrder(1)
 
-            ->set_dateTypographyLineHeight(1.6)
+            ->set_dateTypographyLineHeight(3)
             ->set_eventsTypographyLineHeight(1.5)
 
             ->set_dateTypographyFontStyle('')
@@ -128,6 +127,14 @@ abstract class EventCalendarLayout extends AbstractElement
             ->set_detailButtonBgColorHex($sectionPalette['text'])
             ->set_detailButtonBgColorOpacity(1)
             ->set_detailButtonBgColorPalette('')
+
+            ->set_listItemTitleColorHex($sectionPalette['link'])
+            ->set_listItemTitleColorOpacity(1)
+            ->set_listItemTitleColorPalette('')
+
+            ->set_hoverListItemTitleColorHex($sectionPalette['link'])
+            ->set_hoverListItemTitleColorOpacity(0.75)
+            ->set_hoverListItemTitleColorPalette('')
 
             ->set_detailButtonGradientColorHex($sectionPalette['text'])
             ->set_detailButtonGradientColorOpacity(1)

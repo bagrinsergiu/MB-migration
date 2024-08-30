@@ -8,7 +8,7 @@ use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventCalendarLayout;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventGridLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventTileLayout;
@@ -70,7 +70,7 @@ class ElementFactory  extends AbstractThemeElementFactory
             case 'event-tile-layout':
 //                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
             case 'event-calendar-layout':
-                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage, $this->getQueryBuilder());
+                return new EventLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage, $this->getQueryBuilder());
             case 'gallery-layout':
                 return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $browserPage);
             case 'right-media-overlap':
