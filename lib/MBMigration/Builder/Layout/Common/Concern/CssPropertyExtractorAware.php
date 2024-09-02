@@ -139,7 +139,7 @@ trait CssPropertyExtractorAware
             return false;
         }
 
-        return $sectionStyles['data']['contain'] ?? false;
+        return $sectionStyles['contain'] ?? false;
     }
 
     protected function getDomElementSizes(

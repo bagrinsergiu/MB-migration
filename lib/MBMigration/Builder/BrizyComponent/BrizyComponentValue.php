@@ -36,9 +36,17 @@ class BrizyComponentValue implements JsonSerializable
         return $this;
     }
 
-    public function add($field, $value)
+    public function add($field, $value, $position=null)
     {
-        $this->fields[$field] = array_merge($this->fields[$field], $value);
+        if($position === null) {
+            $this->fields[$field] = array_merge($this->fields[$field], $value);
+        } else {
+            if($position === 0){
+                array_unshift($this->fields[$field], ...$value);
+            } else{
+                array_splice($this->fields[$field], $position,0, $value);
+            }
+        }
 
         return $this;
     }
