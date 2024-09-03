@@ -53,24 +53,24 @@ export const getModel = (data: Model) => {
       case "line-height": {
         const value = `${styles[key]}`;
         if (value) {
-          Object.assign(dicKeyForDevices(key, 1));
+          Object.assign(dic, dicKeyForDevices(key, 1));
         } else {
-          Object.assign(dicKeyForDevices(key, value));
+          Object.assign(dic, dicKeyForDevices(key, value));
         }
         break;
       }
       case "font-size": {
-        Object.assign(dicKeyForDevices(key, parseInt(`${styles[key]}`)));
+        Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
         break;
       }
       case "letter-spacing": {
         const value = styles[key];
         if (value === "normal") {
-          Object.assign(dicKeyForDevices(key, 0));
+          Object.assign(dic, dicKeyForDevices(key, 0));
         } else {
           // Remove 'px' and any extra whitespace
           const letterSpacingValue = `${value}`.replace(/px/g, "").trim();
-          Object.assign(dicKeyForDevices(key, +letterSpacingValue));
+          Object.assign(dic, dicKeyForDevices(key, +letterSpacingValue));
         }
         break;
       }

@@ -10,13 +10,14 @@ export interface Data {
   styleProperties: Array<string>;
   urlMap: Record<string, string>;
   attributeNames?: string[];
-  psevdoElement?: string[];
+  pseudoElement?: string;
 }
 
 export const styleExtractor = (_entry: Data): Output => {
   const entry = window.isDev ? getDataByEntry(_entry) : _entry;
 
-  const { selector, pseudoElement, styleProperties } = entry;
+  const { selector, styleProperties } = entry;
+  const pseudoElement = entry.pseudoElement;
 
   const data: Record<string, Literal> = {};
   const element = selector ? document.querySelector(selector) : undefined;
@@ -27,7 +28,9 @@ export const styleExtractor = (_entry: Data): Output => {
     };
   }
 
-  const computedStyles = getComputedStyle(element, pseudoElement);
+  const computedStyles = pseudoElement
+    ? getComputedStyle(element, pseudoElement)
+    : getComputedStyle(element);
 
   if (styleProperties)
     styleProperties.forEach((styleName: string) => {

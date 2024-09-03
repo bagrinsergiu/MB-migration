@@ -1,4 +1,4 @@
-import { MenuItemSelector } from "types/type";
+import { MenuItemSelector } from "../../types/type";
 
 interface ToMenuItemElement {
   node: Element | null;
