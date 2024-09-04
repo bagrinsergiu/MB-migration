@@ -50,17 +50,47 @@ abstract class MediaLayout extends AbstractElement
         $sectionSubPalette = $this->getNodeSubPalette($dataIdSelector, $this->browserPage);
         $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
 
-        if($mbSection['mediaGridContainer']){
+        if($mbSection['mediaGridContainer']) {
             $brizySection = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
             $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['head'], true));
             $detailsSection = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['detail'], true));
+
+            $resultColorStyles['pagination-normal'] = $this->getDomElementStyles(
+                $dataIdSelector. ' .pagination .previous a',
+                ['color'],
+                $this->browserPage);
+
+            $resultColorStyles['opacity-pagination-normal'] = $this->getDomElementStyles(
+                $dataIdSelector. ' .pagination .previous a',
+                ['opacity'],
+                $this->browserPage);
+
+            $resultColorStyles['pagination-active'] = $this->getDomElementStyles(
+                $dataIdSelector. ' .pagination .active a',
+                ['color'],
+                $this->browserPage);
+
+            $resultColorStyles['opacity-pagination-active'] = $this->getDomElementStyles(
+                $dataIdSelector. ' .pagination .active a',
+                ['opacity'],
+                $this->browserPage);
+
+
+            $colorStyles = [
+                'pagination-normal' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-normal']['color']),
+                'pagination-active' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-active']['color']),
+                'opacity-pagination-normal' => $resultColorStyles['opacity-pagination-normal']['opacity'],
+                'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'],
+                ];
 
             $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
             $detailCollectionItem = $this->createDetailsCollectionItem(
                 $data->getThemeContext()->getBrizyCollectionTypeURI(),
                 [
                     $detailsSection,
-                ]
+                ],
+                'media-detail',
+                'Media Detail'
             );
 
             $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem . '" }}"');
@@ -131,7 +161,9 @@ abstract class MediaLayout extends AbstractElement
                 $brizySection->getItemValueWithDepth(0, 2, 0, 0, 0)
                     ->set_source($key, $value);
             }
+
         } else {
+
             $brizySection = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['main'], true));
             $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['head'], true));
 

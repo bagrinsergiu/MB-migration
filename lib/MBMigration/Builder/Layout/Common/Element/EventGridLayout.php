@@ -51,7 +51,9 @@ abstract class EventGridLayout extends AbstractElement
             $data->getThemeContext()->getBrizyCollectionTypeURI(),
             [
                 $detailsSection,
-            ]
+            ],
+            'event-details',
+            'Event details'
         );
 
         $this->getDetailsLinksComponent($detailsSection)

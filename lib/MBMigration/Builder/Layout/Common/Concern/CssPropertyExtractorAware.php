@@ -118,7 +118,7 @@ trait CssPropertyExtractorAware
             return false;
         }
 
-        return $sectionStyles['data']['hasNode'] ?? false;
+        return $sectionStyles['hasNode'] ?? false;
     }
 
     protected function getNodeText(
