@@ -15,8 +15,8 @@ import { Color, parseColorString } from "utils/src/color/parseColorString";
 import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { pipe } from "utils/src/fp/pipe";
+import { prefixed } from "utils/src/models/prefixed";
 import { onNullish } from "utils/src/onNullish";
-import * as Num from "utils/src/reader/number";
 import * as Obj from "utils/src/reader/object";
 import * as Str from "utils/src/reader/string";
 import { uuid } from "utils/src/uuid";
@@ -28,11 +28,20 @@ const getBgColor = mPipe(
   parseColorString
 );
 
-const getBorderWidth = mPipe(Obj.readKey("border-width"), Num.read);
+const getBorderWidth = mPipe(
+  Obj.readKey("border-top-width"),
+  Str.read,
+  parseInt
+);
+const getBorderColor = mPipe(
+  Obj.readKey("border-top-color"),
+  Str.read,
+  parseColorString
+);
 const getBorderRadius = mPipe(
   Obj.readKey("border-top-left-radius"),
   Str.read,
-  parseFloat
+  parseInt
 );
 const getTransform = mPipe(Obj.readKey("text-transform"), Str.read);
 const getText = pipe(Obj.readKey("text"), Str.read, onNullish("BUTTON"));
@@ -58,9 +67,32 @@ export const getStyleModel = (
   const opacity = +style.opacity;
   const borderWidth = getBorderWidth(style);
   const borderRadius = getBorderRadius(style);
+  const borderColor = getBorderColor(style);
   const paddingTB = getPaddingTB(style);
   const paddingRL = getPaddingRL(style);
   const fontModel = getFontModel(node, defaultFamily, families);
+
+  let borderColorV = {};
+
+  if (borderColor) {
+    const borderV = {
+      borderColorHex: normalizeOpacity({
+        hex: borderColor.hex,
+        opacity: borderColor.opacity ?? "1"
+      }).hex,
+      borderColorOpacity: normalizeOpacity({
+        hex: borderColor.hex,
+        opacity: borderColor.opacity ?? "1"
+      }).opacity,
+      borderColorPalette: ""
+    };
+    const hoverBorderV = prefixed(borderV, "hover");
+
+    borderColorV = {
+      ...borderV,
+      ...hoverBorderV
+    };
+  }
 
   return {
     ...(color && {
@@ -86,7 +118,8 @@ export const getStyleModel = (
       hoverBgColorPalette: ""
     }),
     ...(borderRadius && { borderRadiusType: "custom", borderRadius }),
-    ...(borderWidth === undefined && { borderStyle: "none" }),
+    ...(borderWidth === undefined ? { borderStyle: "none" } : { borderWidth }),
+    ...borderColorV,
     size: "custom",
     ...(paddingTB && dicKeyForDevices("paddingTB", paddingTB)),
     ...(paddingRL && dicKeyForDevices("paddingRL", paddingRL)),
