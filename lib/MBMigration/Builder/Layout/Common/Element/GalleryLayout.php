@@ -30,15 +30,16 @@ abstract class GalleryLayout extends AbstractElement
 
         try{
             $arrowSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"] .slick-next';
-            $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"] .slick-next';
             $arrowsColorStyles = $this->getDomElementStyles($arrowSelector, ['color'], $this->browserPage, [], '','::before');
-            $backgroundColorStyles = $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage);
-
-            $properties['background-color'] = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
             $colorArrows = ColorConverter::convertColorRgbToHex($arrowsColorStyles['color']);
         } catch (Exception|ElementNotFound|BrowserScriptException|BadJsonProvided $e){
             $colorArrows = '#FFFFFF';
         }
+
+        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $backgroundColorStyles = $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage);
+        $properties['background-color'] = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
+
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
         $videoJson = json_decode($this->brizyKit['video'], true);
@@ -139,12 +140,13 @@ abstract class GalleryLayout extends AbstractElement
         $brizyComponentValue = $brizySectionItem->getValue();
         Logger::instance()->debug('ImageSrc (content): '.$mbItem['content']);
         Logger::instance()->debug('ImageFileName (imageFileName): '.$mbItem['imageFileName']);
+        $colorCSS = $properties['background-color'] ?? '#ffffff';
         $brizyComponentValue
             ->set_marginTop(0)
             ->set_marginBottom(0)
             ->set_bgImageSrc($mbItem['content'])
             ->set_bgImageFileName($mbItem['imageFileName'])
-            ->set_customCSS('element{background:' . $properties['background-color'] ?? '#ffffff' . '}');
+            ->set_customCSS('element{background:' . $colorCSS . '}');
 
         if (isset($mbItem['settings']['slide']['extension'])) {
             $brizyComponentValue->set_imageExtension($mbItem['settings']['slide']['extension']);

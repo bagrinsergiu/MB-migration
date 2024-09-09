@@ -70,6 +70,7 @@ abstract class HeadElement extends AbstractElement
         $this->setImageLogo($logoImageComponent, $data->getMbSection());
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItem);
+
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         return $section;

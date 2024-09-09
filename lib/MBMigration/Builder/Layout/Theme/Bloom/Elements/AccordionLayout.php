@@ -50,7 +50,27 @@ class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\Accordi
             $brizyAccordionItem = $this->getAccordionSectionComponent($brizyAccordionItemComponent);
 
             $brizyAccordionItem->getValue()
-                ->set_bgColorHex($backgroundColorStyles['background-color']);
+                ->set_bgColorHex($backgroundColorStyles['background-color'])
+
+                ->set_mobileMarginType('ungrouped')
+                ->set_mobileMarginTop(0)
+                ->set_mobileMarginTopSuffix('px')
+                ->set_mobileMarginBottom(0)
+                ->set_mobileMarginBottomSuffix('px')
+                ->set_mobileMarginRight(-10)
+                ->set_mobileMarginRightSuffix('px')
+                ->set_mobileMarginLeft(-10)
+                ->set_mobileMarginLeftSuffix('px')
+
+                ->set_tabletMarginType('ungrouped')
+                ->set_tabletMarginTop(0)
+                ->set_tabletMarginTopSuffix('px')
+                ->set_tabletMarginBottom(0)
+                ->set_tabletMarginBottomSuffix('px')
+                ->set_tabletMarginRight(-10)
+                ->set_tabletMarginRightSuffix('px')
+                ->set_tabletMarginLeft(-10)
+                ->set_tabletMarginLeftSuffix('px');
 
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                 $mbSectionItem['item'][1],
