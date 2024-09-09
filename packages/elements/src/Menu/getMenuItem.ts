@@ -6,6 +6,7 @@ import {
   Output
 } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
+import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { prefixed } from "utils/src/models/prefixed";
 
 interface MenuItemData {
@@ -48,6 +49,14 @@ const getV = (entry: MenuItemData) => {
     defaultFamily: defaultFamily
   });
   const mMenu = prefixed(v, "mMenu");
+  Object.assign(
+    mMenu,
+    dicKeyForDevices("m-menu-color-hex", mMenu["mMenuColorHex"])
+  );
+  Object.assign(
+    mMenu,
+    dicKeyForDevices("m-menu-color-opacity", mMenu["mMenuColorOpacity"])
+  );
 
   const bgModel = {
     "menu-bg-color-hex": undefined,
