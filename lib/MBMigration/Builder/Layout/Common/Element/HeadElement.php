@@ -282,6 +282,8 @@ abstract class HeadElement extends AbstractElement
 
     abstract protected function getThemeMenuItemSelector(): array;
 
+    abstract protected function getPropertiesIconMenuItem(): array;
+
     abstract protected function getThemeMenuItemMobileSelector(): array;
 
     abstract protected function getThemeParentMenuItemSelector(): array;

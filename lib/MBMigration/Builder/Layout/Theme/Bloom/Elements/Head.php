@@ -128,6 +128,13 @@ class Head extends HeadElement
                 ->getValue()
                 ->$nameOption($value);
         }
+
+        foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 1, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
     }
 
     protected function getThemeMenuItemMobileSelector(): array
@@ -143,5 +150,22 @@ class Head extends HeadElement
     public function getThemeMobileBtnSelector(): array
     {
         return $this->getThemeMenuItemMobileSelector();
+    }
+
+    protected function getPropertiesIconMenuItem(): array
+    {
+        return [
+            'mobileMarginType' => "ungrouped",
+            'mobileMargin' => 0,
+            'mobileMarginSuffix' => "px",
+            'mobileMarginTop' => 10,
+            'mobileMarginTopSuffix' => "px",
+            'mobileMarginRight' => -21,
+            'mobileMarginRightSuffix' => "px",
+            'mobileMarginBottom' => 10,
+            'mobileMarginBottomSuffix' => "px",
+            'mobileMarginLeft' => 0,
+            'mobileMarginLeftSuffix' => "px",
+        ];
     }
 }
