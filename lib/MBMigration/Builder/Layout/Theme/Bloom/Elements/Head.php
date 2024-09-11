@@ -135,6 +135,13 @@ class Head extends HeadElement
                 ->getValue()
                 ->$nameOption($value);
         }
+
+        foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
     }
 
     protected function getThemeMenuItemMobileSelector(): array
