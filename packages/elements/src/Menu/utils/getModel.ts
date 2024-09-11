@@ -51,8 +51,10 @@ export const getModel = (data: Model) => {
         break;
       }
       case "item-padding": {
-        dic[toCamelCase(key)] = parseInt(`${styles["padding-left"]}`); // we naively assume the padding are equal
-        dic["itemPaddingSuffix"] = "px"; // we naively assume the padding are equal
+        const value = parseInt(`${styles["padding-left"]}`) * 2;
+
+        dic[toCamelCase(key)] = value;
+        dic["itemPaddingSuffix"] = "px";
         break;
       }
       case "line-height": {
