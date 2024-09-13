@@ -43,12 +43,18 @@ export const getModel = (data: Model) => {
         break;
       }
       case "font-style": {
-        dic[toCamelCase(key)] = "";
+        Object.assign(dic, dicKeyForDevices(key, ""));
+        break;
+      }
+      case "font-weight": {
+        Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
         break;
       }
       case "item-padding": {
-        dic[toCamelCase(key)] = parseInt(`${styles["padding-left"]}`); // we naively assume the padding are equal
-        dic["itemPaddingSuffix"] = "px"; // we naively assume the padding are equal
+        const value = parseInt(`${styles["padding-left"]}`) * 2;
+
+        dic[toCamelCase(key)] = value;
+        dic["itemPaddingSuffix"] = "px";
         break;
       }
       case "line-height": {
@@ -68,11 +74,11 @@ export const getModel = (data: Model) => {
       case "letter-spacing": {
         const value = styles[key];
         if (value === "normal") {
-          dicKeyForDevices(key, 0);
+          Object.assign(dic, dicKeyForDevices(key, 0));
         } else {
           // Remove 'px' and any extra whitespace
           const letterSpacingValue = `${value}`.replace(/px/g, "").trim();
-          Object.assign(dic, dicKeyForDevices(key, letterSpacingValue));
+          Object.assign(dic, dicKeyForDevices(key, +letterSpacingValue));
         }
         break;
       }
@@ -93,21 +99,34 @@ export const getModel = (data: Model) => {
         break;
       }
       case "bg-color-hex":
-      case "menu-bg-color-hex":
-      case "m-menu-icon-color-hex":
-      case "m-menu-bg-color-hex": {
+      case "menu-bg-color-hex": {
         const toHex = parseColorString(`${styles["background-color"]}`);
         dic[toCamelCase(key)] = toHex?.hex ?? "#ffffff";
         break;
       }
+      case "m-menu-icon-color-hex":
+      case "m-menu-bg-color-hex": {
+        const toHex = parseColorString(`${styles["background-color"]}`);
+        const value = toHex?.hex ?? "#ffffff";
+
+        Object.assign(dic, dicKeyForDevices(key, value));
+        break;
+      }
       case "bg-color-opacity":
-      case "menu-bg-color-opacity":
-      case "m-menu-icon-color-opacity":
-      case "m-menu-bg-color-opacity": {
+      case "menu-bg-color-opacity": {
         const toHex = parseColorString(`${styles["background-color"]}`);
         const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
 
         dic[toCamelCase(key)] = +(toHex?.opacity ?? opacity);
+        break;
+      }
+      case "m-menu-icon-color-opacity":
+      case "m-menu-bg-color-opacity": {
+        const toHex = parseColorString(`${styles["background-color"]}`);
+        const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
+        const value = +(toHex?.opacity ?? opacity);
+
+        Object.assign(dic, dicKeyForDevices(key, value));
         break;
       }
       default: {

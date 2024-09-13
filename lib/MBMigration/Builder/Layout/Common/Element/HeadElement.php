@@ -70,6 +70,7 @@ abstract class HeadElement extends AbstractElement
         $this->setImageLogo($logoImageComponent, $data->getMbSection());
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItem);
+
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         return $section;
@@ -280,6 +281,8 @@ abstract class HeadElement extends AbstractElement
     abstract protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent;
 
     abstract protected function getThemeMenuItemSelector(): array;
+
+    abstract protected function getPropertiesIconMenuItem(): array;
 
     abstract protected function getThemeMenuItemMobileSelector(): array;
 

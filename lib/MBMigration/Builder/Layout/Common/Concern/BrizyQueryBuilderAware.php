@@ -29,11 +29,8 @@ trait BrizyQueryBuilderAware
         return $this;
     }
 
-    protected function createDetailsCollectionItem($collectionTypeUri, $pageData)
+    protected function createDetailsCollectionItem($collectionTypeUri, $pageData, $slug = 'event-detail', $title = 'Event Detail')
     {
-        $slug = 'event-grid';
-        $title = 'Event grid';
-
         $collectionItem = $this->getQueryBuilder()->getCollectionItemBySlug($slug);
 
         if (!$collectionItem) {

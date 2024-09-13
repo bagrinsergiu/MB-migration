@@ -89,7 +89,59 @@ class Head extends HeadElement
         $brizySection->getItemWithDepth(0)
             ->getValue()
             ->set_bgColorHex($backgroundColorHex)
-            ->set_bgColorOpacity($opacity);
+            ->set_bgColorOpacity($opacity)
+            ->set_mobileBgColorType('solid')
+            ->set_mobileBgColorHex($backgroundColorHex)
+            ->set_mobileBgColorPalette('')
+            ->set_mobileBgColorOpacity($opacity);
+
+        $imageLogoOptions = [
+            'mobileSize' => 85,
+            'mobileSizeSuffix' => '%'
+        ];
+
+        $sectionlogoOptions = [
+            'mobileMarginType' => 'grouped',
+            'mobileMargin' => -20,
+            'mobileMarginSuffix' => 'px',
+            'mobileMarginTop' => -20,
+            'mobileMarginTopSuffix' => 'px',
+            'mobileMarginRight' => -20,
+            'mobileMarginRightSuffix' => 'px',
+            'mobileMarginBottom' => -20,
+            'mobileMarginBottomSuffix' => 'px',
+            'mobileMarginLeft' => -20,
+            'mobileMarginLeftSuffix' => 'px',
+        ];
+
+
+        foreach ($imageLogoOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($sectionlogoOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 1, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
     }
 
     protected function getThemeMenuItemMobileSelector(): array
@@ -105,5 +157,22 @@ class Head extends HeadElement
     public function getThemeMobileBtnSelector(): array
     {
         return $this->getThemeMenuItemMobileSelector();
+    }
+
+    protected function getPropertiesIconMenuItem(): array
+    {
+        return [
+            'mobileMarginType' => "ungrouped",
+            'mobileMargin' => 0,
+            'mobileMarginSuffix' => "px",
+            'mobileMarginTop' => 10,
+            'mobileMarginTopSuffix' => "px",
+            'mobileMarginRight' => -21,
+            'mobileMarginRightSuffix' => "px",
+            'mobileMarginBottom' => 10,
+            'mobileMarginBottomSuffix' => "px",
+            'mobileMarginLeft' => 0,
+            'mobileMarginLeftSuffix' => "px",
+        ];
     }
 }

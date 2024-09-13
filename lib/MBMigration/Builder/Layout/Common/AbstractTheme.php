@@ -52,7 +52,21 @@ abstract class AbstractTheme implements ThemeInterface
         Logger::instance()->debug("Handling [head] page section.");
         $elementFactory->getElement('head', $browserPage)->transformToItem($elementContext);
 
+        $elementsList = ['event'];
+        $processedItems = [];
+
         foreach ($mbPageSections as $mbPageSection) {
+
+            $elementName = explode("-", $mbPageSection['typeSection']);
+
+            if (in_array($elementName[0], $elementsList)) {
+                if (!in_array($elementName[0], $processedItems)) {
+                    $processedItems[] = $elementName[0];
+                } else {
+                    continue;
+                }
+            }
+
             $elementName = $mbPageSection['typeSection'];
             Logger::instance()->debug("Handling [$elementName] page section.");
             try {

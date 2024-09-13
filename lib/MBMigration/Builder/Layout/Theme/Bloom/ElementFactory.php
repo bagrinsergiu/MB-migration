@@ -95,7 +95,7 @@ class ElementFactory  extends AbstractThemeElementFactory
 
             case 'grid-media-layout':
             case 'list-media-layout':
-                return new MediaLayout($this->blockKit['blocks']['list-media-layout'], $browserPage, $this->getQueryBuilder());
+                return new MediaLayout($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
 
             case 'full-media':
                 return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);

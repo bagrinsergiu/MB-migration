@@ -49,14 +49,98 @@ class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\Accordi
 
             $brizyAccordionItem = $this->getAccordionSectionComponent($brizyAccordionItemComponent);
 
-            $brizyAccordionItem->getValue()
-                ->set_bgColorHex($backgroundColorStyles['background-color']);
+            $accordionWrapperElementStyle = [
+                "marginType" => "ungrouped",
+                "marginSuffix" => "px",
+                "marginTop" => 10,
+                "marginTopSuffix" => "px",
+                "marginRight" => 11,
+                "marginRightSuffix" => "px",
+                "marginBottom" => 10,
+                "marginBottomSuffix" => "px",
+                "marginLeft" => 11,
+                "marginLeftSuffix" => "px",
+
+                "tabletMarginType" => "ungrouped",
+                "tabletMargin" => 0,
+                "tabletMarginSuffix" => "px",
+                "tabletMarginTop" => 10,
+                "tabletMarginTopSuffix" => "px",
+                "tabletMarginRight" => 11,
+                "tabletMarginRightSuffix" => "px",
+                "tabletMarginBottom" => 10,
+                "tabletMarginBottomSuffix" => "px",
+                "tabletMarginLeft" => 11,
+                "tabletMarginLeftSuffix" => "px",
+
+                "mobileMarginType" => "ungrouped",
+                "mobileMargin" => 0,
+                "mobileMarginSuffix" => "px",
+                "mobileMarginTop" => 10,
+                "mobileMarginTopSuffix" => "px",
+                "mobileMarginRight" => 11,
+                "mobileMarginRightSuffix" => "px",
+                "mobileMarginBottom" => 10,
+                "mobileMarginBottomSuffix" => "px",
+                "mobileMarginLeft" => 11,
+                "mobileMarginLeftSuffix" => "px",
+            ];
+
+
+            $accordionRowElementStyle = [
+                'bgColorHex' => $backgroundColorStyles['background-color'],
+
+                "marginType" => "ungrouped",
+                "marginSuffix" => "px",
+                "marginTop" => 10,
+                "marginTopSuffix" => "px",
+                "marginRight" => -11,
+                "marginRightSuffix" => "px",
+                "marginBottom" => 0,
+                "marginBottomSuffix" => "px",
+                "marginLeft" => -11,
+                "marginLeftSuffix" => "px",
+
+                'mobileMarginType' => 'ungrouped',
+                'mobileMarginTop' => 0,
+                'mobileMarginTopSuffix' => 'px',
+                'mobileMarginBottom' => 0,
+                'mobileMarginBottomSuffix' => 'px',
+                'mobileMarginRight' => -10,
+                'mobileMarginRightSuffix' => 'px',
+                'mobileMarginLeft' => -10,
+                'mobileMarginLeftSuffix' => 'px',
+
+                'tabletMarginType' => 'ungrouped',
+                'tabletMarginTop' => 0,
+                'tabletMarginTopSuffix' => 'px',
+                'tabletMarginBottom' => 0,
+                'tabletMarginBottomSuffix' => 'px',
+                'tabletMarginRight' => -10,
+                'tabletMarginRightSuffix' => 'px',
+                'tabletMarginLeft' => -10,
+                'tabletMarginLeftSuffix' => 'px',
+
+            ];
+
+            foreach ($accordionRowElementStyle as $key => $value) {
+                $method = "set_".$key;
+                $brizyAccordionItem->getValue()
+                    ->$method($value);
+            }
 
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                 $mbSectionItem['item'][1],
                 $brizyAccordionItem
             );
             $this->handleRichTextItem($elementContext, $this->browserPage);
+
+            $elementWrapper = $brizyAccordionItem->getItemWithDepth(0);
+            foreach ($accordionWrapperElementStyle as $key => $value) {
+                $method = "set_".$key;
+                $elementWrapper->getValue()
+                    ->$method($value);
+            }
 
             $brizyAccordionItems[] = $brizyAccordionItemComponent;
         }
