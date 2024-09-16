@@ -39,7 +39,7 @@ abstract class MediaLayout extends AbstractElement
 
         $mbContext = $data->getThemeContext();
 
-        $mbContext->getSlug();
+        $slug = $mbContext->getSlug();
 
         $dataIdSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
 
@@ -103,6 +103,11 @@ abstract class MediaLayout extends AbstractElement
                 ['opacity'],
                 $this->browserPage);
 
+            $resultColorStyles['color-text-description'] = $this->getDomElementStyles(
+                $dataIdSelector. ' .media-player-container .media-description',
+                ['color'],
+                $this->browserPage);
+
 
             $colorStyles = [
                 'text-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['text']['color']),
@@ -110,6 +115,7 @@ abstract class MediaLayout extends AbstractElement
                 'bg-opacity' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-opacity']['opacity']),
                 'pagination-normal' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-normal']['color']),
                 'pagination-active' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-active']['color']),
+                'color-text-description' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-description']['color']),
                 'opacity-pagination-normal' => $resultColorStyles['opacity-pagination-normal']['opacity'],
                 'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'],
                 ];
@@ -129,11 +135,16 @@ abstract class MediaLayout extends AbstractElement
             $this->getDetailsLinksComponent($detailsSection)
                 ->getValue()
                 ->set_source($collectionTypeUri)
+                ->set_detailPageSource($detailCollectionItem)
                 ->set_detailPage("{{placeholder content='$placeholder'}}");
 
             $sectionProperties = [
 
                 'showCategoryFilter' => 'off',
+
+                'colorHex' =>  $colorStyles['color-text-description']['color'] ?? "#ebeff2",
+                'colorOpacity' => $colorStyles['color-text-description']['opacity'] ?? 1,
+                'colorPalette' => "",
 
                 'titleColorHex' =>  $sectionPalette['link'] ?? "#1e1eb7",
                 'titleColorOpacity' =>  1,
