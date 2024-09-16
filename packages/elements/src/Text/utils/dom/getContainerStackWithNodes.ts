@@ -206,27 +206,12 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                 container.append(node.cloneNode(true));
                 appendNodeStyles(node, node);
 
-                if (container.querySelector(buttonSelector)) {
-                  // if latest appended is icon, icons must be wrapped in same node
-                  if (appendedButton) {
-                    stack.set(node);
-                  } else {
-                    stack.append(node, { type: "button" });
-                    appendedButton = true;
-                  }
+                // if latest appended is icon, icons must be wrapped in same node
+                if (appendedButton) {
+                  stack.set(node);
                 } else {
-                  const text = node.textContent;
-
-                  if (text?.trim()) {
-                    extractInnerText(node, stack, buttonSelector);
-                    appendedButton = false;
-                  }
-                }
-              } else {
-                const text = node.textContent;
-
-                if (text?.trim()) {
-                  extractInnerText(_node, stack, buttonSelector);
+                  stack.append(node, { type: "button" });
+                  appendedButton = true;
                 }
               }
             });
