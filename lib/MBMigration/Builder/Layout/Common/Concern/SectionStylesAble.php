@@ -125,7 +125,12 @@ trait SectionStylesAble
             ->set_bgColorHex($backgroundColorHex)
             ->set_bgColorPalette('')
             ->set_bgColorType('solid')
-            ->set_bgColorOpacity($opacity);
+            ->set_bgColorOpacity($opacity)
+
+            ->set_mobileBgColorType('solid')
+            ->set_mobileBgColorHex($backgroundColorHex)
+            ->set_mobileBgColorOpacity($opacity)
+            ->set_mobileBgColorPalette('');
 
         // try to set the image background
         if ($this->hasImageBackground($mbSectionItem)) {
@@ -136,7 +141,10 @@ trait SectionStylesAble
                     ->set_bgImageSrc($background['photo'])
                     ->set_bgSize($sectionStyles['background-size'])
                     ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
-                    ->set_bgColorHex($backgroundColorHex);
+                    ->set_bgColorHex($backgroundColorHex)
+
+                    ->set_mobileBgColorHex($backgroundColorHex)
+                    ->set_mobileBgColorOpacity($background['opacity']);
             }
         }
 
