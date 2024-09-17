@@ -1939,6 +1939,35 @@ const ex28: Data = {
 };
 //#endregion
 
+//#region Example 28 (Bloom list)
+const ex29: Data = {
+  html: `<div class="text-content text-1 editable" data-id="23136535" data-category="text"><div><p style="text-align: left; font-weight: 600;"><strong style="font-size: 15px; letter-spacing: 0.45px;">MONTHLY PRAYER GATHERING</strong><br></p><div style="text-align: left; font-weight: 200;"><ul><li>Have you ever struggled praying out loud in front of other people? Consider joining us for our monthly prayer meeting as we seek to learn, encourage, and grow deeper with God through prayer together.&nbsp;</li><li>Our prayer meetings happen monthly on the second Tuesday of every month at 6pm.</li></ul></div></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"23136535\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-15 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0_4"><strong style="font-weight: 600; ">MONTHLY PRAYER GATHERING</strong><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"></p><ul><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Have you ever struggled praying out loud in front of other people? Consider joining us for our monthly prayer meeting as we seek to learn, encourage, and grow deeper with God through prayer together.&nbsp;</span></li><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Our prayer meetings happen monthly on the second Tuesday of every month at 6pm.</span></li></ul><p></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -1967,7 +1996,8 @@ describe.each([
   ex25,
   ex26,
   ex27,
-  ex28
+  ex28,
+  ex29
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
