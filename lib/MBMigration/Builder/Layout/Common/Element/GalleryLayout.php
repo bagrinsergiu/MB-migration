@@ -36,7 +36,7 @@ abstract class GalleryLayout extends AbstractElement
             $colorArrows = '#FFFFFF';
         }
 
-        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $sectionSelector = 'body';
         $backgroundColorStyles = $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage);
         $properties['background-color'] = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
 

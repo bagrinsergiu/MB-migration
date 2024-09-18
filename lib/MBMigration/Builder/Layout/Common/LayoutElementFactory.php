@@ -3,7 +3,6 @@
 namespace MBMigration\Builder\Layout\Common;
 
 use MBMigration\Builder\Fonts\FontsController;
-use MBMigration\Builder\Layout\Theme\Bloom\ElementFactory;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Layer\Brizy\BrizyAPI;
@@ -53,8 +52,12 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
         }
 
         switch ($design) {
+            case 'Anthem':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Anthem\ElementFactory(
+                    $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
             case 'Bloom':
-                return self::$instances[$design] = new ElementFactory(
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Bloom\ElementFactory(
                     $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
             case 'Voyage':

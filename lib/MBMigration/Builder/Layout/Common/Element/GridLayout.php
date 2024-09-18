@@ -13,10 +13,13 @@ abstract class GridLayout extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
+    private array $globalBrizyKit;
+
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);

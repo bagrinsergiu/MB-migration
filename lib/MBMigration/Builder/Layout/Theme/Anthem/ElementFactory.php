@@ -1,40 +1,39 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Bloom;
+namespace MBMigration\Builder\Layout\Theme\Anthem;
 
-use MBMigration\Browser\BrowserPage;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventGalleryLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventListLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventTileLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\Footer;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullMedia;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullText;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullWidthForm;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\GalleryLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridMediaLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\Head;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftForm;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMedia;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMediaCircle;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\ListLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\MediaLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\PrayerForm;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightForm;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightMedia;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\SmallGroupsList;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\TabsLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\TwoRightMediaCircle;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\AccordionLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventGalleryLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventListLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventTileLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Footer;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullMedia;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullText;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullWidthForm;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\GalleryLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\GridLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\GridMediaLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Head;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftForm;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftMedia;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftMediaCircle;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\ListLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\MediaLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\PrayerForm;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\RightForm;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\RightMedia;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\SmallGroupsList;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\TabsLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\TwoRightMediaCircle;
 
-class ElementFactory  extends AbstractThemeElementFactory
+class ElementFactory extends AbstractThemeElementFactory
 {
-    public function getElement($name, BrowserPageInterface $browserPage): ElementInterface
+    public function getElement($name, BrowserPageInterface $browserPage) :ElementInterface
     {
         switch ($name) {
             case 'footer':
