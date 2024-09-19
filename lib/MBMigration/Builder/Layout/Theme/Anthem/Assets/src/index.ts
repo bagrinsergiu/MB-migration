@@ -10,8 +10,8 @@ import { run as getText } from "./Text";
 window.brizy = {
   getMenuItem,
   getSubMenuItem,
-  getAttributes,
   getStyles,
+  getAttributes,
   getText,
   getAccordion,
   dom
