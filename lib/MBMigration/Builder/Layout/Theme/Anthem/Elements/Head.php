@@ -36,36 +36,6 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0);
     }
 
-    public function getThemeMenuItemSelector(): array
-    {
-        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
-    }
-
-    public function getThemeParentMenuItemSelector(): array
-    {
-        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
-    }
-
-    public function getThemeSubMenuItemSelector(): array
-    {
-        return ["selector" => "#main-navigation>ul>li.has-sub .sub-navigation>li>a", "pseudoEl" => ""];
-    }
-
-    public function getThemeMenuItemBgSelector(): array
-    {
-        return $this->getThemeMenuItemSelector();
-    }
-
-    public function getThemeSubMenuItemBGSelector(): array
-    {
-        return ["selector" => "#main-navigation>ul>li.has-sub .sub-navigation", "pseudoEl" => ""];
-    }
-
-    public function getThemeMenuItemPaddingSelector(): array
-    {
-        return $this->getThemeMenuItemSelector();
-    }
-
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = parent::internalTransformToItem($data);
@@ -144,13 +114,19 @@ class Head extends HeadElement
             'mobileMarginLeftSuffix' => 'px',
         ];
 
-
-        foreach ($imageLogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
-                ->getValue()
-                ->$nameOption($value);
-        }
+        $mobileIconButtonOptions = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginBottom" => 10,
+            "marginBottomSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+        ];
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
@@ -159,16 +135,24 @@ class Head extends HeadElement
                 ->$nameOption($value);
         }
 
-        foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
+        foreach ($imageLogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 1, 0)
+            $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
+        foreach ($mobileIconButtonOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 1)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
+            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -181,9 +165,24 @@ class Head extends HeadElement
 
     }
 
-    protected function getThemeMenuItemMobileSelector(): array
+    public function getThemeMenuItemSelector(): array
     {
-        return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+    }
+
+    public function getThemeParentMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation>ul>li>a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemBGSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation", "pseudoEl" => ""];
     }
 
     public function getThemeMobileNavSelector(): array
@@ -191,25 +190,78 @@ class Head extends HeadElement
         return ["selector" => "#mobile-navigation", "pseudoEl" => ""];
     }
 
+    public function getThemeMenuItemMobileSelector(): array
+    {
+        return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
+    }
+
+    public function getThemeMenuItemPaddingSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
     public function getThemeMobileBtnSelector(): array
     {
         return $this->getThemeMenuItemMobileSelector();
     }
 
+    public function getThemeMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
     protected function getPropertiesIconMenuItem(): array
     {
         return [
-            'mobileMarginType' => "ungrouped",
-            'mobileMargin' => 0,
-            'mobileMarginSuffix' => "px",
-            'mobileMarginTop' => 0,
-            'mobileMarginTopSuffix' => "px",
-            'mobileMarginRight' => -10,
-            'mobileMarginRightSuffix' => "px",
-            'mobileMarginBottom' => 0,
-            'mobileMarginBottomSuffix' => "px",
-            'mobileMarginLeft' => 0,
-            'mobileMarginLeftSuffix' => "px",
+            "itemPadding" => 30,
+            "itemPaddingSuffix" => "px",
+
+            "mobileMMenuSize" => 32,
+            "mobileMMenuSizeSuffix" => "px",
+            "tabletMMenuSize" => 32,
+            "tabletMMenuSizeSuffix" => "px",
+
+            "tabletHorizontalAlign" => "right",
+
+            "tabletMarginType" => "ungrouped",
+            "tabletMarginSuffix" => "px",
+            "tabletMarginRight" => -10,
+            "tabletMarginRightSuffix" => "px",
+            "tabletMarginLeft" => 299,
+            "tabletMarginLeftSuffix" => "px",
+
+            "tabletPaddingType" => "ungrouped",
+            "tabletPadding" => 0,
+            "tabletPaddingSuffix" => "px",
+            "tabletPaddingTop" => 0,
+            "tabletPaddingTopSuffix" => "px",
+            "tabletPaddingRight" => 50,
+            "tabletPaddingRightSuffix" => "px",
+            "tabletPaddingBottom" => 0,
+            "tabletPaddingBottomSuffix" => "px",
+            "tabletPaddingLeft" => 0,
+            "tabletPaddingLeftSuffix" => "px",
+
+            "mobileHorizontalAlign" => "right",
+
+            "mobileMarginType" => "ungrouped",
+            "mobileMarginSuffix" => "px",
+            "mobileMarginRight" => 0,
+            "mobileMarginRightSuffix" => "px",
+            "mobileMarginLeft" => 199,
+            "mobileMarginLeftSuffix" => "px",
+
+            "mobilePaddingType" => "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 0,
+            "mobilePaddingLeftSuffix" => "px",
         ];
     }
 }

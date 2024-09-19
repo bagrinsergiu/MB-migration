@@ -17,7 +17,7 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullText;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullWidthForm;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\GridLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\GridMediaLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\ThreeTopMediaCircle;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Head;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftForm;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftMedia;
@@ -44,6 +44,8 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
             case 'two-right-media-circle':
                 return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
+            case 'three-top-media-circle':
+                return new ThreeTopMediaCircle($this->blockKit['blocks']['three-top-media-circle'], $browserPage);
             case 'left-media':
                 return new LeftMedia($this->blockKit['blocks']['left-media'], $browserPage);
             case 'right-media':
@@ -99,7 +101,7 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'full-media':
                 return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);
             default:
-                throw new ElementNotFound("The Element [{$name}] was not found.");
+                return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
         }
     }
 
