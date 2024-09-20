@@ -15,6 +15,17 @@ trait MbSectionUtils
         return null;
     }
 
+    protected function getByType($section, $itemType)
+    {
+        foreach ($section as $item) {
+            if ($item['item_type'] == $itemType) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
     protected function getItemsByCategory($section, $category)
     {
         $items = [];

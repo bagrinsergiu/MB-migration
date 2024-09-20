@@ -1,10 +1,10 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
+namespace MBMigration\Builder\Layout\Theme\Bloom\Elements\Events;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-class EventListLayout extends \MBMigration\Builder\Layout\Common\Element\EventListLayout
+class EventListLayout extends \MBMigration\Builder\Layout\Common\Element\Events\EventListLayout
 {
     protected function getDetailsComponent(BrizyComponent $brizySection)
     {

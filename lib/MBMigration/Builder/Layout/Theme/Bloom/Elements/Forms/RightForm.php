@@ -1,10 +1,10 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
+namespace MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\FormWithTextElement;
+use MBMigration\Builder\Layout\Common\Element\Forms\FormWithTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class RightForm extends FormWithTextElement

@@ -12,6 +12,7 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventGalleryLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventTileLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Footer;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Form;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullMedia;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullText;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullWidthForm;
@@ -40,12 +41,16 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new Footer($this->blockKit['blocks']['footer'], $browserPage,$this->brizyApiClient);
             case 'head':
                 return new Head($this->blockKit['blocks']['menu'], $browserPage,$this->brizyApiClient, $this->fontsController);
+
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
             case 'two-right-media-circle':
                 return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
             case 'three-top-media-circle':
                 return new ThreeTopMediaCircle($this->blockKit['blocks']['three-top-media-circle'], $browserPage);
+
+            case 'full-media':
+                return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);
             case 'left-media':
                 return new LeftMedia($this->blockKit['blocks']['left-media'], $browserPage);
             case 'right-media':
@@ -62,14 +67,6 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new GridLayout($this->blockKit['blocks']['grid-layout'], $browserPage);
             case 'list-layout':
                 return new ListLayout($this->blockKit['blocks']['list-layout'], $browserPage);
-            case 'prayer-form':
-                return new PrayerForm($this->blockKit['blocks']['prayer-form'], $browserPage);
-            case 'full-width-form':
-                return new FullWidthForm($this->blockKit['blocks']['form'], $browserPage);
-            case 'left-form-with-text':
-                return new LeftForm($this->blockKit['blocks']['form'], $browserPage);
-            case 'right-form-with-text':
-                return new RightForm($this->blockKit['blocks']['form'], $browserPage);
             case 'accordion-layout':
                 return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $browserPage);
             case 'event-list-layout':
@@ -94,12 +91,19 @@ class ElementFactory extends AbstractThemeElementFactory
 //            case 'full-width-form':
 //                return new FullWidthForm($this->blockKit['blocks']['full-width-form'], $browserPage);
 
+            case 'full-width-form':
+                return new Form($this->blockKit['blocks']['form'], $browserPage);
+            case 'left-form-with-text':
+                return new LeftForm($this->blockKit['blocks']['form'], $browserPage);
+            case 'right-form-with-text':
+                return new RightForm($this->blockKit['blocks']['form'], $browserPage);
+            case 'prayer-form':
+                return new PrayerForm($this->blockKit['blocks']['prayer-form'], $browserPage);
+
             case 'grid-media-layout':
             case 'list-media-layout':
                 return new MediaLayout($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
 
-            case 'full-media':
-                return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);
             default:
                 return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
         }

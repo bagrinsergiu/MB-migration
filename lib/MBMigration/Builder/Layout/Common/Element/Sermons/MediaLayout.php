@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Element;
+namespace MBMigration\Builder\Layout\Common\Element\Sermons;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
@@ -9,6 +9,7 @@ use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\SlugAble;
+use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
@@ -122,20 +123,17 @@ abstract class MediaLayout extends AbstractElement
 
             $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
             $detailCollectionItem = $this->createDetailsCollectionItem(
-                $data->getThemeContext()->getBrizyCollectionTypeURI(),
-                [
-                    $detailsSection,
-                ],
+                $collectionTypeUri,
+                $detailsSection,
                 'media-detail',
                 'Media Detail'
             );
 
-            $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem . '" }}"');
+            $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
 
-            $this->getDetailsLinksComponent($detailsSection)
+            $this->getDetailsLinksComponent($brizySection)
                 ->getValue()
-                ->set_source($collectionTypeUri)
-                ->set_detailPageSource($detailCollectionItem)
+                ->set_detailPageSource($collectionTypeUri)
                 ->set_detailPage("{{placeholder content='$placeholder'}}");
 
             $sectionProperties = [
@@ -280,6 +278,6 @@ abstract class MediaLayout extends AbstractElement
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 }

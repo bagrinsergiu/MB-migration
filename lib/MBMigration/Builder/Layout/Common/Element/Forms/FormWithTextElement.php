@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Element;
+namespace MBMigration\Builder\Layout\Common\Element\Forms;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;

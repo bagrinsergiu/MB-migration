@@ -122,8 +122,6 @@ class MBProjectDataCollector
      */
     public function getSite()
     {
-
-
         $siteData = $this->db->requestOne(
             "
             SELECT
@@ -370,7 +368,6 @@ class MBProjectDataCollector
 
     public function getPages(): array
     {
-
         $result = [];
 
         $allPages = $this->db->request(
@@ -378,14 +375,14 @@ class MBProjectDataCollector
                        slug,
                        name,
                        parent_id,
-                       ''                 as collection,
+                       '' as collection,
                        position,
                        settings as parentSettings,
                        landing,
                        hidden,
                        (CASE WHEN (password_protected IS NULL OR password_protected IS FALSE) THEN false ELSE true END) as protectedPage
                 FROM pages
-                WHERE site_id = {$this->siteId} and trashed_at is null"
+                WHERE site_id = {$this->siteId} and trashed_at is null and hidden = false"
         );
 
         $allPages = array_map(function ($page) {

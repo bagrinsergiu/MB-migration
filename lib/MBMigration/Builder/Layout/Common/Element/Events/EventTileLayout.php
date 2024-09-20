@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Element;
+namespace MBMigration\Builder\Layout\Common\Element\Events;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;

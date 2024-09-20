@@ -1,11 +1,12 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Element;
+namespace MBMigration\Builder\Layout\Common\Element\Forms;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
+use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 abstract class FormElement extends AbstractElement

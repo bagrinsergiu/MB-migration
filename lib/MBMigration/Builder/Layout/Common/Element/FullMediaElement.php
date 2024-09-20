@@ -22,10 +22,11 @@ abstract class FullMediaElement extends AbstractElement
         $mbSectionItem = $data->getMbSection();
 
         $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
-
         $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
-
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $brizySectionItemComponent = $this->getTextContainerComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
         $this->handleRichTextItems($elementContext, $this->browserPage);
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
 
@@ -63,5 +64,7 @@ abstract class FullMediaElement extends AbstractElement
     abstract protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent;
 
     abstract protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent;
+
+    abstract protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent;
 
 }

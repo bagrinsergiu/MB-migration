@@ -7,14 +7,18 @@ use MBMigration\Builder\Layout\Common\Element\FullMediaElement;
 
 class FullMedia extends FullMediaElement
 {
-    protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0);
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0, 0, 0, 0);
     }
 
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 1, 0);
+    }
+
+    protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0, 1);
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
