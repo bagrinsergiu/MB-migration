@@ -21,11 +21,19 @@ abstract class GridLayout extends AbstractElement
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
+        $sectionItemComponent->getValue()
+            ->set_paddingTop($this->getTopPaddingOfTheFirstElement());
 
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
+        $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
 
         $rowJson = json_decode($this->brizyKit['row'], true);
         $itemJson = json_decode($this->brizyKit['item'], true);

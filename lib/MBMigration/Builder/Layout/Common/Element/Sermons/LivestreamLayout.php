@@ -8,7 +8,7 @@ use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class LivestreamLayout extends AbstractElement
+abstract class LivestreamLayout extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;

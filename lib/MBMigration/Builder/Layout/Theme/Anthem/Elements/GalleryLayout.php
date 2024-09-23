@@ -16,4 +16,14 @@ class GalleryLayout extends \MBMigration\Builder\Layout\Common\Element\GalleryLa
     {
         return $brizySection;
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 50;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
 }

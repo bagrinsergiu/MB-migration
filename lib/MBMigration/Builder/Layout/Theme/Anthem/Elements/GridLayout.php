@@ -8,7 +8,7 @@ class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
 {
     protected function getItemsPerRow(): int
     {
-        return 3;
+        return 4;
     }
 
     protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent
@@ -23,5 +23,15 @@ class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
 
     protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent {
         return $brizyComponent->getItemWithDepth(0);
+    }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 50;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
     }
 }

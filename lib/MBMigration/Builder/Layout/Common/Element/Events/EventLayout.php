@@ -50,8 +50,13 @@ abstract class EventLayout extends AbstractElement
 
         $fonts = FontsController::getFontsFamilyFromName('main_text');
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
         $this->handleRichTextHead($elementContext, $this->browserPage);
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
@@ -62,104 +67,145 @@ abstract class EventLayout extends AbstractElement
             ]
         );
 
-        $this->getDetailsLinksComponent($detailsSection)
+        $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
+
+        $this->getDetailsLinksComponent($brizySection)
             ->getValue()
-            ->set_source($collectionTypeUri)
-            ->set_detailPage("{{ brizy_dc_url_post id=\"".$detailCollectionItem['id']."\" }}");
+            ->set_eventDetailPageSource($collectionTypeUri)
+            ->set_eventDetailPage("{{placeholder content='$placeholder'}}");
 
-        $brizySection->getValue()
-            ->set_featuredViewOrder(3)
-            ->set_calendarViewOrder(1)
+        $sectionProperties = [
+            'titleTypographyLineHeight' => 1.8,
 
-            ->set_dateTypographyLineHeight(3)
-            ->set_eventsTypographyLineHeight(1.5)
+            'listItemMetaTypographyLineHeight' => 1.8,
 
-            ->set_dateTypographyFontStyle('')
-            ->set_dateTypographyFontFamily(1.5)
+            'featuredViewOrder' => 3,
+            'calendarViewOrder' => 1,
 
-            ->set_resultsHeadingColorHex($sectionPalette['text'])
-            ->set_resultsHeadingColorOpacity(1)
-            ->set_resultsHeadingColorPalette()
+            'dateTypographyLineHeight' => 1.8,
+            'eventsTypographyLineHeight' => 1.8,
 
-            ->set_resultsHeadingTypographyFontFamilyType($fonts)
-            ->set_resultsHeadingTypographyFontStyle('')
+            'dateTypographyFontStyle' => '',
+            'dateTypographyFontFamily' => 1.8,
 
-            ->set_listPaginationArrowsColorHex($sectionPalette['text'])
-            ->set_listPaginationArrowsColorOpacity(1)
-            ->set_listPaginationArrowsColorPalette('')
+            'previewColorHex' => '#f8f8f8',
+            'previewColorOpacity' => 1,
+            'previewColorPalette' => '',
 
-            ->set_hoverListPaginationArrowsColorHex($sectionPalette['text'])
-            ->set_hoverListPaginationArrowsColorOpacity(1)
-            ->set_hoverListPaginationArrowsColorPalette('')
+            'hoverPreviewColorHex' => '#f8f8f8',
+            'hoverPreviewColorOpacity' => 0.8,
+            'hoverPreviewColorPalette' => '',
 
-            ->set_listItemMetaColorHex($sectionPalette['text'])
-            ->set_listItemMetaColorOpacity(1)
-            ->set_listItemMetaColorPalette('')
+            'resultsHeadingColorHex' => $sectionPalette['text'],
+            'resultsHeadingColorOpacity' => 1,
+            'resultsHeadingColorPalette' => '',
 
-            ->set_listItemDateColorHex($sectionPalette['text'])
-            ->set_listItemDateColorOpacity(1)
-            ->set_listItemDateColorPalette('')
+            'resultsHeadingTypographyFontFamilyType' => $fonts,
+            'resultsHeadingTypographyFontStyle' => '',
 
-            ->set_listTitleColorHex($sectionPalette['text'])
-            ->set_listTitleColorOpacity(1)
-            ->set_listTitleColorPalette('')
+            'listPaginationArrowsColorHex' => $sectionPalette['text'],
+            'listPaginationArrowsColorOpacity' => 1,
+            'listPaginationArrowsColorPalette' => '',
 
-            ->set_groupingDateColorHex($sectionPalette['text'])
-            ->set_groupingDateColorOpacity(1)
-            ->set_groupingDateColorPalette('')
+            'hoverListPaginationArrowsColorHex' => $sectionPalette['text'],
+            'hoverListPaginationArrowsColorOpacity' => 0.75,
+            'hoverListPaginationArrowsColorPalette' => '',
 
-            ->set_hoverTitleColorHex($sectionPalette['text'])
-            ->set_hoverTitleColorOpacity(0.75)
-            ->set_hoverTitleColorPalette('')
+            'listPaginationColorHex' => $sectionPalette['text'],
+            'listPaginationColorOpacity' => 1,
+            'listPaginationColorPalette' => '',
 
-            ->set_titleColorHex($sectionPalette['text'])
-            ->set_titleColorOpacity(1)
-            ->set_titleColorPalette('')
+            'calendarHeadingColorHex' => $sectionPalette['text'],
+            'calendarHeadingColorOpacity' => 1,
+            'calendarHeadingColorPalette' => '',
 
-            ->set_dateColorHex($sectionPalette['text'])
-            ->set_dateColorOpacity(1)
-            ->set_dateColorPalette('')
+            'calendarDaysColorHex' => $sectionPalette['text'],
+            'calendarDaysColorOpacity' => 1,
+            'calendarDaysColorPalette' => '',
 
-            ->set_listItemDateBgColorHex($sectionPalette['text'])
-            ->set_listItemDateBgColorOpacity(1)
-            ->set_listItemDateBgColorType('solid')
-            ->set_listItemDateBgColorPalette('')
+            'eventsColorHex' => $sectionPalette['text'],
+            'eventsColorOpacity' => 1,
+            'eventsColorPalette' => '',
 
-            ->set_detailButtonBgColorHex($sectionPalette['text'])
-            ->set_detailButtonBgColorOpacity(1)
-            ->set_detailButtonBgColorPalette('')
+            'hoverEventsColorHex' => $sectionPalette['text'],
+            'hoverEventsColorOpacity' => 0.75,
+            'hoverEventsColorPalette' => '',
 
-            ->set_listItemTitleColorHex($sectionPalette['link'])
-            ->set_listItemTitleColorOpacity(1)
-            ->set_listItemTitleColorPalette('')
+            'listItemTitleColorHex' => $sectionPalette['link'],
+            'listItemTitleColorOpacity' => 1,
+            'listItemTitleColorPalette' => '',
 
-            ->set_hoverListItemTitleColorHex($sectionPalette['link'])
-            ->set_hoverListItemTitleColorOpacity(0.75)
-            ->set_hoverListItemTitleColorPalette('')
+            'hoverListItemTitleColorHex' => $sectionPalette['link'],
+            'hoverListItemTitleColorOpacity' => 0.75,
+            'hoverListItemTitleColorPalette' => '',
 
-            ->set_detailButtonGradientColorHex($sectionPalette['text'])
-            ->set_detailButtonGradientColorOpacity(1)
-            ->set_detailButtonGradientColorPalette('')
+            'listItemMetaColorHex' => $sectionPalette['text'],
+            'listItemMetaColorOpacity' => 1,
+            'listItemMetaColorPalette' => '',
 
-            ->set_hoverViewColorHex($sectionPalette['text'])
-            ->set_hoverViewColorOpacity(0.75)
-            ->set_hoverViewColorPalette('')
+            'listItemDateColorHex' => $sectionPalette['btn-text'],
+            'listItemDateColorOpacity' => 1,
+            'listItemDateColorPalette' => '',
 
-            ->set_viewColorHex($sectionPalette['text'])
-            ->set_viewColorOpacity(1)
-            ->set_viewColorPalette('')
+            'listTitleColorHex' => $sectionPalette['text'],
+            'listTitleColorOpacity' => 1,
+            'listTitleColorPalette' => '',
 
-            ->set_layoutViewTypographyFontFamily($fonts)
-            ->set_layoutViewTypographyFontStyle('')
-            ->set_layoutViewTypographyFontFamilyType('upload');
+            'groupingDateColorHex' => $sectionPalette['text'],
+            'groupingDateColorOpacity' => 1,
+            'groupingDateColorPalette' => '',
 
+            'hoverTitleColorHex' => $sectionPalette['link'],
+            'hoverTitleColorOpacity' => 0.75,
+            'hoverTitleColorPalette' => '',
 
+            'titleColorHex' => $sectionPalette['link'],
+            'titleColorOpacity' => 1,
+            'titleColorPalette' => '',
+
+            'dateColorHex' => $sectionPalette['text'],
+            'dateColorOpacity' => 1,
+            'dateColorPalette' => '',
+
+            'listItemDateBgColorHex' => $sectionPalette['btn-bg'],
+            'listItemDateBgColorOpacity' => 1,
+            'listItemDateBgColorType' => 'solid',
+            'listItemDateBgColorPalette' => '',
+
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'detailButtonBgColorOpacity' => 1,
+            'detailButtonBgColorPalette' => '',
+
+            'detailButtonGradientColorHex' => $sectionPalette['btn-text'],
+            'detailButtonGradientColorOpacity' => 1,
+            'detailButtonGradientColorPalette' => '',
+
+            'hoverViewColorHex' => $sectionPalette['text'],
+            'hoverViewColorOpacity' => 0.7,
+            'hoverViewColorPalette' => '',
+
+            'viewColorHex' => $sectionPalette['text'],
+            'viewColorOpacity' => 1,
+            'viewColorPalette' => '',
+
+            'layoutViewTypographyFontFamily' => $fonts,
+            'layoutViewTypographyFontStyle' => '',
+            'layoutViewTypographyFontFamilyType' => 'upload',
+        ];
+
+        foreach ($sectionProperties as $key => $value) {
+            $properties = 'set_'.$key;
+            $brizySection->getItemValueWithDepth(0, 0, 0)
+                ->$properties($value);
+        }
 
         return $brizySection;
     }
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
+
+    abstract protected function getPropertiesMainSection(): array;
 }

@@ -25,7 +25,10 @@ abstract class GalleryLayout extends AbstractElement
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         try{
@@ -269,6 +272,4 @@ abstract class GalleryLayout extends AbstractElement
 
         return $brightness > 125 ? '#000000' : '#FFFFFF';
     }
-
-
 }

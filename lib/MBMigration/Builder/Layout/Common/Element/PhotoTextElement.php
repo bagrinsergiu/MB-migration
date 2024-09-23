@@ -69,8 +69,12 @@ abstract class PhotoTextElement extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($this->getTextComponent($brizySection));
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         return $brizySection;
     }
@@ -86,5 +90,4 @@ abstract class PhotoTextElement extends AbstractElement
      * @return mixed|null
      */
     abstract protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent;
-
 }

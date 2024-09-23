@@ -20,6 +20,9 @@ abstract class PrayerList extends AbstractElement
 
         $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->setTopPaddingOfTheFirstElement($data, $brizyComponent);
+
         $this->handleRichTextHead($elementContext, $this->browserPage);
         $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
 

@@ -26,4 +26,13 @@ class FullMedia extends FullMediaElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 50;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
 }

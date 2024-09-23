@@ -55,4 +55,14 @@ class FullText extends FullTextElement
 
         return $brizySection;
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 50;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
 }

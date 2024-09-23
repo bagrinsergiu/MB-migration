@@ -20,8 +20,12 @@ abstract class ListLayout extends AbstractElement
 
         $photoPosition = $mbSection['settings']['sections']['list']['photo_position'] ?? 'left';
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);

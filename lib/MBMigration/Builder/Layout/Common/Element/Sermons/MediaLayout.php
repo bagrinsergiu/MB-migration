@@ -62,7 +62,9 @@ abstract class MediaLayout extends AbstractElement
 
             $sectionItemComponent = $this->getSectionItemComponent($brizySection);
             $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-            $this->handleSectionStyles($elementContext, $this->browserPage);
+            $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+
+            $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
             $sectionItemComponent = $this->getSectionItemComponent($brizySectionHead);
             $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
@@ -194,6 +196,8 @@ abstract class MediaLayout extends AbstractElement
             $sectionItemComponent = $this->getSectionItemComponent($brizySection);
             $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
             $this->handleSectionStyles($elementContext, $this->browserPage);
+
+            $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
             $sectionItemComponent = $this->getSectionItemComponent($brizySectionHead);
             $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);

@@ -70,11 +70,8 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'accordion-layout':
                 return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $browserPage);
             case 'event-list-layout':
-//                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $browserPage, $this->getQueryBuilder());
             case 'event-tile-layout':
-//                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
             case 'event-gallery-layout':
-//                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $browserPage);
             case 'event-calendar-layout':
                 return new EventLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage, $this->getQueryBuilder());
 

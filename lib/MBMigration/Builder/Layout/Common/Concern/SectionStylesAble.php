@@ -12,6 +12,29 @@ use Wrench\Exception\Exception;
 
 trait SectionStylesAble
 {
+    protected function setTopPaddingOfTheFirstElement(
+        ElementContextInterface $data,
+        BrizyComponent $section,
+        array $additionalOptions = []
+    ): void {
+        $mbSectionItem = $data->getMbSection();
+
+        $options = [
+            'paddingTop' => $this->getTopPaddingOfTheFirstElement(),
+            'mobilePaddingTop' => $this->getMobileTopPaddingOfTheFirstElement(),
+        ];
+
+        $options = array_merge($options, $additionalOptions);
+
+        if(isset($mbSectionItem['position']) &&  $mbSectionItem['position'] === 1) {
+            foreach ($options as $key => $value) {
+               $method = 'set_'.$key;
+                $section->getValue()
+                    ->$method($value);
+            }
+        }
+    }
+
     protected function obtainSectionStyles(ElementContextInterface $data, BrowserPageInterface $browserPage): array
     {
         $mbSectionItem = $data->getMbSection();
@@ -39,7 +62,8 @@ trait SectionStylesAble
 
     protected function handleSectionStyles(
         ElementContextInterface $data,
-        BrowserPageInterface $browserPage
+        BrowserPageInterface $browserPage,
+        $additionalOptions = []
     ): BrizyComponent {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -85,8 +109,8 @@ trait SectionStylesAble
 
         // set the background color paddings and margins
         $brizySection->getValue()
-            //->set_paddingType('ungrouped')
-            //->set_marginType('ungrouped')
+            ->set_paddingType('ungrouped')
+            ->set_marginType('ungrouped')
             ->set_paddingTop((int)$sectionStyles['padding-top'] + (int)$sectionWrapperStyles['padding-top'])
             ->set_paddingBottom((int)$sectionStyles['padding-bottom'] + (int)$sectionWrapperStyles['padding-bottom'])
             ->set_paddingRight((int)$sectionStyles['padding-right'] + (int)$sectionWrapperStyles['padding-right'])
@@ -94,7 +118,25 @@ trait SectionStylesAble
             ->set_marginLeft((int)$sectionStyles['margin-left'] + (int)$sectionWrapperStyles['margin-left'])
             ->set_marginRight((int)$sectionStyles['margin-right'] + (int)$sectionWrapperStyles['margin-right'])
             ->set_marginTop((int)$sectionStyles['margin-top'] + (int)$sectionWrapperStyles['margin-top'])
-            ->set_marginBottom((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom']);
+            ->set_marginBottom((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom'])
+
+            ->set_mobilePaddingType('ungrouped')
+            ->set_mobilePadding((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom'])
+            ->set_mobilePaddingSuffix('px')
+            ->set_mobilePaddingTop((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom'])
+            ->set_mobilePaddingTopSuffix('px')
+            ->set_mobilePaddingRight((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom'])
+            ->set_mobilePaddingRightSuffix('px')
+            ->set_mobilePaddingBottom((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom'])
+            ->set_mobilePaddingBottomSuffix('px')
+            ->set_mobilePaddingLeft((int)$sectionStyles['margin-bottom'] + (int)$sectionWrapperStyles['margin-bottom'])
+            ->set_mobilePaddingLeftSuffix('px');
+
+        foreach ($additionalOptions as $key => $value) {
+            $method = 'set_'.$key;
+            $brizySection->getValue()
+                    ->$method($value);
+        }
 
         return $brizySection;
     }

@@ -257,6 +257,12 @@ abstract class HeadElement extends AbstractElement
             ]);
         }
 
+        if(isset($hoverMenuSubItemStyles['data']['hoverSubMenuColorOpacity']) &&
+            isset($menuItemStyles['data']['mMenuColorOpacity'])){
+                $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = $hoverMenuItemStyles['data']['activeColorOpacity'];
+                $hoverMenuSubItemStyles['data']['hoverSubMenuColorOpacity'] = $hoverMenuItemStyles['data']['hoverColorOpacity'];
+        }
+
         return [
             'menu' => array_merge(
                 $menuItemStyles['data'] ?? [],

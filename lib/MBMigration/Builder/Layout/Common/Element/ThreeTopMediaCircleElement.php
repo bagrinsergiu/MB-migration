@@ -41,8 +41,12 @@ abstract class ThreeTopMediaCircleElement extends AbstractElement
                     break;
             }
         }
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+
+        $brizyComponent = $this->getSectionItemComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->setTopPaddingOfTheFirstElement($data, $brizyComponent);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getTextComponent($brizySection));
         $this->handleRichTextItems($elementContext, $this->browserPage);

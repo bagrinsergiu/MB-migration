@@ -19,8 +19,12 @@ abstract class FormElement extends AbstractElement
         $brizySection = new BrizyComponent(json_decode($this->getJsonFromBrizyKit(), true));
         $brizySection->getValue()->set_marginTop(0);
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getFormContainerElement($brizySection));
         $this->handleForm($elementContext, $this->browserPage);
