@@ -20,11 +20,16 @@ abstract class ListLayout extends AbstractElement
 
         $photoPosition = $mbSection['settings']['sections']['list']['photo_position'] ?? 'left';
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
+        $this->afterTransformItem($elementContext, $this->getHeaderComponent($brizySection));
 
         $itemJson = json_decode($this->brizyKit['item-'.$photoPosition], true);
         $brizyComponentValue = $this->getSectionItemComponent($brizySection)->getValue();
@@ -54,8 +59,12 @@ abstract class ListLayout extends AbstractElement
                     );
                 }
                 $this->handleRichTextItem($elementContext, $this->browserPage);
-            }
 
+                if ($mbItem['item_type'] == 'title') {
+                    $this->afterTransformItem($elementContext,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition));
+                }
+            }
 
             $brizyComponentValue->add_items([$brizySectionItem]);
         }
@@ -74,4 +83,6 @@ abstract class ListLayout extends AbstractElement
         BrizyComponent $brizyComponent,
         string $photoPosition
     ): BrizyComponent;
+
+    abstract protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent;
 }

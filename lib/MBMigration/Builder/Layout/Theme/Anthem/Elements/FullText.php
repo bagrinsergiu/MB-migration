@@ -2,148 +2,67 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
-use DOMException;
-use Exception;
-use MBMigration\Builder\Utils\TextTools;
-use MBMigration\Core\Logger;
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Element\FullTextElement;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\ColorConverter;
 
-class FullText extends Element
+class FullText extends FullTextElement
 {
-    /**
-     * @var VariableCache
-     */
-    protected $cache;
-    private $jsonDecode;
-
-    /**
-     * @var array
-     */
-    protected $sectionData;
-
-    public function __construct($jsonKitElements)
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
+        return $brizySection->getItemWithDepth(0);
     }
 
-    /**
-     * @throws DOMException
-     */
-    public function getElement(array $elementData = [])
-    {
-        $this->sectionData = $elementData;
-        return $this->FullText($elementData);
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0,0,0);
     }
 
-    /**
-     * @throws DOMException
-     * @throws Exception
-     */
-    protected function FullText(array $sectionData)
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        Logger::instance()->info('Create bloc');
+        $brizySection = parent::internalTransformToItem($data);
+        $mbSectionItem = $data->getMbSection();
+        $itemsKit = $data->getThemeContext()->getBrizyKit();
 
-        $options = [];
+        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
 
-        $objBlock = new ItemBuilder();
-        $objLine = new ItemBuilder();
+        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+        $titleMb = $this->getItemByType($mbSectionItem, 'title');
 
-        $this->cache->set('currentSectionData', $sectionData);
+        $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
+        $wrapperLineStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $menuSectionSelector,
+                'styleProperties' => ['border-bottom-color',],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
 
-        $decoded = $this->jsonDecode['blocks']['full-text'];
+        $headStyle = [
+            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
+        ];
 
-        $objBlock->newItem($decoded['main']);
-        $objLine->newItem($decoded['line']);
+        $wrapperLine->getItemWithDepth(0)
+            ->getValue()
+            ->set_borderColorHex($headStyle['line-color']);
 
-        $this->generalParameters($objBlock, $options, $sectionData);
 
-        $this->backgroundParallax($objBlock, $sectionData);
+        $brizySection->getItemWithDepth(0)
+            ->getValue()
+            ->add_items([$wrapperLine], 1);
 
-        $this->backgroundColor($objBlock, $sectionData);
-
-        $this->backgroundImages($objBlock, $sectionData);
-
-        $this->backgroundVideo($objBlock, $sectionData);
-
-        $this->setOptionsForTextColor($sectionData, $options);
-
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'text') {
-                if ($item['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                    $this->textCreation($item, $objBlock, $sectionData['style']);
-                    $objBlock->item(0)->addItem($this->wrapperLine(
-                        [
-                            'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''
-                        ]
-                    ));
-                }
-            }
-        }
-
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'text') {
-                if ($item['item_type'] === 'body' && $this->showBody($sectionData)) {
-                    $this->textCreation($item, $objBlock, $sectionData['style']);
-                }
-            }
-        }
-
-        if ($sectionData['category'] == 'donation' && $this->checkArrayPath($sectionData, 'settings/sections/donations')) {
-            if ($sectionData['settings']['sections']['donations']['new_window'] ?? false) {
-                $sectionItem['new_window'] = 'on';
-            } else {
-                $sectionItem['new_window'] = 'off';
-            }
-            if (isset($sectionData['settings']['sections']['donations']['url'])) {
-                $buttonOptions = [
-                    'linkExternal' => $sectionData['settings']['sections']['donations']['url'],
-                    'text' => TextTools::transformText(
-                        $sectionData['settings']['sections']['donations']['text'] ?? $sectionData['settings']['layout']['donations']['text'],
-                        $sectionData['style']['donation']['button']['text-transform'] ?? 'normal'),
-                    'linkExternalBlank' => $sectionItem['new_window'],
-
-                    'bgColorHex' => $sectionData['style']['donation']['button']['background-color'] ?? '#024E69',
-                    'hoverBgColorHex' => $sectionData['style']['donation']['button']['background-color'] ?? '#024E69',
-
-                    'borderStyle' => 'none',
-                    'hoverBorderStyle' => 'none',
-                ];
-                $position = $sectionData['settings']['sections']['donations']['alignment'] ?? 'left';
-
-                $objBlock->item()->addItem($this->button($buttonOptions, $position));
-            }
-            if (isset($sectionData['settings']['sections']['donations']['text'])) {
-                // to do
-            }
-        }
-
-        return json_encode($this->replaceIdWithRandom($objBlock->get()));
+        return $brizySection;
     }
 
-    /**
-     * @throws Exception
-     */
-    private function textCreation($sectionData, $objBlock, $style)
+    protected function getTopPaddingOfTheFirstElement(): int
     {
-        $i = 0;
-        foreach ($sectionData['brzElement'] as $textItem) {
-            switch ($textItem['type']) {
-                case 'EmbedCode':
-                    if(!empty($sectionData['content'])) {
-                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
-                        if(is_array($embedCode)){
-                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
-                        }
-                        $i++;
-                    }
-                    break;
-                case 'Cloneable':
-                case 'Wrapper':
-                    $objBlock->item(0)->addItem($textItem);
-                    break;
-            }
-        }
+        return 50;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
     }
 }

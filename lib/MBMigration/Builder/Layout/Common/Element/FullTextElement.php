@@ -25,6 +25,8 @@ abstract class FullTextElement extends AbstractElement
 
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
         $elementContext = $data->instanceWithBrizyComponent($textContainerComponent);
         $this->handleRichTextItems($elementContext, $this->browserPage);
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);

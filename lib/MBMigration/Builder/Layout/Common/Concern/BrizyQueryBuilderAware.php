@@ -46,7 +46,7 @@ trait BrizyQueryBuilderAware
                 json_encode($pageData)
             );
         } else {
-            $this->getQueryBuilder()->updateCollectionItem(
+            $result = $this->getQueryBuilder()->updateCollectionItem(
                 $collectionItem['id'],
                 $slug,
                 json_encode($pageData)

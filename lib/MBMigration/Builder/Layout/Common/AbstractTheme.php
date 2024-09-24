@@ -90,7 +90,6 @@ abstract class AbstractTheme implements ThemeInterface
             }
         }
 
-
         $elementFactory->getElement('footer',$browserPage)
             ->transformToItem(
                 ElementContext::instance(

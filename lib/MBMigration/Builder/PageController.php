@@ -82,89 +82,61 @@ class PageController
 
         $this->browser = BrowserPHP::instance($layoutBasePath);
         try {
-            if ($design !== 'Anthem' && $design !== 'Solstice') {
-
-                try {
-                    $browserPage = $this->browser->openPage($url, $design);
-                } catch (OperationTimedOut $e) {
-                    Logger::instance()->critical($e->getMessage());
-                    $this->browser = BrowserPHP::instance($layoutBasePath);
-                    $browserPage = $this->browser->openPage($url, $design);
-                }
-
-                $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-                $layoutElementFactory = new LayoutElementFactory(
-                    $brizyKit,
-                    $browserPage,
-                    $queryBuilder,
-                    $this->brizyAPI,
-                    $fontController
-                );
-                $themeElementFactory = $layoutElementFactory->getFactory($design);
-                $brizyMenuEntity = $this->cache->get('menuList');
-                $brizyMenuItems = $this->cache->get('brizyMenuItems');
-                $headItem = $this->cache->get('header', 'mainSection');
-                $footerItem = $this->cache->get('footer', 'mainSection');
-                $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
-
-                $themeContext = new ThemeContext(
-                    $design,
-                    $browserPage,
-                    $brizyKit,
-                    $brizyMenuEntity,
-                    $brizyMenuItems,
-                    $headItem,
-                    $footerItem,
-                    $fontFamily['kit'],
-                    $fontFamily['Default'],
-                    $themeElementFactory,
-                    $mainCollectionType,
-                    $itemsID,
-                    $slug,
-                    $pageMapping,
-                    $RootPalettesExtracted->extractRootPalettes()
-                );
-
-                /**
-                 * @var ThemeInterface $_WorkClassTemplate ;
-                 */
-                $_WorkClassTemplate = new $workClass($themeContext);
-                $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
-
-                $pageData = json_encode($brizySections);
-                $queryBuilder = $this->cache->getClass('QueryBuilder');
-                $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
-                Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
-                Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
-
-                return true;
-
-            } else {
-                try {
-                    $browserPage = $this->browser->openPage($url, $design);
-                } catch (OperationTimedOut $e) {
-                    Logger::instance()->critical($e->getMessage());
-                    $this->browser = BrowserPHP::instance($layoutBasePath);
-                    $browserPage = $this->browser->openPage($url, $design);
-                }
-
-                $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
-
-                $this->cache->set('palettes', $_WorkClassTemplate->getPalettes());
-
-                $_WorkClassTemplate->buildGlobalSection();
-
-                if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
-                    Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
-                    Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
-
-                    return true;
-                } else {
-                    Logger::instance()->info('Fail Build Page: '.$itemsID.' | Slug: '.$slug);
-
-                    return false;
-                }
+            try {
+                $browserPage = $this->browser->openPage($url, $design);
+            } catch (OperationTimedOut $e) {
+                Logger::instance()->critical($e->getMessage());
+                $this->browser = BrowserPHP::instance($layoutBasePath);
+                $browserPage = $this->browser->openPage($url, $design);
             }
+
+            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
+            $layoutElementFactory = new LayoutElementFactory(
+                $brizyKit,
+                $browserPage,
+                $queryBuilder,
+                $this->brizyAPI,
+                $fontController
+            );
+            $themeElementFactory = $layoutElementFactory->getFactory($design);
+            $brizyMenuEntity = $this->cache->get('menuList');
+            $brizyMenuItems = $this->cache->get('brizyMenuItems');
+            $headItem = $this->cache->get('header', 'mainSection');
+            $footerItem = $this->cache->get('footer', 'mainSection');
+            $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
+
+            $themeContext = new ThemeContext(
+                $design,
+                $browserPage,
+                $brizyKit,
+                $brizyMenuEntity,
+                $brizyMenuItems,
+                $headItem,
+                $footerItem,
+                $fontFamily['kit'],
+                $fontFamily['Default'],
+                $themeElementFactory,
+                $mainCollectionType,
+                $itemsID,
+                $slug,
+                $pageMapping,
+                $RootPalettesExtracted->extractRootPalettes()
+            );
+
+            /**
+             * @var ThemeInterface $_WorkClassTemplate ;
+             */
+            $_WorkClassTemplate = new $workClass($themeContext);
+            $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
+
+            $pageData = json_encode($brizySections);
+            $queryBuilder = $this->cache->getClass('QueryBuilder');
+            $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+            Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
+            Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
+
+            return true;
+
         } catch (\Exception $e) {
             Logger::instance()->critical('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
             throw $e;

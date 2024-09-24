@@ -18,8 +18,12 @@ abstract class TabsLayout extends AbstractElement
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $mbSection = $data->getMbSection();
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $brizyComponent = $this->getSectionItemComponent($brizySection);
+
+        $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
         $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->setTopPaddingOfTheFirstElement($data, $brizyComponent);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getTopTextComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);

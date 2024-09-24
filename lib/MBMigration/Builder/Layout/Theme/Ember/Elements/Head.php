@@ -69,4 +69,21 @@ class Head extends HeadElement
         return $this->getThemeMenuItemMobileSelector();
     }
 
+    protected function getPropertiesIconMenuItem(): array
+    {
+        return [
+            'mobileMarginType' => "ungrouped",
+            'mobileMargin' => 0,
+            'mobileMarginSuffix' => "px",
+            'mobileMarginTop' => 10,
+            'mobileMarginTopSuffix' => "px",
+            'mobileMarginRight' => -21,
+            'mobileMarginRightSuffix' => "px",
+            'mobileMarginBottom' => 10,
+            'mobileMarginBottomSuffix' => "px",
+            'mobileMarginLeft' => 0,
+            'mobileMarginLeftSuffix' => "px",
+        ];
+    }
+
 }

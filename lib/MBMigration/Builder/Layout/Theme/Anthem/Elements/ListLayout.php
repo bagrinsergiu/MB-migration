@@ -2,290 +2,64 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
-use DOMException;
-use Exception;
-use MBMigration\Builder\Media\MediaController;
-use MBMigration\Core\Logger;
-use DOMDocument;
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\ColorConverter;
 
-class ListLayout extends Element
+class ListLayout extends \MBMigration\Builder\Layout\Common\Element\ListLayout
 {
-    /**
-     * @var VariableCache
-     */
-    protected $cache;
-    private $jsonDecode;
-
-    public function __construct($jsonKitElements)
+    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
+        return $brizyComponent->getItemWithDepth(0);
     }
 
-    /**
-     * @throws DOMException
-     */
-    public function getElement(array $elementData = [])
+    protected function getItemTextContainerComponent(
+        BrizyComponent $brizyComponent,
+        string $photoPosition
+    ): BrizyComponent {
+        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 1 : 0);
+    }
+
+    protected function getItemImageComponent(
+        BrizyComponent $brizyComponent,
+        string $photoPosition
+    ): BrizyComponent {
+        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0,0);
+    }
+
+    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent
     {
-        return $this->ListLayout($elementData);
+        $mbSectionItem = $data->getMbSection();
+        $itemsKit = $data->getThemeContext()->getBrizyKit();
+
+        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
+        if(!isset($mbSectionItem['item_type']) || $mbSectionItem['item_type'] !== 'title'){
+            $titleMb = $this->getByType($mbSectionItem['head'], 'title');
+        } else {
+            $titleMb['id'] =  $mbSectionItem['id'];
+        }
+
+        $menuSectionSelector = '[data-id="' . $titleMb['id']. '"]';
+        $wrapperLineStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $menuSectionSelector,
+                'styleProperties' => ['border-bottom-color',],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        $headStyle = [
+            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
+        ];
+
+        $wrapperLine->getItemWithDepth(0)
+            ->getValue()
+            ->set_borderColorHex($headStyle['line-color']);
+
+        $brizySection->getValue()->add_items([$wrapperLine]);
+
+        return $brizySection;
     }
-
-    /**
-     * @throws DOMException
-     * @throws Exception
-     */
-    protected function ListLayout(array $sectionData)
-    {
-        Logger::instance()->info('Create bloc');
-        $this->cache->set('currentSectionData', $sectionData);
-        $decoded = $this->jsonDecode['blocks']['list-layout'];
-
-        $options = [];
-
-        $objBlock = new ItemBuilder();
-        $objItem = new ItemBuilder();
-        $objHead = new ItemBuilder();
-        $objImage = new ItemBuilder();
-        $objRow = new ItemBuilder();
-
-        $objBlock->newItem($decoded['main']);
-        $objHead->newItem($decoded['head']);
-        $objImage->newItem($decoded['image']);
-
-        $this->generalParameters($objBlock, $options, $sectionData);
-
-        $this->defaultOptionsForElement($decoded, $options);
-
-        $this->backgroundColor($objBlock, $sectionData, $options);
-
-        $this->setOptionsForTextColor($sectionData, $options);
-
-        $this->backgroundParallax($objBlock, $sectionData);
-
-        $this->backgroundImages($objBlock, $sectionData, $options);
-
-        $blockHead = false;
-        $blockHeadSet = false;
-        $titleSectionSet = false;
-        $bodySectionSet = false;
-
-        if(!empty($sectionData['head'])){
-            foreach ($sectionData['head'] as $headItem) {
-                if ($headItem['category'] === 'text') {
-                    if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                        $blockHead = true;
-                        $titleSectionSet = true;
-                        foreach ($headItem['brzElement'] as $item) {
-                            $objHead->item()->addItem($item);
-                        }
-                        $objHead->item()->addItem(
-                            $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? ''])
-                        );
-                    }
-                }
-            }
-
-            foreach ($sectionData['head'] as $headItem) {
-                if ($headItem['category'] === 'text') {
-                    if ($headItem['item_type'] === 'body' && $this->showHeader($sectionData)) {
-                        $blockHead = true;
-                        $bodySectionSet = true;
-                        foreach ($headItem['brzElement'] as $item) {
-                            $objHead->item()->addItem($item);
-                        }
-                    }
-                }
-            }
-        }
-
-        if ($blockHead) {
-            $objBlock->item(0)->addItem($objHead->get());
-        }
-
-        if ($this->checkArrayPath($sectionData, 'settings/sections/list/photo_position')) {
-            $options['photoPosition'] = $sectionData['settings']['sections']['list']['photo_position'];
-        }
-
-        foreach ($sectionData['items'] as $section) {
-            if ($section['category'] === 'text' && !$titleSectionSet) {
-                if ($section['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                    foreach ($section['brzElement'] as $item) {
-                        $objHead->item()->addItem($item);
-                    }
-                    $objHead->item()->addItem(
-                        $this->wrapperLine(['borderColorHex' => $sectionData['style']['border']['border-bottom-color']])
-                    );
-                    $blockHeadSet = true;
-                }
-            }
-
-            if ($section['category'] === 'text' && !$bodySectionSet) {
-                if ($section['item_type'] === 'body' && $this->showHeader($sectionData)) {
-                    foreach ($section['brzElement'] as $item) {
-                        $objHead->item()->addItem($item);
-                    }
-                    $blockHeadSet = true;
-                }
-            }
-        }
-
-        if($blockHeadSet){
-            $objBlock->item()->addItem($objHead->get());
-        }
-
-        foreach ($sectionData['items'] as $section) {
-            if (empty($section['item'])) {
-                continue;
-            }
-
-            $objRow->newItem($decoded['row']);
-            $objItem->newItem($decoded['item']);
-
-            foreach ($section['item'] as $item) {
-                if ($item['category'] === 'photo') {
-                    if (isset($item['content']) && isset($item['imageFileName'])){
-                        $objImage->item(0)->item(0)->setting('imageSrc', $item['content']);
-                        $objImage->item(0)->item(0)->setting('imageFileName', $item['imageFileName']);
-                    }
-
-                    if (!empty($item['link'])) {
-                        $this->link($objImage, $item);
-                    }
-
-                    $objImage->item(0)->setting('mobileHorizontalAlign', 'center');
-
-                    if (empty($options['photoPosition']) || $options['photoPosition'] === 'left') {
-                        $objRow->addItem($objImage->get());
-                    }
-                }
-            }
-
-            foreach ($section['item'] as $item) {
-                if ($item['category'] === 'text') {
-                    if ($item['item_type'] === 'title') {
-                        foreach ($item['brzElement'] as $element) {
-                            switch ($element['type']) {
-                                case 'EmbedCode':
-                                    if (!empty($sectionData['content'])) {
-                                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
-                                        if (is_array($embedCode)) {
-                                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
-                                        }
-                                        $i++;
-                                    }
-                                    break;
-                                case 'Cloneable':
-                                    $element['value']['mobileHorizontalAlign'] = 'center';
-
-                                    foreach ($element['value']['items'] as &$iconItem) {
-                                        if ($iconItem['type'] == 'Icon') {
-                                            if($iconItem['value']['hoverColorOpacity'] == 1){
-                                                $iconItem['value']['hoverColorOpacity'] = 0.9;
-                                            }
-                                        }
-
-                                        if ($iconItem['type'] == 'Button') {
-                                            $iconItem['value']['borderStyle'] = "none";
-                                        }
-                                    }
-                                    $objItem->addItem($element);
-                                    break;
-                                case 'Wrapper':
-                                    $element['value']['items'][0]['value']['mobileContentHorizontalAlign'] = 'center';
-                                    $element['value']['items'][0]['value']['text'] = $this->addClassToTags($element['value']['items'][0]['value']['text'], 'brz-text-xs-center');
-                                    $objItem->addItem($element);
-//                                    $objBlock->item(0)->addItem($element);
-                                    break;
-
-                            }
-                        }
-                        $objItem->addItem(
-                            $this->wrapperLine([
-                                'borderColorHex' => $sectionData['style']['border']['border-bottom-color'] ?? '',
-                            ])
-                        );
-                    }
-                }
-            }
-
-            foreach ($section['item'] as $item) {
-                if ($item['category'] === 'text') {
-                    if ($item['item_type'] === 'body') {
-                        foreach ($item['brzElement'] as $element) {
-                            switch ($element['type']) {
-                                case 'EmbedCode':
-                                    if (!empty($sectionData['content'])) {
-                                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
-                                        if (is_array($embedCode)) {
-                                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
-                                        }
-                                        $i++;
-                                    }
-                                    break;
-                                case 'Cloneable':
-                                    $element['value']['mobileHorizontalAlign'] = 'center';
-
-                                    foreach ($element['value']['items'] as &$iconItem) {
-                                        if ($iconItem['type'] == 'Icon') {
-                                            if($iconItem['value']['hoverColorOpacity'] == 1){
-                                                $iconItem['value']['hoverColorOpacity'] = 0.9;
-                                            }
-                                        }
-
-                                        if ($iconItem['type'] == 'Button') {
-                                            $iconItem['value']['borderStyle'] = "none";
-                                        }
-                                    }
-                                    $objItem->addItem($element);
-                                    break;
-                                case 'Wrapper':
-                                    $element['value']['items'][0]['value']['mobileContentHorizontalAlign'] = 'center';
-                                    $objItem->addItem($element);
-//                                    $objBlock->item(0)->addItem($element);
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            $objRow->addItem($objItem->get());
-            if (!empty($options['photoPosition']) && $options['photoPosition'] === 'right') {
-                $objRow->addItem($objImage->get());
-            }
-            $objBlock->item(0)->addItem($objRow->get());
-        }
-        $block = $this->replaceIdWithRandom($objBlock->get());
-
-        return json_encode($block);
-    }
-
-    private function addClassToTags($htmlString, $className) {
-        $dom = new DOMDocument;
-
-        $dom->loadHTML($htmlString, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-
-        $tags = $dom->getElementsByTagName('*');
-        foreach ($tags as $tag) {
-
-            $currentClasses = $tag->getAttribute('class');
-
-            $currentClassesArray = explode(' ', $currentClasses);
-
-            if (!in_array($className, $currentClassesArray)) {
-                $currentClassesArray[] = $className;
-                $newClasses = implode(' ', $currentClassesArray);
-
-                $tag->setAttribute('class', $newClasses);
-            }
-        }
-
-        $updatedHtmlString = $dom->saveHTML();
-
-        return str_replace(['<!DOCTYPE html>', '<html>', '</html>'], '', $updatedHtmlString);
-    }
-
-
 }
