@@ -207,5 +207,20 @@ abstract class EventLayout extends AbstractElement
         return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
-    abstract protected function getPropertiesMainSection(): array;
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
 }

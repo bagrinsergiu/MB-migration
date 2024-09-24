@@ -2,16 +2,18 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Element\Forms\FormElement;
 
-class FullWidthForm extends AbstractElement
+class FullWidthForm extends FormElement
 {
-    protected function internalTransformToItem(ElementDataInterface $data): array
+    protected function getJsonFromBrizyKit()
     {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
+        return $this->brizyKit['full-width'];
+    }
 
-        return $section->get();
+    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0);
     }
 }

@@ -49,9 +49,17 @@ abstract class FooterElement extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
 
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+        $this->handleSectionStyles($elementContext, $this->browserPage);
 
         return $brizySection;
+    }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "margin-left" => 0,
+            "margin-right" => 0,
+        ];
     }
 
 }

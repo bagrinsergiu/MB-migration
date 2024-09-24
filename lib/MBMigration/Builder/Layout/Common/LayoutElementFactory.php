@@ -56,28 +56,56 @@ class LayoutElementFactory implements LayoutElementFactoryInterface
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Anthem\ElementFactory(
                     $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
-            case 'Bloom':
-                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Bloom\ElementFactory(
-                    $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
-                );
-            case 'Voyage':
-                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Voyage\ElementFactory(
+            case 'August':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\August\ElementFactory(
                     $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
             case 'Aurora':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Aurora\ElementFactory(
                     $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
-//            case 'Solstice':
-//                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Solstice\ElementFactory(
-//                    $this->blockKit,  $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
-//                );
-            case 'Majesty':
-                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Majesty\ElementFactory(
+            case 'Bloom':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Bloom\ElementFactory(
+                    $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
+            case 'Boulevard':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Boulevard\ElementFactory(
+                    $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
+            case 'Dusk':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Dusk\ElementFactory(
                     $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
             case 'Ember':
                 return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Ember\ElementFactory(
+                    $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
+            case 'Hope':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Hope\ElementFactory(
+                    $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
+            case 'Majesty':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Majesty\ElementFactory(
+                    $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
+            case 'Serene':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Serene\ElementFactory(
+                    $this->blockKit,  $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
+            case 'Solstice':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Solstice\ElementFactory(
+                    $this->blockKit,  $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
+            case 'Tradition':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Tradition\ElementFactory(
+                    $this->blockKit,  $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
+            case 'Voyage':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Voyage\ElementFactory(
+                    $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
+                );
+            case 'Zion':
+                return self::$instances[$design] = new \MBMigration\Builder\Layout\Theme\Zion\ElementFactory(
                     $this->blockKit, $this->queryBuilder, $this->brizyAPIClient, $this->fontsController
                 );
             default:

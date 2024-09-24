@@ -23,7 +23,7 @@ abstract class ListLayout extends AbstractElement
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
@@ -85,4 +85,21 @@ abstract class ListLayout extends AbstractElement
     ): BrizyComponent;
 
     abstract protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent;
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
 }

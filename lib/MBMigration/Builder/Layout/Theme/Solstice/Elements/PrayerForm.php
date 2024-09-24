@@ -2,16 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-class PrayerForm extends AbstractElement
+class PrayerForm extends \MBMigration\Builder\Layout\Common\Element\Forms\PrayerForm
 {
-    protected function internalTransformToItem(ElementDataInterface $data): array
+    public function getFormComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
-
-        return $section->get();
+        return parent::getSectionItemComponent($brizySection);
     }
 }

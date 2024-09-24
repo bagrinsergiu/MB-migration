@@ -2,17 +2,17 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-class AccordionLayout extends AbstractElement
+class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\AccordionLayout
 {
-    protected function internalTransformToItem(ElementContextInterface $data): array
+    protected function getSectionHeaderComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
+        return $brizySection->getItemWithDepth(0, 0, 0);
+    }
 
-        return $section->get();
+    protected function getAccordionParentComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
 }

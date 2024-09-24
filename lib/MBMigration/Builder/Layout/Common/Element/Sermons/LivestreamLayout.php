@@ -20,8 +20,25 @@ abstract class LivestreamLayout extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
 
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
 
         return $brizySection;
+    }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
     }
 }

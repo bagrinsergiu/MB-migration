@@ -22,4 +22,7 @@ class FullMedia extends FullMediaElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0, 0, 0, 0);
+    }
 }

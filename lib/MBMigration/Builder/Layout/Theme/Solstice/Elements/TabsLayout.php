@@ -2,16 +2,26 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-class TabsLayout extends AbstractElement
+class TabsLayout extends \MBMigration\Builder\Layout\Common\Element\TabsLayout
 {
-    protected function internalTransformToItem(ElementDataInterface $data): array
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getTopTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
-
-        return $section->get();
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
+
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed
+     */
+    protected function getTabContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+    }
+
 }

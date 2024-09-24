@@ -20,6 +20,7 @@ use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Head;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMediaCircle;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightMediaCircle;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\ListLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightMedia;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Semons\MediaLayout;
@@ -38,6 +39,8 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new Head($this->blockKit['blocks']['menu'], $browserPage,$this->brizyApiClient, $this->fontsController);
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
+            case 'right-media-circle':
+                return new RightMediaCircle($this->blockKit['blocks']['right-media'], $browserPage);
             case 'two-right-media-circle':
                 return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
             case 'left-media':

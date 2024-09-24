@@ -23,10 +23,8 @@ const v = {
   "line-height": undefined,
   "letter-spacing": undefined,
   "font-style": "",
-  colorHex: undefined,
-  colorOpacity: 1,
-  activeColorHex: undefined,
-  activeColorOpacity: undefined
+  "color-hex": undefined,
+  "color-opacity": 1
 };
 
 export const getModel = (data: Model) => {
@@ -81,12 +79,14 @@ export const getModel = (data: Model) => {
         }
         break;
       }
-      case "colorHex": {
+      case "color-hex": {
         const toHex = parseColorString(`${styles["color"]}`);
         dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
         break;
       }
-      case "colorOpacity": {
+      case "color-opacity": {
+        const opacity = styles["opacity"];
+        dic[toCamelCase(key)] = opacity ?? 1;
         break;
       }
       default: {
