@@ -166,6 +166,10 @@ abstract class MediaLayout extends AbstractElement
                 'filterBgColorOpacity' => $colorStyles['bg-opacity'],
                 'filterBgColorPalette' => '',
 
+                'itemBgColorHex' => $colorStyles['bg-color'],
+                'itemBgColorOpacity' => $colorStyles['bg-opacity'],
+                'itemBgColorPalette' => '',
+
                 'paginationColorHex' => $colorStyles['pagination-normal'],
                 'paginationColorOpacity' => floatval($colorStyles['opacity-pagination-normal']),
                 'paginationColorPalette' => '',
@@ -181,6 +185,18 @@ abstract class MediaLayout extends AbstractElement
                 'resultsHeadingColorHex' => $colorStyles['text-color'],
                 'resultsHeadingColorOpacity' => 1,
                 'resultsHeadingColorPalette' => '',
+
+                "itemPaddingType" => "ungrouped",
+                "itemPadding" => 0,
+                "itemPaddingSuffix" => "px",
+                "itemPaddingTop" => 0,
+                "itemPaddingTopSuffix" => "px",
+                "itemPaddingRight" => 5,
+                "itemPaddingRightSuffix" => "px",
+                "itemPaddingBottom" => 0,
+                "itemPaddingBottomSuffix" => "px",
+                "itemPaddingLeft" => 5,
+                "itemPaddingLeftSuffix" => "px",
             ];
 
             foreach ($sectionProperties as $key => $value) {

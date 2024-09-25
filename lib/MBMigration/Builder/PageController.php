@@ -3,6 +3,7 @@
 namespace MBMigration\Builder;
 
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
@@ -343,7 +344,10 @@ class PageController
         return [];
     }
 
-    public function getItemsFromPage(array $page)
+    /**
+     * @throws GuzzleException
+     */
+    public function getSectionsFromPage(array $page)
     {
         Logger::instance()->info(
             'Getting MB page items for page: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
@@ -363,11 +367,13 @@ class PageController
                     'items' => [],
 
                 ];
-                $sectionItems = $this->parser->getSectionsItems($value, true);
+                $sectionItems = $this->parser->getItemsFromSection($value, true);
 
                 foreach ($sectionItems as $key => $Item) {
                     if ($key === 'item') {
                         $items['head'] = $Item;
+                    } elseif ($key === 'slide') {
+                        $items['slide'][] = $Item;
                     } else {
                         $items['items'][] = $Item;
                     }

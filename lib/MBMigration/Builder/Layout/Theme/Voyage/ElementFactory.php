@@ -2,7 +2,6 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage;
 
-use MBMigration\Browser\BrowserPage;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;

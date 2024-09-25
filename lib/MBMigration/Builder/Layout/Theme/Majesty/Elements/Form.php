@@ -2,12 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
-use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Element\Forms\FormElement;
-use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class FullWidthForm extends FormElement
+class Form extends FormElement
 {
     protected function getJsonFromBrizyKit()
     {
@@ -16,12 +14,6 @@ class FullWidthForm extends FormElement
 
     protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent {
         return $brizyComponent->getItemWithDepth(0);
-    }
-
-    protected function handleForm(ElementContextInterface $elementContext, BrowserPageInterface $browserPage): BrizyComponent {
-
-        // add the form here.
-        return $elementContext->getBrizySection();
     }
 
     protected function getTopPaddingOfTheFirstElement(): int

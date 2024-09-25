@@ -626,7 +626,7 @@ class MBProjectDataCollector
      * @throws GuzzleException
      * @throws Exception
      */
-    public function getSectionsItems($sectionId, $assembly = false)
+    public function getItemsFromSection($sectionId, $assembly = false)
     {
         $result = [];
         if ($this->cache->exist($sectionId['id'])) {

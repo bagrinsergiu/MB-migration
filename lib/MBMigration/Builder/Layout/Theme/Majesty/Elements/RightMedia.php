@@ -3,63 +3,87 @@
 namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
-use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
-use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\Element\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\ColorConverter;
 
-class RightMedia extends AbstractElement
+class RightMedia extends PhotoTextElement
 {
-    use RichTextAble;
-    use SectionStylesAble;
-    use DanationsAble;
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 1, 0,0);
+    }
+
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0);
+    }
+
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $mbSection = $data->getMbSection();
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizySection = parent::internalTransformToItem($data);
+        $mbSectionItem = $data->getMbSection();
+        $itemsKit = $data->getThemeContext()->getBrizyKit();
 
-        foreach ((array)$mbSection['items'] as $mbSectionItem) {
-            switch ($mbSectionItem['category']) {
-                case 'photo':
-                    // add the photo items on the right side of the block
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbSectionItem,
-                        $brizySection->getItemWithDepth(0, 0, 1, 0) //
-                    );
-                    $this->handleRichTextItem(
-                        $elementContext,
-                        $this->browserPage
-                    );
+        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
 
-                    $brizySection->getItemWithDepth(0, 0, 1, 0, 0)->getValue()
-                        ->set_width(100)
-                        ->set_height(100)
-                        ->set_heightSuffix('%')
-                        ->set_widthSuffix('%');
-                    break;
-                case 'text':
-                    // add the text on the left side of th bock
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbSectionItem,
-                        $brizySection->getItemWithDepth(0, 0, 0)
-                    );
-                    $this->handleRichTextItem(
-                        $elementContext,
-                        $this->browserPage
-                    );
-                    break;
-            }
-        }
+        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+        $titleMb = $this->getItemByType($mbSectionItem, 'title');
 
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0, 0, 0));
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
+        $wrapperLineStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $menuSectionSelector,
+                'styleProperties' => ['border-bottom-color',],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
 
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $headStyle = [
+            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
+        ];
+
+        $wrapperLine->getItemWithDepth(0)
+            ->getValue()
+            ->set_borderColorHex($headStyle['line-color']);
+
+
+        $brizySection->getItemWithDepth(0,0,0)
+            ->getValue()
+            ->add_items([$wrapperLine], 1);
 
         return $brizySection;
+    }
 
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
     }
 }

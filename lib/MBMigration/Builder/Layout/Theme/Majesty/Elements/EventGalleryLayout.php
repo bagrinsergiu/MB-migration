@@ -1,17 +1,17 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
+namespace MBMigration\Builder\Layout\Theme\AntMajestyhem\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-
-class EventGalleryLayout extends AbstractElement
+class EventGalleryLayout extends \MBMigration\Builder\Layout\Common\Element\Events\EventGalleryLayout
 {
-    protected function internalTransformToItem(ElementDataInterface $data): array
-    {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
 
-        return $section->get();
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 50;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+       return 25;
     }
 }

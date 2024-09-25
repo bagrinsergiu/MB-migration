@@ -45,8 +45,8 @@ class ArrayManipulator
     {
         $result = [];
         $parents = [];
-        if($section !== 'gallery'){
 
+        if($section !== 'gallery') {
             foreach ($list as $item) {
                 if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'list') {
                     $parents[$item["id"]] = $item;
@@ -61,9 +61,7 @@ class ArrayManipulator
             }
         }
 
-
-
-         if(!empty($parents)){
+        if(!empty($parents)) {
             foreach ($parents as &$parent) {
                 foreach ($list as $item) {
                     if($parent['id'] == $item['parent_id'])
@@ -76,7 +74,6 @@ class ArrayManipulator
             usort($parents, function($a, $b) {
                 return $a["order_by"] <=> $b["order_by"];
             });
-
         } else {
              $result = [];
              $parents = [];
@@ -101,29 +98,40 @@ class ArrayManipulator
                      $parents[$item["parent_id"]]["children"][] = $item;
                  }
              }
+
              foreach ($parents as $key => $parent) {
                  $children = $parent["children"];
                  usort($children, function($a, $b) {
                      return $a["order_by"] <=> $b["order_by"];
                  });
-                 foreach ($result as &$item){
-                     if($key == $item['id']){
+
+                 foreach ($result as &$item) {
+                     if($key == $item['id']) {
                          $item['children'] = $children;
                      }
                  }
                  //$result[] = $parent;
              }
-             return $result;
-         }
 
-        foreach ($list as $item) {
-            if ($item["parent_id"] == null && $item["category"] === 'text') {
-                $parents['item'][] = $item;
-            }
+             if($section === 'gallery') {
+
+                 return [
+                     'slick' => $result,
+                     'list' => $parents
+                 ];
+             }
+
+             return $result;
         }
+
+
 
         return $parents;
     }
+
+
+
+
 
     public function _groupArrayByParentId($list)
     {
