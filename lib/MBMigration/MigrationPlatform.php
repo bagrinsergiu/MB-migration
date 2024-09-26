@@ -282,6 +282,7 @@ class MigrationPlatform
 
     /**
      * @throws Exception
+     * @throws GuzzleException
      */
     private function collector($page): void
     {

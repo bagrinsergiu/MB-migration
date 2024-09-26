@@ -62,7 +62,7 @@ abstract class GridLayout extends AbstractElement
                     ->set_paddingRight((int)$styles['margin-right'])
                     ->set_paddingLeft((int)$styles['margin-left']);
 
-                foreach ($item['item'] as $mbItem) {
+                foreach ($item['items'] as $mbItem) {
                     switch ($mbItem['category']) {
                         case 'photo':
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(

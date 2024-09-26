@@ -353,32 +353,65 @@ class PageController
             'Getting MB page items for page: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
         );
 
-        $child = $this->parser->getSectionsPage($page['id']);
-        if (!empty($child)) {
+        $listOfSections = $this->parser->getSectionsPage($page['id']);
+        if (!empty($listOfSections)) {
             $sections = [];
-            foreach ($child as $value) {
+            $position = 1;
+            foreach ($listOfSections as $section) {
                 $items = [
-                    'sectionId' => $value['id'],
-                    'typeSection' => $value['typeSection'],
-                    'position' => $value['position'],
-                    'category' => $value['category'],
-                    'settings' => $value['settings'],
+                    'sectionId' => $section['id'],
+                    'typeSection' => $section['typeSection'],
+                    'position' => $position,
+                    'category' => $section['category'],
+                    'settings' => $section['settings'],
                     'head' => [],
+                    'slide' => [],
                     'items' => [],
-
                 ];
-                $sectionItems = $this->parser->getItemsFromSection($value, true);
 
-                foreach ($sectionItems as $key => $Item) {
-                    if ($key === 'item') {
-                        $items['head'] = $Item;
-                    } elseif ($key === 'slide') {
-                        $items['slide'][] = $Item;
-                    } else {
-                        $items['items'][] = $Item;
-                    }
+                $sectionItems = $this->parser->getItemsFromSection($section, true);
+
+                switch ($section['category']) {
+                    case 'gallery':
+                        $itemsSubGallery = [
+                            'sectionId' => $section['id'],
+                            'typeSection' => 'sub-gallery-layout',
+                            'position' => $section['position'],
+                            'category' => $section['category'],
+                            'settings' => $section['settings'],
+                            'head' => [],
+                            'slide' => [],
+                            'items' => [],
+                        ];
+
+                        foreach ($sectionItems as $key => $Item) {
+                            if ($key === 'slide') {
+                                $items['slide'] = array_merge($items['slide'], $Item);
+                                $sections[] = $items;
+                            } else if ($key === 'list') {
+                                $position++;
+                                $itemsSubGallery['position'] = $position;
+                                $itemsSubGallery['items'] = array_merge($items['items'], $Item);
+                                $sections[] = $itemsSubGallery;
+                            }
+                        }
+                        break;
+                    default:
+                        foreach ($sectionItems as $key => $Item) {
+                            if ($key === 'head') {
+                                $items['head'] = array_merge($items['head'], $Item);
+                            } elseif ($key === 'slide') {
+                                $items['slide'] = array_merge($items['slide'], $Item);
+                            } elseif ($key === 'items') {
+                                $items['items'] = array_merge($items['items'], $Item);
+                            }  elseif (!empty($Item)) {
+                                $items['items'][] = $Item;
+                            }
+                        }
+                        $sections[] = $items;
+                        break;
                 }
-                $sections[] = $items;
+                $position++;
             }
             $result = $sections;
         } else {

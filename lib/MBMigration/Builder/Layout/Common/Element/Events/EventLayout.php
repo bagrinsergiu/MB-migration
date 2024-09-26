@@ -143,7 +143,7 @@ abstract class EventLayout extends AbstractElement
             'listItemMetaColorOpacity' => 1,
             'listItemMetaColorPalette' => '',
 
-            'listItemDateColorHex' => $sectionPalette['btn-text'],
+            'listItemDateColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'listItemDateColorOpacity' => 1,
             'listItemDateColorPalette' => '',
 
@@ -167,16 +167,16 @@ abstract class EventLayout extends AbstractElement
             'dateColorOpacity' => 1,
             'dateColorPalette' => '',
 
-            'listItemDateBgColorHex' => $sectionPalette['btn-bg'],
+            'listItemDateBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
             'listItemDateBgColorOpacity' => 1,
             'listItemDateBgColorType' => 'solid',
             'listItemDateBgColorPalette' => '',
 
-            'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
             'detailButtonBgColorOpacity' => 1,
             'detailButtonBgColorPalette' => '',
 
-            'detailButtonGradientColorHex' => $sectionPalette['btn-text'],
+            'detailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonGradientColorOpacity' => 1,
             'detailButtonGradientColorPalette' => '',
 

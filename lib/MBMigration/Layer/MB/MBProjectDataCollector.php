@@ -758,7 +758,7 @@ class MBProjectDataCollector
 
     private function assemblySection($id, $section): array
     {
-        return $this->manipulator->groupArrayByParentId($this->cache->get($id, 'Sections'), $section);
+        return $this->manipulator->groupItemsListByParentId($this->cache->get($id, 'Sections'), $section);
     }
 
     public function transLiterationFontFamily($family): string

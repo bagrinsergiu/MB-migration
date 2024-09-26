@@ -27,7 +27,7 @@ use MBMigration\Builder\Layout\Theme\Majesty\Elements\ThreeTopMediaCircle;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\TwoRightMediaCircle;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\GalleryLayout;
-use MBMigration\Builder\Layout\Theme\Majesty\Elements\ThreeHorizontalText;
+use MBMigration\Builder\Layout\Theme\Majesty\Elements\ThreeTopMediaColumn;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\Head;
 
 class ElementFactory extends AbstractThemeElementFactory
@@ -45,7 +45,8 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
             case 'three-top-media-circle':
                 return new ThreeTopMediaCircle($this->blockKit['blocks']['three-top-media-circle'], $browserPage);
-
+            case 'sub-gallery-layout':
+                return new ThreeTopMediaColumn($this->blockKit['blocks']['three-top-media-column'], $browserPage);
             case 'full-media':
                 return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);
             case 'left-media':

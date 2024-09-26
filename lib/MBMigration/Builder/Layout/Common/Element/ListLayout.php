@@ -45,7 +45,7 @@ abstract class ListLayout extends AbstractElement
                 ->set_paddingRight((int)$styles['margin-right'])
                 ->set_paddingLeft((int)$styles['margin-left']);
 
-            foreach ($item['item'] as $mbItem) {
+            foreach ($item['items'] as $mbItem) {
                 if ($mbItem['item_type'] == 'title' || $mbItem['item_type'] == 'body') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,

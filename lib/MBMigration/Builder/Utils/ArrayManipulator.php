@@ -41,12 +41,47 @@ class ArrayManipulator
         return $this->array;
     }
 
-    public function groupArrayByParentId($list, $section): array
+    public function groupItemsListByParentId($list, $sectionCategory): array
+    {
+        $parents = [];
+        $itemsList = [];
+
+        foreach ($list as $item) {
+            if ($item["parent_id"] == null && $item["content"] == null && $item["item_type"] == null) {
+                $item["items"] = [];
+                $parents[] = $item;
+            } else if ($item["parent_id"] == null) {
+                $itemsList[] = $item;
+            }
+        }
+
+        foreach ($parents as &$parentItem) {
+            foreach ($list as $item) {
+                if($item["parent_id"] == $parentItem["id"]) {
+                    $parentItem['items'][] = $item;
+                }
+            }
+        }
+
+        switch ($sectionCategory) {
+            case 'gallery':
+                return ['slide' => $itemsList, 'list' => $parents];
+            case 'accordion':
+            case 'list':
+            case 'tab':
+                return ['head' => $itemsList, 'items' => $parents];
+            default:
+                return $itemsList;
+        }
+    }
+
+    public function groupItemsListByParentId__q($list, $sectionCategory): array
     {
         $result = [];
         $parents = [];
+        $itemsList = [];
 
-        if($section !== 'gallery') {
+        if($sectionCategory !== 'gallery') {
             foreach ($list as $item) {
                 if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'list') {
                     $parents[$item["id"]] = $item;
@@ -113,18 +148,19 @@ class ArrayManipulator
                  //$result[] = $parent;
              }
 
-             if($section === 'gallery') {
+             if($sectionCategory === 'gallery') {
+                 foreach ($parents as $item) {
+                     $itemsList[] = $item;
+                 }
 
                  return [
-                     'slick' => $result,
-                     'list' => $parents
+                     'slide' => $result,
+                     'list' => $itemsList
                  ];
              }
 
              return $result;
         }
-
-
 
         return $parents;
     }
@@ -217,6 +253,13 @@ class ArrayManipulator
         }
 
         return true;
+    }
+
+    private function groupItemsGalery(array $items): array
+    {
+
+
+        return $sections;
     }
 
 }
