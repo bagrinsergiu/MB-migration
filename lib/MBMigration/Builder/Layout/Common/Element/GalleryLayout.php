@@ -25,7 +25,6 @@ abstract class GalleryLayout extends AbstractElement
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
-
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
@@ -42,7 +41,6 @@ abstract class GalleryLayout extends AbstractElement
         $sectionSelector = 'body';
         $backgroundColorStyles = $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage);
         $properties['background-color'] = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
-
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
         $videoJson = json_decode($this->brizyKit['video'], true);
