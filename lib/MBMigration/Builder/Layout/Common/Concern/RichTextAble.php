@@ -273,29 +273,31 @@ trait RichTextAble
                     $popupUid = $this->generateUniqueId(12);
 
                     $attribute = [
-                        'style' => "width : 100%; height : 100%;"
+                        'style' => "position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
                     ];
-                    $remove = [
 
+                    $remove = [
+                        'width', 'height'
                     ];
 
                     $iframe = $this->setAttributeInToElement($mbSectionItem['link'], 'iframe', $attribute, $remove);
 
                     $attribute = [
-                        'style' => "aspect-ratio: 16 / 9; width : 100%;"
+                        'style' => "position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden;"
                     ];
 
-                    $this->putInsideTheBlock('div', $iframe, $attribute);
+                    $iframeUpdated = $this->putInsideTheBlock('div', $iframe, $attribute);
 
                     $popupSection->getValue()
-                        ->get_popupId($popupUid);
+                        ->set_popupId($popupUid);
                     $popupSection->getItemWithDepth(0,0,0,0)->getValue()
-                        ->get_code($popupUid);
+                        ->set_code($iframeUpdated);
 
                     $external = [
                         'linkType' => 'popup',
                         'linkPopup' => $popupUid,
-                        'linkExternalBlank' => $mbSectionItem['new_window']
+                        'linkExternalBlank' => $mbSectionItem['new_window'],
+                        'popups' => [$popupSection],
                     ];
 
                 } else {
@@ -322,7 +324,7 @@ trait RichTextAble
                 foreach ($external as $key => $value) {
                     $method = 'set_'.$key;
                     $brizyComponent->getValue()
-                        ->$method('external');
+                        ->$method($value);
                 }
             }
 
