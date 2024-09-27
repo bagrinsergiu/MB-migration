@@ -58,6 +58,8 @@ COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/dist 
 COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/dist lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/dist
 COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/dist lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/dist
 COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Ember/Assets/dist lib/MBMigration/Builder/Layout/Theme/Ember/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/dist lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/dist lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/dist
 
 ENTRYPOINT ["tini", "docker-entrypoint", "--"]
 

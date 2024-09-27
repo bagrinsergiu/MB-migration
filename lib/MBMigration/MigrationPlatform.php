@@ -282,6 +282,7 @@ class MigrationPlatform
 
     /**
      * @throws Exception
+     * @throws GuzzleException
      */
     private function collector($page): void
     {
@@ -289,7 +290,7 @@ class MigrationPlatform
         ExecutionTimer::start();
 
          if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
-            $preparedSectionOfThePage = $this->pageController->getItemsFromPage($page);
+            $preparedSectionOfThePage = $this->pageController->getSectionsFromPage($page);
             if (!$preparedSectionOfThePage) {
                 return;
             }

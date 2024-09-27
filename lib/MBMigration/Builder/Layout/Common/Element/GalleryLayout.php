@@ -25,7 +25,9 @@ abstract class GalleryLayout extends AbstractElement
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         try{
@@ -36,10 +38,9 @@ abstract class GalleryLayout extends AbstractElement
             $colorArrows = '#FFFFFF';
         }
 
-        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $sectionSelector = 'body';
         $backgroundColorStyles = $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage);
         $properties['background-color'] = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
-
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
         $videoJson = json_decode($this->brizyKit['video'], true);
@@ -121,7 +122,7 @@ abstract class GalleryLayout extends AbstractElement
             $brizySectionItems[] = $brizySectionItem;
 
         } else {
-            foreach ($mbSection['items'] as $mbItem) {
+            foreach ($mbSection['slide'] as $mbItem) {
                 $brizySectionItem = new BrizyComponent($slideJson);
                 $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
                 $this->setSlideImage($brizySectionItemImage, $mbItem, $properties);
@@ -269,6 +270,4 @@ abstract class GalleryLayout extends AbstractElement
 
         return $brightness > 125 ? '#000000' : '#FFFFFF';
     }
-
-
 }

@@ -129,4 +129,12 @@ class Footer extends FooterElement
 
         }
     }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "margin-left" => 0,
+            "margin-right" => 0,
+        ];
+    }
 }

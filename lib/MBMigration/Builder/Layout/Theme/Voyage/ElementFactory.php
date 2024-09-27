@@ -2,16 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Theme\Voyage;
 
-use MBMigration\Browser\BrowserPage;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\AccordionLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventGridLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventListLayout;
-use MBMigration\Builder\Layout\Theme\Voyage\Elements\EventTileLayout;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\FullText;

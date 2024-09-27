@@ -2,127 +2,176 @@
 
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
-use DOMException;
-use MBMigration\Core\Logger;
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\TextTools;
 
-class AccordionLayout extends Element
+class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\AccordionLayout
 {
-
-    /**
-     * @var VariableCache
-     */
-    protected $cache;
-    private $jsonDecode;
-
-    public function __construct($jsonKitElements)
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $mbSection = $data->getMbSection();
+        $families = $data->getFontFamilies();
+
+        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $backgroundColorStyles = ColorConverter::convertColorRgbToHex(
+            $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage));
+
+        $accordionElementStyles = $this->getAccordionElementStyles($sectionSelector, $this->browserPage, $families);
+
+        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
+        $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $elementContext = $data->instanceWithBrizyComponent($this->getSectionHeaderComponent($brizySection));
+        $this->handleRichTextHead($elementContext, $this->browserPage);
+
+        $itemJson = json_decode($this->brizyKit['item'], true);
+        $brizyAccordionItems = [];
+
+        $brizyAccordionComponent = $this->getAccordionParentComponent($brizySection)->getValue();
+
+        foreach ($accordionElementStyles as $key => $value) {
+            $propertiesName = 'set_'.$key;
+            $brizyAccordionComponent->$propertiesName($value);
+        }
+
+        foreach ($mbSection['items'] as $mbSectionItem) {
+            $brizyAccordionItemComponent = new BrizyComponent($itemJson);
+
+            $lableText = TextTools::transformTextBool($mbSectionItem['item'][0]['content'],
+                    $accordionElementStyles['uppercase']);
+
+            $brizyAccordionItemComponent->getValue()->set_labelText(strip_tags($lableText));
+
+            $brizyAccordionItem = $this->getAccordionSectionComponent($brizyAccordionItemComponent);
+
+            $accordionWrapperElementStyle = [
+                "marginType" => "ungrouped",
+                "marginSuffix" => "px",
+                "marginTop" => 10,
+                "marginTopSuffix" => "px",
+                "marginRight" => 11,
+                "marginRightSuffix" => "px",
+                "marginBottom" => 10,
+                "marginBottomSuffix" => "px",
+                "marginLeft" => 11,
+                "marginLeftSuffix" => "px",
+
+                "tabletMarginType" => "ungrouped",
+                "tabletMargin" => 0,
+                "tabletMarginSuffix" => "px",
+                "tabletMarginTop" => 10,
+                "tabletMarginTopSuffix" => "px",
+                "tabletMarginRight" => 11,
+                "tabletMarginRightSuffix" => "px",
+                "tabletMarginBottom" => 10,
+                "tabletMarginBottomSuffix" => "px",
+                "tabletMarginLeft" => 11,
+                "tabletMarginLeftSuffix" => "px",
+
+                "mobileMarginType" => "ungrouped",
+                "mobileMargin" => 0,
+                "mobileMarginSuffix" => "px",
+                "mobileMarginTop" => 10,
+                "mobileMarginTopSuffix" => "px",
+                "mobileMarginRight" => 11,
+                "mobileMarginRightSuffix" => "px",
+                "mobileMarginBottom" => 10,
+                "mobileMarginBottomSuffix" => "px",
+                "mobileMarginLeft" => 11,
+                "mobileMarginLeftSuffix" => "px",
+            ];
+
+
+            $accordionRowElementStyle = [
+                'bgColorHex' => $backgroundColorStyles['background-color'],
+
+                "marginType" => "ungrouped",
+                "marginSuffix" => "px",
+                "marginTop" => 10,
+                "marginTopSuffix" => "px",
+                "marginRight" => -11,
+                "marginRightSuffix" => "px",
+                "marginBottom" => 0,
+                "marginBottomSuffix" => "px",
+                "marginLeft" => -11,
+                "marginLeftSuffix" => "px",
+
+                'mobileMarginType' => 'ungrouped',
+                'mobileMarginTop' => 0,
+                'mobileMarginTopSuffix' => 'px',
+                'mobileMarginBottom' => 0,
+                'mobileMarginBottomSuffix' => 'px',
+                'mobileMarginRight' => -10,
+                'mobileMarginRightSuffix' => 'px',
+                'mobileMarginLeft' => -10,
+                'mobileMarginLeftSuffix' => 'px',
+
+                'tabletMarginType' => 'ungrouped',
+                'tabletMarginTop' => 0,
+                'tabletMarginTopSuffix' => 'px',
+                'tabletMarginBottom' => 0,
+                'tabletMarginBottomSuffix' => 'px',
+                'tabletMarginRight' => -10,
+                'tabletMarginRightSuffix' => 'px',
+                'tabletMarginLeft' => -10,
+                'tabletMarginLeftSuffix' => 'px',
+
+            ];
+
+            foreach ($accordionRowElementStyle as $key => $value) {
+                $method = "set_".$key;
+                $brizyAccordionItem->getValue()
+                    ->$method($value);
+            }
+
+            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                $mbSectionItem['item'][1],
+                $brizyAccordionItem
+            );
+            $this->handleRichTextItem($elementContext, $this->browserPage);
+
+            $elementWrapper = $brizyAccordionItem->getItemWithDepth(0);
+            foreach ($accordionWrapperElementStyle as $key => $value) {
+                $method = "set_".$key;
+                $elementWrapper->getValue()
+                    ->$method($value);
+            }
+
+            $brizyAccordionItems[] = $brizyAccordionItemComponent;
+        }
+
+        $brizyAccordionComponent->set_items($brizyAccordionItems);
+
+        return $brizySection;
     }
 
-    /**
-     * @throws DOMException
-     */
-    public function getElement(array $elementData = [])
+    protected function getAccordionSectionComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $this->AccordionLayout($elementData);
+        return $brizySection->getItemWithDepth(0);
     }
 
-    /**
-     * @throws DOMException
-     */
-    protected function AccordionLayout(array $sectionData) {
-        Logger::instance()->info('Create bloc');
-
-        $options = [];
-
-        $this->cache->set('currentSectionData', $sectionData);
-        $decoded = $this->jsonDecode['blocks']['accordion-layout'];
-
-        $objBlock = new ItemBuilder();
-        $objItem = new ItemBuilder();
-        $objList = new ItemBuilder();
-
-        $objBlock->newItem($decoded['main']);
-        $objList->newItem($decoded['list']);
-
-        $this->generalParameters($objBlock, $options, $sectionData);
-
-        $this->defaultOptionsForElement($sectionData, $options);
-
-        $this->backgroundColor($objBlock, $sectionData, $options);
-
-        $this->backgroundParallax($objBlock, $sectionData);
-
-        $this->backgroundImages($objBlock, $sectionData, $options);
-
-        foreach ($sectionData['head'] as $headItem) {
-            if ($headItem['item_type'] === 'title' && $this->showHeader($sectionData)) {
-                $this->textCreation($headItem, $objBlock);
-            }
-        }
-        foreach ($sectionData['head'] as $headItem) {
-            if ($headItem['item_type'] === 'body' && $this->showBody($sectionData)) {
-                $this->textCreation($headItem, $objBlock);
-            }
-        }
-
-        foreach ($sectionData['items'] as $section) {
-
-            $objItem->newItem($decoded['item']);
-
-            foreach ($section['item'] as $item) {
-                if ($item['category'] === 'text') {
-                    if ($item['item_type'] === 'accordion_title') {
-                        $objItem->setting('labelText', preg_replace('/<[^>]*>/', '', $item['content']));
-                    }
-                }
-            }
-
-            foreach ($section['item'] as $item) {
-                if ($item['category'] === 'text') {
-                    if ($item['item_type'] === 'accordion_body') {
-                        $this->textCreation($item, $objItem);
-                    }
-                }
-            }
-            $objList->item(0)->addItem($objItem->get());
-        }
-        $objList->item(0)->setting('bgColorHex', $sectionData['style']['background-color'] ?? '#FFFFFF');
-
-        if(!empty($sectionData['style']['accordion'])){
-            foreach ( $sectionData['style']['accordion'] as $key => $value){
-                $objList->item(0)->setting($key, $value);
-            }
-        }
-
-
-        $objBlock->item(0)->addItem($objList->get());
-        $block = $this->replaceIdWithRandom($objBlock->get());
-        return json_encode($block);
+    protected function getSectionHeaderComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
-    private function textCreation($sectionData, $objBlock)
+    protected function getAccordionParentComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        $i = 0;
-        foreach ($sectionData['brzElement'] as $textItem) {
-            switch ($textItem['type']) {
-                case 'EmbedCode':
-                    if(!empty($sectionData['content'])) {
-                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
-                        if(is_array($embedCode)){
-                            $objBlock->item(0)->addItem($this->embedCode($embedCode[$i]));
-                        }
-                        $i++;
-                    }
-                    break;
-                case 'Cloneable':
-                case 'Wrapper':
-                    $objBlock->item(0)->addItem($textItem);
-                    break;
-            }
-        }
+        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+    }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+       return 50;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
     }
 }

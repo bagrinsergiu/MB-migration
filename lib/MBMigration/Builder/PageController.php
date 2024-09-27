@@ -3,6 +3,7 @@
 namespace MBMigration\Builder;
 
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
@@ -82,89 +83,61 @@ class PageController
 
         $this->browser = BrowserPHP::instance($layoutBasePath);
         try {
-            if ($design !== 'Anthem' && $design !== 'Solstice') {
-
-                try {
-                    $browserPage = $this->browser->openPage($url, $design);
-                } catch (OperationTimedOut $e) {
-                    Logger::instance()->critical($e->getMessage());
-                    $this->browser = BrowserPHP::instance($layoutBasePath);
-                    $browserPage = $this->browser->openPage($url, $design);
-                }
-
-                $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
-                $layoutElementFactory = new LayoutElementFactory(
-                    $brizyKit,
-                    $browserPage,
-                    $queryBuilder,
-                    $this->brizyAPI,
-                    $fontController
-                );
-                $themeElementFactory = $layoutElementFactory->getFactory($design);
-                $brizyMenuEntity = $this->cache->get('menuList');
-                $brizyMenuItems = $this->cache->get('brizyMenuItems');
-                $headItem = $this->cache->get('header', 'mainSection');
-                $footerItem = $this->cache->get('footer', 'mainSection');
-                $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
-
-                $themeContext = new ThemeContext(
-                    $design,
-                    $browserPage,
-                    $brizyKit,
-                    $brizyMenuEntity,
-                    $brizyMenuItems,
-                    $headItem,
-                    $footerItem,
-                    $fontFamily['kit'],
-                    $fontFamily['Default'],
-                    $themeElementFactory,
-                    $mainCollectionType,
-                    $itemsID,
-                    $slug,
-                    $pageMapping,
-                    $RootPalettesExtracted->extractRootPalettes()
-                );
-
-                /**
-                 * @var ThemeInterface $_WorkClassTemplate ;
-                 */
-                $_WorkClassTemplate = new $workClass($themeContext);
-                $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
-
-                $pageData = json_encode($brizySections);
-                $queryBuilder = $this->cache->getClass('QueryBuilder');
-                $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
-                Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
-                Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
-
-                return true;
-
-            } else {
-                try {
-                    $browserPage = $this->browser->openPage($url, $design);
-                } catch (OperationTimedOut $e) {
-                    Logger::instance()->critical($e->getMessage());
-                    $this->browser = BrowserPHP::instance($layoutBasePath);
-                    $browserPage = $this->browser->openPage($url, $design);
-                }
-
-                $_WorkClassTemplate = new $workClass($browserPage, $this->browser, $this->brizyAPI);
-
-                $this->cache->set('palettes', $_WorkClassTemplate->getPalettes());
-
-                $_WorkClassTemplate->buildGlobalSection();
-
-                if ($_WorkClassTemplate->build($preparedSectionOfThePage)) {
-                    Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
-                    Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
-
-                    return true;
-                } else {
-                    Logger::instance()->info('Fail Build Page: '.$itemsID.' | Slug: '.$slug);
-
-                    return false;
-                }
+            try {
+                $browserPage = $this->browser->openPage($url, $design);
+            } catch (OperationTimedOut $e) {
+                Logger::instance()->critical($e->getMessage());
+                $this->browser = BrowserPHP::instance($layoutBasePath);
+                $browserPage = $this->browser->openPage($url, $design);
             }
+
+            $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
+            $layoutElementFactory = new LayoutElementFactory(
+                $brizyKit,
+                $browserPage,
+                $queryBuilder,
+                $this->brizyAPI,
+                $fontController
+            );
+            $themeElementFactory = $layoutElementFactory->getFactory($design);
+            $brizyMenuEntity = $this->cache->get('menuList');
+            $brizyMenuItems = $this->cache->get('brizyMenuItems');
+            $headItem = $this->cache->get('header', 'mainSection');
+            $footerItem = $this->cache->get('footer', 'mainSection');
+            $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
+
+            $themeContext = new ThemeContext(
+                $design,
+                $browserPage,
+                $brizyKit,
+                $brizyMenuEntity,
+                $brizyMenuItems,
+                $headItem,
+                $footerItem,
+                $fontFamily['kit'],
+                $fontFamily['Default'],
+                $themeElementFactory,
+                $mainCollectionType,
+                $itemsID,
+                $slug,
+                $pageMapping,
+                $RootPalettesExtracted->extractRootPalettes()
+            );
+
+            /**
+             * @var ThemeInterface $_WorkClassTemplate ;
+             */
+            $_WorkClassTemplate = new $workClass($themeContext);
+            $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
+
+            $pageData = json_encode($brizySections);
+            $queryBuilder = $this->cache->getClass('QueryBuilder');
+            $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
+            Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
+            Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
+
+            return true;
+
         } catch (\Exception $e) {
             Logger::instance()->critical('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
             throw $e;
@@ -371,36 +344,74 @@ class PageController
         return [];
     }
 
-    public function getItemsFromPage(array $page)
+    /**
+     * @throws GuzzleException
+     */
+    public function getSectionsFromPage(array $page)
     {
         Logger::instance()->info(
             'Getting MB page items for page: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
         );
 
-        $child = $this->parser->getSectionsPage($page['id']);
-        if (!empty($child)) {
+        $listOfSections = $this->parser->getSectionsPage($page['id']);
+        if (!empty($listOfSections)) {
             $sections = [];
-            foreach ($child as $value) {
+            $position = 1;
+            foreach ($listOfSections as $section) {
                 $items = [
-                    'sectionId' => $value['id'],
-                    'typeSection' => $value['typeSection'],
-                    'position' => $value['position'],
-                    'category' => $value['category'],
-                    'settings' => $value['settings'],
+                    'sectionId' => $section['id'],
+                    'typeSection' => $section['typeSection'],
+                    'position' => $position,
+                    'category' => $section['category'],
+                    'settings' => $section['settings'],
                     'head' => [],
+                    'slide' => [],
                     'items' => [],
-
                 ];
-                $sectionItems = $this->parser->getSectionsItems($value, true);
 
-                foreach ($sectionItems as $key => $Item) {
-                    if ($key === 'item') {
-                        $items['head'] = $Item;
-                    } else {
-                        $items['items'][] = $Item;
-                    }
+                $sectionItems = $this->parser->getItemsFromSection($section, true);
+
+                switch ($section['category']) {
+                    case 'gallery':
+                        $itemsSubGallery = [
+                            'sectionId' => $section['id'],
+                            'typeSection' => 'sub-gallery-layout',
+                            'position' => $section['position'],
+                            'category' => $section['category'],
+                            'settings' => $section['settings'],
+                            'head' => [],
+                            'slide' => [],
+                            'items' => [],
+                        ];
+
+                        foreach ($sectionItems as $key => $Item) {
+                            if ($key === 'slide') {
+                                $items['slide'] = array_merge($items['slide'], $Item);
+                                $sections[] = $items;
+                            } else if ($key === 'list') {
+                                $position++;
+                                $itemsSubGallery['position'] = $position;
+                                $itemsSubGallery['items'] = array_merge($items['items'], $Item);
+                                $sections[] = $itemsSubGallery;
+                            }
+                        }
+                        break;
+                    default:
+                        foreach ($sectionItems as $key => $Item) {
+                            if ($key === 'head') {
+                                $items['head'] = array_merge($items['head'], $Item);
+                            } elseif ($key === 'slide') {
+                                $items['slide'] = array_merge($items['slide'], $Item);
+                            } elseif ($key === 'items') {
+                                $items['items'] = array_merge($items['items'], $Item);
+                            }  elseif (!empty($Item)) {
+                                $items['items'][] = $Item;
+                            }
+                        }
+                        $sections[] = $items;
+                        break;
                 }
-                $sections[] = $items;
+                $position++;
             }
             $result = $sections;
         } else {

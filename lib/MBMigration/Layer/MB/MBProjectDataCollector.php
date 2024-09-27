@@ -122,8 +122,6 @@ class MBProjectDataCollector
      */
     public function getSite()
     {
-
-
         $siteData = $this->db->requestOne(
             "
             SELECT
@@ -370,7 +368,6 @@ class MBProjectDataCollector
 
     public function getPages(): array
     {
-
         $result = [];
 
         $allPages = $this->db->request(
@@ -378,7 +375,7 @@ class MBProjectDataCollector
                        slug,
                        name,
                        parent_id,
-                       ''                 as collection,
+                       '' as collection,
                        position,
                        settings as parentSettings,
                        landing,
@@ -629,7 +626,7 @@ class MBProjectDataCollector
      * @throws GuzzleException
      * @throws Exception
      */
-    public function getSectionsItems($sectionId, $assembly = false)
+    public function getItemsFromSection($sectionId, $assembly = false)
     {
         $result = [];
         if ($this->cache->exist($sectionId['id'])) {
@@ -761,7 +758,7 @@ class MBProjectDataCollector
 
     private function assemblySection($id, $section): array
     {
-        return $this->manipulator->groupArrayByParentId($this->cache->get($id, 'Sections'), $section);
+        return $this->manipulator->groupItemsListByParentId($this->cache->get($id, 'Sections'), $section);
     }
 
     public function transLiterationFontFamily($family): string

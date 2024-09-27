@@ -2,32 +2,28 @@
 
 namespace MBMigration\Builder\Layout\Theme\Bloom;
 
-use MBMigration\Browser\BrowserPage;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventGalleryLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventListLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\EventTileLayout;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Events\EventLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Footer;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms\FullWidthForm;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms\LeftForm;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms\PrayerForm;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms\RightForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullMedia;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullText;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullWidthForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\GalleryLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridMediaLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Head;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMediaCircle;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightMediaCircle;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\ListLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\MediaLayout;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\PrayerForm;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightMedia;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Semons\MediaLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\SmallGroupsList;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\TabsLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\TwoRightMediaCircle;
@@ -43,6 +39,8 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new Head($this->blockKit['blocks']['menu'], $browserPage,$this->brizyApiClient, $this->fontsController);
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
+            case 'right-media-circle':
+                return new RightMediaCircle($this->blockKit['blocks']['right-media'], $browserPage);
             case 'two-right-media-circle':
                 return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
             case 'left-media':
@@ -105,36 +103,3 @@ class ElementFactory  extends AbstractThemeElementFactory
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

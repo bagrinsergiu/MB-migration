@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Core\Logger;
 
 trait CssPropertyExtractorAware
 {
@@ -34,13 +35,15 @@ trait CssPropertyExtractorAware
         );
 
         if (isset($elementStyles['error'])) {
-            throw new BrowserScriptException($elementStyles['error']);
+            Logger::instance()->error($elementStyles['error']);
+
+            return [];
         }
 
         if (empty($elementStyles)) {
-            throw new BrowserScriptException(
-                "The element with selector {$selectorSectionStyles} was not found in page."
-            );
+            Logger::instance()->error("The element with selector {$selectorSectionStyles} was not found in page.");
+
+            return [];
         }
 
         return $elementStyles['data'];

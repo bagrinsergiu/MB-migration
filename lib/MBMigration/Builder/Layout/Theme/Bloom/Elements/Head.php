@@ -42,12 +42,12 @@ class Head extends HeadElement
 
     public function getThemeParentMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li:has(.sub-navigation)", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li:has(.sub-navigation) .sub-navigation>li>a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation ul li.has-sub > .sub-navigation li > a", "pseudoEl" => ""];
     }
 
     public function getThemeMenuItemBgSelector(): array
@@ -57,7 +57,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li:has(.sub-navigation) .sub-navigation", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation>ul>li.has-sub .sub-navigation", "pseudoEl" => ""];
     }
 
     public function getThemeMenuItemPaddingSelector(): array

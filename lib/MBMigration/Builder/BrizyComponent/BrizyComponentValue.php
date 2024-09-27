@@ -67,7 +67,22 @@ class BrizyComponentValue implements JsonSerializable
         $method = strtolower($matches['action']);
         $field = $matches['field'];
 
-        return call_user_func_array([$this, $method], [$field, array_pop($params)]);
+        switch($method) {
+            case 'add':
+                $arg = [
+                    $matches['field'],
+                    $params[0],
+                    $params[1] ?? null
+                    ];
+                break;
+            default:
+                $arg = [
+                    $field,
+                    array_pop($params)
+                ];
+        }
+
+        return call_user_func_array([$this, $method], $arg);
 
     }
 

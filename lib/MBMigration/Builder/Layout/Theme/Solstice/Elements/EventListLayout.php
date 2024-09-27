@@ -2,16 +2,12 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-class EventListLayout extends AbstractElement
+class EventListLayout extends \MBMigration\Builder\Layout\Common\Element\Events\EventListLayout
 {
-    protected function internalTransformToItem(ElementDataInterface $data): array
+    protected function getDetailsComponent(BrizyComponent $brizySection)
     {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
-
-        return $section->get();
+        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
 }

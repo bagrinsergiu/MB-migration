@@ -125,6 +125,7 @@ class MediaController
                     }
                 } else {
                     self::checkItemForMediaFiles($section['items'], $section['typeSection'], $projectId, $brizyApi);
+
                 }
             }
 
@@ -144,7 +145,13 @@ class MediaController
                     self::checkItemForMediaFiles($section['items'], $section['typeSection'], $projectId, $brizyApi);
                 }
             }
-            self::checkItemForMediaFiles($section['items'], $section['typeSection'], $projectId, $brizyApi);
+            if (!empty($section['items'])) {
+                self::checkItemForMediaFiles($section['items'], $section['typeSection'], $projectId, $brizyApi);
+            }
+
+            if (!empty($section['slide'])) {
+                self::checkItemForMediaFiles($section['slide'], $section['typeSection'], $projectId, $brizyApi);
+            }
         }
 
         return $sectionsItems;
@@ -160,7 +167,7 @@ class MediaController
                 MediaController::media($item, $typeSection, $projectId, $brizyApi);
             }
             if ($item['category'] == 'list') {
-                foreach ($item['item'] as &$piece) {
+                foreach ($item['items'] as &$piece) {
                     if ($piece['category'] == 'photo' && $piece['content'] != '') {
                         MediaController::media($piece, $typeSection, $projectId, $brizyApi);
                     }

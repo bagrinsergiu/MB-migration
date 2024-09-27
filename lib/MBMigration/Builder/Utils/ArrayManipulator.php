@@ -41,12 +41,47 @@ class ArrayManipulator
         return $this->array;
     }
 
-    public function groupArrayByParentId($list, $section): array
+    public function groupItemsListByParentId($list, $sectionCategory): array
+    {
+        $parents = [];
+        $itemsList = [];
+
+        foreach ($list as $item) {
+            if ($item["parent_id"] == null && $item["content"] == null && $item["item_type"] == null) {
+                $item["items"] = [];
+                $parents[] = $item;
+            } else if ($item["parent_id"] == null) {
+                $itemsList[] = $item;
+            }
+        }
+
+        foreach ($parents as &$parentItem) {
+            foreach ($list as $item) {
+                if($item["parent_id"] == $parentItem["id"]) {
+                    $parentItem['items'][] = $item;
+                }
+            }
+        }
+
+        switch ($sectionCategory) {
+            case 'gallery':
+                return ['slide' => $itemsList, 'list' => $parents];
+            case 'accordion':
+            case 'list':
+            case 'tab':
+                return ['head' => $itemsList, 'items' => $parents];
+            default:
+                return $itemsList;
+        }
+    }
+
+    public function groupItemsListByParentId__q($list, $sectionCategory): array
     {
         $result = [];
         $parents = [];
-        if($section !== 'gallery'){
+        $itemsList = [];
 
+        if($sectionCategory !== 'gallery') {
             foreach ($list as $item) {
                 if ($item["parent_id"] == null && $item["content"] == null && $item["category"] == 'list') {
                     $parents[$item["id"]] = $item;
@@ -61,9 +96,7 @@ class ArrayManipulator
             }
         }
 
-
-
-         if(!empty($parents)){
+        if(!empty($parents)) {
             foreach ($parents as &$parent) {
                 foreach ($list as $item) {
                     if($parent['id'] == $item['parent_id'])
@@ -76,7 +109,6 @@ class ArrayManipulator
             usort($parents, function($a, $b) {
                 return $a["order_by"] <=> $b["order_by"];
             });
-
         } else {
              $result = [];
              $parents = [];
@@ -101,29 +133,41 @@ class ArrayManipulator
                      $parents[$item["parent_id"]]["children"][] = $item;
                  }
              }
+
              foreach ($parents as $key => $parent) {
                  $children = $parent["children"];
                  usort($children, function($a, $b) {
                      return $a["order_by"] <=> $b["order_by"];
                  });
-                 foreach ($result as &$item){
-                     if($key == $item['id']){
+
+                 foreach ($result as &$item) {
+                     if($key == $item['id']) {
                          $item['children'] = $children;
                      }
                  }
                  //$result[] = $parent;
              }
-             return $result;
-         }
 
-        foreach ($list as $item) {
-            if ($item["parent_id"] == null && $item["category"] === 'text') {
-                $parents['item'][] = $item;
-            }
+             if($sectionCategory === 'gallery') {
+                 foreach ($parents as $item) {
+                     $itemsList[] = $item;
+                 }
+
+                 return [
+                     'slide' => $result,
+                     'list' => $itemsList
+                 ];
+             }
+
+             return $result;
         }
 
         return $parents;
     }
+
+
+
+
 
     public function _groupArrayByParentId($list)
     {
@@ -209,6 +253,13 @@ class ArrayManipulator
         }
 
         return true;
+    }
+
+    private function groupItemsGalery(array $items): array
+    {
+
+
+        return $sections;
     }
 
 }

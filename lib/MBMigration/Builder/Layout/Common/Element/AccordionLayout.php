@@ -17,8 +17,12 @@ abstract class AccordionLayout extends AbstractElement
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $mbSection = $data->getMbSection();
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
@@ -53,4 +57,21 @@ abstract class AccordionLayout extends AbstractElement
     //{ return $brizySection->getItemWithDepth(0, 0, 0); }
     abstract protected function getAccordionParentComponent(BrizyComponent $brizySection): BrizyComponent;
     //{ return $brizySection->getItemValueWithDepth(0, 1, 0, 0, 0); }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
 }

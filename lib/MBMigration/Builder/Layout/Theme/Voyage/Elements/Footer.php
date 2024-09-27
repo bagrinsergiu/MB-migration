@@ -11,4 +11,12 @@ class Footer extends FooterElement
     {
         return $brizySection->getItemWithDepth(0);
     }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "margin-left" => 0,
+            "margin-right" => 0,
+        ];
+    }
 }

@@ -3,172 +3,265 @@
 namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\Cacheable;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\Element\HeadElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
-class Head extends AbstractElement
+class Head extends HeadElement
 {
-    const CACHE_KEY = 'head';
-    use Cacheable;
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getLogoComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
+    }
+
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0, 2, 0);
+    }
+
+    /**
+     * @param BrizyComponent $brizySection
+     * @return BrizyComponent
+     */
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
+        $brizySection = parent::internalTransformToItem($data);
 
-            $headStyles = $this->extractBlockBrowserData($data->getMbSection()['sectionId'], $data);
+        $MbSection = $data->getMbSection();
 
-            $headStyles['menu']['lineHeight'] = 2; // set line height to 2 for menu items to fix the issue with the menu items not being centered vertically
-            $headStyles['menu']['itemPadding'] = 14; // set line height to 2 for menu items to fix the issue with the menu items not being centered vertically
-
-            $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-
-            // reset color palette
-            $section->getItemValueWithDepth(0)->set_bgColorPalette('');
-
-            // build menu items and set the menu uid
-            $this->buildMenuItemsAndSetTheMenuUid($data, $section, $headStyles);
-            $this->setImageLogo($section, $data->getMbSection());
-            $this->setSectionBackgroundColor($section, $headStyles['style']);
-
-            return $section;
-        });
-    }
-
-    // region Menu methods
-    private function createMenu(BrizyComponent $brizyComponent, $menuList): array
-    {
-        $menuItems = $this->creatingMenuTree($menuList['list'], $brizyComponent);
-
-        return $menuItems;
-    }
-
-    private function creatingMenuTree($menuList, BrizyComponent $cloneBlockMenu): array
-    {
-        $treeMenu = [];
-        foreach ($menuList as $item) {
-            $blockMenu = clone $cloneBlockMenu;
-            $blockMenu->getValue()->set_itemId($item['collection']);
-            $blockMenu->getValue()->set_title($item['name']);
-            $blockMenu->getValue()->set_url($item['slug'] == 'home' ? '/' : $item['slug']);
-            $blockMenu->getValue()->set_id(bin2hex(random_bytes(16)));
-
-            $menuSubItems = $this->creatingMenuTree($item['child'], $cloneBlockMenu);
-            $blockMenu->getValue()->set_items($menuSubItems);
-
-            if ($item['landing'] == false) {
-                $url = $blockMenu->getItemValueWithDepth(0)->get_url();
-                $blockMenu->getValue()->set_url($url);
-            }
-
-            $treeMenu[] = $blockMenu;
-        }
-
-        return $treeMenu;
-    }
-    // endregion
-
-    /**
-     * @param BrizyComponent $component
-     * @param $headItem
-     * @return BrizyComponent
-     */
-    private function setImageLogo(BrizyComponent $component, $headItem): BrizyComponent
-    {
-        $imageLogo = [];
-
-        foreach ($headItem['items'] as $item) {
-            if ($item['category'] = 'photo') {
-                $imageLogo['imageSrc'] = $item['content'];
-                $imageLogo['imageFileName'] = $item['content']; //$item['imageFileName'];
-                $imageLogo['imageWidth'] = $item['settings']['image']['width'];
-                $imageLogo['imageHeight'] = $item['settings']['image']['height'];
-            }
-        }
-
-        if (!empty($imageLogo['imageWidth']) && !empty($imageLogo['imageHeight'])) {
-            $component->getItemValueWithDepth(0, 0, 0, 0, 0)->set_imageHeight($imageLogo['imageHeight']);
-            $component->getItemValueWithDepth(0, 0, 0, 0, 0)->set_imageWidth($imageLogo['imageWidth']);
-        }
-
-        $component->getItemValueWithDepth(0, 0, 0, 0, 0)->set_imageSrc($imageLogo['imageSrc']);
-        $component->getItemValueWithDepth(0, 0, 0, 0, 0)->set_imageFileName($imageLogo['imageFileName']);
-
-        return $component;
-    }
-
-    /**
-     * @param BrizyComponent $component
-     * @param $styles
-     * @return BrizyComponent
-     */
-    private function setSectionBackgroundColor(BrizyComponent $component, $styles): BrizyComponent
-    {
-        $rgbaToHex = ColorConverter::rgba2hex($styles['background-color']);
-        $opacity = ColorConverter::rgba2opacity($styles['background-color']);
-
-        $component->getItemValueWithDepth(0)->set_bgColorHex($rgbaToHex)->set_bgColorOpacity($opacity);
-
-        return $component;
-    }
-
-
-    /**
-     * @param ElementContextInterface $data
-     * @param BrizyComponent $component
-     * @return BrizyComponent
-     */
-    private function buildMenuItemsAndSetTheMenuUid(
-        ElementContextInterface $data,
-        BrizyComponent $component,
-        $headStyles
-    ): BrizyComponent {
-        $menuItemKit = json_decode($this->brizyKit['item'], true);
-        $brizyComponent = new BrizyComponent($menuItemKit);
-        $menuItems = $this->createMenu($brizyComponent, $data->getBrizyMenuItems());
-        $menuComponentValue = $component->getItemValueWithDepth(0, 0, 0, 2, 0);
-        $menuComponentValue->set('items', $menuItems)
-            ->set_menuSelected($data->getBrizyMenuEntity()['uid'])
-            ->set_subMenuBgColorPalette('')
-            ->set_colorOpacity(1)
-            ->set_tempColorOpacity(1)
-            ->set_colorPalette('');
-        // apply menu styles
-        foreach ($headStyles['menu'] as $field => $value) {
-            $method = "set_{$field}";
-            $menuComponentValue->$method($value);
-        }
-
-        return $component;
-    }
-
-    protected function extractBlockBrowserData(
-        $sectionId,
-        ElementContextInterface $data): array
-    {
-        $menuStyles = $this->browserPage->evaluateScript(
-            'Menu.js',
-            [
-                'selector' => '[data-id="'.$sectionId.'"]',
-                'FAMILIES' => $data->getFontFamilies(),
-                'DEFAULT_FAMILY' => $data->getDefaultFontFamily()
-            ]
-        );
-
+        $menuSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"]';
         $menuSectionStyles = $this->browserPage->evaluateScript(
-            'StyleExtractor.js',
+            'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"]',
-                'STYLE_PROPERTIES' => ['background-color', 'opacity', 'border-bottom-color'],
-                'FAMILIES' => [],
-                'DEFAULT_FAMILY' => 'lato',
+                'selector' => $menuSectionSelector,
+                'styleProperties' => ['background-color', 'opacity', 'background-image'],
+                'families' => [],
+                'defaultFamily' => '',
             ]
         );
 
+        $imageSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"] .branding a';
+        $brandingSectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $imageSectionSelector,
+                'styleProperties' => ['width', 'height'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        $headStyle = [
+            'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['width']),
+            'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['height']),
+            'bg-color'=> ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
+            'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
+        ];
+
+        $brizySection->getItemWithDepth(0)
+            ->getValue()
+            ->set_bgColorHex($headStyle['bg-color'])
+            ->set_bgColorOpacity($headStyle['bg-opacity'])
+            ->set_mobileBgColorType('solid')
+            ->set_mobileBgColorHex($headStyle['bg-color'])
+            ->set_mobileBgColorPalette('')
+            ->set_mobileBgColorOpacity($headStyle['bg-opacity']);
+
+        $imageLogoOptions = [
+            'sizeType' => 'custom',
+
+            'imageWidth' => $headStyle['image-width'],
+            'imageHeight' => $headStyle['image-height'],
+
+            'height' => 100,
+            'width' => 300,
+            'widthSuffix' => 'px',
+            'heightSuffix' => '%',
+
+            'mobileSize' => 52,
+            'mobileSizeSuffix' => '%',
+            'mobileWidthSuffix' => '%',
+            'mobileHeightSuffix' => '%',
+        ];
+
+        $sectionlogoOptions = [
+            'horizontalAlign' => 'center',
+            'mobileHorizontalAlign' => 'left',
+
+            'mobileMarginType' => 'grouped',
+            'mobileMargin' => 0,
+            'mobileMarginSuffix' => 'px',
+            'mobileMarginTop' => 0,
+            'mobileMarginTopSuffix' => 'px',
+            'mobileMarginRight' => 0,
+            'mobileMarginRightSuffix' => 'px',
+            'mobileMarginBottom' => 0,
+            'mobileMarginBottomSuffix' => 'px',
+            'mobileMarginLeft' => 0,
+            'mobileMarginLeftSuffix' => 'px',
+        ];
+
+        $mobileIconButtonOptions = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginBottom" => 10,
+            "marginBottomSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+        ];
+
+        foreach ($sectionlogoOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($imageLogoOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($mobileIconButtonOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 1)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+
+        foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        return $brizySection;
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+
+    }
+
+    public function getThemeMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+    }
+
+    public function getThemeParentMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation>ul>li>a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemBGSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation", "pseudoEl" => ""];
+    }
+
+    public function getThemeMobileNavSelector(): array
+    {
+        return ["selector" => "#mobile-navigation", "pseudoEl" => ""];
+    }
+
+    public function getThemeMenuItemMobileSelector(): array
+    {
+        return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
+    }
+
+    public function getThemeMenuItemPaddingSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getThemeMobileBtnSelector(): array
+    {
+        return $this->getThemeMenuItemMobileSelector();
+    }
+
+    public function getThemeMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    protected function getPropertiesIconMenuItem(): array
+    {
         return [
-            'menu' => $menuStyles['data'],
-            'style' => $menuSectionStyles['data'],
+            "itemPadding" => 30,
+            "itemPaddingSuffix" => "px",
+
+            "mobileMMenuSize" => 32,
+            "mobileMMenuSizeSuffix" => "px",
+            "tabletMMenuSize" => 32,
+            "tabletMMenuSizeSuffix" => "px",
+
+            "tabletHorizontalAlign" => "right",
+
+            "tabletMarginType" => "ungrouped",
+            "tabletMarginSuffix" => "px",
+            "tabletMarginRight" => -10,
+            "tabletMarginRightSuffix" => "px",
+            "tabletMarginLeft" => 299,
+            "tabletMarginLeftSuffix" => "px",
+
+            "tabletPaddingType" => "ungrouped",
+            "tabletPadding" => 0,
+            "tabletPaddingSuffix" => "px",
+            "tabletPaddingTop" => 0,
+            "tabletPaddingTopSuffix" => "px",
+            "tabletPaddingRight" => 50,
+            "tabletPaddingRightSuffix" => "px",
+            "tabletPaddingBottom" => 0,
+            "tabletPaddingBottomSuffix" => "px",
+            "tabletPaddingLeft" => 0,
+            "tabletPaddingLeftSuffix" => "px",
+
+            "mobileHorizontalAlign" => "right",
+
+            "mobileMarginType" => "ungrouped",
+            "mobileMarginSuffix" => "px",
+            "mobileMarginRight" => 0,
+            "mobileMarginRightSuffix" => "px",
+            "mobileMarginLeft" => 199,
+            "mobileMarginLeftSuffix" => "px",
+
+            "mobilePaddingType" => "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 0,
+            "mobilePaddingLeftSuffix" => "px",
         ];
     }
 }

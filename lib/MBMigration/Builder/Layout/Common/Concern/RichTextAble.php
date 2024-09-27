@@ -2,6 +2,8 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
+use DOMElement;
+use DOMException;
 use Exception;
 use MBMigration\Core\Logger;
 use DOMDocument;
@@ -14,6 +16,7 @@ trait RichTextAble
 {
     use TextsExtractorAware;
     use CssPropertyExtractorAware;
+    use GeneratorID;
 
     /**
      * Process and add all items the same brizy section
@@ -263,23 +266,66 @@ trait RichTextAble
                 ->set_mobileHeightSuffix($sizeUnit);
 
             if ($mbSectionItem['link'] != '') {
-                $urlComponents = parse_url($mbSectionItem['link']);
+                if($this->findTag($mbSectionItem['link'], 'iframe')) {
+                    $popupFromKit = $this->globalBrizyKit['popup']['popup--embedCode'];
+                    $popupSection = new BrizyComponent(json_decode($popupFromKit, true));
 
-                if (!empty($urlComponents['host'])) {
-                    $slash = '';
+                    $popupUid = $this->generateUniqueId(12);
+
+                    $attribute = [
+                        'style' => "position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                    ];
+
+                    $remove = [
+                        'width', 'height'
+                    ];
+
+                    $iframe = $this->setAttributeInToElement($mbSectionItem['link'], 'iframe', $attribute, $remove);
+
+                    $attribute = [
+                        'style' => "position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden;"
+                    ];
+
+                    $iframeUpdated = $this->putInsideTheBlock('div', $iframe, $attribute);
+
+                    $popupSection->getValue()
+                        ->set_popupId($popupUid);
+                    $popupSection->getItemWithDepth(0,0,0,0)->getValue()
+                        ->set_code($iframeUpdated);
+
+                    $external = [
+                        'linkType' => 'popup',
+                        'linkPopup' => $popupUid,
+                        'linkExternalBlank' => $mbSectionItem['new_window'],
+                        'popups' => [$popupSection],
+                    ];
+
                 } else {
-                    $slash = '/';
-                }
-                if ($mbSectionItem['new_window']) {
-                    $mbSectionItem['new_window'] = 'on';
-                } else {
-                    $mbSectionItem['new_window'] = 'off';
+                    $urlComponents = parse_url($mbSectionItem['link']);
+
+                    if (!empty($urlComponents['host'])) {
+                        $slash = '';
+                    } else {
+                        $slash = '/';
+                    }
+                    if ($mbSectionItem['new_window']) {
+                        $mbSectionItem['new_window'] = 'on';
+                    } else {
+                        $mbSectionItem['new_window'] = 'off';
+                    }
+
+                    $external = [
+                        'linkType' => 'external',
+                        'linkExternal' => $slash.$mbSectionItem['link'],
+                        'linkExternalBlank' => $mbSectionItem['new_window']
+                    ];
                 }
 
-                $brizyComponent->getValue()
-                    ->set_linkType('external')
-                    ->set_linkExternal($slash.$mbSectionItem['link'])
-                    ->set_imageFileName( $mbSectionItem['new_window']);
+                foreach ($external as $key => $value) {
+                    $method = 'set_'.$key;
+                    $brizyComponent->getValue()
+                        ->$method($value);
+                }
             }
 
         }
@@ -318,6 +364,68 @@ trait RichTextAble
         }
 
         return $result;
+    }
+
+    private function findTag($html, $name): bool
+    {
+        $pattern = '/<\s*' . preg_quote($name, '/') . '\b[^>]*>(.*?)<\s*\/\s*' . preg_quote($name, '/') . '\s*>/i';
+
+        if (preg_match($pattern, $html)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function setAttributeInToElement($html, $elementName, array $attributes, array $attributesToRemove = [])
+    {
+        $dom = new DOMDocument();
+        $dom->loadHTML(
+            $html,
+            LIBXML_NOWARNING | LIBXML_BIGLINES | LIBXML_NOBLANKS | LIBXML_NONET | LIBXML_NOERROR | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_PARSEHUGE
+        );
+
+        $elements = $dom->getElementsByTagName($elementName);
+
+        foreach ($elements as $element) {
+            $this->setAttribute($element, $attributes);
+
+            foreach ($attributesToRemove as $name) {
+                if ($element->hasAttribute($name)) {
+                    $element->removeAttribute($name);
+                }
+            }
+        }
+
+        return $dom->saveHTML();
+    }
+
+    private function putInsideTheBlock(string $blocName, string $inputHtml, array $attributes = [])
+    {
+        try {
+            $dom = new DOMDocument();
+
+            $div = $dom->createElement($blocName);
+
+            $this->setAttribute($div, $attributes);
+
+            $fragment = $dom->createDocumentFragment();
+            $fragment->appendXML($inputHtml);
+            $div->appendChild($fragment);
+
+            $dom->appendChild($div);
+
+            return $dom->saveHTML();
+        } catch (DOMException $e) {
+
+            return $inputHtml;
+        }
+    }
+
+    private function setAttribute(DOMElement $fragment, array $attributes){
+        foreach ($attributes as $name => $value) {
+            $fragment->setAttribute($name, $value);
+        }
     }
 
 }

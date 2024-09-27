@@ -2,152 +2,44 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use Exception;
-use MBMigration\Core\Logger;
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Element\PhotoTextElement;
 
-class RightMedia extends Element
+class RightMedia extends PhotoTextElement
 {
-    protected $cache;
-    private $jsonDecode;
-
-    public function __construct($jsonKitElements)
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        $this->cache = VariableCache::getInstance();
-        $this->jsonDecode = $jsonKitElements;
+        return $brizySection->getItemWithDepth(0, 0, 1, 0,0);
     }
 
     /**
-     * @throws DOMException
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
      */
-    public function getElement(array $elementData = [])
+    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $this->RightMedia($elementData);
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
-    /**
-     * @throws DOMException
-     * @throws Exception
-     */
-    protected function RightMedia(array $sectionData)
+    protected function getPropertiesMainSection(): array
     {
-        Logger::instance()->info('Create bloc');
-        $this->cache->set('currentSectionData', $sectionData);
-
-        $options = [];
-
-        $objBlock = new ItemBuilder();
-
-        $decoded = $this->jsonDecode['blocks']['right-media']['main'];
-        $general = $this->jsonDecode['blocks']['right-media'];
-
-        $objBlock->newItem($decoded);
-
-        $objBlock->item()->setting('bgColorPalette', '');
-        $objBlock->item()->setting('bgColorOpacity', 1);
-
-        $this->generalParameters($objBlock, $options, $sectionData);
-
-        $this->defaultOptionsForElement($general, $options);
-
-        $this->backgroundColor($objBlock, $sectionData, $options);
-
-        $this->setOptionsForTextColor($sectionData, $options);
-
-        $this->backgroundParallax($objBlock, $sectionData);
-
-        $this->backgroundImages($objBlock, $sectionData, $options);
-
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'photo' && $item['content'] !== '') {
-                $objBlock->item()->item()->item(1)->item()->item()->setting('imageSrc', $item['content']);
-                $objBlock->item()->item()->item(1)->item()->item()->setting(
-                    'imageFileName',
-                    $item['imageFileName']
-                );
-                $objBlock->item()->item()->item(1)->item()->item()->setting('mobileSize', 100);
-                $objBlock->item()->item()->item(1)->item()->item()->setting('mobileSizeSuffix', '%');
-
-
-                if ($this->checkArrayPath($item, 'settings/image')) {
-                    $objBlock->item()->item()->item(1)->item()->item()->setting(
-                        'imageWidth',
-                        $item['settings']['image']['width']
-                    );
-                    $objBlock->item()->item()->item(1)->item()->item()->setting(
-                        'imageHeight',
-                        $item['settings']['image']['height']
-                    );
-                }
-
-                if ($item['link'] != '') {
-
-                    $urlComponents = parse_url($item['link']);
-
-                    if (!empty($urlComponents['host'])) {
-                        $slash = '';
-                    } else {
-                        $slash = '/';
-                    }
-                    if ($item['new_window']) {
-                        $sectionItem['new_window'] = 'on';
-                    } else {
-                        $sectionItem['new_window'] = 'off';
-                    }
-                    $objBlock->item()->item()->item(1)->item()->item()->setting('linkType', 'external');
-                    $objBlock->item()->item()->item(1)->item()->item()->setting(
-                        'linkExternal',
-                        $slash.$item['link']
-                    );
-                    $objBlock->item()->item()->item(1)->item()->item()->setting(
-                        'linkExternalBlank',
-                        $sectionItem['new_window']
-                    );
-                }
-            }
-        }
-
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'text') {
-                if ($item['item_type'] == 'title' && $this->showHeader($sectionData)) {
-                    $this->textCreation($item, $objBlock);
-                }
-            }
-        }
-        foreach ($sectionData['items'] as $item) {
-            if ($item['category'] == 'text') {
-                if ($item['item_type'] == 'body' && $this->showBody($sectionData)) {
-                    $this->textCreation($item, $objBlock);
-                }
-            }
-        }
-        $block = $this->replaceIdWithRandom($objBlock->get());
-
-        return json_encode($block);
-    }
-
-    private function textCreation($sectionData, $objBlock)
-    {
-
-        $i = 0;
-        foreach ($sectionData['brzElement'] as $textItem) {
-            switch ($textItem['type']) {
-                case 'EmbedCode':
-                    if(!empty($sectionData['content'])) {
-                        $embedCode = $this->findEmbeddedPasteDivs($sectionData['content']);
-                        if(is_array($embedCode)){
-                            $objBlock->item()->item()->item()->addItem($this->embedCode($embedCode[$i]));
-                        }
-                        $i++;
-                    }
-                    break;
-                case 'Cloneable':
-                case 'Wrapper':
-                    $objBlock->item()->item()->item()->addItem($textItem);
-                    break;
-            }
-        }
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
     }
 
 }

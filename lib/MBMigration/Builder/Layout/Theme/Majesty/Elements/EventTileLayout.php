@@ -2,16 +2,22 @@
 
 namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-class EventTileLayout extends AbstractElement
+class EventTileLayout extends \MBMigration\Builder\Layout\Common\Element\Events\EventTileLayout
 {
-    protected function internalTransformToItem(ElementDataInterface $data): array
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
+        return $brizySection->getItemWithDepth(0, 0);
+    }
 
-        return $section->get();
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 50;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
     }
 }

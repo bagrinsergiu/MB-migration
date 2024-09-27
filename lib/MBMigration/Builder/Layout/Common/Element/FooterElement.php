@@ -54,4 +54,12 @@ abstract class FooterElement extends AbstractElement
         return $brizySection;
     }
 
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "margin-left" => 0,
+            "margin-right" => 0,
+        ];
+    }
+
 }

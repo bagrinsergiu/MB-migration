@@ -2,16 +2,16 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
-
-class PrayerList extends AbstractElement
+class PrayerList extends \MBMigration\Builder\Layout\Common\Element\PrayerList
 {
-    protected function internalTransformToItem(ElementDataInterface $data): array
-    {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
 
-        return $section->get();
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 50;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
     }
 }

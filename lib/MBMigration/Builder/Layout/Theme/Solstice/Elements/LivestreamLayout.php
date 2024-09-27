@@ -2,16 +2,10 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 
-class LivestreamLayout extends AbstractElement
+use MBMigration\Builder\Layout\Common\Element\Sermons\LivestreamLayout as CommonLivestreamLayout;
+
+class LivestreamLayout extends CommonLivestreamLayout
 {
-    protected function internalTransformToItem(ElementDataInterface $data): array
-    {
-        $section = new ItemBuilder();
-        $section->newItem($this->brizyKit['main']);
 
-        return $section->get();
-    }
 }

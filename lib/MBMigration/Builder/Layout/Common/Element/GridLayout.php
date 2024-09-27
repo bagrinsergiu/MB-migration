@@ -13,16 +13,27 @@ abstract class GridLayout extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
+    private array $globalBrizyKit;
+
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
+        $sectionItemComponent->getValue()
+            ->set_paddingTop($this->getTopPaddingOfTheFirstElement());
 
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
+        $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
 
         $rowJson = json_decode($this->brizyKit['row'], true);
         $itemJson = json_decode($this->brizyKit['item'], true);
@@ -51,7 +62,7 @@ abstract class GridLayout extends AbstractElement
                     ->set_paddingRight((int)$styles['margin-right'])
                     ->set_paddingLeft((int)$styles['margin-left']);
 
-                foreach ($item['item'] as $mbItem) {
+                foreach ($item['items'] as $mbItem) {
                     switch ($mbItem['category']) {
                         case 'photo':
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
@@ -91,4 +102,21 @@ abstract class GridLayout extends AbstractElement
     abstract protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent;
 
     abstract protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent;
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
 }

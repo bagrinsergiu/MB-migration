@@ -38,7 +38,7 @@ abstract class PhotoTextElement extends AbstractElement
                         $this->browserPage
                     );
 
-                    $imageStyles = $this->obtainImageStyles($elementContext,$this->browserPage);
+                    $imageStyles = $this->obtainImageStyles($elementContext, $this->browserPage);
 
                     $imageTarget
                         ->getValue()
@@ -69,8 +69,13 @@ abstract class PhotoTextElement extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($this->getTextComponent($brizySection));
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         return $brizySection;
     }
@@ -86,5 +91,22 @@ abstract class PhotoTextElement extends AbstractElement
      * @return mixed|null
      */
     abstract protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent;
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
 
 }
