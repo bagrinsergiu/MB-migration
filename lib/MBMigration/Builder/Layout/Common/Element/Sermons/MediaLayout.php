@@ -36,18 +36,33 @@ abstract class MediaLayout extends AbstractElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['Section']['main'], true));
+
         $mbSection = $data->getMbSection();
 
         $mbContext = $data->getThemeContext();
 
         $slug = $mbContext->getSlug();
 
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+        $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+        $this->handleRichTextHead($elementContext, $this->browserPage);
+        $this->handleRichTextItems($elementContext, $this->browserPage);
+
         $dataIdSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
 
         $nodeSelector = $dataIdSelector. ' .media-grid-container';
         $mbSection['mediaGridContainer'] = $this->hasNode($nodeSelector, $this->browserPage);
 
-        if (!$mbSection['mediaGridContainer']) {
+        $nodeSelector = $dataIdSelector. ' .media-player';
+        $mbSection['media-player'] = $this->hasNode($nodeSelector, $this->browserPage);
+
+        if ($mbSection['media-player']) {
             $titleSelector = $dataIdSelector. ' .media-video-title';
             $mbSection['containTitle'] = $this->getNodeText($titleSelector, $this->browserPage);
         }
@@ -55,21 +70,87 @@ abstract class MediaLayout extends AbstractElement
         $sectionSubPalette = $this->getNodeSubPalette($dataIdSelector, $this->browserPage);
         $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
 
+        if($mbSection['media-player']) {
+            $brizySectionFeaturedVideo = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['elementVideo'], true));
+            $brizySectionFeaturedDescription = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['elementDescription'], true));
+
+            $textColorStyles = $this->getDomElementStyles(
+                $dataIdSelector. ' .media-player-container .media-header .text-content',
+                ['color'],
+                $this->browserPage);
+
+            $backgroundColorStyles = $this->getDomElementStyles(
+                $dataIdSelector. ' .media-player-container .media-player',
+                ['background-color'],
+                $this->browserPage);
+
+            $backgroundColorStyles = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
+            $textColorStyles = ColorConverter::convertColorRgbToHex($textColorStyles['color']);
+
+            $sectionProperties = [
+                'sermonSlug' => $this->createSlug($mbSection['containTitle']),
+
+                'titleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
+                'titleColorOpacity' => 1,
+                'titleColorPalette' => "",
+
+                'hoverTitleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
+                'hoverTitleColorOpacity' => 0.7,
+                'hoverTitleColorPalette' => "",
+
+                'metaLinksColorHex' => $sectionPalette['link'] ?? "#3d79ff",
+                'metaLinksColorOpacity' => 1,
+                'metaLinksColorPalette' => "",
+
+                'hoverMetaLinksColorHex' => $sectionPalette['link'] ?? "#3d79ff",
+                'hoverMetaLinksColorOpacity' => 0.7,
+                'hoverMetaLinksColorPalette' => "",
+            ];
+
+            $sectionPropertiesSecondLevel = [
+                'sermonSlug'=> $this->createSlug($mbSection['containTitle']),
+
+                'colorHex' => $textColorStyles ?? "#ebeff2",
+                'colorOpacity' => 1,
+                'colorPalette' => "",
+
+                'titleColorHex' => $textColorStyles ?? "#ebeff2",
+                'titleColorOpacity' => 1,
+                'titleColorPalette' => "",
+
+                'hoverTitleColorHex' => $textColorStyles ?? "#ebeff2",
+                'hoverTitleColorOpacity' => 1,
+                'hoverTitleColorPalette' => "",
+
+                'previewColorHex' => $textColorStyles ?? "#ebeff2",
+                'previewColorOpacity' => 1,
+                'previewColorPalette' => "",
+
+                'parentBgColorHex' => $backgroundColorStyles ?? '#505050',
+                'parentBgColorOpacity' => 1,
+                'parentBgColorPalette' => "",
+            ];
+
+            foreach ($sectionProperties as $key => $value) {
+                $properties = 'set_'.$key;
+                $brizySectionFeaturedVideo->getItemValueWithDepth(0)
+                    ->$properties($value);
+            }
+
+            foreach ($sectionPropertiesSecondLevel as $key => $value) {
+                $properties = 'set_'.$key;
+                $brizySectionFeaturedDescription->getItemValueWithDepth(0)
+                    ->$properties($value);
+            }
+
+            $brizySection->getItemValueWithDepth(0)
+                ->add('items', [$brizySectionFeaturedVideo])
+                ->add('items', [$brizySectionFeaturedDescription]);
+        }
+
         if($mbSection['mediaGridContainer']) {
-            $brizySection = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
-            $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['head'], true));
+            $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
             $detailsSection = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['detail'], true));
-
-            $sectionItemComponent = $this->getSectionItemComponent($brizySection);
-            $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-            $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
-
-            $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
-
-            $sectionItemComponent = $this->getSectionItemComponent($brizySectionHead);
-            $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-            $this->handleRichTextHead($elementContext, $this->browserPage);
-            $this->handleRichTextItems($elementContext, $this->browserPage);
 
             $resultColorStyles['text'] = $this->getDomElementStyles(
                 $dataIdSelector. ' .media-player-container .media-header .text-content',
@@ -133,8 +214,10 @@ abstract class MediaLayout extends AbstractElement
 
             $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
 
-            $this->getDetailsLinksComponent($brizySection)
+            $this->getDetailsLinksComponent($brizySectionGrid)
                 ->getValue()
+                ->set_defaultCategory($slug)
+                ->set_parentCategory($slug)
                 ->set_detailPageSource($collectionTypeUri)
                 ->set_detailPage("{{placeholder content='$placeholder'}}");
 
@@ -201,104 +284,20 @@ abstract class MediaLayout extends AbstractElement
 
             foreach ($sectionProperties as $key => $value) {
                 $properties = 'set_'.$key;
-                $brizySection->getItemValueWithDepth(0, 0, 0)
+                $brizySectionGrid->getItemValueWithDepth(0)
                     ->$properties($value);
             }
 
-        } else {
-            $brizySection = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['main'], true));
-            $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['head'], true));
-
-            $sectionItemComponent = $this->getSectionItemComponent($brizySection);
-            $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-            $this->handleSectionStyles($elementContext, $this->browserPage);
-
-            $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
-
-            $sectionItemComponent = $this->getSectionItemComponent($brizySectionHead);
-            $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-            $this->handleRichTextHead($elementContext, $this->browserPage);
-            $this->handleRichTextItems($elementContext, $this->browserPage);
-
-            $textColorStyles = $this->getDomElementStyles(
-                $dataIdSelector. ' .media-player-container .media-header .text-content',
-                ['color'],
-                $this->browserPage);
-
-            $backgroundColorStyles = $this->getDomElementStyles(
-                $dataIdSelector. ' .media-player-container .media-player',
-                ['background-color'],
-                $this->browserPage);
-
-            $backgroundColorStyles = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
-            $textColorStyles = ColorConverter::convertColorRgbToHex($textColorStyles['color']);
-
-            $sectionProperties = [
-                'sermonSlug' => $this->createSlug($mbSection['containTitle']),
-
-                'titleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
-                'titleColorOpacity' => 1,
-                'titleColorPalette' => "",
-
-                'hoverTitleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
-                'hoverTitleColorOpacity' => 0.7,
-                'hoverTitleColorPalette' => "",
-
-                'metaLinksColorHex' => $sectionPalette['link'] ?? "#3d79ff",
-                'metaLinksColorOpacity' => 1,
-                'metaLinksColorPalette' => "",
-
-                'hoverMetaLinksColorHex' => $sectionPalette['link'] ?? "#3d79ff",
-                'hoverMetaLinksColorOpacity' => 0.7,
-                'hoverMetaLinksColorPalette' => "",
-            ];
-
-            $sectionPropertiesSecondLevel = [
-                'sermonSlug'=> $this->createSlug($mbSection['containTitle']),
-
-                'colorHex' => $textColorStyles ?? "#ebeff2",
-                'colorOpacity' => 1,
-                'colorPalette' => "",
-
-                'titleColorHex' => $textColorStyles ?? "#ebeff2",
-                'titleColorOpacity' => 1,
-                'titleColorPalette' => "",
-
-                'hoverTitleColorHex' => $textColorStyles ?? "#ebeff2",
-                'hoverTitleColorOpacity' => 1,
-                'hoverTitleColorPalette' => "",
-
-                'previewColorHex' => $textColorStyles ?? "#ebeff2",
-                'previewColorOpacity' => 1,
-                'previewColorPalette' => "",
-
-                'parentBgColorHex' => $backgroundColorStyles ?? '#505050',
-                'parentBgColorOpacity' => 1,
-                'parentBgColorPalette' => "",
-            ];
-
-            foreach ($sectionProperties as $key => $value) {
-                $properties = 'set_'.$key;
-                $brizySection->getItemValueWithDepth(0, 0, 0)
-                    ->$properties($value);
-            }
-
-            foreach ($sectionPropertiesSecondLevel as $key => $value) {
-                $properties = 'set_'.$key;
-                $brizySection->getItemValueWithDepth(0, 1, 0)
-                    ->$properties($value);
-            }
+            $brizySection->getItemValueWithDepth(0)
+                ->add('items', [$brizySectionGrid]);
         }
-
-        $brizySection->getItemValueWithDepth(0)
-            ->add('items', [$brizySectionHead], 0);
 
         return $brizySection;
     }
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getPropertiesMainSection(): array
