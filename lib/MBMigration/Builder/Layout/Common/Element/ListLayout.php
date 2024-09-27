@@ -18,6 +18,8 @@ abstract class ListLayout extends AbstractElement
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
+        $showHeader = $this->canShowHeader($mbSection);
+
         $photoPosition = $mbSection['settings']['sections']['list']['photo_position'] ?? 'left';
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
@@ -29,7 +31,10 @@ abstract class ListLayout extends AbstractElement
 
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
-        $this->afterTransformItem($elementContext, $this->getHeaderComponent($brizySection));
+
+        if ($showHeader) {
+            $this->afterTransformItem($elementContext, $this->getHeaderComponent($brizySection));
+        }
 
         $itemJson = json_decode($this->brizyKit['item-'.$photoPosition], true);
         $brizyComponentValue = $this->getSectionItemComponent($brizySection)->getValue();
