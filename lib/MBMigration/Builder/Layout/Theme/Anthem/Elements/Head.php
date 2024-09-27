@@ -53,7 +53,7 @@ class Head extends HeadElement
             ]
         );
 
-        $imageSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"] .branding a';
+        $imageSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"] .branding .photo-container img';
         $brandingSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
