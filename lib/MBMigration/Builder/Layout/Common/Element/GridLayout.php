@@ -7,6 +7,7 @@ use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\ColorConverter;
 
 abstract class GridLayout extends AbstractElement
 {
@@ -50,12 +51,27 @@ abstract class GridLayout extends AbstractElement
             $brizySectionRow->getValue()->set_size($rowWidth);
 
             foreach ($row as $item) {
+
+                $dataIdSelector = '[data-id="'.($item['sectionId'] ?? $item['id']).'"]';
+
+                $resultColorStyles = $this->getDomElementStyles(
+                    $dataIdSelector,
+                    ['border-bottom-color'],
+                    $this->browserPage);
+
+                $resultColorStyles['border-bottom-color'] = ColorConverter::convertColorRgbToHex($resultColorStyles['border-bottom-color']);
+
                 $brizySectionItem = new BrizyComponent($itemJson);
 
                 $elementContext = $data->instanceWithMBSection($item);
                 $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
                 $brizySectionItem->getValue()
+                    ->set_borderColorHex($resultColorStyles['border-bottom-color'])
+                    ->set_borderColorPalette('')
+                    ->set_borderColorOpacity(1)
+                    ->set_borderWidth(3)
+
                     ->set_width($itemWidth)
                     ->set_paddingTop((int)$styles['margin-top'])
                     ->set_paddingBottom((int)$styles['margin-bottom'])
@@ -67,22 +83,23 @@ abstract class GridLayout extends AbstractElement
                         case 'photo':
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                                 $mbItem,
-                                $this->getItemImageComponent($brizySectionItem)
+                                $brizySectionItem
                             );
-                            $this->handleRichTextItem($elementContext, $this->browserPage);
-                            $this->getItemImageComponent($brizySectionItem)
-                                ->getValue()
-                                ->set_widthSuffix('%')
-                                ->set_heightSuffix('%')
-                                ->set_width(100)
-                                ->set_height(100);
+
+                            $this->handleBgPhotoItems($elementContext, $this->browserPage);
+//                            $this->getItemImageComponent($brizySectionItem)
+//                                ->getValue()
+//                                ->set_widthSuffix('%')
+//                                ->set_heightSuffix('%')
+//                                ->set_width(100)
+//                                ->set_height(100);
                             break;
                         default:
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                                 $mbItem,
-                                $this->getItemTextContainerComponent($brizySectionItem)
+                                $brizySectionItem
                             );
-                            $this->handleRichTextItem($elementContext, $this->browserPage);
+                            $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
                             break;
                     }
                 }
@@ -93,6 +110,21 @@ abstract class GridLayout extends AbstractElement
 
 
         return $brizySection;
+    }
+
+    private function handleBgPhotoItems($data)
+    {
+        $mbSectionItem = $data->getMbSection();
+        $brizyComponent = $data->getBrizySection();
+
+        $brizyComponent->getValue()
+            ->set_verticalAlign('bottom')
+            ->set_bgImageFileName($mbSectionItem['imageFileName'])
+            ->set_bgImageSrc($mbSectionItem['content']);
+
+        $this->handleLink($mbSectionItem, $brizyComponent);
+
+        $aa= 1-3;
     }
 
     abstract protected function getItemsPerRow(): int;
