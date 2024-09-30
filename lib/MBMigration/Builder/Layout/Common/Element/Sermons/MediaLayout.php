@@ -70,7 +70,7 @@ abstract class MediaLayout extends AbstractElement
         $sectionSubPalette = $this->getNodeSubPalette($dataIdSelector, $this->browserPage);
         $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
 
-        if($mbSection['media-player']) {
+        if(!$mbSection['mediaGridContainer']) {
             $brizySectionFeaturedVideo = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['elementVideo'], true));
             $brizySectionFeaturedDescription = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['elementDescription'], true));
 
@@ -146,9 +146,7 @@ abstract class MediaLayout extends AbstractElement
             $brizySection->getItemValueWithDepth(0)
                 ->add('items', [$brizySectionFeaturedVideo])
                 ->add('items', [$brizySectionFeaturedDescription]);
-        }
-
-        if($mbSection['mediaGridContainer']) {
+        } else {
             $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
             $detailsSection = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['detail'], true));
 
