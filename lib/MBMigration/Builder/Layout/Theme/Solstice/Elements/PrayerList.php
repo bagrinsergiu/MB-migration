@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
-class PrayerList extends \MBMigration\Builder\Layout\Common\Element\PrayerList
+class PrayerList extends \MBMigration\Builder\Layout\Common\Element\Prayer\PrayerList
 {
 
     protected function getTopPaddingOfTheFirstElement(): int

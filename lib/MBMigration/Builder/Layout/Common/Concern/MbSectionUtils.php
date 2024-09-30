@@ -26,7 +26,19 @@ trait MbSectionUtils
         return null;
     }
 
-    protected function getItemsByCategory($section, $category)
+    protected function groupingByGroupItems(&$section)
+    {
+        $items = [];
+        foreach ($section['items'] as $item) {
+                $items[$item['group']][] = $item;
+        }
+
+        ksort($items);
+
+        $section['items'] = $items;
+    }
+
+    protected function getItemsByCategory($section, $category): array
     {
         $items = [];
         foreach ($section['items'] as $item) {
@@ -35,7 +47,7 @@ trait MbSectionUtils
             }
         }
 
-        return $items;
+        return $this->sortItems($items);
     }
 
     protected function sortItems($items)

@@ -4,6 +4,8 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Utils\ExecutionTimer;
+use MBMigration\Core\Logger;
 
 trait TextsExtractorAware
 {
@@ -22,11 +24,13 @@ trait TextsExtractorAware
         ]);
 
         if (isset($richTextBrowserData['error'])) {
-            throw new BrowserScriptException($richTextBrowserData['error']);
+            Logger::instance()->error('Error extractTexts  : '.$richTextBrowserData['error']);
+            return [];
         }
 
         if (!isset($richTextBrowserData['data'])) {
-            throw new BrowserScriptException("Probably the section id was not found in page. Selector:".$selectorSectionStyles);
+            Logger::instance()->warning('Probably the section id was not found in page. Selector: '.$selectorSectionStyles);
+            return [];
         }
 
         return $richTextBrowserData['data'];

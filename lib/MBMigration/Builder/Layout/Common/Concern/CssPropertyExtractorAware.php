@@ -88,6 +88,23 @@ trait CssPropertyExtractorAware
         );
     }
 
+    protected function getTabsElementStyles(
+        $selectorSection,
+        $browserPage,
+        $families = [],
+        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
+    ) {
+
+        return $this->evaluate(
+            'brizy.getTabs',
+            $selectorSection,
+            [],
+            $browserPage,
+            $families,
+            $default_fonts,
+        );
+    }
+
     protected function getNodeSubPalette(
         $selectorSectionStyles,
         $browserPage
