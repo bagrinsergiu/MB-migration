@@ -5,6 +5,7 @@ import {
   attributeRun as getAttributes,
   run as getStyles
 } from "./StyleExtractor";
+import { run as getTabs } from "./Tabs";
 import { run as getText } from "./Text";
 
 window.brizy = {
@@ -14,5 +15,6 @@ window.brizy = {
   getAttributes,
   getText,
   getAccordion,
+  getTabs,
   dom
 };

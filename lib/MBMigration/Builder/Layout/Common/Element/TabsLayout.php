@@ -17,10 +17,16 @@ abstract class TabsLayout extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $mbSection = $data->getMbSection();
+        $families = $data->getFontFamilies();
 
         $brizyComponent = $this->getSectionItemComponent($brizySection);
 
         $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
+
+        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+
+        $tabsElementStyles = $this->getTabsElementStyles($sectionSelector, $this->browserPage, $families);
+
         $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
 
         $this->setTopPaddingOfTheFirstElement($data, $brizyComponent);
@@ -32,9 +38,9 @@ abstract class TabsLayout extends AbstractElement
         $brizyAccordionItems = [];
         foreach ($mbSection['items'] as $mbSectionItem) {
             $brizyTabItem = new BrizyComponent($itemJson);
-            $brizyTabItem->getValue()->set_labelText(strip_tags($mbSectionItem['item'][0]['content']));
+            $brizyTabItem->getValue()->set_labelText(strip_tags($mbSectionItem['items'][0]['content']));
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                $mbSectionItem['item'][1],
+                $mbSectionItem['items'][1],
                 $brizyTabItem
             );
             $this->handleRichTextItem($elementContext, $this->browserPage);
@@ -43,6 +49,12 @@ abstract class TabsLayout extends AbstractElement
 
         $tabContainerComponentValue = $this->getTabContainerComponent($brizySection)->getValue();
         $tabContainerComponentValue->set_items($brizyAccordionItems);
+
+        foreach ($tabsElementStyles as $key => $value) {
+            $method = "set_".$key;
+            $tabContainerComponentValue
+                ->$method($value);
+        }
 
         if($this->hasImageBackground($mbSection))
         {

@@ -8,7 +8,7 @@ use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-abstract class ThreeTopMediaCircleElement extends AbstractElement
+class TwoHorizontalTextElement extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
@@ -16,31 +16,12 @@ abstract class ThreeTopMediaCircleElement extends AbstractElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
+
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
-        $imageTargets = [
-            $this->getImage1Component($brizySection),
-            $this->getImage2Component($brizySection),
-            $this->getImage3Component($brizySection),
-        ];
-
-        $k = 0;
-        foreach ((array)$mbSection['items'] as $mbSectionItem) {
-            switch ($mbSectionItem['category']) {
-                case 'photo':
-                    // add the photo items on the right side of the block
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbSectionItem,
-                        $imageTargets[$k++]
-                    );
-                    $this->handleRichTextItem(
-                        $elementContext,
-                        $this->browserPage
-                    );
-                    break;
-            }
-        }
+        $this->groupingByGroupItems($mbSection);
 
         $brizyComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
@@ -48,12 +29,18 @@ abstract class ThreeTopMediaCircleElement extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $brizyComponent);
 
-        foreach ($this->getItemsByCategory($mbSection, 'text') as $mbItemText) {
-            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                $mbItemText,
-                $this->getTextComponent($brizySection)
-            );
-            $this->handleRichTextItem($elementContext, $this->browserPage);
+        foreach ($mbSection['items'] as $groupItems) {
+            $brizyItemColumn = new BrizyComponent(json_decode($this->globalBrizyKit['Column'], true));
+
+            foreach ($groupItems as $item) {
+                $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                    $item,
+                    $brizyItemColumn
+                );
+                $this->handleRichTextItem($elementContext, $this->browserPage);
+            }
+
+            $brizySection->getItemWithDepth(0, 0)->getValue()->add_items([$brizyItemColumn]);
         }
 
         return $brizySection;
@@ -75,4 +62,5 @@ abstract class ThreeTopMediaCircleElement extends AbstractElement
             "mobilePaddingLeftSuffix" => "px",
         ];
     }
+
 }

@@ -5,32 +5,28 @@ namespace MBMigration\Builder\Layout\Theme\Anthem;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
-use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventGalleryLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventListLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\EventTileLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Events\EventLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Footer;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\Form;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullMedia;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullText;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\FullWidthForm;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\GalleryLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\GridLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\ThreeTopMediaCircle;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Forms\Form;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Forms\LeftForm;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Forms\RightForm;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Gallery\GalleryLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Groups\SmallGroupsList;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Head;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftForm;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftMedia;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\LeftMediaCircle;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\ListLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\MediaLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\PrayerForm;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\RightForm;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\RightMedia;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\SmallGroupsList;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\TabsLayout;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\TwoRightMediaCircle;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Prayer\PrayerForm;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Sermons\MediaLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\AccordionLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\FullMedia;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\FullText;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\GridLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\LeftMedia;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\LeftMediaCircle;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\ListLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\RightMedia;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\TabsLayout;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\ThreeTopMediaCircle;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\TwoHorizontalText;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\TwoRightMediaCircle;
 
 class ElementFactory extends AbstractThemeElementFactory
 {
@@ -42,10 +38,18 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'head':
                 return new Head($this->blockKit['blocks']['menu'], $browserPage,$this->brizyApiClient, $this->fontsController);
 
+            case 'full-text':
+                return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
+
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
+            case 'right-media-circle':
+                return new RightMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
+
             case 'two-right-media-circle':
                 return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
+            case 'two-horizontal-text':
+                return new TwoHorizontalText($this->blockKit['blocks']['two-horizontal-text'], $browserPage);
             case 'three-top-media-circle':
                 return new ThreeTopMediaCircle($this->blockKit['blocks']['three-top-media-circle'], $browserPage);
 
@@ -55,10 +59,10 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new LeftMedia($this->blockKit['blocks']['left-media'], $browserPage);
             case 'right-media':
                 return new RightMedia($this->blockKit['blocks']['right-media'], $browserPage);
+
             case 'gallery-layout':
                 return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $browserPage);
-            case 'full-text':
-                return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
+
             case 'small-groups-list':
                 return new SmallGroupsList($this->blockKit['blocks']['small-groups-list'], $browserPage);
             case 'tabs-layout':
@@ -69,14 +73,17 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new ListLayout($this->blockKit['blocks']['list-layout'], $browserPage);
             case 'accordion-layout':
                 return new AccordionLayout($this->blockKit['blocks']['accordion-layout'], $browserPage);
+
             case 'event-list-layout':
             case 'event-tile-layout':
             case 'event-gallery-layout':
             case 'event-calendar-layout':
                 return new EventLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage, $this->getQueryBuilder());
 
-//            case 'prayer-list':
-//                return new PrayerList($this->blockKit['blocks']['prayer-list'], $browserPage);
+            case 'prayer-list':
+            case 'prayer-form':
+                return new PrayerForm($this->blockKit['blocks']['prayer-form'], $browserPage);
+
 //            case 'livestream-layout':
 //                return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $browserPage);
 //            case 'small-groups-grid':
@@ -94,8 +101,6 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new LeftForm($this->blockKit['blocks']['form'], $browserPage);
             case 'right-form-with-text':
                 return new RightForm($this->blockKit['blocks']['form'], $browserPage);
-            case 'prayer-form':
-                return new PrayerForm($this->blockKit['blocks']['prayer-form'], $browserPage);
 
             case 'grid-media-layout':
             case 'list-media-layout':

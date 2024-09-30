@@ -68,7 +68,7 @@ class ArrayManipulator
                 return ['slide' => $itemsList, 'list' => $parents];
             case 'accordion':
             case 'list':
-            case 'tab':
+            case 'tabs':
                 return ['head' => $itemsList, 'items' => $parents];
             default:
                 return $itemsList;
