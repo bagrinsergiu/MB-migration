@@ -144,7 +144,8 @@ trait RichTextAble
     protected function handleRichTextItem(
         ElementContextInterface $data,
         BrowserPageInterface $browserPage,
-        $selector = null
+        $selector = null,
+        $settings = []
     ) {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -160,7 +161,8 @@ trait RichTextAble
                     $families,
                     $default_fonts,
                     $data->getThemeContext()->getUrlMap(),
-                    $selector
+                    $selector,
+                    $settings
                 );
                 break;
             case 'photo':
@@ -192,7 +194,8 @@ trait RichTextAble
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $urlMap = [],
-        $selector = null
+        $selector = null,
+        $settings = []
     ) {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
         $richTextBrowserData = $this->extractTexts($selector ?? '[data-id="'.$sectionId.'"]', $browserPage, $families, $defaultFont, $urlMap);
@@ -221,7 +224,13 @@ trait RichTextAble
                 case 'Cloneable':
                 case 'Wrapper':
                     //wrapper--richText
-                    $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
+                    if(empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
+                            $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
+                    } elseif ($settings['setEmptyText'] === true) {
+                        if ($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])) {
+                            $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
+                        }
+                    }
                     break;
             }
         }
@@ -265,72 +274,76 @@ trait RichTextAble
                 ->set_mobileWidthSuffix($sizeUnit)
                 ->set_mobileHeightSuffix($sizeUnit);
 
-            if ($mbSectionItem['link'] != '') {
-                if($this->findTag($mbSectionItem['link'], 'iframe')) {
-                    $popupFromKit = $this->globalBrizyKit['popup']['popup--embedCode'];
-                    $popupSection = new BrizyComponent(json_decode($popupFromKit, true));
-
-                    $popupUid = $this->generateUniqueId(12);
-
-                    $attribute = [
-                        'style' => "position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-                    ];
-
-                    $remove = [
-                        'width', 'height'
-                    ];
-
-                    $iframe = $this->setAttributeInToElement($mbSectionItem['link'], 'iframe', $attribute, $remove);
-
-                    $attribute = [
-                        'style' => "position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden;"
-                    ];
-
-                    $iframeUpdated = $this->putInsideTheBlock('div', $iframe, $attribute);
-
-                    $popupSection->getValue()
-                        ->set_popupId($popupUid);
-                    $popupSection->getItemWithDepth(0,0,0,0)->getValue()
-                        ->set_code($iframeUpdated);
-
-                    $external = [
-                        'linkType' => 'popup',
-                        'linkPopup' => $popupUid,
-                        'linkExternalBlank' => $mbSectionItem['new_window'],
-                        'popups' => [$popupSection],
-                    ];
-
-                } else {
-                    $urlComponents = parse_url($mbSectionItem['link']);
-
-                    if (!empty($urlComponents['host'])) {
-                        $slash = '';
-                    } else {
-                        $slash = '/';
-                    }
-                    if ($mbSectionItem['new_window']) {
-                        $mbSectionItem['new_window'] = 'on';
-                    } else {
-                        $mbSectionItem['new_window'] = 'off';
-                    }
-
-                    $external = [
-                        'linkType' => 'external',
-                        'linkExternal' => $slash.$mbSectionItem['link'],
-                        'linkExternalBlank' => $mbSectionItem['new_window']
-                    ];
-                }
-
-                foreach ($external as $key => $value) {
-                    $method = 'set_'.$key;
-                    $brizyComponent->getValue()
-                        ->$method($value);
-                }
-            }
-
+            $this->handleLink($mbSectionItem, $brizyComponent);
         }
 
         return $brizyComponent;
+    }
+
+    private function handleLink($mbSectionItem, $brizyComponent)
+    {
+        if ($mbSectionItem['link'] != '') {
+            if ($this->findTag($mbSectionItem['link'], 'iframe')) {
+                $popupFromKit = $this->globalBrizyKit['popup']['popup--embedCode'];
+                $popupSection = new BrizyComponent(json_decode($popupFromKit, true));
+
+                $popupUid = $this->generateUniqueId(12);
+
+                $attribute = [
+                    'style' => "position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                ];
+
+                $remove = [
+                    'width', 'height'
+                ];
+
+                $iframe = $this->setAttributeInToElement($mbSectionItem['link'], 'iframe', $attribute, $remove);
+
+                $attribute = [
+                    'style' => "position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden;"
+                ];
+
+                $iframeUpdated = $this->putInsideTheBlock('div', $iframe, $attribute);
+
+                $popupSection->getValue()
+                    ->set_popupId($popupUid);
+                $popupSection->getItemWithDepth(0, 0, 0, 0)->getValue()
+                    ->set_code($iframeUpdated);
+
+                $external = [
+                    'linkType' => 'popup',
+                    'linkPopup' => $popupUid,
+                    'linkExternalBlank' => $mbSectionItem['new_window'],
+                    'popups' => [$popupSection],
+                ];
+
+            } else {
+                $urlComponents = parse_url($mbSectionItem['link']);
+
+                if (!empty($urlComponents['host'])) {
+                    $slash = '';
+                } else {
+                    $slash = '/';
+                }
+                if ($mbSectionItem['new_window']) {
+                    $mbSectionItem['new_window'] = 'on';
+                } else {
+                    $mbSectionItem['new_window'] = 'off';
+                }
+
+                $external = [
+                    'linkType' => 'external',
+                    'linkExternal' => $slash . $mbSectionItem['link'],
+                    'linkExternalBlank' => $mbSectionItem['new_window']
+                ];
+            }
+
+            foreach ($external as $key => $value) {
+                $method = 'set_' . $key;
+                $brizyComponent->getValue()
+                    ->$method($value);
+            }
+        }
     }
 
     private function findEmbeddedElements($html): array
@@ -420,6 +433,37 @@ trait RichTextAble
 
             return $inputHtml;
         }
+    }
+
+    public function hasAnyTagsInsidePTag($html): bool
+    {
+        $dom = new DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+
+        $pTags = $dom->getElementsByTagName('p');
+
+        $ignoreTags = ['br'];
+
+        foreach ($pTags as $pTag) {
+            if ($pTag->hasChildNodes()) {
+                foreach ($pTag->childNodes as $childNode) {
+
+                    if ($childNode->nodeType === XML_ELEMENT_NODE && !in_array(
+                            strtolower($childNode->nodeName),
+                            $ignoreTags
+                        )) {
+                        return true;
+                    }
+
+                    if ($childNode->nodeType === XML_TEXT_NODE && trim($childNode->nodeValue) !== '') {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     private function setAttribute(DOMElement $fragment, array $attributes){
