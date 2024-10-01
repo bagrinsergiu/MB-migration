@@ -70,7 +70,7 @@ abstract class GridLayout extends AbstractElement
                     ->set_borderColorHex($resultColorStyles['border-bottom-color'])
                     ->set_borderColorPalette('')
                     ->set_borderColorOpacity(1)
-                    ->set_borderWidth(2)
+                    ->set_borderWidth(3)
 
                     ->set_width($itemWidth)
                     ->set_paddingTop((int)$styles['margin-top'])

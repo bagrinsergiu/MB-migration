@@ -2,7 +2,6 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
-use MBMigration\Browser\BrowserInterface;
 use MBMigration\Browser\BrowserPageInterface;
 
 interface ThemeContextInterface
@@ -37,6 +36,4 @@ interface ThemeContextInterface
     public function getUrlMap(): array;
 
     public function getRootPalettes(): RootPalettesInterface;
-
-    public function getBrowser(): BrowserInterface;
 }

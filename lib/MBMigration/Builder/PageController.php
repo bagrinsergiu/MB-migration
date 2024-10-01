@@ -121,8 +121,7 @@ class PageController
                 $itemsID,
                 $slug,
                 $pageMapping,
-                $RootPalettesExtracted->extractRootPalettes(),
-                $this->browser
+                $RootPalettesExtracted->extractRootPalettes()
             );
 
             /**

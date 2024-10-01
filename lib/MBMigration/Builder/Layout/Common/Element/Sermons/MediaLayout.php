@@ -205,7 +205,7 @@ abstract class MediaLayout extends AbstractElement
             $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
             $detailCollectionItem = $this->createDetailsCollectionItem(
                 $collectionTypeUri,
-                ['items' => [$detailsSection]],
+                $detailsSection,
                 'media-detail',
                 'Media Detail'
             );
