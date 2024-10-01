@@ -60,6 +60,9 @@ abstract class EventLayout extends AbstractElement
         $this->handleRichTextHead($elementContext, $this->browserPage);
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
+
+        $this->setStyleDetailPage($detailsSection, $sectionPalette);
+
         $detailCollectionItem = $this->createDetailsCollectionItem(
             $data->getThemeContext()->getBrizyCollectionTypeURI(),
             $detailsSection
@@ -114,10 +117,14 @@ abstract class EventLayout extends AbstractElement
             'listPaginationColorPalette' => '',
 
             'calendarHeadingColorHex' => $sectionPalette['text'],
+            'calendarDaysBgColorOpacity' => 1,
+            'calendarDaysBgColorPalette' => '',
+
+            'calendarDaysBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
             'calendarHeadingColorOpacity' => 1,
             'calendarHeadingColorPalette' => '',
 
-            'calendarDaysColorHex' => $sectionPalette['text'],
+            'calendarDaysColorHex' => $sectionPalette['btn-text'],
             'calendarDaysColorOpacity' => 1,
             'calendarDaysColorPalette' => '',
 
@@ -220,5 +227,103 @@ abstract class EventLayout extends AbstractElement
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    private function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
+    {
+
+        $sectionStyle = [
+            'bgColorHex' => $sectionPalette['bg']
+        ];
+
+
+        $sectionProperties1 = [
+            'showImage' =>'off',
+            'showTitle' => 'on',
+            'showDescription' => 'on',
+            'showSubscribeToEvent' => 'on',
+            'showPreviousPage' => 'off',
+            'showCoordinatorPhone' => 'off',
+            'showMetaIcons' => 'off',
+            'showGroup' => 'off',
+            'showDate' => 'off',
+            'showCategory' => 'off',
+            'showMetaHeadings' => 'off',
+            'showLocation' => 'off',
+            'showRoom' => 'off',
+            'showCoordinator' => 'off',
+            'showCoordinatorEmail' => 'off',
+            'showCost' => 'off',
+            'showWebsite' => 'off',
+            'showRegistration' => 'off',
+
+            'colorHex' => $sectionPalette['text'],
+            'colorOpacity' => 1,
+            'colorPalette' => '',
+
+            'titleColorHex' => $sectionPalette['text'],
+            'titleColorOpacity' => 3,
+            'titleColorPalette' => '',
+
+            'previewColorHex' => $sectionPalette['text'],
+            'previewColorOpacity' => 1,
+            'previewColorPalette' => '',
+
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'detailButtonBgColorOpacity' => 1,
+            'detailButtonBgColorPalette' => '',
+
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverDetailButtonBgColorOpacity' => 0.75,
+            'hoverDetailButtonBgColorPalette' => '',
+
+            'metaLinksColorHex' => $sectionPalette['link'],
+            'metaLinksColorOpacity' => 1,
+            'metaLinksColorPalette' => '',
+
+            'hoverMetaLinksColorHex' => $sectionPalette['link'],
+            'hoverMetaLinksColorOpacity' => 0.75,
+            'hoverMetaLinksColorPalette' => '',
+
+            'subscribeEventButtonColorHex' => $sectionPalette['btn-text'],
+            'subscribeEventButtonColorOpacity' => 1,
+            'subscribeEventButtonColorPalette' => '',
+
+            'subscribeEventButtonBgColorHex' => $sectionPalette['btn-text'],
+            'subscribeEventButtonBgColorOpacity' => 1,
+            'subscribeEventButtonBgColorPalette' => '',
+
+            'hoverSubscribeEventButtonBgColorHex' => $sectionPalette['btn-text'],
+            'hoverSubscribeEventButtonBgColorOpacity' => 0.75,
+            'hoverSubscribeEventButtonBgColorPalette' => '',
+        ];
+
+        $sectionProperties2 = [
+
+            'colorHex' => $sectionPalette['text'],
+            'colorOpacity' => 1,
+            'colorPalette' => '',
+
+
+        ];
+
+        foreach ($sectionStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0)
+            ->$properties($value);
+        }
+
+        foreach ($sectionProperties1 as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
+            ->$properties($value);
+        }
+
+        foreach ($sectionProperties2 as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
+                ->$properties($value);
+        }
+
     }
 }

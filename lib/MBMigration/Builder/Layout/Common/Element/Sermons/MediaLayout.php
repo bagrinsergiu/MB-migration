@@ -192,14 +192,14 @@ abstract class MediaLayout extends AbstractElement
 
 
             $colorStyles = [
-                'text-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['text']['color']),
-                'bg-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-color']['background-color']),
-                'bg-opacity' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-opacity']['opacity']),
-                'pagination-normal' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-normal']['color']),
-                'pagination-active' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-active']['color']),
-                'color-text-description' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-description']['color']),
-                'opacity-pagination-normal' => $resultColorStyles['opacity-pagination-normal']['opacity'],
-                'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'],
+                'text-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['text']['color'] ?? $sectionPalette['text']),
+                'bg-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-color']['background-color']  ?? $sectionPalette['bg']),
+                'bg-opacity' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-opacity']['opacity'] ?? 1),
+                'pagination-normal' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-normal']['color']  ?? $sectionPalette['text']),
+                'pagination-active' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-active']['color']  ?? $sectionPalette['text']),
+                'color-text-description' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-description']['color']  ?? $sectionPalette['text']),
+                'opacity-pagination-normal' => $resultColorStyles['opacity-pagination-normal']['opacity'] ?? 0.75,
+                'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'] ?? 1,
                 ];
 
             $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
