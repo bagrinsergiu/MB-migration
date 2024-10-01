@@ -195,7 +195,7 @@ trait DanationsAble
 
         $brizyDonationButton->getItemValueWithDepth(0)
             ->set_hoverBgColorHex(ColorConverter::rgba2hex($buttonStyles['background-color']))
-            ->set_hoverBgColorOpacity(ColorConverter::rgba2opacity($buttonStyles['background-color']))
+            ->set_hoverBgColorOpacity(0.75)
             ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-top-color']))
             ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
             ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['color']))

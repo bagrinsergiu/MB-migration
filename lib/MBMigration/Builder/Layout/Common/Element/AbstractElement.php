@@ -98,4 +98,12 @@ abstract class AbstractElement implements ElementInterface
     {
         return 25;
     }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "margin-left" => 0,
+            "margin-right" => 0,
+        ];
+    }
 }
