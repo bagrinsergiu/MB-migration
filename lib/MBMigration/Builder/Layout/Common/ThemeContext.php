@@ -2,7 +2,9 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
+use MBMigration\Browser\BrowserInterface;
 use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Browser\BrowserPHP;
 
 final class ThemeContext implements ThemeContextInterface
 {
@@ -25,6 +27,11 @@ final class ThemeContext implements ThemeContextInterface
      * @var BrowserPageInterface
      */
     private $browserPage;
+
+    /**
+     * @var BrowserInterface
+     */
+    private $browser;
 
     /**
      * @var RootPalettes
@@ -83,7 +90,8 @@ final class ThemeContext implements ThemeContextInterface
         string $brizyCollectionItemURI,
         string $slug,
         array $urlMap,
-        RootPalettesInterface $RootPalettes
+        RootPalettesInterface $RootPalettes,
+        BrowserInterface $browser
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
@@ -100,6 +108,7 @@ final class ThemeContext implements ThemeContextInterface
         $this->brizyMenuItems = $brizyMenuItems;
         $this->urlMap = $urlMap;
         $this->rootPalettes = $RootPalettes;
+        $this->browser = $browser;
     }
 
     public function getLayoutName(): string
@@ -182,5 +191,10 @@ final class ThemeContext implements ThemeContextInterface
     public function getRootPalettes(): RootPalettesInterface
     {
         return $this->rootPalettes;
+    }
+
+    public function getBrowser(): BrowserInterface
+    {
+        return $this->browser;
     }
 }

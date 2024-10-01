@@ -6,6 +6,7 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Element\HeadElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\PathSlugExtractor;
 
 class Head extends HeadElement
 {
@@ -34,6 +35,19 @@ class Head extends HeadElement
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function beforeTransformToItem(ElementContextInterface $data): void
+    {
+        $menuEnt = $data->getThemeContext()->getBrizyMenuEntity();
+        $deepSlug = PathSlugExtractor::findDeepestSlug($menuEnt['list']);
+        $menuUrl = PathSlugExtractor::getFullUrl($deepSlug['slug']);
+        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
+        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
+        $layoutName = $data->getThemeContext()->getLayoutName();
+        $browser = $data->getThemeContext()->getBrowser();
+
+       $this->browserPage = $browser->openPage($menuUrl, $layoutName);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -157,6 +171,13 @@ class Head extends HeadElement
                 ->$nameOption($value);
         }
 
+        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
+        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
+        $layoutName = $data->getThemeContext()->getLayoutName();
+        $browser = $data->getThemeContext()->getBrowser();
+
+        $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
+
         return $brizySection;
     }
 
@@ -172,12 +193,12 @@ class Head extends HeadElement
 
     public function getThemeParentMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation>ul>li>a", "pseudoEl" => ""];
+        return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
@@ -262,6 +283,17 @@ class Head extends HeadElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 0,
             "mobilePaddingLeftSuffix" => "px",
+
+            "activeMenuBorderStyle" => "solid",
+            "activeMenuBorderColorHex" => "#0c0b0b",
+            "activeMenuBorderColorOpacity" => 0.3,
+            "activeMenuBorderColorPalette" => "",
+            "activeMenuBorderWidthType" => "ungrouped",
+            "activeMenuBorderWidth" => 2,
+            "activeMenuBorderTopWidth" => 0,
+            "activeMenuBorderRightWidth" => 0,
+            "activeMenuBorderBottomWidth" => 2,
+            "activeMenuBorderLeftWidth" => 0,
         ];
     }
 }
