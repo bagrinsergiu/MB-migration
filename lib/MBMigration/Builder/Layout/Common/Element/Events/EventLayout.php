@@ -62,9 +62,7 @@ abstract class EventLayout extends AbstractElement
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
         $detailCollectionItem = $this->createDetailsCollectionItem(
             $data->getThemeContext()->getBrizyCollectionTypeURI(),
-            [
-                $detailsSection,
-            ]
+            $detailsSection
         );
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');

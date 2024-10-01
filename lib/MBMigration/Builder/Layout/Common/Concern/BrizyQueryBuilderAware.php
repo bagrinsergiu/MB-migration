@@ -29,9 +29,6 @@ trait BrizyQueryBuilderAware
         return $this;
     }
 
-    /**
-     * @throws \Exception
-     */
     protected function createDetailsCollectionItem($collectionTypeUri, $pageData, $slug = 'event-detail', $title = 'Event Detail')
     {
         $collectionItem = $this->getQueryBuilder()->getCollectionItemBySlug($slug);
@@ -46,13 +43,13 @@ trait BrizyQueryBuilderAware
                 false,
                 'published',
                 [],
-                json_encode($pageData)
+                json_encode(['items' => [$pageData]])
             );
         } else {
             $result = $this->getQueryBuilder()->updateCollectionItem(
                 $collectionItem['id'],
                 $slug,
-                json_encode($pageData)
+                json_encode(['items' => [$pageData]])
             );
         }
 
