@@ -29,6 +29,9 @@ trait BrizyQueryBuilderAware
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function createDetailsCollectionItem($collectionTypeUri, $pageData, $slug = 'event-detail', $title = 'Event Detail')
     {
         $collectionItem = $this->getQueryBuilder()->getCollectionItemBySlug($slug);
