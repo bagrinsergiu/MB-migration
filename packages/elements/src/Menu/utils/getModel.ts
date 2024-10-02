@@ -51,7 +51,15 @@ export const getModel = (data: Model) => {
         break;
       }
       case "item-padding": {
-        const value = parseInt(`${styles["padding-left"]}`) * 2;
+        let value = parseInt(`${styles["padding-left"]}`) * 2;
+
+        const childNode = (node.item ?? node.pseudoEl)?.firstElementChild;
+
+        if (childNode) {
+          const childStyles = window.getComputedStyle(childNode);
+          const childPadding = parseInt(`${childStyles["paddingLeft"]}`) * 2;
+          value += childPadding;
+        }
 
         dic[toCamelCase(key)] = value;
         dic["itemPaddingSuffix"] = "px";
