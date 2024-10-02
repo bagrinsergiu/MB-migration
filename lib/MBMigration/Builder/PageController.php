@@ -374,27 +374,32 @@ class PageController
 
                 switch ($section['category']) {
                     case 'gallery':
-                        $itemsSubGallery = [
-                            'sectionId' => $section['id'],
-                            'typeSection' => 'sub-gallery-layout',
-                            'position' => $section['position'],
-                            'category' => $section['category'],
-                            'settings' => $section['settings'],
-                            'head' => [],
-                            'slide' => [],
-                            'items' => [],
-                        ];
+                        if (!empty($sectionItems['list'])) {
+                            $itemsSubGallery = [
+                                'sectionId' => $section['id'],
+                                'typeSection' => 'sub-gallery-layout',
+                                'position' => $section['position'],
+                                'category' => $section['category'],
+                                'settings' => $section['settings'],
+                                'head' => [],
+                                'slide' => [],
+                                'items' => [],
+                            ];
 
-                        foreach ($sectionItems as $key => $Item) {
-                            if ($key === 'slide') {
-                                $items['slide'] = array_merge($items['slide'], $Item);
-                                $sections[] = $items;
-                            } else if ($key === 'list') {
-                                $position++;
-                                $itemsSubGallery['position'] = $position;
-                                $itemsSubGallery['items'] = array_merge($items['items'], $Item);
-                                $sections[] = $itemsSubGallery;
+                            foreach ($sectionItems as $key => $Item) {
+                                if ($key === 'slide') {
+                                    $items['slide'] = array_merge($items['slide'], $Item);
+                                    $sections[] = $items;
+                                } else if ($key === 'list') {
+                                    $position++;
+                                    $itemsSubGallery['position'] = $position;
+                                    $itemsSubGallery['items'] = array_merge($items['items'], $Item);
+                                    $sections[] = $itemsSubGallery;
+                                }
                             }
+                        } else {
+                            $items['slide'] = $sectionItems['slide'];
+                            $sections[] = $items;
                         }
                         break;
                     default:
