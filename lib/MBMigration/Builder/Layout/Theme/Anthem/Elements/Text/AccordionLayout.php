@@ -42,10 +42,10 @@ class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\Accordi
         foreach ($mbSection['items'] as $mbSectionItem) {
             $brizyAccordionItemComponent = new BrizyComponent($itemJson);
 
-            $lableText = TextTools::transformTextBool($mbSectionItem['item'][0]['content'],
+            $lableText = TextTools::transformTextBool(strip_tags($mbSectionItem['items'][0]['content']),
                     $accordionElementStyles['uppercase']);
 
-            $brizyAccordionItemComponent->getValue()->set_labelText(strip_tags($lableText));
+            $brizyAccordionItemComponent->getValue()->set_labelText($lableText);
 
             $brizyAccordionItem = $this->getAccordionSectionComponent($brizyAccordionItemComponent);
 
@@ -130,12 +130,13 @@ class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\Accordi
             }
 
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                $mbSectionItem['item'][1],
+                $mbSectionItem['items'][1],
                 $brizyAccordionItem
             );
             $this->handleRichTextItem($elementContext, $this->browserPage);
 
             $elementWrapper = $brizyAccordionItem->getItemWithDepth(0);
+
             foreach ($accordionWrapperElementStyle as $key => $value) {
                 $method = "set_".$key;
                 $elementWrapper->getValue()
