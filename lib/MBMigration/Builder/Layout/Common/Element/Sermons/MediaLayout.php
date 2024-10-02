@@ -200,7 +200,9 @@ abstract class MediaLayout extends AbstractElement
                 'color-text-description' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-description']['color']  ?? $sectionPalette['text']),
                 'opacity-pagination-normal' => $resultColorStyles['opacity-pagination-normal']['opacity'] ?? 0.75,
                 'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'] ?? 1,
-                ];
+            ];
+
+            $this->setStyleDetailPage($detailsSection, $sectionPalette);
 
             $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
             $detailCollectionItem = $this->createDetailsCollectionItem(
@@ -291,6 +293,119 @@ abstract class MediaLayout extends AbstractElement
         }
 
         return $brizySection;
+    }
+
+    private function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
+    {
+
+        $sectionStyle = [
+            'bgColorHex' => $sectionPalette['bg']
+        ];
+
+        $sectionProperties1 = [
+            'showAudio' => 'off',
+            'showImage' => 'off',
+            'showVideo' => 'off',
+            'showPreview' => 'on',
+            'showTitle' => 'on',
+            'showGroup' => 'on',
+            'showDate' => 'off',
+            'showCategory' => 'off',
+            'showPreacher' => 'off',
+            'showPassage' => 'off',
+            'showMetaHeadings' => 'off',
+            'showPreviousPage' => 'off',
+            'showMediaLinksVideo' =>'off',
+            'showMediaLinksAudio' => 'off',
+            'showMediaLinksDownload' => 'off',
+            'showMediaLinksNotes' => 'off',
+
+            'colorHex' => $sectionPalette['text'],
+            'colorOpacity' => 1,
+            'colorPalette' => '',
+
+            'titleColorHex' => $sectionPalette['text'],
+            'titleTypographyFontStyle' => 'heading3',
+            'titleColorOpacity' => 3,
+            'titleColorPalette' => '',
+
+            'previewColorHex' => $sectionPalette['text'],
+            'previewColorOpacity' => 1,
+            'previewColorPalette' => '',
+        ];
+
+        $sectionProperties2 = [
+            'showAudio' => 'off',
+            'showImage' => 'off',
+            'showVideo' => 'off',
+            'showPreview' => 'off',
+            'showTitle' => 'off',
+            'showDate' => 'on',
+            'showGroup' => 'on',
+            'showCategory' => 'off',
+            'showPreacher' => 'off',
+            'showPassage' => 'off',
+            'showMetaHeadings' => 'off',
+            'showPreviousPage' => 'off',
+            'showMediaLinksVideo' =>'off',
+            'showMediaLinksAudio' => 'off',
+            'showMediaLinksDownload' => 'on',
+            'showMediaLinksNotes' => 'on',
+
+            'colorHex' => $sectionPalette['text'],
+            'colorOpacity' => 1,
+            'colorPalette' => '',
+
+            'dateColorHex' => $sectionPalette['text'],
+            'dateColorOpacity' => 1,
+            'dateColorPalette' => '',
+
+            'metaLinksColorHex' => $sectionPalette['link'],
+            'metaLinksColorOpacity' => 1,
+            'metaLinksColorPalette' => '',
+
+            'hoverMetaLinksColorHex' => $sectionPalette['text'],
+            'hoverMetaLinksColorOpacity' => 0.75,
+            'hoverMetaLinksColorPalette' => '',
+
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'detailButtonBgColorOpacity' => 1,
+            'detailButtonBgColorPalette' => '',
+
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverDetailButtonBgColorOpacity' => 0.75,
+            'hoverDetailButtonBgColorPalette' => '',
+
+            'subscribeButtonColorHex' => $sectionPalette['btn-text'],
+            'subscribeButtonColorOpacity' => 1,
+            'subscribeButtonColorPalette' => '',
+
+            'subscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'subscribeButtonBgColorOpacity' => 1,
+            'subscribeButtonBgColorPalette' => '',
+
+            'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverSubscribeButtonBgColorOpacity' => 0.75,
+            'hoverSubscribeButtonBgColorPalette' => '',
+        ];
+
+        foreach ($sectionStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0)
+                ->$properties($value);
+        }
+
+        foreach ($sectionProperties1 as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
+                ->$properties($value);
+        }
+
+        foreach ($sectionProperties2 as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0)
+                ->$properties($value);
+        }
     }
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
