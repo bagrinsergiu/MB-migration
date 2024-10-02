@@ -139,7 +139,7 @@ final class ColorConverter
         }
     }
 
-    private function removePx($inputString)
+    public static function removePx($inputString)
     {
         $pos = strpos($inputString, "px");
 
