@@ -119,11 +119,11 @@ abstract class EventLayout extends AbstractElement
             'calendarDaysBgColorOpacity' => 1,
             'calendarDaysBgColorPalette' => '',
 
-            'calendarDaysBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'calendarDaysBgColorHex' => $sectionPalette['bg'],
             'calendarHeadingColorOpacity' => 1,
             'calendarHeadingColorPalette' => '',
 
-            'calendarDaysColorHex' => $sectionPalette['btn-text'],
+            'calendarDaysColorHex' => $sectionPalette['text'],
             'calendarDaysColorOpacity' => 1,
             'calendarDaysColorPalette' => '',
 
