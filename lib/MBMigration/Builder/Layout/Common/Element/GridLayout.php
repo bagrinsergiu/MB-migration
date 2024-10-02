@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Common\Element;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Element\AbstractElement;
@@ -13,6 +14,7 @@ abstract class GridLayout extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
+    use ImageStylesAble;
 
     private array $globalBrizyKit;
 
@@ -86,7 +88,18 @@ abstract class GridLayout extends AbstractElement
                                 $brizySectionItem
                             );
 
-                            $this->handleBgPhotoItems($elementContext, $this->browserPage);
+                            $imageSize = $this->obtainItemImageStyles($mbItem['id'], $this->browserPage);
+
+                            $additionalOptions = [
+                                'mobileWidth' => 100,
+                                'mobileHeightStyle' => 'custom',
+                                'mobileHeight' => (int)ColorConverter::removePx($imageSize['height']),
+                                'mobileHeightSuffix' => 'px',
+                                "mobileMarginType" => "grouped",
+                                "mobileMargin" => 20,
+                            ];
+
+                            $this->handleBgPhotoItems($elementContext, $additionalOptions);
 //                            $this->getItemImageComponent($brizySectionItem)
 //                                ->getValue()
 //                                ->set_widthSuffix('%')
@@ -112,7 +125,7 @@ abstract class GridLayout extends AbstractElement
         return $brizySection;
     }
 
-    private function handleBgPhotoItems($data)
+    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [])
     {
         $mbSectionItem = $data->getMbSection();
         $brizyComponent = $data->getBrizySection();
@@ -122,9 +135,13 @@ abstract class GridLayout extends AbstractElement
             ->set_bgImageFileName($mbSectionItem['imageFileName'])
             ->set_bgImageSrc($mbSectionItem['content']);
 
-        $this->handleLink($mbSectionItem, $brizyComponent);
+        foreach ($options as $key => $value) {
+            $method = 'set_'.$key;
+            $brizyComponent->getValue()
+                ->$method($value);
+        }
 
-        $aa= 1-3;
+        $this->handleLink($mbSectionItem, $brizyComponent);
     }
 
     abstract protected function getItemsPerRow(): int;

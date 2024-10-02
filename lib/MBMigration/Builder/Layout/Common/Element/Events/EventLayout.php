@@ -37,9 +37,8 @@ abstract class EventLayout extends AbstractElement
      */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-        $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['head'], true));
-        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['details'], true));
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayout']['main'], true));
+        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayout']['detail'], true));
 
         $mbSection = $data->getMbSection();
 
@@ -300,11 +299,60 @@ abstract class EventLayout extends AbstractElement
 
         $sectionProperties2 = [
 
+            'showImage' =>'off',
+            'showTitle' => 'off',
+            'showDescription' => 'off',
+            'showSubscribeToEvent' => 'off',
+            'showPreviousPage' => 'on',
+            'showCoordinatorPhone' => 'on',
+            'showMetaIcons' => 'off',
+            'showGroup' => 'on',
+            'showDate' => 'on',
+            'showCategory' => 'on',
+            'showMetaHeadings' => 'on',
+            'showLocation' => 'on',
+            'showRoom' => 'on',
+            'showCoordinator' => 'on',
+            'showCoordinatorEmail' => 'on',
+            'showCost' => 'on',
+            'showWebsite' => 'on',
+            'showRegistration' => 'on',
+
             'colorHex' => $sectionPalette['text'],
             'colorOpacity' => 1,
             'colorPalette' => '',
 
+            'dateColorHex' => $sectionPalette['text'],
+            'dateColorOpacity' => 1,
+            'dateColorPalette' => '',
 
+            'metaLinksColorHex' => $sectionPalette['link'],
+            'metaLinksColorOpacity' => 1,
+            'metaLinksColorPalette' => '',
+
+            'hoverMetaLinksColorHex' => $sectionPalette['text'],
+            'hoverMetaLinksColorOpacity' => 0.75,
+            'hoverMetaLinksColorPalette' => '',
+
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'detailButtonBgColorOpacity' => 1,
+            'detailButtonBgColorPalette' => '',
+
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverDetailButtonBgColorOpacity' => 0.75,
+            'hoverDetailButtonBgColorPalette' => '',
+
+            'subscribeEventButtonColorHex' => $sectionPalette['btn-text'],
+            'subscribeEventButtonColorOpacity' => 1,
+            'subscribeEventButtonColorPalette' => '',
+
+            'subscribeEventButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'subscribeEventButtonBgColorOpacity' => 1,
+            'subscribeEventButtonBgColorPalette' => '',
+
+            'hoverSubscribeEventButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverSubscribeEventButtonBgColorOpacity' => 0.75,
+            'hoverSubscribeEventButtonBgColorPalette' => '',
         ];
 
         foreach ($sectionStyle as $key => $value) {
@@ -321,9 +369,8 @@ abstract class EventLayout extends AbstractElement
 
         foreach ($sectionProperties2 as $key => $value) {
             $properties = 'set_'.$key;
-            $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
+            $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0)
                 ->$properties($value);
         }
-
     }
 }
