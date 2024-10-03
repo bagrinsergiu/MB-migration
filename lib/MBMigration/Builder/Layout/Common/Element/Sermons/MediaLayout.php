@@ -22,6 +22,9 @@ abstract class MediaLayout extends AbstractElement
     use BrizyQueryBuilderAware;
     use SlugAble;
 
+    const DETAILS_PAGE_NAME = 'Sermon Detail';
+    const DETAILS_SLUG_NAME = 'sermon-detail';
+
     /**
      * @param $brizyKit
      * @param BrowserPageInterface $browserPage
@@ -208,8 +211,8 @@ abstract class MediaLayout extends AbstractElement
             $detailCollectionItem = $this->createDetailsCollectionItem(
                 $collectionTypeUri,
                 $detailsSection,
-                'media-detail',
-                'Media Detail'
+                self::DETAILS_SLUG_NAME,
+                self::DETAILS_PAGE_NAME,
             );
 
             $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
