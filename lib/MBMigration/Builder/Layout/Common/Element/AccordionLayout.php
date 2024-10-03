@@ -31,11 +31,11 @@ abstract class AccordionLayout extends AbstractElement
         $brizyAccordionItems = [];
         foreach ($mbSection['items'] as $mbSectionItem) {
             $brizyAccordionItem = new BrizyComponent($itemJson);
-            $brizyAccordionItem->getValue()->set_labelText(strip_tags($mbSectionItem['item'][0]['content']));
+            $brizyAccordionItem->getValue()->set_labelText(strip_tags($mbSectionItem['items'][0]['content']));
 //            $brizyAccordionItem->getItemWithDepth(0)->getValue()
 //                ->set_bgColorHex('#ffffff');
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                $mbSectionItem['item'][1],
+                $mbSectionItem['items'][1],
                 $brizyAccordionItem
             );
             $this->handleRichTextItem($elementContext, $this->browserPage);
