@@ -309,10 +309,51 @@ abstract class MediaLayout extends AbstractElement
             'bgColorOpacity' => 1,
         ];
 
-        $sectionDiscriptionStyle = [
+        $sectionDescriptionStyle = [
             'bgColorHex' => $sectionPalette['item-bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
+        ];
+
+        $sectionDescriptionItemsStyle = [
+            "mobilePaddingType" => "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 5,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 5,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+
+
+        $sectionPlayerStyle = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 0,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            "mobileMarginType" => "ungrouped",
+            "mobileMargin" => 0,
+            "mobileMarginSuffix" => "px",
+            "mobileMarginTop" => 10,
+            "mobileMarginTopSuffix" => "px",
+            "mobileMarginRight" => 0,
+            "mobileMarginRightSuffix" => "px",
+            "mobileMarginBottom" => 0,
+            "mobileMarginBottomSuffix" => "px",
+            "mobileMarginLeft" => 0,
+            "mobileMarginLeftSuffix" => "px",
         ];
 
         $sectionProperties1 = [
@@ -408,12 +449,29 @@ abstract class MediaLayout extends AbstractElement
                 ->$properties($value);
         }
 
+        foreach ($sectionPlayerStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 0)
+                ->$properties($value);
+        }
+
+        foreach ($sectionDescriptionItemsStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 0)
+                ->$properties($value);
+        }
+        foreach ($sectionDescriptionItemsStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 1)
+                ->$properties($value);
+        }
+
         foreach ($sectionProperties1 as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
                 ->$properties($value);
         }
-        foreach ($sectionDiscriptionStyle as $key => $value) {
+        foreach ($sectionDescriptionStyle as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1)
                 ->$properties($value);
