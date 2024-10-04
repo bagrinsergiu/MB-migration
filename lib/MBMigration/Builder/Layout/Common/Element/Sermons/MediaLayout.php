@@ -205,6 +205,8 @@ abstract class MediaLayout extends AbstractElement
                 'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'] ?? 1,
             ];
 
+            $sectionPalette['item-bg'] = $colorStyles['bg-color'];
+
             $this->setStyleDetailPage($detailsSection, $sectionPalette);
 
             $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
@@ -302,7 +304,15 @@ abstract class MediaLayout extends AbstractElement
     {
 
         $sectionStyle = [
-            'bgColorHex' => $sectionPalette['bg']
+            'bgColorHex' => $sectionPalette['bg'],
+            'bgColorPalette' => '',
+            'bgColorOpacity' => 1,
+        ];
+
+        $sectionDiscriptionStyle = [
+            'bgColorHex' => $sectionPalette['item-bg'],
+            'bgColorPalette' => '',
+            'bgColorOpacity' => 1,
         ];
 
         $sectionProperties1 = [
@@ -401,6 +411,11 @@ abstract class MediaLayout extends AbstractElement
         foreach ($sectionProperties1 as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
+                ->$properties($value);
+        }
+        foreach ($sectionDiscriptionStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1)
                 ->$properties($value);
         }
 
