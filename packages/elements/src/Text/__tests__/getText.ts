@@ -1910,7 +1910,7 @@ const ex27: Data = {
 };
 //#endregion
 
-//#region Example 27 (Ember text with link )
+//#region Example 28 (Ember text with link )
 const ex28: Data = {
   html: `<<header class="text-content text-1 title-text editable" data-id="23478396" data-category="text"><div><p>PRE-SCHOOL</p><p style="font-size: 0.75em;"><span class="clovercustom" style="font-size: 0.8333em;">Interested In Joining This Team?</span><a href="https://forms.ministryforms.net/viewForm.aspx?formId=10095747-3f27-49ab-a7a7-567fca858af3" data-location="external" data-button="true" data-detail="https://forms.ministryforms.net/viewForm.aspx?formId=10095747-3f27-49ab-a7a7-567fca858af3" data-category="link" target="_blank" class="cloverlinks sites-button" role="button" style="background-color: rgb(255, 255, 255); font-size: 0.8889em;">CLICK HERE</a></p></div></header>`,
   //prettier-ignore
@@ -1939,7 +1939,7 @@ const ex28: Data = {
 };
 //#endregion
 
-//#region Example 28 (Bloom list)
+//#region Example 29 (Bloom list)
 const ex29: Data = {
   html: `<div class="text-content text-1 editable" data-id="23136535" data-category="text"><div><p style="text-align: left; font-weight: 600;"><strong style="font-size: 15px; letter-spacing: 0.45px;">MONTHLY PRAYER GATHERING</strong><br></p><div style="text-align: left; font-weight: 200;"><ul><li>Have you ever struggled praying out loud in front of other people? Consider joining us for our monthly prayer meeting as we seek to learn, encourage, and grow deeper with God through prayer together.&nbsp;</li><li>Our prayer meetings happen monthly on the second Tuesday of every month at 6pm.</li></ul></div></div></div>`,
   //prettier-ignore
@@ -1958,6 +1958,42 @@ const ex29: Data = {
                 _id: "1",
                 _styles: ["richText"],
                 text: '<p class="brz-fs-lg-15 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0_4"><strong style="font-weight: 600; ">MONTHLY PRAYER GATHERING</strong><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"></p><ul><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Have you ever struggled praying out loud in front of other people? Consider joining us for our monthly prayer meeting as we seek to learn, encourage, and grow deeper with God through prayer together.&nbsp;</span></li><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Our prayer meetings happen monthly on the second Tuesday of every month at 6pm.</span></li></ul><p></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 30 (Voyage Text with bold link)
+const ex30: Data = {
+  html: `<div class="text-content text-1 editable" data-id="25300675" data-category="text"><div><p style="line-height: 18pt;"><span class="clovercustom" style="font-size: 14pt;">Child dedication is
+  an opportunity to acknowledge children as a gift from God. Families dedicating
+  their child(ren) make the commitment, to raise them to know, love and serve the
+  Lord according to His Word, the Bible. Timberwood Church, as a body of Christ,
+  supports this commitment by loving children as Jesus did, providing an
+  environment for children to experience the Holy Spirit and partnering with
+  parents. If you would like more information about Child Dedication, contact
+  Eric Holst at </span><a href="mailto:eric.holst@timberwoodchurch.org" target="_self" data-location="email" data-button="false" data-detail="eric.holst@timberwoodchurch.org" data-category="link"><b><span class="clovercustom" style="font-size: 14pt;">eric.holst@timberwoodchurch.org</span></b></a><span class="clovercustom" style="font-size: 15pt;"></span></p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"25300675\"]" },
+  output: {
+    data: [
+      {
+        type: 'Wrapper',
+        value: {
+          _id: '1',
+          _styles: ['wrapper', 'wrapper--richText'],
+          items: [
+            {
+              type: 'RichText',
+              value: {
+                _id: '1',
+                _styles: ['richText'],
+                text: '<p class="brz-fs-lg-14 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">Child dedication is   an opportunity to acknowledge children as a gift from God. Families dedicating   their child(ren) make the commitment, to raise them to know, love and serve the   Lord according to His Word, the Bible. Timberwood Church, as a body of Christ,   supports this commitment by loving children as Jesus did, providing an   environment for children to experience the Holy Spirit and partnering with   parents. If you would like more information about Child Dedication, contact   Eric Holst at </span><a target="_self" data-location="email" data-button="false" data-detail="eric.holst@timberwoodchurch.org" data-category="link" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22mailto%3Aeric.holst%40timberwoodchurch.org%22%2C%22externalBlank%22%3A%22off%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><b><span style="">eric.holst@timberwoodchurch.org</span></b></a><span style=""></span></p>'
               }
             }
           ]
@@ -1997,7 +2033,8 @@ describe.each([
   ex26,
   ex27,
   ex28,
-  ex29
+  ex29,
+  ex30
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;

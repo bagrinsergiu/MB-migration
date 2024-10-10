@@ -8,9 +8,9 @@ export function extractAllElementsStyles(
 ): Record<string, Literal> {
   const nodes = recursiveGetNodes(node);
   return nodes.reduce((acc, element) => {
-    const parentElementTag = element.parentElement?.tagName;
+    const parentElementTag = ignoreStyleExtracting.some(selector => element.closest(selector));
 
-    if (parentElementTag && ignoreStyleExtracting.includes(parentElementTag)) {
+    if (parentElementTag) {
       return acc;
     }
 
