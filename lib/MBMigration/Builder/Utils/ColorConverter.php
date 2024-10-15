@@ -17,6 +17,21 @@ final class ColorConverter
         return $fromRGB;
     }
 
+    static public function hex2Rgb($hex): string
+    {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) == 3) {
+            $hex = str_repeat($hex[0], 2) . str_repeat($hex[1], 2) . str_repeat($hex[2], 2);
+        }
+
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        return "rgb($r, $g, $b)";
+    }
+
+
     static private function fromRGB($R, $G, $B)
     {
 
@@ -148,5 +163,18 @@ final class ColorConverter
         }
 
         return $inputString;
+    }
+
+    public static function getContrastColor($hexColor): string
+    {
+        $hexColor = str_replace('#', '', $hexColor);
+
+        $r = hexdec(substr($hexColor, 0, 2));
+        $g = hexdec(substr($hexColor, 2, 2));
+        $b = hexdec(substr($hexColor, 4, 2));
+
+        $brightness = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+        return $brightness > 125 ? '#000000' : '#FFFFFF';
     }
 }

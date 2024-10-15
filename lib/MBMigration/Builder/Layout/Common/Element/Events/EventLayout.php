@@ -127,11 +127,11 @@ abstract class EventLayout extends AbstractElement
             'calendarDaysColorOpacity' => 1,
             'calendarDaysColorPalette' => '',
 
-            'eventsColorHex' => $sectionPalette['text'],
+            'eventsColorHex' => $sectionPalette['link'],
             'eventsColorOpacity' => 1,
             'eventsColorPalette' => '',
 
-            'hoverEventsColorHex' => $sectionPalette['text'],
+            'hoverEventsColorHex' => $sectionPalette['link'],
             'hoverEventsColorOpacity' => 0.75,
             'hoverEventsColorPalette' => '',
 
@@ -234,7 +234,6 @@ abstract class EventLayout extends AbstractElement
         $sectionStyle = [
             'bgColorHex' => $sectionPalette['bg']
         ];
-
 
         $sectionProperties1 = [
             'showImage' =>'off',
