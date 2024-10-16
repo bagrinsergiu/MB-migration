@@ -1,4 +1,4 @@
-FROM composer:2.7.1 AS stage_composer
+FROM composer:2.7.1 AS  stage_composer
 ARG COMPOSER_AUTH
 ENV COMPOSER_AUTH ${COMPOSER_AUTH}
 
@@ -8,12 +8,12 @@ COPY ./composer.lock ./
 
 RUN composer install --ignore-platform-reqs --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts  --no-dev
 
-FROM node:18-alpine as node
+FROM node:18-alpine AS  node
 WORKDIR /build
 COPY ./ ./
 RUN npm i && npm run build:prod
 
-FROM php:7.4-fpm as production
+FROM php:7.4-fpm AS  production
 WORKDIR /project
 ENV PUPPETEER_SKIP_DOWNLOAD false
 ARG UID=1000
@@ -65,7 +65,7 @@ ENTRYPOINT ["tini", "docker-entrypoint", "--"]
 
 CMD []
 
-FROM production as development
+FROM production AS  development
 COPY --from=stage_composer /usr/bin/composer /usr/bin/composer
 
 ARG PHP_FPM_INI_DIR="/usr/local/etc/php"
