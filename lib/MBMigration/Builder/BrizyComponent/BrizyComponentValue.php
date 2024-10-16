@@ -62,6 +62,8 @@ class BrizyComponentValue implements JsonSerializable
 
     public function __call($methodName, $params)
     {
+        $methodName = preg_replace("/[^a-zA-Z0-9_]/", "", $methodName);
+
         $matches = [];
         preg_match("/^(?<action>set|get|add)_(?<field>\w+)$/", $methodName, $matches);
         $method = strtolower($matches['action']);
