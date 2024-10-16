@@ -8,7 +8,7 @@ use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class ThreeTopMediaColumnElement
+class ThreeTopMediaColumnElement extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
