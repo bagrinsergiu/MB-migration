@@ -1,8 +1,8 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Prayer;
 
-class EventLayout extends \MBMigration\Builder\Layout\Common\Element\Events\EventLayout
+class PrayerForm extends \MBMigration\Builder\Layout\Common\Element\Prayer\PrayerForm
 {
 
     protected function getPropertiesMainSection(): array

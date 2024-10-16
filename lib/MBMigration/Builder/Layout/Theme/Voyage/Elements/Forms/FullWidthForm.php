@@ -1,33 +1,27 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Forms;
 
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\PhotoTextElement;
+use MBMigration\Builder\Layout\Common\Element\Forms\FormElement;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class LeftMedia extends PhotoTextElement
+class FullWidthForm extends FormElement
 {
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getJsonFromBrizyKit()
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
+        return $this->brizyKit['full-width'];
     }
 
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0, 1);
+    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent {
+        return $brizyComponent->getItemWithDepth(0);
     }
 
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
+    protected function handleForm(ElementContextInterface $elementContext, BrowserPageInterface $browserPage): BrizyComponent {
+
+        // add the form here.
+        return $elementContext->getBrizySection();
     }
 
     protected function getPropertiesMainSection(): array

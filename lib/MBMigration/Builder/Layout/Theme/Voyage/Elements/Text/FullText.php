@@ -1,9 +1,20 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
-class SmallGroupsList extends \MBMigration\Builder\Layout\Common\Element\SmallGroupsList
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Element\FullTextElement;
+
+class FullText extends FullTextElement
 {
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0);
+    }
 
     protected function getPropertiesMainSection(): array
     {
@@ -31,5 +42,4 @@ class SmallGroupsList extends \MBMigration\Builder\Layout\Common\Element\SmallGr
             "paddingLeftSuffix" => "px",
         ];
     }
-
 }

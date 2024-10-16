@@ -1,22 +1,18 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Forms;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Element\Forms\FormWithTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class RightForm extends FormWithTextElement
+class LeftForm extends FormWithTextElement
 {
-    protected function getJsonFromBrizyKit()
-    {
-        return $this->brizyKit['right-form'];
-    }
 
     protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0, 0, 1);
+        return $brizyComponent->getItemWithDepth(0, 0, 0);
     }
 
     protected function handleForm(
@@ -30,7 +26,7 @@ class RightForm extends FormWithTextElement
 
     protected function getTextContainerElement(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0, 0, 0);
+        return $brizyComponent->getItemWithDepth(0, 0, 1);
     }
 
     protected function handleText(
@@ -38,6 +34,11 @@ class RightForm extends FormWithTextElement
         BrowserPageInterface $browserPage
     ): BrizyComponent {
         return $this->handleRichTextItems($elementContext, $this->browserPage);
+    }
+
+    protected function getJsonFromBrizyKit()
+    {
+        return $this->brizyKit['left-form'];
     }
 
     protected function getPropertiesMainSection(): array
@@ -66,5 +67,4 @@ class RightForm extends FormWithTextElement
             "paddingLeftSuffix" => "px",
         ];
     }
-
 }

@@ -1,27 +1,43 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Forms;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\Forms\FormElement;
+use MBMigration\Builder\Layout\Common\Element\Forms\FormWithTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class FullWidthForm extends FormElement
+class RightForm extends FormWithTextElement
 {
     protected function getJsonFromBrizyKit()
     {
-        return $this->brizyKit['full-width'];
+        return $this->brizyKit['right-form'];
     }
 
-    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent {
-        return $brizyComponent->getItemWithDepth(0);
+    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0, 0, 1);
     }
 
-    protected function handleForm(ElementContextInterface $elementContext, BrowserPageInterface $browserPage): BrizyComponent {
+    protected function handleForm(
+        ElementContextInterface $elementContext,
+        BrowserPageInterface $browserPage
+    ): BrizyComponent {
 
         // add the form here.
         return $elementContext->getBrizySection();
+    }
+
+    protected function getTextContainerElement(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0, 0, 0);
+    }
+
+    protected function handleText(
+        ElementContextInterface $elementContext,
+        BrowserPageInterface $browserPage
+    ): BrizyComponent {
+        return $this->handleRichTextItems($elementContext, $this->browserPage);
     }
 
     protected function getPropertiesMainSection(): array
@@ -50,4 +66,5 @@ class FullWidthForm extends FormElement
             "paddingLeftSuffix" => "px",
         ];
     }
+
 }

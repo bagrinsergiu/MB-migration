@@ -1,11 +1,11 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Element\PhotoTextElement;
 
-class RightMediaOverlap extends PhotoTextElement
+class LeftMediaOverlap extends PhotoTextElement
 {
     /**
      * @param BrizyComponent $brizySection
@@ -13,7 +13,7 @@ class RightMediaOverlap extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     /**
@@ -22,7 +22,7 @@ class RightMediaOverlap extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
@@ -56,4 +56,5 @@ class RightMediaOverlap extends PhotoTextElement
             "paddingLeftSuffix" => "px",
         ];
     }
+
 }

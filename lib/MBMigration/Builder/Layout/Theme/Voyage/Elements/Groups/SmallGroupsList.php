@@ -1,34 +1,9 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Groups;
 
-use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\PhotoTextElement;
-
-class LeftMediaOverlap extends PhotoTextElement
+class SmallGroupsList extends \MBMigration\Builder\Layout\Common\Element\SmallGroupsList
 {
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
-    }
-
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
-    }
-
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
-    }
 
     protected function getPropertiesMainSection(): array
     {

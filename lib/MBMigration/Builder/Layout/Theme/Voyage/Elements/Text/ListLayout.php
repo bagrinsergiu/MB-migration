@@ -1,44 +1,29 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
-use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\Forms\FormWithTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class LeftForm extends FormWithTextElement
+class ListLayout extends \MBMigration\Builder\Layout\Common\Element\ListLayout
 {
-
-    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent
+    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
         return $brizyComponent->getItemWithDepth(0, 0, 0);
     }
 
-    protected function handleForm(
-        ElementContextInterface $elementContext,
-        BrowserPageInterface $browserPage
-    ): BrizyComponent {
-
-        // add the form here.
-        return $elementContext->getBrizySection();
+    protected function getItemTextContainerComponent(BrizyComponent $brizyComponent,string $photoPosition): BrizyComponent {
+        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 1 : 0);
     }
 
-    protected function getTextContainerElement(BrizyComponent $brizyComponent): BrizyComponent
+    protected function getItemImageComponent(BrizyComponent $brizyComponent, string $photoPosition): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0, 0, 1);
+        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0, 0);
     }
 
-    protected function handleText(
-        ElementContextInterface $elementContext,
-        BrowserPageInterface $browserPage
-    ): BrizyComponent {
-        return $this->handleRichTextItems($elementContext, $this->browserPage);
-    }
-
-    protected function getJsonFromBrizyKit()
+    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent
     {
-        return $this->brizyKit['left-form'];
+        return $brizySection;
     }
 
     protected function getPropertiesMainSection(): array

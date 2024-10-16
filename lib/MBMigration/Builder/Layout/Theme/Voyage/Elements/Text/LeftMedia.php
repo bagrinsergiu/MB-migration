@@ -1,29 +1,33 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Element\PhotoTextElement;
 
-class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
+class LeftMedia extends PhotoTextElement
 {
-    protected function getItemsPerRow(): int
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return 3;
+        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
     }
 
-    protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0);
+        return $brizySection->getItemWithDepth(0, 0, 1);
     }
 
-    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0);
-    }
-
-    protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent
-    {
-        return $brizyComponent->getItemWithDepth(0,0);
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getPropertiesMainSection(): array

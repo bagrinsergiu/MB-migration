@@ -1,27 +1,29 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-class TabsLayout extends \MBMigration\Builder\Layout\Common\Element\TabsLayout
+class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
 {
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getTopTextComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getItemsPerRow(): int
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return 3;
     }
 
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed
-     */
-    protected function getTabContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+        return $brizyComponent->getItemWithDepth(0);
+    }
+
+    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0);
+    }
+
+    protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0,0);
     }
 
     protected function getPropertiesMainSection(): array
@@ -50,5 +52,4 @@ class TabsLayout extends \MBMigration\Builder\Layout\Common\Element\TabsLayout
             "paddingLeftSuffix" => "px",
         ];
     }
-
 }

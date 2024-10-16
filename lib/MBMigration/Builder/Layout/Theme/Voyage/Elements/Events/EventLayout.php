@@ -1,8 +1,8 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Events;
 
-class PrayerList extends \MBMigration\Builder\Layout\Common\Element\Prayer\PrayerList
+class EventLayout extends \MBMigration\Builder\Layout\Common\Element\Events\EventLayout
 {
 
     protected function getPropertiesMainSection(): array
@@ -31,5 +31,4 @@ class PrayerList extends \MBMigration\Builder\Layout\Common\Element\Prayer\Praye
             "paddingLeftSuffix" => "px",
         ];
     }
-
 }

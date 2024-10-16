@@ -1,29 +1,19 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\FullMediaElement;
 
-class FullMedia extends FullMediaElement
+class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\AccordionLayout
 {
-    protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0);
-    }
-
-    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getSectionHeaderComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getAccordionParentComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0);
-    }
-
-    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
 
     protected function getPropertiesMainSection(): array

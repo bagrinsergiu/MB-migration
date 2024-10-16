@@ -1,29 +1,27 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
+namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
-class ListLayout extends \MBMigration\Builder\Layout\Common\Element\ListLayout
+class TabsLayout extends \MBMigration\Builder\Layout\Common\Element\TabsLayout
 {
-    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getTopTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
-    protected function getItemTextContainerComponent(BrizyComponent $brizyComponent,string $photoPosition): BrizyComponent {
-        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 1 : 0);
-    }
-
-    protected function getItemImageComponent(BrizyComponent $brizyComponent, string $photoPosition): BrizyComponent
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed
+     */
+    protected function getTabContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0, 0);
-    }
-
-    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection;
+        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
 
     protected function getPropertiesMainSection(): array
@@ -52,4 +50,5 @@ class ListLayout extends \MBMigration\Builder\Layout\Common\Element\ListLayout
             "paddingLeftSuffix" => "px",
         ];
     }
+
 }
