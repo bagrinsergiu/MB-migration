@@ -15,6 +15,4 @@ class Solstice extends AbstractTheme
     {
         return ".sites-button:not(.nav-menu-button)";
     }
-
-
 }

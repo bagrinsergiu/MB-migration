@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
+namespace MBMigration\Builder\Layout\Theme\Solstice\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Element\FullMediaElement;
@@ -23,7 +23,7 @@ class FullMedia extends FullMediaElement
     }
 
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
-        return $brizySection->getItemWithDepth(0, 1, 0);
+        return $brizySection->getItemWithDepth(0, 1);
     }
 
     protected function getPropertiesMainSection(): array

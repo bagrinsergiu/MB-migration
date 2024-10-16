@@ -13,7 +13,7 @@ class ItemBuilder
      */
     private $content;
 
-    public function /home/worker/Projects/MB-migration/lib/MBMigration/Builder/Layout/Theme/Anthem_new__construct($json = '')
+    public function __construct($json = '')
     {
         if($json !== '') {
             $this->newItem($json);

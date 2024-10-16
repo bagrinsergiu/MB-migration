@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\Text;
+namespace MBMigration\Builder\Layout\Theme\Solstice\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
@@ -8,7 +8,7 @@ class GridLayout extends \MBMigration\Builder\Layout\Common\Element\GridLayout
 {
     protected function getItemsPerRow(): int
     {
-        return 4;
+        return 3;
     }
 
     protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent
