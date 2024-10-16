@@ -19,6 +19,16 @@ class EventLayout extends \MBMigration\Builder\Layout\Common\Element\Events\Even
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "paddingTop" => 50,
+            "paddingTopSuffix" => "px",
+            "paddingBottom" => 50,
+            "paddingBottomSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
         ];
     }
 }

@@ -44,6 +44,16 @@ class RightMediaOverlap extends PhotoTextElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "paddingTop" => 50,
+            "paddingTopSuffix" => "px",
+            "paddingBottom" => 50,
+            "paddingBottomSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
         ];
     }
 }
