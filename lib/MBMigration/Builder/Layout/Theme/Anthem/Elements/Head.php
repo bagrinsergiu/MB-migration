@@ -111,6 +111,19 @@ class Head extends HeadElement
             'mobileHeightSuffix' => '%',
         ];
 
+        $activeItemMenuOptions = [
+            'activeMenuBorderStyle' => 'solid',
+            'activeMenuBorderColorHex' => '#000000',
+            'activeMenuBorderColorOpacity' => 0.02,
+            'activeMenuBorderColorPalette' => '',
+            'activeMenuBorderWidthType' => 'ungrouped',
+            'activeMenuBorderWidth' => 3,
+            'activeMenuBorderTopWidth' => 0,
+            'activeMenuBorderRightWidth' => 0,
+            'activeMenuBorderBottomWidth' => 3,
+            'activeMenuBorderLeftWidth' => 0,
+        ];
+
         $sectionlogoOptions = [
             'horizontalAlign' => 'center',
             'mobileHorizontalAlign' => 'left',
@@ -165,6 +178,13 @@ class Head extends HeadElement
 
 
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($activeItemMenuOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
             $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
                 ->getValue()
