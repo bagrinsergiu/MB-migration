@@ -227,7 +227,7 @@ abstract class MediaLayout extends AbstractElement
 
             $this->getDetailsLinksComponent($brizySectionGrid)
                 ->getValue()
-                ->set_defaultCategory($slug)
+//                ->set_defaultCategory($slug)
                 ->set_parentCategory($slug)
                 ->set_detailPageSource($collectionTypeUri)
                 ->set_detailPage("{{placeholder content='$placeholder'}}");
@@ -264,16 +264,16 @@ abstract class MediaLayout extends AbstractElement
                 'itemBgColorOpacity' => 0, // $colorStyles['bg-opacity'],
                 'itemBgColorPalette' => '',
 
-                'paginationColorHex' => $colorStyles['pagination-normal'],
-                'paginationColorOpacity' => floatval($colorStyles['opacity-pagination-normal']),
+                'paginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
+                'paginationColorOpacity' => floatval($colorStyles['pagination-normal']['opacity'] ?? $colorStyles['opacity-pagination-normal']),
                 'paginationColorPalette' => '',
 
-                'activePaginationColorHex' => $colorStyles['pagination-active'],
-                'activePaginationColorOpacity' => floatval($colorStyles['opacity-pagination-active']),
+                'activePaginationColorHex' => $colorStyles['pagination-active']['color'] ?? $colorStyles['pagination-active'],
+                'activePaginationColorOpacity' => floatval($colorStyles['pagination-active']['opacity'] ?? $colorStyles['opacity-pagination-active']),
                 'activePaginationColorPalette' => '',
 
-                'hoverPaginationColorHex' => $colorStyles['pagination-normal'],
-                'hoverPaginationColorOpacity' => 0.75,
+                'hoverPaginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
+                'hoverPaginationColorOpacity' => $colorStyles['pagination-normal']['opacity'] ?? 0.75,
                 'hoverPaginationColorPalette' => '',
 
                 'resultsHeadingColorHex' => $colorStyles['text-color'],
@@ -330,7 +330,7 @@ abstract class MediaLayout extends AbstractElement
         $sectionDescriptionStyle = [
             'bgColorHex' => $sectionPalette['item-bg'],
             'bgColorPalette' => '',
-            'bgColorOpacity' => 1,
+            'bgColorOpacity' => 0,
         ];
 
         $sectionDescriptionItemsStyle = [
@@ -418,7 +418,7 @@ abstract class MediaLayout extends AbstractElement
             'showPreacher' => 'off',
             'showPassage' => 'off',
             'showMetaHeadings' => 'off',
-            'showPreviousPage' => 'off',
+            'showPreviousPage' => 'on',
             'showMediaLinksVideo' =>'off',
             'showMediaLinksAudio' => 'off',
             'showMediaLinksDownload' => 'on',
@@ -459,6 +459,13 @@ abstract class MediaLayout extends AbstractElement
             'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
             'hoverSubscribeButtonBgColorOpacity' => 0.75,
             'hoverSubscribeButtonBgColorPalette' => '',
+
+            "typographyBold" => false,
+            "typographyItalic" => false,
+            "typographyUnderline" => false,
+            "typographyStrike" => false,
+            "typographyUppercase" => false,
+            "typographyLowercase" => false
         ];
 
         foreach ($sectionStyle as $key => $value) {

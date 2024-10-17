@@ -12,6 +12,7 @@ use MBMigration\Builder\Layout\Common\Element\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
 
 abstract class EventLayout extends AbstractElement
@@ -230,9 +231,28 @@ abstract class EventLayout extends AbstractElement
 
     private function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
     {
+        $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
+
+        $richTextTitle = [
+            'text' => '<p data-generated-css="brz-css-yVHHc" data-uniq-id="oe68r" class="brz-tp-lg-heading2 brz-text-lg-center"><span style="color: '.$colorTitle.';">Sermon Details</span></p>',
+        ];
+
+        $wrapperItemTitle = [
+            'bgColorHex' => $sectionPalette['btn-bg'],
+            'bgColorPalette' => '',
+            'bgColorOpacity' => 1,
+        ];
 
         $sectionStyle = [
-            'bgColorHex' => $sectionPalette['bg']
+            'bgColorHex' => $sectionPalette['bg'],
+            'bgColorPalette' => '',
+            'bgColorOpacity' => 1,
+        ];
+
+        $sectionDescriptionStyle = [
+            'bgColorHex' => $sectionPalette['item-bg'],
+            'bgColorPalette' => '',
+            'bgColorOpacity' => 0,
         ];
 
         $sectionProperties1 = [
@@ -352,6 +372,13 @@ abstract class EventLayout extends AbstractElement
             'hoverSubscribeEventButtonBgColorHex' => $sectionPalette['btn-bg'],
             'hoverSubscribeEventButtonBgColorOpacity' => 0.75,
             'hoverSubscribeEventButtonBgColorPalette' => '',
+
+            "typographyBold" => false,
+            "typographyItalic" => false,
+            "typographyUnderline" => false,
+            "typographyStrike" => false,
+            "typographyUppercase" => false,
+            "typographyLowercase" => false
         ];
 
         foreach ($sectionStyle as $key => $value) {
@@ -371,5 +398,24 @@ abstract class EventLayout extends AbstractElement
             $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0)
                 ->$properties($value);
         }
+
+        foreach ($wrapperItemTitle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0)
+                ->$properties($value);
+        }
+
+        foreach ($richTextTitle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0, 0, 0)
+                ->$properties($value);
+        }
+
+        foreach ($sectionDescriptionStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1)
+                ->$properties($value);
+        }
+
     }
 }
