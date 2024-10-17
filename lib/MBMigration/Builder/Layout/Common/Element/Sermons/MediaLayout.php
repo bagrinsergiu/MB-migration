@@ -236,7 +236,7 @@ abstract class MediaLayout extends AbstractElement
 
                 'showCategoryFilter' => 'off',
 
-                'colorHex' =>  $colorStyles['color-text-header']['color'] ?? "#ebeff2",
+                'colorHex' =>  $colorStyles['color-text-header']['color'] ?? $colorStyles['color-text-header'],
                 'colorOpacity' => $colorStyles['color-text-header']['opacity'] ?? 1,
                 'colorPalette' => "",
 
