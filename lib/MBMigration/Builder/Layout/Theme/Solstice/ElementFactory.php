@@ -2,37 +2,33 @@
 
 namespace MBMigration\Builder\Layout\Theme\Solstice;
 
-use MBMigration\Browser\BrowserPage;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\AccordionLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\EventLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\EventGalleryLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\EventTileLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\EventListLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Events\EventLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Sermons\MediaLayout;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Footer;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\FourHorizontalText;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\FullText;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\FullWidthForm;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\GalleryLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\GridLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\GridMediaLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Forms\FullWidthForm;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Forms\LeftForm;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Forms\RightForm;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Gallery\GalleryLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Groups\SmallGroupsList;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Head;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\LeftForm;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\LeftMedia;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\LeftMediaCircle;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\ListLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\ListMediaLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\PrayerForm;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\PrayerList;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\RightForm;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\RightMedia;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\SmallGroupsList;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\TabsLayout;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\ThreeBottomMediaCircle;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\LivestreamLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Prayer\PrayerForm;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Prayer\PrayerList;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Sermons\LivestreamLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\AccordionLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\FourHorizontalText;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\FullText;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\FullMedia;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\GridLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\LeftMedia;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\LeftMediaCircle;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\ListLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\RightMedia;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\TabsLayout;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\ThreeBottomMediaCircle;
 
 class ElementFactory extends AbstractThemeElementFactory
 {
@@ -55,22 +51,18 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new ThreeBottomMediaCircle($this->blockKit['blocks']['three-bottom-media-circle'], $browserPage);
             case 'four-horizontal-text':
                 return new FourHorizontalText($this->blockKit['blocks']['four-horizontal-text'], $browserPage);
-           case 'gallery-layout':
+            case 'gallery-layout':
                 return new GalleryLayout($this->blockKit['blocks']['gallery-layout'], $browserPage);
             case 'livestream-layout':
                 return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $browserPage);
-            case 'grid-media-layout':
-                return new GridMediaLayout($this->blockKit['blocks']['abstract-media-layout'], $browserPage);
-            case 'list-media-layout':
-                return new ListMediaLayout($this->blockKit['blocks']['abstract-media-layout'], $browserPage);
+
             case 'event-list-layout':
-                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $browserPage, $this->getQueryBuilder());
             case 'event-tile-layout':
-                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage, $this->getQueryBuilder());
             case 'event-calendar-layout':
-//                return new EventCalendarLayout($this->blockKit['blocks']['event-calendar-layout'], $browserPage);
             case 'event-gallery-layout':
-                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $browserPage);
+                return new EventLayout($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
+
+
             case 'full-width-form':
                 return new FullWidthForm($this->blockKit['blocks']['form'], $browserPage);
             case 'left-form-with-text':
@@ -81,10 +73,12 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new GridLayout($this->blockKit['blocks']['grid-layout'], $browserPage);
             case 'list-layout':
                 return new ListLayout($this->blockKit['blocks']['list-layout'], $browserPage);
+
             case 'prayer-form':
                 return new PrayerForm($this->blockKit['blocks']['prayer-form'], $browserPage);
             case 'prayer-list':
                 return new PrayerList($this->blockKit['blocks']['prayer-list'], $browserPage);
+
             case 'tabs-layout':
                 return new TabsLayout($this->blockKit['blocks']['tabs-layout'], $browserPage);
             case 'accordion-layout':
@@ -104,12 +98,14 @@ class ElementFactory extends AbstractThemeElementFactory
 //            case 'right-form-with-text':
 //                return new RightForm($this->blockKit['blocks']['form'], $browserPage);
 
-//            case 'grid-media-layout':
-//                return new GridMediaLayout($this->blockKit['blocks']['grid-media-layout'], $browserPage, $this->getQueryBuilder());
-//            case 'list-media-layout':
-//                return new ListMediaLayout($this->blockKit['blocks']['list-media-layout'], $browserPage, $this->getQueryBuilder());
-//            case 'full-media':
-//                return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);
+            case 'grid-media-layout':
+            case 'list-media-layout':
+                return new MediaLayout($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
+
+            case 'full-media':
+            case 'top-media':
+                return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);
+
             default:
                 throw new ElementNotFound("The Element [{$name}] was not found.");
         }

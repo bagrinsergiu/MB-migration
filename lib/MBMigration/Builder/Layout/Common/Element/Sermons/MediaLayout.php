@@ -193,6 +193,11 @@ abstract class MediaLayout extends AbstractElement
                 ['color'],
                 $this->browserPage);
 
+            $resultColorStyles['color-text-header'] = $this->getDomElementStyles(
+                $dataIdSelector. ' .media-player-container .media-header',
+                ['color'],
+                $this->browserPage);
+
 
             $colorStyles = [
                 'text-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['text']['color'] ?? $sectionPalette['text']),
@@ -201,9 +206,12 @@ abstract class MediaLayout extends AbstractElement
                 'pagination-normal' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-normal']['color']  ?? $sectionPalette['text']),
                 'pagination-active' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-active']['color']  ?? $sectionPalette['text']),
                 'color-text-description' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-description']['color']  ?? $sectionPalette['text']),
+                'color-text-header' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-header']['color']  ?? $sectionPalette['text']),
                 'opacity-pagination-normal' => $resultColorStyles['opacity-pagination-normal']['opacity'] ?? 0.75,
                 'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'] ?? 1,
             ];
+
+            $sectionPalette['item-bg'] = $colorStyles['bg-color'];
 
             $this->setStyleDetailPage($detailsSection, $sectionPalette);
 
@@ -219,7 +227,7 @@ abstract class MediaLayout extends AbstractElement
 
             $this->getDetailsLinksComponent($brizySectionGrid)
                 ->getValue()
-                ->set_defaultCategory($slug)
+//                ->set_defaultCategory($slug)
                 ->set_parentCategory($slug)
                 ->set_detailPageSource($collectionTypeUri)
                 ->set_detailPage("{{placeholder content='$placeholder'}}");
@@ -228,8 +236,8 @@ abstract class MediaLayout extends AbstractElement
 
                 'showCategoryFilter' => 'off',
 
-                'colorHex' =>  $colorStyles['color-text-description']['color'] ?? "#ebeff2",
-                'colorOpacity' => $colorStyles['color-text-description']['opacity'] ?? 1,
+                'colorHex' =>  $colorStyles['color-text-header']['color'] ?? "#ebeff2",
+                'colorOpacity' => $colorStyles['color-text-header']['opacity'] ?? 1,
                 'colorPalette' => "",
 
                 'titleColorHex' =>  $sectionPalette['link'] ?? "#1e1eb7",
@@ -253,19 +261,19 @@ abstract class MediaLayout extends AbstractElement
                 'filterBgColorPalette' => '',
 
                 'itemBgColorHex' => $colorStyles['bg-color'],
-                'itemBgColorOpacity' => $colorStyles['bg-opacity'],
+                'itemBgColorOpacity' => 0, // $colorStyles['bg-opacity'],
                 'itemBgColorPalette' => '',
 
-                'paginationColorHex' => $colorStyles['pagination-normal'],
-                'paginationColorOpacity' => floatval($colorStyles['opacity-pagination-normal']),
+                'paginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
+                'paginationColorOpacity' => floatval($colorStyles['pagination-normal']['opacity'] ?? $colorStyles['opacity-pagination-normal']),
                 'paginationColorPalette' => '',
 
-                'activePaginationColorHex' => $colorStyles['pagination-active'],
-                'activePaginationColorOpacity' => floatval($colorStyles['opacity-pagination-active']),
+                'activePaginationColorHex' => $colorStyles['pagination-active']['color'] ?? $colorStyles['pagination-active'],
+                'activePaginationColorOpacity' => floatval($colorStyles['pagination-active']['opacity'] ?? $colorStyles['opacity-pagination-active']),
                 'activePaginationColorPalette' => '',
 
-                'hoverPaginationColorHex' => $colorStyles['pagination-normal'],
-                'hoverPaginationColorOpacity' => 0.75,
+                'hoverPaginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
+                'hoverPaginationColorOpacity' => $colorStyles['pagination-normal']['opacity'] ?? 0.75,
                 'hoverPaginationColorPalette' => '',
 
                 'resultsHeadingColorHex' => $colorStyles['text-color'],
@@ -277,11 +285,11 @@ abstract class MediaLayout extends AbstractElement
                 "itemPaddingSuffix" => "px",
                 "itemPaddingTop" => 0,
                 "itemPaddingTopSuffix" => "px",
-                "itemPaddingRight" => 5,
+                "itemPaddingRight" => 0,
                 "itemPaddingRightSuffix" => "px",
                 "itemPaddingBottom" => 0,
                 "itemPaddingBottomSuffix" => "px",
-                "itemPaddingLeft" => 5,
+                "itemPaddingLeft" => 0,
                 "itemPaddingLeftSuffix" => "px",
             ];
 
@@ -301,8 +309,69 @@ abstract class MediaLayout extends AbstractElement
     private function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
     {
 
+        $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
+
+        $richTextTitle = [
+            'text' => '<p data-generated-css="brz-css-yVHHc" data-uniq-id="oe68r" class="brz-tp-lg-heading2 brz-text-lg-center"><span style="color: '.$colorTitle.';">Sermon Details</span></p>',
+        ];
+
+        $wrapperItemTitle = [
+            'bgColorHex' => $sectionPalette['btn-bg'],
+            'bgColorPalette' => '',
+            'bgColorOpacity' => 1,
+        ];
+
         $sectionStyle = [
-            'bgColorHex' => $sectionPalette['bg']
+            'bgColorHex' => $sectionPalette['bg'],
+            'bgColorPalette' => '',
+            'bgColorOpacity' => 1,
+        ];
+
+        $sectionDescriptionStyle = [
+            'bgColorHex' => $sectionPalette['item-bg'],
+            'bgColorPalette' => '',
+            'bgColorOpacity' => 0,
+        ];
+
+        $sectionDescriptionItemsStyle = [
+            "mobilePaddingType" => "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 5,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 5,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+
+
+        $sectionPlayerStyle = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 0,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            "mobileMarginType" => "ungrouped",
+            "mobileMargin" => 0,
+            "mobileMarginSuffix" => "px",
+            "mobileMarginTop" => 10,
+            "mobileMarginTopSuffix" => "px",
+            "mobileMarginRight" => 0,
+            "mobileMarginRightSuffix" => "px",
+            "mobileMarginBottom" => 0,
+            "mobileMarginBottomSuffix" => "px",
+            "mobileMarginLeft" => 0,
+            "mobileMarginLeftSuffix" => "px",
         ];
 
         $sectionProperties1 = [
@@ -349,7 +418,7 @@ abstract class MediaLayout extends AbstractElement
             'showPreacher' => 'off',
             'showPassage' => 'off',
             'showMetaHeadings' => 'off',
-            'showPreviousPage' => 'off',
+            'showPreviousPage' => 'on',
             'showMediaLinksVideo' =>'off',
             'showMediaLinksAudio' => 'off',
             'showMediaLinksDownload' => 'on',
@@ -390,6 +459,13 @@ abstract class MediaLayout extends AbstractElement
             'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
             'hoverSubscribeButtonBgColorOpacity' => 0.75,
             'hoverSubscribeButtonBgColorPalette' => '',
+
+            "typographyBold" => false,
+            "typographyItalic" => false,
+            "typographyUnderline" => false,
+            "typographyStrike" => false,
+            "typographyUppercase" => false,
+            "typographyLowercase" => false
         ];
 
         foreach ($sectionStyle as $key => $value) {
@@ -398,15 +474,49 @@ abstract class MediaLayout extends AbstractElement
                 ->$properties($value);
         }
 
+        foreach ($sectionPlayerStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 0)
+                ->$properties($value);
+        }
+
+        foreach ($sectionDescriptionItemsStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 0)
+                ->$properties($value);
+        }
+        foreach ($sectionDescriptionItemsStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 1)
+                ->$properties($value);
+        }
+
         foreach ($sectionProperties1 as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
                 ->$properties($value);
         }
+        foreach ($sectionDescriptionStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1)
+                ->$properties($value);
+        }
 
         foreach ($sectionProperties2 as $key => $value) {
             $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0)
+                ->$properties($value);
+        }
+
+        foreach ($wrapperItemTitle as $key => $value) {
+            $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0)
+                ->$properties($value);
+        }
+
+        foreach ($richTextTitle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0, 0, 0)
                 ->$properties($value);
         }
     }

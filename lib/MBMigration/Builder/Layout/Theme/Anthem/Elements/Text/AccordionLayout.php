@@ -137,10 +137,12 @@ class AccordionLayout extends \MBMigration\Builder\Layout\Common\Element\Accordi
 
             $elementWrapper = $brizyAccordionItem->getItemWithDepth(0);
 
-            foreach ($accordionWrapperElementStyle as $key => $value) {
-                $method = "set_".$key;
-                $elementWrapper->getValue()
-                    ->$method($value);
+            if(!empty($elementWrapper)){
+                foreach ($accordionWrapperElementStyle as $key => $value) {
+                    $method = "set_".$key;
+                    $elementWrapper->getValue()
+                        ->$method($value);
+                }
             }
 
             $brizyAccordionItems[] = $brizyAccordionItemComponent;
