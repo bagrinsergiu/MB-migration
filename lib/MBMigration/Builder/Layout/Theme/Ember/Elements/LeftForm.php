@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\Forms\FormWithTextElement;
+use MBMigration\Builder\Layout\Common\Elements\Forms\FormWithTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class LeftForm extends FormWithTextElement

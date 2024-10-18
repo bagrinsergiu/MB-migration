@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 
 class RightFormWithText extends AbstractElement
 {

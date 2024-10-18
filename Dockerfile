@@ -55,11 +55,19 @@ COPY .docker/entrypoint.sh /usr/local/bin/docker-entrypoint
 COPY --from=stage_composer /vendor ./
 COPY . ./
 COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/dist lib/MBMigration/Builder/Layout/Theme/Anthem/Assets/dist
-COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/dist lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/August/Assets/dist lib/MBMigration/Builder/Layout/Theme/August/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Aurora/Assets/dist lib/MBMigration/Builder/Layout/Theme/Aurora/Assets/dist
 COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/dist lib/MBMigration/Builder/Layout/Theme/Bloom/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Boulevard/Assets/dist lib/MBMigration/Builder/Layout/Theme/Boulevard/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Dusk/Assets/dist lib/MBMigration/Builder/Layout/Theme/Dusk/Assets/dist
 COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Ember/Assets/dist lib/MBMigration/Builder/Layout/Theme/Ember/Assets/dist
-COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/dist lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Hope/Assets/dist lib/MBMigration/Builder/Layout/Theme/Hope/Assets/dist
 COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/dist lib/MBMigration/Builder/Layout/Theme/Majesty/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Serene/Assets/dist lib/MBMigration/Builder/Layout/Theme/Serene/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/dist lib/MBMigration/Builder/Layout/Theme/Solstice/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Tradition/Assets/dist lib/MBMigration/Builder/Layout/Theme/Tradition/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/dist lib/MBMigration/Builder/Layout/Theme/Voyage/Assets/dist
+COPY --from=node /build/lib/MBMigration/Builder/Layout/Theme/Zion/Assets/dist lib/MBMigration/Builder/Layout/Theme/Zion/Assets/dist
 
 ENTRYPOINT ["tini", "docker-entrypoint", "--"]
 

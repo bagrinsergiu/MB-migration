@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Solstice\Elements\Forms;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\ItemBuilder;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class LeftFormWithText extends AbstractElement

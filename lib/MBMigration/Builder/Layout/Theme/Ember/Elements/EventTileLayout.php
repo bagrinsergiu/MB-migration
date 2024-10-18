@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-class EventTileLayout extends \MBMigration\Builder\Layout\Common\Element\Events\EventTileLayout
+class EventTileLayout extends \MBMigration\Builder\Layout\Common\Elements\Events\EventTileLayout
 {
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {

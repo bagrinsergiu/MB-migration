@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\Forms;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\Forms\FormElement;
+use MBMigration\Builder\Layout\Common\Elements\Forms\FormElement;
 
 class Form extends FormElement
 {

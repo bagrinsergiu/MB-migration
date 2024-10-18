@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\HeadElement;
+use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class Head extends HeadElement

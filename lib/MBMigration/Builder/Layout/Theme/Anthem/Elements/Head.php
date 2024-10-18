@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\HeadElement;
+use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\PathSlugExtractor;

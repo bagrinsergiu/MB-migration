@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Solstice\Elements\Forms;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\Forms\FormWithTextElement;
+use MBMigration\Builder\Layout\Common\Elements\Forms\FormWithTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class RightForm extends FormWithTextElement

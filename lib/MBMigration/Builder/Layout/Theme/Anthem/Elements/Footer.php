@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\FooterElement;
+use MBMigration\Builder\Layout\Common\Elements\FooterElement;
 
 class Footer extends FooterElement
 {
