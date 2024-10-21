@@ -78,11 +78,23 @@ class Head extends HeadElement
             ]
         );
 
+        $imageSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"] #main-navigation > ul > li:not(.selected) > a > span';
+        $colorMenuTextStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $imageSectionSelector,
+                'styleProperties' => ['color'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
         $headStyle = [
             'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['width']),
             'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['height']),
             'bg-color'=> ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
             'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
+            'text-color' => ColorConverter::convertColorRgbToHex($colorMenuTextStyles['data']['color']),
         ];
 
         $brizySection->getItemWithDepth(0)
@@ -113,8 +125,8 @@ class Head extends HeadElement
 
         $activeItemMenuOptions = [
             'activeMenuBorderStyle' => 'solid',
-            'activeMenuBorderColorHex' => '#000000',
-            'activeMenuBorderColorOpacity' => 0.02,
+            'activeMenuBorderColorHex' => $headStyle['text-color'],
+            'activeMenuBorderColorOpacity' => 0.25,
             'activeMenuBorderColorPalette' => '',
             'activeMenuBorderWidthType' => 'ungrouped',
             'activeMenuBorderWidth' => 3,
@@ -123,6 +135,23 @@ class Head extends HeadElement
             'activeMenuBorderBottomWidth' => 3,
             'activeMenuBorderLeftWidth' => 0,
         ];
+
+
+        $menuPadding = [
+            "menuPaddingType" => "ungrouped",
+            "menuPadding" => 5,
+            "menuPaddingSuffix" => "px",
+            "menuPaddingTop" => 0,
+            "menuPaddingTopSuffix" => "px",
+            "menuPaddingRight" => 5,
+            "menuPaddingRightSuffix" => "px",
+            "menuPaddingBottom" => 3,
+            "menuPaddingBottomSuffix" => "px",
+            "menuPaddingLeft" => 5,
+            "menuPaddingLeftSuffix" => "px",
+        ];
+
+
 
         $sectionlogoOptions = [
             'horizontalAlign' => 'center',
@@ -184,7 +213,9 @@ class Head extends HeadElement
                 ->$nameOption($value);
         }
 
-        foreach ($activeItemMenuOptions as $logoOption => $value) {
+        $itemMenuOptions = array_merge($activeItemMenuOptions, $menuPadding);
+
+        foreach ($itemMenuOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
             $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
                 ->getValue()
