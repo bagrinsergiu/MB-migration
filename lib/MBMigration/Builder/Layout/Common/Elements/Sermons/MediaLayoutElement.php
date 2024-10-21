@@ -269,7 +269,7 @@ abstract class MediaLayoutElement extends AbstractElement
                 'paginationColorPalette' => '',
 
                 'activePaginationColorHex' => $colorStyles['pagination-active']['color'] ?? $colorStyles['pagination-active'],
-                'activePaginationColorOpacity' => floatval($colorStyles['pagination-active']['opacity'] ?? $colorStyles['opacity-pagination-active']),
+                'activePaginationColorOpacity' => floatval($colorStyles['opacity-pagination-active'] ?? $colorStyles['pagination-active']['opacity']),
                 'activePaginationColorPalette' => '',
 
                 'hoverPaginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
