@@ -7,7 +7,7 @@ use MBMigration\Builder\BrizyComponent\BrizyMinistryBrandsSermonLayout;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 abstract class AbstractMediaLayout extends AbstractElement

@@ -6,7 +6,7 @@ use Exception;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
-use MBMigration\Builder\Layout\Common\Element\FooterElement;
+use MBMigration\Builder\Layout\Common\Elements\FooterElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 

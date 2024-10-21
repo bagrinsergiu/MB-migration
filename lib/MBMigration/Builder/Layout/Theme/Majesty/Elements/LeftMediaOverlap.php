@@ -6,7 +6,7 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Element\AbstractElement;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class LeftMediaOverlap extends AbstractElement

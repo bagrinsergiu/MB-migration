@@ -1,0 +1,24 @@
+{
+  "name": "august",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "lint": "eslint --ext .ts ./src",
+    "tsc": "tsc --noEmit",
+    "start": "npm run build -- --watch",
+    "dev": "npm start",
+    "build": "npm run clean && node bin/index.js",
+    "build:prod": "npm run build -- --production",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "utils": "*",
+    "elements": "*"
+  },
+  "devDependencies": {
+    "config": "*",
+    "esbuild": "^0.19.5",
+    "minimist": "^1.2.8",
+    "rimraf": "^5.0.5"
+  }
+}

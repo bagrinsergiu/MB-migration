@@ -4,12 +4,21 @@
   "version": "1.0.0",
   "workspaces": [
     "packages/*",
-    "lib/MBMigration/Builder/Layout/Theme/Voyage/Assets",
     "lib/MBMigration/Builder/Layout/Theme/Anthem/Assets",
-    "lib/MBMigration/Builder/Layout/Theme/Solstice/Assets",
-    "lib/MBMigration/Builder/Layout/Theme/Majesty/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/August/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Aurora/Assets",
     "lib/MBMigration/Builder/Layout/Theme/Bloom/Assets",
-    "lib/MBMigration/Builder/Layout/Theme/Ember/Assets"
+    "lib/MBMigration/Builder/Layout/Theme/Boulevard/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Dusk/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Ember/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Dusk/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Hope/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Majesty/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Serene/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Solstice/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Tradition/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Voyage/Assets",
+    "lib/MBMigration/Builder/Layout/Theme/Zion/Assets"
   ],
   "scripts": {
     "lint": "turbo run lint",

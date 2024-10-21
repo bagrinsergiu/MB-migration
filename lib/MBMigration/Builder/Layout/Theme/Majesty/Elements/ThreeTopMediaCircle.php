@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\ThreeTopMediaCircleElement;
+use MBMigration\Builder\Layout\Common\Elements\Text\ThreeTopMediaCircleElement;
 
 class ThreeTopMediaCircle extends ThreeTopMediaCircleElement
 {

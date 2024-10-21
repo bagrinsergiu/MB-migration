@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\TwoHorizontalTextElement;
+use MBMigration\Builder\Layout\Common\Elements\Text\TwoHorizontalTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 

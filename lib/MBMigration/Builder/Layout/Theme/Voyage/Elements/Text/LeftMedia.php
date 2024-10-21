@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\PhotoTextElement;
+use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 
 class LeftMedia extends PhotoTextElement
 {

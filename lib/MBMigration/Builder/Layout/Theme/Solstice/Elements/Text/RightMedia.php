@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Element\PhotoTextElement;
+use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 
 class RightMedia extends PhotoTextElement
 {

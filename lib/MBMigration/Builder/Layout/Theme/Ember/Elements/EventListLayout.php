@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
-class EventListLayout extends \MBMigration\Builder\Layout\Common\Element\Events\EventListLayout
+class EventListLayout extends \MBMigration\Builder\Layout\Common\Elements\Events\EventListLayout
 {
     protected function getDetailsComponent(BrizyComponent $brizySection)
     {
