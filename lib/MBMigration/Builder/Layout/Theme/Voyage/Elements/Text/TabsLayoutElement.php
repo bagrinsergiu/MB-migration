@@ -24,6 +24,16 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 80;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

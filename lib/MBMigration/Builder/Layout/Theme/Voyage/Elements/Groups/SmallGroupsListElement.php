@@ -5,6 +5,16 @@ namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Groups;
 class SmallGroupsListElement extends \MBMigration\Builder\Layout\Common\Elements\Groups\SmallGroupsListElement
 {
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 80;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
