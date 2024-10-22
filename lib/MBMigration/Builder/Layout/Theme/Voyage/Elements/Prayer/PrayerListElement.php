@@ -5,6 +5,16 @@ namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Prayer;
 class PrayerListElement extends \MBMigration\Builder\Layout\Common\Elements\Prayer\PrayerListElement
 {
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 80;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

@@ -170,7 +170,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 50;
+        return 80;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

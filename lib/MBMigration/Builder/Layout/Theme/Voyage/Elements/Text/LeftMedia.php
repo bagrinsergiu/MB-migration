@@ -30,6 +30,16 @@ class LeftMedia extends PhotoTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 80;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
