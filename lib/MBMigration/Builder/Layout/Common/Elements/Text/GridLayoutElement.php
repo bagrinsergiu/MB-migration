@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -15,6 +16,7 @@ abstract class GridLayoutElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use ImageStylesAble;
+    use DanationsAble;
 
     private array $globalBrizyKit;
 
@@ -113,6 +115,7 @@ abstract class GridLayoutElement extends AbstractElement
                                 $brizySectionItem
                             );
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
+                            $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
                             break;
                     }
                 }
