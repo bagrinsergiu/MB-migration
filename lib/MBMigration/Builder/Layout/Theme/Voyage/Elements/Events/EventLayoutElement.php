@@ -21,9 +21,9 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 50,
+            "paddingTop" => 80,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 50,
+            "paddingBottom" => 80,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

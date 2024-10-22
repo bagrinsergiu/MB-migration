@@ -40,9 +40,9 @@ class FullWidthForm extends FormElement
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 50,
+            "paddingTop" => 80,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 50,
+            "paddingBottom" => 80,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

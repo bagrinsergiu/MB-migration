@@ -17,6 +17,16 @@ class Footer extends FooterElement
         return [
             "marginLeft" => 0,
             "marginRight" => 0,
+
+            "paddingType" => "ungrouped",
+            "paddingTop" => 80,
+            "paddingTopSuffix" => "px",
+            "paddingBottom" => 80,
+            "paddingBottomSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
         ];
     }
 }
