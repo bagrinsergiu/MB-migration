@@ -136,6 +136,7 @@ class PageController
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
             Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
+            $this->cache->update('Success', '++', 'Status');
 
             return true;
 
