@@ -26,6 +26,8 @@ const ex1: Data = {
     data: {
       borderColorHex: "#000000",
       borderColorOpacity: 1,
+      bgColorHex: "#ffffff",
+      bgColorOpacity: 1,
       borderWidth: NaN,
       colorHex: "#000000",
       colorOpacity: 1,
