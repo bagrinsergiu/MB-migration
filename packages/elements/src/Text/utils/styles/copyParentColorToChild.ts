@@ -3,6 +3,32 @@ import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 
 const attributes = extractedAttributes;
 
+const appenStylesToNode = (node: HTMLElement, styles: CSSStyleDeclaration) => {
+  const parentElement = node.parentElement;
+  if (
+    attributes.includes("text-transform") &&
+    styles.textTransform === "uppercase"
+  ) {
+    node.classList.add("brz-capitalize-on");
+  }
+
+  if (styles.color) {
+    node.style.color = styles.color;
+  }
+
+  if (styles.backgroundColor) {
+    node.style.backgroundColor = styles.backgroundColor;
+  }
+
+  if (styles.fontWeight) {
+    node.style.fontWeight = styles.fontWeight;
+  }
+
+  if (parentElement?.tagName === "U") {
+    parentElement.style.color = styles.color;
+  }
+};
+
 export function copyColorStyleToTextNodes(element: Element): void {
   if (element.nodeType === Node.TEXT_NODE) {
     let parentElement = element.parentElement;
@@ -42,6 +68,14 @@ export function copyColorStyleToTextNodes(element: Element): void {
         });
 
         while (parentElement.firstChild) {
+          const firstChild = parentElement.firstChild;
+
+          if (firstChild instanceof HTMLElement) {
+            const computedStyles = window.getComputedStyle(parentElement);
+
+            appenStylesToNode(firstChild, computedStyles);
+          }
+
           emElement.appendChild(parentElement.firstChild);
         }
 
@@ -86,30 +120,9 @@ export function copyColorStyleToTextNodes(element: Element): void {
 
     const innerElement = document.createElement(innerElementType);
 
-    if (
-      attributes.includes("text-transform") &&
-      computedStyles.textTransform === "uppercase"
-    ) {
-      innerElement.classList.add("brz-capitalize-on");
-    }
-
-    if (computedStyles.color) {
-      innerElement.style.color = computedStyles.color;
-    }
-
-    if (computedStyles.backgroundColor) {
-      innerElement.style.backgroundColor = computedStyles.backgroundColor;
-    }
-
-    if (computedStyles.fontWeight) {
-      innerElement.style.fontWeight = computedStyles.fontWeight;
-    }
+    appenStylesToNode(innerElement, computedStyles);
 
     innerElement.textContent = element.textContent;
-
-    if (parentElement.tagName === "U") {
-      parentElement.style.color = computedStyles.color;
-    }
 
     if (element) {
       parentElement.replaceChild(innerElement, element);
