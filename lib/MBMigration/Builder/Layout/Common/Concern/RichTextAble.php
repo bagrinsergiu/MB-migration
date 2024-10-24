@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 use DOMElement;
 use DOMException;
 use Exception;
+use MBMigration\Builder\Media\MediaController;
 use MBMigration\Core\Logger;
 use DOMDocument;
 use MBMigration\Browser\BrowserPageInterface;
@@ -318,24 +319,44 @@ trait RichTextAble
                 ];
 
             } else {
-                $urlComponents = parse_url($mbSectionItem['link']);
+                switch ($this->detectLinkType($mbSectionItem['link'])) {
+                    case 'mail':
+                        $external = [
+                            'linkType' => 'external',
+                            'linkExternal' => 'mailto:'.$mbSectionItem['link'],
+                            'linkExternalBlank' => $mbSectionItem['new_window']
+                        ];
+                        break;
+                    case 'phone':
+                        $external = [
+                            'linkType' => 'external',
+                            'linkExternal' => 'tel:'.$mbSectionItem['link'],
+                            'linkExternalBlank' => $mbSectionItem['new_window']
+                        ];
+                        break;
+                    case 'string':
+                    case 'link':
+                        if(MediaController::is_doc($mbSectionItem['link'])) {
+                            $mbSectionItem['link'] = MediaController::getURLDoc($mbSectionItem['link']);
+                        }
 
-                if (!empty($urlComponents['host'])) {
-                    $slash = '';
-                } else {
-                    $slash = '/';
-                }
-                if ($mbSectionItem['new_window']) {
-                    $mbSectionItem['new_window'] = 'on';
-                } else {
-                    $mbSectionItem['new_window'] = 'off';
-                }
+                        $slash = $this->processURL($mbSectionItem['link']);
 
-                $external = [
-                    'linkType' => 'external',
-                    'linkExternal' => $slash . $mbSectionItem['link'],
-                    'linkExternalBlank' => $mbSectionItem['new_window']
-                ];
+                        $external = [
+                            'linkType' => 'external',
+                            'linkExternal' => $slash . $mbSectionItem['link'],
+                            'linkExternalBlank' => $mbSectionItem['new_window']
+                        ];
+                        break;
+                    default:
+                        $slash = $this->processURL($mbSectionItem['link']);
+
+                        $external = [
+                            'linkType' => 'external',
+                            'linkExternal' => $slash . $mbSectionItem['link'],
+                            'linkExternalBlank' => $mbSectionItem['new_window']
+                        ];
+                }
             }
 
             foreach ($external as $key => $value) {
@@ -343,6 +364,53 @@ trait RichTextAble
                 $brizyComponent->getValue()
                     ->$method($value);
             }
+        }
+    }
+
+    private function detectLinkType($link): string
+    {
+        if (filter_var($link, FILTER_VALIDATE_EMAIL)) {
+            return 'mail';
+        }
+        if (filter_var($link, FILTER_VALIDATE_URL)) {
+            return 'link';
+        }
+        if ($this->checkPhoneNumber($link)) {
+            return 'phone';
+        }
+
+        return 'string';
+    }
+
+    private function processURL($url): string
+    {
+        $urlComponents = parse_url($url);
+
+        $hasHost = isset($urlComponents['host']);
+        $isValidScheme = isset($urlComponents['scheme']) && ($urlComponents['scheme'] === 'https' || $urlComponents['scheme'] === 'http');
+
+        if ($hasHost || $isValidScheme) {
+            return '';
+        } else {
+            return '/';
+        }
+    }
+
+    public function checkPhoneNumber($str): bool
+    {
+        if (!preg_match("/^(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\$/", $str)) {
+
+            return false;
+        }
+
+        $number = preg_replace('/[^0-9]/', '', $str);
+
+        if (ctype_digit($number)) {
+
+            return true;
+        } else {
+
+            return false;
         }
     }
 
