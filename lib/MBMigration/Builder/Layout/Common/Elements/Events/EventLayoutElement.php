@@ -250,7 +250,7 @@ abstract class EventLayoutElement extends AbstractElement
         ];
 
         $sectionDescriptionStyle = [
-            'bgColorHex' => $sectionPalette['item-bg'],
+            'bgColorHex' => $sectionPalette['bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 0,
         ];

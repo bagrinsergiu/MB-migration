@@ -89,12 +89,19 @@ class BrizyComponent implements JsonSerializable
     {
         $depths = func_get_args();
         $item = null;
+
         foreach ($depths as $index) {
             if ($item) {
-                $item = $item->getValue()->get_items()[$index];
+                $items = $item->getValue()->get_items();
             } else {
-                $item = $this->getValue()->get_items()[$index];
+                $items = $this->getValue()->get_items();
             }
+
+            if (!isset($items[$index])) {
+                return $item;
+            }
+
+            $item = $items[$index];
         }
 
         return $item;

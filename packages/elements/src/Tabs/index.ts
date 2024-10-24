@@ -1,7 +1,7 @@
 import { getModel } from "../utils/getModel";
+import { bgModel, model } from "./models";
 import { Entry, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
-import { parseColorString } from "utils/src/color/parseColorString";
 
 interface NavData {
   node: Element;
@@ -15,27 +15,30 @@ const warns: Record<string, Record<string, string>> = {};
 const getTabsV = (data: NavData) => {
   const { node, list, selector } = data;
   const tab = list.children[0];
-  let v = {};
 
   if (!tab) {
     warns["tabs tab"] = {
       message: `Tabs don't have .tabs-list > .tab-title in ${selector}`
     };
-    return v;
   }
 
-  v = getModel({
+  const v = getModel({
     node: tab,
+    modelDefaults: model,
     families: data.families,
     defaultFamily: data.defaultFamily
   });
 
-  const { backgroundColor, opacity } = window.getComputedStyle(node);
-  const color = parseColorString(backgroundColor);
+  const bgV = getModel({
+    node,
+    modelDefaults: bgModel,
+    families: data.families,
+    defaultFamily: data.defaultFamily
+  });
 
   return {
     ...v,
-    ...(color && { bgColorHex: color.hex, opacity: color.opacity ?? +opacity }),
+    ...bgV,
     navStyle: "style-3"
   };
 };
