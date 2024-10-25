@@ -1983,17 +1983,71 @@ const ex30: Data = {
   output: {
     data: [
       {
-        type: 'Wrapper',
+        type: "Wrapper",
         value: {
-          _id: '1',
-          _styles: ['wrapper', 'wrapper--richText'],
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
           items: [
             {
-              type: 'RichText',
+              type: "RichText",
               value: {
-                _id: '1',
-                _styles: ['richText'],
+                _id: "1",
+                _styles: ["richText"],
                 text: '<p class="brz-fs-lg-14 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">Child dedication is   an opportunity to acknowledge children as a gift from God. Families dedicating   their child(ren) make the commitment, to raise them to know, love and serve the   Lord according to His Word, the Bible. Timberwood Church, as a body of Christ,   supports this commitment by loving children as Jesus did, providing an   environment for children to experience the Holy Spirit and partnering with   parents. If you would like more information about Child Dedication, contact   Eric Holst at </span><a target="_self" data-location="email" data-button="false" data-detail="eric.holst@timberwoodchurch.org" data-category="link" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22mailto%3Aeric.holst%40timberwoodchurch.org%22%2C%22externalBlank%22%3A%22off%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><b><span style="">eric.holst@timberwoodchurch.org</span></b></a><span style=""></span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 31 (Anthem embed)
+const ex31: Data = {
+  html: `<div class="text-content text-1 editable" data-id="19657540" data-category="text"><div><div class="embedded-paste" contenteditable="false" data-src="<div id=&quot;resources_calendar_widget&quot; class=&quot;styled&quot;>
+  <div class=&quot;loader&quot;>Loading...</div>
+</div>
+<script type=&quot;text/javascript&quot;>
+  (function(){
+    var rs = document.createElement(&quot;script&quot;);
+    rs.type = &quot;text/javascript&quot;;
+    rs.async = true;
+    rs.src = &quot;//calendar.planningcenteronline.com/widgets/eJxj4ajmsGLLz2RulWe04kotzi8oqea0Yq9I81TiMjQ0NjZns2JzDbFiK_ZU4k_MyYlPLUvNKylms-YAipVmMs-SASouK_FU4gNJlmTmpkLkuAsSixJzi6sZAJFMGcs=64decca82d0dec7dd0874acece089d680844e71d.js&quot;;
+    var s = document.getElementsByTagName(&quot;script&quot;)[0];
+    s.parentNode.insertBefore(rs,s);
+  })();
+</script>"><div id="resources_calendar_widget" class="styled"><div class="rc-content rc-clearfix">   <div id="global_header">     <h2 class="rc-date ellipsis">       Friday, October 25, 2024     </h2>     <div class="rc-position-helper">       <div class="rc-kal_popover" style="display: none;">       <div class="kalendae"><div class="k-calendar" data-cal-index="0"><div class="k-title"><a class="k-btn-previous-year"></a><a class="k-btn-previous-month"></a><a class="k-btn-next-year"></a><a class="k-btn-next-month"></a><span class="k-caption">October, 2024</span></div><div class="k-header"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div><div class="k-days"><span class="k-out-of-month" data-date="2024-09-29">29</span><span class="k-out-of-month" data-date="2024-09-30">30</span><span class="k-in-month k-active" data-date="2024-10-01">1</span><span class="k-in-month k-active" data-date="2024-10-02">2</span><span class="k-in-month k-active" data-date="2024-10-03">3</span><span class="k-in-month k-active" data-date="2024-10-04">4</span><span class="k-in-month k-active" data-date="2024-10-05">5</span><span class="k-in-month k-active" data-date="2024-10-06">6</span><span class="k-in-month k-active" data-date="2024-10-07">7</span><span class="k-in-month k-active" data-date="2024-10-08">8</span><span class="k-in-month k-active" data-date="2024-10-09">9</span><span class="k-in-month k-active" data-date="2024-10-10">10</span><span class="k-in-month k-active" data-date="2024-10-11">11</span><span class="k-in-month k-active" data-date="2024-10-12">12</span><span class="k-in-month k-active" data-date="2024-10-13">13</span><span class="k-in-month k-active" data-date="2024-10-14">14</span><span class="k-in-month k-active" data-date="2024-10-15">15</span><span class="k-in-month k-active" data-date="2024-10-16">16</span><span class="k-in-month k-active" data-date="2024-10-17">17</span><span class="k-in-month k-active" data-date="2024-10-18">18</span><span class="k-in-month k-active" data-date="2024-10-19">19</span><span class="k-in-month k-active" data-date="2024-10-20">20</span><span class="k-in-month k-active" data-date="2024-10-21">21</span><span class="k-in-month k-active" data-date="2024-10-22">22</span><span class="k-in-month k-active" data-date="2024-10-23">23</span><span class="k-in-month k-active" data-date="2024-10-24">24</span><span class="k-selected k-in-month k-active k-today" data-date="2024-10-25">25</span><span class="k-in-month k-active" data-date="2024-10-26">26</span><span class="k-in-month k-active" data-date="2024-10-27">27</span><span class="k-in-month k-active" data-date="2024-10-28">28</span><span class="k-in-month k-active" data-date="2024-10-29">29</span><span class="k-in-month k-active" data-date="2024-10-30">30</span><span class="k-in-month k-active" data-date="2024-10-31">31</span><span class="k-out-of-month" data-date="2024-11-01">1</span><span class="k-out-of-month" data-date="2024-11-02">2</span><span class="k-out-of-month" data-date="2024-11-03">3</span><span class="k-out-of-month" data-date="2024-11-04">4</span><span class="k-out-of-month" data-date="2024-11-05">5</span><span class="k-out-of-month" data-date="2024-11-06">6</span><span class="k-out-of-month" data-date="2024-11-07">7</span><span class="k-out-of-month" data-date="2024-11-08">8</span><span class="k-out-of-month" data-date="2024-11-09">9</span></div></div></div></div>       <ul class="rc-navi">         <li class="rc-btn_wrap rc-disparate-btn">           <button class="rc-icon-date-btn rc-btn rc-btn_primary" onclick="PCOResourcesWidget.toggleKal(); return false;">             <span class="img-icon-date rc-icon">             </span>           </button>         </li>         <li class="rc-prev rc-btn_wrap">           <button class="rc-btn rc-btn_primary" onclick="PCOResourcesWidget.loadDataForDate('2024-10-24'); return false;">             Prev           </button></li>         <li class="rc-today rc-btn_wrap">           <button class="rc-btn rc-btn_primary" onclick="PCOResourcesWidget.loadDataForDate('2024-10-25'); return false;">             Today           </button></li>         <li class="rc-next rc-btn_wrap">           <button class="rc-btn rc-btn_primary" onclick="PCOResourcesWidget.loadDataForDate('2024-10-26'); return false;">             Next           </button></li>       </ul>     </div>   </div>   <div class="rc-resources_grid">     <table class="rc-table_striped">       <thead>         <tr>           <th class="rc-time_col">             <div class="rc-table_sleeve">               Time             </div>           </th>           <th class="rc-primary_col">             <div class="rc-table_sleeve">               Location             </div>           </th>           <th colspan="2">             <div class="rc-table_sleeve">               Event               <input id="search_input" placeholder="Filter..." type="text">             </div>           </th>         </tr>       </thead>       <tbody id="filter_body">         <tr class="no_results rc-row" style="display: none;">           <td class="rc-time rc-time_col">             <div class="rc-table_sleeve">               <span class="rc-results_placeholder">—</span>             </div>           </td>           <td class="rc-primary_col">             <div class="rc-table_sleeve">               <span class="rc-results_placeholder">—</span>             </div>           </td>           <td class="rc-event_title">             <div class="rc-table_sleeve">               <span class="rc-results_placeholder">—</span>             </div>           </td>           <td class="rc-event_time_name">             <div class="rc-table_sleeve">               <span class="rc-results_placeholder">—</span>             </div>           </td>         </tr>             <tr class="rc-row visible">               <td class="rc-time rc-time_col" style="white-space:nowrap;">                 <div class="rc-table_sleeve">                   10:00a - 11:45a                 </div>               </td>               <td class="rc-primary_col">                 <div class="rc-table_sleeve" style="overflow-wrap:anywhere" ;="">                   Boyd's Home - 2128 Thoroughbred Pkwy Goochland, VA 23063                 </div>               </td>               <td class="rc-event_title">                 <div class="rc-table_sleeve">                   Mornings with Moms: LG                 </div>               </td>               <td class="rc-event_time_name">                 <div class="rc-table_sleeve">                                    </div>               </td>             </tr>       </tbody>     </table>   </div>   <div class="rc-footer">     <p>       Powered by&nbsp;       <a href="https://www.planningcenter.com/calendar">Planning Center Calendar</a>     </p>   </div> </div> </div>
+<script type="text/javascript">
+  (function(){
+    var rs = document.createElement("script");
+    rs.type = "text/javascript";
+    rs.async = true;
+    rs.src = "//calendar.planningcenteronline.com/widgets/eJxj4ajmsGLLz2RulWe04kotzi8oqea0Yq9I81TiMjQ0NjZns2JzDbFiK_ZU4k_MyYlPLUvNKylms-YAipVmMs-SASouK_FU4gNJlmTmpkLkuAsSixJzi6sZAJFMGcs=64decca82d0dec7dd0874acece089d680844e71d.js";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(rs,s);
+  })();
+</script></div><p><br></p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"19657540\"]" },
+  output: {
+    data: [
+      {
+        type: "EmbedCode"
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
               }
             }
           ]
@@ -2034,7 +2088,8 @@ describe.each([
   ex27,
   ex28,
   ex29,
-  ex30
+  ex30,
+  ex31
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;

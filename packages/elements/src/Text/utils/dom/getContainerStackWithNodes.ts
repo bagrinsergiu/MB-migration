@@ -182,6 +182,11 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           node.remove();
         });
       } else {
+        if (containerOfNode.querySelector(embedSelector)) {
+          appendNewText = true;
+          stack.append(_node, { type: "embed" });
+          return;
+        }
         // Check the button first because
         // inside button can be icons
         if (buttons.length > 0) {
@@ -256,13 +261,6 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           });
           return;
         }
-      }
-
-      if (containerOfNode.querySelector(embedSelector)) {
-        appendNewText = true;
-        extractInnerText(_node, stack, embedSelector);
-        stack.append(_node, { type: "embed" });
-        return;
       }
 
       if (appendNewText) {
