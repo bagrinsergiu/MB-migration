@@ -283,6 +283,12 @@ trait RichTextAble
 
     private function handleLink($mbSectionItem, $brizyComponent)
     {
+        if ($mbSectionItem['new_window']) {
+            $mbSectionItem['new_window'] = 'on';
+        } else {
+            $mbSectionItem['new_window'] = 'off';
+        }
+
         if ($mbSectionItem['link'] != '') {
             if ($this->findTag($mbSectionItem['link'], 'iframe')) {
                 $popupFromKit = $this->globalBrizyKit['popup']['popup--embedCode'];
