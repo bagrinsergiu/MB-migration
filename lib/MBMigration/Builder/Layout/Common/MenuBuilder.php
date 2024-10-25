@@ -11,7 +11,7 @@ class MenuBuilder implements MenuBuilderInterface
     protected int $brizyProject;
     protected BrizyAPI $brizyApi;
     protected array $fonts;
-    protected $textTransform = 'none';
+    protected array $textTransform;
 
     public function __construct(int $brizyProject, BrizyAPI $brizyApi, array $fonts)
     {
@@ -21,8 +21,10 @@ class MenuBuilder implements MenuBuilderInterface
 
         foreach ($fonts as $itemTextTransform) {
             if (isset($itemTextTransform['name']) && $itemTextTransform['name'] === 'main_nav') {
-                $this->textTransform = $itemTextTransform['text_transform'] ?? 'none';
-                break;
+                $this->textTransform['mainMenu'] = $itemTextTransform['text_transform'] ?? 'none';
+            }
+            if (isset($itemTextTransform['name']) && $itemTextTransform['name'] === 'sub_nav') {
+                $this->textTransform['subMenu'] = $itemTextTransform['text_transform'] ?? 'none';
             }
         }
     }
@@ -45,7 +47,7 @@ class MenuBuilder implements MenuBuilderInterface
         // filter hidden menu items
         $menuItems = array_values(array_filter($menuItems, fn($item) => isset($item['hidden']) && !$item['hidden']));
 
-        $mainMenu = $this->getMainMenu($menuItems);
+        $mainMenu = $this->getMainMenu($menuItems, $this->textTransform);
 
         return $mainMenu;
     }
@@ -54,7 +56,7 @@ class MenuBuilder implements MenuBuilderInterface
      * @param array $menuItems
      * @return array
      */
-    protected function getMainMenu(array $menuItems): array
+    protected function getMainMenu(array $menuItems, $textTransform, bool $itemChild = false): array
     {
         $mainMenu = [];
 
@@ -62,7 +64,7 @@ class MenuBuilder implements MenuBuilderInterface
 
             $settings = json_decode($item['parentSettings'], true);
 
-            $mainMenu[] = $this->createMenuItemData($settings, $item);
+            $mainMenu[] = $this->createMenuItemData($settings, $item, $textTransform, $itemChild);
         }
 
         return $mainMenu;
@@ -74,13 +76,19 @@ class MenuBuilder implements MenuBuilderInterface
      * @param $item
      * @return array
      */
-    protected function createMenuItemData($settings, $item): array
+    protected function createMenuItemData($settings, $item, $textTransform, bool $itemChild = false ): array
     {
+        if($itemChild){
+            $textTransformMenu = $textTransform['subMenu'];
+        } else {
+            $textTransformMenu = $textTransform['mainMenu'];
+        }
+
         $newItem = [
             "uid" => Utils::getNameHash(),
             "isNewTab" => $this->checkOpenInNewTab($settings),
             'isIndex'=>$item['position']==1 && !$item['parent_id'] && $item['landing'],
-            "label" => TextTools::transformText($item['name'], $this->textTransform),
+            "label" => TextTools::transformText($item['name'], $textTransformMenu),
             "items" => [],
         ];
 
@@ -97,7 +105,7 @@ class MenuBuilder implements MenuBuilderInterface
         }
 
         if (isset($item['child']) && count($item['child'])) {
-            $newItem["items"] = $this->getMainMenu($item['child']);
+            $newItem["items"] = $this->getMainMenu($item['child'], $this->textTransform, true);
         }
 
         return $newItem;
