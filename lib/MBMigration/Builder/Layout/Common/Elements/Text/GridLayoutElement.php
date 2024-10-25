@@ -54,6 +54,10 @@ abstract class GridLayoutElement extends AbstractElement
             $rowWidth = (int)( (100/$this->getItemsPerRow()) * $itemCount );
             $brizySectionRow->getValue()->set_size($rowWidth);
 
+            if ($itemCount === 1) {
+                $brizySectionRow->getValue()->set_mobileSize(100);
+            }
+
             foreach ($row as $item) {
 
                 $dataIdSelector = '[data-id="'.($item['sectionId'] ?? $item['id']).'"]';
