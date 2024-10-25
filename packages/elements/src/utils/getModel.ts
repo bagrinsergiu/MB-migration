@@ -19,7 +19,7 @@ interface Model {
 export const getModel = (data: Model) => {
   const { node, families, defaultFamily, modelDefaults } = data;
   const styles = getNodeStyle(node);
-  const dic: Record<string, string | number> = {};
+  const dic: Record<string, Literal | boolean> = {};
 
   Object.keys(modelDefaults).forEach((key) => {
     switch (key) {
@@ -95,7 +95,7 @@ export const getModel = (data: Model) => {
       }
       case "uppercase": {
         const value = `${styles["text-transform"]}`;
-        const isUppercase = value === "uppercase" ? "true" : "false";
+        const isUppercase = value === "uppercase";
 
         dic[toCamelCase(key)] = isUppercase;
         break;

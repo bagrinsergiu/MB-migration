@@ -39,7 +39,8 @@ const getV = (entry: MenuItemData) => {
     "letter-spacing": undefined,
     "font-style": "",
     "color-hex": undefined,
-    "color-opacity": 1
+    "color-opacity": 1,
+    italic: false
   };
 
   const v = getModel({
