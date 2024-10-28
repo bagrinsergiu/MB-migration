@@ -181,7 +181,7 @@ trait SectionStylesAble
 
                 if($background['opacity']>=0.9)
                 {
-                    $background['opacity'] = 0.6;
+                    $background['opacity'] = 0.8;
                 }
 
                 $brizySection->getValue()

@@ -25,6 +25,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $itemImage = new BrizyComponent(json_decode($this->brizyKit['itemImage'], true));
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
@@ -123,18 +124,49 @@ abstract class GalleryLayoutElement extends AbstractElement
             $brizySectionItems[] = $brizySectionItem;
 
         } else {
-            foreach ($mbSection['slide'] as $mbItem) {
+            if(count($mbSection['slide']) === 1){
                 $brizySectionItem = new BrizyComponent($slideJson);
                 $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
-                $this->setSlideImage($brizySectionItemImage, $mbItem, $properties);
-                $this->setSlideLinks($brizySectionItemImage, $mbItem);
+                $this->setSlideImage($brizySectionItemImage, $mbSection['settings']['sections']['background'], $properties);
+                $image = $this->setImageItem($itemImage, $mbSection['slide'][0], $properties);
+
+                $brizySectionItemImage->getValue()
+                    ->set_items([$image]);
+
+                $brizySection->getValue()
+                    ->set_slider("off");
+
                 $brizySectionItems[] = $brizySectionItem;
+            } else {
+                foreach ($mbSection['slide'] as $mbItem) {
+                    $brizySectionItem = new BrizyComponent($slideJson);
+                    $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
+                    $this->setSlideImage($brizySectionItemImage, $mbItem, $properties);
+                    $this->setSlideLinks($brizySectionItemImage, $mbItem);
+                    $brizySectionItems[] = $brizySectionItem;
+                }
+
             }
+
         }
 
         $brizySection->getValue()->set_items($brizySectionItems);
 
         return $brizySection;
+    }
+
+    protected function setImageItem(BrizyComponent $brizySectionItem, $mbItem, $properties = []): BrizyComponent
+    {
+        $brizyComponentValue = $brizySectionItem->getItemWithDepth(0)->getValue();
+        Logger::instance()->debug('ImageSrc (content): '.$mbItem['content']);
+        Logger::instance()->debug('ImageFileName (imageFileName): '.$mbItem['imageFileName']);
+        $brizyComponentValue
+            ->set_marginTop(0)
+            ->set_marginBottom(0)
+            ->set_imageSrc($mbItem['content'])
+            ->set_imageFileName($mbItem['imageFileName']);
+
+        return $brizySectionItem;
     }
 
     protected function setSlideImage(BrizyComponent $brizySectionItem, $mbItem, $properties = []): BrizyComponent
@@ -146,12 +178,26 @@ abstract class GalleryLayoutElement extends AbstractElement
         $brizyComponentValue
             ->set_marginTop(0)
             ->set_marginBottom(0)
-            ->set_bgImageSrc($mbItem['content'])
-            ->set_bgImageFileName($mbItem['imageFileName'])
+            ->set_bgImageSrc($mbItem['content'] ?? $mbItem['photo'])
+            ->set_bgImageFileName($mbItem['imageFileName'] ?? $mbItem['filename'])
             ->set_customCSS('element{background:' . $colorCSS . '}');
 
         if (isset($mbItem['settings']['slide']['extension'])) {
             $brizyComponentValue->set_imageExtension($mbItem['settings']['slide']['extension']);
+        }
+
+        if(!empty($mbItem['photoOption'])){
+            switch ($mbItem['photoOption']){
+                case 'parallax-scroll':
+                    $brizyComponentValue
+                        ->set_sizeType('original')
+                        ->set_bgSize('cover')
+                        ->set_bgImageType('internal')
+                        ->set_bgAttachment('fixed');
+                    break;
+            }
+        } else {
+            $brizyComponentValue->set_sizeType('original');
         }
 
         $brizyComponentValue->set_widthSuffix('px');
@@ -161,7 +207,7 @@ abstract class GalleryLayoutElement extends AbstractElement
         $brizyComponentValue->set_tabletWidthSuffix('px');
         $brizyComponentValue->set_tabletHeightSuffix('px');
 
-        $brizyComponentValue->set_sizeType('original');
+
 
         if (isset($mbItem['settings']['sections']['gallery']['max_width']) &&
             isset($mbItem['settings']['sections']['gallery']['max_height'])) {
