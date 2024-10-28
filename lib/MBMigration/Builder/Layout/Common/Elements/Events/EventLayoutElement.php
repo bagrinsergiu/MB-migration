@@ -75,13 +75,27 @@ abstract class EventLayoutElement extends AbstractElement
             ->set_eventDetailPageSource($collectionTypeUri)
             ->set_eventDetailPage("{{placeholder content='$placeholder'}}");
 
+        switch ($mbSection['typeSection']){
+            case 'event-tile-layout':
+                $eventTabs = [
+                    'featuredViewOrder' => 1,
+                    "listViewOrder"=> 2,
+                    'calendarViewOrder' => 3,
+                ];
+                break;
+            default:
+                $eventTabs = [
+                    'featuredViewOrder' => 3,
+                    "listViewOrder"=> 2,
+                    'calendarViewOrder' => 1,
+                ];
+                break;
+        }
+
         $sectionProperties = [
             'titleTypographyLineHeight' => 1.8,
 
             'listItemMetaTypographyLineHeight' => 1.8,
-
-            'featuredViewOrder' => 3,
-            'calendarViewOrder' => 1,
 
             'dateTypographyLineHeight' => 1.8,
             'eventsTypographyLineHeight' => 1.8,
@@ -197,6 +211,8 @@ abstract class EventLayoutElement extends AbstractElement
             'layoutViewTypographyFontStyle' => '',
             'layoutViewTypographyFontFamilyType' => 'upload',
         ];
+
+        $sectionProperties = array_merge($sectionProperties, $eventTabs);
 
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_'.$key;
