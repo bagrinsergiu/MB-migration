@@ -127,7 +127,9 @@ abstract class GalleryLayoutElement extends AbstractElement
             if(count($mbSection['slide']) === 1){
                 $brizySectionItem = new BrizyComponent($slideJson);
                 $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
-                $this->setSlideImage($brizySectionItemImage, $mbSection['settings']['sections']['background'], $properties);
+                if(!empty($mbSection['settings']['sections']['background'])){
+                    $this->setSlideImage($brizySectionItemImage, $mbSection['settings']['sections']['background'], $properties);
+                }
                 $image = $this->setImageItem($itemImage, $mbSection['slide'][0], $properties);
 
                 $brizySectionItemImage->getValue()
@@ -172,8 +174,8 @@ abstract class GalleryLayoutElement extends AbstractElement
     protected function setSlideImage(BrizyComponent $brizySectionItem, $mbItem, $properties = []): BrizyComponent
     {
         $brizyComponentValue = $brizySectionItem->getValue();
-        Logger::instance()->debug('ImageSrc (content): '.$mbItem['content']);
-        Logger::instance()->debug('ImageFileName (imageFileName): '.$mbItem['imageFileName']);
+        Logger::instance()->debug('ImageSrc (content): '.$mbItem['content']?? $mbItem['photo']);
+        Logger::instance()->debug('ImageFileName (imageFileName): '.$mbItem['imageFileName'] ?? $mbItem['filename']);
         $colorCSS = $properties['background-color'] ?? '#ffffff';
         $brizyComponentValue
             ->set_marginTop(0)
