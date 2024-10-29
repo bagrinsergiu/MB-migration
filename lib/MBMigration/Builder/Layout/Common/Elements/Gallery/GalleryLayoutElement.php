@@ -174,8 +174,8 @@ abstract class GalleryLayoutElement extends AbstractElement
     protected function setSlideImage(BrizyComponent $brizySectionItem, $mbItem, $properties = []): BrizyComponent
     {
         $brizyComponentValue = $brizySectionItem->getValue();
-        Logger::instance()->debug('ImageSrc (content): '.$mbItem['content']?? $mbItem['photo']);
-        Logger::instance()->debug('ImageFileName (imageFileName): '.$mbItem['imageFileName'] ?? $mbItem['filename']);
+        Logger::instance()->debug('ImageSrc (content): '.($mbItem['content'] ?? $mbItem['photo']));
+        Logger::instance()->debug('ImageFileName (imageFileName): '.($mbItem['imageFileName'] ?? $mbItem['filename']));
         $colorCSS = $properties['background-color'] ?? '#ffffff';
         $brizyComponentValue
             ->set_marginTop(0)
