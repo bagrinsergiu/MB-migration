@@ -299,7 +299,7 @@ class MigrationPlatform
             $this->cache->set('preparedSectionOfThePage_'.$page['id'], $preparedSectionOfThePage);
         }
 
-        $collectionItem = $this->pageController->getCollectionItem($page['slug']);
+        $collectionItem = $page['collection'];
 
         if ($collectionItem) {
             $this->pageController->setCurrentPageOnWork($collectionItem);
