@@ -6,6 +6,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Events\EventLayoutElement;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Events\EventFeturedLayout;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Forms\Form;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Forms\LeftForm;
@@ -76,6 +77,7 @@ class ElementFactory extends AbstractThemeElementFactory
 
             case 'event-list-layout':
             case 'event-tile-layout':
+                return new EventFeturedLayout($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
             case 'event-gallery-layout':
             case 'event-calendar-layout':
                 return new EventLayoutElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
