@@ -2167,7 +2167,34 @@ const ex33: Data = {
 };
 //#endregion
 
-
+//#region Example 34 (Anthem Text with font tag)
+const ex34: Data = {
+  html: `<div class="text-content text-1 editable" data-id="13030114" data-category="text"><div><p style="font-family: &quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, &quot;Lucida Sans&quot;, Geneva, Verdana, sans-serif; font-weight: 700; text-align: left; font-size: 0.9973em; color: rgb(0, 83, 166); line-height: 1.4em;">Part 3 - We respond to God's Word</p><ol style="color: rgb(0, 83, 166); font-family: &quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, &quot;Lucida Sans&quot;, Geneva, Verdana, sans-serif; font-style: normal; font-weight: 400;"><li><font color="#0053a6" face="Lucida Grande, Lucida Sans Unicode, Lucida Sans, Geneva, Verdana, sans-serif" style="font-weight: 400;">In songs of praise</font></li><li><font color="#0053a6" face="Lucida Grande, Lucida Sans Unicode, Lucida Sans, Geneva, Verdana, sans-serif" style="font-weight: 400;">In offerings of thanks to God (We support the sharing of his Word)</font></li><li>In prayers for our congregation, our world, and the Church</li></ol></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"13030114\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 83, 166); font-weight: 700; ">Part 3 - We respond to God\'s Word</span></p><ol><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; ">In songs of praise</span></li><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; ">In offerings of thanks to God (We support the sharing of his Word)</span></li><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>In prayers for our congregation, our world, and the Church</span></li></ol>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
 
 describe.each([
   ex1,
@@ -2202,7 +2229,8 @@ describe.each([
   ex30,
   ex31,
   ex32,
-  ex33
+  ex33,
+  ex34
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;

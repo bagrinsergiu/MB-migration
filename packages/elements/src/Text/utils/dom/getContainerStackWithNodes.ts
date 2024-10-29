@@ -153,6 +153,18 @@ const flattenNode = (node: Element) => {
   return _node;
 };
 
+const replaceWrongTags = (node: HTMLElement) => {
+  const tagsToReplace = "font";
+  const replaceElements = node.querySelectorAll(tagsToReplace);
+
+  replaceElements.forEach((element) => {
+    const span = document.createElement("span");
+    appendNodeStyles(element, span);
+    span.innerHTML = element.innerHTML;
+    element.parentNode?.replaceChild(span, element);
+  });
+};
+
 export const getContainerStackWithNodes = (parentNode: Element): Container => {
   const container = document.createElement("div");
   const stack = new Stack();
@@ -265,6 +277,8 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           return;
         }
       }
+
+      replaceWrongTags(_node);
 
       if (appendNewText) {
         appendNewText = false;
