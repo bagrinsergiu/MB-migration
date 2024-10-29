@@ -52,11 +52,9 @@ abstract class GridLayoutElement extends AbstractElement
             $itemCount = count($row);
             $itemWidth = (int)(100/$itemCount);
             $rowWidth = (int)( (100/$this->getItemsPerRow()) * $itemCount );
-            $brizySectionRow->getValue()->set_size($rowWidth);
-
-            if ($itemCount === 1) {
-                $brizySectionRow->getValue()->set_mobileSize(100);
-            }
+            $brizySectionRow->getValue()
+                ->set_size($rowWidth)
+                ->set_mobileSize(100);
 
             foreach ($row as $item) {
 
