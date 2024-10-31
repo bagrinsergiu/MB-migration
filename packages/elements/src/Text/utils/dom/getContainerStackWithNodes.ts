@@ -287,7 +287,9 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
         stack.set(_node, { type: "text" });
       }
     } else {
-      stack.append(_node, { type: "text" });
+      if (_node.textContent?.trim()) {
+        stack.append(_node, { type: "text" });
+      }
     }
   });
 

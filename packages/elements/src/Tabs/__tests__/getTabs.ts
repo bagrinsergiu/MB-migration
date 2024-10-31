@@ -41,7 +41,7 @@ const ex1: Data = {
       mobileLineHeight: 1.2,
       tabletLineHeight: 1.2,
       navStyle: "style-3",
-      uppercase: "false"
+      uppercase: false
     }
   }
 };

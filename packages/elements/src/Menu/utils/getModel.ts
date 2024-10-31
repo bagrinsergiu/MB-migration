@@ -1,4 +1,5 @@
 import { MenuItemElement } from "../../types/type";
+import { Literal, MValue } from "utils";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
@@ -6,7 +7,7 @@ import { toCamelCase } from "utils/src/text/toCamelCase";
 
 interface Model {
   node: MenuItemElement;
-  modelDefaults: Record<string, string | number | undefined>;
+  modelDefaults: Record<string, MValue<Literal | boolean>>;
   families: Record<string, string>;
   defaultFamily: string;
 }
@@ -20,7 +21,7 @@ const pxToEm = (lineHeightValue: string, fontSize: string | number): number => {
 export const getModel = (data: Model) => {
   const { node, modelDefaults, families, defaultFamily } = data;
   const styles = getNodeStyle(node.item, node.pseudoEl);
-  const dic: Record<string, string | number> = {};
+  const dic: Record<string, Literal | boolean> = {};
 
   Object.keys(modelDefaults).forEach((key) => {
     switch (key) {
@@ -135,6 +136,13 @@ export const getModel = (data: Model) => {
         const value = +(toHex?.opacity ?? opacity);
 
         Object.assign(dic, dicKeyForDevices(key, value));
+        break;
+      }
+      case "italic": {
+        const value = `${styles["font-style"]}`;
+        const isItalic = value === "italic";
+
+        dic[toCamelCase(key)] = isItalic;
         break;
       }
       default: {
