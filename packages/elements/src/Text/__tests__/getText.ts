@@ -2087,6 +2087,88 @@ const ex32: Data = {
 };
 //#endregion
 
+//#region Example 33 (Anthem Icon aligment)
+const ex33: Data = {
+  html: `<div class="text-content text-0 editable" data-id="18444100" data-category="text"><div><p style="font-size: 1.1968em;"><a href="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-location="external" data-button="false" data-detail="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-category="link" target="_blank" class="cloverlinks" style="color: rgb(227, 227, 227);">101 N Palm Ave.</a></p><p style="text-align: right;"><a class="socialIconLink cloverlinks" href="https://www.facebook.com/Firstpresfrostproof" data-location="external" data-button="false" data-detail="https://www.facebook.com/Firstpresfrostproof" data-category="link" target="_blank" style="letter-spacing: 0.1504px; background-color: rgb(80, 80, 80); outline-style: initial; outline-width: 0px; color: rgb(202, 232, 79); font-size: 26.9998px;"><span data-socialicon="facebook"><span class="socialIconSymbol" style="font-size: 1.8519em; color: rgb(227, 227, 227);" aria-hidden="true"></span><span class="sr-only">facebook</span></span> <span class="clovercustom" style="font-size: 1.8519em;"> &nbsp;</span></a><a class="socialIconLink cloverlinks" href="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-location="external" data-button="false" data-detail="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-category="link" target="_blank" style="letter-spacing: 0.1504px; background-color: rgb(80, 80, 80); color: rgb(227, 227, 227); font-size: 26.9998px;"><span data-socialicon="map"><span class="socialIconSymbol" style="font-size: 1.8519em;" aria-hidden="true"></span><span class="sr-only">map</span></span><span class="clovercustom" style="font-size: 1.8519em;"> </span></a> </p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"18444100\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-button="false" data-detail="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-category="link" target="_blank" style="color: rgb(227, 227, 227); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.google.com%2Fmaps%2Fplace%2F101%2BN%2BPalm%2BAve%2C%2BFrostproof%2C%2BFL%2B33843%2F%4027.7475396%2C-81.537104%2C17z%2Fdata%3D!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9%3A0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="color: rgb(227, 227, 227); ">101 N Palm Ave.</span></a></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                bgColorHex: "#505050",
+                bgColorOpacity: undefined,
+                bgColorPalette: "",
+                colorHex: "#e3e3e3",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#e3e3e3",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                linkExternal: "https://www.facebook.com/Firstpresfrostproof",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "facebook-f",
+                padding: 7,
+                type: "fa"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                bgColorHex: "#505050",
+                bgColorOpacity: undefined,
+                bgColorPalette: "",
+                customSize: 26,
+                linkExternal:
+                  "https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "map-marker-alt",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+
+
 describe.each([
   ex1,
   ex2,
@@ -2119,7 +2201,8 @@ describe.each([
   ex29,
   ex30,
   ex31,
-  ex32
+  ex32,
+  ex33
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
