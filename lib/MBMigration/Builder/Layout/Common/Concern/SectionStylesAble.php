@@ -191,8 +191,9 @@ trait SectionStylesAble
                     ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
                     ->set_bgColorHex($backgroundColorHex)
 
+                    ->set_mobileBgColorType('solid')
                     ->set_mobileBgColorHex($backgroundColorHex)
-                    ->set_mobileBgColorOpacity($background['opacity']);
+                    ->set_mobileBgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']));
             }
         }
 
