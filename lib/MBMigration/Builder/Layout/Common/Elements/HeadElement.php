@@ -235,7 +235,7 @@ abstract class HeadElement extends AbstractElement
         ]);
 
         if(isset($menuSubItemStyles['error'])) {
-            $this->browserPage->evaluateScript('brizy.removeNodeClass', [
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
@@ -248,7 +248,7 @@ abstract class HeadElement extends AbstractElement
                 'hover' => false,
             ]);
 
-            $this->browserPage->evaluateScript('brizy.addNodeClass', [
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
@@ -277,7 +277,7 @@ abstract class HeadElement extends AbstractElement
             ]);
         } else {
 
-            $this->browserPage->evaluateScript('brizy.removeNodeClass', [
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
@@ -290,7 +290,7 @@ abstract class HeadElement extends AbstractElement
                 'hover' => true,
             ]);
 
-            $this->browserPage->evaluateScript('brizy.addNodeClass', [
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
