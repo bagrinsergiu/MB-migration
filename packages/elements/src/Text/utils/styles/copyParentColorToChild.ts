@@ -71,7 +71,7 @@ export function copyColorStyleToTextNodes(element: Element): void {
           const firstChild = parentElement.firstChild;
 
           if (firstChild instanceof HTMLElement) {
-            const computedStyles = window.getComputedStyle(parentElement);
+            const computedStyles = window.getComputedStyle(firstChild);
 
             appenStylesToNode(firstChild, computedStyles);
           }
