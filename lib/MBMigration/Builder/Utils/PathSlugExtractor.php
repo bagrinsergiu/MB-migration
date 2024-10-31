@@ -42,33 +42,48 @@ class PathSlugExtractor
         return $urlBuilder->setPath($pathPages)->build();
     }
 
-    public static function findDeepestSlug($array): array
+    public static function findDeepestSlug($array, $parentHidden = false): array
     {
         $deepestSlug = null;
         $maxDepth = -1;
 
         foreach ($array as $item) {
-            if (isset($item['slug'])) {
-                $currentSlug = $item['slug'];
+            $currentHidden = isset($item['hidden']) ? $item['hidden'] : false;
+            if ($parentHidden || $currentHidden) {
+                continue;
+            }
 
-                if (!empty($item['child'])) {
-                    $result = self::findDeepestSlug($item['child']);
-                    $depth = $result['depth'] + 1;
+            if (isset($item['child']) && count($item['child']) >= 2) {
+                $validChildren = array_filter($item['child'], function ($child) {
+                    return isset($child['hidden']) && !$child['hidden'];
+                });
 
-                    if ($depth > $maxDepth) {
-                        $maxDepth = $depth;
-                        $deepestSlug = $result['slug'];
-                    }
-                } else {
-                    $slug = $currentSlug;
-                    $depth = 0;
-
-                    if ($depth > $maxDepth) {
-                        $maxDepth = $depth;
-                        $deepestSlug = $slug;
-                    }
+                if (count($validChildren) >= 2) {
+                    return ['slug' => reset($validChildren)['slug'], 'depth' => 1];
                 }
             }
+
+            if (!empty($item['child'])) {
+                $result = self::findDeepestSlug($item['child'], $currentHidden);
+                $depth = $result['depth'] + 1;
+
+                if ($depth > $maxDepth) {
+                    $maxDepth = $depth;
+                    $deepestSlug = $result['slug'];
+                }
+            } else {
+                $slug = $item['slug'];
+                $depth = 0;
+
+                if ($depth > $maxDepth) {
+                    $maxDepth = $depth;
+                    $deepestSlug = $slug;
+                }
+            }
+        }
+
+        if ($deepestSlug === null && isset($array[0]['slug'])) {
+            return ['slug' => $array[0]['slug'], 'depth' => 0];
         }
 
         return ['slug' => $deepestSlug, 'depth' => $maxDepth];
