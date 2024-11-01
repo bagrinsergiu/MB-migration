@@ -162,6 +162,7 @@ trait DanationsAble
         $brizyDonationButton->getItemValueWithDepth(0)
             ->set_text($mbSection['settings']['sections']['donations']['text'] ?? 'MAKE A DONATION')
             ->set_linkExternal($mbSection['settings']['sections']['donations']['url'] ?? '#')
+            ->set_linkExternalBlank($this->detectLinkExternalBlank($mbSection, $browserPage))
             ->set_paddingType('ungrouped')
             ->set_paddingTop((int)$buttonStyles['padding-top'])
             ->set_paddingBottom((int)$buttonStyles['padding-bottom'])
@@ -185,6 +186,35 @@ trait DanationsAble
             ->set_colorPalette("");
 
         return $brizyDonationButton;
+    }
+
+    protected function detectLinkExternalBlank(array $mbSection, BrowserPageInterface $browserPage): string
+    {
+        $selector = '[data-id="'.$mbSection['sectionId'].'"] .donation > a';
+
+        $buttonTarget = $browserPage->evaluateScript(
+            'brizy.getAttributes',
+            [   //#donation-3697334 > div.content-wrapper.clearfix > div.text.donation.center > a
+                'selector' => $selector,
+                'attributeNames' => [
+                    'target',
+                ],
+            ]
+        );
+
+        if (isset($buttonTarget['error'])) {
+            return 'off';
+        }
+
+        $buttonTarget = $buttonTarget['data'];
+
+        if($buttonTarget['target'] == '_blank') {
+
+            return 'on';
+        } else {
+
+            return 'off';
+        }
     }
 
     protected function setHoveButtonStyles(

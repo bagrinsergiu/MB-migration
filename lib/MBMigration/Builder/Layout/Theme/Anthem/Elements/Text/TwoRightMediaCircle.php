@@ -83,6 +83,11 @@ class TwoRightMediaCircle extends PhotoTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

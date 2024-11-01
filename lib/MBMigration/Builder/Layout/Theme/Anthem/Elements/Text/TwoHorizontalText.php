@@ -86,6 +86,11 @@ class TwoHorizontalText extends TwoHorizontalTextElement
         return $brizySection->getItemWithDepth(0, 0, 1);
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
