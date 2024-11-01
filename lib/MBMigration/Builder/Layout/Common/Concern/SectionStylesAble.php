@@ -18,11 +18,23 @@ trait SectionStylesAble
         array $additionalOptions = []
     ): void {
         $mbSectionItem = $data->getMbSection();
+        $options = [];
 
-        $options = [
-            'paddingTop' => $this->getTopPaddingOfTheFirstElement(),
-            'mobilePaddingTop' => $this->getMobileTopPaddingOfTheFirstElement(),
-        ];
+        if($this->getTopPaddingOfTheFirstElement() !== 0) {
+            $options = [
+                'paddingTop' => $this->getTopPaddingOfTheFirstElement(),
+            ];
+
+            $options = array_merge($options, $additionalOptions);
+        }
+
+        if($this->getMobileTopPaddingOfTheFirstElement() !== 0) {
+            $options = [
+                'mobilePaddingTop' => $this->getMobileTopPaddingOfTheFirstElement(),
+            ];
+
+            $options = array_merge($options, $additionalOptions);
+        }
 
         $options = array_merge($options, $additionalOptions);
 
@@ -103,9 +115,9 @@ trait SectionStylesAble
 
         // reset padding top for first section as in brizy there is no need for that padding.
         // In Voyage our fixed heared adds space
-        if (!is_null($pagePosition) && $pagePosition == 0) {
-            $sectionStyles['padding-top'] = 0;
-        }
+//        if (!is_null($pagePosition) && $pagePosition == 0) {
+//            $sectionStyles['padding-top'] = 0;
+//        }
 
         // set the background color paddings and margins
         $brizySection->getValue()

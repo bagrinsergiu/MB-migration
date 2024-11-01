@@ -33,9 +33,6 @@ abstract class GridLayoutElement extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
-        $sectionItemComponent->getValue()
-            ->set_paddingTop($this->getTopPaddingOfTheFirstElement());
-
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
         $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
