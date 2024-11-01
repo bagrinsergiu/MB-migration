@@ -7,6 +7,7 @@ import {
   normalizeOpacity
 } from "../../../utils/common";
 import { getModel as getIconModel } from "../../Icon/utils/getModel";
+import { codeToBuilderMap, defaultIcon } from "../../Icon/utils/iconMapping";
 import { Data } from "../types";
 import { getFontModel } from "./getFontModel";
 import { mPipe } from "fp-utilities";
@@ -144,6 +145,10 @@ export const getModel = ({
   if (icon) {
     const model = getIconModel(icon, urlMap);
     const name = Str.read(model.value.name);
+    const iconCode = icon?.textContent?.charCodeAt(0);
+    const iconName = iconCode
+      ? codeToBuilderMap[iconCode] ?? defaultIcon
+      : defaultIcon;
 
     // Remove the html for Icon
     // have conflicts with text of button
@@ -151,7 +156,8 @@ export const getModel = ({
 
     if (name) {
       iconModel = {
-        iconName: name
+        iconName,
+        iconType: iconCode ? "fa" : "glyph"
       };
     }
   }
