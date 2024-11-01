@@ -1,6 +1,9 @@
 import { Entry, Error } from "../types/type";
 
-export const addNodeClass = ({ selector, className }: Entry): Error | void => {
+export const addNodeClass = ({
+  selector,
+  className
+}: Entry): Error | boolean => {
   if (!className) {
     return {
       error: "className was not provided"
@@ -16,4 +19,6 @@ export const addNodeClass = ({ selector, className }: Entry): Error | void => {
   }
 
   element.classList.add(className);
+
+  return element.classList.contains(className);
 };

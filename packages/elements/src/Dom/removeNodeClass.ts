@@ -3,7 +3,7 @@ import { Entry, Error } from "../types/type";
 export const removeNodeClass = ({
   selector,
   className
-}: Entry): Error | void => {
+}: Entry): Error | boolean => {
   if (!className) {
     return {
       error: "className was not provided"
@@ -19,4 +19,6 @@ export const removeNodeClass = ({
   }
 
   element.classList.remove(className);
+
+  return !element.classList.contains(className);
 };
