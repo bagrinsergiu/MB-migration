@@ -23,6 +23,7 @@ use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
+use MBMigration\Layer\MB\MonkcmsAPI;
 use MBMigration\Parser\JS;
 use Psr\Log\LoggerInterface;
 
@@ -43,6 +44,7 @@ class MigrationPlatform
     private PageController $pageController;
     private LoggerInterface $logger;
     private array $pageMapping;
+    private Config $config;
 
     use checking;
     use DebugBackTrace;
@@ -59,6 +61,8 @@ class MigrationPlatform
         $this->finalSuccess['status'] = 'start';
 
         $this->buildPage = $buildPage;
+
+        $this->config = $config;
     }
 
     public function start(string $projectID_MB, int $projectID_Brizy = 0): bool
@@ -178,6 +182,29 @@ class MigrationPlatform
         }
 
         $this->brizyApi->setMetaDate();
+
+        $received = $this->brizyApi->getMetadata();
+
+        $configM = [
+            'siteId' => $received['site_id'],
+            'siteSecret' => $received['secret'],
+        ];
+
+        $mCms = new MonkcmsAPI($configM);
+
+        $queryParams = [
+            'module' => 'sermon',
+            'display' => 'list',
+            'show' => '{"slug":"__slug__", "title":"__title__", "series":"__series__"},'
+        ];
+
+// Выполнение запроса
+//        try {
+//            $response = $mCms->get($queryParams);
+//            //print_r($response);
+//        } catch (Exception $e) {
+//            //echo 'Ошибка: ' . $e->getMessage();
+//        }
 
         $parentPages = $this->parser->getPages();
 
