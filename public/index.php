@@ -47,6 +47,10 @@ return static function (array $context, Request $request): Response {
         $settings['metaData']['mb_secret'] = $mb_secret;
     }
 
+    if( !empty($context['MB_MONKCMS_API'])){
+        $settings['monkcms_api'] = $context['MB_MONKCMS_API'];
+    }
+
     try {
         $config = new Config(
             $context['BRIZY_CLOUD_HOST'],

@@ -49,7 +49,7 @@ abstract class MediaLayoutElement extends AbstractElement
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection() );
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
@@ -273,7 +273,7 @@ abstract class MediaLayoutElement extends AbstractElement
                 'activePaginationColorPalette' => '',
 
                 'hoverPaginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
-                'hoverPaginationColorOpacity' => $colorStyles['pagination-normal']['opacity'] ?? 0.75,
+                'hoverPaginationColorOpacity' => ColorConverter::getHoverOpacity($colorStyles['pagination-normal']['opacity'] ?? $colorStyles['opacity-pagination-normal']),
                 'hoverPaginationColorPalette' => '',
 
                 'resultsHeadingColorHex' => $colorStyles['text-color'],
@@ -312,8 +312,9 @@ abstract class MediaLayoutElement extends AbstractElement
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
 
         $richTextTitle = [
-            'text' => '<p data-generated-css="brz-css-yVHHc" data-uniq-id="oe68r" class="brz-tp-lg-heading2 brz-text-lg-center"><span style="color: '.$colorTitle.';">Sermon Details</span></p>',
-        ];
+            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-heading5" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
+            'typographyFontStyle' => 'heading5'
+            ];
 
         $wrapperItemTitle = [
             'bgColorHex' => $sectionPalette['btn-bg'],
@@ -406,6 +407,20 @@ abstract class MediaLayoutElement extends AbstractElement
             'previewColorPalette' => '',
         ];
 
+        $sectionProperties2Margin = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 0,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 30,
+            "marginLeftSuffix" => "px",
+        ];
+
         $sectionProperties2 = [
             'showAudio' => 'off',
             'showImage' => 'off',
@@ -413,11 +428,11 @@ abstract class MediaLayoutElement extends AbstractElement
             'showPreview' => 'off',
             'showTitle' => 'off',
             'showDate' => 'on',
-            'showGroup' => 'on',
-            'showCategory' => 'off',
-            'showPreacher' => 'off',
-            'showPassage' => 'off',
-            'showMetaHeadings' => 'off',
+            'showGroup' => 'off',
+            'showCategory' => 'on',
+            'showPreacher' => 'on',
+            'showPassage' => 'on',
+            'showMetaHeadings' => 'on',
             'showPreviousPage' => 'on',
             'showMediaLinksVideo' =>'off',
             'showMediaLinksAudio' => 'off',
@@ -436,9 +451,17 @@ abstract class MediaLayoutElement extends AbstractElement
             'metaLinksColorOpacity' => 1,
             'metaLinksColorPalette' => '',
 
-            'hoverMetaLinksColorHex' => $sectionPalette['text'],
+            'hoverMetaLinksColorHex' => $sectionPalette['link'],
             'hoverMetaLinksColorOpacity' => 0.75,
             'hoverMetaLinksColorPalette' => '',
+
+            'detailButtonColorHex' => $sectionPalette['btn-text'],
+            'detailButtonColorOpacity' => 1,
+            'detailButtonColorPalette' => '',
+
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'],
+            'hoverDetailButtonColorOpacity' => 0.75,
+            'hoverDetailButtonColorPalette' => '',
 
             'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
             'detailButtonBgColorOpacity' => 1,
@@ -505,6 +528,12 @@ abstract class MediaLayoutElement extends AbstractElement
         foreach ($sectionProperties2 as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0)
+                ->$properties($value);
+        }
+
+        foreach ($sectionProperties2Margin as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 1, 1)
                 ->$properties($value);
         }
 
