@@ -104,6 +104,7 @@ class PageController
             $brizyMenuItems = $this->cache->get('brizyMenuItems');
             $headItem = $this->cache->get('header', 'mainSection');
             $footerItem = $this->cache->get('footer', 'mainSection');
+            $listSeries = $this->cache->get('series');
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
 
             $themeContext = new ThemeContext(
@@ -122,7 +123,8 @@ class PageController
                 $slug,
                 $pageMapping,
                 $RootPalettesExtracted->extractRootPalettes(),
-                $this->browser
+                $this->browser,
+                $listSeries
             );
 
             /**

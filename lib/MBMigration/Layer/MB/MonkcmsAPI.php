@@ -209,9 +209,9 @@ class MonkcmsAPI
             $response = $this->client->request('GET', $url, $options);
             $responseBody = substr($response->getBody(), 10); // Remove unwanted prefix
             try {
-                return json_decode($this->replacePlaceholderValues($responseBody), true);
+                return json_decode($this->fixJsonFormat($responseBody), true);
             } catch (Exception $exception) {
-                return [];
+                return json_decode('{}', true);
             }
 
         } catch (Exception $e) {
@@ -241,6 +241,25 @@ class MonkcmsAPI
         }
 
         return $body;
+    }
+
+    private function fixJsonFormat($response) {
+        $response = trim($response);
+
+        if (empty($response)) {
+            return json_encode([]);
+        }
+
+        $response = rtrim(ltrim($response, ','), ',');
+
+        $response = "[$response]";
+
+        $decoded = json_decode($response, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return json_encode($decoded);
+        }
+
+        return json_encode([]);
     }
 
     /**
@@ -279,6 +298,44 @@ class MonkcmsAPI
         }
 
         return array_filter($queryParams);
+    }
+
+    public function getSeriesGroupBySlug(): array
+    {
+        try {
+            $response = $this->get([
+                'module' => 'sermon',
+                'order' => 'title',
+                'groupby' => 'series',
+                'display' => 'list',
+                'show' => '{"slug":"__categoryslug__", "series":"__series__"},'
+            ]);
+        } catch (Exception $e) {
+            $response = '{}';
+        }
+
+        return $this->groupBySlug($response);
+    }
+
+
+    public function groupBySlug($data): array
+    {
+        $grouped = [];
+
+        foreach ($data as $item) {
+            $slug = $item['slug'];
+            $series = $item['series'];
+
+            if (!isset($grouped[$slug])) {
+                $grouped[$slug] = [];
+            }
+
+            if (!in_array($series, $grouped[$slug])) {
+                $grouped[$slug][] = $series;
+            }
+        }
+
+        return $grouped;
     }
 
 }

@@ -192,19 +192,7 @@ class MigrationPlatform
 
         $mCms = new MonkcmsAPI($configM);
 
-        $queryParams = [
-            'module' => 'sermon',
-            'display' => 'list',
-            'show' => '{"slug":"__slug__", "title":"__title__", "series":"__series__"},'
-        ];
-
-// Выполнение запроса
-//        try {
-//            $response = $mCms->get($queryParams);
-//            //print_r($response);
-//        } catch (Exception $e) {
-//            //echo 'Ошибка: ' . $e->getMessage();
-//        }
+        $this->cache->set('series', $mCms->getSeriesGroupBySlug());
 
         $parentPages = $this->parser->getPages();
 
