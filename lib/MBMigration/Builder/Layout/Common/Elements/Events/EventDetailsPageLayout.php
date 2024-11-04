@@ -81,15 +81,15 @@ class EventDetailsPageLayout
             'hoverMetaLinksColorOpacity' => 0.75,
             'hoverMetaLinksColorPalette' => '',
 
-            'subscribeEventButtonColorHex' => $sectionPalette['btn-text'],
+            'subscribeEventButtonColorHex' => $sectionPalette['text'],
             'subscribeEventButtonColorOpacity' => 1,
             'subscribeEventButtonColorPalette' => '',
 
-            'subscribeEventButtonBgColorHex' => $sectionPalette['btn-text'],
+            'subscribeEventButtonBgColorHex' => $sectionPalette['btn-bg'],
             'subscribeEventButtonBgColorOpacity' => 1,
             'subscribeEventButtonBgColorPalette' => '',
 
-            'hoverSubscribeEventButtonBgColorHex' => $sectionPalette['btn-text'],
+            'hoverSubscribeEventButtonBgColorHex' => $sectionPalette['btn-bg'],
             'hoverSubscribeEventButtonBgColorOpacity' => 0.75,
             'hoverSubscribeEventButtonBgColorPalette' => '',
         ];
@@ -139,7 +139,7 @@ class EventDetailsPageLayout
             'hoverDetailButtonBgColorOpacity' => 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'subscribeEventButtonColorHex' => $sectionPalette['btn-text'],
+            'subscribeEventButtonColorHex' => $sectionPalette['text'],
             'subscribeEventButtonColorOpacity' => 1,
             'subscribeEventButtonColorPalette' => '',
 
