@@ -146,11 +146,15 @@ trait DanationsAble
                 $brizyDonationButton->getItemValueWithDepth(0)
                     ->set_uppercase(true)
                     ->set_lowercase(false);
+
+                    $buttonText = strtoupper($mbSection['settings']['sections']['donations']['text']);
                 break;
             case 'lowercase':
                 $brizyDonationButton->getItemValueWithDepth(0)
                     ->set_lowercase(true)
                     ->set_uppercase(false);
+
+                $buttonText = strtolower($mbSection['settings']['sections']['donations']['text']);
                 break;
             default:
                 $brizyDonationButton->getItemValueWithDepth(0)
@@ -160,7 +164,7 @@ trait DanationsAble
         }
 
         $brizyDonationButton->getItemValueWithDepth(0)
-            ->set_text($mbSection['settings']['sections']['donations']['text'] ?? 'MAKE A DONATION')
+            ->set_text($buttonText ?? 'MAKE A DONATION')
             ->set_linkExternal($mbSection['settings']['sections']['donations']['url'] ?? '#')
             ->set_linkExternalBlank($this->detectLinkExternalBlank($mbSection, $browserPage))
             ->set_paddingType('ungrouped')
