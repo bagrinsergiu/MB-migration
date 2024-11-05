@@ -169,11 +169,15 @@ class MonkcmsAPI
     private function buildRequestQueryString(array $queryParams): string
     {
         $config = $this->getConfig();
+
+        $NR = (is_array($queryParams) ? count($queryParams) : 0)
+            + (isset($queryParams['show']) && is_array($queryParams['show']) ? count($queryParams['show']) - 1 : 0);
+
         $query = [
             'SITEID' => $config['siteId'],
             'CMSCODE' => $config['cmsCode'],
             'CMSTYPE' => $config['cmsType'],
-            'NR' => count($queryParams) + (isset($queryParams['show']) ? count($queryParams['show']) - 1 : 0)
+            'NR' => $NR
         ];
         $query = array_merge($query, self::buildRequestQueryParams($queryParams));
 
