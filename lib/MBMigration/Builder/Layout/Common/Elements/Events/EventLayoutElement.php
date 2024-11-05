@@ -39,8 +39,8 @@ abstract class EventLayoutElement extends AbstractElement
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['main'], true));
-        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
-        $DetailsPageLayout = new EventDetailsPageLayout();
+//        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
+        $DetailsPageLayout = new EventDetailsPageLayout($this->brizyKit['EventLayoutElement']['detail']);
 
         $mbSection = $data->getMbSection();
 
@@ -62,7 +62,7 @@ abstract class EventLayoutElement extends AbstractElement
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
 
-        $DetailsPageLayout->setStyleDetailPage($detailsSection, $sectionPalette);
+        $detailsSection = $DetailsPageLayout->setStyleDetailPage($sectionPalette);
 
         $detailCollectionItem = $this->createDetailsCollectionItem(
             $data->getThemeContext()->getBrizyCollectionTypeURI(),

@@ -3,12 +3,29 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Events;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class EventDetailsPageLayout
 {
-    public function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
+    private BrizyComponent $detailsSection;
+
+    private static BrizyComponent $cache;
+
+    /**
+     * @throws BadJsonProvided
+     */
+    public function __construct($detailsSection)
     {
+        $this->detailsSection = new BrizyComponent(json_decode($detailsSection, true));
+    }
+    public function setStyleDetailPage(array $sectionPalette): BrizyComponent
+    {
+        if(!empty(self::$cache))
+        {
+            return self::$cache;
+        }
+        $detailsSection = $this->detailsSection;
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
 
         $richTextTitle = [
@@ -227,5 +244,8 @@ class EventDetailsPageLayout
                 ->$properties($value);
         }
 
+        self::$cache = $detailsSection;
+
+        return $detailsSection;
     }
 }
