@@ -3,16 +3,34 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Events;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class EventDetailsPageLayout
 {
-    public function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
+    private BrizyComponent $detailsSection;
+
+    private static BrizyComponent $cache;
+
+    /**
+     * @throws BadJsonProvided
+     */
+    public function __construct($detailsSection)
     {
+        $this->detailsSection = new BrizyComponent(json_decode($detailsSection, true));
+    }
+    public function setStyleDetailPage(array $sectionPalette): BrizyComponent
+    {
+        if(!empty(self::$cache))
+        {
+            return self::$cache;
+        }
+        $detailsSection = $this->detailsSection;
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
 
         $richTextTitle = [
-            'text' => '<p data-generated-css="brz-css-yVHHc" data-uniq-id="oe68r" class="brz-tp-lg-heading3 brz-text-lg-center"><span style="color: '.$colorTitle.';">Sermon Details</span></p>',
+            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-heading5" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Event Details</span></h5>',
+            'typographyFontStyle' => 'heading5'
         ];
 
         $wrapperItemTitle = [
@@ -65,6 +83,14 @@ class EventDetailsPageLayout
             'previewColorOpacity' => 1,
             'previewColorPalette' => '',
 
+            'detailButtonColorHex' => $sectionPalette['btn-text'],
+            'detailButtonColorOpacity' => 1,
+            'detailButtonColorPalette' => '',
+
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'],
+            'hoverDetailButtonColorOpacity' => 0.75,
+            'hoverDetailButtonColorPalette' => '',
+
             'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
             'detailButtonBgColorOpacity' => 1,
             'detailButtonBgColorPalette' => '',
@@ -81,7 +107,7 @@ class EventDetailsPageLayout
             'hoverMetaLinksColorOpacity' => 0.75,
             'hoverMetaLinksColorPalette' => '',
 
-            'subscribeEventButtonColorHex' => $sectionPalette['text'],
+            'subscribeEventButtonColorHex' => $sectionPalette['btn-text'],
             'subscribeEventButtonColorOpacity' => 1,
             'subscribeEventButtonColorPalette' => '',
 
@@ -94,8 +120,21 @@ class EventDetailsPageLayout
             'hoverSubscribeEventButtonBgColorPalette' => '',
         ];
 
-        $sectionProperties2 = [
+        $sectionProperties2Margin = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 0,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 30,
+            "marginLeftSuffix" => "px",
+        ];
 
+        $sectionProperties2 = [
             'showImage' =>'off',
             'showTitle' => 'off',
             'showDescription' => 'off',
@@ -127,9 +166,13 @@ class EventDetailsPageLayout
             'metaLinksColorOpacity' => 1,
             'metaLinksColorPalette' => '',
 
-            'hoverMetaLinksColorHex' => $sectionPalette['text'],
+            'hoverMetaLinksColorHex' => $sectionPalette['link'],
             'hoverMetaLinksColorOpacity' => 0.75,
             'hoverMetaLinksColorPalette' => '',
+
+            'detailButtonColorHex' => $sectionPalette['btn-text'],
+            'detailButtonColorOpacity' => 1,
+            'detailButtonColorPalette' => '',
 
             'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
             'detailButtonBgColorOpacity' => 1,
@@ -139,7 +182,7 @@ class EventDetailsPageLayout
             'hoverDetailButtonBgColorOpacity' => 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'subscribeEventButtonColorHex' => $sectionPalette['text'],
+            'subscribeEventButtonColorHex' => $sectionPalette['btn-text'],
             'subscribeEventButtonColorOpacity' => 1,
             'subscribeEventButtonColorPalette' => '',
 
@@ -171,9 +214,15 @@ class EventDetailsPageLayout
                 ->$properties($value);
         }
 
+        foreach ($sectionProperties2Margin as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 1, 1, 1)
+                ->$properties($value);
+        }
+
         foreach ($sectionProperties2 as $key => $value) {
             $properties = 'set_'.$key;
-            $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0)
+            $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0)
                 ->$properties($value);
         }
 
@@ -195,5 +244,8 @@ class EventDetailsPageLayout
                 ->$properties($value);
         }
 
+        self::$cache = $detailsSection;
+
+        return $detailsSection;
     }
 }

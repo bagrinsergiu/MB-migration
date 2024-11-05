@@ -37,12 +37,12 @@ class EventFeaturedLayoutElement  extends AbstractElement
      */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventFeatured']['main'], true));
-        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventDetailsPage']['main'], true));
-        $DetailsPageLayout = new EventDetailsPageLayout();
+//        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventDetailsPage']['main'], true));
+        $DetailsPageLayout = new EventDetailsPageLayout($this->brizyKit['EventDetailsPage']['main']);
 
         $mbSection = $data->getMbSection();
+        $mbPageSlug = $data->getThemeContext()->getSlug();
 
         $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
         $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
@@ -65,7 +65,7 @@ class EventFeaturedLayoutElement  extends AbstractElement
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
 
-        $DetailsPageLayout->setStyleDetailPage($detailsSection, $sectionPalette);
+        $detailsSection = $DetailsPageLayout->setStyleDetailPage($sectionPalette);
 
         $detailCollectionItem = $this->createDetailsCollectionItem(
             $data->getThemeContext()->getBrizyCollectionTypeURI(),
@@ -80,7 +80,14 @@ class EventFeaturedLayoutElement  extends AbstractElement
             ->set_detailPage("{{placeholder content='$placeholder'}}");
 
         $sectionProperties = [
-            'detailPageButtonText' => 'Detail',
+            "showMeta" => "on",
+            "showCategory" => "on",
+            "showLocation" => "off",
+            "showPagination" => "off",
+
+            'category' => $mbPageSlug,
+
+            'detailPageButtonText' => '',
 
             'titleTypographyLineHeight' => 1.8,
 
@@ -103,6 +110,10 @@ class EventFeaturedLayoutElement  extends AbstractElement
             'resultsHeadingColorHex' => $sectionPalette['text'],
             'resultsHeadingColorOpacity' => 1,
             'resultsHeadingColorPalette' => '',
+
+            'colorHex' => $sectionPalette['text'],
+            'colorOpacity' => 1,
+            'cateColorPalette' => '',
 
             'resultsHeadingTypographyFontFamilyType' => $fonts,
             'resultsHeadingTypographyFontStyle' => '',
@@ -180,6 +191,33 @@ class EventFeaturedLayoutElement  extends AbstractElement
             'listItemDateBgColorType' => 'solid',
             'listItemDateBgColorPalette' => '',
 
+            'hoverRegisterButtonBgColorType' => 'solid',
+            'hoverRegisterButtonGradientType' => 'linear',
+
+            'registerButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'registerButtonColorOpacity' => 1,
+            'registerButtonColorPalette' => '',
+
+            'hoverRegisterButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'hoverRegisterButtonColorOpacity' => 0.75,
+            'hoverRegisterButtonColorPalette' => '',
+
+            'registerButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['text'],
+            'registerButtonBgColorOpacity' => 1,
+            'registerButtonBgColorPalette' => '',
+
+            'hoverRegisterButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'hoverRegisterButtonBgColorOpacity' => 0.75,
+            'hoverRegisterButtonBgColorPalette' => '',
+
+            'hoverRegisterButtonGradientColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'hoverRegisterButtonGradientColorOpacity' => 0.75,
+            'hoverRegisterButtonGradientColorPalette' => '',
+
+            'registerButtonGradientColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'registerButtonGradientColorOpacity' => 1,
+            'registerButtonGradientColorPalette' => '',
+
             'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
@@ -191,6 +229,18 @@ class EventFeaturedLayoutElement  extends AbstractElement
             'detailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonGradientColorOpacity' => 1,
             'detailButtonGradientColorPalette' => '',
+
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'hoverDetailButtonColorOpacity' => 0.75,
+            'hoverDetailButtonColorPalette' => '',
+
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'hoverDetailButtonBgColorOpacity' => 0.75,
+            'hoverDetailButtonBgColorPalette' => '',
+
+            'hoverDetailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'hoverDetailButtonGradientColorOpacity' => 0.75,
+            'hoverDetailButtonGradientColorPalette' => '',
 
             'hoverViewColorHex' => $sectionPalette['text'],
             'hoverViewColorOpacity' => 0.7,
