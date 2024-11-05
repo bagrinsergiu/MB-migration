@@ -38,8 +38,8 @@ class EventFeaturedLayoutElement  extends AbstractElement
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
 
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventFeaturedLayoutElement']['main'], true));
-        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventFeaturedLayoutElement']['detail'], true));
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventFeatured']['main'], true));
+        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventDetailsPage']['main'], true));
         $DetailsPageLayout = new EventDetailsPageLayout();
 
         $mbSection = $data->getMbSection();
@@ -58,7 +58,10 @@ class EventFeaturedLayoutElement  extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
-        $this->handleRichTextHead($elementContext, $this->browserPage);
+        $textContainerComponent = $this->getTextContainerComponent($brizySection);
+        $textContext = $data->instanceWithBrizyComponent($textContainerComponent);
+        $this->handleRichTextHead($textContext, $this->browserPage);
+        $this->handleRichTextItems($textContext, $this->browserPage);
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
 
@@ -73,27 +76,12 @@ class EventFeaturedLayoutElement  extends AbstractElement
 
         $this->getDetailsLinksComponent($brizySection)
             ->getValue()
-            ->set_eventDetailPageSource($collectionTypeUri)
-            ->set_eventDetailPage("{{placeholder content='$placeholder'}}");
-
-        switch ($mbSection['typeSection']){
-            case 'event-tile-layout':
-                $eventTabs = [
-                    'featuredViewOrder' => 1,
-                    "listViewOrder"=> 2,
-                    'calendarViewOrder' => 3,
-                ];
-                break;
-            default:
-                $eventTabs = [
-                    'featuredViewOrder' => 3,
-                    "listViewOrder"=> 2,
-                    'calendarViewOrder' => 1,
-                ];
-                break;
-        }
+            ->set_detailPageSource($collectionTypeUri)
+            ->set_detailPage("{{placeholder content='$placeholder'}}");
 
         $sectionProperties = [
+            'detailPageButtonText' => 'Detail',
+
             'titleTypographyLineHeight' => 1.8,
 
             'listItemMetaTypographyLineHeight' => 1.8,
@@ -192,6 +180,10 @@ class EventFeaturedLayoutElement  extends AbstractElement
             'listItemDateBgColorType' => 'solid',
             'listItemDateBgColorPalette' => '',
 
+            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonColorOpacity' => 1,
+            'detailButtonColorPalette' => '',
+
             'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
             'detailButtonBgColorOpacity' => 1,
             'detailButtonBgColorPalette' => '',
@@ -213,20 +205,22 @@ class EventFeaturedLayoutElement  extends AbstractElement
             'layoutViewTypographyFontFamilyType' => 'upload',
         ];
 
-        $sectionProperties = array_merge($sectionProperties, $eventTabs);
-
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_'.$key;
-            $brizySection->getItemValueWithDepth(0, 0, 0)
+            $brizySection->getItemValueWithDepth(0, 1, 0)
                 ->$properties($value);
         }
 
         return $brizySection;
     }
 
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0,0,0);
+    }
+
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 1, 0);
     }
 
 }
