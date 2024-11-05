@@ -94,6 +94,8 @@ abstract class EventLayoutElement extends AbstractElement
         }
 
         $sectionProperties = [
+            'eventDetailPageButtonText' => 'Learn More',
+
             'titleTypographyLineHeight' => 1.8,
 
             'listItemMetaTypographyLineHeight' => 1.8,
@@ -195,6 +197,18 @@ abstract class EventLayoutElement extends AbstractElement
             'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
             'detailButtonBgColorOpacity' => 1,
             'detailButtonBgColorPalette' => '',
+
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'hoverDetailButtonBgColorOpacity' => 0.75,
+            'hoverDetailButtonBgColorPalette' => '',
+
+            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonColorOpacity' => 1,
+            'detailButtonColorPalette' => '',
+
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'hoverDetailButtonColorOpacity' => 0.75,
+            'hoverDetailButtonColorPalette' => '',
 
             'detailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonGradientColorOpacity' => 1,

@@ -80,7 +80,7 @@ class EventFeaturedLayoutElement  extends AbstractElement
             ->set_detailPage("{{placeholder content='$placeholder'}}");
 
         $sectionProperties = [
-            'detailPageButtonText' => 'Detail',
+            'detailPageButtonText' => 'Learn More',
 
             'titleTypographyLineHeight' => 1.8,
 
