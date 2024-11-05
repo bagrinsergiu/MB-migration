@@ -29,6 +29,10 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
             ]
         );
 
+        if(isset($wrapperLineStyles['error'])) {
+            $wrapperLineStyles['data']['border-bottom-color'] = '#717171';
+        }
+
         $headStyle = [
             'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
         ];
