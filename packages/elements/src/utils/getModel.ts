@@ -3,6 +3,7 @@ import {
   defaultMobileNumberLineHeight,
   defaultTabletNumberLineHeight
 } from "elements/src/Text/utils/common";
+import { Literal, MValue } from "utils";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { capByPrefix } from "utils/src/text/capByPrefix";
@@ -11,31 +12,16 @@ import { toCamelCase } from "utils/src/text/toCamelCase";
 interface Model {
   node: Element;
   families: Record<string, string>;
+  modelDefaults: Record<string, MValue<Literal | boolean>>;
   defaultFamily: string;
 }
 
-const v = {
-  "font-family": undefined,
-  "font-family-type": "uploaded",
-  "font-weight": undefined,
-  "font-size": undefined,
-  "line-height": undefined,
-  "letter-spacing": undefined,
-  "font-style": "",
-  uppercase: false,
-  borderColorHex: undefined,
-  borderColorOpacity: 1,
-  borderWidth: 1,
-  colorHex: undefined,
-  colorOpacity: 1
-};
-
 export const getModel = (data: Model) => {
-  const { node, families, defaultFamily } = data;
+  const { node, families, defaultFamily, modelDefaults } = data;
   const styles = getNodeStyle(node);
-  const dic: Record<string, string | number> = {};
+  const dic: Record<string, Literal | boolean> = {};
 
-  Object.keys(v).forEach((key) => {
+  Object.keys(modelDefaults).forEach((key) => {
     switch (key) {
       case "font-family": {
         const value = `${styles[key]}`;
@@ -82,14 +68,26 @@ export const getModel = (data: Model) => {
         }
         break;
       }
-      case "colorHex": {
+      case "color-hex": {
         const toHex = parseColorString(`${styles["color"]}`);
 
         dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
         break;
       }
-      case "colorOpacity": {
+      case "bg-color-hex": {
+        const toHex = parseColorString(`${styles["background-color"]}`);
+        dic[toCamelCase(key)] = toHex?.hex ?? "#ffffff";
+        break;
+      }
+      case "color-opacity": {
         const toHex = parseColorString(`${styles["color"]}`);
+        const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
+
+        dic[toCamelCase(key)] = +(toHex?.opacity ?? opacity);
+        break;
+      }
+      case "bg-color-opacity": {
+        const toHex = parseColorString(`${styles["background-color"]}`);
         const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
 
         dic[toCamelCase(key)] = +(toHex?.opacity ?? opacity);
@@ -97,25 +95,25 @@ export const getModel = (data: Model) => {
       }
       case "uppercase": {
         const value = `${styles["text-transform"]}`;
-        const isUppercase = value === "uppercase" ? "true" : "false";
+        const isUppercase = value === "uppercase";
 
         dic[toCamelCase(key)] = isUppercase;
         break;
       }
-      case "borderColorHex": {
+      case "border-color-hex": {
         const toHex = parseColorString(`${styles["border-bottom-color"]}`);
 
         dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
         break;
       }
-      case "borderColorOpacity": {
+      case "border-color-opacity": {
         const toHex = parseColorString(`${styles["border-bottom-color"]}`);
         const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
 
         dic[toCamelCase(key)] = +(toHex?.opacity ?? opacity);
         break;
       }
-      case "borderWidth": {
+      case "border-width": {
         const borderWidth = `${styles["border-bottom-width"]}`.replace(
           /px/g,
           ""

@@ -71,6 +71,10 @@ class Config
      */
     private static $defaultSettings;
     public static string $cachePath;
+    /**
+     * @var false|mixed
+     */
+    public static $MB_MONKCMS_API;
 
     /**
      * @throws Exception
@@ -104,6 +108,8 @@ class Config
 
         self::$urlJsonKits = $this->checkAssets('CloudUrlJsonKit');
         self::$MBMediaStaging = $this->checkAssets('MBMediaStaging');
+
+        self::$MB_MONKCMS_API = $this->checkSettings('monkcms_api');
 
         self::$nameMigration = 'Migration';
         self::$endPointVersion = '/2.0';

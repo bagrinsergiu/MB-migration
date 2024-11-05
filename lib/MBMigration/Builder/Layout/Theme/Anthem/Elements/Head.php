@@ -153,7 +153,22 @@ class Head extends HeadElement
             "menuPaddingLeftSuffix" => "px",
         ];
 
+        $sectionRowPadding = [
+            "paddingType" => "ungrouped",
 
+            "padding" => 0,
+            "paddingSuffix" => "px",
+
+            "paddingTop" => 10,
+            "paddingRight" => 10,
+            "paddingBottom" => 10,
+            "paddingLeft" => 10,
+
+            "paddingTopSuffix" => "px",
+            "paddingRightSuffix" => "px",
+            "paddingBottomSuffix" => "px",
+            "paddingLeftSuffix" => "px",
+        ];
 
         $sectionlogoOptions = [
             'horizontalAlign' => 'center',
@@ -186,30 +201,37 @@ class Head extends HeadElement
             "marginLeftSuffix" => "px",
         ];
 
-        foreach ($sectionlogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+        foreach ($sectionlogoOptions as $option => $value) {
+            $nameOption = 'set_'.$option;
             $brizySection->getItemWithDepth(0, 0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
-        foreach ($imageLogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+        foreach ($sectionRowPadding as $option => $value) {
+            $nameOption = 'set_'.$option;
+            $brizySection->getItemWithDepth(0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($imageLogoOptions as $option => $value) {
+            $nameOption = 'set_'.$option;
             $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
-        foreach ($mobileIconButtonOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+        foreach ($mobileIconButtonOptions as $option => $value) {
+            $nameOption = 'set_'.$option;
             $brizySection->getItemWithDepth(0, 0, 0, 1)
                 ->getValue()
                 ->$nameOption($value);
         }
 
 
-        foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+        foreach ($this->getPropertiesIconMenuItem() as $option => $value) {
+            $nameOption = 'set_'.$option;
             $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
                 ->getValue()
                 ->$nameOption($value);
@@ -217,8 +239,8 @@ class Head extends HeadElement
 
         $itemMenuOptions = array_merge($activeItemMenuOptions, $menuPadding);
 
-        foreach ($itemMenuOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+        foreach ($itemMenuOptions as $option => $value) {
+            $nameOption = 'set_'.$option;
             $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
                 ->getValue()
                 ->$nameOption($value);
@@ -249,9 +271,18 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation", "pseudoEl" => ""];
     }
 
-    public function getThemeSubMenuItemSelector(): array
+    public function getThemeSubMenuNotSelectedItemSelector(): array
     {
         return ["selector" => "#selected-sub-navigation > ul > li:not(.selected) > a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
+    }
+    public function getThemeSubMenuItemClassSelected(): array
+    {
+        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array

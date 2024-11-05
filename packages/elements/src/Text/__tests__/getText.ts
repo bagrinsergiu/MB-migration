@@ -62,20 +62,18 @@ const ex1: Data = {
                 fontStyle: "",
                 fontWeight: 600,
                 iconName: "arrow-alt-circle-right",
-                letterSpacing: NaN,
+                iconType: "fa",
                 lineHeight: 1.3,
                 linkExternal: "/about-us/who-we-are",
                 linkType: "external",
                 mobileFontSize: 1,
                 mobileFontStyle: "",
                 mobileFontWeight: 600,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
                 tabletFontSize: 1,
                 tabletFontStyle: "",
                 tabletFontWeight: 600,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternalBlank: "off"
               }
@@ -333,20 +331,11 @@ const ex5: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 lineHeight: 1.3,
                 linkExternal: "http://google.com/",
@@ -441,21 +430,12 @@ const ex6: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternal: "http://google.com/",
                 linkType: "external",
@@ -746,21 +726,12 @@ const ex9: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternal: "http://google.com/",
                 linkType: "external",
@@ -786,21 +757,12 @@ const ex9: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternal: "http://google.com/",
                 linkType: "external",
@@ -859,20 +821,18 @@ const ex10: Data = {
                 fontSize: 1,
                 fontStyle: "",
                 fontWeight: 600,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
                 mobileFontSize: 1,
                 mobileFontStyle: "",
                 mobileFontWeight: 600,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
                 tabletFontSize: 1,
                 tabletFontStyle: "",
                 tabletFontWeight: 600,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 iconName: "arrow-alt-circle-right",
+                iconType: "fa",
                 linkExternal: "/about-us/who-we-are",
                 linkExternalBlank: "off",
                 linkType: "external"
@@ -1004,21 +964,12 @@ const ex13: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternal: "/contact-us/decision-form",
                 linkType: "external",
@@ -1061,21 +1012,12 @@ const ex13: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternal:
                   "https://docs.google.com/forms/d/1Bt4ajELyGHt1jYtkf7X9QG_FTKcqX0p5r9xcxSCckYk/edit",
@@ -1227,21 +1169,12 @@ const ex14: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternal: "https://maps.app.goo.gl/Sb33XGmMfvqtsSAt5",
                 linkType: "external",
@@ -1602,21 +1535,12 @@ const ex23: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternal: "/about-us/who-we-are",
                 linkType: "external",
@@ -1671,21 +1595,12 @@ const ex24: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternal:
                   "https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&usp=sharing",
@@ -1724,21 +1639,12 @@ const ex25: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 linkExternal: "https://f4c1f8a9.churchtrac.com/connect",
                 linkExternalBlank: "on",
@@ -1793,24 +1699,15 @@ const ex26: Data = {
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
-                fontSize: NaN,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
                 linkExternal: "https://f4c1f8a9.churchtrac.com/connect",
                 linkExternalBlank: "on",
                 linkType: "external",
-                mobileFontSize: NaN,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
-                tabletFontSize: NaN,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 text: "make a donation"
               }
@@ -1881,8 +1778,6 @@ const ex27: Data = {
                 fontFamilyType: "upload",
                 fontSize: 1,
                 fontStyle: "",
-                fontWeight: NaN,
-                letterSpacing: NaN,
                 lineHeight: 1.3,
                 linkExternal:
                   "https://forms.ministryforms.net/viewForm.aspx?formId=e6c65131-c32a-49ed-b8c6-e63634a7f0d2",
@@ -1890,14 +1785,10 @@ const ex27: Data = {
                 linkType: "external",
                 mobileFontSize: 1,
                 mobileFontStyle: "",
-                mobileFontWeight: NaN,
-                mobileLetterSpacing: NaN,
                 mobileLineHeight: 1.2,
                 size: "custom",
                 tabletFontSize: 1,
                 tabletFontStyle: "",
-                tabletFontWeight: NaN,
-                tabletLetterSpacing: NaN,
                 tabletLineHeight: 1.2,
                 text: "CLICK HERE"
               }
@@ -1983,17 +1874,296 @@ const ex30: Data = {
   output: {
     data: [
       {
-        type: 'Wrapper',
+        type: "Wrapper",
         value: {
-          _id: '1',
-          _styles: ['wrapper', 'wrapper--richText'],
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
           items: [
             {
-              type: 'RichText',
+              type: "RichText",
               value: {
-                _id: '1',
-                _styles: ['richText'],
+                _id: "1",
+                _styles: ["richText"],
                 text: '<p class="brz-fs-lg-14 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">Child dedication is   an opportunity to acknowledge children as a gift from God. Families dedicating   their child(ren) make the commitment, to raise them to know, love and serve the   Lord according to His Word, the Bible. Timberwood Church, as a body of Christ,   supports this commitment by loving children as Jesus did, providing an   environment for children to experience the Holy Spirit and partnering with   parents. If you would like more information about Child Dedication, contact   Eric Holst at </span><a target="_self" data-location="email" data-button="false" data-detail="eric.holst@timberwoodchurch.org" data-category="link" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22mailto%3Aeric.holst%40timberwoodchurch.org%22%2C%22externalBlank%22%3A%22off%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><b><span style="">eric.holst@timberwoodchurch.org</span></b></a><span style=""></span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 31 (Anthem embed)
+const ex31: Data = {
+  html: `<div class="text-content text-1 editable" data-id="19657540" data-category="text"><div><div class="embedded-paste" contenteditable="false" data-src="<div id=&quot;resources_calendar_widget&quot; class=&quot;styled&quot;>
+  <div class=&quot;loader&quot;>Loading...</div>
+</div>
+<script type=&quot;text/javascript&quot;>
+  (function(){
+    var rs = document.createElement(&quot;script&quot;);
+    rs.type = &quot;text/javascript&quot;;
+    rs.async = true;
+    rs.src = &quot;//calendar.planningcenteronline.com/widgets/eJxj4ajmsGLLz2RulWe04kotzi8oqea0Yq9I81TiMjQ0NjZns2JzDbFiK_ZU4k_MyYlPLUvNKylms-YAipVmMs-SASouK_FU4gNJlmTmpkLkuAsSixJzi6sZAJFMGcs=64decca82d0dec7dd0874acece089d680844e71d.js&quot;;
+    var s = document.getElementsByTagName(&quot;script&quot;)[0];
+    s.parentNode.insertBefore(rs,s);
+  })();
+</script>"><div id="resources_calendar_widget" class="styled"><div class="rc-content rc-clearfix">   <div id="global_header">     <h2 class="rc-date ellipsis">       Friday, October 25, 2024     </h2>     <div class="rc-position-helper">       <div class="rc-kal_popover" style="display: none;">       <div class="kalendae"><div class="k-calendar" data-cal-index="0"><div class="k-title"><a class="k-btn-previous-year"></a><a class="k-btn-previous-month"></a><a class="k-btn-next-year"></a><a class="k-btn-next-month"></a><span class="k-caption">October, 2024</span></div><div class="k-header"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div><div class="k-days"><span class="k-out-of-month" data-date="2024-09-29">29</span><span class="k-out-of-month" data-date="2024-09-30">30</span><span class="k-in-month k-active" data-date="2024-10-01">1</span><span class="k-in-month k-active" data-date="2024-10-02">2</span><span class="k-in-month k-active" data-date="2024-10-03">3</span><span class="k-in-month k-active" data-date="2024-10-04">4</span><span class="k-in-month k-active" data-date="2024-10-05">5</span><span class="k-in-month k-active" data-date="2024-10-06">6</span><span class="k-in-month k-active" data-date="2024-10-07">7</span><span class="k-in-month k-active" data-date="2024-10-08">8</span><span class="k-in-month k-active" data-date="2024-10-09">9</span><span class="k-in-month k-active" data-date="2024-10-10">10</span><span class="k-in-month k-active" data-date="2024-10-11">11</span><span class="k-in-month k-active" data-date="2024-10-12">12</span><span class="k-in-month k-active" data-date="2024-10-13">13</span><span class="k-in-month k-active" data-date="2024-10-14">14</span><span class="k-in-month k-active" data-date="2024-10-15">15</span><span class="k-in-month k-active" data-date="2024-10-16">16</span><span class="k-in-month k-active" data-date="2024-10-17">17</span><span class="k-in-month k-active" data-date="2024-10-18">18</span><span class="k-in-month k-active" data-date="2024-10-19">19</span><span class="k-in-month k-active" data-date="2024-10-20">20</span><span class="k-in-month k-active" data-date="2024-10-21">21</span><span class="k-in-month k-active" data-date="2024-10-22">22</span><span class="k-in-month k-active" data-date="2024-10-23">23</span><span class="k-in-month k-active" data-date="2024-10-24">24</span><span class="k-selected k-in-month k-active k-today" data-date="2024-10-25">25</span><span class="k-in-month k-active" data-date="2024-10-26">26</span><span class="k-in-month k-active" data-date="2024-10-27">27</span><span class="k-in-month k-active" data-date="2024-10-28">28</span><span class="k-in-month k-active" data-date="2024-10-29">29</span><span class="k-in-month k-active" data-date="2024-10-30">30</span><span class="k-in-month k-active" data-date="2024-10-31">31</span><span class="k-out-of-month" data-date="2024-11-01">1</span><span class="k-out-of-month" data-date="2024-11-02">2</span><span class="k-out-of-month" data-date="2024-11-03">3</span><span class="k-out-of-month" data-date="2024-11-04">4</span><span class="k-out-of-month" data-date="2024-11-05">5</span><span class="k-out-of-month" data-date="2024-11-06">6</span><span class="k-out-of-month" data-date="2024-11-07">7</span><span class="k-out-of-month" data-date="2024-11-08">8</span><span class="k-out-of-month" data-date="2024-11-09">9</span></div></div></div></div>       <ul class="rc-navi">         <li class="rc-btn_wrap rc-disparate-btn">           <button class="rc-icon-date-btn rc-btn rc-btn_primary" onclick="PCOResourcesWidget.toggleKal(); return false;">             <span class="img-icon-date rc-icon">             </span>           </button>         </li>         <li class="rc-prev rc-btn_wrap">           <button class="rc-btn rc-btn_primary" onclick="PCOResourcesWidget.loadDataForDate('2024-10-24'); return false;">             Prev           </button></li>         <li class="rc-today rc-btn_wrap">           <button class="rc-btn rc-btn_primary" onclick="PCOResourcesWidget.loadDataForDate('2024-10-25'); return false;">             Today           </button></li>         <li class="rc-next rc-btn_wrap">           <button class="rc-btn rc-btn_primary" onclick="PCOResourcesWidget.loadDataForDate('2024-10-26'); return false;">             Next           </button></li>       </ul>     </div>   </div>   <div class="rc-resources_grid">     <table class="rc-table_striped">       <thead>         <tr>           <th class="rc-time_col">             <div class="rc-table_sleeve">               Time             </div>           </th>           <th class="rc-primary_col">             <div class="rc-table_sleeve">               Location             </div>           </th>           <th colspan="2">             <div class="rc-table_sleeve">               Event               <input id="search_input" placeholder="Filter..." type="text">             </div>           </th>         </tr>       </thead>       <tbody id="filter_body">         <tr class="no_results rc-row" style="display: none;">           <td class="rc-time rc-time_col">             <div class="rc-table_sleeve">               <span class="rc-results_placeholder">—</span>             </div>           </td>           <td class="rc-primary_col">             <div class="rc-table_sleeve">               <span class="rc-results_placeholder">—</span>             </div>           </td>           <td class="rc-event_title">             <div class="rc-table_sleeve">               <span class="rc-results_placeholder">—</span>             </div>           </td>           <td class="rc-event_time_name">             <div class="rc-table_sleeve">               <span class="rc-results_placeholder">—</span>             </div>           </td>         </tr>             <tr class="rc-row visible">               <td class="rc-time rc-time_col" style="white-space:nowrap;">                 <div class="rc-table_sleeve">                   10:00a - 11:45a                 </div>               </td>               <td class="rc-primary_col">                 <div class="rc-table_sleeve" style="overflow-wrap:anywhere" ;="">                   Boyd's Home - 2128 Thoroughbred Pkwy Goochland, VA 23063                 </div>               </td>               <td class="rc-event_title">                 <div class="rc-table_sleeve">                   Mornings with Moms: LG                 </div>               </td>               <td class="rc-event_time_name">                 <div class="rc-table_sleeve">                                    </div>               </td>             </tr>       </tbody>     </table>   </div>   <div class="rc-footer">     <p>       Powered by&nbsp;       <a href="https://www.planningcenter.com/calendar">Planning Center Calendar</a>     </p>   </div> </div> </div>
+<script type="text/javascript">
+  (function(){
+    var rs = document.createElement("script");
+    rs.type = "text/javascript";
+    rs.async = true;
+    rs.src = "//calendar.planningcenteronline.com/widgets/eJxj4ajmsGLLz2RulWe04kotzi8oqea0Yq9I81TiMjQ0NjZns2JzDbFiK_ZU4k_MyYlPLUvNKylms-YAipVmMs-SASouK_FU4gNJlmTmpkLkuAsSixJzi6sZAJFMGcs=64decca82d0dec7dd0874acece089d680844e71d.js";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(rs,s);
+  })();
+</script></div><p><br></p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"19657540\"]" },
+  output: {
+    data: [
+      {
+        type: "EmbedCode"
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 32 (Anthem Link color)
+const ex32: Data = {
+  html: `<div class="text-content text-1 editable" data-id="13073170" data-category="text"><div><p style="font-size: calc(var(--regular-text) * 1.2); letter-spacing: normal; line-height: calc(var(--regular-text) * 2);"><span style="font-size: inherit; font-style: italic;"><a href="https://biblia.com/bible/csb/Exod%2024.4" data-reference="Exod 24.4" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Exodus 24:4</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Deut%204.1-2" data-reference="Deut 4.1-2" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Deuteronomy 4:1-2</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Deuteronomy%2017.19" data-reference="Deuteronomy 17.19" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">17:19</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Josh%208.34" data-reference="Josh 8.34" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Joshua 8:34</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Ps%2019.7-10" data-reference="Ps 19.7-10" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Psalms 19:7-10</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Psalms%20119.11" data-reference="Psalms 119.11" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">119:11</a>,<a href="https://biblia.com/bible/csb/Psalms%20119.89" data-reference="Psalms 119.89" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">89</a>,<a href="https://biblia.com/bible/csb/Psalms%20119.105" data-reference="Psalms 119.105" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">105</a>,<a href="https://biblia.com/bible/csb/Psalms%20119.140" data-reference="Psalms 119.140" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">140</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Isa%2034.16" data-reference="Isa 34.16" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Isaiah 34:16</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Isaiah%2040.8" data-reference="Isaiah 40.8" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">40:8</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Jer%2015.16" data-reference="Jer 15.16" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Jeremiah 15:16</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Jeremiah%2036.1-32" data-reference="Jeremiah 36.1-32" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">36:1-32</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Matt%205.17-18" data-reference="Matt 5.17-18" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Matthew 5:17-18</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Matthew%2022.29" data-reference="Matthew 22.29" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">22:29</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Luke%2021.33" data-reference="Luke 21.33" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Luke 21:33</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Luke%2024.44-46" data-reference="Luke 24.44-46" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">24:44-46</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/John%205.39" data-reference="John 5.39" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">John 5:39</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/John%2016.13-15" data-reference="John 16.13-15" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">16:13-15</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/John%2017.17" data-reference="John 17.17" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">17:17</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Acts%202.16ff" data-reference="Acts 2.16ff" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Acts 2:16ff</a>.;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Acts%2017.11" data-reference="Acts 17.11" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">17:11</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Rom%2015.4" data-reference="Rom 15.4" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Romans 15:4</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Romans%2016.25-26" data-reference="Romans 16.25-26" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">16:25-26</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/2%20Tim%203.15-17" data-reference="2 Tim 3.15-17" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">2 Timothy 3:15-17</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Heb%201.1-2" data-reference="Heb 1.1-2" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Hebrews 1:1-2</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Hebrews%204.12" data-reference="Hebrews 4.12" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">4:12</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/1%20Pet%201.25" data-reference="1 Pet 1.25" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">1 Peter 1:25</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/2%20Pet%201.19-21" data-reference="2 Pet 1.19-21" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">2 Peter 1:19-21</a>.</span></p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"13073170\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><em style=""><a data-reference="Exod 24.4" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FExod%252024.4%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>Exodus 24:4</span></a>;<span>&nbsp;</span><a data-reference="Deut 4.1-2" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FDeut%25204.1-2%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Deuteronomy 4:1-2</a>;<span>&nbsp;</span><a data-reference="Deuteronomy 17.19" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FDeuteronomy%252017.19%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">17:19</a>;<span>&nbsp;</span><a data-reference="Josh 8.34" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FJosh%25208.34%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Joshua 8:34</a>;<span>&nbsp;</span><a data-reference="Ps 19.7-10" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FPs%252019.7-10%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Psalms 19:7-10</a>;<span>&nbsp;</span><a data-reference="Psalms 119.11" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FPsalms%2520119.11%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">119:11</a>,<a data-reference="Psalms 119.89" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FPsalms%2520119.89%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">89</a>,<a data-reference="Psalms 119.105" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FPsalms%2520119.105%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">105</a>,<a data-reference="Psalms 119.140" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FPsalms%2520119.140%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">140</a>;<span>&nbsp;</span><a data-reference="Isa 34.16" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FIsa%252034.16%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Isaiah 34:16</a>;<span>&nbsp;</span><a data-reference="Isaiah 40.8" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FIsaiah%252040.8%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">40:8</a>;<span>&nbsp;</span><a data-reference="Jer 15.16" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FJer%252015.16%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Jeremiah 15:16</a>;<span>&nbsp;</span><a data-reference="Jeremiah 36.1-32" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FJeremiah%252036.1-32%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">36:1-32</a>;<span>&nbsp;</span><a data-reference="Matt 5.17-18" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FMatt%25205.17-18%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Matthew 5:17-18</a>;<span>&nbsp;</span><a data-reference="Matthew 22.29" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FMatthew%252022.29%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">22:29</a>;<span>&nbsp;</span><a data-reference="Luke 21.33" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FLuke%252021.33%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Luke 21:33</a>;<span>&nbsp;</span><a data-reference="Luke 24.44-46" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FLuke%252024.44-46%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">24:44-46</a>;<span>&nbsp;</span><a data-reference="John 5.39" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FJohn%25205.39%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">John 5:39</a>;<span>&nbsp;</span><a data-reference="John 16.13-15" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FJohn%252016.13-15%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">16:13-15</a>;<span>&nbsp;</span><a data-reference="John 17.17" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FJohn%252017.17%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">17:17</a>;<span>&nbsp;</span><a data-reference="Acts 2.16ff" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FActs%25202.16ff%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Acts 2:16ff</a>.;<span>&nbsp;</span><a data-reference="Acts 17.11" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FActs%252017.11%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">17:11</a>;<span>&nbsp;</span><a data-reference="Rom 15.4" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FRom%252015.4%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Romans 15:4</a>;<span>&nbsp;</span><a data-reference="Romans 16.25-26" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FRomans%252016.25-26%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">16:25-26</a>;<span>&nbsp;</span><a data-reference="2 Tim 3.15-17" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2F2%2520Tim%25203.15-17%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">2 Timothy 3:15-17</a>;<span>&nbsp;</span><a data-reference="Heb 1.1-2" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FHeb%25201.1-2%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">Hebrews 1:1-2</a>;<span>&nbsp;</span><a data-reference="Hebrews 4.12" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2FHebrews%25204.12%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">4:12</a>;<span>&nbsp;</span><a data-reference="1 Pet 1.25" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2F1%2520Pet%25201.25%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">1 Peter 1:25</a>;<span>&nbsp;</span><a data-reference="2 Pet 1.19-21" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fbiblia.com%2Fbible%2Fcsb%2F2%2520Pet%25201.19-21%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D">2 Peter 1:19-21</a>.</em></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 33 (Anthem Icon aligment)
+const ex33: Data = {
+  html: `<div class="text-content text-0 editable" data-id="18444100" data-category="text"><div><p style="font-size: 1.1968em;"><a href="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-location="external" data-button="false" data-detail="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-category="link" target="_blank" class="cloverlinks" style="color: rgb(227, 227, 227);">101 N Palm Ave.</a></p><p style="text-align: right;"><a class="socialIconLink cloverlinks" href="https://www.facebook.com/Firstpresfrostproof" data-location="external" data-button="false" data-detail="https://www.facebook.com/Firstpresfrostproof" data-category="link" target="_blank" style="letter-spacing: 0.1504px; background-color: rgb(80, 80, 80); outline-style: initial; outline-width: 0px; color: rgb(202, 232, 79); font-size: 26.9998px;"><span data-socialicon="facebook"><span class="socialIconSymbol" style="font-size: 1.8519em; color: rgb(227, 227, 227);" aria-hidden="true"></span><span class="sr-only">facebook</span></span> <span class="clovercustom" style="font-size: 1.8519em;"> &nbsp;</span></a><a class="socialIconLink cloverlinks" href="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-location="external" data-button="false" data-detail="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-category="link" target="_blank" style="letter-spacing: 0.1504px; background-color: rgb(80, 80, 80); color: rgb(227, 227, 227); font-size: 26.9998px;"><span data-socialicon="map"><span class="socialIconSymbol" style="font-size: 1.8519em;" aria-hidden="true"></span><span class="sr-only">map</span></span><span class="clovercustom" style="font-size: 1.8519em;"> </span></a> </p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"18444100\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-button="false" data-detail="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-category="link" target="_blank" style="color: rgb(227, 227, 227); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.google.com%2Fmaps%2Fplace%2F101%2BN%2BPalm%2BAve%2C%2BFrostproof%2C%2BFL%2B33843%2F%4027.7475396%2C-81.537104%2C17z%2Fdata%3D!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9%3A0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="color: rgb(227, 227, 227); ">101 N Palm Ave.</span></a></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                bgColorHex: "#505050",
+                bgColorOpacity: undefined,
+                bgColorPalette: "",
+                colorHex: "#e3e3e3",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#e3e3e3",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                linkExternal: "https://www.facebook.com/Firstpresfrostproof",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "facebook-f",
+                padding: 7,
+                type: "fa"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                bgColorHex: "#505050",
+                bgColorOpacity: undefined,
+                bgColorPalette: "",
+                customSize: 26,
+                linkExternal:
+                  "https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "map-marker-alt",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 34 (Anthem Text with font tag)
+const ex34: Data = {
+  html: `<div class="text-content text-1 editable" data-id="13030114" data-category="text"><div><p style="font-family: &quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, &quot;Lucida Sans&quot;, Geneva, Verdana, sans-serif; font-weight: 700; text-align: left; font-size: 0.9973em; color: rgb(0, 83, 166); line-height: 1.4em;">Part 3 - We respond to God's Word</p><ol style="color: rgb(0, 83, 166); font-family: &quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, &quot;Lucida Sans&quot;, Geneva, Verdana, sans-serif; font-style: normal; font-weight: 400;"><li><font color="#0053a6" face="Lucida Grande, Lucida Sans Unicode, Lucida Sans, Geneva, Verdana, sans-serif" style="font-weight: 400;">In songs of praise</font></li><li><font color="#0053a6" face="Lucida Grande, Lucida Sans Unicode, Lucida Sans, Geneva, Verdana, sans-serif" style="font-weight: 400;">In offerings of thanks to God (We support the sharing of his Word)</font></li><li>In prayers for our congregation, our world, and the Church</li></ol></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"13030114\"]" },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 83, 166); font-weight: 700; ">Part 3 - We respond to God\'s Word</span></p><ol><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; ">In songs of praise</span></li><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; ">In offerings of thanks to God (We support the sharing of his Word)</span></li><li class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>In prayers for our congregation, our world, and the Church</span></li></ol>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 35 (Voyage Text with bold link)
+const ex35: Data = {
+  html: `<div class="text-content text-0 editable" data-id="23579203" data-category="text"><div><p><a class="socialIconLink cloverlinks sites-button" href="https://facebook.com/CanaanBaptistChurch.Birmingham" data-location="external" data-button="true" data-detail="https://facebook.com/CanaanBaptistChurch.Birmingham" data-category="link" target="_blank" role="button"><span data-socialicon="facebook"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">facebook</span></span></a> <a class="socialIconLink cloverlinks sites-button" href="https://www.youtube.com/@CanaanBaptistChurch-Birmingham" data-location="external" data-button="true" data-detail="https://www.youtube.com/@CanaanBaptistChurch-Birmingham" data-category="link" target="_blank" role="button"><span data-socialicon="youtube"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">youtube</span></span></a><br></p><p>Canaan Baptist Church</p><p>2543 Morgan Rd Bessemer, AL 35022</p><p>205-425-4381</p></div></div>`,
+  //prettier-ignore
+  entry: { ...entry, selector: "[data-id=\"23579203\"]" },
+  output: {
+    data: [
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontStyle: "",
+                iconName: "facebook-f",
+                iconType: "fa",
+                lineHeight: 1.3,
+                linkExternal:
+                  "https://facebook.com/CanaanBaptistChurch.Birmingham",
+                linkExternalBlank: "on",
+                linkType: "external",
+                mobileFontStyle: "",
+                mobileLineHeight: 1.2,
+                size: "custom",
+                tabletFontStyle: "",
+                tabletLineHeight: 1.2,
+                text: ""
+              }
+            },
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontStyle: "",
+                iconName: "youtube",
+                iconType: "fa",
+                lineHeight: 1.3,
+                linkExternal:
+                  "https://www.youtube.com/@CanaanBaptistChurch-Birmingham",
+                linkExternalBlank: "on",
+                linkType: "external",
+                mobileFontStyle: "",
+                mobileLineHeight: 1.2,
+                size: "custom",
+                tabletFontStyle: "",
+                tabletLineHeight: 1.2,
+                text: ""
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Canaan Baptist Church</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>2543 Morgan Rd Bessemer, AL 35022</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>205-425-4381</span></p>'
               }
             }
           ]
@@ -2034,7 +2204,12 @@ describe.each([
   ex27,
   ex28,
   ex29,
-  ex30
+  ex30,
+  ex31,
+  ex32,
+  ex33,
+  ex34,
+  ex35
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;

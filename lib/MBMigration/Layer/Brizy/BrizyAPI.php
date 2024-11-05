@@ -379,6 +379,25 @@ class BrizyAPI extends Utils
         return json_decode($result->getBody(), true);
     }
 
+    public function getMetadata(): array
+    {
+        $containerID = Utils::$cache->get('projectId_Brizy');
+        $url = $this->createUrlAPI('projects').'/'.$containerID;
+
+        $r_projectFullData['project'] = $containerID;
+
+        $result = $this->request('GET', $url, ['form_params' => $r_projectFullData]);
+
+        $result = json_decode($result->getBody(), true);
+
+        if(!empty($result['metadata'])) {
+
+           return json_decode($result['metadata'], true);
+        }
+
+        return ['site_id'=>'', 'secret'=>''];
+    }
+
 
     /**
      * @throws GuzzleException

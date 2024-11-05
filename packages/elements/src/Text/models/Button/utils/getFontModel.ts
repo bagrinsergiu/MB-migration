@@ -81,11 +81,19 @@ export const getFontModel = (
         break;
       }
       case "font-size": {
-        Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
+        const fontSize = parseInt(`${styles[key]}`);
+
+        if (fontSize) {
+          Object.assign(dic, dicKeyForDevices(key, fontSize));
+        }
         break;
       }
       case "font-weight": {
-        Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
+        const fontWeight = parseInt(`${styles[key]}`);
+
+        if (fontWeight) {
+          Object.assign(dic, dicKeyForDevices(key, fontWeight));
+        }
         break;
       }
       case "line-height": {
@@ -98,6 +106,9 @@ export const getFontModel = (
       }
       case "letter-spacing": {
         const value = styles[key];
+
+        if (!value) break;
+
         if (value === "normal") {
           Object.assign(dic, dicKeyForDevices(key, 0));
         } else {

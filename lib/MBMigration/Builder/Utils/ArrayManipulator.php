@@ -165,10 +165,6 @@ class ArrayManipulator
         return $parents;
     }
 
-
-
-
-
     public function _groupArrayByParentId($list)
     {
         $result = [];

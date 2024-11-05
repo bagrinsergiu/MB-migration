@@ -5,6 +5,7 @@ export interface Entry {
   families: Record<string, string>;
   defaultFamily: string;
   urlMap: Record<string, string>;
+  className?: string;
 }
 
 export interface MenuItemSelector {
@@ -46,7 +47,7 @@ export interface Data {
   warns?: Record<string, Record<string, string>>;
 }
 
-interface Error {
+export interface Error {
   error: string;
 }
 

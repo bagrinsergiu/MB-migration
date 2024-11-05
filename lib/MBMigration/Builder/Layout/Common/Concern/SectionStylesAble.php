@@ -18,11 +18,23 @@ trait SectionStylesAble
         array $additionalOptions = []
     ): void {
         $mbSectionItem = $data->getMbSection();
+        $options = [];
 
-        $options = [
-            'paddingTop' => $this->getTopPaddingOfTheFirstElement(),
-            'mobilePaddingTop' => $this->getMobileTopPaddingOfTheFirstElement(),
-        ];
+        if($this->getTopPaddingOfTheFirstElement() !== 0) {
+            $options = [
+                'paddingTop' => $this->getTopPaddingOfTheFirstElement(),
+            ];
+
+            $options = array_merge($options, $additionalOptions);
+        }
+
+        if($this->getMobileTopPaddingOfTheFirstElement() !== 0) {
+            $options = [
+                'mobilePaddingTop' => $this->getMobileTopPaddingOfTheFirstElement(),
+            ];
+
+            $options = array_merge($options, $additionalOptions);
+        }
 
         $options = array_merge($options, $additionalOptions);
 
@@ -103,9 +115,9 @@ trait SectionStylesAble
 
         // reset padding top for first section as in brizy there is no need for that padding.
         // In Voyage our fixed heared adds space
-        if (!is_null($pagePosition) && $pagePosition == 0) {
-            $sectionStyles['padding-top'] = 0;
-        }
+//        if (!is_null($pagePosition) && $pagePosition == 0) {
+//            $sectionStyles['padding-top'] = 0;
+//        }
 
         // set the background color paddings and margins
         $brizySection->getValue()
@@ -178,6 +190,12 @@ trait SectionStylesAble
         if ($this->hasImageBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
             if (isset($background['filename']) && isset($background['photo'])) {
+
+                if($background['opacity']>=0.9)
+                {
+                    $background['opacity'] = 0.8;
+                }
+
                 $brizySection->getValue()
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgImageSrc($background['photo'])
@@ -185,8 +203,9 @@ trait SectionStylesAble
                     ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
                     ->set_bgColorHex($backgroundColorHex)
 
+                    ->set_mobileBgColorType('solid')
                     ->set_mobileBgColorHex($backgroundColorHex)
-                    ->set_mobileBgColorOpacity($background['opacity']);
+                    ->set_mobileBgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']));
             }
         }
 

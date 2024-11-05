@@ -1,23 +1,14 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\Text;
+namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\Events;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Text\FullTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\Events\EventFeaturedLayoutElement;
 use MBMigration\Builder\Utils\ColorConverter;
 
-class FullText extends FullTextElement
+class EventFeturedLayout extends EventFeaturedLayoutElement
 {
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
-    }
-
-    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
-        return $brizySection->getItemWithDepth(0,0,0);
-    }
-
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = parent::internalTransformToItem($data);
@@ -62,17 +53,21 @@ class FullText extends FullTextElement
         return $brizySection;
     }
 
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0,0,0);
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 50,
+            "mobilePaddingTop" => 25,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 50,
+            "mobilePaddingBottom" => 0,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
@@ -88,4 +83,5 @@ class FullText extends FullTextElement
     {
         return 25;
     }
+
 }

@@ -175,9 +175,14 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
     }
 
-    public function getThemeSubMenuItemSelector(): array
+    public function getThemeSubMenuNotSelectedItemSelector(): array
     {
         return ["selector" => "#selected-sub-navigation>ul>li>a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemClassSelected(): array
+    {
+        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array

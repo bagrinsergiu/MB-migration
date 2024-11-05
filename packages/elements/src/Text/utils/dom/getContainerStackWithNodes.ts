@@ -69,7 +69,7 @@ const extractInnerText = (node: Node, stack: Stack, selector: string): void => {
   }
 };
 
-function appendNodeStyles(node: HTMLElement, targetNode: HTMLElement) {
+function appendNodeStyles(node: HTMLElement, targetNode: HTMLElement = node) {
   const styles = window.getComputedStyle(node);
   extractedAttributes.forEach((style) => {
     targetNode.style.setProperty(style, styles.getPropertyValue(style));
@@ -96,7 +96,7 @@ function removeNestedDivs(node: HTMLElement) {
         // insert granchild to child parent node and remove child
         Array.from(child.childNodes).forEach((grandchild) => {
           if (grandchild instanceof HTMLElement) {
-            appendNodeStyles(grandchild, grandchild);
+            appendNodeStyles(grandchild);
 
             node.insertBefore(grandchild, child);
           } else if (grandchild.textContent?.trim()) {
@@ -153,6 +153,18 @@ const flattenNode = (node: Element) => {
   return _node;
 };
 
+const replaceWrongTags = (node: HTMLElement) => {
+  const tagsToReplace = "font";
+  const replaceElements = node.querySelectorAll(tagsToReplace);
+
+  replaceElements.forEach((element) => {
+    const span = document.createElement("span");
+    appendNodeStyles(element, span);
+    span.innerHTML = element.innerHTML;
+    element.parentNode?.replaceChild(span, element);
+  });
+};
+
 export const getContainerStackWithNodes = (parentNode: Element): Container => {
   const container = document.createElement("div");
   const stack = new Stack();
@@ -182,6 +194,11 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           node.remove();
         });
       } else {
+        if (containerOfNode.querySelector(embedSelector)) {
+          appendNewText = true;
+          stack.append(_node, { type: "embed" });
+          return;
+        }
         // Check the button first because
         // inside button can be icons
         if (buttons.length > 0) {
@@ -204,7 +221,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
               if (node instanceof HTMLElement) {
                 const container = document.createElement("div");
                 container.append(node.cloneNode(true));
-                appendNodeStyles(node, node);
+                appendNodeStyles(node);
 
                 // if latest appended is icon, icons must be wrapped in same node
                 if (appendedButton) {
@@ -231,6 +248,8 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
               container.append(node.cloneNode(true));
 
               if (container.querySelector(iconSelector)) {
+                parentNode.parentElement?.append(_node);
+                appendNodeStyles(node);
                 // if latest appended is icon, icons must be wrapped in same node
                 if (appendedIcon) {
                   stack.set(node);
@@ -254,16 +273,12 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
               }
             }
           });
+          _node.remove();
           return;
         }
       }
 
-      if (containerOfNode.querySelector(embedSelector)) {
-        appendNewText = true;
-        extractInnerText(_node, stack, embedSelector);
-        stack.append(_node, { type: "embed" });
-        return;
-      }
+      replaceWrongTags(_node);
 
       if (appendNewText) {
         appendNewText = false;
@@ -272,7 +287,9 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
         stack.set(_node, { type: "text" });
       }
     } else {
-      stack.append(_node, { type: "text" });
+      if (_node.textContent?.trim()) {
+        stack.append(_node, { type: "text" });
+      }
     }
   });
 

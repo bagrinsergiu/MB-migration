@@ -227,12 +227,32 @@ abstract class HeadElement extends AbstractElement
         ]);
 
         $menuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', [
-            'itemSelector' => $this->getThemeSubMenuItemSelector(),
+            'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
             'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
             'families' => $families,
             'defaultFamily' => $defaultFamilies,
             'hover' => false,
         ]);
+
+        if(isset($menuSubItemStyles['error'])) {
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+
+            $menuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', [
+                'itemSelector' => $this->getThemeSubMenuItemSelector(),
+                'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
+                'hover' => false,
+            ]);
+
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+        }
 
         if ($this->browserPage->triggerEvent('hover', $menuItemSelector['selector'])) {
             $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
@@ -246,7 +266,21 @@ abstract class HeadElement extends AbstractElement
         }
 
         if ($this->browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()['selector']) &&
-            $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuItemSelector()['selector'])) {
+            $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])) {
+
+            $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', [
+                'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
+                'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
+                'hover' => true,
+            ]);
+        } else {
+
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
 
             $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', [
                 'itemSelector' => $this->getThemeSubMenuItemSelector(),
@@ -254,6 +288,11 @@ abstract class HeadElement extends AbstractElement
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,
                 'hover' => true,
+            ]);
+
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
         }
 
@@ -293,6 +332,10 @@ abstract class HeadElement extends AbstractElement
     abstract protected function getThemeMenuItemMobileSelector(): array;
 
     abstract protected function getThemeParentMenuItemSelector(): array;
+
+    abstract protected function getThemeSubMenuNotSelectedItemSelector(): array;
+
+    abstract protected function getThemeSubMenuItemClassSelected(): array;
 
     abstract protected function getThemeSubMenuItemSelector(): array;
 

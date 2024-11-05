@@ -33,9 +33,6 @@ abstract class GridLayoutElement extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
-        $sectionItemComponent->getValue()
-            ->set_paddingTop($this->getTopPaddingOfTheFirstElement());
-
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
         $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
@@ -52,7 +49,9 @@ abstract class GridLayoutElement extends AbstractElement
             $itemCount = count($row);
             $itemWidth = (int)(100/$itemCount);
             $rowWidth = (int)( (100/$this->getItemsPerRow()) * $itemCount );
-            $brizySectionRow->getValue()->set_size($rowWidth);
+            $brizySectionRow->getValue()
+                ->set_size($rowWidth)
+                ->set_mobileSize(100);
 
             foreach ($row as $item) {
 

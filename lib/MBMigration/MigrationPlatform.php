@@ -23,6 +23,7 @@ use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
+use MBMigration\Layer\MB\MonkcmsAPI;
 use MBMigration\Parser\JS;
 use Psr\Log\LoggerInterface;
 
@@ -43,6 +44,7 @@ class MigrationPlatform
     private PageController $pageController;
     private LoggerInterface $logger;
     private array $pageMapping;
+    private Config $config;
 
     use checking;
     use DebugBackTrace;
@@ -59,6 +61,8 @@ class MigrationPlatform
         $this->finalSuccess['status'] = 'start';
 
         $this->buildPage = $buildPage;
+
+        $this->config = $config;
     }
 
     public function start(string $projectID_MB, int $projectID_Brizy = 0): bool
@@ -178,6 +182,17 @@ class MigrationPlatform
         }
 
         $this->brizyApi->setMetaDate();
+
+        $received = $this->brizyApi->getMetadata();
+
+        $configM = [
+            'siteId' => $received['site_id'],
+            'siteSecret' => $received['secret'],
+        ];
+
+        $mCms = new MonkcmsAPI($configM);
+
+        $this->cache->set('series', $mCms->getSeriesGroupBySlug());
 
         $parentPages = $this->parser->getPages();
 
@@ -299,7 +314,7 @@ class MigrationPlatform
             $this->cache->set('preparedSectionOfThePage_'.$page['id'], $preparedSectionOfThePage);
         }
 
-        $collectionItem = $this->pageController->getCollectionItem($page['slug']);
+        $collectionItem = $page['collection'];
 
         if ($collectionItem) {
             $this->pageController->setCurrentPageOnWork($collectionItem);

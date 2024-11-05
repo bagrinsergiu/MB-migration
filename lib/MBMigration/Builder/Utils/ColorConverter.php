@@ -177,4 +177,29 @@ final class ColorConverter
 
         return $brightness > 125 ? '#000000' : '#FFFFFF';
     }
+
+    public static function getHoverOpacity(float $baseOpacity): float {
+        // Убедимся, что значение прозрачности находится в диапазоне от 0 до 1
+        if ($baseOpacity < 0) {
+            $baseOpacity = 0;
+        } elseif ($baseOpacity > 1) {
+            $baseOpacity = 1;
+        }
+
+        // Если прозрачность больше или равна 0.8, уменьшим её
+        if ($baseOpacity >= 0.8) {
+            $hoverOpacity = $baseOpacity - 0.2;
+            if ($hoverOpacity < 0) {
+                $hoverOpacity = 0; // Убедимся, что не выходит за пределы
+            }
+        } else {
+            // В других случаях увеличим прозрачность
+            $hoverOpacity = $baseOpacity + 0.2;
+            if ($hoverOpacity > 1) {
+                $hoverOpacity = 1; // Убедимся, что не выходит за пределы
+            }
+        }
+
+        return $hoverOpacity;
+    }
 }
