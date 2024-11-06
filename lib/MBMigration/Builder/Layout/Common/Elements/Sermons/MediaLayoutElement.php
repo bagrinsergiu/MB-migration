@@ -227,7 +227,7 @@ abstract class MediaLayoutElement extends AbstractElement
 
             $this->getDetailsLinksComponent($brizySectionGrid)
                 ->getValue()
-//                ->set_defaultCategory($slug)
+                ->set_defaultCategory($slug)
                 ->set_parentCategory($slug)
                 ->set_detailPageSource($collectionTypeUri)
                 ->set_detailPage("{{placeholder content='$placeholder'}}");
