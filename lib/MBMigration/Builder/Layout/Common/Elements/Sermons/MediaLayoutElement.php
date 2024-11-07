@@ -59,11 +59,17 @@ abstract class MediaLayoutElement extends AbstractElement
 
         $dataIdSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
 
-        $nodeSelector = $dataIdSelector. ' .media-grid-container';
-        $mbSection['mediaGridContainer'] = $this->hasNode($nodeSelector, $this->browserPage);
+        $mbSection['mediaGridContainer'] = false;
 
-        $nodeSelector = $dataIdSelector. ' .media-player';
-        $mbSection['media-player'] = $this->hasNode($nodeSelector, $this->browserPage);
+        if($this->hasNode($dataIdSelector. ' .media-grid-container', $this->browserPage)){
+            $mbSection['mediaGridContainer'] = true;
+        } elseif ($this->hasNode($dataIdSelector. ' .media-list-container', $this->browserPage)){
+            $mbSection['mediaGridContainer'] = true;
+        }
+
+        if ($this->hasNode($dataIdSelector. ' .media-player', $this->browserPage)){
+            $mbSection['media-player'] = true;
+        }
 
         if ($mbSection['media-player']) {
             $titleSelector = $dataIdSelector. ' .media-video-title';
