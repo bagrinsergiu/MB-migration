@@ -50,6 +50,7 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new LivestreamLayoutElement($this->blockKit['blocks']['livestream-layout'], $browserPage);
             case 'small-groups-list':
                 return new SmallGroupsListElement($this->blockKit['blocks']['small-groups-list'], $browserPage);
+
             case 'full-width-form':
                 return new FullWidthForm($this->blockKit['blocks']['form'], $browserPage);
             case 'left-form-with-text':
