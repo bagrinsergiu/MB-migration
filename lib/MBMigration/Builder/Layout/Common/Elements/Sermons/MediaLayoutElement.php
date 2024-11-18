@@ -318,7 +318,7 @@ abstract class MediaLayoutElement extends AbstractElement
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
 
         $richTextTitle = [
-            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-heading5" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
+            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-empty brz-ff-overpass brz-ft-google brz-fs-lg-20 brz-fss-lg-px brz-fw-lg-400 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
             'typographyFontStyle' => 'heading5'
             ];
 
