@@ -37,6 +37,29 @@ class Head extends HeadElement
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
         // because of a fantastic idea to not have the option the place the icon per menu item
+
+        $menuPadding = [
+            "mobileMarginType" => "ungrouped",
+            "mobileMargin" => 0,
+            "mobileMarginSuffix" => "px",
+            "mobileMarginTop" => 10,
+            "mobileMarginTopSuffix" => "px",
+            "mobileMarginRight" => 12,
+            "mobileMarginRightSuffix" => "px",
+            "mobileMarginBottom" => 10,
+            "mobileMarginBottomSuffix" => "px",
+            "mobileMarginLeft" => 0,
+            "mobileMarginLeftSuffix" => "px",
+        ];
+
+        foreach ($menuPadding as $option => $value) {
+            $nameOption = 'set_'.$option;
+            $brizySection->getItemWithDepth(0, 0, 1, 0 )
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+
         $menuComponent = $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
         $menuComponent->getValue()
             ->set_iconPosition('right');

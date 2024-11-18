@@ -29,7 +29,7 @@ use MBMigration\Builder\Layout\Theme\Voyage\Elements\Text\RightMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Text\RightMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Text\TabsLayoutElement;
 
-class ElementFactory  extends AbstractThemeElementFactory
+class ElementFactory extends AbstractThemeElementFactory
 {
     public function getElement($name, BrowserPageInterface $browserPage): ElementInterface
     {

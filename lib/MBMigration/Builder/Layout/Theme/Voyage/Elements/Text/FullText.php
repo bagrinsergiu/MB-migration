@@ -36,7 +36,7 @@ class FullText extends FullTextElement
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 20,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
