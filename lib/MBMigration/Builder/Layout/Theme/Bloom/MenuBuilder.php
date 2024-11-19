@@ -10,7 +10,7 @@ class MenuBuilder extends \MBMigration\Builder\Layout\Common\MenuBuilder
     public function transformToBrizyMenu(array $menuItems): array
     {
         // filter hidden menu items
-        $menuItems = array_values(array_filter($menuItems, fn($item) => isset($item['hidden']) && !$item['hidden']));
+        $menuItems = $this->removeHiddenElements($menuItems);
 
 //        $count = count($menuItems);
 //        if ($count > self::MAIN_MENU_ITEM_MAX_COUNT) {

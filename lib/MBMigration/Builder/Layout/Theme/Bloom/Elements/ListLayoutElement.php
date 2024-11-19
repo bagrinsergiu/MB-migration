@@ -30,4 +30,14 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     {
         return $brizySection;
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 250;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
 }

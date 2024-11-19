@@ -18,25 +18,15 @@ trait SectionStylesAble
         array $additionalOptions = []
     ): void {
         $mbSectionItem = $data->getMbSection();
-        $options = [];
+        $options = $additionalOptions;
 
         if($this->getTopPaddingOfTheFirstElement() !== 0) {
-            $options = [
-                'paddingTop' => $this->getTopPaddingOfTheFirstElement(),
-            ];
-
-            $options = array_merge($options, $additionalOptions);
+            $options['paddingTop'] = $this->getTopPaddingOfTheFirstElement();
         }
 
-        if($this->getMobileTopPaddingOfTheFirstElement() !== 0) {
-            $options = [
-                'mobilePaddingTop' => $this->getMobileTopPaddingOfTheFirstElement(),
-            ];
-
-            $options = array_merge($options, $additionalOptions);
+        if ($this->getMobileTopPaddingOfTheFirstElement() !== 0) {
+            $options['mobilePaddingTop'] = $this->getMobileTopPaddingOfTheFirstElement();
         }
-
-        $options = array_merge($options, $additionalOptions);
 
         if(isset($mbSectionItem['position']) &&  $mbSectionItem['position'] === 1) {
             foreach ($options as $key => $value) {
