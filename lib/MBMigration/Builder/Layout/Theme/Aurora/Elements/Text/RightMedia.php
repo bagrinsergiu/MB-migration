@@ -76,13 +76,13 @@ class RightMedia extends PhotoTextElement
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 25,
+            "mobilePaddingTop" => 0,
             "mobilePaddingTopSuffix" => "px",
-            "mobilePaddingRight" => 20,
+            "mobilePaddingRight" => 0,
             "mobilePaddingRightSuffix" => "px",
             "mobilePaddingBottom" => 0,
             "mobilePaddingBottomSuffix" => "px",
-            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeft" => 0,
             "mobilePaddingLeftSuffix" => "px",
         ];
     }

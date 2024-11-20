@@ -113,7 +113,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 
         if (isset($mbSection['settings']['sections']['background']['video'])){
             $brizySectionItem = new BrizyComponent($videoJson);
-            $brizyComponentValue = $brizySectionItem->getValue();
+            $brizyComponentValue = $this->getSlideVideoComponent($brizySectionItem)->getValue();
             $brizyComponentValue
                 ->set_media('video')
                 ->set_bgVideoType('url')
@@ -305,5 +305,10 @@ abstract class GalleryLayoutElement extends AbstractElement
 
             return false;
         }
+    }
+
+    protected function getSlideVideoComponent(BrizyComponent $brizySectionItem): BrizyComponent
+    {
+        return $brizySectionItem;
     }
 }

@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Common;
 use MBMigration\Browser\BrowserInterface;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Browser\BrowserPHP;
+use MBMigration\Builder\Layout\Common\DTO\PageDto;
 
 final class ThemeContext implements ThemeContextInterface
 {
@@ -93,7 +94,8 @@ final class ThemeContext implements ThemeContextInterface
         array $urlMap,
         RootPalettesInterface $RootPalettes,
         BrowserInterface $browser,
-        array $listSeries
+        array $listSeries,
+        PageDto $pageDTO
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
@@ -112,6 +114,7 @@ final class ThemeContext implements ThemeContextInterface
         $this->rootPalettes = $RootPalettes;
         $this->browser = $browser;
         $this->listSeries = $listSeries;
+        $this->pageDTO = $pageDTO;
     }
 
     public function getLayoutName(): string
@@ -204,5 +207,10 @@ final class ThemeContext implements ThemeContextInterface
     public function getListSeries(): array
     {
         return $this->listSeries;
+    }
+
+    public function getPageDTO(): PageDto
+    {
+        return $this->pageDTO;
     }
 }

@@ -11,13 +11,9 @@ use MBMigration\Core\Logger;
 
 abstract class AbstractTheme implements ThemeInterface
 {
-    /**
-     * @var ThemeContextInterface
-     */
-    protected $themeContext;
+    protected ThemeContextInterface $themeContext;
 
-
-    public function __construct(ThemeContextInterface $themeContext)
+    public function setThemeContext(ThemeContextInterface $themeContext)
     {
         $this->themeContext = $themeContext;
     }
@@ -117,5 +113,10 @@ abstract class AbstractTheme implements ThemeInterface
     public function afterTransformBlocks(BrizyPage $page, array $mbPageSections): BrizyPage
     {
         return $page;
+    }
+
+    public function beforeBuildPage(): array
+    {
+        return [];
     }
 }

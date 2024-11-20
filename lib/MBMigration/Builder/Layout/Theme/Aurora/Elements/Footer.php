@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
+namespace MBMigration\Builder\Layout\Theme\Aurora\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Elements\FooterElement;

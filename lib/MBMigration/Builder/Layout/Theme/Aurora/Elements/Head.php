@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Anthem\Elements;
+namespace MBMigration\Builder\Layout\Theme\Aurora\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Elements\HeadElement;
@@ -320,5 +320,10 @@ class Head extends HeadElement
             "activeMenuBorderBottomWidth" => 2,
             "activeMenuBorderLeftWidth" => 0,
         ];
+    }
+
+    protected function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
     }
 }
