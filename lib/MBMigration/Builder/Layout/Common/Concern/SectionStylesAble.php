@@ -101,6 +101,10 @@ trait SectionStylesAble
         catch (\Exception $e) {
         }
 
+        if(!empty($additionalOptions['bg-gradient'])){
+            $sectionStyles['bg-gradient'] = $additionalOptions['bg-gradient'];
+        }
+
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles);
 
         // reset padding top for first section as in brizy there is no need for that padding.
@@ -135,6 +139,9 @@ trait SectionStylesAble
             ->set_mobilePaddingLeftSuffix('px');
 
         foreach ($additionalOptions as $key => $value) {
+            if (is_array($value)) {
+               continue;
+            }
             $method = 'set_'.$key;
             $brizySection->getValue()
                     ->$method($value);
@@ -176,6 +183,32 @@ trait SectionStylesAble
             ->set_mobileBgColorOpacity($opacity)
             ->set_mobileBgColorPalette('');
 
+        if(!empty($sectionStyles['bg-gradient'])){
+
+            $gradient = $sectionStyles['bg-gradient'];
+
+            $brizySection->getValue()
+                ->set_bgColorType('gradient')
+                ->set_gradientType($gradient['type'])
+                ->set_gradientLinearDegree($gradient['angleOrPosition'])
+                ->set_bgColorHex($gradient['colors'][0]['color'])
+                ->set_bgColorOpacity(1)
+                ->set_gradientStartPointer($gradient['colors'][0]['percentage'])
+                ->set_gradientColorHex($gradient['colors'][1]['color'])
+                ->set_gradientColorOpacity(1)
+                ->set_gradientFinishPointer($gradient['colors'][1]['percentage'])
+
+                ->set_mobileBgColorType('gradient')
+                ->set_mobileGradientType($gradient['type'])
+                ->set_mobileGradientLinearDegree($gradient['angleOrPosition'])
+                ->set_mobileBgColorHex($gradient['colors'][0]['color'])
+                ->set_mobileBgColorOpacity(1)
+                ->set_mobileGradientStartPointer($gradient['colors'][0]['percentage'])
+                ->set_mobileGradientColorHex($gradient['colors'][1]['color'])
+                ->set_mobileGradientColorOpacity(1)
+                ->set_mobileGradientFinishPointer($gradient['colors'][1]['percentage']);
+        }
+
         // try to set the image background
         if ($this->hasImageBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
@@ -197,10 +230,7 @@ trait SectionStylesAble
                     ->set_mobileBgColorHex($backgroundColorHex)
                     ->set_mobileBgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']));
             }
-        }
-
-        // try to set the video background
-        if ($this->hasVideoBackground($mbSectionItem)) {
+        } else if ($this->hasVideoBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
             $brizySection->getValue()
                 ->set_media('video')

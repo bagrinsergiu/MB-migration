@@ -29,25 +29,27 @@ class Gradient {
         } elseif (strpos($gradient, 'conic-gradient(') === 0) {
             $this->type = 'conic';
         } else {
-            throw new Exception("invalid gradient: $gradient");
+            $this->type = 'linear';
         }
 
         $gradient = substr($gradient, strpos($gradient, '(') + 1, -1);
 
         if ($this->type === 'linear' || $this->type === 'conic') {
             $parts = explode(',', $gradient, 2);
-            $this->angleOrPosition = trim($parts[0]);
-
-            if (!preg_match('/^(to\s+\w+|\d+deg)$/', $this->angleOrPosition)) {
-                throw new Exception("invalid gradient: $gradient");
-            }
-
+            $this->angleOrPosition = $this->parseAngleOrPosition(trim($parts[0]));
             $this->parseColors($parts[1]);
         } elseif ($this->type === 'radial') {
             $parts = explode(',', $gradient, 2);
             $this->angleOrPosition = trim($parts[0]);
-
             $this->parseColors($parts[1]);
+        }
+    }
+
+    private function parseAngleOrPosition(string $angleOrPosition): int {
+        if (preg_match('/^\d+deg$/', $angleOrPosition)) {
+            return (int) str_replace('deg', '', $angleOrPosition);
+        } else {
+           return 0;
         }
     }
 
@@ -56,7 +58,7 @@ class Gradient {
 
         foreach ($matches as $match) {
             $color = $match[1];
-            $percentage = isset($match[2]) ? trim($match[2]) : null;
+            $percentage = isset($match[2]) ? (int) str_replace('%', '', trim($match[2])) : 0;
 
             if (strpos($color, 'rgb(') === 0) {
                 $color = ColorConverter::convertColorRgbToHex($color);

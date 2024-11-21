@@ -84,6 +84,29 @@ class RightMedia extends PhotoTextElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 0,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType"=> "ungrouped",
+            "padding" => 0,
+            "paddingSuffix" => "px",
+            "paddingTop" => 0,
+            "paddingTopSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingBottom" => 0,
+            "paddingBottomSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
         ];
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
 }

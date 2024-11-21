@@ -8,8 +8,8 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
 {
     protected function getSlideImageComponent(BrizyComponent $brizySectionItem): BrizyComponent
     {
-//        return $brizySectionItem->getItemWithDepth(0,0);
-        return $brizySectionItem;
+        return $brizySectionItem->getItemWithDepth(0,0,0);
+        //return $brizySectionItem;
     }
 
     protected function getSlideVideoComponent(BrizyComponent $brizySectionItem): BrizyComponent

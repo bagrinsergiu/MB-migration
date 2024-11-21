@@ -20,7 +20,6 @@ class Aurora extends AbstractTheme
 
     public function beforeBuildPage(): array
     {
-
         $browserPage = $this->themeContext->getBrowserPage();
         $sectionStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
@@ -33,6 +32,7 @@ class Aurora extends AbstractTheme
         );
 
         if(isset($sectionStyles['error'])){
+
             return ['bg-gradient'=> '#ffffff'];
         }
 
@@ -41,14 +41,16 @@ class Aurora extends AbstractTheme
         try{
             $gradient = new Gradient($bgColorGradient);
 
-            return ['bg-gradient'=> [
-                'type' => $gradient->getType(),
-                'angleOrPosition' => $gradient->getAngleOrPosition(),
-                'colors' => $gradient->getColors()
+            return [
+                'bg-gradient'=> [
+                    'type' => $gradient->getType(),
+                    'angleOrPosition' => $gradient->getAngleOrPosition(),
+                    'colors' => $gradient->getColors()
                 ]
             ];
         } catch (\Exception $e){
-            return ['bg-gradient' => ColorConverter::convertColorRgbToHex($bgColor)];
+
+            return ['background-color' => ColorConverter::convertColorRgbToHex($bgColor)];
         }
     }
 

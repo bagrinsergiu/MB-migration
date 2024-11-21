@@ -62,13 +62,42 @@ class FullText extends FullTextElement
         return $brizySection;
     }
 
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 0,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 0,
+            "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType"=> "ungrouped",
+            "padding" => 0,
+            "paddingSuffix" => "px",
+            "paddingTop" => 0,
+            "paddingTopSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingBottom" => 0,
+            "paddingBottomSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
+        ];
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 50;
+        return 0;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
-        return 25;
+        return 0;
     }
 }

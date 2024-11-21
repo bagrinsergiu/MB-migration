@@ -10,6 +10,9 @@ use MBMigration\Builder\Utils\PathSlugExtractor;
 
 class Head extends HeadElement
 {
+    protected array $headParams = [
+        'addMenuItems' => false
+    ];
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
@@ -25,7 +28,7 @@ class Head extends HeadElement
      */
     protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 1, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
     /**
@@ -35,19 +38,6 @@ class Head extends HeadElement
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
-    }
-
-    protected function beforeTransformToItem(ElementContextInterface $data): void
-    {
-        $menuEnt = $data->getThemeContext()->getBrizyMenuEntity();
-        $deepSlug = PathSlugExtractor::findDeepestSlug($menuEnt['list']);
-        $menuUrl = PathSlugExtractor::getFullUrl($deepSlug['slug']);
-        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
-        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
-        $layoutName = $data->getThemeContext()->getLayoutName();
-        $browser = $data->getThemeContext()->getBrowser();
-
-       $this->browserPage = $browser->openPage($menuUrl, $layoutName);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -85,15 +75,6 @@ class Head extends HeadElement
             'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
         ];
 
-        $brizySection->getItemWithDepth(0)
-            ->getValue()
-            ->set_bgColorHex($headStyle['bg-color'])
-            ->set_bgColorOpacity($headStyle['bg-opacity'])
-            ->set_mobileBgColorType('solid')
-            ->set_mobileBgColorHex($headStyle['bg-color'])
-            ->set_mobileBgColorPalette('')
-            ->set_mobileBgColorOpacity($headStyle['bg-opacity']);
-
         $imageLogoOptions = [
             'sizeType' => 'custom',
 
@@ -128,7 +109,7 @@ class Head extends HeadElement
             'horizontalAlign' => 'center',
             'mobileHorizontalAlign' => 'left',
 
-            'mobileMarginType' => 'grouped',
+            'mobileMarginType' => 'ungrouped',
             'mobileMargin' => 0,
             'mobileMarginSuffix' => 'px',
             'mobileMarginTop' => 0,
@@ -137,7 +118,7 @@ class Head extends HeadElement
             'mobileMarginRightSuffix' => 'px',
             'mobileMarginBottom' => 0,
             'mobileMarginBottomSuffix' => 'px',
-            'mobileMarginLeft' => 0,
+            'mobileMarginLeft' => 10,
             'mobileMarginLeftSuffix' => 'px',
         ];
 
@@ -149,44 +130,76 @@ class Head extends HeadElement
             "marginTopSuffix" => "px",
             "marginBottom" => 10,
             "marginBottomSuffix" => "px",
+            "marginRight" => 15,
+            "marginRightSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            "mobileMarginType" => "ungrouped",
+            "mobileMarginTopSuffix" => "px",
+            "mobileMarginTop" => 0,
+            "mobileMarginSuffix" => "px",
+            "mobileMarginRight" => 15,
+            "mobileMarginRightSuffix" => "px",
+            "mobileMarginLeft" => 0,
+            "mobileMarginLeftSuffix" => "px",
+            "mobileMarginBottomSuffix" => "px",
+            "mobileMarginBottom" => 0,
+
+        ];
+
+        $sectionHeaderOptions = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 0,
+            "marginTopSuffix" => "px",
+            "marginBottom" => 0,
+            "marginBottomSuffix" => "px",
             "marginRight" => 0,
             "marginRightSuffix" => "px",
             "marginLeft" => 0,
             "marginLeftSuffix" => "px",
         ];
 
-        foreach ($sectionlogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+        foreach ($sectionHeaderOptions as $optionName => $value) {
+            $nameOption = 'set_'.$optionName;
+            $brizySection->getItemWithDepth(0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($sectionlogoOptions as $optionName => $value) {
+            $nameOption = 'set_'.$optionName;
             $brizySection->getItemWithDepth(0, 0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
-        foreach ($imageLogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+        foreach ($imageLogoOptions as $optionName => $value) {
+            $nameOption = 'set_'.$optionName;
             $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
-        foreach ($mobileIconButtonOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 1)
+        foreach ($mobileIconButtonOptions as $optionName => $value) {
+            $nameOption = 'set_'.$optionName;
+            $brizySection->getItemWithDepth(0, 0, 1, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
-
-        foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+        foreach ($this->getPropertiesIconMenuItem() as $optionName => $value) {
+            $nameOption = 'set_'.$optionName;
+            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
-        foreach ($activeItemMenuOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+        foreach ($activeItemMenuOptions as $optionName => $value) {
+            $nameOption = 'set_'.$optionName;
+            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -254,6 +267,22 @@ class Head extends HeadElement
     public function getThemeMenuItemBgSelector(): array
     {
         return $this->getThemeMenuItemSelector();
+    }
+    public function getPropertiesMainSection(): array
+    {
+        return [
+            "paddingType"=> "ungrouped",
+            "padding" => 0,
+            "paddingSuffix" => "px",
+            "paddingTop" => 0,
+            "paddingTopSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingBottom" => 0,
+            "paddingBottomSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
+            ];
     }
 
     protected function getPropertiesIconMenuItem(): array
