@@ -88,6 +88,11 @@ class BrizyComponent implements JsonSerializable
     public function getItemWithDepth()
     {
         $depths = func_get_args();
+
+        if(is_array($depths[0])) {
+            $depths = $depths[0];
+        }
+
         $item = null;
 
         foreach ($depths as $index) {

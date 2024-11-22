@@ -129,6 +129,9 @@ abstract class GalleryLayoutElement extends AbstractElement
             if(count($mbSection['slide']) === 1){
                 $brizySectionItem = new BrizyComponent($slideJson);
                 $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
+
+                $this->handleSectionGradient($brizySectionItem, $additionalOptions);
+
                 if(!empty($mbSection['settings']['sections']['background'])){
                     $this->setSlideImage($brizySectionItemImage, $mbSection['settings']['sections']['background'], $properties);
                 }
@@ -144,6 +147,9 @@ abstract class GalleryLayoutElement extends AbstractElement
             } else {
                 foreach ($mbSection['slide'] as $mbItem) {
                     $brizySectionItem = new BrizyComponent($slideJson);
+
+                    $this->handleSectionGradient($brizySectionItem, $additionalOptions);
+
                     $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
                     $this->setSlideImage($brizySectionItemImage, $mbItem, $properties);
                     $this->setSlideLinks($brizySectionItemImage, $mbItem);
@@ -244,6 +250,11 @@ abstract class GalleryLayoutElement extends AbstractElement
         }
 
         return $brizySectionItem;
+    }
+
+    public function setSlideGradient()
+    {
+
     }
 
     protected function setSlideLinks(BrizyComponent $brizySectionItem, $mbItem): BrizyComponent

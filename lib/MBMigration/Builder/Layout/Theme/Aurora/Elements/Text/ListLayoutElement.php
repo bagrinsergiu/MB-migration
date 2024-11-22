@@ -10,7 +10,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 {
     protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0);
+        return $brizyComponent->getItemWithDepth(0, 0, 0);
     }
 
     protected function getItemTextContainerComponent(

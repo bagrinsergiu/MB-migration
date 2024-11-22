@@ -183,31 +183,7 @@ trait SectionStylesAble
             ->set_mobileBgColorOpacity($opacity)
             ->set_mobileBgColorPalette('');
 
-        if(!empty($sectionStyles['bg-gradient'])){
-
-            $gradient = $sectionStyles['bg-gradient'];
-
-            $brizySection->getValue()
-                ->set_bgColorType('gradient')
-                ->set_gradientType($gradient['type'])
-                ->set_gradientLinearDegree($gradient['angleOrPosition'])
-                ->set_bgColorHex($gradient['colors'][0]['color'])
-                ->set_bgColorOpacity(1)
-                ->set_gradientStartPointer($gradient['colors'][0]['percentage'])
-                ->set_gradientColorHex($gradient['colors'][1]['color'])
-                ->set_gradientColorOpacity(1)
-                ->set_gradientFinishPointer($gradient['colors'][1]['percentage'])
-
-                ->set_mobileBgColorType('gradient')
-                ->set_mobileGradientType($gradient['type'])
-                ->set_mobileGradientLinearDegree($gradient['angleOrPosition'])
-                ->set_mobileBgColorHex($gradient['colors'][0]['color'])
-                ->set_mobileBgColorOpacity(1)
-                ->set_mobileGradientStartPointer($gradient['colors'][0]['percentage'])
-                ->set_mobileGradientColorHex($gradient['colors'][1]['color'])
-                ->set_mobileGradientColorOpacity(1)
-                ->set_mobileGradientFinishPointer($gradient['colors'][1]['percentage']);
-        }
+        $this->handleSectionGradient($brizySection, $sectionStyles);
 
         // try to set the image background
         if ($this->hasImageBackground($mbSectionItem)) {
@@ -256,6 +232,37 @@ trait SectionStylesAble
                         $brizySection->getValue()->set_bgRepeat('on');
                 }
             }
+        }
+    }
+
+    public function handleSectionGradient(BrizyComponent $brizySection, $sectionStyles): void
+    {
+        if(!empty($sectionStyles['bg-gradient'])){
+
+            $gradient = $sectionStyles['bg-gradient'];
+
+            $brizySection->getValue()
+                ->set_bgColorType('gradient')
+                ->set_gradientType($gradient['type'])
+                ->set_gradientLinearDegree($gradient['angleOrPosition'])
+                ->set_bgColorHex($gradient['colors'][0]['color'])
+                ->set_bgColorPalette('')
+                ->set_bgColorOpacity(1)
+                ->set_gradientStartPointer($gradient['colors'][0]['percentage'])
+                ->set_gradientColorHex($gradient['colors'][1]['color'])
+                ->set_gradientColorPalette('')
+                ->set_gradientColorOpacity(1)
+                ->set_gradientFinishPointer($gradient['colors'][1]['percentage'])
+
+                ->set_mobileBgColorType('gradient')
+                ->set_mobileGradientType($gradient['type'])
+                ->set_mobileGradientLinearDegree($gradient['angleOrPosition'])
+                ->set_mobileBgColorHex($gradient['colors'][0]['color'])
+                ->set_mobileBgColorOpacity(1)
+                ->set_mobileGradientStartPointer($gradient['colors'][0]['percentage'])
+                ->set_mobileGradientColorHex($gradient['colors'][1]['color'])
+                ->set_mobileGradientColorOpacity(1)
+                ->set_mobileGradientFinishPointer($gradient['colors'][1]['percentage']);
         }
     }
 

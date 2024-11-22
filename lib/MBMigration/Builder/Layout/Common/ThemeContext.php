@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Common;
 use MBMigration\Browser\BrowserInterface;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Browser\BrowserPHP;
+use MBMigration\Builder\BrizyComponent\BrizyComponentBuilder;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
 
 final class ThemeContext implements ThemeContextInterface
@@ -76,6 +77,7 @@ final class ThemeContext implements ThemeContextInterface
     private array $brizyMenuItems;
     private array $urlMap = [];
     private array $listSeries;
+    private PageDto $pageDTO;
 
     public function __construct(
         string $layoutName,
@@ -212,5 +214,10 @@ final class ThemeContext implements ThemeContextInterface
     public function getPageDTO(): PageDto
     {
         return $this->pageDTO;
+    }
+
+    public function getBrizyComponentBuilder(): BrizyComponentBuilder
+    {
+        return new BrizyComponentBuilder($this->getBrizyKit());
     }
 }

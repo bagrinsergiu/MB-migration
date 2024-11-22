@@ -38,6 +38,9 @@ class RightMedia extends PhotoTextElement
         $mbSectionItem = $data->getMbSection();
         $itemsKit = $data->getThemeContext()->getBrizyKit();
 
+        $data->getThemeContext()->getbrizyComponentBuilder();
+
+
         $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
 
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);

@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Common;
 
 use MBMigration\Browser\BrowserInterface;
 use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Builder\BrizyComponent\BrizyComponentBuilder;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
 
 interface ThemeContextInterface
@@ -44,4 +45,6 @@ interface ThemeContextInterface
     public function getListSeries(): array;
 
     public function getPageDTO(): PageDto;
+
+    public function getBrizyComponentBuilder(): BrizyComponentBuilder;
 }
