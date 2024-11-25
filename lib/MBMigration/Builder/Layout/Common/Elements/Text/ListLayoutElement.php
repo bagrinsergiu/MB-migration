@@ -25,7 +25,12 @@ abstract class ListLayoutElement extends AbstractElement
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
@@ -33,7 +38,7 @@ abstract class ListLayoutElement extends AbstractElement
         $this->handleRichTextHead($elementContext, $this->browserPage);
 
         if ($showHeader) {
-            $this->afterTransformItem($elementContext, $this->getHeaderComponent($brizySection));
+            $this->transformHeadItem($elementContext, $this->getHeaderComponent($brizySection), $styleList);
         }
 
         $itemJson = json_decode($this->brizyKit['item-'.$photoPosition], true);
@@ -66,8 +71,9 @@ abstract class ListLayoutElement extends AbstractElement
                 $this->handleRichTextItem($elementContext, $this->browserPage);
 
                 if ($mbItem['item_type'] == 'title') {
-                    $this->afterTransformItem($elementContext,
-                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition));
+                    $this->transformListItem($elementContext,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition),
+                        $styleList);
                 }
             }
 
@@ -89,7 +95,8 @@ abstract class ListLayoutElement extends AbstractElement
         string $photoPosition
     ): BrizyComponent;
 
-    abstract protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent;
+    abstract protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
+    abstract protected function transformHeadItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
 
     protected function getPropertiesMainSection(): array
     {

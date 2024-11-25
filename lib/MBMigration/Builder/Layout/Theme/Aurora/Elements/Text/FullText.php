@@ -3,15 +3,22 @@
 namespace MBMigration\Builder\Layout\Theme\Aurora\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Elements\Text\FullTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class FullText extends FullTextElement
 {
+    use SectionStylesAble;
+
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0,0);
     }
 
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
@@ -21,44 +28,33 @@ class FullText extends FullTextElement
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = parent::internalTransformToItem($data);
+
+        return $brizySection;
+    }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        $this->handleItemBackground($brizySection, $params);
+        return $brizySection;
+    }
+
+    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent
+    {
         $mbSectionItem = $data->getMbSection();
-        $itemsKit = $data->getThemeContext()->getBrizyKit();
+        $selectId = $mbSectionItem['id'] ?? $mbSectionItem['sectionId'];
 
-        $showHeader = $this->canShowHeader($mbSectionItem);
-        $showBody = $this->canShowBody($mbSectionItem);
+        $sectionSelector = '[data-id="' .$selectId. '"] .bg-helper>.bg-opacity';
+        $styles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $sectionSelector,
+                'styleProperties' => ['background-color','opacity'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
 
-        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
-
-        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
-
-        if($showHeader) {
-            $titleMb = $this->getItemByType($mbSectionItem, 'title');
-
-            $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
-            $wrapperLineStyles = $this->browserPage->evaluateScript(
-                'brizy.getStyles',
-                [
-                    'selector' => $menuSectionSelector,
-                    'styleProperties' => ['border-bottom-color',],
-                    'families' => [],
-                    'defaultFamily' => '',
-                ]
-            );
-
-            $headStyle = [
-                'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
-            ];
-
-            $wrapperLine->getItemWithDepth(0)
-                ->getValue()
-                ->set_borderColorHex($headStyle['line-color']);
-
-
-            $brizySection->getItemWithDepth(0)
-                ->getValue()
-                ->add_items([$wrapperLine], 1);
-        }
-
+        $this->handleItemBackground($brizySection, $styles['data']);
         return $brizySection;
     }
 

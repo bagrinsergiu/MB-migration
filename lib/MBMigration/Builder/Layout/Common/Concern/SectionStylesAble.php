@@ -68,50 +68,15 @@ trait SectionStylesAble
         $additionalOptions = []
     ): BrizyComponent {
         $mbSectionItem = $data->getMbSection();
-        $families = $data->getFontFamilies();
-        $defaultFont = $data->getDefaultFontFamily();
         $brizySection = $data->getBrizySection();
-        $pagePosition = $mbSectionItem['settings']['pagePosition'] ?? null;
 
-
-        $sectionStyles = $this->getSectionStyles(
-            $mbSectionItem['sectionId'],
-            $browserPage,
-            $families,
-            $defaultFont
-        );
-
-        $sectionWrapperStyles = $this->getSectionWrapperStyles(
-            $mbSectionItem['sectionId'],
-            $browserPage,
-            $families,
-            $defaultFont
-        );
-
-        try {
-            $sectionBgStyles = $this->getBgHelperStyles(
-                $mbSectionItem['sectionId'],
-                $browserPage,
-                $families,
-                $defaultFont
-            );
-
-            $sectionStyles = array_merge($sectionStyles,$sectionBgStyles);
-        }
-        catch (\Exception $e) {
-        }
+        $sectionStyles = $this->getSectionListStyle($data, $browserPage);
 
         if(!empty($additionalOptions['bg-gradient'])){
             $sectionStyles['bg-gradient'] = $additionalOptions['bg-gradient'];
         }
 
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles);
-
-        // reset padding top for first section as in brizy there is no need for that padding.
-        // In Voyage our fixed heared adds space
-//        if (!is_null($pagePosition) && $pagePosition == 0) {
-//            $sectionStyles['padding-top'] = 0;
-//        }
 
         // set the background color paddings and margins
         $brizySection->getValue()
@@ -150,12 +115,12 @@ trait SectionStylesAble
         return $brizySection;
     }
 
-    private function hasImageBackground($mbSectionItem)
+    private function hasImageBackground($mbSectionItem): bool
     {
         return isset($mbSectionItem['settings']['sections']['background']['photo']) && $mbSectionItem['settings']['sections']['background']['photo'] != '';
     }
 
-    private function hasVideoBackground($mbSectionItem)
+    private function hasVideoBackground($mbSectionItem): bool
     {
         return isset($mbSectionItem['settings']['sections']['background']['video']) && $mbSectionItem['settings']['sections']['background']['video'] != '';
     }
@@ -166,26 +131,13 @@ trait SectionStylesAble
             return;
         }
 
-        $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
-        $opacity = ColorConverter::rgba2opacity($sectionStyles['background-color']);
-        $opacity = NumberProcessor::convertToNumeric($opacity);
+        $sectionStyles['background-color'] = ColorConverter::rgba2hex($sectionStyles['background-color']);
+        $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
+            ColorConverter::rgba2opacity($sectionStyles['background-color'])
+        );
 
-        //if((float)$opacity===0.) return;
+        $this->handleItemBackground($brizySection, $sectionStyles);
 
-        $brizySection->getValue()
-            ->set_bgColorHex($backgroundColorHex)
-            ->set_bgColorPalette('')
-            ->set_bgColorType('solid')
-            ->set_bgColorOpacity($opacity)
-
-            ->set_mobileBgColorType('solid')
-            ->set_mobileBgColorHex($backgroundColorHex)
-            ->set_mobileBgColorOpacity($opacity)
-            ->set_mobileBgColorPalette('');
-
-        $this->handleSectionGradient($brizySection, $sectionStyles);
-
-        // try to set the image background
         if ($this->hasImageBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
             if (isset($background['filename']) && isset($background['photo'])) {
@@ -200,10 +152,10 @@ trait SectionStylesAble
                     ->set_bgImageSrc($background['photo'])
                     ->set_bgSize($sectionStyles['background-size'])
                     ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
-                    ->set_bgColorHex($backgroundColorHex)
+                    ->set_bgColorHex($sectionStyles['background-color'])
 
                     ->set_mobileBgColorType('solid')
-                    ->set_mobileBgColorHex($backgroundColorHex)
+                    ->set_mobileBgColorHex($sectionStyles['background-color'])
                     ->set_mobileBgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']));
             }
         } else if ($this->hasVideoBackground($mbSectionItem)) {
@@ -235,6 +187,26 @@ trait SectionStylesAble
         }
     }
 
+    protected function handleItemBackground(BrizyComponent $brizySection, array $sectionStyles)
+    {
+        $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
+        $opacity = ColorConverter::rgba2opacity($sectionStyles['background-color'] ?? $sectionStyles['background-opacity']);
+        $opacity = NumberProcessor::convertToNumeric($opacity);
+
+        $brizySection->getValue()
+            ->set_bgColorHex($backgroundColorHex)
+            ->set_bgColorPalette('')
+            ->set_bgColorType('solid')
+            ->set_bgColorOpacity($opacity)
+
+            ->set_mobileBgColorType('solid')
+            ->set_mobileBgColorHex($backgroundColorHex)
+            ->set_mobileBgColorOpacity($opacity)
+            ->set_mobileBgColorPalette('');
+
+        $this->handleSectionGradient($brizySection, $sectionStyles);
+    }
+
     public function handleSectionGradient(BrizyComponent $brizySection, $sectionStyles): void
     {
         if(!empty($sectionStyles['bg-gradient'])){
@@ -264,6 +236,44 @@ trait SectionStylesAble
                 ->set_mobileGradientColorOpacity(1)
                 ->set_mobileGradientFinishPointer($gradient['colors'][1]['percentage']);
         }
+    }
+
+    protected function getSectionListStyle(
+        ElementContextInterface $data,
+        BrowserPageInterface $browserPage
+    ){
+        $mbSectionItem = $data->getMbSection();
+        $families = $data->getFontFamilies();
+        $defaultFont = $data->getDefaultFontFamily();
+
+        $sectionStyles = $this->getSectionStyles(
+            $mbSectionItem['sectionId'],
+            $browserPage,
+            $families,
+            $defaultFont
+        );
+
+        $sectionWrapperStyles = $this->getSectionWrapperStyles(
+            $mbSectionItem['sectionId'],
+            $browserPage,
+            $families,
+            $defaultFont
+        );
+
+        try {
+            $sectionBgStyles = $this->getBgHelperStyles(
+                $mbSectionItem['sectionId'],
+                $browserPage,
+                $families,
+                $defaultFont
+            );
+
+            $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
+        }
+        catch (\Exception $e) {
+        }
+
+        return $sectionStyles;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Aurora\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
@@ -38,10 +39,6 @@ class LeftMedia extends PhotoTextElement
         $mbSectionItem = $data->getMbSection();
         $itemsKit = $data->getThemeContext()->getBrizyKit();
 
-        $componentBuilder = $data->getThemeContext()->getbrizyComponentBuilder();
-
-        $componentBuilder->createSection()->
-
         $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
 
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
@@ -70,6 +67,12 @@ class LeftMedia extends PhotoTextElement
             ->getValue()
             ->add_items([$wrapperLine], 1);
 
+        return $brizySection;
+    }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        $this->handleItemBackground($brizySection, $params);
         return $brizySection;
     }
 

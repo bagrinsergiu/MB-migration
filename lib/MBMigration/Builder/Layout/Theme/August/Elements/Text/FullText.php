@@ -62,6 +62,11 @@ class FullText extends FullTextElement
         return $brizySection;
     }
 
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 50;

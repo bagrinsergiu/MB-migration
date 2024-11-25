@@ -24,7 +24,13 @@ abstract class FullTextElement extends AbstractElement
         $textContainerComponent = $this->getTextContainerComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
+
+        $this->transformItem($elementContext, $textContainerComponent, $styleList);
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
@@ -47,6 +53,8 @@ abstract class FullTextElement extends AbstractElement
     }
 
     abstract protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent;
+
+    abstract protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
 
     protected function getPropertiesMainSection(): array
     {

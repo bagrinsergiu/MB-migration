@@ -78,6 +78,10 @@ abstract class PhotoTextElement extends AbstractElement
 
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
+        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
+
+        $this->transformItem($elementContext, $sectionItemComponent, $styleList);
+
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         return $brizySection;
@@ -94,6 +98,9 @@ abstract class PhotoTextElement extends AbstractElement
      * @return mixed|null
      */
     abstract protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent;
+
+    abstract protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
+
 
     protected function getPropertiesMainSection(): array
     {
