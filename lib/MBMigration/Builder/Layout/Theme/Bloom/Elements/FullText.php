@@ -15,4 +15,14 @@ class FullText extends FullTextElement
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
         return $brizySection->getItemWithDepth(0,0,0);
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 250;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
 }

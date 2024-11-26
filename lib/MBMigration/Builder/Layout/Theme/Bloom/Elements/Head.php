@@ -180,4 +180,9 @@ class Head extends HeadElement
             'mobileMarginLeftSuffix' => "px",
         ];
     }
+
+    protected function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub > .sub-navigation li > a", "pseudoEl" => ""];
+    }
 }

@@ -23,4 +23,14 @@ class FullWidthForm extends FormElement
         // add the form here.
         return $elementContext->getBrizySection();
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 250;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
 }

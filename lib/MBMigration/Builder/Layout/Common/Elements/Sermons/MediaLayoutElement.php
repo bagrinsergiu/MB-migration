@@ -315,7 +315,7 @@ abstract class MediaLayoutElement extends AbstractElement
     private function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
     {
 
-        $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
+        $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text'] ?? $sectionPalette['text']);
 
         $richTextTitle = [
             'text' => '<h5 class="brz-text-lg-center brz-tp-lg-empty brz-ff-overpass brz-ft-google brz-fs-lg-20 brz-fss-lg-px brz-fw-lg-400 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
@@ -323,12 +323,13 @@ abstract class MediaLayoutElement extends AbstractElement
             ];
 
         $wrapperItemTitle = [
-            'bgColorHex' => $sectionPalette['btn-bg'],
+            'bgColorHex' => $sectionPalette['item-bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
         ];
 
         $sectionStyle = [
+            'paddingTop' => $this->getTopPaddingOfTheFirstElement() ?? 0,
             'bgColorHex' => $sectionPalette['bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
@@ -461,31 +462,31 @@ abstract class MediaLayoutElement extends AbstractElement
             'hoverMetaLinksColorOpacity' => 0.75,
             'hoverMetaLinksColorPalette' => '',
 
-            'detailButtonColorHex' => $sectionPalette['btn-text'],
+            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'],
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text']  ?? $sectionPalette['text'],
             'hoverDetailButtonColorOpacity' => 0.75,
             'hoverDetailButtonColorPalette' => '',
 
-            'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'detailButtonBgColorOpacity' => 1,
             'detailButtonBgColorPalette' => '',
 
-            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'hoverDetailButtonBgColorOpacity' => 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'subscribeButtonColorHex' => $sectionPalette['btn-text'],
+            'subscribeButtonColorHex' => $sectionPalette['btn-text']  ?? $sectionPalette['text'],
             'subscribeButtonColorOpacity' => 1,
             'subscribeButtonColorPalette' => '',
 
-            'subscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'subscribeButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'subscribeButtonBgColorOpacity' => 1,
             'subscribeButtonBgColorPalette' => '',
 
-            'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'hoverSubscribeButtonBgColorOpacity' => 0.75,
             'hoverSubscribeButtonBgColorPalette' => '',
 

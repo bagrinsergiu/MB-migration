@@ -46,4 +46,14 @@ class LeftMediaCircle extends PhotoTextElement
             "mobilePaddingLeftSuffix" => "px",
         ];
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 250;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
 }

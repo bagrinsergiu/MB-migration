@@ -315,7 +315,7 @@ class MonkcmsAPI
                 'show' => '{"slug":"__categoryslug__", "series":"__series__"},'
             ]);
         } catch (Exception $e) {
-            $response = '{}';
+            $response = [];
         }
 
         return $this->groupBySlug($response);

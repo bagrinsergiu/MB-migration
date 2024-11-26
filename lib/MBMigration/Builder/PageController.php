@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
+use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettes;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
@@ -43,10 +44,12 @@ class PageController
     private QueryBuilder $QueryBuilder;
     private MBProjectDataCollector $parser;
     private int $projectID_Brizy;
+    private PageDto $pageDTO;
 
     public function __construct(MBProjectDataCollector $MBProjectDataCollector, BrizyAPI $brizyAPI, QueryBuilder $QueryBuilder, LoggerInterface $logger, $projectID_Brizy)
     {
         $this->cache = VariableCache::getInstance();
+        $this->pageDTO = new PageDTO();
         $this->brizyAPI = $brizyAPI;
         $this->QueryBuilder = $QueryBuilder;
         $this->projectID_Brizy = $projectID_Brizy;
@@ -76,6 +79,7 @@ class PageController
         $this->cache->set('pageMapping', $pageMapping);
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
+        $_WorkClassTemplate = new $workClass();
 
         $layoutBasePath = dirname(__FILE__)."/Layout";
 
@@ -124,13 +128,18 @@ class PageController
                 $pageMapping,
                 $RootPalettesExtracted->extractRootPalettes(),
                 $this->browser,
-                $listSeries
+                $listSeries,
+                $this->pageDTO
             );
 
             /**
              * @var ThemeInterface $_WorkClassTemplate ;
              */
-            $_WorkClassTemplate = new $workClass($themeContext);
+
+            $_WorkClassTemplate->setThemeContext($themeContext);
+            $this->pageDTO->setPageStyleDetails($_WorkClassTemplate->beforeBuildPage());
+
+            $_WorkClassTemplate->setThemeContext($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
             $pageData = json_encode($brizySections);

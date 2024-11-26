@@ -17,19 +17,15 @@ abstract class AbstractElement implements ElementInterface
     use MbSectionUtils;
     use TextsExtractorAware;
 
-    /**
-     * @var array
-     */
-    protected $brizyKit = [];
-    /**
-     * @var BrowserPageInterface
-     */
-    protected $browserPage;
-    /**
-     * @var QueryBuilder
-     */
-    private $queryBuilder;
+    protected array $brizyKit = [];
 
+    protected array $headParams = [];
+
+    protected array $basicHeadParams = [];
+
+    protected BrowserPageInterface $browserPage;
+
+    private QueryBuilder $queryBuilder;
 
     public function __construct($brizyKit, BrowserPageInterface $browserPage)
     {
@@ -44,6 +40,11 @@ abstract class AbstractElement implements ElementInterface
         $this->afterTransformToItem($component);
 
         return $component;
+    }
+
+    public function getBasicHeadParams(): array
+    {
+        return $this->basicHeadParams;
     }
 
     /**

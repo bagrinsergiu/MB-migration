@@ -30,7 +30,9 @@ abstract class GalleryLayoutElement extends AbstractElement
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
         try{
             $arrowSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"] .slick-next';
@@ -113,7 +115,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 
         if (isset($mbSection['settings']['sections']['background']['video'])){
             $brizySectionItem = new BrizyComponent($videoJson);
-            $brizyComponentValue = $brizySectionItem->getValue();
+            $brizyComponentValue = $this->getSlideVideoComponent($brizySectionItem)->getValue();
             $brizyComponentValue
                 ->set_media('video')
                 ->set_bgVideoType('url')
@@ -124,16 +126,19 @@ abstract class GalleryLayoutElement extends AbstractElement
             $brizySectionItems[] = $brizySectionItem;
 
         } else {
-            if(count($mbSection['slide']) === 1){
+            if(count($mbSection['slide']) === 1) {
                 $brizySectionItem = new BrizyComponent($slideJson);
                 $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
-                if(!empty($mbSection['settings']['sections']['background'])){
-                    $this->setSlideImage($brizySectionItemImage, $mbSection['settings']['sections']['background'], $properties);
-                }
-                $image = $this->setImageItem($itemImage, $mbSection['slide'][0], $properties);
 
-                $brizySectionItemImage->getValue()
-                    ->set_items([$image]);
+                $this->handleSectionGradient($brizySectionItem, $additionalOptions);
+
+                if(!empty($mbSection['settings']['sections']['background']['photo']) && !empty($mbSection['settings']['sections']['background']['filename'])) {
+                    $this->setSlideImage($brizySectionItemImage, $mbSection['settings']['sections']['background'], $properties);
+                    $this->setSlideLinks($brizySectionItemImage, $mbSection['settings']['sections']['background']);
+                } else {
+                    $this->setSlideImage($brizySectionItemImage, $mbSection['slide'][0], $properties);
+                    $this->setSlideLinks($brizySectionItemImage, $mbSection['slide'][0]);
+                }
 
                 $brizySection->getValue()
                     ->set_slider("off");
@@ -142,14 +147,15 @@ abstract class GalleryLayoutElement extends AbstractElement
             } else {
                 foreach ($mbSection['slide'] as $mbItem) {
                     $brizySectionItem = new BrizyComponent($slideJson);
+
+                    $this->handleSectionGradient($brizySectionItem, $additionalOptions);
+
                     $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
                     $this->setSlideImage($brizySectionItemImage, $mbItem, $properties);
                     $this->setSlideLinks($brizySectionItemImage, $mbItem);
                     $brizySectionItems[] = $brizySectionItem;
                 }
-
             }
-
         }
 
         $brizySection->getValue()->set_items($brizySectionItems);
@@ -244,6 +250,11 @@ abstract class GalleryLayoutElement extends AbstractElement
         return $brizySectionItem;
     }
 
+    public function setSlideGradient()
+    {
+
+    }
+
     protected function setSlideLinks(BrizyComponent $brizySectionItem, $mbItem): BrizyComponent
     {
         $brizyComponentValue = $brizySectionItem->getValue();
@@ -288,7 +299,6 @@ abstract class GalleryLayoutElement extends AbstractElement
 
     abstract protected function getSlideImageComponent(BrizyComponent $brizySectionItem);
 
-    //abstract protected function getSlideImageComponent(BrizyComponent $brizySectionItem);
     public function checkPhoneNumber($str)
     {
         if (!preg_match("/^(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\$/", $str)) {
@@ -305,5 +315,10 @@ abstract class GalleryLayoutElement extends AbstractElement
 
             return false;
         }
+    }
+
+    protected function getSlideVideoComponent(BrizyComponent $brizySectionItem): BrizyComponent
+    {
+        return $brizySectionItem;
     }
 }

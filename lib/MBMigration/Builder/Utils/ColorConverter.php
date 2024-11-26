@@ -2,6 +2,8 @@
 
 namespace MBMigration\Builder\Utils;
 
+use MBMigration\Core\Logger;
+
 final class ColorConverter
 {
     /**
@@ -9,12 +11,51 @@ final class ColorConverter
      * @return string
      * @example pass: rgba(123,100,23,.5)
      */
-    static public function rgba2hex($rgba)
+    static public function rgba2hex($rgba): string
     {
-        // get the values
-        preg_match_all("/([\\d.]+)/", $rgba, $matches);
-        $fromRGB = self::fromRGB($matches[1][0], $matches[1][1], $matches[1][2]);
-        return $fromRGB;
+        $defaultColor = "#000000";
+
+        if (!is_string($rgba)) {
+            Logger::instance()->info("Input must be a string. Given: " . var_export($rgba, true));
+            return $defaultColor;
+        }
+
+        // Already in HEX format
+        if (preg_match("/^#([a-fA-F0-9]{6})$/", $rgba)) {
+            return $rgba;
+        }
+
+        // Normalize short HEX format (#abc -> #aabbcc)
+        if (preg_match("/^#([a-fA-F0-9]{3})$/", $rgba, $matches)) {
+            $hex = $matches[1];
+            $normalizedHex = "#" . $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+            Logger::instance()->info("Normalized short HEX $rgba to $normalizedHex.");
+            return $normalizedHex;
+        }
+
+        // Match RGBA or RGB values
+        if (preg_match("/rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)(?:,\\s*(\\d*(?:\\.\\d+)?))?\\)/", $rgba, $matches)) {
+            $r = (int)$matches[1];
+            $g = (int)$matches[2];
+            $b = (int)$matches[3];
+            $a = isset($matches[4]) ? (float)$matches[4] : null;
+
+            // Log presence of alpha channel
+            if ($a !== null) {
+                Logger::instance()->info("Alpha channel detected (ignored): $a.");
+            }
+
+            // Validate RGB ranges
+            if ($r < 0 || $r > 255 || $g < 0 || $g > 255 || $b < 0 || $b > 255) {
+                Logger::instance()->info("RGB values must be in the range 0–255. Given: R=$r, G=$g, B=$b.");
+                return $defaultColor;
+            }
+
+            return sprintf("#%02x%02x%02x", $r, $g, $b);
+        }
+
+        Logger::instance()->info("Input does not match any supported format. Given: $rgba.");
+        return $defaultColor;
     }
 
     static public function hex2Rgb($hex): string

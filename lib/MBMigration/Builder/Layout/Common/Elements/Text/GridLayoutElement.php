@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
+use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -16,7 +16,7 @@ abstract class GridLayoutElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use ImageStylesAble;
-    use DanationsAble;
+    use DonationsAble;
 
     private array $globalBrizyKit;
 

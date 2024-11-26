@@ -69,14 +69,12 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new RightForm($this->blockKit['blocks']['form'], $browserPage);
             case 'accordion-layout':
                 return new AccordionLayoutElement($this->blockKit['blocks']['accordion-layout'], $browserPage);
+
             case 'event-list-layout':
-//                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $browserPage, $this->getQueryBuilder());
             case 'event-tile-layout':
-//                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
             case 'event-gallery-layout':
-//                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $browserPage);
             case 'event-calendar-layout':
-                return new EventLayoutElement($this->blockKit['blocks']['event-calendar-layout'], $browserPage, $this->getQueryBuilder());
+                return new EventLayoutElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
 
 //            case 'prayer-list':
 //                return new PrayerListElement($this->blockKit['blocks']['prayer-list'], $browserPage);
@@ -98,7 +96,7 @@ class ElementFactory  extends AbstractThemeElementFactory
             case 'full-media':
                 return new FullMediaElement($this->blockKit['blocks']['full-media'], $browserPage);
             default:
-                throw new ElementNotFound("The Element [{$name}] was not found.");
+                return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
         }
     }
 
