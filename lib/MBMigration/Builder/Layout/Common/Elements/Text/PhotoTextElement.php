@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
+use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -14,7 +14,7 @@ abstract class PhotoTextElement extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
-    use DanationsAble;
+    use DonationsAble;
     use ImageStylesAble;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent

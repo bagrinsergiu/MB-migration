@@ -3,6 +3,8 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
@@ -12,6 +14,8 @@ abstract class ListLayoutElement extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
+    use DonationsAble;
+    use ButtonAble;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -43,6 +47,7 @@ abstract class ListLayoutElement extends AbstractElement
 
         $itemJson = json_decode($this->brizyKit['item-'.$photoPosition], true);
         $brizyComponentValue = $this->getSectionItemComponent($brizySection)->getValue();
+
         foreach ($mbSection['items'] as $item) {
             $brizySectionItem = new BrizyComponent($itemJson);
 
@@ -56,24 +61,56 @@ abstract class ListLayoutElement extends AbstractElement
                 ->set_paddingLeft((int)$styles['margin-left']);
 
             foreach ($item['items'] as $mbItem) {
-                if ($mbItem['item_type'] == 'title' || $mbItem['item_type'] == 'body') {
+                if ($mbItem['item_type'] == 'title') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
                         $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
                     );
+                    $this->handleRichTextItem($elementContext, $this->browserPage);
+
+                    $this->transformListItem($elementContext,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition),
+                        $styleList);
                 }
+            }
+
+            foreach ($item['items'] as $mbItem) {
+                if ($mbItem['item_type'] == 'body') {
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                        $mbItem,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                    );
+                    $this->handleRichTextItem($elementContext, $this->browserPage);
+                }
+            }
+
+            foreach ($item['items'] as $mbItem) {
+                if ($mbItem['category'] == 'button') {
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                        $mbItem,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                    );
+                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
+                }
+            }
+
+            foreach ($item['items'] as $mbItem) {
+                if ($mbItem['category'] == 'donation') {
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                        $mbItem,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                    );
+                    $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+                }
+            }
+
+            foreach ($item['items'] as $mbItem) {
                 if ($mbItem['category'] == 'photo') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
                         $this->getItemImageComponent($brizySectionItem, $photoPosition)
                     );
-                }
-                $this->handleRichTextItem($elementContext, $this->browserPage);
-
-                if ($mbItem['item_type'] == 'title') {
-                    $this->transformListItem($elementContext,
-                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition),
-                        $styleList);
+                    $this->handleRichTextItem($elementContext, $this->browserPage);
                 }
             }
 

@@ -126,19 +126,19 @@ abstract class GalleryLayoutElement extends AbstractElement
             $brizySectionItems[] = $brizySectionItem;
 
         } else {
-            if(count($mbSection['slide']) === 1){
+            if(count($mbSection['slide']) === 1) {
                 $brizySectionItem = new BrizyComponent($slideJson);
                 $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
 
                 $this->handleSectionGradient($brizySectionItem, $additionalOptions);
 
-                if(!empty($mbSection['settings']['sections']['background'])){
+                if(!empty($mbSection['settings']['sections']['background']['photo']) && !empty($mbSection['settings']['sections']['background']['filename'])) {
                     $this->setSlideImage($brizySectionItemImage, $mbSection['settings']['sections']['background'], $properties);
+                    $this->setSlideLinks($brizySectionItemImage, $mbSection['settings']['sections']['background']);
+                } else {
+                    $this->setSlideImage($brizySectionItemImage, $mbSection['slide'][0], $properties);
+                    $this->setSlideLinks($brizySectionItemImage, $mbSection['slide'][0]);
                 }
-                $image = $this->setImageItem($itemImage, $mbSection['slide'][0], $properties);
-
-                $brizySectionItemImage->getValue()
-                    ->set_items([$image]);
 
                 $brizySection->getValue()
                     ->set_slider("off");
@@ -155,9 +155,7 @@ abstract class GalleryLayoutElement extends AbstractElement
                     $this->setSlideLinks($brizySectionItemImage, $mbItem);
                     $brizySectionItems[] = $brizySectionItem;
                 }
-
             }
-
         }
 
         $brizySection->getValue()->set_items($brizySectionItems);
@@ -301,7 +299,6 @@ abstract class GalleryLayoutElement extends AbstractElement
 
     abstract protected function getSlideImageComponent(BrizyComponent $brizySectionItem);
 
-    //abstract protected function getSlideImageComponent(BrizyComponent $brizySectionItem);
     public function checkPhoneNumber($str)
     {
         if (!preg_match("/^(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\$/", $str)) {

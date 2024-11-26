@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 
 class RightMediaOverlap extends PhotoTextElement
@@ -28,6 +29,11 @@ class RightMediaOverlap extends PhotoTextElement
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
