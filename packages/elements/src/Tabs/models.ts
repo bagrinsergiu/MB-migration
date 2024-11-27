@@ -11,10 +11,12 @@ export const model = {
   "border-width": 1,
   "color-hex": undefined,
   "color-opacity": 1,
+  "bg-color-hex": undefined,
+  "bg-color-opacity": 1,
   uppercase: false
 };
 
 export const bgModel = {
-  "bg-color-hex": undefined,
-  "bg-color-opacity": 1
+  "content-bg-color-hex": undefined,
+  "content-bg-color-opacity": 1
 };

@@ -10,15 +10,14 @@ interface NavData {
   families: Record<string, string>;
   defaultFamily: string;
 }
-const warns: Record<string, Record<string, string>> = {};
 
 const getTabsV = (data: NavData) => {
   const { node, list, selector } = data;
-  const tab = list.children[0];
+  const tab = list.querySelector(".tab-title");
 
   if (!tab) {
-    warns["tabs tab"] = {
-      message: `Tabs don't have .tabs-list > .tab-title in ${selector}`
+    return {
+      error: `Tabs don't have .tabs-list > .tab-title in ${selector}`
     };
   }
 
