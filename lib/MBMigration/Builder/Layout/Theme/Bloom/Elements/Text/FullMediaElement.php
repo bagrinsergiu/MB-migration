@@ -1,33 +1,29 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
+namespace MBMigration\Builder\Layout\Theme\Bloom\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
+use MBMigration\Builder\Layout\Common\Elements\Text\FullMediaElementElement;
 
-class RightMediaCircle extends PhotoTextElement
+class FullMediaElement extends FullMediaElementElement
 {
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        return $brizySection->getItemWithDepth(0, 1);
     }
 
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 1, 0);
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
     protected function getPropertiesMainSection(): array
@@ -36,11 +32,11 @@ class RightMediaCircle extends PhotoTextElement
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 25,
+            "mobilePaddingTop" => 50,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 50,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
@@ -56,4 +52,5 @@ class RightMediaCircle extends PhotoTextElement
     {
         return 25;
     }
+
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
+namespace MBMigration\Builder\Layout\Theme\Bloom\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 
 class TwoRightMediaCircle extends PhotoTextElement
 {
@@ -108,5 +108,10 @@ class TwoRightMediaCircle extends PhotoTextElement
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;
+    }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
     }
 }
