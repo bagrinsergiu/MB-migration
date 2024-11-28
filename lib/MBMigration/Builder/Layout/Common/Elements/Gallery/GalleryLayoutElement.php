@@ -34,6 +34,8 @@ abstract class GalleryLayoutElement extends AbstractElement
 
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
         try{
             $arrowSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"] .slick-next';
             $arrowsColorStyles = $this->getDomElementStyles($arrowSelector, ['color'], $this->browserPage, [], '','::before');
@@ -321,4 +323,11 @@ abstract class GalleryLayoutElement extends AbstractElement
     {
         return $brizySectionItem;
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 250;
+    }
+
+
 }
