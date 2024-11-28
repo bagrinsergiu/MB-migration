@@ -191,7 +191,7 @@ abstract class HeadElement extends AbstractElement
         $menuSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id=\''.$sectionId.'\']',
                 'styleProperties' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,

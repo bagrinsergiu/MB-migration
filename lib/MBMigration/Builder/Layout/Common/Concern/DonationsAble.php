@@ -31,7 +31,7 @@ trait DonationsAble
         try {
             switch ($mbSection['category']) {
                 case "donation":
-                    $selector = '[data-id="'.$mbSection['sectionId'].'"] button.sites-button';
+                    $selector = '[data-id=\''.$mbSection['sectionId'].'\'] button.sites-button';
                     $brizyDonationButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
                     $brizyDonationButton = $this->setButtonDonationStyles(
                         $brizyDonationButton,
@@ -264,6 +264,7 @@ trait DonationsAble
         }
 
         $brizyDonationButton->getItemValueWithDepth(0)
+            ->set_fillType('filled')
             ->set_hoverBgColorHex(ColorConverter::rgba2hex($buttonStyles['background-color']))
             ->set_hoverBgColorPalette("")
             ->set_hoverBgColorOpacity(0.75)

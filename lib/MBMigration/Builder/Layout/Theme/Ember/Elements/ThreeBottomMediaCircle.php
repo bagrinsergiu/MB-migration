@@ -42,4 +42,9 @@ class ThreeBottomMediaCircle extends FullTextElement
             ->set_imageFileName($mbSectionItem['imageFileName'])
             ->set_imageSrc($mbSectionItem['content']);
     }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
+    }
 }
