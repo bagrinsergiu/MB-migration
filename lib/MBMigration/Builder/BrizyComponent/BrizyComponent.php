@@ -13,7 +13,7 @@ class BrizyComponent implements JsonSerializable
     protected $blockId;
     protected $parent;
 
-    public function __construct($data,$parent=null)
+    public function __construct($data, $parent = null)
     {
         if (!is_array($data)) {
             throw new BadJsonProvided('Wrong data format provided for BrizyComponent');
@@ -89,7 +89,7 @@ class BrizyComponent implements JsonSerializable
     {
         $depths = func_get_args();
 
-        if(is_array($depths[0])) {
+        if (is_array($depths[0])) {
             $depths = $depths[0];
         }
 
@@ -127,4 +127,33 @@ class BrizyComponent implements JsonSerializable
         return call_user_func_array([$this, 'getItemWithDepth'], $depths)->getValue();
     }
 
+    public function addRadius(): BrizyComponent
+    {
+        $radius = [
+            "borderRadiusType" => "grouped",
+            "borderRadius" => 150,
+            "borderRadiusSuffix" => "px",
+            "borderTopLeftRadius" => 150,
+            "tempBorderTopLeftRadius" => 150,
+            "borderTopLeftRadiusSuffix" => "px",
+            "tempBorderTopLeftRadiusSuffix" => "px",
+            "borderTopRightRadius" => 150,
+            "tempBorderTopRightRadius" => 150,
+            "borderTopRightRadiusSuffix" => "px",
+            "tempBorderTopRightRadiusSuffix" => "px",
+            "borderBottomRightRadius" => 150,
+            "tempBorderBottomRightRadius" => 150,
+            "borderBottomRightRadiusSuffix" => "px",
+            "tempBorderBottomRightRadiusSuffix" => "px",
+            "borderBottomLeftRadius" => 150,
+            "tempBorderBottomLeftRadius" => 150,
+            "borderBottomLeftRadiusSuffix" => "px",
+            "tempBorderBottomLeftRadiusSuffix" => "px"
+        ];
+
+        foreach ($radius as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+        return $this;
+    }
 }

@@ -16,4 +16,6 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
     {
         return $brizySection;
     }
+
+
 }

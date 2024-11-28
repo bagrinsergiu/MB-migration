@@ -100,6 +100,11 @@ abstract class AbstractElement implements ElementInterface
         return 25;
     }
 
+    protected function getTypeItemImageComponent(): string
+    {
+        return 'bg';
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

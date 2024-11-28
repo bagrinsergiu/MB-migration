@@ -100,7 +100,12 @@ abstract class GridLayoutElement extends AbstractElement
                                 "mobileMargin" => 20,
                             ];
 
-                            $this->handleBgPhotoItems($elementContext, $additionalOptions);
+                            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                $mbItem,
+                                $this->getItemImageComponent($brizySectionItem)
+                            );
+
+                            $this->handleBgPhotoItems($elementContext, $additionalOptions, $this->getTypeItemImageComponent());
 //                            $this->getItemImageComponent($brizySectionItem)
 //                                ->getValue()
 //                                ->set_widthSuffix('%')
@@ -127,15 +132,24 @@ abstract class GridLayoutElement extends AbstractElement
         return $brizySection;
     }
 
-    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [])
+    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [], $elementImageType = 'bg')
     {
         $mbSectionItem = $data->getMbSection();
         $brizyComponent = $data->getBrizySection();
 
-        $brizyComponent->getValue()
-            ->set_verticalAlign('bottom')
-            ->set_bgImageFileName($mbSectionItem['imageFileName'])
-            ->set_bgImageSrc($mbSectionItem['content']);
+        switch ($elementImageType){
+            case 'bg':
+                $brizyComponent->getValue()
+                    ->set_verticalAlign('bottom')
+                    ->set_bgImageFileName($mbSectionItem['imageFileName'])
+                    ->set_bgImageSrc($mbSectionItem['content']);
+                break;
+            case 'image':
+                $brizyComponent->getValue()
+                    ->set_imageFileName($mbSectionItem['imageFileName'])
+                    ->set_imageSrc($mbSectionItem['content']);
+                break;
+        }
 
         foreach ($options as $key => $value) {
             $method = 'set_'.$key;
@@ -153,6 +167,11 @@ abstract class GridLayoutElement extends AbstractElement
     abstract protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent;
 
     abstract protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent;
+
+    protected function getTypeItemImageComponent(): string
+    {
+       return 'bg';
+    }
 
     protected function getPropertiesMainSection(): array
     {

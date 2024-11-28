@@ -106,19 +106,30 @@ class Head extends HeadElement
         ];
 
         $sectionlogoOptions = [
-            'mobileMarginType' => 'grouped',
-            'mobileMargin' => -20,
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 10,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            'mobileMarginType' => 'ungrouped',
+            'mobileMargin' => 0,
             'mobileMarginSuffix' => 'px',
-            'mobileMarginTop' => -20,
+            'mobileMarginTop' => 5,
             'mobileMarginTopSuffix' => 'px',
-            'mobileMarginRight' => -20,
+            'mobileMarginRight' => 0,
             'mobileMarginRightSuffix' => 'px',
-            'mobileMarginBottom' => -20,
+            'mobileMarginBottom' => 5,
             'mobileMarginBottomSuffix' => 'px',
-            'mobileMarginLeft' => -20,
+            'mobileMarginLeft' => 0,
             'mobileMarginLeftSuffix' => 'px',
         ];
-
 
         foreach ($imageLogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
