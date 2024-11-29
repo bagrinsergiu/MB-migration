@@ -33,7 +33,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 250;
+        return 0;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

@@ -60,7 +60,7 @@ class LeftMediaCircle extends PhotoTextElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 250;
+        return 0;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

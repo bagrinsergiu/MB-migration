@@ -26,7 +26,7 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 250;
+        return 0;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -54,9 +54,9 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "paddingTopSuffix" => "px",
             "paddingBottom" => 80,
             "paddingBottomSuffix" => "px",
-            "paddingRight" => 0,
+            "paddingRight" => 10,
             "paddingRightSuffix" => "px",
-            "paddingLeft" => 0,
+            "paddingLeft" => 10,
             "paddingLeftSuffix" => "px",
         ];
     }

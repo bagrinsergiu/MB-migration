@@ -131,6 +131,32 @@ class Head extends HeadElement
             'mobileMarginLeftSuffix' => 'px',
         ];
 
+        $sectionSectionOptions = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 0,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 0,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            'mobileMarginType' => 'ungrouped',
+            'mobileMargin' => 0,
+            'mobileMarginSuffix' => 'px',
+            'mobileMarginTop' => 5,
+            'mobileMarginTopSuffix' => 'px',
+            'mobileMarginRight' => 0,
+            'mobileMarginRightSuffix' => 'px',
+            'mobileMarginBottom' => 5,
+            'mobileMarginBottomSuffix' => 'px',
+            'mobileMarginLeft' => 0,
+            'mobileMarginLeftSuffix' => 'px',
+        ];
+
         foreach ($imageLogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
             $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
@@ -155,6 +181,13 @@ class Head extends HeadElement
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
             $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($sectionSectionOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0)
                 ->getValue()
                 ->$nameOption($value);
         }

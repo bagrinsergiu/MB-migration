@@ -36,6 +36,11 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return 25;
     }
 
+    protected function getTypeItemImageComponent(): string
+    {
+        return 'image';
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

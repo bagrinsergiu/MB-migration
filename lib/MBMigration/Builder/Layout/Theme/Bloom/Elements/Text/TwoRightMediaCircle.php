@@ -49,8 +49,12 @@ class TwoRightMediaCircle extends PhotoTextElement
         $elementContext = $data->instanceWithBrizyComponent($this->getTextComponent($brizySection));
         $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
 
-        $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         return $brizySection;
     }
@@ -103,16 +107,16 @@ class TwoRightMediaCircle extends PhotoTextElement
             "paddingTopSuffix" => "px",
             "paddingBottom" => 80,
             "paddingBottomSuffix" => "px",
-            "paddingRight" => 0,
+            "paddingRight" => 10,
             "paddingRightSuffix" => "px",
-            "paddingLeft" => 0,
+            "paddingLeft" => 10,
             "paddingLeftSuffix" => "px",
         ];
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 250;
+        return 0;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

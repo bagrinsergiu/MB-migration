@@ -55,7 +55,7 @@ class FullMediaElement extends FullMediaElementElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 250;
+        return 0;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

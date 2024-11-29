@@ -39,7 +39,7 @@ abstract class GalleryLayoutElement extends AbstractElement
         try{
             $arrowSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"] .slick-next';
             $arrowsColorStyles = $this->getDomElementStyles($arrowSelector, ['color'], $this->browserPage, [], '','::before');
-            $colorArrows = ColorConverter::convertColorRgbToHex($arrowsColorStyles['color']);
+            $colorArrows = ColorConverter::convertColorRgbToHex($arrowsColorStyles['color'] ?? '#FFFFFF');
         } catch (Exception|ElementNotFound|BrowserScriptException|BadJsonProvided $e){
             $colorArrows = '#FFFFFF';
         }
