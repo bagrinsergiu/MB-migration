@@ -127,29 +127,21 @@ class BrizyComponent implements JsonSerializable
         return call_user_func_array([$this, 'getItemWithDepth'], $depths)->getValue();
     }
 
-    public function addRadius(): BrizyComponent
+    public function addRadius($radiusPx = 0): BrizyComponent
     {
-        $radius = [
+        $radius = array(
             "borderRadiusType" => "grouped",
-            "borderRadius" => 150,
+            "borderRadius" => $radiusPx,
             "borderRadiusSuffix" => "px",
-            "borderTopLeftRadius" => 150,
-            "tempBorderTopLeftRadius" => 150,
+            "borderTopLeftRadius" => $radiusPx,
             "borderTopLeftRadiusSuffix" => "px",
-            "tempBorderTopLeftRadiusSuffix" => "px",
-            "borderTopRightRadius" => 150,
-            "tempBorderTopRightRadius" => 150,
+            "borderTopRightRadius" => $radiusPx,
             "borderTopRightRadiusSuffix" => "px",
-            "tempBorderTopRightRadiusSuffix" => "px",
-            "borderBottomRightRadius" => 150,
-            "tempBorderBottomRightRadius" => 150,
+            "borderBottomRightRadius" => $radiusPx,
             "borderBottomRightRadiusSuffix" => "px",
-            "tempBorderBottomRightRadiusSuffix" => "px",
-            "borderBottomLeftRadius" => 150,
-            "tempBorderBottomLeftRadius" => 150,
+            "borderBottomLeftRadius" => $radiusPx,
             "borderBottomLeftRadiusSuffix" => "px",
-            "tempBorderBottomLeftRadiusSuffix" => "px"
-        ];
+        );
 
         foreach ($radius as $key => $value) {
             $this->getValue()->set($key, $value);
