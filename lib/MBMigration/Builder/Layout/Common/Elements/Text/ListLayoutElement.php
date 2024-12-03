@@ -133,7 +133,6 @@ abstract class ListLayoutElement extends AbstractElement
     ): BrizyComponent;
 
     abstract protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
-    abstract protected function transformHeadItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
 
     protected function getPropertiesMainSection(): array
     {

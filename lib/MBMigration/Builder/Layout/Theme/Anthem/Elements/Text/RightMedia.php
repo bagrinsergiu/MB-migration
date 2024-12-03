@@ -91,4 +91,9 @@ class RightMedia extends PhotoTextElement
             "mobilePaddingLeftSuffix" => "px",
         ];
     }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
+    }
 }

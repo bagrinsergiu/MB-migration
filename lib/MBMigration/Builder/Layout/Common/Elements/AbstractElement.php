@@ -80,6 +80,15 @@ abstract class AbstractElement implements ElementInterface
         return true;
     }
 
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
+    }
+
+    protected function transformHeadItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
+    }
 
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {

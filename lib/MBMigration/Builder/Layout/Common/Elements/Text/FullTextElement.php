@@ -54,8 +54,6 @@ abstract class FullTextElement extends AbstractElement
 
     abstract protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent;
 
-    abstract protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
-
     protected function getPropertiesMainSection(): array
     {
         return [

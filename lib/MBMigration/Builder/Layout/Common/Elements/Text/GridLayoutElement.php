@@ -89,6 +89,8 @@ abstract class GridLayoutElement extends AbstractElement
                                 $brizySectionItem
                             );
 
+                            $brizySectionItem->addPadding(10);
+
                             $imageSize = $this->obtainItemImageStyles($mbItem['id'], $this->browserPage);
 
                             $additionalOptions = [
