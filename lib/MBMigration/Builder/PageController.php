@@ -10,6 +10,7 @@ use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettes;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
+use MBMigration\Builder\Utils\UrlUtils;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
@@ -85,12 +86,23 @@ class PageController
 
         $queryBuilder = $this->cache->getClass('QueryBuilder');
 
+        if(UrlUtils::checkRedirect($url)){
+            return true;
+        }
+
         $this->browser = BrowserPHP::instance($layoutBasePath);
         try {
             try {
                 $browserPage = $this->browser->openPage($url, $design);
             } catch (OperationTimedOut $e) {
+
                 Logger::instance()->critical($e->getMessage());
+
+                try{
+                    $this->browser->closePage();
+                    $this->browser->closeBrowser();
+                } catch (\Exception $e) {}
+
                 $this->browser = BrowserPHP::instance($layoutBasePath);
                 $browserPage = $this->browser->openPage($url, $design);
             }
