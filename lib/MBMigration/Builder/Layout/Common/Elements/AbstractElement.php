@@ -59,6 +59,11 @@ abstract class AbstractElement implements ElementInterface
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getTabTextComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection;
+    }
+
     protected function canShowHeader($mbSectionData): bool
     {
         $sectionCategory = $mbSectionData['category'];
@@ -96,6 +101,10 @@ abstract class AbstractElement implements ElementInterface
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+    }
+
+    protected function afterTransformTabs(BrizyComponent $brizySection): void
     {
     }
 

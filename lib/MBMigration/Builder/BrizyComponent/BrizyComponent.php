@@ -170,23 +170,81 @@ class BrizyComponent implements JsonSerializable
 
     public function addMobilePadding($paddingPx = 0): BrizyComponent
     {
-        $radius = [
-            "mobilePaddingType"=> "ungrouped",
-            "mobilePadding" => $paddingPx,
-            "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => $paddingPx,
-            "mobilePaddingTopSuffix" => "px",
-            "mobilePaddingRight" => $paddingPx,
-            "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => $paddingPx,
-            "mobilePaddingBottomSuffix" => "px",
-            "mobilePaddingLeft" => $paddingPx,
-            "mobilePaddingLeftSuffix" => "px",
-        ];
+        if(is_array($paddingPx)){
+            $mobilePadding = [
+                "mobilePaddingType"=> "ungrouped",
+                "mobilePadding" => 0,
+                "mobilePaddingSuffix" => "px",
+                "mobilePaddingTop" => $paddingPx[0] ?? 0,
+                "mobilePaddingTopSuffix" => "px",
+                "mobilePaddingRight" => $paddingPx[1] ?? 0,
+                "mobilePaddingRightSuffix" => "px",
+                "mobilePaddingBottom" => $paddingPx[2] ?? 0,
+                "mobilePaddingBottomSuffix" => "px",
+                "mobilePaddingLeft" => $paddingPx[3] ?? 0,
+                "mobilePaddingLeftSuffix" => "px",
+            ];
 
-        foreach ($radius as $key => $value) {
+        } else {
+            $mobilePadding = [
+                "mobilePaddingType"=> "ungrouped",
+                "mobilePadding" => $paddingPx,
+                "mobilePaddingSuffix" => "px",
+                "mobilePaddingTop" => $paddingPx,
+                "mobilePaddingTopSuffix" => "px",
+                "mobilePaddingRight" => $paddingPx,
+                "mobilePaddingRightSuffix" => "px",
+                "mobilePaddingBottom" => $paddingPx,
+                "mobilePaddingBottomSuffix" => "px",
+                "mobilePaddingLeft" => $paddingPx,
+                "mobilePaddingLeftSuffix" => "px",
+            ];
+        }
+
+        foreach ($mobilePadding as $key => $value) {
             $this->getValue()->set($key, $value);
         }
+
+        return $this;
+    }
+
+    public function addMobileMargin($MarginPx = 0): BrizyComponent
+    {
+        if(is_array($MarginPx)){
+            $mobileMargin = [
+                "mobileMarginType"=> "ungrouped",
+                "mobileMargin" => 0,
+                "mobileMarginSuffix" => "px",
+                "mobileMarginTop" => $MarginPx[0] ?? 0,
+                "mobileMarginTopSuffix" => "px",
+                "mobileMarginRight" => $MarginPx[1] ?? 0,
+                "mobileMarginRightSuffix" => "px",
+                "mobileMarginBottom" => $MarginPx[2] ?? 0,
+                "mobileMarginBottomSuffix" => "px",
+                "mobileMarginLeft" => $MarginPx[3] ?? 0,
+                "mobileMarginLeftSuffix" => "px",
+            ];
+
+        } else {
+            $mobileMargin = [
+                "mobileMarginType"=> "ungrouped",
+                "mobileMargin" => $MarginPx,
+                "mobileMarginSuffix" => "px",
+                "mobileMarginTop" => $MarginPx,
+                "mobileMarginTopSuffix" => "px",
+                "mobileMarginRight" => $MarginPx,
+                "mobileMarginRightSuffix" => "px",
+                "mobileMarginBottom" => $MarginPx,
+                "mobileMarginBottomSuffix" => "px",
+                "mobileMarginLeft" => $MarginPx,
+                "mobileMarginLeftSuffix" => "px",
+            ];
+        }
+
+        foreach ($mobileMargin as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
         return $this;
     }
 }
