@@ -45,6 +45,10 @@ export const getModel = (data: Model) => {
         dic[toCamelCase(key)] = "";
         break;
       }
+      case "font-weight": {
+        dic[toCamelCase(key)] = parseInt(`${styles[key]}`);
+        break;
+      }
       case "line-height": {
         dic[toCamelCase(key)] = defaultDesktopNumberLineHeight;
         dic[toCamelCase(capByPrefix("tablet", key))] =
