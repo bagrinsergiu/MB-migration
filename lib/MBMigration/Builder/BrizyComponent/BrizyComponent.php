@@ -152,68 +152,22 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addPadding($prefix, $paddingPx = 0): BrizyComponent
+    public function addPadding($t, $r, $b, $l, $prefix = '', $measureType = 'px'): BrizyComponent
     {
-        if (is_array($paddingPx)) {
-            $padding = [
-                "{$prefix}PaddingType" => "ungrouped",
-                "{$prefix}Padding" => 0,
-                "{$prefix}PaddingSuffix" => "px",
-                "{$prefix}PaddingTop" => $paddingPx[0] ?? 0,
-                "{$prefix}PaddingTopSuffix" => "px",
-                "{$prefix}PaddingRight" => $paddingPx[1] ?? 0,
-                "{$prefix}PaddingRightSuffix" => "px",
-                "{$prefix}PaddingBottom" => $paddingPx[2] ?? 0,
-                "{$prefix}PaddingBottomSuffix" => "px",
-                "{$prefix}PaddingLeft" => $paddingPx[3] ?? 0,
-                "{$prefix}PaddingLeftSuffix" => "px",
-            ];
-
-        } else {
-            $padding = [
-                "paddingType" => "ungrouped",
-                "paddingTop" => $paddingPx,
-                "paddingTopSuffix" => "px",
-                "paddingBottom" => $paddingPx,
-                "paddingBottomSuffix" => "px",
-                "paddingRight" => $paddingPx,
-                "paddingRightSuffix" => "px",
-                "paddingLeft" => $paddingPx,
-                "paddingLeftSuffix" => "px",
-            ];
-        }
-        foreach ($padding as $key => $value) {
-            $this->getValue()->set($key, $value);
-        }
+        $this->addConstructPadding($t, 'top', $prefix, $measureType);
+        $this->addConstructPadding($r, 'right', $prefix, $measureType);
+        $this->addConstructPadding($b, 'bottom', $prefix, $measureType);
+        $this->addConstructPadding($l, 'left', $prefix, $measureType);
 
         return $this;
     }
 
-    public function addPadding($prefix, $t, $r, $b, $l): BrizyComponent
+    public function addGroupedPadding($p, $prefix = '', $measureType = 'px'): BrizyComponent
     {
-        $padding = [
-            "{$prefix}PaddingType" => "ungrouped",
-            "{$prefix}Padding" => 0,
-            "{$prefix}PaddingSuffix" => "px",
-            "{$prefix}PaddingTop" => $paddingPx[0] ?? 0,
-            "{$prefix}PaddingTopSuffix" => "px",
-            "{$prefix}PaddingRight" => $paddingPx[1] ?? 0,
-            "{$prefix}PaddingRightSuffix" => "px",
-            "{$prefix}PaddingBottom" => $paddingPx[2] ?? 0,
-            "{$prefix}PaddingBottomSuffix" => "px",
-            "{$prefix}PaddingLeft" => $paddingPx[3] ?? 0,
-            "{$prefix}PaddingLeftSuffix" => "px",
-        ];
-        foreach ($padding as $key => $value) {
-            $this->getValue()->set($key, $value);
-        }
-
-        return $this;
-    }
-
-    public function addGroupedPadding($prefix, $p): BrizyComponent
-    {
-        $this->addPadding($prefix, $p,$p,$p,$p);
+        $this->addConstructPadding($p, 'top', $prefix, $measureType);
+        $this->addConstructPadding($p, 'right', $prefix, $measureType);
+        $this->addConstructPadding($p, 'bottom', $prefix, $measureType);
+        $this->addConstructPadding($p, 'left', $prefix, $measureType);
 
         return $this;
     }
@@ -299,15 +253,17 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addPadingLeft($padding = 0, $measureType = 'px'): BrizyComponent
+    public function addPaddingRight($padding = 0, $measureType = 'px', $prefix = '' ): BrizyComponent
     {
-        $padingLeft = [
-            "paddingType" => "ungrouped",
-            "paddingLeft" => $padding,
-            "paddingLeftSuffix" => $measureType,
+        $formattedPrefix = $prefix !== '' ? strtolower($prefix) : '';
+
+        $paddingLeft = [
+            ($formattedPrefix . ($formattedPrefix ? 'PaddingType' : 'paddingType')) => "ungrouped",
+            ($formattedPrefix . ($formattedPrefix ? 'PaddingLeft' : 'paddingLeft')) => $padding,
+            ($formattedPrefix . ($formattedPrefix ? 'PaddingLeftSuffix' : 'paddingLeftSuffix')) => $measureType,
         ];
 
-        foreach ($padingLeft as $key => $value) {
+        foreach ($paddingLeft as $key => $value) {
             $this->getValue()->set($key, $value);
         }
 
@@ -380,5 +336,24 @@ class BrizyComponent implements JsonSerializable
         }
 
         return $this;
+    }
+
+    private function addConstructPadding($padding, $position, $prefix = '', $measureType = 'px'): void
+    {
+        $formattedPrefix = $prefix !== '' ? strtolower($prefix) : '';
+
+        $formattedPosition = ucfirst(strtolower($position));
+
+        $paddingKey = "Padding{$formattedPosition}";
+
+        $paddingConfig = [
+            ($formattedPrefix . ($formattedPrefix ? 'PaddingType' : 'paddingType')) => "ungrouped",
+            ($formattedPrefix . ($formattedPrefix ? $paddingKey : lcfirst($paddingKey))) => $padding,
+            ($formattedPrefix . ($formattedPrefix ? "{$paddingKey}Suffix" : lcfirst("{$paddingKey}Suffix"))) => $measureType,
+        ];
+
+        foreach ($paddingConfig as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
     }
 }
