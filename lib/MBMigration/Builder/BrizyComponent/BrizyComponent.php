@@ -11,9 +11,9 @@ class BrizyComponent implements JsonSerializable
     protected $type;
     protected $value;
     protected $blockId;
-    protected $parent;
+    protected ?BrizyComponent $parent = null;
 
-    public function __construct($data, $parent = null)
+    public function __construct($data, ?BrizyComponent $parent = null)
     {
         if (!is_array($data)) {
             throw new BadJsonProvided('Wrong data format provided for BrizyComponent');
@@ -82,10 +82,11 @@ class BrizyComponent implements JsonSerializable
     {
         $getObjectVars = get_object_vars($this);
         unset($getObjectVars['parent']);
+
         return $getObjectVars;
     }
 
-    public function getItemWithDepth()
+    public function getItemWithDepth(): ?BrizyComponent
     {
         $depths = func_get_args();
 
@@ -115,17 +116,18 @@ class BrizyComponent implements JsonSerializable
     /**
      * @return mixed|null
      */
-    public function getParent()
+    public function getParent(): ?BrizyComponent
     {
         return $this->parent;
     }
 
-    public function getItemValueWithDepth()
+    public function getItemValueWithDepth(): ?BrizyComponentValue
     {
         $depths = func_get_args();
 
         return call_user_func_array([$this, 'getItemWithDepth'], $depths)->getValue();
     }
+
 
     public function addRadius($radiusPx = 0): BrizyComponent
     {
@@ -146,24 +148,25 @@ class BrizyComponent implements JsonSerializable
         foreach ($radius as $key => $value) {
             $this->getValue()->set($key, $value);
         }
+
         return $this;
     }
 
-    public function addPadding($paddingPx = 0): BrizyComponent
+    public function addPadding($prefix, $paddingPx = 0): BrizyComponent
     {
-        if(is_array($paddingPx)){
+        if (is_array($paddingPx)) {
             $padding = [
-                "mobilePaddingType"=> "ungrouped",
-                "mobilePadding" => 0,
-                "mobilePaddingSuffix" => "px",
-                "mobilePaddingTop" => $paddingPx[0] ?? 0,
-                "mobilePaddingTopSuffix" => "px",
-                "mobilePaddingRight" => $paddingPx[1] ?? 0,
-                "mobilePaddingRightSuffix" => "px",
-                "mobilePaddingBottom" => $paddingPx[2] ?? 0,
-                "mobilePaddingBottomSuffix" => "px",
-                "mobilePaddingLeft" => $paddingPx[3] ?? 0,
-                "mobilePaddingLeftSuffix" => "px",
+                "{$prefix}PaddingType" => "ungrouped",
+                "{$prefix}Padding" => 0,
+                "{$prefix}PaddingSuffix" => "px",
+                "{$prefix}PaddingTop" => $paddingPx[0] ?? 0,
+                "{$prefix}PaddingTopSuffix" => "px",
+                "{$prefix}PaddingRight" => $paddingPx[1] ?? 0,
+                "{$prefix}PaddingRightSuffix" => "px",
+                "{$prefix}PaddingBottom" => $paddingPx[2] ?? 0,
+                "{$prefix}PaddingBottomSuffix" => "px",
+                "{$prefix}PaddingLeft" => $paddingPx[3] ?? 0,
+                "{$prefix}PaddingLeftSuffix" => "px",
             ];
 
         } else {
@@ -176,7 +179,8 @@ class BrizyComponent implements JsonSerializable
                 "paddingRight" => $paddingPx,
                 "paddingRightSuffix" => "px",
                 "paddingLeft" => $paddingPx,
-                "paddingLeftSuffix" => "px",];
+                "paddingLeftSuffix" => "px",
+            ];
         }
         foreach ($padding as $key => $value) {
             $this->getValue()->set($key, $value);
@@ -185,11 +189,42 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addPadding($prefix, $t, $r, $b, $l): BrizyComponent
+    {
+        $padding = [
+            "{$prefix}PaddingType" => "ungrouped",
+            "{$prefix}Padding" => 0,
+            "{$prefix}PaddingSuffix" => "px",
+            "{$prefix}PaddingTop" => $paddingPx[0] ?? 0,
+            "{$prefix}PaddingTopSuffix" => "px",
+            "{$prefix}PaddingRight" => $paddingPx[1] ?? 0,
+            "{$prefix}PaddingRightSuffix" => "px",
+            "{$prefix}PaddingBottom" => $paddingPx[2] ?? 0,
+            "{$prefix}PaddingBottomSuffix" => "px",
+            "{$prefix}PaddingLeft" => $paddingPx[3] ?? 0,
+            "{$prefix}PaddingLeftSuffix" => "px",
+        ];
+        foreach ($padding as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function addGroupedPadding($prefix, $p): BrizyComponent
+    {
+        $this->addPadding($prefix, $p,$p,$p,$p);
+
+        return $this;
+    }
+
+
+
     public function addMobilePadding($paddingPx = 0): BrizyComponent
     {
-        if(is_array($paddingPx)){
+        if (is_array($paddingPx)) {
             $mobilePadding = [
-                "mobilePaddingType"=> "ungrouped",
+                "mobilePaddingType" => "ungrouped",
                 "mobilePadding" => 0,
                 "mobilePaddingSuffix" => "px",
                 "mobilePaddingTop" => $paddingPx[0] ?? 0,
@@ -203,7 +238,7 @@ class BrizyComponent implements JsonSerializable
             ];
         } else {
             $mobilePadding = [
-                "mobilePaddingType"=> "ungrouped",
+                "mobilePaddingType" => "ungrouped",
                 "mobilePadding" => $paddingPx,
                 "mobilePaddingSuffix" => "px",
                 "mobilePaddingTop" => $paddingPx,
@@ -226,9 +261,9 @@ class BrizyComponent implements JsonSerializable
 
     public function addMobileMargin($MarginPx = 0): BrizyComponent
     {
-        if(is_array($MarginPx)){
+        if (is_array($MarginPx)) {
             $mobileMargin = [
-                "mobileMarginType"=> "ungrouped",
+                "mobileMarginType" => "ungrouped",
                 "mobileMargin" => 0,
                 "mobileMarginSuffix" => "px",
                 "mobileMarginTop" => $MarginPx[0] ?? 0,
@@ -243,7 +278,7 @@ class BrizyComponent implements JsonSerializable
 
         } else {
             $mobileMargin = [
-                "mobileMarginType"=> "ungrouped",
+                "mobileMarginType" => "ungrouped",
                 "mobileMargin" => $MarginPx,
                 "mobileMarginSuffix" => "px",
                 "mobileMarginTop" => $MarginPx,
@@ -264,13 +299,13 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addPadingLeft($padding = 0,  $measureType = 'px'): BrizyComponent
+    public function addPadingLeft($padding = 0, $measureType = 'px'): BrizyComponent
     {
         $padingLeft = [
             "paddingType" => "ungrouped",
             "paddingLeft" => $padding,
             "paddingLeftSuffix" => $measureType,
-            ];
+        ];
 
         foreach ($padingLeft as $key => $value) {
             $this->getValue()->set($key, $value);
@@ -279,7 +314,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addPadingRight($padding = 0,  $measureType = 'px'): BrizyComponent
+    public function addPadingRight($padding = 0, $measureType = 'px'): BrizyComponent
     {
         $padingLeft = [
             "paddingType" => "ungrouped",
@@ -334,7 +369,7 @@ class BrizyComponent implements JsonSerializable
     public function addBgColor($hex, $opacity): BrizyComponent
     {
         $bgColor = [
-            "bgColorType"=> "solid",
+            "bgColorType" => "solid",
             "bgColorHex" => $hex,
             "bgColorOpacity" => $opacity,
             "bgColorPalette" => '',
