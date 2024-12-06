@@ -1,14 +1,14 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
+namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Sermons;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyMinistryBrandsSermonLayout;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 
 abstract class AbstractMediaLayout extends AbstractElement
 {

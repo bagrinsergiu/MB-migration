@@ -23,7 +23,7 @@ class Head extends HeadElement
      */
     protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0)->addVerticalContentAlign();
     }
 
     /**

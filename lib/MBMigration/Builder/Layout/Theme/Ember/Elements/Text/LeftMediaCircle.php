@@ -1,11 +1,11 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
+namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 
-class RightMedia extends PhotoTextElement
+class LeftMediaCircle extends PhotoTextElement
 {
     /**
      * @param BrizyComponent $brizySection
@@ -13,7 +13,8 @@ class RightMedia extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0,0);
+        $brizySection->getItemWithDepth(0, 0, 0)->addVerticalContentAlign();
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     /**
@@ -22,7 +23,12 @@ class RightMedia extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1);
+    }
+
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getPropertiesMainSection(): array
@@ -41,5 +47,4 @@ class RightMedia extends PhotoTextElement
             "mobilePaddingLeftSuffix" => "px",
         ];
     }
-
 }

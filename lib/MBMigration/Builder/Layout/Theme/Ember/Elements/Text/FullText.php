@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
+namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Elements\Text\FullTextElement;

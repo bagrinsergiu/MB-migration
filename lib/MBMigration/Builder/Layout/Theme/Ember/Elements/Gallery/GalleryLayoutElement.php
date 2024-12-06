@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
+namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Gallery;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 

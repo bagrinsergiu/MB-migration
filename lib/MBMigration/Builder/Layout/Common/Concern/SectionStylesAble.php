@@ -131,10 +131,11 @@ trait SectionStylesAble
             return;
         }
 
-        $sectionStyles['background-color'] = ColorConverter::rgba2hex($sectionStyles['background-color']);
+
         $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
             ColorConverter::rgba2opacity($sectionStyles['background-color'])
         );
+        $sectionStyles['background-color'] = ColorConverter::rgba2hex($sectionStyles['background-color']);
 
         $this->handleItemBackground($brizySection, $sectionStyles);
 
@@ -190,7 +191,7 @@ trait SectionStylesAble
     protected function handleItemBackground(BrizyComponent $brizySection, array $sectionStyles)
     {
         $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
-        $opacity = ColorConverter::rgba2opacity($sectionStyles['background-color'] ?? $sectionStyles['background-opacity']);
+        $opacity = ColorConverter::rgba2opacity($sectionStyles['background-opacity'] ?? $sectionStyles['background-color']);
         $opacity = NumberProcessor::convertToNumeric($opacity);
 
         $brizySection->getValue()

@@ -151,20 +151,37 @@ class BrizyComponent implements JsonSerializable
 
     public function addPadding($paddingPx = 0): BrizyComponent
     {
-        $radius = [
-            "paddingType" => "ungrouped",
-            "paddingTop" => $paddingPx,
-            "paddingTopSuffix" => "px",
-            "paddingBottom" => $paddingPx,
-            "paddingBottomSuffix" => "px",
-            "paddingRight" => $paddingPx,
-            "paddingRightSuffix" => "px",
-            "paddingLeft" => $paddingPx,
-            "paddingLeftSuffix" => "px",];
+        if(is_array($paddingPx)){
+            $padding = [
+                "mobilePaddingType"=> "ungrouped",
+                "mobilePadding" => 0,
+                "mobilePaddingSuffix" => "px",
+                "mobilePaddingTop" => $paddingPx[0] ?? 0,
+                "mobilePaddingTopSuffix" => "px",
+                "mobilePaddingRight" => $paddingPx[1] ?? 0,
+                "mobilePaddingRightSuffix" => "px",
+                "mobilePaddingBottom" => $paddingPx[2] ?? 0,
+                "mobilePaddingBottomSuffix" => "px",
+                "mobilePaddingLeft" => $paddingPx[3] ?? 0,
+                "mobilePaddingLeftSuffix" => "px",
+            ];
 
-        foreach ($radius as $key => $value) {
+        } else {
+            $padding = [
+                "paddingType" => "ungrouped",
+                "paddingTop" => $paddingPx,
+                "paddingTopSuffix" => "px",
+                "paddingBottom" => $paddingPx,
+                "paddingBottomSuffix" => "px",
+                "paddingRight" => $paddingPx,
+                "paddingRightSuffix" => "px",
+                "paddingLeft" => $paddingPx,
+                "paddingLeftSuffix" => "px",];
+        }
+        foreach ($padding as $key => $value) {
             $this->getValue()->set($key, $value);
         }
+
         return $this;
     }
 
@@ -184,7 +201,6 @@ class BrizyComponent implements JsonSerializable
                 "mobilePaddingLeft" => $paddingPx[3] ?? 0,
                 "mobilePaddingLeftSuffix" => "px",
             ];
-
         } else {
             $mobilePadding = [
                 "mobilePaddingType"=> "ungrouped",
@@ -242,6 +258,89 @@ class BrizyComponent implements JsonSerializable
         }
 
         foreach ($mobileMargin as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function addPadingLeft($padding = 0,  $measureType = 'px'): BrizyComponent
+    {
+        $padingLeft = [
+            "paddingType" => "ungrouped",
+            "paddingLeft" => $padding,
+            "paddingLeftSuffix" => $measureType,
+            ];
+
+        foreach ($padingLeft as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function addPadingRight($padding = 0,  $measureType = 'px'): BrizyComponent
+    {
+        $padingLeft = [
+            "paddingType" => "ungrouped",
+            "paddingRight" => $padding,
+            "paddingRightSuffix" => $measureType,
+        ];
+
+        foreach ($padingLeft as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function addVerticalContentAlign($verticalAlign = 'center'): BrizyComponent
+    {
+        if (!in_array($verticalAlign, ['center', 'left', 'right'])) {
+            $verticalAlign = 'center';
+        }
+
+        $this->getValue()->set('verticalAlign', $verticalAlign);
+        $this->getValue()->set('mobileVerticalAlign', $verticalAlign);
+        $this->getValue()->set('tabletVerticalAlign', $verticalAlign);
+
+        return $this;
+    }
+
+    public function addHorizontalContentAlign($verticalAlign = 'center'): BrizyComponent
+    {
+        if (!in_array($verticalAlign, ['center', 'left', 'right'])) {
+            $verticalAlign = 'center';
+        }
+
+        $this->getValue()->set('horizontalAlign', $verticalAlign);
+        $this->getValue()->set('mobileHorizontalAlign', $verticalAlign);
+        $this->getValue()->set('tabletHorizontalAlign', $verticalAlign);
+
+        return $this;
+    }
+
+    public function addMobileContentAlign($verticalAlign = 'center'): BrizyComponent
+    {
+        if (!in_array($verticalAlign, ['center', 'left', 'right'])) {
+            $verticalAlign = 'center';
+        }
+
+        $this->getValue()->set('mobileHorizontalAlign', $verticalAlign);
+
+        return $this;
+    }
+
+    public function addBgColor($hex, $opacity): BrizyComponent
+    {
+        $bgColor = [
+            "bgColorType"=> "solid",
+            "bgColorHex" => $hex,
+            "bgColorOpacity" => $opacity,
+            "bgColorPalette" => '',
+        ];
+
+        foreach ($bgColor as $key => $value) {
             $this->getValue()->set($key, $value);
         }
 

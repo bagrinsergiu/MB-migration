@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
+namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Prayer;
 
 class PrayerListElement extends \MBMigration\Builder\Layout\Common\Elements\Prayer\PrayerListElement
 {

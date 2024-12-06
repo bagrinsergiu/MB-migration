@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
+namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 
@@ -24,6 +24,11 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
         return $brizyComponent->getItemWithDepth(0, 0);
+    }
+
+    protected function getTypeItemImageComponent(): string
+    {
+        return 'image';
     }
 
 
