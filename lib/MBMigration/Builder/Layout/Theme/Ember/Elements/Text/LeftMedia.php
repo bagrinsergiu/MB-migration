@@ -22,7 +22,10 @@ class LeftMedia extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1)->addBgColor('#ffffff', 0)->addPadingRight(50, '%');
+        return $brizySection
+            ->getItemWithDepth(0, 0, 1)
+            ->addBgColor('#ffffff', 0)
+            ->addPaddingRight(45, '%');
     }
 
     protected function getPropertiesMainSection(): array
@@ -39,6 +42,16 @@ class LeftMedia extends PhotoTextElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "paddingTop" => 0,
+            "paddingTopSuffix" => "px",
+            "paddingBottom" => 0,
+            "paddingBottomSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
         ];
     }
 

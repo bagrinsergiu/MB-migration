@@ -7,6 +7,12 @@ use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 
 class Head extends HeadElement
 {
+
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0)->addMarginBottom(-80);
+    }
+
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null

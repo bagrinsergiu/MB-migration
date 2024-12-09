@@ -253,7 +253,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addPaddingRight($padding = 0, $measureType = 'px', $prefix = '' ): BrizyComponent
+    public function addPaddingRight_n($padding = 0, $measureType = 'px', $prefix = '' ): BrizyComponent
     {
         $formattedPrefix = $prefix !== '' ? strtolower($prefix) : '';
 
@@ -270,7 +270,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addPadingRight($padding = 0, $measureType = 'px'): BrizyComponent
+    public function addPaddingRight($padding = 0, $measureType = 'px'): BrizyComponent
     {
         $padingLeft = [
             "paddingType" => "ungrouped",
@@ -279,6 +279,36 @@ class BrizyComponent implements JsonSerializable
         ];
 
         foreach ($padingLeft as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function addPaddingLeft($padding = 0, $measureType = 'px'): BrizyComponent
+    {
+        $padingLeft = [
+            "paddingType" => "ungrouped",
+            "paddingLeft" => $padding,
+            "paddingLeftSuffix" => $measureType,
+        ];
+
+        foreach ($padingLeft as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function addMarginBottom($margin = 0, $measureType = 'px'): BrizyComponent
+    {
+        $marginBottom = [
+            "marginType" => "ungrouped",
+            "marginBottom" => $margin,
+            "marginBottomSuffix" => $measureType,
+        ];
+
+        foreach ($marginBottom as $key => $value) {
             $this->getValue()->set($key, $value);
         }
 
