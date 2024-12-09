@@ -7,6 +7,12 @@ use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 
 class Head extends HeadElement
 {
+
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0)->addMarginBottom(-80);
+    }
+
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
@@ -92,4 +98,8 @@ class Head extends HeadElement
         ];
     }
 
+    protected function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.has-sub>ul.sub-navigation>li>a", "pseudoEl" => ""];
+    }
 }

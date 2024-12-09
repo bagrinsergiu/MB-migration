@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
+use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -16,7 +16,7 @@ abstract class GridLayoutElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use ImageStylesAble;
-    use DanationsAble;
+    use DonationsAble;
 
     private array $globalBrizyKit;
 
@@ -89,6 +89,8 @@ abstract class GridLayoutElement extends AbstractElement
                                 $brizySectionItem
                             );
 
+                            $brizySectionItem->addGroupedPadding(20);
+
                             $imageSize = $this->obtainItemImageStyles($mbItem['id'], $this->browserPage);
 
                             $additionalOptions = [
@@ -100,7 +102,12 @@ abstract class GridLayoutElement extends AbstractElement
                                 "mobileMargin" => 20,
                             ];
 
-                            $this->handleBgPhotoItems($elementContext, $additionalOptions);
+                            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                $mbItem,
+                                $this->getItemImageComponent($brizySectionItem)
+                            );
+
+                            $this->handleBgPhotoItems($elementContext, $additionalOptions, $this->getTypeItemImageComponent());
 //                            $this->getItemImageComponent($brizySectionItem)
 //                                ->getValue()
 //                                ->set_widthSuffix('%')
@@ -113,6 +120,18 @@ abstract class GridLayoutElement extends AbstractElement
                                 $mbItem,
                                 $brizySectionItem
                             );
+
+                            $dataIdSelector = '[data-id="'.$mbItem['id'].'"]';
+
+                            $displayItem = $this->getDomElementStyles(
+                                $dataIdSelector,
+                                ['display'],
+                                $this->browserPage);
+
+                            if(trim($displayItem['display']) === 'none'){
+                                continue 2;
+                            }
+
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
                             $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
                             break;
@@ -127,15 +146,24 @@ abstract class GridLayoutElement extends AbstractElement
         return $brizySection;
     }
 
-    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [])
+    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [], $elementImageType = 'bg')
     {
         $mbSectionItem = $data->getMbSection();
         $brizyComponent = $data->getBrizySection();
 
-        $brizyComponent->getValue()
-            ->set_verticalAlign('bottom')
-            ->set_bgImageFileName($mbSectionItem['imageFileName'])
-            ->set_bgImageSrc($mbSectionItem['content']);
+        switch ($elementImageType){
+            case 'bg':
+                $brizyComponent->getValue()
+                    ->set_verticalAlign('bottom')
+                    ->set_bgImageFileName($mbSectionItem['imageFileName'])
+                    ->set_bgImageSrc($mbSectionItem['content']);
+                break;
+            case 'image':
+                $brizyComponent->getValue()
+                    ->set_imageFileName($mbSectionItem['imageFileName'])
+                    ->set_imageSrc($mbSectionItem['content']);
+                break;
+        }
 
         foreach ($options as $key => $value) {
             $method = 'set_'.$key;
@@ -153,6 +181,11 @@ abstract class GridLayoutElement extends AbstractElement
     abstract protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent;
 
     abstract protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent;
+
+    protected function getTypeItemImageComponent(): string
+    {
+       return 'bg';
+    }
 
     protected function getPropertiesMainSection(): array
     {

@@ -49,7 +49,10 @@ abstract class FooterElement extends AbstractElement
         $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
 
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
         return $brizySection;
     }

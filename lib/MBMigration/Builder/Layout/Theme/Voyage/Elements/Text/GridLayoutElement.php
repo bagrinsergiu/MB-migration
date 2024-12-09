@@ -36,6 +36,11 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return 25;
     }
 
+    protected function getTypeItemImageComponent(): string
+    {
+        return 'image';
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
@@ -46,7 +51,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 20,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",

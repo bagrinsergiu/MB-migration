@@ -17,19 +17,15 @@ abstract class AbstractElement implements ElementInterface
     use MbSectionUtils;
     use TextsExtractorAware;
 
-    /**
-     * @var array
-     */
-    protected $brizyKit = [];
-    /**
-     * @var BrowserPageInterface
-     */
-    protected $browserPage;
-    /**
-     * @var QueryBuilder
-     */
-    private $queryBuilder;
+    protected array $brizyKit = [];
 
+    protected array $headParams = [];
+
+    protected array $basicHeadParams = [];
+
+    protected BrowserPageInterface $browserPage;
+
+    private QueryBuilder $queryBuilder;
 
     public function __construct($brizyKit, BrowserPageInterface $browserPage)
     {
@@ -46,6 +42,11 @@ abstract class AbstractElement implements ElementInterface
         return $component;
     }
 
+    public function getBasicHeadParams(): array
+    {
+        return $this->basicHeadParams;
+    }
+
     /**
      * Returns and Brizy fully build section ready to be inserted in page data.
      *
@@ -56,6 +57,11 @@ abstract class AbstractElement implements ElementInterface
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getTabTextComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection;
     }
 
     protected function canShowHeader($mbSectionData): bool
@@ -79,6 +85,15 @@ abstract class AbstractElement implements ElementInterface
         return true;
     }
 
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
+    }
+
+    protected function transformHeadItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
+    }
 
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {
@@ -86,6 +101,10 @@ abstract class AbstractElement implements ElementInterface
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+    }
+
+    protected function afterTransformTabs(BrizyComponent $brizySection): void
     {
     }
 
@@ -97,6 +116,11 @@ abstract class AbstractElement implements ElementInterface
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;
+    }
+
+    protected function getTypeItemImageComponent(): string
+    {
+        return 'bg';
     }
 
     protected function getPropertiesMainSection(): array

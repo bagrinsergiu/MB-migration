@@ -44,7 +44,7 @@ class BrizyComponentPage extends BrizyComponent implements JsonSerializable
     public function get($field, $value)
     {
         if(!isset($this->fields[$field])) {
-            throw new Exception();
+            throw new Exception('Field ' . $field . ' not found');
         }
 
         return $this->fields[$field];
