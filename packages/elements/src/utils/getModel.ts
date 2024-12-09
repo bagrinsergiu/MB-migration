@@ -74,7 +74,8 @@ export const getModel = (data: Model) => {
         dic[toCamelCase(key)] = toHex?.hex ?? "#000000";
         break;
       }
-      case "bg-color-hex": {
+      case "bg-color-hex":
+      case "content-bg-color-hex": {
         const toHex = parseColorString(`${styles["background-color"]}`);
         dic[toCamelCase(key)] = toHex?.hex ?? "#ffffff";
         break;
@@ -86,7 +87,8 @@ export const getModel = (data: Model) => {
         dic[toCamelCase(key)] = +(toHex?.opacity ?? opacity);
         break;
       }
-      case "bg-color-opacity": {
+      case "bg-color-opacity":
+      case "content-bg-color-opacity": {
         const toHex = parseColorString(`${styles["background-color"]}`);
         const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
 

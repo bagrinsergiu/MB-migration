@@ -29,7 +29,7 @@ use MBMigration\Builder\Layout\Theme\Voyage\Elements\Text\RightMedia;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Text\RightMediaOverlap;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Text\TabsLayoutElement;
 
-class ElementFactory  extends AbstractThemeElementFactory
+class ElementFactory extends AbstractThemeElementFactory
 {
     public function getElement($name, BrowserPageInterface $browserPage): ElementInterface
     {
@@ -50,6 +50,7 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new LivestreamLayoutElement($this->blockKit['blocks']['livestream-layout'], $browserPage);
             case 'small-groups-list':
                 return new SmallGroupsListElement($this->blockKit['blocks']['small-groups-list'], $browserPage);
+
             case 'full-width-form':
                 return new FullWidthForm($this->blockKit['blocks']['form'], $browserPage);
             case 'left-form-with-text':
@@ -62,7 +63,7 @@ class ElementFactory  extends AbstractThemeElementFactory
             case 'event-gallery-layout':
             case 'event-tile-layout':
             case 'event-calendar-layout':
-                return new EventLayoutElement($this->blockKit['blocks']['event-calendar-layout'], $browserPage, $this->getQueryBuilder());
+                return new EventLayoutElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
 
             case 'gallery-layout':
                 return new GalleryLayoutElement($this->blockKit['blocks']['gallery-layout'], $browserPage);

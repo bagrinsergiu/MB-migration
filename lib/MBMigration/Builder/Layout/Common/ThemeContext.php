@@ -5,6 +5,8 @@ namespace MBMigration\Builder\Layout\Common;
 use MBMigration\Browser\BrowserInterface;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Browser\BrowserPHP;
+use MBMigration\Builder\BrizyComponent\BrizyComponentBuilder;
+use MBMigration\Builder\Layout\Common\DTO\PageDto;
 
 final class ThemeContext implements ThemeContextInterface
 {
@@ -75,6 +77,8 @@ final class ThemeContext implements ThemeContextInterface
     private array $brizyMenuItems;
     private array $urlMap = [];
     private array $listSeries;
+    private PageDto $pageDTO;
+    private string $projectName;
 
     public function __construct(
         string $layoutName,
@@ -93,7 +97,9 @@ final class ThemeContext implements ThemeContextInterface
         array $urlMap,
         RootPalettesInterface $RootPalettes,
         BrowserInterface $browser,
-        array $listSeries
+        array $listSeries,
+        PageDto $pageDTO,
+        string $projectName
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
@@ -112,6 +118,8 @@ final class ThemeContext implements ThemeContextInterface
         $this->rootPalettes = $RootPalettes;
         $this->browser = $browser;
         $this->listSeries = $listSeries;
+        $this->pageDTO = $pageDTO;
+        $this->projectName = $projectName;
     }
 
     public function getLayoutName(): string
@@ -204,5 +212,20 @@ final class ThemeContext implements ThemeContextInterface
     public function getListSeries(): array
     {
         return $this->listSeries;
+    }
+
+    public function getPageDTO(): PageDto
+    {
+        return $this->pageDTO;
+    }
+
+    public function getProjectName(): string
+    {
+        return $this->projectName;
+    }
+
+    public function getBrizyComponentBuilder(): BrizyComponentBuilder
+    {
+        return new BrizyComponentBuilder($this->getBrizyKit());
     }
 }

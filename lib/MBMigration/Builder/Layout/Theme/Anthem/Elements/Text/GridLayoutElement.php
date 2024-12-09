@@ -18,7 +18,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0);
+        return $brizyComponent;
     }
 
     protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent {

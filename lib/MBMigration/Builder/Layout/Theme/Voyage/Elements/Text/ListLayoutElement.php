@@ -21,7 +21,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0, 0);
     }
 
-    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent
+    protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params=[]): BrizyComponent
     {
         return $brizySection;
     }
@@ -46,7 +46,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 20,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
@@ -61,5 +61,10 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "paddingLeft" => 0,
             "paddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function transformHeadItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
     }
 }

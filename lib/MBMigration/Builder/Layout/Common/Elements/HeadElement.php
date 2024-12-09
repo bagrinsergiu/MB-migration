@@ -16,6 +16,11 @@ abstract class HeadElement extends AbstractElement
     use Cacheable;
     use SectionStylesAble;
 
+    protected array $basicHeadParams = [
+        'addMenuItems' => true,
+        'addMenu' => true,
+    ];
+
     protected BrizyAPI $brizyAPIClient;
     private FontsController $fontsController;
 
@@ -34,6 +39,7 @@ abstract class HeadElement extends AbstractElement
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
+            $this->basicHeadParams = array_merge($this->basicHeadParams, $this->headParams);
             $this->beforeTransformToItem($data);
             $component = $this->internalTransformToItem($data);
             $this->afterTransformToItem($component);
@@ -71,7 +77,9 @@ abstract class HeadElement extends AbstractElement
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItem);
 
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
         return $section;
     }
@@ -159,9 +167,11 @@ abstract class HeadElement extends AbstractElement
         $headStyles
     ): BrizyComponent {
         $menuComponentValue = $component->getValue();
+        $projectName = $data->getThemeContext()->getProjectName();
         $menuComponentValue
             ->set('items', $this->createMenu($data->getBrizyMenuEntity()['list']))
-            ->set_menuSelected($data->getBrizyMenuEntity()['uid']);
+            ->set_menuSelected($data->getBrizyMenuEntity()['uid'])
+            ->set_mMenuTitle($projectName);
 
         // apply menu styles
         foreach ($headStyles['menu'] as $field => $value) {
@@ -183,7 +193,7 @@ abstract class HeadElement extends AbstractElement
         $menuSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => '[data-id="'.$sectionId.'"]',
+                'selector' => '[data-id=\''.$sectionId.'\']',
                 'styleProperties' => ['background-color', 'color', 'opacity', 'border-bottom-color'],
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,

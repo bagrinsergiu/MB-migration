@@ -38,12 +38,20 @@ abstract class TabsLayoutElement extends AbstractElement
         $brizyAccordionItems = [];
         foreach ($mbSection['items'] as $mbSectionItem) {
             $brizyTabItem = new BrizyComponent($itemJson);
+
             $brizyTabItem->getValue()->set_labelText(strip_tags($mbSectionItem['items'][0]['content']));
+
+            $brizyTabItemText = $this->getTabTextComponent($brizyTabItem);
+
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                 $mbSectionItem['items'][1],
-                $brizyTabItem
+                $brizyTabItemText
             );
+
             $this->handleRichTextItem($elementContext, $this->browserPage);
+
+            $this->afterTransformTabs($brizyTabItem);
+
             $brizyAccordionItems[] = $brizyTabItem;
         }
 
@@ -75,6 +83,11 @@ abstract class TabsLayoutElement extends AbstractElement
      * @return mixed
      */
     abstract protected function getTabContainerComponent(BrizyComponent $brizySection): BrizyComponent;
+
+
+    protected function  beforeItemTransform(): void
+    {
+    }
 
     protected function getPropertiesMainSection(): array
     {
