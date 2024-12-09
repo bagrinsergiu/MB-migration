@@ -78,6 +78,7 @@ final class ThemeContext implements ThemeContextInterface
     private array $urlMap = [];
     private array $listSeries;
     private PageDto $pageDTO;
+    private string $projectName;
 
     public function __construct(
         string $layoutName,
@@ -97,7 +98,8 @@ final class ThemeContext implements ThemeContextInterface
         RootPalettesInterface $RootPalettes,
         BrowserInterface $browser,
         array $listSeries,
-        PageDto $pageDTO
+        PageDto $pageDTO,
+        string $projectName
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
@@ -117,6 +119,7 @@ final class ThemeContext implements ThemeContextInterface
         $this->browser = $browser;
         $this->listSeries = $listSeries;
         $this->pageDTO = $pageDTO;
+        $this->projectName = $projectName;
     }
 
     public function getLayoutName(): string
@@ -214,6 +217,11 @@ final class ThemeContext implements ThemeContextInterface
     public function getPageDTO(): PageDto
     {
         return $this->pageDTO;
+    }
+
+    public function getProjectName(): string
+    {
+        return $this->projectName;
     }
 
     public function getBrizyComponentBuilder(): BrizyComponentBuilder

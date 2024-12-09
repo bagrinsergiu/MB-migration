@@ -167,9 +167,11 @@ abstract class HeadElement extends AbstractElement
         $headStyles
     ): BrizyComponent {
         $menuComponentValue = $component->getValue();
+        $projectName = $data->getThemeContext()->getProjectName();
         $menuComponentValue
             ->set('items', $this->createMenu($data->getBrizyMenuEntity()['list']))
-            ->set_menuSelected($data->getBrizyMenuEntity()['uid']);
+            ->set_menuSelected($data->getBrizyMenuEntity()['uid'])
+            ->set_mMenuTitle($projectName);
 
         // apply menu styles
         foreach ($headStyles['menu'] as $field => $value) {

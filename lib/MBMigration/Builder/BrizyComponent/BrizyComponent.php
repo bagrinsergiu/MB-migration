@@ -351,6 +351,16 @@ class BrizyComponent implements JsonSerializable
 
         return $this;
     }
+    public function addMobileHorizontalContentAlign($verticalAlign = 'center'): BrizyComponent
+    {
+        if (!in_array($verticalAlign, ['center', 'left', 'right'])) {
+            $verticalAlign = 'center';
+        }
+
+        $this->getValue()->set('mobileHorizontalAlign', $verticalAlign);
+
+        return $this;
+    }
 
     public function addBgColor($hex, $opacity): BrizyComponent
     {

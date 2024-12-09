@@ -47,4 +47,6 @@ interface ThemeContextInterface
     public function getPageDTO(): PageDto;
 
     public function getBrizyComponentBuilder(): BrizyComponentBuilder;
+
+    public function getProjectName(): string;
 }

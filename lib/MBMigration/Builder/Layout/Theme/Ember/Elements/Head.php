@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Ember\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 
 class Head extends HeadElement
@@ -29,6 +30,45 @@ class Head extends HeadElement
     protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+    }
+
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $brizySection = parent::internalTransformToItem($data);
+
+        $sectionlogoOptions = [
+            'horizontalAlign' => 'center',
+            'mobileHorizontalAlign' => 'left',
+
+            'mobileMarginType' => 'grouped',
+            'mobileMargin' => 0,
+            'mobileMarginSuffix' => 'px',
+            'mobileMarginTop' => 0,
+            'mobileMarginTopSuffix' => 'px',
+            'mobileMarginRight' => 0,
+            'mobileMarginRightSuffix' => 'px',
+            'mobileMarginBottom' => 0,
+            'mobileMarginBottomSuffix' => 'px',
+            'mobileMarginLeft' => 0,
+            'mobileMarginLeftSuffix' => 'px',
+        ];
+
+        $brizySection->getItemWithDepth(0, 0, 0, 0)
+            ->addHorizontalContentAlign()
+            ->addMobileContentAlign()
+            ->addMobileMargin();
+
+        $brizySection->getItemWithDepth(0, 0, 1, 0)
+            ->addMobileMargin([11,11,11,0]);
+
+        foreach ($sectionlogoOptions as $option => $value) {
+            $nameOption = 'set_'.$option;
+            $brizySection->getItemWithDepth(0, 0, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        return $brizySection;
     }
 
     public function getThemeMenuItemSelector(): array

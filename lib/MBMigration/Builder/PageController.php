@@ -141,7 +141,8 @@ class PageController
                 $RootPalettesExtracted->extractRootPalettes(),
                 $this->browser,
                 $listSeries,
-                $this->pageDTO
+                $this->pageDTO,
+                $this->cache->get('title','settings') ?? ''
             );
 
             /**
