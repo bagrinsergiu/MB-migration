@@ -162,6 +162,10 @@ trait DonationsAble
                 break;
         }
 
+        if(empty($buttonText)){
+            $buttonText = 'MAKE A DONATION';
+        }
+
         $brizyDonationButton->getItemValueWithDepth(0)
             ->set_text($buttonText ?? 'MAKE A DONATION')
             ->set_linkExternal($mbSection['settings']['sections']['donations']['url'] ?? '#')
