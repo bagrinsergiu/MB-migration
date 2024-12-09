@@ -79,7 +79,9 @@ abstract class GridLayoutElement extends AbstractElement
                     ->set_paddingTop((int)$styles['margin-top'])
                     ->set_paddingBottom((int)$styles['margin-bottom'])
                     ->set_paddingRight((int)$styles['margin-right'])
-                    ->set_paddingLeft((int)$styles['margin-left']);
+                    ->set_paddingLeft((int)$styles['margin-left'])
+
+                    ->set_mobileWidth(100);
 
                 foreach ($item['items'] as $mbItem) {
                     switch ($mbItem['category']) {
