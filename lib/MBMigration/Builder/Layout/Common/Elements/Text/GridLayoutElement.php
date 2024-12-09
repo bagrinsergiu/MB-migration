@@ -120,6 +120,18 @@ abstract class GridLayoutElement extends AbstractElement
                                 $mbItem,
                                 $brizySectionItem
                             );
+
+                            $dataIdSelector = '[data-id="'.$mbItem['id'].'"]';
+
+                            $displayItem = $this->getDomElementStyles(
+                                $dataIdSelector,
+                                ['display'],
+                                $this->browserPage);
+
+                            if(trim($displayItem['display']) === 'none'){
+                                continue 2;
+                            }
+
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
                             $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
                             break;
