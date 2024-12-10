@@ -378,6 +378,12 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addCustomCSS(string $ccsCustom): BrizyComponent
+    {
+        $this->getValue()->set('customCSS', $ccsCustom);
+        return $this;
+    }
+
     private function addConstructPadding($padding, $position, $prefix = '', $measureType = 'px'): void
     {
         $formattedPrefix = $prefix !== '' ? strtolower($prefix) : '';
