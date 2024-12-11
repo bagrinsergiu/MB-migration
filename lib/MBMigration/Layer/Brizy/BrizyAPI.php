@@ -720,17 +720,81 @@ class BrizyAPI extends Utils
         $image_data = curl_exec($ch);
         curl_close($ch);
 
-        $file_name = mb_strtolower(basename($url));
-        $fileName = explode(".", $file_name);
-        $file_name = $fileName[0] . '.' . $this->fileExtension($fileName[1]);
+        if ($image_data === false) {
+            Logger::instance()->warning('Failed to download image from URL: ' . $url);
+            return "unknown";
+        }
 
+        $file_name = mb_strtolower(basename($url));
+        $fileNameParts = explode(".", $file_name);
+
+        if (count($fileNameParts) < 2) {
+            Logger::instance()->warning('Invalid file name format: ' . $file_name);
+            return "unknown";
+        }
+
+        $originalExtension = $fileNameParts[count($fileNameParts) - 1];
+        $supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'ico'];
+
+        if (!in_array($originalExtension, $supportedExtensions)) {
+            $convertedExtension = 'jpg';
+        } else {
+            $convertedExtension = $originalExtension;
+        }
+
+        $file_name = $fileNameParts[0] . '.' . $convertedExtension;
         $path = Config::$pathTmp . $this->nameFolder . '/media/' . $file_name;
-        $status = file_put_contents($path, $image_data);
-        if (!$status) {
-            Logger::instance()->warning('Failed to load image!!! path: ' . $path);
+
+        file_put_contents($path, $image_data);
+
+        if (!file_exists($path)) {
+            Logger::instance()->warning('Failed to save image to path: ' . $path);
+            return "unknown";
+        }
+
+        if ($originalExtension !== $convertedExtension) {
+            $this->convertImageFormat($path, $convertedExtension);
         }
 
         return $this->resizeImageIfNeeded($path, 9.5);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function convertImageFormat($filePath, $targetExtension): void
+    {
+        $image = null;
+        $mimeType = mime_content_type($filePath);
+
+        switch ($mimeType) {
+            case 'image/jpeg':
+            case 'image/jpg':
+            case 'image/jfif':
+                $image = imagecreatefromjpeg($filePath);
+                break;
+            case 'image/png':
+                $image = imagecreatefrompng($filePath);
+                break;
+            case 'image/gif':
+                $image = imagecreatefromgif($filePath);
+                break;
+            case 'image/webp':
+                $image = imagecreatefromwebp($filePath);
+                break;
+            default:
+                Logger::instance()->warning('Unsupported image format for conversion: ' . $mimeType);
+                return;
+        }
+
+        if ($image) {
+            $newFilePath = preg_replace('/\.[^.]+$/', '.' . $targetExtension, $filePath);
+            imagejpeg($image, $newFilePath, 90);
+            imagedestroy($image);
+            unlink($filePath);
+        } else {
+            Logger::instance()->warning('Failed to create image resource for conversion: ' . $filePath);
+        }
     }
 
     /**
