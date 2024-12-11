@@ -23,7 +23,7 @@ class Head extends HeadElement
      */
     protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0)->addVerticalContentAlign();
     }
 
     /**
@@ -106,19 +106,56 @@ class Head extends HeadElement
         ];
 
         $sectionlogoOptions = [
-            'mobileMarginType' => 'grouped',
-            'mobileMargin' => -20,
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 10,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            'mobileMarginType' => 'ungrouped',
+            'mobileMargin' => 0,
             'mobileMarginSuffix' => 'px',
-            'mobileMarginTop' => -20,
+            'mobileMarginTop' => 5,
             'mobileMarginTopSuffix' => 'px',
-            'mobileMarginRight' => -20,
+            'mobileMarginRight' => 0,
             'mobileMarginRightSuffix' => 'px',
-            'mobileMarginBottom' => -20,
+            'mobileMarginBottom' => 5,
             'mobileMarginBottomSuffix' => 'px',
-            'mobileMarginLeft' => -20,
+            'mobileMarginLeft' => 0,
             'mobileMarginLeftSuffix' => 'px',
         ];
 
+        $sectionSectionOptions = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 0,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => -200,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 5,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 0,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 5,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 0,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
 
         foreach ($imageLogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
@@ -144,6 +181,13 @@ class Head extends HeadElement
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
             $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($sectionSectionOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -179,5 +223,10 @@ class Head extends HeadElement
             'mobileMarginLeft' => 0,
             'mobileMarginLeftSuffix' => "px",
         ];
+    }
+
+    protected function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub > .sub-navigation li > a", "pseudoEl" => ""];
     }
 }

@@ -120,4 +120,19 @@ class MenuBuilder implements MenuBuilderInterface
             return false;
         }
     }
+
+    protected function removeHiddenElements(array $items): array {
+        $filteredItems = [];
+
+        foreach ($items as $item) {
+            if (!$item['hidden']) {
+                if (!empty($item['child'])) {
+                    $item['child'] = $this->removeHiddenElements($item['child']);
+                }
+                $filteredItems[] = $item;
+            }
+        }
+
+        return $filteredItems;
+    }
 }

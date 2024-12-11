@@ -206,6 +206,7 @@ class BrizyAPI extends Utils
         $mime_type = mime_content_type($pathToFileName);
         Logger::instance()->debug('Mime type image; '.$mime_type);
         if ($this->getFileExtension($mime_type)) {
+
             $file_contents = file_get_contents($pathToFileName);
             if (!$file_contents) {
                 Logger::instance()->warning('Failed get contents image!!! path: '.$pathToFileName);
@@ -709,6 +710,9 @@ class BrizyAPI extends Utils
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function downloadImage($url): string
     {
         $ch = curl_init($url);
@@ -718,15 +722,91 @@ class BrizyAPI extends Utils
 
         $file_name = mb_strtolower(basename($url));
         $fileName = explode(".", $file_name);
-        $file_name = $fileName[0].'.'.$this->fileExtension($fileName[1]);
+        $file_name = $fileName[0] . '.' . $this->fileExtension($fileName[1]);
 
-        $path = Config::$pathTmp.$this->nameFolder.'/media/'.$file_name;
+        $path = Config::$pathTmp . $this->nameFolder . '/media/' . $file_name;
         $status = file_put_contents($path, $image_data);
         if (!$status) {
-            Logger::instance()->warning('Failed to load image!!! path: '.$path);
+            Logger::instance()->warning('Failed to load image!!! path: ' . $path);
         }
 
-        return $path;
+        return $this->resizeImageIfNeeded($path, 9.5);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function resizeImageIfNeeded($filePath, $maxSizeMB = 10): string
+    {
+        $maxSizeBytes = $maxSizeMB * 1024 * 1024;
+
+        if (!file_exists($filePath)) {
+            Logger::instance()->warning('Compression file not found: ' . $filePath);
+
+            return $filePath;
+        }
+
+        $fileSize = filesize($filePath);
+        if ($fileSize <= $maxSizeBytes) {
+
+            return $filePath;
+        }
+
+        $imageInfo = getimagesize($filePath);
+        if (!$imageInfo) {
+            Logger::instance()->warning('The file is not an image: ' . $filePath);
+            return $filePath;
+        }
+
+        list($width, $height, $type) = $imageInfo;
+
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                $image = imagecreatefromjpeg($filePath);
+                break;
+            case IMAGETYPE_PNG:
+                $image = imagecreatefrompng($filePath);
+                break;
+            case IMAGETYPE_WEBP:
+                $image = imagecreatefromwebp($filePath);
+                break;
+            default:
+                Logger::instance()->warning('The image type is not supported: ' . $filePath);
+                return $filePath;
+        }
+
+        $scaleFactor = sqrt($maxSizeBytes / $fileSize);
+
+        $newWidth = (int)($width * $scaleFactor);
+        $newHeight = (int)($height * $scaleFactor);
+
+        $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        if ($type === IMAGETYPE_PNG || $type === IMAGETYPE_WEBP) {
+            imagealphablending($resizedImage, false);
+            imagesavealpha($resizedImage, true);
+        }
+
+        imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                imagejpeg($resizedImage, $filePath, 90);
+                break;
+            case IMAGETYPE_PNG:
+                imagepng($resizedImage, $filePath, 9);
+                break;
+            case IMAGETYPE_WEBP:
+                imagewebp($resizedImage, $filePath, 90);
+                break;
+        }
+
+        imagedestroy($image);
+        imagedestroy($resizedImage);
+
+        Logger::instance()->info('The image has been compressed to an acceptable size: ' . $filePath);
+
+        return $filePath;
     }
 
     private function fileExtension($expansion): string

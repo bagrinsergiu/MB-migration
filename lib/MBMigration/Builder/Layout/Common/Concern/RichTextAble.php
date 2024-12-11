@@ -251,29 +251,34 @@ trait RichTextAble
         if (!empty($mbSectionItem['content'])) {
 
             $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container img';
-            $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+            $sizes = $this->handleSizeToInt($this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts));
             $sizeUnit = 'px';
-            if (strpos($sizes['width'], '%') !== false) {
-                $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container';
-                $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
-            }
 
             $brizyComponent->getValue()
                 ->set_imageFileName($mbSectionItem['imageFileName'])
-                ->set_imageSrc($mbSectionItem['content'])
-                ->set_width((int)$sizes['width'])
-                ->set_tabletWidth((int)$sizes['width'])
-                ->set_mobileWidth((int)$sizes['width'])
-                ->set_height((int)$sizes['height'])
-                ->set_tabletHeight((int)$sizes['height'])
-                ->set_mobileHeight((int)$sizes['height'])
-                ->set_imageWidth($mbSectionItem['settings']['image']['width'])
-                ->set_imageHeight($mbSectionItem['settings']['image']['height'])
-                ->set_widthSuffix($sizeUnit)
-                ->set_heightSuffix($sizeUnit)
-                ->set_tabletHeightSuffix($sizeUnit)
-                ->set_mobileWidthSuffix($sizeUnit)
-                ->set_mobileHeightSuffix($sizeUnit);
+                ->set_imageSrc($mbSectionItem['content']);
+
+            if(!empty($sizes['width']) && !empty($sizes['height'])) {
+                if (strpos($sizes['width'], '%') !== false) {
+                    $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container';
+                    $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+                }
+
+                $brizyComponent->getValue()
+                    ->set_width((int)$sizes['width'])
+                    ->set_tabletWidth((int)$sizes['width'])
+                    ->set_mobileWidth((int)$sizes['width'])
+                    ->set_height((int)$sizes['height'])
+                    ->set_tabletHeight((int)$sizes['height'])
+                    ->set_mobileHeight((int)$sizes['height'])
+                    ->set_imageWidth($mbSectionItem['settings']['image']['width'])
+                    ->set_imageHeight($mbSectionItem['settings']['image']['height'])
+                    ->set_widthSuffix($sizeUnit)
+                    ->set_heightSuffix($sizeUnit)
+                    ->set_tabletHeightSuffix($sizeUnit)
+                    ->set_mobileWidthSuffix($sizeUnit)
+                    ->set_mobileHeightSuffix($sizeUnit);
+            }
 
             $this->handleLink($mbSectionItem, $brizyComponent);
         }
@@ -544,6 +549,25 @@ trait RichTextAble
         foreach ($attributes as $name => $value) {
             $fragment->setAttribute($name, $value);
         }
+    }
+
+    private function extractInteger($string): string
+    {
+        if (strpos($string, "px") !== false) {
+            $cleanedString = str_replace("px", "", $string);
+            return (int) $cleanedString;
+        }
+
+        return $string;
+    }
+
+    private function handleSizeToInt(array $size): array
+    {
+        $result = [];
+        foreach ($size as $key => $size) {
+            $result[$key] = $this->extractInteger($size);
+        }
+        return $result;
     }
 
 }
