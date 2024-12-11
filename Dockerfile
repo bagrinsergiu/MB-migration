@@ -21,7 +21,7 @@ ARG PHP_FPM_INI_DIR="/usr/local/etc/php"
 COPY .docker/conf.d/php.ini $PHP_FPM_INI_DIR/conf.d/php.ini
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libzip-dev libxml2-dev libpq-dev libcurl4-openssl-dev nginx zip unzip curl vim libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev libx11-xcb1 libasound2 && \
+    apt-get install --no-install-recommends -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libzip-dev libxml2-dev libpq-dev libcurl4-openssl-dev nginx zip unzip curl vim libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev libx11-xcb1 libasound2 libjpeg-dev libpng-dev libfreetype6-dev && \
     curl -LO http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_122.0.6261.128-1_amd64.deb && \
     apt-get install --no-install-recommends -y ./google-chrome-stable_122.0.6261.128-1_amd64.deb && \
     rm google-chrome-stable_122.0.6261.128-1_amd64.deb && \
@@ -35,6 +35,9 @@ RUN apt-get update && \
     mkdir -p var/cache && \
     chown -R www-data:www-data var/log && \
     chown -R www-data:www-data var/cache
+
+RUN docker-php-ext-configure gd --with-jpeg --with-freetype \
+    && docker-php-ext-install gd
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION v18.17.0
