@@ -53,7 +53,8 @@ export const getModel = (data: Model) => {
           defaultMobileNumberLineHeight;
         break;
       }
-      case "font-size": {
+      case "font-size":
+      case "font-weight": {
         dic[toCamelCase(key)] = parseInt(`${styles[key]}`);
         break;
       }

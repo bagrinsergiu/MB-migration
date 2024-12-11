@@ -1,4 +1,12 @@
-export const model = {
+export const baseModel = {
+  "border-color-hex": undefined,
+  "border-color-opacity": 1,
+  "border-width": 1,
+  "bg-color-hex": undefined,
+  "bg-color-opacity": 1
+};
+
+export const textModel = {
   "font-family": undefined,
   "font-family-type": "uploaded",
   "font-weight": undefined,
@@ -6,14 +14,9 @@ export const model = {
   "line-height": undefined,
   "letter-spacing": undefined,
   "font-style": "",
-  "border-color-hex": undefined,
-  "border-color-opacity": 1,
-  "border-width": 1,
+  uppercase: false,
   "color-hex": undefined,
-  "color-opacity": 1,
-  "bg-color-hex": undefined,
-  "bg-color-opacity": 1,
-  uppercase: false
+  "color-opacity": 1
 };
 
 export const bgModel = {
