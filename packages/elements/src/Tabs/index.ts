@@ -1,5 +1,5 @@
 import { getModel } from "../utils/getModel";
-import { bgModel, model } from "./models";
+import { baseModel, bgModel, textModel } from "./models";
 import { Entry, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
 
@@ -21,9 +21,11 @@ const getTabsV = (data: NavData) => {
     };
   }
 
+  const tabText = tab.querySelector("span");
+
   const v = getModel({
     node: tab,
-    modelDefaults: model,
+    modelDefaults: baseModel,
     families: data.families,
     defaultFamily: data.defaultFamily
   });
@@ -35,9 +37,17 @@ const getTabsV = (data: NavData) => {
     defaultFamily: data.defaultFamily
   });
 
+  const textV = getModel({
+    node: tabText ?? tab,
+    modelDefaults: textModel,
+    families: data.families,
+    defaultFamily: data.defaultFamily
+  });
+
   return {
     ...v,
     ...bgV,
+    ...textV,
     navStyle: "style-3"
   };
 };
