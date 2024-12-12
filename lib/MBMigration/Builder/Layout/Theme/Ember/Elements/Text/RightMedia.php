@@ -14,7 +14,10 @@ class RightMedia extends PhotoTextElement
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
         $brizySection->getItemWithDepth(0, 0, 1)->addVerticalContentAlign();
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
+            ->mobileSizeTypeOriginal()
+            ->tabletSizeTypeOriginal()
+            ->sizeTypeOriginal();
     }
 
     /**
