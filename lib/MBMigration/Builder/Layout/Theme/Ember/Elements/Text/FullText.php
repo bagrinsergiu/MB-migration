@@ -17,6 +17,11 @@ class FullText extends FullTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
@@ -43,4 +48,6 @@ class FullText extends FullTextElement
             "paddingLeftSuffix" => "px",
         ];
     }
+
+
 }
