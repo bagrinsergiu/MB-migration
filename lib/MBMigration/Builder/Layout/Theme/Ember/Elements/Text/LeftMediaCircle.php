@@ -31,6 +31,11 @@ class LeftMediaCircle extends PhotoTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
