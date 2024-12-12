@@ -20,6 +20,11 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
         return 0;
     }
 
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

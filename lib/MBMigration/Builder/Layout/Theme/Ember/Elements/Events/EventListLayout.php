@@ -10,4 +10,9 @@ class EventListLayout extends \MBMigration\Builder\Layout\Common\Elements\Events
     {
         return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+    }
 }

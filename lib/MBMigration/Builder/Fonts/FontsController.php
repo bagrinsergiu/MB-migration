@@ -81,6 +81,11 @@ class FontsController extends builderUtils
             if(isset($projectData['fonts']['upload']['data']))
             foreach ($projectData['fonts']['upload']['data'] as $projectFont) {
                 if ($projectFont['family'] == $KitFonts['displayName']) {
+                    foreach ($KitFonts['fontsFile'] as $type => $font) {
+                        if (!in_array($type, $projectFont['files'])){
+                            continue 2;
+                        }
+                    }
                     $uploaded = true;
                     $fontStyles[$index]['uuid'] = $projectFont['id'];
                     break;
