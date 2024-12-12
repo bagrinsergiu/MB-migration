@@ -402,4 +402,22 @@ class BrizyComponent implements JsonSerializable
             $this->getValue()->set($key, $value);
         }
     }
+
+    public function mobileSizeTypeOriginal(): BrizyComponent
+    {
+        $this->getValue()->set('mobileSizeType', 'original');
+        return $this;
+    }
+
+    public function tabletSizeTypeOriginal(): BrizyComponent
+    {
+        $this->getValue()->set('tabletSizeType', 'original');
+        return $this;
+    }
+
+    public function sizeTypeOriginal(): BrizyComponent
+    {
+        $this->getValue()->set('sizeType', 'original');
+        return $this;
+    }
 }
