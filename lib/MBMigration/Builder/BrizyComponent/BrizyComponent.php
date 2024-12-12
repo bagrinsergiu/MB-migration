@@ -128,7 +128,6 @@ class BrizyComponent implements JsonSerializable
         return call_user_func_array([$this, 'getItemWithDepth'], $depths)->getValue();
     }
 
-
     public function addRadius($radiusPx = 0): BrizyComponent
     {
         $radius = array(
@@ -369,6 +368,36 @@ class BrizyComponent implements JsonSerializable
             "bgColorHex" => $hex,
             "bgColorOpacity" => $opacity,
             "bgColorPalette" => '',
+        ];
+
+        foreach ($bgColor as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function titleTypography(): BrizyComponent
+    {
+        $bgColor = [
+            "titleTypographyFontStyle" => "",
+            "typographyFontStyle" => "paragraph",
+            "titleTypographyFontFamily" => "lato",
+            "titleTypographyFontFamilyType" => "google",
+            "titleTypographyFontSize" => 28,
+            "titleTypographyFontSizeSuffix" => "px",
+            "titleTypographyFontWeight" => 700,
+            "titleTypographyLetterSpacing" => -1.5,
+            "titleTypographyLineHeight" => 1.4,
+            "titleTypographyVariableFontWeight" => 400,
+            "titleTypographyFontWidth" => 100,
+            "titleTypographyFontSoftness" => 0,
+            "titleTypographyBold" => false,
+            "titleTypographyItalic" => false,
+            "titleTypographyUnderline" => false,
+            "titleTypographyStrike" => false,
+            "titleTypographyUppercase" => false,
+            "titleTypographyLowercase" => false
         ];
 
         foreach ($bgColor as $key => $value) {

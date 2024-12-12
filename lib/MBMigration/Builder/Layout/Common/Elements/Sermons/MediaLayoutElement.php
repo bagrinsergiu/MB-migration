@@ -323,7 +323,7 @@ abstract class MediaLayoutElement extends AbstractElement
             ];
 
         $wrapperItemTitle = [
-            'bgColorHex' => $sectionPalette['item-bg'],
+            'bgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
         ];
@@ -526,6 +526,9 @@ abstract class MediaLayoutElement extends AbstractElement
             $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
                 ->$properties($value);
         }
+
+        $detailsSection->getItemWithDepth(0, 1, 0, 0, 0)->titleTypography();
+
         foreach ($sectionDescriptionStyle as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1)
