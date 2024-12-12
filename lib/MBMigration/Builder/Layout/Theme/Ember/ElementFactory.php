@@ -23,6 +23,7 @@ use MBMigration\Builder\Layout\Theme\Ember\Elements\Text\FullText;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\Text\GridLayoutElement;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\Text\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\Text\LeftMediaCircle;
+use MBMigration\Builder\Layout\Theme\Ember\Elements\Text\RightMediaCircle;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\Text\ListLayoutElement;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\Text\RightMedia;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\Text\TabsLayoutElement;
@@ -37,12 +38,17 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new Head($this->blockKit['blocks']['menu'], $browserPage,$this->brizyApiClient, $this->fontsController);
             case 'footer':
                 return new Footer($this->blockKit['blocks']['footer'], $browserPage,$this->brizyApiClient);
+
             case 'left-media':
                 return new LeftMedia($this->blockKit['blocks']['left-media'], $browserPage);
             case 'right-media':
                 return new RightMedia($this->blockKit['blocks']['right-media'], $browserPage);
+
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
+            case 'right-media-circle':
+                return new RightMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
+
             case 'full-text':
                 return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
             case 'three-bottom-media-circle':
