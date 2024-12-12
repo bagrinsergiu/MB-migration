@@ -48,6 +48,11 @@ class ThreeBottomMediaCircle extends FullTextElement
         return $brizySection;
     }
 
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

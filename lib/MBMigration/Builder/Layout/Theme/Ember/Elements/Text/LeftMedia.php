@@ -32,6 +32,11 @@ class LeftMedia extends PhotoTextElement
             ->addPaddingRight(45, '%');
     }
 
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

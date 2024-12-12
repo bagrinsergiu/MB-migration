@@ -16,4 +16,9 @@ class FullWidthForm extends FormElement
     {
         return $brizyComponent->getItemWithDepth(0);
     }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+    }
 }

@@ -31,7 +31,8 @@ class LeftMediaCircle extends PhotoTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
-    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height){
+    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height)
+    {
         $imageTarget
             ->getValue()
             ->set_width($width)
@@ -40,6 +41,12 @@ class LeftMediaCircle extends PhotoTextElement
             ->set_mobileHeight(286)
             ->set_heightSuffix((strpos($height,'%')===true)?'%':'pix')
             ->set_widthSuffix((strpos($width,'%')===true)?'%':'pix');
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+
     }
 
     protected function getPropertiesMainSection(): array
