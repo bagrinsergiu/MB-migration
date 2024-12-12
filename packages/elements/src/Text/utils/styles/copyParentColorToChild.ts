@@ -101,6 +101,29 @@ export function copyColorStyleToTextNodes(element: Element): void {
           parentFontWeight || getComputedStyle(parentElement).fontWeight;
       }
 
+      if (
+        parentOfParent.tagName === "EM" &&
+        parentComputedStyle.fontStyle === "normal"
+      ) {
+        // If an <em> element is present and its child is a <span> with font-style: normal,
+        // replace the <em> element with the <span>, as the <em> is unnecessary in this case.
+
+        const spanElement = document.createElement("span");
+
+        // Copy attributes from the <em> element to the <span> element
+        Array.from(parentOfParent.attributes).forEach((attr) => {
+          spanElement.setAttribute(attr.name, attr.value);
+        });
+
+        // Move the children from the <em> element to the new <span> element
+        while (parentOfParent.firstChild) {
+          spanElement.appendChild(parentOfParent.firstChild);
+        }
+
+        // Replace the <em> element with the new <span> element
+        parentOfParent.replaceWith(spanElement);
+      }
+
       return;
     }
 
