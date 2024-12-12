@@ -1,6 +1,20 @@
 import { allowedTags } from "../common";
 import { cleanClassNames } from "./cleanClassNames";
 
+function getValidStyles(element: Element): string[] {
+  const baseValidStyles = ["font-weight", "color", "background-color"];
+  const additionalStyles = ["font-size"];
+  const parentTag = element.parentElement?.tagName ?? "";
+
+  const isSpecialElement =
+    ["A", "U"].includes(element.tagName) ||
+    (element.tagName === "SPAN" && !allowedTags.includes(parentTag));
+
+  return isSpecialElement
+    ? [...baseValidStyles, ...additionalStyles]
+    : baseValidStyles;
+}
+
 export function removeStylesExceptFontWeightAndColor(
   htmlString: string
 ): string {
@@ -29,7 +43,7 @@ export function removeStylesExceptFontWeightAndColor(
       const property = styleProperties[i].trim();
 
       // Check if the property is font-weight or color
-      const validStyles = ["font-weight", "color", "background-color"];
+      const validStyles = getValidStyles(element);
       const hasProperty = validStyles.some((style) =>
         property.startsWith(style)
       );
