@@ -41,12 +41,8 @@ abstract class PhotoTextElement extends AbstractElement
 
                     $imageStyles = $this->obtainImageStyles($elementContext, $this->browserPage);
 
-                    $imageTarget
-                        ->getValue()
-                        ->set_width((int)$imageStyles['width'])
-                        ->set_height((int)$imageStyles['height'])
-                        ->set_heightSuffix((strpos($imageStyles['height'],'%')===true)?'%':'pix')
-                        ->set_widthSuffix((strpos($imageStyles['width'],'%')===true)?'%':'pix');
+                    $this->targetImageSize($imageTarget, (int)$imageStyles['width'], (int)$imageStyles['height']);
+
                     break;
                 case 'text':
 
@@ -85,6 +81,16 @@ abstract class PhotoTextElement extends AbstractElement
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         return $brizySection;
+    }
+
+
+    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height){
+        $imageTarget
+            ->getValue()
+            ->set_width($width)
+            ->set_height($height)
+            ->set_heightSuffix((strpos($height,'%')===true)?'%':'pix')
+            ->set_widthSuffix((strpos($width,'%')===true)?'%':'pix');
     }
 
     /**

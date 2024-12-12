@@ -22,6 +22,7 @@ use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\FullText;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\GridLayoutElement;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\LeftMediaCircle;
+use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\RightMediaCircle;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\ListLayoutElement;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\RightMedia;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Text\TabsLayoutElement;
@@ -38,9 +39,6 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new Footer($this->blockKit['blocks']['footer'], $browserPage,$this->brizyApiClient);
             case 'head':
                 return new Head($this->blockKit['blocks']['menu'], $browserPage,$this->brizyApiClient, $this->fontsController);
-
-            case 'full-text':
-                return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
 
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
