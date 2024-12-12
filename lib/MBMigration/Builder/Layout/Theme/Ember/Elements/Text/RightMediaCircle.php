@@ -5,7 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Text;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 
-class LeftMediaCircle extends PhotoTextElement
+class RightMediaCircle extends PhotoTextElement
 {
     /**
      * @param BrizyComponent $brizySection
@@ -13,8 +13,8 @@ class LeftMediaCircle extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        $brizySection->getItemWithDepth(0, 0, 0)->addVerticalContentAlign();
-        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
+        $brizySection->getItemWithDepth(0, 0, 1)->addVerticalContentAlign();
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
     /**
@@ -23,7 +23,7 @@ class LeftMediaCircle extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1);
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
@@ -31,22 +31,15 @@ class LeftMediaCircle extends PhotoTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
-    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height)
-    {
+    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height){
         $imageTarget
             ->getValue()
-            ->set_width($width)
+            ->set_width($height)
             ->set_height($height)
             ->set_mobileWidth(286)
             ->set_mobileHeight(286)
             ->set_heightSuffix((strpos($height,'%')===true)?'%':'pix')
-            ->set_widthSuffix((strpos($width,'%')===true)?'%':'pix');
-    }
-
-    protected function getMobileTopPaddingOfTheFirstElement(): int
-    {
-        return 95;
-
+            ->set_widthSuffix((strpos($height,'%')===true)?'%':'pix');
     }
 
     protected function getPropertiesMainSection(): array
