@@ -37,7 +37,10 @@ class Footer extends FooterElement
             $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
             $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
             $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
-            $this->handleSectionStyles($elementContext, $this->browserPage);
+
+            $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+            $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
             $mbSectionItem = $data->getMbSection();
 
