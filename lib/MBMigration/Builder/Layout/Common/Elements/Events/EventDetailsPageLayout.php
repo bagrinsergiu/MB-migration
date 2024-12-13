@@ -214,7 +214,9 @@ class EventDetailsPageLayout
                 ->$properties($value);
         }
 
-        $detailsSection->getItemWithDepth(0, 1, 0, 0, 0)->titleTypography();
+        $detailsSection->getItemWithDepth(0, 1, 0, 0, 0)
+            ->titleTypography()
+            ->previewTypography();
 
         foreach ($sectionProperties2Margin as $key => $value) {
             $properties = 'set_'.$key;
