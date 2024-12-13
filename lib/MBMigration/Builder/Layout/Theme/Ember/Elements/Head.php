@@ -40,7 +40,7 @@ class Head extends HeadElement
             'horizontalAlign' => 'center',
             'mobileHorizontalAlign' => 'left',
 
-            'mobileMarginType' => 'grouped',
+            'mobileMarginType' => 'ungrouped',
             'mobileMargin' => 0,
             'mobileMarginSuffix' => 'px',
             'mobileMarginTop' => 0,
@@ -49,7 +49,7 @@ class Head extends HeadElement
             'mobileMarginRightSuffix' => 'px',
             'mobileMarginBottom' => 0,
             'mobileMarginBottomSuffix' => 'px',
-            'mobileMarginLeft' => 0,
+            'mobileMarginLeft' => 10,
             'mobileMarginLeftSuffix' => 'px',
         ];
 
@@ -62,7 +62,7 @@ class Head extends HeadElement
             ->addMobileMargin();
 
         $brizySection->getItemWithDepth(0, 0, 1, 0)
-            ->addMobileMargin([11,11,11,0]);
+            ->addMobileMargin([10,10,10,0]);
 
         foreach ($sectionlogoOptions as $option => $value) {
             $nameOption = 'set_'.$option;

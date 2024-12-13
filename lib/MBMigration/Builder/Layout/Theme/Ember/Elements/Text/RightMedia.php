@@ -29,7 +29,7 @@ class RightMedia extends PhotoTextElement
         return $brizySection
             ->getItemWithDepth(0, 0, 0)
             ->addBgColor('#ffffff', 0)
-            ->addPaddingLeft(45, '%');
+            ->addPaddingLeft(35, '%');
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
