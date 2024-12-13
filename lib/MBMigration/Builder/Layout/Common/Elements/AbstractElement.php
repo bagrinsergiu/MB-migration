@@ -84,6 +84,15 @@ abstract class AbstractElement implements ElementInterface
 
         return true;
     }
+    protected function canShowButton($sectionData): bool
+    {
+        $sectionCategory = $sectionData['category'];
+        if (isset($sectionData['settings']['sections'][$sectionCategory]['show_buttons'])) {
+            return $sectionData['settings']['sections'][$sectionCategory]['show_buttons'];
+        }
+
+        return true;
+    }
 
     protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {

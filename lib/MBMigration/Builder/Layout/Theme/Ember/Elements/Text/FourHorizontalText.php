@@ -31,6 +31,9 @@ class FourHorizontalText extends AbstractElement
         $bodies = $this->sortItems(array_filter($mbSection['items'], function ($item) {
             return $item['item_type'] == 'body' && $item['category'] == 'text';
         }));
+        $buttons = $this->sortItems(array_filter($mbSection['items'], function ($item) {
+            return $item['category'] == 'button';
+        }));
 
         $columnJson = json_decode($this->brizyKit['column'], true);
 
@@ -41,8 +44,12 @@ class FourHorizontalText extends AbstractElement
             $this->handleRichTextItem($tmpElementContext, $this->browserPage);
             $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($bodies[$i], $brizyColumn);
             $this->handleRichTextItem($tmpElementContext, $this->browserPage);
-            $buttonSelector = $mbSection['sectionId'];
-            $this->handleRichTextItem($tmpElementContext, $this->browserPage, "[data-id='$buttonSelector'] .group-$i");
+            if($this->canShowButton($mbSection)){
+                $buttonSelector = $mbSection['sectionId'];
+                $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($buttons[$i], $brizyColumn);
+                $this->handleRichTextItem($tmpElementContext, $this->browserPage, "[data-id='$buttonSelector'] .group-$i");
+            }
+
             $columns[] = $brizyColumn;
         }
         $brizySection->getItemValueWithDepth(0,0)->add_items($columns);
