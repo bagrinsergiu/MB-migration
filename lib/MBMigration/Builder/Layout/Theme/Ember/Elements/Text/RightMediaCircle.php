@@ -42,6 +42,16 @@ class RightMediaCircle extends PhotoTextElement
             ->set_widthSuffix((strpos($height,'%')===true)?'%':'pix');
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 95;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
