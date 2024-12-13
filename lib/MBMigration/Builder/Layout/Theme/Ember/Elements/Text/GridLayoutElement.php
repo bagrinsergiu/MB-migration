@@ -34,7 +34,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 80;
+        return 95;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
