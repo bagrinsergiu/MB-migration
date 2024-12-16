@@ -18,7 +18,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 95;
+        return 110;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -28,7 +28,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getPropertiesMainSection(): array
     {
-        return [
+        return array(
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
@@ -42,14 +42,14 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 0,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 0,
+            "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",
             "paddingLeft" => 0,
             "paddingLeftSuffix" => "px",
-        ];
+        );
     }
 }

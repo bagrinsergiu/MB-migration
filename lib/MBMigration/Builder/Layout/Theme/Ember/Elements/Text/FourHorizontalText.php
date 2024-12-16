@@ -42,6 +42,8 @@ class FourHorizontalText extends AbstractElement
         $columns = [];
         foreach ($titles as $i => $mbItem) {
             $brizyColumn = new BrizyComponent($columnJson);
+
+            $brizyColumn->addMobileMargin(10);
             $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($mbItem, $brizyColumn);
             $this->handleRichTextItem($tmpElementContext, $this->browserPage);
             $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($bodies[$i], $brizyColumn);
@@ -74,7 +76,7 @@ class FourHorizontalText extends AbstractElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 95;
+        return 110;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -98,9 +100,9 @@ class FourHorizontalText extends AbstractElement
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 0,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 0,
+            "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

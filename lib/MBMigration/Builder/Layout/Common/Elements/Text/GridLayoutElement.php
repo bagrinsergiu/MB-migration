@@ -53,6 +53,8 @@ abstract class GridLayoutElement extends AbstractElement
                 ->set_size($rowWidth)
                 ->set_mobileSize(100);
 
+            $brizySectionRow->addPadding(10,10,0,10);
+
             foreach ($row as $item) {
 
                 $dataIdSelector = '[data-id="'.($item['sectionId'] ?? $item['id']).'"]';
@@ -66,6 +68,10 @@ abstract class GridLayoutElement extends AbstractElement
 
                 $brizySectionItem = new BrizyComponent($itemJson);
 
+                $brizySectionItem
+                    ->addPadding(10,10,0,10)
+                    ->addMobilePadding(10);
+
                 $elementContext = $data->instanceWithMBSection($item);
                 $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
@@ -76,10 +82,10 @@ abstract class GridLayoutElement extends AbstractElement
                     ->set_borderWidth(2)
 
                     ->set_width($itemWidth)
-                    ->set_paddingTop((int)$styles['margin-top'])
-                    ->set_paddingBottom((int)$styles['margin-bottom'])
-                    ->set_paddingRight((int)$styles['margin-right'])
-                    ->set_paddingLeft((int)$styles['margin-left'])
+//                    ->set_paddingTop((int)$styles['margin-top'])
+//                    ->set_paddingBottom((int)$styles['margin-bottom'])
+//                    ->set_paddingRight((int)$styles['margin-right'])
+//                    ->set_paddingLeft((int)$styles['margin-left'])
 
                     ->set_mobileWidth(100);
 
@@ -91,7 +97,10 @@ abstract class GridLayoutElement extends AbstractElement
                                 $brizySectionItem
                             );
 
-                            $brizySectionItem->addGroupedPadding(20);
+                            $brizySectionItem
+                                ->addGroupedPadding(10)
+                                ->addMobilePadding(10)
+                                ->addMobileMargin();
 
                             $imageSize = $this->obtainItemImageStyles($mbItem['id'], $this->browserPage);
 

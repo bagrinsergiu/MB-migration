@@ -50,7 +50,7 @@ class ThreeBottomMediaCircle extends FullTextElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 95;
+        return 110;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -74,11 +74,11 @@ class ThreeBottomMediaCircle extends FullTextElement
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 0,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
             "paddingBottom" => 0,
             "paddingBottomSuffix" => "px",
-            "paddingRight" => 0,
+            "paddingRight" => 50,
             "paddingRightSuffix" => "px",
             "paddingLeft" => 0,
             "paddingLeftSuffix" => "px",

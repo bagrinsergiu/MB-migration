@@ -34,7 +34,7 @@ class LeftMedia extends PhotoTextElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 95;
+        return 110;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -58,9 +58,9 @@ class LeftMedia extends PhotoTextElement
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 0,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 0,
+            "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

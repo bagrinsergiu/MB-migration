@@ -33,7 +33,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 95;
+        return 110;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -57,9 +57,9 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 0,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 0,
+            "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",
