@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -14,6 +15,7 @@ class FourHorizontalText extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use DonationsAble;
+    use ButtonAble;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -45,16 +47,27 @@ class FourHorizontalText extends AbstractElement
             $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($bodies[$i], $brizyColumn);
             $this->handleRichTextItem($tmpElementContext, $this->browserPage);
             if($this->canShowButton($mbSection)){
+
                 $buttonSelector = $mbSection['sectionId'];
+                $selector = "[data-id='$buttonSelector']";
+
+                if($this->hasNode($selector ." .group-$i > a > button", $this->browserPage)){
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                        $buttons[$i],
+                        $brizyColumn
+                    );
+
+                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
+                }
+
                 $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($buttons[$i], $brizyColumn);
-                $this->handleRichTextItem($tmpElementContext, $this->browserPage, "[data-id='$buttonSelector'] .group-$i");
+                $this->handleRichTextItem($tmpElementContext, $this->browserPage, "$selector . ' .group-$i");
             }
 
             $columns[] = $brizyColumn;
         }
-        $brizySection->getItemValueWithDepth(0,0)->add_items($columns);
 
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $brizySection->getItemValueWithDepth(0,0)->add_items($columns);
 
         return $brizySection;
     }
