@@ -60,6 +60,8 @@ abstract class ListLayoutElement extends AbstractElement
                 ->set_paddingRight((int)$styles['margin-right'])
                 ->set_paddingLeft((int)$styles['margin-left']);
 
+            $this->handleItemTextContainerComponent($brizySectionItem);
+
             foreach ($item['items'] as $mbItem) {
                 if ($mbItem['item_type'] == 'title') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
@@ -133,6 +135,11 @@ abstract class ListLayoutElement extends AbstractElement
     ): BrizyComponent;
 
     abstract protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
+
+    protected function handleItemTextContainerComponent(BrizyComponent $brizySection): void
+    {
+
+    }
 
     protected function getPropertiesMainSection(): array
     {

@@ -26,6 +26,11 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizySection;
     }
 
+    protected function handleItemTextContainerComponent(BrizyComponent $brizySection): void
+    {
+        $brizySection->addPadding(35, 0, 35, 0);
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 80;
