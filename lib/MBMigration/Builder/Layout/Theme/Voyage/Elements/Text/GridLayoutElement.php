@@ -26,6 +26,13 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizyComponent->getItemWithDepth(0,0);
     }
 
+    protected function handleItemRowComponent(BrizyComponent $brizyComponent):void
+    {
+        $brizyComponent
+            ->addPadding(20,0,20,0)
+            ->addMobilePadding(10);
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 80;
