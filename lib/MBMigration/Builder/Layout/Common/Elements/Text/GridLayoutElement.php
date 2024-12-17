@@ -42,7 +42,6 @@ abstract class GridLayoutElement extends AbstractElement
         $rowJson = json_decode($this->brizyKit['row'], true);
         $itemJson = json_decode($this->brizyKit['item'], true);
 
-
         $accordionItems = $this->getItemsByCategory($mbSection,'list');
         $accordionItems = $this->sortItems($accordionItems);
         $itemsChunks = array_chunk($accordionItems, $this->getItemsPerRow());
@@ -55,7 +54,7 @@ abstract class GridLayoutElement extends AbstractElement
                 ->set_size($rowWidth)
                 ->set_mobileSize(100);
 
-            $brizySectionRow->addPadding(10,10,0,10);
+            $this->handleItemRowComponent($brizySectionRow);
 
             foreach ($row as $item) {
 
@@ -218,6 +217,13 @@ abstract class GridLayoutElement extends AbstractElement
     protected function getTypeItemImageComponent(): string
     {
        return 'bg';
+    }
+
+    protected function handleItemRowComponent(BrizyComponent $brizyComponent):void
+    {
+        $brizyComponent
+            ->addPadding(20,0,20,0)
+            ->addMobilePadding(10);
     }
 
     protected function getPropertiesMainSection(): array
