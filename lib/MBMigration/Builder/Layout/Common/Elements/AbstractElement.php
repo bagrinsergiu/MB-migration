@@ -37,6 +37,7 @@ abstract class AbstractElement implements ElementInterface
     {
         $this->beforeTransformToItem($data);
         $component = $this->internalTransformToItem($data);
+        $this->globalTransformSection($component);
         $this->afterTransformToItem($component);
 
         return $component;
@@ -115,6 +116,12 @@ abstract class AbstractElement implements ElementInterface
 
     protected function afterTransformTabs(BrizyComponent $brizySection): void
     {
+    }
+
+    private function globalTransformSection(BrizyComponent $component)
+    {
+        $component->getItemWithDepth(0)
+            ->addCustomCSS('@media (max-width: 768px) {.brz-a.brz-btn {white-space: normal;}}');
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
