@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
@@ -17,6 +18,7 @@ abstract class GridLayoutElement extends AbstractElement
     use SectionStylesAble;
     use ImageStylesAble;
     use DonationsAble;
+    use ButtonAble;
 
     private array $globalBrizyKit;
 
@@ -146,6 +148,26 @@ abstract class GridLayoutElement extends AbstractElement
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
                             $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
                             break;
+                    }
+                }
+
+                foreach ($item['items'] as $mbItem) {
+                    switch ($mbItem['category']) {
+                        case 'button':
+                            if($this->canShowButton($mbSection)){
+
+                                $buttonSelector = $item['id'];
+                                $selector = "[data-id='$buttonSelector'] a > button";
+
+                                if($this->hasNode($selector, $this->browserPage)){
+                                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                        $mbItem,
+                                        $brizySectionItem
+                                    );
+
+                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
+                                }
+                            }
                     }
                 }
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
