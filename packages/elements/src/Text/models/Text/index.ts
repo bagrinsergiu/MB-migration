@@ -1,9 +1,10 @@
 import { createWrapperModel } from "../../../Models/Wrapper";
 import { ElementModel } from "../../../types/type";
-import { addStylesToList } from "../..//utils/styles/addMarginsToLists";
 import { removeAllStylesFromHTML } from "../../utils/dom/removeAllStylesFromHTML";
 import { removeEmptyNodes } from "../../utils/dom/removeEmptyNodes";
 import { transformDivsToParagraphs } from "../../utils/dom/transformDivsToParagraphs";
+import { wrapSingleSpansInParagraph } from "../../utils/dom/wrapSingleSpansInParagraph";
+import { addStylesToList } from "../../utils/styles/addMarginsToLists";
 import { copyParentColorToChild } from "../../utils/styles/copyParentColorToChild";
 import { encodeLinks } from "../../utils/styles/encodeLinks";
 import { getTypographyStyles } from "../../utils/styles/getTypographyStyles";
@@ -23,6 +24,9 @@ export const getTextModel = (data: Data): ElementModel => {
 
   // Transform all inside div to P
   node = transformDivsToParagraphs(node);
+
+  // Wrap all single spans from the first level in paragraph
+  node = wrapSingleSpansInParagraph(node);
 
   // Copy Parent Color to Child, from <p> to <span>
   node = copyParentColorToChild(node);
