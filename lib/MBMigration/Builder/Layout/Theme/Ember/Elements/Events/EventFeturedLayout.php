@@ -3,12 +3,21 @@
 namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Events;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\Events\EventFeaturedLayoutElement;
+use MBMigration\Builder\Utils\ColorConverter;
 
-class EventListLayout extends \MBMigration\Builder\Layout\Common\Elements\Events\EventListLayout
+class EventFeturedLayout extends EventFeaturedLayoutElement
 {
-    protected function getDetailsComponent(BrizyComponent $brizySection)
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+        $brizySection = parent::internalTransformToItem($data);
+
+        return $brizySection;
+    }
+
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0,0,0);
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
@@ -31,7 +40,7 @@ class EventListLayout extends \MBMigration\Builder\Layout\Common\Elements\Events
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 25,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
@@ -47,4 +56,5 @@ class EventListLayout extends \MBMigration\Builder\Layout\Common\Elements\Events
             "paddingLeftSuffix" => "px",
         ];
     }
+
 }
