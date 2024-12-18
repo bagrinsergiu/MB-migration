@@ -36,7 +36,10 @@ abstract class EventListLayout extends AbstractElement
         $brizyComponent = $this->getSectionItemComponent($brizySection);
 
         $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+        $this->setTopPaddingOfTheFirstElement($data, $brizyComponent);
 
         $elementContext = $data->instanceWithBrizyComponent($brizySectionHead->getItemWithDepth(0));
         $this->handleRichTextHead($elementContext, $this->browserPage);
