@@ -6,6 +6,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Layout\Theme\Ember\Elements\Events\EventFeturedLayout;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\Events\EventLayoutElement;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Ember\Elements\Forms\FullWidthForm;
@@ -81,10 +82,11 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'small-groups-list':
                 return new SmallGroupsListElement($this->blockKit['blocks']['small-groups-list'], $browserPage);
 
+            case 'event-tile-layout':
+                return new EventFeturedLayout($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
             case 'event-list-layout':
             case 'event-grid-layout':
             case 'event-gallery-layout':
-            case 'event-tile-layout':
             case 'event-calendar-layout':
                 return new EventLayoutElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
 
