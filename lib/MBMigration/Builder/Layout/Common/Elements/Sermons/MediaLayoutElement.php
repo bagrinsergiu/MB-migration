@@ -59,11 +59,17 @@ abstract class MediaLayoutElement extends AbstractElement
 
         $dataIdSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
 
-        $nodeSelector = $dataIdSelector. ' .media-grid-container';
-        $mbSection['mediaGridContainer'] = $this->hasNode($nodeSelector, $this->browserPage);
+        $mbSection['mediaGridContainer'] = false;
 
-        $nodeSelector = $dataIdSelector. ' .media-player';
-        $mbSection['media-player'] = $this->hasNode($nodeSelector, $this->browserPage);
+        if($this->hasNode($dataIdSelector. ' .media-grid-container', $this->browserPage)){
+            $mbSection['mediaGridContainer'] = true;
+        } elseif ($this->hasNode($dataIdSelector. ' .media-list-container', $this->browserPage)){
+            $mbSection['mediaGridContainer'] = true;
+        }
+
+        if ($this->hasNode($dataIdSelector. ' .media-player', $this->browserPage)){
+            $mbSection['media-player'] = true;
+        }
 
         if ($mbSection['media-player']) {
             $titleSelector = $dataIdSelector. ' .media-video-title';
@@ -309,20 +315,21 @@ abstract class MediaLayoutElement extends AbstractElement
     private function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
     {
 
-        $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
+        $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text'] ?? $sectionPalette['text']);
 
         $richTextTitle = [
-            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-heading5" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
+            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-empty brz-ff-overpass brz-ft-google brz-fs-lg-20 brz-fss-lg-px brz-fw-lg-400 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
             'typographyFontStyle' => 'heading5'
             ];
 
         $wrapperItemTitle = [
-            'bgColorHex' => $sectionPalette['btn-bg'],
+            'bgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
         ];
 
         $sectionStyle = [
+            'paddingTop' => $this->getTopPaddingOfTheFirstElement() ?? 0,
             'bgColorHex' => $sectionPalette['bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
@@ -455,31 +462,31 @@ abstract class MediaLayoutElement extends AbstractElement
             'hoverMetaLinksColorOpacity' => 0.75,
             'hoverMetaLinksColorPalette' => '',
 
-            'detailButtonColorHex' => $sectionPalette['btn-text'],
+            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'],
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text']  ?? $sectionPalette['text'],
             'hoverDetailButtonColorOpacity' => 0.75,
             'hoverDetailButtonColorPalette' => '',
 
-            'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'detailButtonBgColorOpacity' => 1,
             'detailButtonBgColorPalette' => '',
 
-            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'hoverDetailButtonBgColorOpacity' => 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'subscribeButtonColorHex' => $sectionPalette['btn-text'],
+            'subscribeButtonColorHex' => $sectionPalette['btn-text']  ?? $sectionPalette['text'],
             'subscribeButtonColorOpacity' => 1,
             'subscribeButtonColorPalette' => '',
 
-            'subscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'subscribeButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'subscribeButtonBgColorOpacity' => 1,
             'subscribeButtonBgColorPalette' => '',
 
-            'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'hoverSubscribeButtonBgColorOpacity' => 0.75,
             'hoverSubscribeButtonBgColorPalette' => '',
 
@@ -519,6 +526,9 @@ abstract class MediaLayoutElement extends AbstractElement
             $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
                 ->$properties($value);
         }
+
+        $detailsSection->getItemWithDepth(0, 1, 0, 0, 0)->titleTypography();
+
         foreach ($sectionDescriptionStyle as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1)

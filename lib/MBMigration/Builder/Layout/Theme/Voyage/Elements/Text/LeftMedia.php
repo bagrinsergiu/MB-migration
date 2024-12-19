@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 
 class LeftMedia extends PhotoTextElement
@@ -13,7 +14,8 @@ class LeftMedia extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0,0)
+            ->addMobileContentAlign();
     }
 
     /**
@@ -50,7 +52,7 @@ class LeftMedia extends PhotoTextElement
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 20,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
@@ -65,5 +67,10 @@ class LeftMedia extends PhotoTextElement
             "paddingLeft" => 0,
             "paddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
     }
 }

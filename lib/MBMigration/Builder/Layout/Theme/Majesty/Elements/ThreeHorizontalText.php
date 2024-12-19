@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Majesty\Elements;
 
 use Exception;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
+use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
@@ -15,7 +15,7 @@ class ThreeHorizontalText extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
-    use DanationsAble;
+    use DonationsAble;
 
     /**
      * @throws BrowserScriptException

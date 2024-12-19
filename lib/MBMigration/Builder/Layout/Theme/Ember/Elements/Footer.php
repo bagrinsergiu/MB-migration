@@ -37,7 +37,10 @@ class Footer extends FooterElement
             $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
             $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
             $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
-            $this->handleSectionStyles($elementContext, $this->browserPage);
+
+            $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+            $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
             $mbSectionItem = $data->getMbSection();
 
@@ -133,8 +136,17 @@ class Footer extends FooterElement
     protected function getPropertiesMainSection(): array
     {
         return [
-            "margin-left" => 0,
-            "margin-right" => 0,
+            "mobilePaddingType"=> "grouped",
+            "mobilePadding" => 20,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 20,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 20,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
         ];
     }
 }

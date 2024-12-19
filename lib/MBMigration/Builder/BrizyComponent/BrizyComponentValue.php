@@ -54,7 +54,7 @@ class BrizyComponentValue implements JsonSerializable
     public function get($field, $value)
     {
         if (!isset($this->fields[$field])) {
-            throw new Exception();
+            throw new Exception('Field '.$field.' does not exist');
         }
 
         return $this->fields[$field];

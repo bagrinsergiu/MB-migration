@@ -1,10 +1,10 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Theme\Anthem;
+namespace MBMigration\Builder\Layout\Theme\August;
 
 use MBMigration\Builder\Layout\Common\AbstractTheme;
 
-class Anthem extends AbstractTheme
+class August extends AbstractTheme
 {
     public function getThemeIconSelector(): string
     {
@@ -15,5 +15,4 @@ class Anthem extends AbstractTheme
     {
         return ".sites-button:not(.nav-menu-button)";
     }
-
 }
