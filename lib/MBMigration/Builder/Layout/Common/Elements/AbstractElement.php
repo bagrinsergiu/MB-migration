@@ -40,6 +40,8 @@ abstract class AbstractElement implements ElementInterface
         $this->globalTransformSection($component);
         $this->afterTransformToItem($component);
 
+        $this->generalSectionBehavior($data, $component);
+
         return $component;
     }
 
@@ -124,6 +126,22 @@ abstract class AbstractElement implements ElementInterface
             ->addCustomCSS('@media (max-width: 768px) {.brz-a.brz-btn {white-space: normal;}}');
     }
 
+    private function generalSectionBehavior(ElementContextInterface $data, BrizyComponent $section): void
+    {
+        $mbSection = $data->getMbSection();
+
+        if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
+        {
+            $section
+                ->getItemWithDepth(0)
+                ->addGroupedPadding()
+                ->addGroupedMargin()
+                ->addMobilePadding()
+                ->addTabletPadding();
+        }
+
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 50;
@@ -142,8 +160,8 @@ abstract class AbstractElement implements ElementInterface
     protected function getPropertiesMainSection(): array
     {
         return [
-            "margin-left" => 0,
-            "margin-right" => 0,
+            "marginLeft" => 0,
+            "marginRight" => 0,
         ];
     }
 }
