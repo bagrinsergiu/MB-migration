@@ -86,7 +86,7 @@ class ThreeBottomMediaCircle extends FullTextElement
             "paddingType" => "ungrouped",
             "paddingTop" => 60,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 0,
+            "paddingBottom" => 20,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 50,
             "paddingRightSuffix" => "px",
