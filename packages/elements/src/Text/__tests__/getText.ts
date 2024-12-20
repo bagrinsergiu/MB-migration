@@ -2201,6 +2201,34 @@ const ex36: Data = {
   }
 };
 
+//#region Example 36 (Ember with spans unwrapped in p at first level)
+const ex37: Data = {
+  html: `<div class="text-content text-2 editable" data-id="25872932" data-category="text"><div><div style="line-height: 1.4em; text-align: left;"><span class="clovercustom" style="font-size: 1em; letter-spacing: -0.175192px; font-weight: 600; text-align: right;">Pre-School:</span><span class="clovercustom" style="font-size: 1em; letter-spacing: -0.175192px; text-align: right;">&nbsp;</span><span class="clovercustom" style="text-align: right;">Our goal is to provide developmentally appropriate educational classes for each child in a safe, loving, Christian environment. Ages 6 weeks through 4 year olds.</span><p><span class="clovercustom" style="letter-spacing: -0.175192px; font-size: 1em; font-weight: 600; text-align: center;"><br></span></p><p><span class="clovercustom" style="letter-spacing: -0.175192px; font-size: 1em; font-weight: 600; text-align: center;">Men's and Women's Ministries </span>provide Bible Study, fellowship and service opportunities.<br></p><p><span class="clovercustom" style="font-size: 1em; letter-spacing: 0em; font-weight: 600;"><br></span></p><p><span class="clovercustom" style="font-size: 1em; letter-spacing: 0em; font-weight: 600;">Visitor Visitation ministry<span class="clovercustom">&nbsp;</span></span>is focused on providing a free gift&nbsp; &nbsp;bag to 1st and 2nd time visitors with a follow-up via phone or email.<br></p><p><br></p><p><span class="clovercustom" style="font-size: 0.9557em; font-weight: 600; letter-spacing: -0.01em;">Hearts Still Growing:</span><span class="clovercustom" style="font-size: 1em; letter-spacing: 0em;">&nbsp;</span>a Bible class, fellowship and service opportunities for our 'seniors'.<br></p><p><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><span class="clovercustom" style="font-size: 0.9557em; font-weight: 600; letter-spacing: -0.01em;">Children's Homes:</span><span class="clovercustom">&nbsp;</span>serve as a safe loving environment for foster children.<br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><span class="clovercustom" style="font-weight: 600;">Our Food Pantry<span class="clovercustom">&nbsp;</span></span>provides free food for individuals in our community.</p><p style="font-size: 0.9557em; line-height: 1.4em;"><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><span class="clovercustom" style="font-size: 0.9557em; letter-spacing: 0em; font-weight: 600;">Small Groups:</span><span class="clovercustom" style="font-size: 0.9557em; letter-spacing: 0em;">&nbsp;</span>10-12 people gather for prayer, Bible study, spiritual support and fellowship.<br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><br style="font-size: 16.0007px; letter-spacing: -0.167424px;"></p></div></div></div>`,
+  entry: { ...entry, selector: '[data-id="25872932"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-right brz-ls-lg-m_0_1"><span style="font-weight: 600; ">Pre-School:</span><span style="">&nbsp;</span><span style="">Our goal is to provide developmentally appropriate educational classes for each child in a safe, loving, Christian environment. Ages 6 weeks through 4 year olds.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; "><br></span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-m_0_1"><span style="font-weight: 600; ">Men\'s and Women\'s Ministries </span><span>provide Bible Study, fellowship and service opportunities.</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; "><br></span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; ">Visitor Visitation ministry<span>&nbsp;</span></span><span>is focused on providing a free gift&nbsp; &nbsp;bag to 1st and 2nd time visitors with a follow-up via phone or email.</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_0"><span style="font-weight: 600; ">Hearts Still Growing:</span><span style="">&nbsp;</span><span>a Bible class, fellowship and service opportunities for our \'seniors\'.</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_0"><span style="font-weight: 600; ">Children\'s Homes:</span><span>&nbsp;</span><span>serve as a safe loving environment for foster children.</span><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; ">Our Food Pantry<span>&nbsp;</span></span><span>provides free food for individuals in our community.</span></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; ">Small Groups:</span><span style="">&nbsp;</span><span>10-12 people gather for prayer, Bible study, spiritual support and fellowship.</span><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br style=""></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -2237,7 +2265,8 @@ describe.each([
   ex33,
   ex34,
   ex35,
-  ex36
+  ex36,
+  ex37
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
