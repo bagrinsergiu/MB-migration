@@ -43,7 +43,7 @@ class FourHorizontalText extends AbstractElement
         foreach ($titles as $i => $mbItem) {
             $brizyColumn = new BrizyComponent($columnJson);
 
-            $brizyColumn->addMobileMargin(10);
+            $brizyColumn->addMobileMargin(20);
             $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($mbItem, $brizyColumn);
             $this->handleRichTextItem($tmpElementContext, $this->browserPage);
             $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($bodies[$i], $brizyColumn);
@@ -52,14 +52,15 @@ class FourHorizontalText extends AbstractElement
 
                 $buttonSelector = $mbSection['sectionId'];
                 $selector = "[data-id='$buttonSelector']";
+                $selectorButton = $selector ." .group-$i > a > button";
 
-                if($this->hasNode($selector ." .group-$i > a > button", $this->browserPage)){
+                if($this->hasNode($selectorButton, $this->browserPage)){
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $buttons[$i],
                         $brizyColumn
                     );
 
-                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
+                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, $selectorButton);
                 }
 
                 $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($buttons[$i], $brizyColumn);

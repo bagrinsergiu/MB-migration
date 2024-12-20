@@ -220,6 +220,46 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addMobileMargin($marginPx = 0): BrizyComponent
+    {
+        if (is_array($marginPx)) {
+            $mobileMargin = [
+                "mobileMarginType" => "ungrouped",
+                "mobileMargin" => 0,
+                "mobileMarginSuffix" => "px",
+                "mobileMarginTop" => $marginPx[0] ?? 0,
+                "mobileMarginTopSuffix" => "px",
+                "mobileMarginRight" => $marginPx[1] ?? 0,
+                "mobileMarginRightSuffix" => "px",
+                "mobileMarginBottom" => $marginPx[2] ?? 0,
+                "mobileMarginBottomSuffix" => "px",
+                "mobileMarginLeft" => $marginPx[3] ?? 0,
+                "mobileMarginLeftSuffix" => "px",
+            ];
+
+        } else {
+            $mobileMargin = [
+                "mobileMarginType" => "ungrouped",
+                "mobileMargin" => $marginPx,
+                "mobileMarginSuffix" => "px",
+                "mobileMarginTop" => $marginPx,
+                "mobileMarginTopSuffix" => "px",
+                "mobileMarginRight" => $marginPx,
+                "mobileMarginRightSuffix" => "px",
+                "mobileMarginBottom" => $marginPx,
+                "mobileMarginBottomSuffix" => "px",
+                "mobileMarginLeft" => $marginPx,
+                "mobileMarginLeftSuffix" => "px",
+            ];
+        }
+
+        foreach ($mobileMargin as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
     public function addTabletPadding($paddingPx = 0): BrizyComponent
     {
         if (is_array($paddingPx)) {
@@ -259,40 +299,40 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addMobileMargin($MarginPx = 0): BrizyComponent
+    public function addTabletMargin($marginPx = 0): BrizyComponent
     {
-        if (is_array($MarginPx)) {
-            $mobileMargin = [
-                "mobileMarginType" => "ungrouped",
-                "mobileMargin" => 0,
-                "mobileMarginSuffix" => "px",
-                "mobileMarginTop" => $MarginPx[0] ?? 0,
-                "mobileMarginTopSuffix" => "px",
-                "mobileMarginRight" => $MarginPx[1] ?? 0,
-                "mobileMarginRightSuffix" => "px",
-                "mobileMarginBottom" => $MarginPx[2] ?? 0,
-                "mobileMarginBottomSuffix" => "px",
-                "mobileMarginLeft" => $MarginPx[3] ?? 0,
-                "mobileMarginLeftSuffix" => "px",
+        if (is_array($marginPx)) {
+            $tabletMargin = [
+                "tabletMarginType" => "ungrouped",
+                "tabletMargin" => 0,
+                "tabletMarginSuffix" => "px",
+                "tabletMarginTop" => $marginPx[0] ?? 0,
+                "tabletMarginTopSuffix" => "px",
+                "tabletMarginRight" => $marginPx[1] ?? 0,
+                "tabletMarginRightSuffix" => "px",
+                "tabletMarginBottom" => $marginPx[2] ?? 0,
+                "tabletMarginBottomSuffix" => "px",
+                "tabletMarginLeft" => $marginPx[3] ?? 0,
+                "tabletMarginLeftSuffix" => "px",
             ];
 
         } else {
-            $mobileMargin = [
-                "mobileMarginType" => "ungrouped",
-                "mobileMargin" => $MarginPx,
-                "mobileMarginSuffix" => "px",
-                "mobileMarginTop" => $MarginPx,
-                "mobileMarginTopSuffix" => "px",
-                "mobileMarginRight" => $MarginPx,
-                "mobileMarginRightSuffix" => "px",
-                "mobileMarginBottom" => $MarginPx,
-                "mobileMarginBottomSuffix" => "px",
-                "mobileMarginLeft" => $MarginPx,
-                "mobileMarginLeftSuffix" => "px",
+            $tabletMargin = [
+                "tabletMarginType" => "ungrouped",
+                "tabletMargin" => $marginPx,
+                "tabletMarginSuffix" => "px",
+                "tabletMarginTop" => $marginPx,
+                "tabletMarginTopSuffix" => "px",
+                "tabletMarginRight" => $marginPx,
+                "tabletMarginRightSuffix" => "px",
+                "tabletMarginBottom" => $marginPx,
+                "tabletMarginBottomSuffix" => "px",
+                "tabletMarginLeft" => $marginPx,
+                "tabletMarginLeftSuffix" => "px",
             ];
         }
 
-        foreach ($mobileMargin as $key => $value) {
+        foreach ($tabletMargin as $key => $value) {
             $this->getValue()->set($key, $value);
         }
 

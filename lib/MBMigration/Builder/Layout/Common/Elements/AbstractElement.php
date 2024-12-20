@@ -87,6 +87,19 @@ abstract class AbstractElement implements ElementInterface
 
         return true;
     }
+
+    protected function emptyContentSectionItem(array $sectionItem): bool
+    {
+        if(array_key_exists('content', $sectionItem)) {
+            if(!empty(strip_tags($sectionItem['content'])))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     protected function canShowButton($sectionData): bool
     {
         $sectionCategory = $sectionData['category'];
@@ -137,7 +150,22 @@ abstract class AbstractElement implements ElementInterface
                 ->addGroupedPadding()
                 ->addGroupedMargin()
                 ->addMobilePadding()
-                ->addTabletPadding();
+                ->addMobileMargin()
+                ->addTabletPadding()
+                ->addTabletMargin();
+        }
+
+        if($this->emptyContentSectionItem($mbSection['items'][0] ?? [])
+            && $this->emptyContentSectionItem($mbSection['items'][1] ?? []))
+        {
+            $section
+                ->getItemWithDepth(0)
+                ->addGroupedPadding()
+                ->addGroupedMargin()
+                ->addMobilePadding()
+                ->addMobileMargin()
+                ->addTabletPadding()
+                ->addTabletMargin();
         }
 
     }

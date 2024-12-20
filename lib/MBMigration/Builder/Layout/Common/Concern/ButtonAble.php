@@ -18,7 +18,8 @@ trait ButtonAble
     protected function handleButton(
         ElementContextInterface $data,
         BrowserPageInterface $browserPage,
-        array $brizyKit
+        array $brizyKit,
+        $selector = ''
     ): BrizyComponent {
 
         $mbSection = $data->getMbSection();
@@ -31,7 +32,7 @@ trait ButtonAble
         try {
             switch ($mbSection['category']) {
                 case "button":
-                    $selector = '[data-id="'.$mbSection['id'].'"]';
+                    $selector = $selector ?? '[data-id="'.$mbSection['id'].'"]';
 
                     $brizyButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
                     $brizyButton = $this->setButtonStyles(
@@ -257,8 +258,8 @@ trait ButtonAble
             ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
             ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['color']))
             ->set_hoverBorderColorPalette("")
-            ->set_hoverColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
-            ->set_hoverColorHex(ColorConverter::rgba2hex($buttonStyles['color']))
+            ->set_hoverColorOpacity(ColorConverter::rgba2opacity($buttonStyles['background-color']))
+            ->set_hoverColorHex(ColorConverter::rgba2hex($buttonStyles['background-color']))
             ->set_hoverColorPalette("");
 
         return $brizyButton;
