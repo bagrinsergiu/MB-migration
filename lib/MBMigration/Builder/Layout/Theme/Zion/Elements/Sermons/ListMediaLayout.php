@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Sermons;
 
-use MBMigration\Builder\Layout\Theme\Ember\Elements\AbstractMediaLayout;
+use MBMigration\Builder\Layout\Theme\Ember\Elements\Sermons\AbstractMediaLayout;
 
 class ListMediaLayout extends AbstractMediaLayout
 {

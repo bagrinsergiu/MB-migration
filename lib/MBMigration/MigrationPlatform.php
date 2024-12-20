@@ -270,9 +270,9 @@ class MigrationPlatform
 
             if (!empty($page['parentSettings'])) {
                 $settings = json_decode($page['parentSettings'], true);
-                if (array_key_exists('external_url', $settings)) {
-                    continue;
-                }
+//                if (array_key_exists('external_url', $settings)) {
+//                    continue;
+//                }
 
 //                // there a pages that have only one section only and de same slug as home page..
 //                if ( array_key_exists('category', $settings) && $settings['category']=='text' ) {

@@ -1,9 +1,5 @@
-import {
-  buttonSelector,
-  embedSelector,
-  extractedAttributes,
-  iconSelector
-} from "../common";
+import { buttonSelector, embedSelector, iconSelector } from "../common";
+import { appendNodeStyles } from "./appendNodeStyles";
 
 export class Stack {
   collection: Array<Element> = [];
@@ -68,13 +64,6 @@ const extractInnerText = (node: Node, stack: Stack, selector: string): void => {
     }
   }
 };
-
-function appendNodeStyles(node: HTMLElement, targetNode: HTMLElement = node) {
-  const styles = window.getComputedStyle(node);
-  extractedAttributes.forEach((style) => {
-    targetNode.style.setProperty(style, styles.getPropertyValue(style));
-  });
-}
 
 function removeNestedDivs(node: HTMLElement) {
   const embeddedPasteExists = node.querySelectorAll(embedSelector).length > 0;
