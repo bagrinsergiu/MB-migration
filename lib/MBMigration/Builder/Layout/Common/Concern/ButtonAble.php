@@ -12,6 +12,7 @@ use MBMigration\Builder\Utils\ColorConverter;
 
 trait ButtonAble
 {
+    private static $buttonCache = ['id' => 0 , 'button' => null];
     /**
      * Process and add all items the same brizy section
      */
@@ -19,7 +20,8 @@ trait ButtonAble
         ElementContextInterface $data,
         BrowserPageInterface $browserPage,
         array $brizyKit,
-        $selector = ''
+        $selector = '',
+        $options = null
     ): BrizyComponent {
 
         $mbSection = $data->getMbSection();
@@ -32,6 +34,13 @@ trait ButtonAble
         try {
             switch ($mbSection['category']) {
                 case "button":
+
+                    if (self::$buttonCache['id'] === $options)
+                    {
+                        $brizySection->getValue()->add_items([self::$buttonCache['button']]);
+                        break;
+                    }
+
                     $selector = $selector ?? '[data-id="'.$mbSection['id'].'"]';
 
                     $brizyButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
@@ -50,7 +59,8 @@ trait ButtonAble
                         $data,
                         $mbSection
                     );
-
+                    self::$buttonCache['id'] = $options;
+                    self::$buttonCache['button'] = $brizyButton;
                     $brizySection->getValue()->add_items([$brizyButton]);
                     break;
             }
@@ -172,6 +182,7 @@ trait ButtonAble
 
         $buttonItem
             ->set_text($buttonText ?? 'Go here')
+            ->set_fillType('filled' ?? 'outline')
             ->set_paddingType('ungrouped')
             ->set_paddingTop((int)$buttonStyles['padding-top'])
             ->set_paddingBottom((int)$buttonStyles['padding-bottom'])
@@ -228,6 +239,7 @@ trait ButtonAble
                     'border-style',
                     'color',
                     'border-top-color',
+                    'border-color',
                     'border-top-style',
                     'background-color',
                 ],
@@ -253,13 +265,13 @@ trait ButtonAble
             ->set_hoverBgColorHex(ColorConverter::rgba2hex($buttonStyles['background-color']))
             ->set_hoverBgColorPalette("")
             ->set_hoverBgColorOpacity(0.75)
-            ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-top-color']))
+            ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-color']))
             ->set_hoverBorderColorPalette("")
-            ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
-            ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['color']))
+            ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['border-color']))
+            ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-color']))
             ->set_hoverBorderColorPalette("")
-            ->set_hoverColorOpacity(ColorConverter::rgba2opacity($buttonStyles['background-color']))
-            ->set_hoverColorHex(ColorConverter::rgba2hex($buttonStyles['background-color']))
+            ->set_hoverColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
+            ->set_hoverColorHex(ColorConverter::rgba2hex($buttonStyles['color']))
             ->set_hoverColorPalette("");
 
         return $brizyButton;

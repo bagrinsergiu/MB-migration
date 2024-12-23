@@ -102,17 +102,20 @@ final class ColorConverter
     static public function rgba2opacity($rgba)
     {
         if (is_numeric($rgba)) {
-            return sprintf("%.2f", (float)$rgba);
+            $value = (float)$rgba;
+            return ($value === 0.0 || $value === 1.0) ? (int)$value : $value;
         }
 
-        if (!preg_match("/rgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*([\d.]+)\s*\)/", $rgba, $matches)) {
-            return 1; // Значение по умолчанию
+        if (preg_match("/rgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*([\d.]+)\s*)?\)/", $rgba, $matches)) {
+
+            $alpha = isset($matches[1]) ? (float)$matches[1] : 1;
+
+            return ($alpha === 0.0 || $alpha === 1.0) ? (int)$alpha : $alpha;
         }
 
-        $alpha = isset($matches[1]) ? (float)$matches[1] : 1;
-
-        return sprintf("%.2f", $alpha);
+        return 1;
     }
+
 
     public static function convertColor($color)
     {
