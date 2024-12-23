@@ -60,7 +60,7 @@ class FourHorizontalText extends AbstractElement
                         $brizyColumn
                     );
 
-                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, $selectorButton);
+                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, $selectorButton, $mbSection['sectionId']);
                 }
 
                 $tmpElementContext = $data->instanceWithBrizyComponentAndMBSection($buttons[$i], $brizyColumn);
