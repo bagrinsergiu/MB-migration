@@ -40,7 +40,9 @@ abstract class EventLayoutElement extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['main'], true));
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
-        $DetailsPageLayout = new EventDetailsPageLayout($this->brizyKit['EventLayoutElement']['detail']);
+        $DetailsPageLayout = new EventDetailsPageLayout($this->brizyKit['EventLayoutElement']['detail'],
+            $this->getTopPaddingOfTheFirstElement(),
+            $this->getMobileTopPaddingOfTheFirstElement());
 
         $mbSection = $data->getMbSection();
 

@@ -54,6 +54,8 @@ abstract class ListLayoutElement extends AbstractElement
             $elementContext = $data->instanceWithMBSection($item);
             $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
+            $brizySectionItem->getItemWithDepth(0)->addPadding(55,0,55,0);
+
             $brizySectionItem->getValue()
                 ->set_paddingTop((int)$styles['margin-top'])
                 ->set_paddingBottom((int)$styles['margin-bottom'])

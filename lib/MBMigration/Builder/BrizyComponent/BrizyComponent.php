@@ -88,30 +88,45 @@ class BrizyComponent implements JsonSerializable
 
     public function getItemWithDepth(): ?BrizyComponent
     {
-        $depths = func_get_args();
+        try {
+            $depths = func_get_args();
 
-        if (is_array($depths[0])) {
-            $depths = $depths[0];
-        }
-
-        $item = null;
-
-        foreach ($depths as $index) {
-            if ($item) {
-                $items = $item->getValue()->get_items();
-            } else {
-                $items = $this->getValue()->get_items();
+            if (is_array($depths[0])) {
+                $depths = $depths[0];
             }
 
-            if (!isset($items[$index])) {
-                return $item;
+            $item = null;
+
+            foreach ($depths as $index) {
+                // Получаем элементы, проверяя наличие значения
+                $items = $item
+                    ? ($item->getValue()->get_items() ?? [])
+                    : ($this->getValue()->get_items() ?? []);
+
+                // Если результат не массив — критическая ошибка
+                if (!is_array($items)) {
+                    throw new \RuntimeException("Expected an array from get_items(), got " . gettype($items));
+                }
+
+                // Проверка наличия индекса
+                if (!isset($items[$index])) {
+                    return $item;
+                }
+
+                $item = $items[$index];
             }
 
-            $item = $items[$index];
-        }
+            return $item;
 
-        return $item;
+        } catch (\Throwable $e) {
+            // Логирование ошибки (можно заменить на вашу реализацию логгера)
+            error_log("Critical error in getItemWithDepth: " . $e->getMessage());
+
+            // Выброс исключения для дальнейшей обработки
+            throw new \RuntimeException("An error occurred while fetching items with depth.", 0, $e);
+        }
     }
+
 
     /**
      * @return mixed|null
@@ -514,6 +529,64 @@ class BrizyComponent implements JsonSerializable
             "previewTypographyStrike" => false,
             "previewTypographyUppercase" => false,
             "previewTypographyLowercase" => false
+        ];
+
+        foreach ($bgColor as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function typography(): BrizyComponent
+    {
+        $bgColor = [
+            "typographyFontStyle" => "",
+            "typographyFontFamily" => "lato",
+            "typographyFontFamilyType" => "google",
+            "typographyFontSize" => 16,
+            "typographyFontSizeSuffix" => "px",
+            "typographyFontWeight" => 400,
+            "typographyLetterSpacing" => 0,
+            "typographyLineHeight" => 1.9,
+            "typographyVariableFontWeight" => 400,
+            "typographyFontWidth" => 100,
+            "typographyFontSoftness" => 0,
+            "typographyBold" => false,
+            "typographyItalic" => false,
+            "typographyUnderline" => false,
+            "typographyStrike" => false,
+            "typographyUppercase" => false,
+            "typographyLowercase" => false
+        ];
+
+        foreach ($bgColor as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function dataTypography(): BrizyComponent
+    {
+        $bgColor = [
+            "dateTypographyFontStyle" => "",
+            "dateTypographyFontFamily" => "lato",
+            "dateTypographyFontFamilyType" => "google",
+            "dateTypographyFontSize" => 16,
+            "dateTypographyFontSizeSuffix" => "px",
+            "dateTypographyFontWeight" => 400,
+            "dateTypographyLetterSpacing" => 0,
+            "dateTypographyLineHeight" => 1.9,
+            "dateTypographyVariableFontWeight" => 400,
+            "dateTypographyFontWidth" => 100,
+            "dateTypographyFontSoftness" => 0,
+            "dateTypographyBold" => false,
+            "dateTypographyItalic" => false,
+            "dateTypographyUnderline" => false,
+            "dateTypographyStrike" => false,
+            "dateTypographyUppercase" => false,
+            "dateTypographyLowercase" => false
         ];
 
         foreach ($bgColor as $key => $value) {

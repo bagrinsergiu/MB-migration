@@ -9,6 +9,7 @@ use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
 use MBMigration\Builder\Layout\Common\Concern\TextsExtractorAware;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
+use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
 
 abstract class AbstractElement implements ElementInterface
@@ -135,8 +136,13 @@ abstract class AbstractElement implements ElementInterface
 
     private function globalTransformSection(BrizyComponent $component)
     {
-        $component->getItemWithDepth(0)
-            ->addCustomCSS('@media (max-width: 768px) {.brz-a.brz-btn {white-space: normal;}}');
+        try {
+            $component->getItemWithDepth(0)
+                ->addCustomCSS('@media (max-width: 768px) {.brz-a.brz-btn {white-space: normal;}}');
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage());
+        }
+
     }
 
     private function generalSectionBehavior(ElementContextInterface $data, BrizyComponent $section): void

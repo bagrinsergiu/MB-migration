@@ -11,13 +11,18 @@ class EventDetailsPageLayout
     private BrizyComponent $detailsSection;
 
     private static BrizyComponent $cache;
+    private int $topPaddingOfTheFirstElement;
+
+    private int $mobileTopPaddingOfTheFirstElement;
 
     /**
      * @throws BadJsonProvided
      */
-    public function __construct($detailsSection)
+    public function __construct($detailsSection, int $topPaddingOfTheFirstElement, int $mobileTopPaddingOfTheFirstElement)
     {
         $this->detailsSection = new BrizyComponent(json_decode($detailsSection, true));
+        $this->topPaddingOfTheFirstElement = $topPaddingOfTheFirstElement;
+        $this->mobileTopPaddingOfTheFirstElement = $mobileTopPaddingOfTheFirstElement;
     }
     public function setStyleDetailPage(array $sectionPalette): BrizyComponent
     {
@@ -248,8 +253,33 @@ class EventDetailsPageLayout
                 ->$properties($value);
         }
 
+        $detailsSection->getItemWithDepth(0,1,1,1,0)
+            ->dataTypography()
+            ->typography();
+
+
+        $this->sectionPadding($detailsSection);
+
         self::$cache = $detailsSection;
 
         return $detailsSection;
+    }
+
+    private function sectionPadding(BrizyComponent $detailsSection){
+        if($this->topPaddingOfTheFirstElement !== 0) {
+            $options['paddingTop'] = $this->topPaddingOfTheFirstElement;
+        }
+
+        if ($this->mobileTopPaddingOfTheFirstElement !== 0) {
+            $options['mobilePaddingTop'] = $this->mobileTopPaddingOfTheFirstElement;
+        }
+
+        foreach ($options as $key => $value) {
+            $method = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0)
+                ->$method($value);
+        }
+
+
     }
 }
