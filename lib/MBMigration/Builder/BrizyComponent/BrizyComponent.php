@@ -88,45 +88,30 @@ class BrizyComponent implements JsonSerializable
 
     public function getItemWithDepth(): ?BrizyComponent
     {
-        try {
-            $depths = func_get_args();
+        $depths = func_get_args();
 
-            if (is_array($depths[0])) {
-                $depths = $depths[0];
-            }
-
-            $item = null;
-
-            foreach ($depths as $index) {
-                // Получаем элементы, проверяя наличие значения
-                $items = $item
-                    ? ($item->getValue()->get_items() ?? [])
-                    : ($this->getValue()->get_items() ?? []);
-
-                // Если результат не массив — критическая ошибка
-                if (!is_array($items)) {
-                    throw new \RuntimeException("Expected an array from get_items(), got " . gettype($items));
-                }
-
-                // Проверка наличия индекса
-                if (!isset($items[$index])) {
-                    return $item;
-                }
-
-                $item = $items[$index];
-            }
-
-            return $item;
-
-        } catch (\Throwable $e) {
-            // Логирование ошибки (можно заменить на вашу реализацию логгера)
-            error_log("Critical error in getItemWithDepth: " . $e->getMessage());
-
-            // Выброс исключения для дальнейшей обработки
-            throw new \RuntimeException("An error occurred while fetching items with depth.", 0, $e);
+        if (is_array($depths[0])) {
+            $depths = $depths[0];
         }
-    }
 
+        $item = null;
+
+        foreach ($depths as $index) {
+            if ($item) {
+                $items = $item->getValue()->get_items();
+            } else {
+                $items = $this->getValue()->get_items();
+            }
+
+            if (!isset($items[$index])) {
+                return $item;
+            }
+
+            $item = $items[$index];
+        }
+
+        return $item;
+    }
 
     /**
      * @return mixed|null

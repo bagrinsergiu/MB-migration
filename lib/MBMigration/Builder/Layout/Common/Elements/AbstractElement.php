@@ -137,8 +137,10 @@ abstract class AbstractElement implements ElementInterface
     private function globalTransformSection(BrizyComponent $component)
     {
         try {
-            $component->getItemWithDepth(0)
-                ->addCustomCSS('@media (max-width: 768px) {.brz-a.brz-btn {white-space: normal;}}');
+            $section = $component->getItemWithDepth(0);
+                if($section !== null){
+                    $section->addCustomCSS('@media (max-width: 768px) {.brz-a.brz-btn {white-space: normal;}}');
+                }
         } catch (\Exception $e) {
             Logger::instance()->error($e->getMessage());
         }
@@ -149,31 +151,33 @@ abstract class AbstractElement implements ElementInterface
     {
         $mbSection = $data->getMbSection();
 
-        if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
-        {
-            $section
-                ->getItemWithDepth(0)
-                ->addGroupedPadding()
-                ->addGroupedMargin()
-                ->addMobilePadding()
-                ->addMobileMargin()
-                ->addTabletPadding()
-                ->addTabletMargin();
-        }
+        if($section !== null){
 
-        if($this->emptyContentSectionItem($mbSection['items'][0] ?? [])
-            && $this->emptyContentSectionItem($mbSection['items'][1] ?? []))
-        {
-            $section
-                ->getItemWithDepth(0)
-                ->addGroupedPadding()
-                ->addGroupedMargin()
-                ->addMobilePadding()
-                ->addMobileMargin()
-                ->addTabletPadding()
-                ->addTabletMargin();
-        }
+            if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
+            {
+                $section
+                    ->getItemWithDepth(0)
+                    ->addGroupedPadding()
+                    ->addGroupedMargin()
+                    ->addMobilePadding()
+                    ->addMobileMargin()
+                    ->addTabletPadding()
+                    ->addTabletMargin();
+            }
 
+            if($this->emptyContentSectionItem($mbSection['items'][0] ?? [])
+                && $this->emptyContentSectionItem($mbSection['items'][1] ?? []))
+            {
+                $section
+                    ->getItemWithDepth(0)
+                    ->addGroupedPadding()
+                    ->addGroupedMargin()
+                    ->addMobilePadding()
+                    ->addMobileMargin()
+                    ->addTabletPadding()
+                    ->addTabletMargin();
+            }
+        }
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
