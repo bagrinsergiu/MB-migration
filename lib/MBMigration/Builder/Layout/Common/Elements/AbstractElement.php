@@ -91,6 +91,16 @@ abstract class AbstractElement implements ElementInterface
 
     protected function emptyContentSectionItem(array $sectionItem): bool
     {
+        if (empty($sectionItem)) {
+            return true;
+        }
+
+        switch ($sectionItem['category']) {
+            case 'list':
+            case 'media':
+                return false;
+        }
+
         if(array_key_exists('content', $sectionItem)) {
             if(!empty(strip_tags($sectionItem['content'])))
             {
@@ -151,32 +161,50 @@ abstract class AbstractElement implements ElementInterface
     {
         $mbSection = $data->getMbSection();
 
-        if($section !== null){
+        switch ($mbSection['category']){
+            case 'list':
+                if(empty($mbSection['items'])) {
+                    $section
+                        ->getItemWithDepth(0)
+                        ->addGroupedPadding()
+                        ->addGroupedMargin()
+                        ->addMobilePadding()
+                        ->addMobileMargin()
+                        ->addTabletPadding()
+                        ->addTabletMargin();
+                }
+                break;
+            case 'media':
+                break;
+            default:
+                if($section !== null){
 
-            if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
-            {
-                $section
-                    ->getItemWithDepth(0)
-                    ->addGroupedPadding()
-                    ->addGroupedMargin()
-                    ->addMobilePadding()
-                    ->addMobileMargin()
-                    ->addTabletPadding()
-                    ->addTabletMargin();
-            }
+                    if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
+                    {
+                        $section
+                            ->getItemWithDepth(0)
+                            ->addGroupedPadding()
+                            ->addGroupedMargin()
+                            ->addMobilePadding()
+                            ->addMobileMargin()
+                            ->addTabletPadding()
+                            ->addTabletMargin();
+                    }
 
-            if($this->emptyContentSectionItem($mbSection['items'][0] ?? [])
-                && $this->emptyContentSectionItem($mbSection['items'][1] ?? []))
-            {
-                $section
-                    ->getItemWithDepth(0)
-                    ->addGroupedPadding()
-                    ->addGroupedMargin()
-                    ->addMobilePadding()
-                    ->addMobileMargin()
-                    ->addTabletPadding()
-                    ->addTabletMargin();
-            }
+                    if($this->emptyContentSectionItem($mbSection['items'][0] ?? [])
+                        && $this->emptyContentSectionItem($mbSection['items'][1] ?? []))
+                    {
+                        $section
+                            ->getItemWithDepth(0)
+                            ->addGroupedPadding()
+                            ->addGroupedMargin()
+                            ->addMobilePadding()
+                            ->addMobileMargin()
+                            ->addTabletPadding()
+                            ->addTabletMargin();
+                    }
+                }
+                break;
         }
     }
 

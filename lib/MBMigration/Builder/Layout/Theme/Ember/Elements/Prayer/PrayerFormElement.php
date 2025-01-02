@@ -10,4 +10,14 @@ class PrayerFormElement extends \MBMigration\Builder\Layout\Common\Elements\Pray
     {
         return parent::getSectionItemComponent($brizySection);
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 110;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
 }

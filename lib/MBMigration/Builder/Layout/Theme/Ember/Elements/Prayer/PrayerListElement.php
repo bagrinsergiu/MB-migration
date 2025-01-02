@@ -7,7 +7,7 @@ class PrayerListElement extends \MBMigration\Builder\Layout\Common\Elements\Pray
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 50;
+        return 110;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
