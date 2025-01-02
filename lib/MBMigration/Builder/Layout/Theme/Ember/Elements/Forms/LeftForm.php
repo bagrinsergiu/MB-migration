@@ -45,4 +45,9 @@ class LeftForm extends FormWithTextElement
     {
         return 95;
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 110;
+    }
 }
