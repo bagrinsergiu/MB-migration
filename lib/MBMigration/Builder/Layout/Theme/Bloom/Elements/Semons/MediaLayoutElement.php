@@ -33,7 +33,7 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 0;
+        return 140;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

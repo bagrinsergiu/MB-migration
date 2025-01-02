@@ -581,6 +581,35 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function subscribeEventButtonTypography(): BrizyComponent
+    {
+        $bgColor = [
+            "subscribeEventButtonTypographyFontStyle" => "",
+            "subscribeEventButtonTypographyFontFamily" => "lato",
+            "subscribeEventButtonTypographyFontFamilyType" => "google",
+            "subscribeEventButtonTypographyFontSize" => 15,
+            "subscribeEventButtonTypographyFontSizeSuffix" => "px",
+            "subscribeEventButtonTypographyFontWeight" => 700,
+            "subscribeEventButtonTypographyLetterSpacing" => 0,
+            "subscribeEventButtonTypographyLineHeight" => 1.6,
+            "subscribeEventButtonTypographyVariableFontWeight" => 400,
+            "subscribeEventButtonTypographyFontWidth" => 100,
+            "subscribeEventButtonTypographyFontSoftness" => 0,
+            "subscribeEventButtonTypographyBold" => false,
+            "subscribeEventButtonTypographyItalic" => false,
+            "subscribeEventButtonTypographyUnderline" => false,
+            "subscribeEventButtonTypographyStrike" => false,
+            "subscribeEventButtonTypographyUppercase" => false,
+            "subscribeEventButtonTypographyLowercase" => false
+        ];
+
+        foreach ($bgColor as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
     public function addCustomCSS(string $ccsCustom): BrizyComponent
     {
         $this->getValue()->set('customCSS', $ccsCustom);

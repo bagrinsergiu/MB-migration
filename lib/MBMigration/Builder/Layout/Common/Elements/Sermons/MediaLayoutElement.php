@@ -161,6 +161,10 @@ abstract class MediaLayoutElement extends AbstractElement
             $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
             $detailsSection = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['detail'], true));
 
+            $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['EventLayoutElement']['detail'],
+                $this->getTopPaddingOfTheFirstElement(),
+                $this->getMobileTopPaddingOfTheFirstElement());
+
             $resultColorStyles['text'] = $this->getDomElementStyles(
                 $dataIdSelector. ' .media-player-container .media-header .text-content',
                 ['color'],
@@ -221,7 +225,7 @@ abstract class MediaLayoutElement extends AbstractElement
 
             $sectionPalette['item-bg'] = $colorStyles['bg-color'];
 
-            $this->setStyleDetailPage($detailsSection, $sectionPalette);
+            $detailsSection = $DetailsPageLayout->setStyleDetailPage($sectionPalette);
 
             $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
             $detailCollectionItem = $this->createDetailsCollectionItem(
@@ -316,11 +320,10 @@ abstract class MediaLayoutElement extends AbstractElement
 
     private function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
     {
-
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text'] ?? $sectionPalette['text']);
 
         $richTextTitle = [
-            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-empty brz-ff-overpass brz-ft-google brz-fs-lg-20 brz-fss-lg-px brz-fw-lg-400 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
+            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-empty brz-ff-lato brz-ft-google brz-fs-lg-20 brz-fss-lg-px brz-fw-lg-400 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
             'typographyFontStyle' => 'heading5'
             ];
 
