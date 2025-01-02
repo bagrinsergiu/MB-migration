@@ -177,8 +177,7 @@ abstract class AbstractElement implements ElementInterface
             case 'media':
                 break;
             default:
-                if($section !== null){
-
+                if($section->getItemWithDepth(0) !== null){
                     if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
                     {
                         $section
