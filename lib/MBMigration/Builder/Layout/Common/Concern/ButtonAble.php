@@ -12,6 +12,7 @@ use MBMigration\Builder\Utils\ColorConverter;
 
 trait ButtonAble
 {
+    use CssPropertyExtractorAware;
     private static $buttonCache = ['id' => 0 , 'button' => null];
     /**
      * Process and add all items the same brizy section
@@ -277,6 +278,95 @@ trait ButtonAble
         return $brizyButton;
     }
 
+    protected function getButtonStyle(ElementContextInterface $data): array
+    {
+        $mbSectionId = $data->getMbSection()['sectionId'];
+
+        $buttonSelector = [
+            'button.sites-button',
+            'a.sites-button',
+        ];
+
+        foreach ($buttonSelector as $selector) {
+
+            $selector = "[data-id='".$mbSectionId."'] ".$selector;
+
+            if($this->hasNode($selector, $this->browserPage)){
+                $this->searchButton($selector, $data);
+            }
+
+        }
+
+        return [];
+    }
+
+    protected function searchButton($selector, ElementContextInterface $data){
+        $buttonStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $selector,
+                'styleProperties' => [
+                    'font-family',
+                    'font-size',
+                    'font-weight',
+                    'font-style',
+                    'letter-spacing',
+                    'text-transform',
+                    'border-style',
+                    'border-width',
+                    'padding-top',
+                    'padding-bottom',
+                    'padding-right',
+                    'padding-left',
+                    'margin-top',
+                    'margin-bottom',
+                    'margin-left',
+                    'margin-right',
+                    'color',
+                    'border-top-color',
+                    'border-top-style',
+                    'border-bottom-left-radius',
+                    'border-bottom-right-radius',
+                    'border-top-left-radius',
+                    'border-top-right-radius',
+                    'background-color',
+                ],
+                'families' => $data->getFontFamilies(),
+                'defaultFamily' => $data->getDefaultFontFamily(),
+            ]
+        );
+
+        $this->browserPage->triggerEvent('hover', $selector);
+
+        $buttonHoverStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $selector,
+                'styleProperties' => [
+                    'font-family',
+                    'font-size',
+                    'font-weight',
+                    'font-style',
+                    'letter-spacing',
+                    'text-transform',
+                    'border-style',
+                    'color',
+                    'border-top-color',
+                    'border-color',
+                    'border-top-style',
+                    'background-color',
+                ],
+                'families' => $data->getFontFamilies(),
+                'defaultFamily' => $data->getDefaultFontFamily(),
+            ]
+        );
+
+        $styles['normal'] = $buttonStyles['data'] ?? [];
+        $styles['hover'] = $buttonHoverStyles['data'] ?? [];
+
+        $a=$styles;
+    }
+
     private function setButtonLinks($brizySectionItem, $mbItem)
     {
         $brizyComponentValue = $brizySectionItem;
@@ -316,4 +406,6 @@ trait ButtonAble
             }
         }
     }
+
+
 }

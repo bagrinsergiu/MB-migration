@@ -6,6 +6,8 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
+use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
@@ -20,6 +22,8 @@ abstract class EventLayoutElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use BrizyQueryBuilderAware;
+    use CssPropertyExtractorAware;
+    use ButtonAble;
 
     /**
      * @param $brizyKit
@@ -55,6 +59,8 @@ abstract class EventLayoutElement extends AbstractElement
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+
+        $buttonsWithoutPalette = $this->getButtonStyle($elementContext);
 
         $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
 

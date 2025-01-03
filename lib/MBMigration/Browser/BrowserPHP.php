@@ -43,7 +43,7 @@ class BrowserPHP implements BrowserInterface
 
         // starts headless Chrome
         $this->browser = $browserFactory->createBrowser([
-            'windowSize' => [1920, 2000],
+            'windowSize' => [1920, 6000],
             //'enableImages' => true,
             'debugLogger' => $logger,
             'keepAlive' => false,
