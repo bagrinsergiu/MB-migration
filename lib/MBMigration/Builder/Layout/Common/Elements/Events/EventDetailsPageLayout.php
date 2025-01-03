@@ -34,7 +34,7 @@ class EventDetailsPageLayout
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
 
         $richTextTitle = [
-            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-heading5" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Event Details</span></h5>',
+            'text' => '<p class="brz-text-lg-center brz-fss-lg-px brz-fw-lg-700 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0 brz-tp-lg-empty brz-ff-lato brz-ft-google brz-fs-lg-21" data-generated-css="brz-css-bLAMY" data-uniq-id="qQD1W"><span style="color: '.$colorTitle.';">Event Details</span></p>',
             'typographyFontStyle' => 'heading5'
         ];
 
@@ -221,7 +221,10 @@ class EventDetailsPageLayout
 
         $detailsSection->getItemWithDepth(0, 1, 0, 0, 0)
             ->titleTypography()
-            ->previewTypography();
+            ->typography()
+            ->dataTypography()
+            ->previewTypography()
+            ->subscribeEventButtonTypography();
 
         foreach ($sectionProperties2Margin as $key => $value) {
             $properties = 'set_'.$key;
@@ -234,6 +237,12 @@ class EventDetailsPageLayout
             $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0)
                 ->$properties($value);
         }
+
+        $detailsSection->getItemWithDepth(0, 1, 1, 1, 0)
+            ->dataTypography()
+            ->typography(['lineHeight' => 1.7])
+            ->dataTypography(['lineHeight' => 1.7])
+            ->previewTypography(['lineHeight' => 1.7]);
 
         foreach ($wrapperItemTitle as $key => $value) {
             $properties = 'set_'.$key;
@@ -252,11 +261,6 @@ class EventDetailsPageLayout
             $detailsSection->getItemValueWithDepth(0, 1)
                 ->$properties($value);
         }
-
-        $detailsSection->getItemWithDepth(0,1,1,1,0)
-            ->dataTypography()
-            ->typography();
-
 
         $this->sectionPadding($detailsSection);
 

@@ -494,7 +494,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function previewTypography(): BrizyComponent
+    public function previewTypography($typography = []): BrizyComponent
     {
         $bgColor = [
             "previewTypographyFontStyle" => "",
@@ -504,7 +504,7 @@ class BrizyComponent implements JsonSerializable
             "previewTypographyFontSizeSuffix" => "px",
             "previewTypographyFontWeight" => 400,
             "previewTypographyLetterSpacing" => 0,
-            "previewTypographyLineHeight" => 1.9,
+            "previewTypographyLineHeight" => $typography['lineHeight'] ?? 1.9,
             "previewTypographyVariableFontWeight" => 400,
             "previewTypographyFontWidth" => 100,
             "previewTypographyFontSoftness" => 0,
@@ -523,7 +523,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function typography(): BrizyComponent
+    public function typography($typography = []): BrizyComponent
     {
         $bgColor = [
             "typographyFontStyle" => "",
@@ -533,7 +533,7 @@ class BrizyComponent implements JsonSerializable
             "typographyFontSizeSuffix" => "px",
             "typographyFontWeight" => 400,
             "typographyLetterSpacing" => 0,
-            "typographyLineHeight" => 1.9,
+            "typographyLineHeight" => $typography['lineHeight'] ?? 1.9,
             "typographyVariableFontWeight" => 400,
             "typographyFontWidth" => 100,
             "typographyFontSoftness" => 0,
@@ -552,7 +552,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function dataTypography(): BrizyComponent
+    public function dataTypography($typography = []): BrizyComponent
     {
         $bgColor = [
             "dateTypographyFontStyle" => "",
@@ -562,7 +562,7 @@ class BrizyComponent implements JsonSerializable
             "dateTypographyFontSizeSuffix" => "px",
             "dateTypographyFontWeight" => 400,
             "dateTypographyLetterSpacing" => 0,
-            "dateTypographyLineHeight" => 1.9,
+            "dateTypographyLineHeight" => $typography['lineHeight'] ?? 1.9,
             "dateTypographyVariableFontWeight" => 400,
             "dateTypographyFontWidth" => 100,
             "dateTypographyFontSoftness" => 0,
