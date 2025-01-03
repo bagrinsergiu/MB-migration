@@ -89,6 +89,15 @@ abstract class AbstractElement implements ElementInterface
         return true;
     }
 
+    protected function emptyBackgroundContentSection(array $sectionItem): bool
+    {
+        if(empty($sectionItem['settings']['sections']['background']['photo']))
+        {
+            return true;
+        }
+        return false;
+    }
+
     protected function emptyContentSectionItem(array $sectionItem): bool
     {
         if (empty($sectionItem)) {
@@ -177,6 +186,11 @@ abstract class AbstractElement implements ElementInterface
             case 'media':
                 break;
             default:
+
+                if(!$this->emptyBackgroundContentSection($mbSection)){
+                    break;
+                }
+
                 if($section->getItemWithDepth(0) !== null){
                     if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
                     {
