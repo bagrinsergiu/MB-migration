@@ -99,7 +99,7 @@ abstract class GridLayoutElement extends AbstractElement
                             );
 
                             $brizySectionItem
-                                ->addGroupedPadding(20)
+                                ->addGroupedPadding(10)
                                 ->addMobilePadding(10)
                                 ->addMobileMargin();
 
