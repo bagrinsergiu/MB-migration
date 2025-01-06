@@ -51,6 +51,7 @@ class PageController
     {
         $this->cache = VariableCache::getInstance();
         $this->pageDTO = new PageDTO();
+        $this->projectStyleDTO = new PageDTO();
         $this->brizyAPI = $brizyAPI;
         $this->QueryBuilder = $QueryBuilder;
         $this->projectID_Brizy = $projectID_Brizy;
@@ -106,6 +107,10 @@ class PageController
                 $this->browser = BrowserPHP::instance($layoutBasePath);
                 $browserPage = $this->browser->openPage($url, $design);
             }
+
+            $ParentPages = $this->cache->get('ParentPages');
+            $projectDomain = PathSlugExtractor::getProjectDomain();
+            $siteMap = PathSlugExtractor::getSiteMap($ParentPages, $projectDomain);
 
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $layoutElementFactory = new LayoutElementFactory(

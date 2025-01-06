@@ -283,6 +283,7 @@ trait ButtonAble
         $mbSectionId = $data->getMbSection()['sectionId'];
 
         $buttonSelector = [
+            'div.event-calendar-footer .sites-button',
             'button.sites-button',
             'a.sites-button',
         ];
@@ -292,15 +293,20 @@ trait ButtonAble
             $selector = "[data-id='".$mbSectionId."'] ".$selector;
 
             if($this->hasNode($selector, $this->browserPage)){
-                $this->searchButton($selector, $data);
+                return $this->searchButton($selector, $data);
+
             }
 
         }
 
-        return [];
+        return [
+            'normal' => [],
+            'hover' => []
+        ];
     }
 
-    protected function searchButton($selector, ElementContextInterface $data){
+    protected function searchButton($selector, ElementContextInterface $data): array
+    {
         $buttonStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
@@ -336,6 +342,13 @@ trait ButtonAble
             ]
         );
 
+        if (isset($buttonStyles['data'])) {
+            $buttonStyles = $buttonStyles['data'];
+            foreach ($buttonStyles as $key => $value) {
+                $buttonStylesConvert[$key] = ColorConverter::convertColorRgbToHex($value);
+            }
+        }
+
         $this->browserPage->triggerEvent('hover', $selector);
 
         $buttonHoverStyles = $this->browserPage->evaluateScript(
@@ -361,10 +374,17 @@ trait ButtonAble
             ]
         );
 
-        $styles['normal'] = $buttonStyles['data'] ?? [];
-        $styles['hover'] = $buttonHoverStyles['data'] ?? [];
+        if (isset($buttonHoverStyles['data'])) {
+            $buttonStylesHover = $buttonHoverStyles['data'];
+            foreach ($buttonStylesHover as $key => $value) {
+                $buttonHoverStylesConvert[$key] = ColorConverter::convertColorRgbToHex($value);
+            }
+        }
 
-        $a=$styles;
+        $styles['normal'] = $buttonStylesConvert ?? [];
+        $styles['hover'] = $buttonHoverStylesConvert ?? [];
+
+        return $styles;
     }
 
     private function setButtonLinks($brizySectionItem, $mbItem)

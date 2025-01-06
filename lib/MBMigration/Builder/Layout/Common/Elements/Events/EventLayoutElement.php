@@ -60,8 +60,6 @@ abstract class EventLayoutElement extends AbstractElement
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
-        $buttonsWithoutPalette = $this->getButtonStyle($elementContext);
-
         $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
 
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);

@@ -4,9 +4,11 @@ namespace MBMigration\Builder\Layout\Common\Elements;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
 use MBMigration\Builder\Layout\Common\Concern\TextsExtractorAware;
+use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Core\Logger;
@@ -17,16 +19,16 @@ abstract class AbstractElement implements ElementInterface
     use CssPropertyExtractorAware;
     use MbSectionUtils;
     use TextsExtractorAware;
+    use ButtonAble;
 
     protected array $brizyKit = [];
-
     protected array $headParams = [];
-
     protected array $basicHeadParams = [];
-
     protected BrowserPageInterface $browserPage;
-
+    protected PageDto $pageTDO;
     private QueryBuilder $queryBuilder;
+    private array $buttonStyleNormal;
+    private array $buttonStyleHover;
 
     public function __construct($brizyKit, BrowserPageInterface $browserPage)
     {
@@ -36,6 +38,10 @@ abstract class AbstractElement implements ElementInterface
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $this->pageTDO = $data->getThemeContext()->getPageDTO();
+
+        $this->initialBehavior($data);
+
         $this->beforeTransformToItem($data);
         $component = $this->internalTransformToItem($data);
         $this->globalTransformSection($component);
@@ -166,61 +172,6 @@ abstract class AbstractElement implements ElementInterface
 
     }
 
-    private function generalSectionBehavior(ElementContextInterface $data, BrizyComponent $section): void
-    {
-        $mbSection = $data->getMbSection();
-
-        switch ($mbSection['category']){
-            case 'list':
-                if(empty($mbSection['items'])) {
-                    $section
-                        ->getItemWithDepth(0)
-                        ->addGroupedPadding()
-                        ->addGroupedMargin()
-                        ->addMobilePadding()
-                        ->addMobileMargin()
-                        ->addTabletPadding()
-                        ->addTabletMargin();
-                }
-                break;
-            case 'media':
-                break;
-            default:
-
-                if(!$this->emptyBackgroundContentSection($mbSection)){
-                    break;
-                }
-
-                if($section->getItemWithDepth(0) !== null){
-                    if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
-                    {
-                        $section
-                            ->getItemWithDepth(0)
-                            ->addGroupedPadding()
-                            ->addGroupedMargin()
-                            ->addMobilePadding()
-                            ->addMobileMargin()
-                            ->addTabletPadding()
-                            ->addTabletMargin();
-                    }
-
-                    if($this->emptyContentSectionItem($mbSection['items'][0] ?? [])
-                        && $this->emptyContentSectionItem($mbSection['items'][1] ?? []))
-                    {
-                        $section
-                            ->getItemWithDepth(0)
-                            ->addGroupedPadding()
-                            ->addGroupedMargin()
-                            ->addMobilePadding()
-                            ->addMobileMargin()
-                            ->addTabletPadding()
-                            ->addTabletMargin();
-                    }
-                }
-                break;
-        }
-    }
-
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 50;
@@ -243,4 +194,71 @@ abstract class AbstractElement implements ElementInterface
             "marginRight" => 0,
         ];
     }
+
+    private function initialBehavior(ElementContextInterface $data): void
+    {
+        $this->getBasicStyleForButton($data);
+
+        $this->buttonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
+        $this->buttonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
+    }
+
+    private function generalSectionBehavior(ElementContextInterface $data, BrizyComponent $section): void
+    {
+        $mbSection = $data->getMbSection();
+
+        $this->behaviorForAddingIndentsInSection($mbSection, $section);
+
+    }
+
+    private function getBasicStyleForButton(ElementContextInterface $data)
+    {
+        if(!$this->pageTDO->getButtonStyle()->hasData()){
+            $buttonStyle = $this->getButtonStyle($data);
+            $this->pageTDO->getButtonStyle()->setHover($buttonStyle['hover'])->setNormal($buttonStyle['normal']);
+        }
+    }
+
+    private function behaviorForAddingIndentsInSection($mbSection, BrizyComponent $section){
+        switch ($mbSection['category']){
+            case 'list':
+                if(empty($mbSection['items'])) {
+                    $this->sectionIndentations($section);
+                }
+                break;
+            case 'media':
+                break;
+            default:
+
+                if(!$this->emptyBackgroundContentSection($mbSection)){
+                    break;
+                }
+
+                if($section->getItemWithDepth(0) !== null){
+                    if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
+                    {
+                        $this->sectionIndentations($section);
+                    }
+
+                    if($this->emptyContentSectionItem($mbSection['items'][0] ?? [])
+                        && $this->emptyContentSectionItem($mbSection['items'][1] ?? []))
+                    {
+                        $this->sectionIndentations($section);
+                    }
+                }
+                break;
+        }
+    }
+
+    private function sectionIndentations(BrizyComponent $section){
+        $section
+            ->getItemWithDepth(0)
+            ->addGroupedPadding()
+            ->addGroupedMargin()
+            ->addMobilePadding()
+            ->addMobileMargin()
+            ->addTabletPadding()
+            ->addTabletMargin();
+    }
+
 }
