@@ -37,8 +37,8 @@ class EventDetailsPageLayout extends DetailsPage
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
         $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
 
-        $this->rewriteColorIfSetOpacity($basicButtonStyleNormal);
-        $this->rewriteColorIfSetOpacity($basicButtonStyleHover);
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
         $detailsSection = $this->detailsSection;
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text'] ?? $basicButtonStyleNormal['color']);

@@ -70,7 +70,7 @@ abstract class GridLayoutElement extends AbstractElement
                 $brizySectionItem = new BrizyComponent($itemJson);
 
                 $brizySectionItem
-                    ->addPadding(10,10,0,10)
+                    ->addPadding(15,15,15,15)
                     ->addMobilePadding(10);
 
                 $elementContext = $data->instanceWithMBSection($item);

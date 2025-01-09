@@ -106,8 +106,8 @@ abstract class EventLayoutElement extends AbstractElement
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
         $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
 
-        $this->rewriteColorIfSetOpacity($basicButtonStyleNormal);
-        $this->rewriteColorIfSetOpacity($basicButtonStyleHover);
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
         $sectionProperties = [
             'eventDetailPageButtonText' => 'Learn More',
@@ -264,16 +264,6 @@ abstract class EventLayoutElement extends AbstractElement
         }
 
         return $brizySection;
-    }
-
-    private function rewriteColorIfSetOpacity(array &$colors): void
-    {
-        foreach ($colors as $key => $color) {
-            if (is_array($color) && isset($color['color'], $color['opacity'])) {
-                $colors[$key] = $color['color'];
-                $colors[$key . '-opacity'] = $color['opacity'];
-            }
-        }
     }
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent

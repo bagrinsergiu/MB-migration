@@ -163,7 +163,9 @@ abstract class MediaLayoutElement extends AbstractElement
 
             $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['EventLayoutElement']['detail'],
                 $this->getTopPaddingOfTheFirstElement(),
-                $this->getMobileTopPaddingOfTheFirstElement());
+                $this->getMobileTopPaddingOfTheFirstElement(),
+                $this->pageTDO
+            );
 
             $resultColorStyles['text'] = $this->getDomElementStyles(
                 $dataIdSelector. ' .media-player-container .media-header .text-content',

@@ -29,7 +29,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     protected function handleItemRowComponent(BrizyComponent $brizyComponent):void
     {
         $brizyComponent
-            ->addPadding(10,10,10,10)
+            ->addPadding(10,15,10,15)
             ->addMobilePadding(10);
     }
 
