@@ -11,6 +11,11 @@ class UrlBuilder {
         $this->path = '';
     }
 
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
+
     public function setPath($path): UrlBuilder
     {
         $this->path = ltrim($path, '/');

@@ -132,7 +132,7 @@ final class ColorConverter
 
             $color = sprintf("#%02X%02X%02X", $r, $g, $b);
 
-            if ($a == 0 && $color === "#000000") {
+            if ($a == 1 && $color === "#000000") {
                 return '#ffffff';
             } else {
                 return [

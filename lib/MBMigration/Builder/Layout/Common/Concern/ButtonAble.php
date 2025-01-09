@@ -12,6 +12,7 @@ use MBMigration\Builder\Utils\ColorConverter;
 
 trait ButtonAble
 {
+    use CssPropertyExtractorAware;
     private static $buttonCache = ['id' => 0 , 'button' => null];
     /**
      * Process and add all items the same brizy section
@@ -277,6 +278,115 @@ trait ButtonAble
         return $brizyButton;
     }
 
+    protected function getButtonStyle(ElementContextInterface $data): array
+    {
+        $mbSectionId = $data->getMbSection()['sectionId'];
+
+        $buttonSelector = [
+            'div.event-calendar-footer .sites-button',
+            'button.sites-button',
+            'a.sites-button',
+        ];
+
+        foreach ($buttonSelector as $selector) {
+
+            $selector = "[data-id='".$mbSectionId."'] ".$selector;
+
+            if($this->hasNode($selector, $this->browserPage)){
+                return $this->searchButton($selector, $data);
+
+            }
+
+        }
+
+        return [
+            'normal' => [],
+            'hover' => []
+        ];
+    }
+
+    protected function searchButton($selector, ElementContextInterface $data): array
+    {
+        $buttonStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $selector,
+                'styleProperties' => [
+                    'font-family',
+                    'font-size',
+                    'font-weight',
+                    'font-style',
+                    'letter-spacing',
+                    'text-transform',
+                    'border-style',
+                    'border-width',
+                    'padding-top',
+                    'padding-bottom',
+                    'padding-right',
+                    'padding-left',
+                    'margin-top',
+                    'margin-bottom',
+                    'margin-left',
+                    'margin-right',
+                    'color',
+                    'border-top-color',
+                    'border-top-style',
+                    'border-bottom-left-radius',
+                    'border-bottom-right-radius',
+                    'border-top-left-radius',
+                    'border-top-right-radius',
+                    'background-color',
+                ],
+                'families' => $data->getFontFamilies(),
+                'defaultFamily' => $data->getDefaultFontFamily(),
+            ]
+        );
+
+        if (isset($buttonStyles['data'])) {
+            $buttonStyles = $buttonStyles['data'];
+            foreach ($buttonStyles as $key => $value) {
+                $buttonStylesConvert[$key] = ColorConverter::convertColorRgbToHex($value);
+            }
+        }
+
+        $this->browserPage->triggerEvent('hover', $selector);
+
+        $buttonHoverStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $selector,
+                'styleProperties' => [
+                    'font-family',
+                    'font-size',
+                    'font-weight',
+                    'font-style',
+                    'letter-spacing',
+                    'text-transform',
+                    'border-style',
+                    'color',
+                    'border-top-color',
+                    'border-color',
+                    'border-top-style',
+                    'background-color',
+                ],
+                'families' => $data->getFontFamilies(),
+                'defaultFamily' => $data->getDefaultFontFamily(),
+            ]
+        );
+
+        if (isset($buttonHoverStyles['data'])) {
+            $buttonStylesHover = $buttonHoverStyles['data'];
+            foreach ($buttonStylesHover as $key => $value) {
+                $buttonHoverStylesConvert[$key] = ColorConverter::convertColorRgbToHex($value);
+            }
+        }
+
+        $styles['normal'] = $buttonStylesConvert ?? [];
+        $styles['hover'] = $buttonHoverStylesConvert ?? [];
+
+        return $styles;
+    }
+
     private function setButtonLinks($brizySectionItem, $mbItem)
     {
         $brizyComponentValue = $brizySectionItem;
@@ -316,4 +426,6 @@ trait ButtonAble
             }
         }
     }
+
+
 }
