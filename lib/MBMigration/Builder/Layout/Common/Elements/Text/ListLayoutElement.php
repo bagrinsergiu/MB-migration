@@ -56,11 +56,11 @@ abstract class ListLayoutElement extends AbstractElement
 
             $this->handleRowListItem($brizySectionItem);
 
-            $brizySectionItem->getValue()
-                ->set_paddingTop((int)$styles['margin-top'])
-                ->set_paddingBottom((int)$styles['margin-bottom'])
-                ->set_paddingRight((int)$styles['margin-right'])
-                ->set_paddingLeft((int)$styles['margin-left']);
+//            $brizySectionItem->getValue()
+//                ->set_paddingTop((int)$styles['margin-top'])
+//                ->set_paddingBottom((int)$styles['margin-bottom'])
+//                ->set_paddingRight((int)$styles['margin-right'])
+//                ->set_paddingLeft((int)$styles['margin-left']);
 
             $this->handleItemTextContainerComponent($brizySectionItem);
 

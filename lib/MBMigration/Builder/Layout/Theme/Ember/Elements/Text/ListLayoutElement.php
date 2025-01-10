@@ -34,8 +34,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     protected function handleRowListItem(BrizyComponent $brizySection): void
     {
         $brizySection
-            ->getItemWithDepth(0)
-            ->addPadding(55,0,55,0);
+            ->addPadding(25,0,25,0);
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
