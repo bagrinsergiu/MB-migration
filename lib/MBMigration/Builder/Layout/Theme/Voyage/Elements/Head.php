@@ -52,13 +52,20 @@ class Head extends HeadElement
             "mobileMarginLeftSuffix" => "px",
         ];
 
+        $brizySection->getItemWithDepth(0, 0, 0, 0)
+            ->addHorizontalContentAlign()
+            ->addMobileContentAlign()
+            ->addMobileMargin([0,0,0,10]);
+
+        $brizySection->getItemWithDepth(0, 0, 1, 0)
+            ->addMobileMargin([10,10,10,0]);
+
         foreach ($menuPadding as $option => $value) {
             $nameOption = 'set_'.$option;
             $brizySection->getItemWithDepth(0, 0, 1, 0 )
                 ->getValue()
                 ->$nameOption($value);
         }
-
 
         $menuComponent = $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
         $menuComponent->getValue()
@@ -87,17 +94,17 @@ class Head extends HeadElement
 
     public function getThemeParentMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation ul li.has-sub a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.has-sub .sub-navigation>li>a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation ul li.has-sub .sub-navigation li a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
+        return ["selector" => "#selected-sub-navigation ul li", "className" => "selected"];
     }
 
     public function getThemeMenuItemBgSelector(): array
@@ -107,7 +114,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.has-sub .sub-navigation", "pseudoEl" => ":before"];
+        return ["selector" => "#main-navigation ul li.has-sub .sub-navigation", "pseudoEl" => ":before"];
     }
 
     public function getThemeMenuItemPaddingSelector(): array
@@ -134,6 +141,6 @@ class Head extends HeadElement
 
     protected function getThemeSubMenuItemSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "pseudoEl" => ""];
+        return ["selector" => "#selected-sub-navigation ul li", "pseudoEl" => ""];
     }
 }

@@ -15,6 +15,7 @@ class LeftMedia extends PhotoTextElement
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0, 0, 0, 0,0)
+            ->mobileSizeTypeOriginal()
             ->addMobileContentAlign();
     }
 

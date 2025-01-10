@@ -77,13 +77,13 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
                 "mobileMarginType" => "ungrouped",
                 "mobileMargin" => 0,
                 "mobileMarginSuffix" => "px",
-                "mobileMarginTop" => 10,
+                "mobileMarginTop" => 15,
                 "mobileMarginTopSuffix" => "px",
-                "mobileMarginRight" => 11,
+                "mobileMarginRight" => 15,
                 "mobileMarginRightSuffix" => "px",
-                "mobileMarginBottom" => 10,
+                "mobileMarginBottom" => 15,
                 "mobileMarginBottomSuffix" => "px",
-                "mobileMarginLeft" => 11,
+                "mobileMarginLeft" => 15,
                 "mobileMarginLeftSuffix" => "px",
             ];
 

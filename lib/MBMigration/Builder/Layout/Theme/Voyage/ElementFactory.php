@@ -6,7 +6,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
-use MBMigration\Builder\Layout\Theme\Anthem\Elements\Sermons\MediaLayoutElement;
+use MBMigration\Builder\Layout\Theme\Voyage\Elements\Sermons\MediaLayoutElement;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Events\EventLayoutElement;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Voyage\Elements\Forms\FullWidthForm;
