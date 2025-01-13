@@ -53,6 +53,15 @@ abstract class AccordionLayoutElement extends AbstractElement
         return $brizySection;
     }
 
+
+    /*
+     * Introduce a method to apply custom CSS styling for accordion sections. This ensures proper width handling for rich text inside the accordion layout.
+     */
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getItemWithDepth(0)->addCustomCSS('.brz-accordion .brz-row .brz-wrapper:has(.brz-rich-text){width:100%;}');
+    }
+
     abstract protected function getSectionHeaderComponent(BrizyComponent $brizySection): BrizyComponent;
 
     //{ return $brizySection->getItemWithDepth(0, 0, 0); }
