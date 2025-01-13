@@ -19,6 +19,8 @@ class ThreeBottomMediaCircle extends FullTextElement
 
         $items = $this->sortItems($mbSection['items']);
 
+        $this->setTopPaddingOfTheFirstElement($data, $brizySection);
+
         $i = 0;
         foreach ($items as $mbItem) {
             if ($mbItem['category'] == 'photo') {
@@ -50,7 +52,7 @@ class ThreeBottomMediaCircle extends FullTextElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 110;
+        return 120;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

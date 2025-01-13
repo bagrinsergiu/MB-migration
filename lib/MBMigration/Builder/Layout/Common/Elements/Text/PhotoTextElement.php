@@ -120,6 +120,16 @@ abstract class PhotoTextElement extends AbstractElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "paddingTop" => 20,
+            "paddingTopSuffix" => "px",
+            "paddingBottom" => 20,
+            "paddingBottomSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
         ];
     }
 

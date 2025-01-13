@@ -70,9 +70,9 @@ class LeftMediaCircle extends PhotoTextElement
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 50,
+            "paddingTop" => 20,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 50,
+            "paddingBottom" => 20,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

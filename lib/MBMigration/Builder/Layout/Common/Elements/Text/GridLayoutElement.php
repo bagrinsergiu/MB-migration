@@ -71,7 +71,8 @@ abstract class GridLayoutElement extends AbstractElement
 
                 $brizySectionItem
                     ->addPadding(15,15,15,15)
-                    ->addMobilePadding(10);
+                    ->addMobilePadding(10)
+                    ->addMobileMargin();
 
                 $elementContext = $data->instanceWithMBSection($item);
                 $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
@@ -97,11 +98,6 @@ abstract class GridLayoutElement extends AbstractElement
                                 $mbItem,
                                 $brizySectionItem
                             );
-
-                            $brizySectionItem
-                                ->addGroupedPadding(10)
-                                ->addMobilePadding(10)
-                                ->addMobileMargin();
 
                             $imageSize = $this->obtainItemImageStyles($mbItem['id'], $this->browserPage);
 
