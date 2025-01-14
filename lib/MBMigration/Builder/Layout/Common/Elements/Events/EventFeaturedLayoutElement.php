@@ -41,7 +41,9 @@ class EventFeaturedLayoutElement  extends AbstractElement
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventDetailsPage']['main'], true));
         $DetailsPageLayout = new EventDetailsPageLayout($this->brizyKit['EventDetailsPage']['main'],
             $this->getTopPaddingOfTheFirstElement(),
-            $this->getMobileTopPaddingOfTheFirstElement());
+            $this->getMobileTopPaddingOfTheFirstElement(),
+            $this->pageTDO
+        );
 
         $mbSection = $data->getMbSection();
         $mbPageSlug = $data->getThemeContext()->getSlug();
