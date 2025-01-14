@@ -227,6 +227,7 @@ abstract class AbstractElement implements ElementInterface
                 }
                 break;
             case 'media':
+            case 'accordion':
                 break;
             default:
 

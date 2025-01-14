@@ -468,7 +468,6 @@ class BrizyComponent implements JsonSerializable
     {
         $bgColor = [
             "titleTypographyFontStyle" => "",
-            "typographyFontStyle" => "paragraph",
             "titleTypographyFontFamily" => "lato",
             "titleTypographyFontFamilyType" => "google",
             "titleTypographyFontSize" => 28,

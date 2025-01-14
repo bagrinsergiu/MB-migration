@@ -76,7 +76,7 @@ class EventFeturedLayout extends EventFeaturedLayoutElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 0;
+        return 30;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

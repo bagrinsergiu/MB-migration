@@ -12,31 +12,49 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $brizyAccordionItems = [];
+
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $mbSection = $data->getMbSection();
         $families = $data->getFontFamilies();
 
-        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $sectionSelector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
         $backgroundColorStyles = ColorConverter::convertColorRgbToHex(
             $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage));
 
         $accordionElementStyles = $this->getAccordionElementStyles($sectionSelector, $this->browserPage, $families);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
-
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
 
         $itemJson = json_decode($this->brizyKit['item'], true);
-        $brizyAccordionItems = [];
 
         $brizyAccordionComponent = $this->getAccordionParentComponent($brizySection)->getValue();
 
-        foreach ($accordionElementStyles as $key => $value) {
-            $propertiesName = 'set_'.$key;
+        $brizySection->getItemWithDepth(0,1,0,0)->addMobilePadding([0, 10, 0, 10]);
+
+        $additionalOptionsAccordionStyles = [
+            "titlePaddingType" => "ungrouped",
+            "titlePadding" => 10,
+            "titlePaddingSuffix" => "px",
+            "titlePaddingTop" => 10,
+            "titlePaddingTopSuffix" => "px",
+            "titlePaddingRight" => 15,
+            "titlePaddingRightSuffix" => "px",
+            "titlePaddingBottom" => 10,
+            "titlePaddingBottomSuffix" => "px",
+            "titlePaddingLeft" => 15,
+            "titlePaddingLeftSuffix" => "px",
+        ];
+
+        $accordionStyles = array_merge($accordionElementStyles, $additionalOptionsAccordionStyles);
+
+        foreach ($accordionStyles as $key => $value) {
+            $propertiesName = 'set_' . $key;
             $brizyAccordionComponent->$propertiesName($value);
         }
 
@@ -93,7 +111,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
                 "marginType" => "ungrouped",
                 "marginSuffix" => "px",
-                "marginTop" => 10,
+                "marginTop" => 0,
                 "marginTopSuffix" => "px",
                 "marginRight" => -11,
                 "marginRightSuffix" => "px",
@@ -125,7 +143,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             ];
 
             foreach ($accordionRowElementStyle as $key => $value) {
-                $method = "set_".$key;
+                $method = "set_" . $key;
                 $brizyAccordionItem->getValue()
                     ->$method($value);
             }
@@ -138,9 +156,9 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
             $elementWrapper = $brizyAccordionItem->getItemWithDepth(0);
 
-            if(!empty($elementWrapper)){
+            if (!empty($elementWrapper)) {
                 foreach ($accordionWrapperElementStyle as $key => $value) {
-                    $method = "set_".$key;
+                    $method = "set_" . $key;
                     $elementWrapper->getValue()
                         ->$method($value);
                 }
@@ -182,7 +200,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
     protected function getPropertiesMainSection(): array
     {
         return array(
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,
@@ -195,14 +213,25 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 50,
+            "paddingTop" => 10,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 50,
+            "paddingBottom" => 10,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",
             "paddingLeft" => 0,
             "paddingLeftSuffix" => "px",
+
+            "marginType" => "ungrouped",
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 10,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
         );
     }
 }

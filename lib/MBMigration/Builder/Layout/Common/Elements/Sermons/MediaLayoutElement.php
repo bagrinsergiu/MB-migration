@@ -101,6 +101,10 @@ abstract class MediaLayoutElement extends AbstractElement
             $sectionProperties = [
                 'sermonSlug' => $this->createSlug($mbSection['containTitle']),
 
+                'showImage' => 'on',
+                'showVideo' => 'on',
+                'showAudio' => 'off',
+
                 'titleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
                 'titleColorOpacity' => 1,
                 'titleColorPalette' => "",
@@ -120,6 +124,8 @@ abstract class MediaLayoutElement extends AbstractElement
 
             $sectionPropertiesSecondLevel = [
                 'sermonSlug'=> $this->createSlug($mbSection['containTitle']),
+
+                'showMetaHeadings' => 'off',
 
                 'colorHex' => $textColorStyles ?? "#ebeff2",
                 'colorOpacity' => 1,
@@ -153,6 +159,13 @@ abstract class MediaLayoutElement extends AbstractElement
                 $brizySectionFeaturedDescription->getItemValueWithDepth(0)
                     ->$properties($value);
             }
+
+            $brizySectionFeaturedDescription->getItemWithDepth(0)
+                ->typography()
+                ->dataTypography()
+                ->titleTypography()
+                ->previewTypography()
+                ->subscribeEventButtonTypography();
 
             $brizySection->getItemValueWithDepth(0)
                 ->add('items', [$brizySectionFeaturedVideo])

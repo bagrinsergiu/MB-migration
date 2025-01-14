@@ -149,16 +149,16 @@ abstract class EventLayoutElement extends AbstractElement
             'listPaginationColorOpacity' => 1,
             'listPaginationColorPalette' => '',
 
-            'calendarHeadingColorHex' => $sectionPalette['text'],
-            'calendarDaysBgColorOpacity' => 1,
+            'calendarDaysBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['bg'],
+            'calendarDaysBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             'calendarDaysBgColorPalette' => '',
 
-            'calendarDaysBgColorHex' => $sectionPalette['bg'],
-            'calendarHeadingColorOpacity' => 1,
+            'calendarHeadingColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['text'],
+            'calendarHeadingColorOpacity' =>  $basicButtonStyleNormal['color-opacity'] ?? 1,
             'calendarHeadingColorPalette' => '',
 
-            'calendarDaysColorHex' => $sectionPalette['text'],
-            'calendarDaysColorOpacity' => 1,
+            'calendarDaysColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['text'],
+            'calendarDaysColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
             'calendarDaysColorPalette' => '',
 
             'eventsColorHex' => $sectionPalette['link'],
@@ -181,8 +181,8 @@ abstract class EventLayoutElement extends AbstractElement
             'listItemMetaColorOpacity' => 1,
             'listItemMetaColorPalette' => '',
 
-            'listItemDateColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'listItemDateColorOpacity' => 1,
+            'listItemDateColorHex' => $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'listItemDateColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 1,
             'listItemDateColorPalette' => '',
 
             'listTitleColorHex' => $sectionPalette['text'],
@@ -205,8 +205,8 @@ abstract class EventLayoutElement extends AbstractElement
             'dateColorOpacity' => 1,
             'dateColorPalette' => '',
 
-            'listItemDateBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'listItemDateBgColorOpacity' => 1,
+            'listItemDateBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'listItemDateBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             'listItemDateBgColorType' => 'solid',
             'listItemDateBgColorPalette' => '',
 
