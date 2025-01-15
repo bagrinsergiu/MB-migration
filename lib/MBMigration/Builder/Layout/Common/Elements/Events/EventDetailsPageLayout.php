@@ -316,6 +316,8 @@ class EventDetailsPageLayout extends DetailsPage
                 ->$properties($value);
         }
 
+        $detailsSection->getItemWithDepth(0, 1)->addGroupedPadding();
+
         $this->sectionPadding($detailsSection);
 
         self::$cache = $detailsSection;
@@ -325,7 +327,7 @@ class EventDetailsPageLayout extends DetailsPage
 
     private function sectionPadding(BrizyComponent $detailsSection){
         if($this->topPaddingOfTheFirstElement !== 0) {
-            $options['paddingTop'] = $this->topPaddingOfTheFirstElement;
+            $options['paddingTop'] = $this->topPaddingOfTheFirstElement + 40;
         }
 
         if ($this->mobileTopPaddingOfTheFirstElement !== 0) {

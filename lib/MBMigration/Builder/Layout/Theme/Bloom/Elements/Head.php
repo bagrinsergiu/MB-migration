@@ -108,7 +108,7 @@ class Head extends HeadElement
             ->set_mobileBgColorType('solid')
             ->set_mobileBgColorHex($backgroundColorHex)
             ->set_mobileBgColorPalette('')
-            ->set_mobileBgColorOpacity($opacity);
+            ->set_mobileBgColorOpacity(1);
 
         $imageLogoOptions = [
             'mobileSize' => 85,

@@ -103,7 +103,7 @@ abstract class MediaLayoutElement extends AbstractElement
 
                 'showImage' => 'on',
                 'showVideo' => 'on',
-                'showAudio' => 'off',
+                'showAudio' => 'on',
 
                 'titleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
                 'titleColorOpacity' => 1,
@@ -166,6 +166,8 @@ abstract class MediaLayoutElement extends AbstractElement
                 ->titleTypography()
                 ->previewTypography()
                 ->subscribeEventButtonTypography();
+
+            $brizySectionFeaturedDescription->addMobileMargin([0,-5,0,-5]);
 
             $brizySection->getItemValueWithDepth(0)
                 ->add('items', [$brizySectionFeaturedVideo])

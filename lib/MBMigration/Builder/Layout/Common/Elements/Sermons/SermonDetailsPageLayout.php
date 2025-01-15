@@ -380,7 +380,7 @@ class SermonDetailsPageLayout
 
     private function sectionPadding(BrizyComponent $detailsSection){
         if($this->topPaddingOfTheFirstElement !== 0) {
-            $options['paddingTop'] = $this->topPaddingOfTheFirstElement;
+            $options['paddingTop'] = $this->topPaddingOfTheFirstElement + 40;
         }
 
         if ($this->mobileTopPaddingOfTheFirstElement !== 0) {
