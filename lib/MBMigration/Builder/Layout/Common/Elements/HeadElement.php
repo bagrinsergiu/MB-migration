@@ -38,6 +38,8 @@ abstract class HeadElement extends AbstractElement
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $this->pageTDO = $data->getThemeContext()->getPageDTO();
+
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
             $this->basicHeadParams = array_merge($this->basicHeadParams, $this->headParams);
             $this->beforeTransformToItem($data);

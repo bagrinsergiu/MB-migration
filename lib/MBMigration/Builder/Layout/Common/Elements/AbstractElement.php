@@ -21,11 +21,13 @@ abstract class AbstractElement implements ElementInterface
     use TextsExtractorAware;
     use ButtonAble;
 
+
+    public PageDto $pageTDO;
+
     protected array $brizyKit = [];
     protected array $headParams = [];
     protected array $basicHeadParams = [];
     protected BrowserPageInterface $browserPage;
-    protected PageDto $pageTDO;
     private QueryBuilder $queryBuilder;
     private array $buttonStyleNormal;
     private array $buttonStyleHover;
@@ -254,7 +256,7 @@ abstract class AbstractElement implements ElementInterface
     private function sectionIndentations(BrizyComponent $section){
         $section
             ->getItemWithDepth(0)
-            ->addGroupedPadding(10)
+            ->addPadding($this->pageTDO->getHeadStyle()->getHeight() ?? 10, 0, 0, 0)
             ->addGroupedMargin()
             ->addMobilePadding()
             ->addMobileMargin()

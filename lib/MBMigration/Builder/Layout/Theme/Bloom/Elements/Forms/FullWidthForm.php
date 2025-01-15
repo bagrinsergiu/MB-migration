@@ -26,7 +26,7 @@ class FullWidthForm extends FormElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 0;
+        return 150;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

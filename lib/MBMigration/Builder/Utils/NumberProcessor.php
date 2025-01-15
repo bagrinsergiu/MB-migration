@@ -16,4 +16,9 @@ class NumberProcessor
         }
     }
 
+    public static function convertToInt($input)
+    {
+        return preg_replace('/[^0-9]/', '', $input);
+    }
+
 }

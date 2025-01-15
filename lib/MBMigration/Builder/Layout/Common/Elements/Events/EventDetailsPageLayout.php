@@ -45,7 +45,7 @@ class EventDetailsPageLayout extends DetailsPage
 
         $richTextTitle = [
             'text' => '<p class="brz-text-lg-center brz-fss-lg-px brz-fw-lg-700 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0 brz-tp-lg-empty brz-ff-lato brz-ft-google brz-fs-lg-21" data-generated-css="brz-css-bLAMY" data-uniq-id="qQD1W"><span style="color: '.$colorTitle.';">Event Details</span></p>',
-            'typographyFontStyle' => 'heading5'
+            'typographyFontStyle' => ''
         ];
 
         $wrapperItemTitle = [

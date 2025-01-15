@@ -609,9 +609,17 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addCustomCSS(string $ccsCustom): BrizyComponent
+    public function addCustomCSS(string $newCSS): BrizyComponent
     {
-        $this->getValue()->set('customCSS', $ccsCustom);
+        $savedCSS = $this->getValue()->get('customCSS');
+
+        if (!empty($savedCSS)) {
+            $customCSS = $savedCSS . PHP_EOL . $newCSS;
+        } else {
+            $customCSS = $newCSS;
+        }
+        $this->getValue()->set('customCSS', $customCSS);
+
         return $this;
     }
 

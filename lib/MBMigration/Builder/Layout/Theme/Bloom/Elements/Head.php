@@ -3,8 +3,11 @@
 namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\DTO\PageDto;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\NumberProcessor;
 
 class Head extends HeadElement
 {
@@ -70,6 +73,8 @@ class Head extends HeadElement
         return $this->getThemeMenuItemSelector();
     }
 
+
+
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
         //set the default body bg as there are sections that are transparent
@@ -77,8 +82,8 @@ class Head extends HeadElement
         $menuSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => 'body',
-                'styleProperties' => ['background-color', 'background-image'],
+                'selector' => '#main-content header',
+                'styleProperties' => ['background-color', 'height'],
                 'families' => [],
                 'defaultFamily' => '',
             ]
@@ -88,6 +93,11 @@ class Head extends HeadElement
         }
 
         $menuSectionStyles = $menuSectionStyles['data'];
+
+        $this->pageTDO->getHeadStyle()->setHeight(
+            NumberProcessor::convertToInt($menuSectionStyles['height'])
+        );
+
         $backgroundColorHex = ColorConverter::rgba2hex($menuSectionStyles['background-color']);
         $opacity = ColorConverter::rgba2opacity($menuSectionStyles['background-color']);
 
@@ -135,7 +145,7 @@ class Head extends HeadElement
             "marginType" => "ungrouped",
             "margin" => 0,
             "marginSuffix" => "px",
-            "marginTop" => 0,
+            "marginTop" => -10,
             "marginTopSuffix" => "px",
             "marginRight" => 0,
             "marginRightSuffix" => "px",

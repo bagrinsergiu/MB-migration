@@ -116,7 +116,7 @@ class TwoRightMediaCircle extends PhotoTextElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 0;
+        return 150;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
