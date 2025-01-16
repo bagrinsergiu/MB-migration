@@ -2,7 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern;
 
-use MBMigration\Browser\BrowserPage;
+
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
@@ -326,14 +326,7 @@ trait SectionStylesAble
         );
     }
 
-    /**
-     * @param $sectionId
-     * @param array $properties
-     * @param BrowserPage $browserPage
-     * @param array $families
-     * @param string $defaultFont
-     * @return mixed
-     */
+
     protected function getSectionWrapperStyles(
         $sectionId,
         BrowserPageInterface $browserPage,

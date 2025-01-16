@@ -6,9 +6,7 @@ use HeadlessChromium\Page;
 use Monolog\Logger;
 use Exception;
 use HeadlessChromium\BrowserFactory;
-use MBMigration\Core\Config;
 use Monolog\Handler\StreamHandler;
-use Nesk\Puphpeteer\Puppeteer;
 use Psr\Log\LoggerInterface;
 
 class BrowserPHP implements BrowserInterface
