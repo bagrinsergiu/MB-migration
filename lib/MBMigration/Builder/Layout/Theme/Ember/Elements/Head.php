@@ -85,13 +85,18 @@ class Head extends HeadElement
     }
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
-    {#main-navigation > ul:nth-child(1) > li:nth-child(2) > ul > li:nth-child(1) > a
-        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li a", "pseudoEl" => ""];
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li:not(.selected) a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation ul li", "className" => "selected"];
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li", "className" => "selected"];
     }
 
     public function getThemeMenuItemBgSelector(): array

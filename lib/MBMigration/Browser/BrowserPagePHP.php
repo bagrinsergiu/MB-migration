@@ -80,6 +80,11 @@ class BrowserPagePHP implements BrowserPageInterface
         return true; // element found
     }
 
+    public function getPageScreen(): void
+    {
+        $this->page->screenshot()->saveToFile('/project/var/cache/pageScreen.jpg');
+    }
+
     public function extractHover($selector): void
     {
         if ($this->triggerEvent('hover', $selector)) {
