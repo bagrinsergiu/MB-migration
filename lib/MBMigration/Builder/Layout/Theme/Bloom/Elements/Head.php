@@ -92,6 +92,21 @@ class Head extends HeadElement
             return;
         }
 
+        $bodySectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => 'body',
+                'styleProperties' => ['background-color'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        if (!isset($bodySectionStyles['data'])) {
+            return;
+        }
+
+        $bodySectionStyles = $bodySectionStyles['data'];
         $menuSectionStyles = $menuSectionStyles['data'];
 
         $this->pageTDO->getHeadStyle()->setHeight(
@@ -101,14 +116,18 @@ class Head extends HeadElement
         $backgroundColorHex = ColorConverter::rgba2hex($menuSectionStyles['background-color']);
         $opacity = ColorConverter::rgba2opacity($menuSectionStyles['background-color']);
 
+        $bodyBackgroundColorHex = ColorConverter::rgba2hex($bodySectionStyles['background-color']);
+        $bodyBackgroundOpacity = ColorConverter::rgba2opacity($bodySectionStyles['background-color']);
+
         $brizySection->getItemWithDepth(0)
             ->getValue()
             ->set_bgColorHex($backgroundColorHex)
+            ->set_bgColorHexPalette('')
             ->set_bgColorOpacity($opacity)
             ->set_mobileBgColorType('solid')
-            ->set_mobileBgColorHex($backgroundColorHex)
+            ->set_mobileBgColorHex($bodyBackgroundColorHex)
             ->set_mobileBgColorPalette('')
-            ->set_mobileBgColorOpacity(1);
+            ->set_mobileBgColorOpacity($bodyBackgroundOpacity ?? 1);
 
         $imageLogoOptions = [
             'mobileSize' => 85,
