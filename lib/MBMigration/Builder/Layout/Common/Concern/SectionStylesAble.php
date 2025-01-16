@@ -15,10 +15,11 @@ trait SectionStylesAble
     protected function setTopPaddingOfTheFirstElement(
         ElementContextInterface $data,
         BrizyComponent $section,
-        array $additionalOptions = []
+        array $additionalOptions = [],
+        $additionalConstantHeight = 0
     ): void {
         $mbSectionItem = $data->getMbSection();
-        $headHeight = $data->getThemeContext()->getPageDTO()->getHeadStyle()->getHeight() + 30;
+        $headHeight = $data->getThemeContext()->getPageDTO()->getHeadStyle()->getHeight() + $additionalConstantHeight;
         $options = $additionalOptions;
 
         if (isset($headHeight) && $headHeight > $this->getTopPaddingOfTheFirstElement() && $this->getTopPaddingOfTheFirstElement() !== 0) {
