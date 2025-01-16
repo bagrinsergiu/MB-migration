@@ -203,21 +203,29 @@ class BrizyAPI extends Utils
             $this->nameFolder = $nameFolder;
         }
         $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
-        $mime_type = mime_content_type($pathToFileName);
+
+        if($pathToFileName['status'] === false) {
+            Logger::instance()->warning('Failed get path image!!! path: '.$pathOrUrlToFileName);
+            return false;
+        }
+
+        $mime_type = mime_content_type($pathToFileName['path']);
         Logger::instance()->debug('Mime type image; '.$mime_type);
         if ($this->getFileExtension($mime_type)) {
 
-            $file_contents = file_get_contents($pathToFileName);
+            $file_contents = file_get_contents($pathToFileName['path']);
             if (!$file_contents) {
-                Logger::instance()->warning('Failed get contents image!!! path: '.$pathToFileName);
+                Logger::instance()->warning('Failed get contents image!!! path: '.$pathToFileName['path']);
             }
             $base64_content = base64_encode($file_contents);
 
-            return $this->httpClient('POST', $this->createPrivateUrlAPI('media'), [
-                'filename' => $this->getFileName($pathToFileName),
+            $result = $this->httpClient('POST', $this->createPrivateUrlAPI('media'), [
+                'filename' => $this->getFileName($pathToFileName['path']),
                 'name' => $this->getNameHash($base64_content).'.'.$this->getFileExtension($mime_type),
                 'attachment' => $base64_content,
             ]);
+
+            return $result;
         }
 
         return false;
@@ -713,7 +721,7 @@ class BrizyAPI extends Utils
     /**
      * @throws Exception
      */
-    private function downloadImage($url): string
+    private function downloadImage($url): array
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -722,7 +730,7 @@ class BrizyAPI extends Utils
 
         if ($image_data === false) {
             Logger::instance()->warning('Failed to download image from URL: ' . $url);
-            return "unknown";
+            return ['status' => false];
         }
 
         $file_name = mb_strtolower(basename($url));
@@ -730,96 +738,137 @@ class BrizyAPI extends Utils
 
         if (count($fileNameParts) < 2) {
             Logger::instance()->warning('Invalid file name format: ' . $file_name);
-            return "unknown";
+            return ['status' => false];
         }
 
-        $originalExtension = $fileNameParts[count($fileNameParts) - 1];
-        $supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'ico'];
-
-        if (!in_array($originalExtension, $supportedExtensions)) {
-            $convertedExtension = 'jpg';
-        } else {
-            $convertedExtension = $originalExtension;
-        }
-
-        $file_name = $fileNameParts[0] . '.' . $convertedExtension;
-        $path = Config::$pathTmp . $this->nameFolder . '/media/' . $file_name;
+        $path = Config::$pathTmp . $this->nameFolder . '/media/' . $fileNameParts[0];
 
         file_put_contents($path, $image_data);
 
         if (!file_exists($path)) {
             Logger::instance()->warning('Failed to save image to path: ' . $path);
-            return "unknown";
+            return ['status' => false];
         }
 
-        if ($originalExtension !== $convertedExtension) {
-            $this->convertImageFormat($path, $convertedExtension);
+        $newDetailsImage = $this->convertImageFormat($path);
+        if($newDetailsImage['status'] === false) {
+            Logger::instance()->warning('Failed to convert image format: ' . $path);
+            return ['status' => false];
         }
+        $this->resizeImageIfNeeded($newDetailsImage['path'], 9.5);
 
-        return $this->resizeImageIfNeeded($path, 9.5);
+        return [
+            'status' => true,
+            'fileName' => $fileNameParts[0] . '.' . $newDetailsImage['fileType'],
+            'path' => $newDetailsImage['path'],
+        ];
     }
 
     /**
      * @throws Exception
      */
-    private function convertImageFormat($filePath, $targetExtension): void
+    private function convertImageFormat($filePath): array
     {
-        $image = null;
+        if (!file_exists($filePath) || !is_readable($filePath)) {
+            Logger::instance()->warning('File not found or not readable: ' . $filePath);
+            return ['status' => false];
+        }
+
         $mimeType = mime_content_type($filePath);
+        $image = null;
 
         switch ($mimeType) {
             case 'image/jpeg':
             case 'image/jpg':
             case 'image/jfif':
+                $targetExtension = 'jpg';
                 $image = imagecreatefromjpeg($filePath);
                 break;
             case 'image/png':
+                $targetExtension = 'png';
                 $image = imagecreatefrompng($filePath);
                 break;
             case 'image/gif':
+                $targetExtension = 'gif';
                 $image = imagecreatefromgif($filePath);
                 break;
             case 'image/webp':
+                $targetExtension = 'webp';
                 $image = imagecreatefromwebp($filePath);
                 break;
             default:
                 Logger::instance()->warning('Unsupported image format for conversion: ' . $mimeType);
-                return;
+                return ['status' => false];
         }
 
-        if ($image) {
-            $newFilePath = preg_replace('/\.[^.]+$/', '.' . $targetExtension, $filePath);
-            imagejpeg($image, $newFilePath, 90);
-            imagedestroy($image);
-            unlink($filePath);
-        } else {
+        if ($image === false) {
             Logger::instance()->warning('Failed to create image resource for conversion: ' . $filePath);
+            return ['status' => false];
         }
+
+        $newFilePath = $filePath . '.' . $targetExtension;
+
+        $saveResult = false;
+        switch ($targetExtension) {
+            case 'jpeg':
+            case 'jpg':
+                $saveResult = imagejpeg($image, $newFilePath, 90);
+                break;
+            case 'png':
+                $saveResult = imagepng($image, $newFilePath);
+                break;
+            case 'gif':
+                $saveResult = imagegif($image, $newFilePath);
+                break;
+            case 'webp':
+                $saveResult = imagewebp($image, $newFilePath);
+                break;
+            default:
+                Logger::instance()->warning('Unsupported target format: ' . $targetExtension);
+                break;
+        }
+
+        imagedestroy($image);
+
+        if ($saveResult) {
+            if (!unlink($filePath)) {
+                Logger::instance()->warning('Failed to delete original file: ' . $filePath);
+            }
+        } else {
+            Logger::instance()->warning('Failed to save image in target format: ' . $newFilePath);
+            return ['status' => false];
+        }
+
+        return [
+            'status' => true,
+            'fileType' => $targetExtension,
+            'path'=>$newFilePath
+        ];
     }
 
     /**
      * @throws Exception
      */
-    private function resizeImageIfNeeded($filePath, $maxSizeMB = 10): string
+    private function resizeImageIfNeeded($filePath, $maxSizeMB = 10): void
     {
         $maxSizeBytes = $maxSizeMB * 1024 * 1024;
 
         if (!file_exists($filePath)) {
             Logger::instance()->warning('Compression file not found: ' . $filePath);
 
-            return $filePath;
+            return;
         }
 
         $fileSize = filesize($filePath);
         if ($fileSize <= $maxSizeBytes) {
 
-            return $filePath;
+            return;
         }
 
         $imageInfo = getimagesize($filePath);
         if (!$imageInfo) {
             Logger::instance()->warning('The file is not an image: ' . $filePath);
-            return $filePath;
+            return;
         }
 
         list($width, $height, $type) = $imageInfo;
@@ -836,7 +885,7 @@ class BrizyAPI extends Utils
                 break;
             default:
                 Logger::instance()->warning('The image type is not supported: ' . $filePath);
-                return $filePath;
+                return;
         }
 
         $scaleFactor = sqrt($maxSizeBytes / $fileSize);
@@ -870,7 +919,6 @@ class BrizyAPI extends Utils
 
         Logger::instance()->info('The image has been compressed to an acceptable size: ' . $filePath);
 
-        return $filePath;
     }
 
     private function fileExtension($expansion): string
@@ -898,15 +946,25 @@ class BrizyAPI extends Utils
         return $data;
     }
 
-    private function isUrlOrFile($urlOrPath): string
+    /**
+     * @throws Exception
+     */
+    private function isUrlOrFile(string $urlOrPath): array
     {
         if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
-            return $this->downloadImage($urlOrPath);
+
+            $detailsImage = $this->downloadImage($urlOrPath);
+
+            if ($detailsImage['status'] === false) {
+                return ['status' => false, 'message' => 'Failed to download image'];
+            }
+            return $detailsImage;
+
         } else {
             if (file_exists($urlOrPath)) {
-                return $urlOrPath;
+                return ['status' => false, 'message' => 'Failed to download image'];
             } else {
-                return "unknown";
+                return ['status' => false, 'message' => 'Failed to download image'];
             }
         }
     }
