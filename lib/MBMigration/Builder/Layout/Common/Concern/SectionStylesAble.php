@@ -18,7 +18,7 @@ trait SectionStylesAble
         array $additionalOptions = []
     ): void {
         $mbSectionItem = $data->getMbSection();
-        $headHeight = $data->getThemeContext()->getPageDTO()->getHeadStyle()->getHeight();
+        $headHeight = $data->getThemeContext()->getPageDTO()->getHeadStyle()->getHeight() + 30;
         $options = $additionalOptions;
 
         if (isset($headHeight) && $headHeight > $this->getTopPaddingOfTheFirstElement() && $this->getTopPaddingOfTheFirstElement() !== 0) {
