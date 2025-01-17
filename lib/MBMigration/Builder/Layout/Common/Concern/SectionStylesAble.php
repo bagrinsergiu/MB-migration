@@ -16,7 +16,7 @@ trait SectionStylesAble
         ElementContextInterface $data,
         BrizyComponent $section,
         array $additionalOptions = [],
-        $additionalConstantHeight = 0
+        int $additionalConstantHeight = 0
     ): void {
         $mbSectionItem = $data->getMbSection();
         $headHeight = $data->getThemeContext()->getPageDTO()->getHeadStyle()->getHeight() + $additionalConstantHeight;

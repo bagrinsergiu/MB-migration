@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Objects\Button;
+namespace MBMigration\Builder\Layout\Common\DTOObjects\Button;
 
 class ButtonStyle
 {

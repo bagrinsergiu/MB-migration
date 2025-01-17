@@ -1,6 +1,6 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Objects\Head;
+namespace MBMigration\Builder\Layout\Common\DTOObjects\Head;
 
 class HeadStyle
 {

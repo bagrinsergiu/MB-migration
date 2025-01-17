@@ -19,7 +19,7 @@ class ThreeBottomMediaCircle extends FullTextElement
 
         $items = $this->sortItems($mbSection['items']);
 
-        $this->setTopPaddingOfTheFirstElement($data, $brizySection);
+        $this->setTopPaddingOfTheFirstElement($data, $brizySection,[], 50);
 
         $i = 0;
         foreach ($items as $mbItem) {
