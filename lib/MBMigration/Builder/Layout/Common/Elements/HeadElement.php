@@ -286,13 +286,17 @@ abstract class HeadElement extends AbstractElement
 
             $this->browserPage->getPageScreen();
 
-
             $activeMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', [
                 'itemSelector' => $this->getThemeSubMenuSelectedItemSelector(),
                 'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,
                 'hover' => true,
+            ]);
+
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
 
             if($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])){
@@ -327,12 +331,6 @@ abstract class HeadElement extends AbstractElement
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
-        }
-
-        if(isset($hoverMenuSubItemStyles['data']['hoverSubMenuColorOpacity']) &&
-            isset($menuItemStyles['data']['mMenuColorOpacity'])){
-                $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = $hoverMenuItemStyles['data']['activeColorOpacity'];
-                $hoverMenuSubItemStyles['data']['hoverSubMenuColorOpacity'] = $hoverMenuItemStyles['data']['hoverColorOpacity'];
         }
 
         return [
