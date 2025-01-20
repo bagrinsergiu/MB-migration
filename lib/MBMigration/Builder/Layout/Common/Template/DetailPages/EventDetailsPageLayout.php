@@ -1,32 +1,13 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Elements\Events;
+namespace MBMigration\Builder\Layout\Common\Template\DetailPages;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\DTO\PageDto;
-use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class EventDetailsPageLayout extends DetailsPage
 {
-    private BrizyComponent $detailsSection;
 
-    private static BrizyComponent $cache;
-    private int $topPaddingOfTheFirstElement;
-
-    private int $mobileTopPaddingOfTheFirstElement;
-    private PageDto $pageTDO;
-
-    /**
-     * @throws BadJsonProvided
-     */
-    public function __construct($detailsSection, int $topPaddingOfTheFirstElement, int $mobileTopPaddingOfTheFirstElement, PageDto $pageTDO)
-    {
-        $this->detailsSection = new BrizyComponent(json_decode($detailsSection, true));
-        $this->topPaddingOfTheFirstElement = $topPaddingOfTheFirstElement;
-        $this->mobileTopPaddingOfTheFirstElement = $mobileTopPaddingOfTheFirstElement;
-        $this->pageTDO = $pageTDO;
-    }
     public function setStyleDetailPage(array $sectionPalette): BrizyComponent
     {
         if(!empty(self::$cache))
@@ -49,13 +30,13 @@ class EventDetailsPageLayout extends DetailsPage
         ];
 
         $wrapperItemTitle = [
-            'bgColorHex' => $sectionPalette['bg-accent'] ?? $sectionPalette['btn-bg'] ?? $basicButtonStyleNormal['background-color'],
+            'bgColorHex' => $this->colorPalettes['subpalette1']['bg-accent'] ?? $sectionPalette['bg-accent'] ?? $sectionPalette['btn-bg'] ?? $basicButtonStyleNormal['background-color'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
         ];
 
         $sectionStyle = [
-            'bgColorHex' => $sectionPalette['bg'],
+            'bgColorHex' => $this->colorPalettes['subpalette1']['bg'] ?? $sectionPalette['bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
         ];
@@ -297,6 +278,8 @@ class EventDetailsPageLayout extends DetailsPage
             ->typography(['lineHeight' => 1.7])
             ->dataTypography(['lineHeight' => 1.7])
             ->previewTypography(['lineHeight' => 1.7]);
+
+        $detailsSection->getItemWithDepth(0, 1, 1)->addPadding(10,15,5,15);
 
         foreach ($wrapperItemTitle as $key => $value) {
             $properties = 'set_'.$key;

@@ -10,10 +10,11 @@ use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -44,10 +45,12 @@ abstract class EventLayoutElement extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['main'], true));
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
-        $DetailsPageLayout = new EventDetailsPageLayout($this->brizyKit['EventLayoutElement']['detail'],
+        $DetailsPageLayout = new EventDetailsPageLayout(
+            $this->brizyKit['EventLayoutElement']['detail'],
             $this->getTopPaddingOfTheFirstElement(),
             $this->getMobileTopPaddingOfTheFirstElement(),
-            $this->pageTDO
+            $this->pageTDO,
+            $data
         );
 
         $mbSection = $data->getMbSection();

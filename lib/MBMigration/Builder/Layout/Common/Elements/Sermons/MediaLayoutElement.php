@@ -9,8 +9,9 @@ use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\SlugAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
+use MBMigration\Builder\Layout\Common\Template\DetailPages\SermonDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -179,7 +180,8 @@ abstract class MediaLayoutElement extends AbstractElement
             $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['EventLayoutElement']['detail'],
                 $this->getTopPaddingOfTheFirstElement(),
                 $this->getMobileTopPaddingOfTheFirstElement(),
-                $this->pageTDO
+                $this->pageTDO,
+                $data
             );
 
             $resultColorStyles['text'] = $this->getDomElementStyles(

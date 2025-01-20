@@ -12,6 +12,7 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout;
 use MBMigration\Layer\Graph\QueryBuilder;
 
 class EventFeaturedLayoutElement  extends AbstractElement
@@ -39,11 +40,15 @@ class EventFeaturedLayoutElement  extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventFeatured']['main'], true));
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventDetailsPage']['main'], true));
-        $DetailsPageLayout = new EventDetailsPageLayout($this->brizyKit['EventDetailsPage']['main'],
+        $DetailsPageLayout = new EventDetailsPageLayout(
+            $this->brizyKit['EventDetailsPage']['main'],
             $this->getTopPaddingOfTheFirstElement(),
             $this->getMobileTopPaddingOfTheFirstElement(),
-            $this->pageTDO
+            $this->pageTDO,
+            $data
         );
+
+
 
         $mbSection = $data->getMbSection();
         $mbPageSlug = $data->getThemeContext()->getSlug();

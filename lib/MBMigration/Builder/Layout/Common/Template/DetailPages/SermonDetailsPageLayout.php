@@ -1,39 +1,21 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Elements\Sermons;
+namespace MBMigration\Builder\Layout\Common\Template\DetailPages;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Utils\ColorConverter;
 
-class SermonDetailsPageLayout
+class SermonDetailsPageLayout extends DetailsPage
 {
-    private BrizyComponent $detailsSection;
-
-    private static BrizyComponent $cache;
-    private int $topPaddingOfTheFirstElement;
-
-    private int $mobileTopPaddingOfTheFirstElement;
-    private PageDto $pageTDO;
-
-    /**
-     * @throws BadJsonProvided
-     */
-    public function __construct($detailsSection, int $topPaddingOfTheFirstElement, int $mobileTopPaddingOfTheFirstElement, PageDto $pageTDO)
-    {
-        $this->detailsSection = new BrizyComponent(json_decode($detailsSection, true));
-        $this->topPaddingOfTheFirstElement = $topPaddingOfTheFirstElement;
-        $this->mobileTopPaddingOfTheFirstElement = $mobileTopPaddingOfTheFirstElement;
-        $this->pageTDO = $pageTDO;
-    }
-
     public function setStyleDetailPage(array $sectionPalette): BrizyComponent
     {
         if(!empty(self::$cache))
         {
             return self::$cache;
         }
+
         $detailsSection = $this->detailsSection;
 
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
@@ -59,7 +41,7 @@ class SermonDetailsPageLayout
 
         $sectionStyle = [
             'paddingTop' => $this->getTopPaddingOfTheFirstElement ?? 0,
-            'bgColorHex' => $sectionPalette['bg'],
+            'bgColorHex' => $this->colorPalettes['subpalette1']['bg'] ?? $sectionPalette['bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
         ];
@@ -392,7 +374,5 @@ class SermonDetailsPageLayout
             $detailsSection->getItemValueWithDepth(0)
                 ->$method($value);
         }
-
-
     }
 }
