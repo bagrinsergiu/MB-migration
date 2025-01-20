@@ -55,7 +55,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li", "className" => "selected"];
     }
 
     public function getThemeMenuItemBgSelector(): array

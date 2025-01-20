@@ -11,6 +11,7 @@ use MBMigration\Builder\Layout\Common\Concern\TextsExtractorAware;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
+use MBMigration\Builder\Layout\Common\ThemeContextInterface;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -21,9 +22,8 @@ abstract class AbstractElement implements ElementInterface
     use TextsExtractorAware;
     use ButtonAble;
 
-
     public PageDto $pageTDO;
-
+    public ThemeContextInterface $themeContext;
     protected array $brizyKit = [];
     protected array $headParams = [];
     protected array $basicHeadParams = [];
@@ -31,6 +31,7 @@ abstract class AbstractElement implements ElementInterface
     private QueryBuilder $queryBuilder;
     private array $buttonStyleNormal;
     private array $buttonStyleHover;
+
 
     public function __construct($brizyKit, BrowserPageInterface $browserPage)
     {
@@ -41,6 +42,7 @@ abstract class AbstractElement implements ElementInterface
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
         $this->pageTDO = $data->getThemeContext()->getPageDTO();
+        $this->themeContext = $data->getThemeContext();
 
         $this->initialBehavior($data);
 

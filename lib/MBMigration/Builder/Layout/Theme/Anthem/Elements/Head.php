@@ -258,7 +258,12 @@ class Head extends HeadElement
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
+        $currentMigrateSlugPage = $this->themeContext->getSlug();
+        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
+        $layoutName = $this->themeContext->getLayoutName();
+        $browser = $this->themeContext->getBrowser();
 
+        $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
     }
 
     public function getThemeMenuItemSelector(): array
@@ -379,5 +384,10 @@ class Head extends HeadElement
             "activeMenuBorderBottomWidth" => 2,
             "activeMenuBorderLeftWidth" => 0,
         ];
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
     }
 }
