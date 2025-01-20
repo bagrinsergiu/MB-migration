@@ -19,7 +19,13 @@ class ThreeBottomMediaCircle extends FullTextElement
 
         $items = $this->sortItems($mbSection['items']);
 
-        $this->setTopPaddingOfTheFirstElement($data, $brizySection);
+        $this->setTopPaddingOfTheFirstElement(
+            $data,
+            $brizySection,
+            [],
+            50,
+            $this->pageTDO->getPageStyle()->getPreviousSectionEmpty()
+        );
 
         $i = 0;
         foreach ($items as $mbItem) {
@@ -86,7 +92,7 @@ class ThreeBottomMediaCircle extends FullTextElement
             "marginLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 60,
+            "paddingTop" => 70,
             "paddingTopSuffix" => "px",
             "paddingBottom" => 20,
             "paddingBottomSuffix" => "px",

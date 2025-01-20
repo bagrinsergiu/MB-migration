@@ -750,7 +750,7 @@ class BrizyAPI extends Utils
             return ['status' => false];
         }
 
-        $newDetailsImage = $this->convertImageFormat($path);
+        $newDetailsImage = $this->convertImageFormat($path, $fileNameParts[count($fileNameParts) - 1]);
         if($newDetailsImage['status'] === false) {
             Logger::instance()->warning('Failed to convert image format: ' . $path);
             return ['status' => false];
@@ -759,6 +759,7 @@ class BrizyAPI extends Utils
 
         return [
             'status' => true,
+            'originalExtension' => $fileNameParts[count($fileNameParts) - 1],
             'fileName' => $fileNameParts[0] . '.' . $newDetailsImage['fileType'],
             'path' => $newDetailsImage['path'],
         ];
@@ -767,39 +768,14 @@ class BrizyAPI extends Utils
     /**
      * @throws Exception
      */
-    private function convertImageFormat($filePath): array
+    private function convertImageFormat($filePath, $targetExtension): array
     {
         if (!file_exists($filePath) || !is_readable($filePath)) {
             Logger::instance()->warning('File not found or not readable: ' . $filePath);
             return ['status' => false];
         }
 
-        $mimeType = mime_content_type($filePath);
-        $image = null;
-
-        switch ($mimeType) {
-            case 'image/jpeg':
-            case 'image/jpg':
-            case 'image/jfif':
-                $targetExtension = 'jpg';
-                $image = imagecreatefromjpeg($filePath);
-                break;
-            case 'image/png':
-                $targetExtension = 'png';
-                $image = imagecreatefrompng($filePath);
-                break;
-            case 'image/gif':
-                $targetExtension = 'gif';
-                $image = imagecreatefromgif($filePath);
-                break;
-            case 'image/webp':
-                $targetExtension = 'webp';
-                $image = imagecreatefromwebp($filePath);
-                break;
-            default:
-                Logger::instance()->warning('Unsupported image format for conversion: ' . $mimeType);
-                return ['status' => false];
-        }
+        $image = file_get_contents($filePath);
 
         if ($image === false) {
             Logger::instance()->warning('Failed to create image resource for conversion: ' . $filePath);
@@ -807,28 +783,7 @@ class BrizyAPI extends Utils
         }
 
         $newFilePath = $filePath . '.' . $targetExtension;
-
-        $saveResult = false;
-        switch ($targetExtension) {
-            case 'jpeg':
-            case 'jpg':
-                $saveResult = imagejpeg($image, $newFilePath, 90);
-                break;
-            case 'png':
-                $saveResult = imagepng($image, $newFilePath);
-                break;
-            case 'gif':
-                $saveResult = imagegif($image, $newFilePath);
-                break;
-            case 'webp':
-                $saveResult = imagewebp($image, $newFilePath);
-                break;
-            default:
-                Logger::instance()->warning('Unsupported target format: ' . $targetExtension);
-                break;
-        }
-
-        imagedestroy($image);
+        $saveResult = (bool) file_put_contents($newFilePath, $image);
 
         if ($saveResult) {
             if (!unlink($filePath)) {
@@ -842,7 +797,7 @@ class BrizyAPI extends Utils
         return [
             'status' => true,
             'fileType' => $targetExtension,
-            'path'=>$newFilePath
+            'path' => $newFilePath
         ];
     }
 
