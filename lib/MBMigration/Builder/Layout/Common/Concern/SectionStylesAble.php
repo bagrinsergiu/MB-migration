@@ -16,13 +16,18 @@ trait SectionStylesAble
         ElementContextInterface $data,
         BrizyComponent $section,
         array $additionalOptions = [],
-        int $additionalConstantHeight = 0
+        int $additionalConstantHeight = 0,
+        bool $mustBeAdded = false
     ): void {
         $mbSectionItem = $data->getMbSection();
         $headHeight = $data->getThemeContext()->getPageDTO()->getHeadStyle()->getHeight() + $additionalConstantHeight;
         $options = $additionalOptions;
 
-        if (isset($headHeight) && $headHeight > $this->getTopPaddingOfTheFirstElement() && $this->getTopPaddingOfTheFirstElement() !== 0) {
+        if (
+            isset($headHeight) &&
+            $headHeight > $this->getTopPaddingOfTheFirstElement() &&
+            $this->getTopPaddingOfTheFirstElement() !== 0
+        ) {
             $options['paddingTop'] = $headHeight;
         } else {
             if($this->getTopPaddingOfTheFirstElement() !== 0) {
@@ -34,7 +39,13 @@ trait SectionStylesAble
             $options['mobilePaddingTop'] = $this->getMobileTopPaddingOfTheFirstElement();
         }
 
-        if(isset($mbSectionItem['position']) &&  $mbSectionItem['position'] === 1) {
+        if(
+            $mustBeAdded ||
+            (
+                isset($mbSectionItem['position']) &&
+                $mbSectionItem['position'] === 1
+            )
+        ) {
             foreach ($options as $key => $value) {
                $method = 'set_'.$key;
                 $section->getValue()

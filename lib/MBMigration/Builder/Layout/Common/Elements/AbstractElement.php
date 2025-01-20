@@ -234,6 +234,7 @@ abstract class AbstractElement implements ElementInterface
             default:
 
                 if(!$this->emptyBackgroundContentSection($mbSection)){
+                    $this->pageTDO->getPageStyle()->setPreviousSectionEmpty();
                     break;
                 }
 
@@ -241,12 +242,14 @@ abstract class AbstractElement implements ElementInterface
                     if(!$this->canShowBody($mbSection) && !$this->canShowHeader($mbSection))
                     {
                         $this->sectionIndentations($section);
-                    }
-
-                    if($this->emptyContentSectionItem($mbSection['items'][0] ?? [])
-                        && $this->emptyContentSectionItem($mbSection['items'][1] ?? []))
-                    {
-                        $this->sectionIndentations($section);
+                    } else {
+                        if($this->emptyContentSectionItem($mbSection['items'][0] ?? [])
+                            && $this->emptyContentSectionItem($mbSection['items'][1] ?? []))
+                        {
+                            $this->sectionIndentations($section);
+                        } else {
+                            $this->pageTDO->getPageStyle()->setPreviousSectionEmpty();
+                        }
                     }
                 }
                 break;
@@ -262,6 +265,8 @@ abstract class AbstractElement implements ElementInterface
             ->addMobileMargin()
             ->addTabletPadding()
             ->addTabletMargin();
+
+        $this->pageTDO->getPageStyle()->setPreviousSectionEmpty(true);
     }
 
 }
