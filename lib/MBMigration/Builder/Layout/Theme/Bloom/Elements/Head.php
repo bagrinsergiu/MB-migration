@@ -164,11 +164,11 @@ class Head extends HeadElement
             "marginType" => "ungrouped",
             "margin" => 0,
             "marginSuffix" => "px",
-            "marginTop" => -10,
+            "marginTop" => 0,
             "marginTopSuffix" => "px",
             "marginRight" => 0,
             "marginRightSuffix" => "px",
-            "marginBottom" => -200,
+            "marginBottom" => -210,
             "marginBottomSuffix" => "px",
             "marginLeft" => 0,
             "marginLeftSuffix" => "px",
@@ -192,6 +192,8 @@ class Head extends HeadElement
                 ->getValue()
                 ->$nameOption($value);
         }
+
+        $brizySection->getItemWithDepth(0, 0, 0, 0, 0)->addPadding(20,20,20,20);
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
