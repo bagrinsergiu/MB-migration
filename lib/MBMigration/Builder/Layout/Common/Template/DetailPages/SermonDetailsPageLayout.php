@@ -11,9 +11,9 @@ class SermonDetailsPageLayout extends DetailsPage
 {
     public function setStyleDetailPage(array $sectionPalette): BrizyComponent
     {
-        if(!empty(self::$cache))
+        if(!empty(self::$cacheSermons))
         {
-            return self::$cache;
+            return self::$cacheSermons;
         }
 
         $detailsSection = $this->detailsSection;
@@ -29,7 +29,7 @@ class SermonDetailsPageLayout extends DetailsPage
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text'] ?? $sectionPalette['text']);
 
         $richTextTitle = [
-            'text' => '<p class="brz-text-lg-center brz-tp-lg-empty brz-ff-lato brz-ft-google brz-fs-lg-20 brz-fss-lg-px brz-fw-lg-400 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></p>',
+            'text' => '<p class="brz-text-lg-center brz-fss-lg-px brz-fw-lg-700 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0 brz-tp-lg-empty brz-ff-lato brz-ft-google brz-fs-lg-21" data-generated-css="brz-css-bLAMY" data-uniq-id="qQD1W"><span style="color: '.$colorTitle.';">Sermon Details</span></p>',
             'typographyFontStyle' => ''
         ];
 
@@ -323,16 +323,21 @@ class SermonDetailsPageLayout extends DetailsPage
                 ->$properties($value);
         }
 
+        $detailsSection->getItemWithDepth(0, 1)->addGroupedPadding();
+
         foreach ($sectionProperties2 as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0)
                 ->$properties($value);
         }
 
-        $detailsSection
-            ->getItemWithDepth(0,1,1,1,0)
+        $detailsSection->getItemWithDepth(0, 1, 1, 1, 0)
             ->dataTypography()
-            ->typography();
+            ->typography(['lineHeight' => 1.7])
+            ->dataTypography(['lineHeight' => 1.7])
+            ->previewTypography(['lineHeight' => 1.7]);
+
+        $detailsSection->getItemWithDepth(0, 1, 1)->addPadding(10,15,5,15);
 
         foreach ($sectionProperties2Margin as $key => $value) {
             $properties = 'set_'.$key;
@@ -355,7 +360,7 @@ class SermonDetailsPageLayout extends DetailsPage
 
         $this->sectionPadding($detailsSection);
 
-        self::$cache = $detailsSection;
+        self::$cacheSermons = $detailsSection;
 
         return $detailsSection;
     }

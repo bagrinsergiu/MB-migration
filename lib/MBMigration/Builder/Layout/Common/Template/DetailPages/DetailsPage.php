@@ -10,7 +10,8 @@ use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 class DetailsPage
 {
     protected BrizyComponent $detailsSection;
-    protected static BrizyComponent $cache;
+    protected static BrizyComponent $cacheEvent;
+    protected static BrizyComponent $cacheSermons;
     protected int $topPaddingOfTheFirstElement;
     protected int $mobileTopPaddingOfTheFirstElement;
     protected array $colorPalettes;
