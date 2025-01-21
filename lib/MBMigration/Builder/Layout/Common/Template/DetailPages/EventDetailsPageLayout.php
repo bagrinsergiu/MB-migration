@@ -10,9 +10,9 @@ class EventDetailsPageLayout extends DetailsPage
 
     public function setStyleDetailPage(array $sectionPalette): BrizyComponent
     {
-        if(!empty(self::$cache))
+        if(!empty(self::$cacheEvent))
         {
-            return self::$cache;
+            return self::$cacheEvent;
         }
 
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
@@ -45,6 +45,32 @@ class EventDetailsPageLayout extends DetailsPage
             'bgColorHex' => $sectionPalette['bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 0,
+        ];
+
+        $sectionPlayerStyle = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 0,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            "mobileMarginType" => "ungrouped",
+            "mobileMargin" => 0,
+            "mobileMarginSuffix" => "px",
+            "mobileMarginTop" => 10,
+            "mobileMarginTopSuffix" => "px",
+            "mobileMarginRight" => 0,
+            "mobileMarginRightSuffix" => "px",
+            "mobileMarginBottom" => 0,
+            "mobileMarginBottomSuffix" => "px",
+            "mobileMarginLeft" => 0,
+            "mobileMarginLeftSuffix" => "px",
         ];
 
         $sectionProperties1 = [
@@ -248,6 +274,12 @@ class EventDetailsPageLayout extends DetailsPage
                 ->$properties($value);
         }
 
+        foreach ($sectionPlayerStyle as $key => $value) {
+            $properties = 'set_'.$key;
+            $detailsSection->getItemValueWithDepth(0, 0)
+                ->$properties($value);
+        }
+
         foreach ($sectionProperties1 as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
@@ -303,7 +335,7 @@ class EventDetailsPageLayout extends DetailsPage
 
         $this->sectionPadding($detailsSection);
 
-        self::$cache = $detailsSection;
+        self::$cacheEvent = $detailsSection;
 
         return $detailsSection;
     }

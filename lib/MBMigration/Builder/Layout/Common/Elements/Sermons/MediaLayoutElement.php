@@ -177,7 +177,7 @@ abstract class MediaLayoutElement extends AbstractElement
             $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
             $detailsSection = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['detail'], true));
 
-            $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['EventLayoutElement']['detail'],
+            $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['GridMediaLayout']['detail'],
                 $this->getTopPaddingOfTheFirstElement(),
                 $this->getMobileTopPaddingOfTheFirstElement(),
                 $this->pageTDO,
