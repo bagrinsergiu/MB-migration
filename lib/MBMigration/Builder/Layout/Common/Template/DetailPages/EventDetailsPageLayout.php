@@ -293,6 +293,10 @@ class EventDetailsPageLayout extends DetailsPage
             ->previewTypography()
             ->subscribeEventButtonTypography();
 
+        $detailsSection
+            ->getItemWithDepth(0, 1)
+            ->addPadding(15,0,0,0);
+
         foreach ($sectionProperties2Margin as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 1)
@@ -330,8 +334,6 @@ class EventDetailsPageLayout extends DetailsPage
             $detailsSection->getItemValueWithDepth(0, 1)
                 ->$properties($value);
         }
-
-        $detailsSection->getItemWithDepth(0, 1)->addGroupedPadding();
 
         $this->sectionPadding($detailsSection);
 

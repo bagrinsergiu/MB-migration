@@ -323,8 +323,6 @@ class SermonDetailsPageLayout extends DetailsPage
                 ->$properties($value);
         }
 
-        $detailsSection->getItemWithDepth(0, 1)->addGroupedPadding();
-
         foreach ($sectionProperties2 as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0)
@@ -335,7 +333,10 @@ class SermonDetailsPageLayout extends DetailsPage
             ->dataTypography()
             ->typography(['lineHeight' => 1.7])
             ->dataTypography(['lineHeight' => 1.7])
-            ->previewTypography(['lineHeight' => 1.7]);
+            ->previewTypography(['lineHeight' => 1.7])
+            ->subscribeEventButtonTypography()
+            ->b
+        ;
 
         $detailsSection->getItemWithDepth(0, 1, 1)->addPadding(10,15,5,15);
 
@@ -357,6 +358,14 @@ class SermonDetailsPageLayout extends DetailsPage
             $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0, 0, 0)
                 ->$properties($value);
         }
+
+        $detailsSection
+            ->getItemWithDepth(0, 1)
+            ->addPadding(15,0,0,0);
+
+        $detailsSection
+            ->getItemWithDepth(0, 1, 1)
+            ->addPadding(0,0,0,0);
 
         $this->sectionPadding($detailsSection);
 
