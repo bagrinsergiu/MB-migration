@@ -181,6 +181,11 @@ abstract class AbstractElement implements ElementInterface
         return 50;
     }
 
+    protected function getAdditionalTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;

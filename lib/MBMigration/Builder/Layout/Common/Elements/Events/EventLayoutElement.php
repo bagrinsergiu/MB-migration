@@ -69,7 +69,7 @@ abstract class EventLayoutElement extends AbstractElement
 
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
-        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent, [], $this->getAdditionalTopPaddingOfTheFirstElement());
 
         $this->handleRichTextHead($elementContext, $this->browserPage);
 
@@ -152,15 +152,15 @@ abstract class EventLayoutElement extends AbstractElement
             'listPaginationColorOpacity' => 1,
             'listPaginationColorPalette' => '',
 
-            'calendarDaysBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['bg'],
+            'calendarDaysBgColorHex' => $sectionPalette['bg'] ?? $basicButtonStyleNormal['background-color'],
             'calendarDaysBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             'calendarDaysBgColorPalette' => '',
 
-            'calendarHeadingColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['text'],
+            'calendarHeadingColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'],
             'calendarHeadingColorOpacity' =>  $basicButtonStyleNormal['color-opacity'] ?? 1,
             'calendarHeadingColorPalette' => '',
 
-            'calendarDaysColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['text'],
+            'calendarDaysColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'],
             'calendarDaysColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
             'calendarDaysColorPalette' => '',
 

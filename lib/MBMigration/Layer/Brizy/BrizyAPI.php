@@ -750,11 +750,25 @@ class BrizyAPI extends Utils
             return ['status' => false];
         }
 
-        $newDetailsImage = $this->convertImageFormat($path, $fileNameParts[count($fileNameParts) - 1]);
+        $currentExtensionImage = $fileNameParts[count($fileNameParts) - 1];
+
+        switch ($currentExtensionImage) {
+            case 'jfif':
+                $extensionImage = $this->getFileExtension(
+                    mime_content_type($path)
+                );
+                break;
+            default:
+                $extensionImage = $currentExtensionImage;
+        }
+
+        $newDetailsImage = $this->convertImageFormat($path, $extensionImage);
+
         if($newDetailsImage['status'] === false) {
             Logger::instance()->warning('Failed to convert image format: ' . $path);
             return ['status' => false];
         }
+
         $this->resizeImageIfNeeded($newDetailsImage['path'], 9.5);
 
         return [
