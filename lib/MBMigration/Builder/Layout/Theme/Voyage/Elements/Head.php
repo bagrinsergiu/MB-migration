@@ -3,7 +3,9 @@
 namespace MBMigration\Builder\Layout\Theme\Voyage\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\HeadElement;
+use MBMigration\Builder\Utils\PathSlugExtractor;
 
 class Head extends HeadElement
 {
@@ -34,9 +36,27 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function beforeTransformToItem(ElementContextInterface $data): void
+    {
+        $menuEnt = $data->getThemeContext()->getBrizyMenuEntity();
+        $deepSlug = PathSlugExtractor::findDeepestSlug($menuEnt['list']);
+        $menuUrl = PathSlugExtractor::getFullUrl($deepSlug['slug']);
+        $layoutName = $data->getThemeContext()->getLayoutName();
+        $browser = $data->getThemeContext()->getBrowser();
+
+        $this->browserPage = $browser->openPage($menuUrl, $layoutName);
+    }
+
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
         // because of a fantastic idea to not have the option the place the icon per menu item
+
+        $currentMigrateSlugPage = $this->themeContext->getSlug();
+        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
+        $layoutName = $this->themeContext->getLayoutName();
+        $browser = $this->themeContext->getBrowser();
+
+        $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
 
         $menuPadding = [
             "mobileMarginType" => "ungrouped",
@@ -142,5 +162,10 @@ class Head extends HeadElement
     protected function getThemeSubMenuItemSelector(): array
     {
         return ["selector" => "#selected-sub-navigation ul li", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
     }
 }
