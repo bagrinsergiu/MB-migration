@@ -73,8 +73,6 @@ class Head extends HeadElement
         return $this->getThemeMenuItemSelector();
     }
 
-
-
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
         //set the default body bg as there are sections that are transparent

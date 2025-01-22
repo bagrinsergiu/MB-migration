@@ -339,7 +339,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addPaddingRight_n($padding = 0, $measureType = 'px', $prefix = '' ): BrizyComponent
+    public function addPaddingRight_n($padding = 0, $measureType = 'px', $prefix = ''): BrizyComponent
     {
         $formattedPrefix = $prefix !== '' ? strtolower($prefix) : '';
 
@@ -437,6 +437,7 @@ class BrizyComponent implements JsonSerializable
 
         return $this;
     }
+
     public function addMobileHorizontalContentAlign($verticalAlign = 'center'): BrizyComponent
     {
         if (!in_array($verticalAlign, ['center', 'left', 'right'])) {
@@ -609,6 +610,35 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function detailButtonTypography(): BrizyComponent
+    {
+        $bgColor = [
+            "detailButtonTypographyFontStyle" => "",
+            "detailButtonTypographyFontFamily" => "lato",
+            "detailButtonTypographyFontFamilyType" => "google",
+            "detailButtonTypographyFontSize" => 15,
+            "detailButtonTypographyFontSizeSuffix" => "px",
+            "detailButtonTypographyFontWeight" => 700,
+            "detailButtonTypographyLetterSpacing" => 0,
+            "detailButtonTypographyLineHeight" => 1.6,
+            "detailButtonTypographyVariableFontWeight" => 400,
+            "detailButtonTypographyFontWidth" => 100,
+            "detailButtonTypographyFontSoftness" => 0,
+            "detailButtonTypographyBold" => false,
+            "detailButtonTypographyItalic" => false,
+            "detailButtonTypographyUnderline" => false,
+            "detailButtonTypographyStrike" => false,
+            "detailButtonTypographyUppercase" => false,
+            "detailButtonTypographyLowercase" => false
+        ];
+
+        foreach ($bgColor as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
     public function addCustomCSS(string $newCSS): BrizyComponent
     {
         $savedCSS = $this->getValue()->get('customCSS');
@@ -678,4 +708,6 @@ class BrizyComponent implements JsonSerializable
         $this->getValue()->set('sizeType', 'original');
         return $this;
     }
+
+
 }

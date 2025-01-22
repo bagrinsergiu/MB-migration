@@ -315,7 +315,8 @@ class SermonDetailsPageLayout extends DetailsPage
             ->getItemWithDepth(0, 1, 0, 0, 0)
             ->titleTypography()
             ->previewTypography()
-            ->subscribeEventButtonTypography();
+            ->subscribeEventButtonTypography()
+            ->detailButtonTypography();
 
         foreach ($sectionDescriptionStyle as $key => $value) {
             $properties = 'set_'.$key;
@@ -335,8 +336,7 @@ class SermonDetailsPageLayout extends DetailsPage
             ->dataTypography(['lineHeight' => 1.7])
             ->previewTypography(['lineHeight' => 1.7])
             ->subscribeEventButtonTypography()
-            ->b
-        ;
+            ->detailButtonTypography();
 
         $detailsSection->getItemWithDepth(0, 1, 1)->addPadding(10,15,5,15);
 
@@ -352,6 +352,7 @@ class SermonDetailsPageLayout extends DetailsPage
                 ->$properties($value);
         }
 
+        $detailsSection->getItemWithDepth(0, 1, 1, 0)->addPadding(0,10,10,10);
 
         foreach ($richTextTitle as $key => $value) {
             $properties = 'set_'.$key;
