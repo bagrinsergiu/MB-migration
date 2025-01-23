@@ -138,6 +138,8 @@ trait DonationsAble
             $brizyDonationButton->getValue()->set_horizontalAlign(
                 $mbSection['settings']['sections']['donations']['alignment']
             );
+        } else {
+            $brizyDonationButton->getValue()->set_horizontalAlign('left');
         }
 
         switch ($buttonTextTransform['text-transform']) {
@@ -264,7 +266,7 @@ trait DonationsAble
                 $mbSection['settings']['sections']['donations']['alignment']
             );
         } else {
-            $brizyDonationButton->getValue()->set_horizontalAlign('center');
+            $brizyDonationButton->getValue()->set_horizontalAlign('left');
         }
 
         $brizyDonationButton->getItemValueWithDepth(0)
