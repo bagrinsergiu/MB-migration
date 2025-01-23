@@ -280,18 +280,28 @@ trait RichTextAble
                     ->set_mobileHeightSuffix($sizeUnit);
             }
 
-            $this->handleLink($mbSectionItem, $brizyComponent);
+            $this->handleLink(
+                $mbSectionItem,
+                $brizyComponent,
+                '[data-id="'.$mbSectionItemId.'"] div.photo-container a',
+                $browserPage);
         }
 
         return $brizyComponent;
     }
 
-    private function handleLink($mbSectionItem, $brizyComponent)
+    private function handleLink($mbSectionItem, $brizyComponent, $selector, $browserPage)
     {
         if ($mbSectionItem['new_window']) {
             $mbSectionItem['new_window'] = 'on';
         } else {
-            $mbSectionItem['new_window'] = 'off';
+            $mbSectionItem['new_window'] = $this->openNewTab(
+                $this->getNodeAttribute(
+                    $browserPage,
+                    $selector,
+                    'target'
+                )
+            );
         }
 
         if ($mbSectionItem['link'] != '') {
@@ -568,6 +578,18 @@ trait RichTextAble
             $result[$key] = $this->extractInteger($size);
         }
         return $result;
+    }
+
+    private function openNewTab(string $targetValue): string
+    {
+        switch ($targetValue) {
+            case '_blank':
+                return 'on';
+            case '_self':
+            default:
+                return 'off';
+        }
+
     }
 
 }
