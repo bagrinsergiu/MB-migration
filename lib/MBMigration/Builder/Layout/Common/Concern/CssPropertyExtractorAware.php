@@ -188,4 +188,17 @@ trait CssPropertyExtractorAware
         return $this->getDomElementStyles($selectorSectionStyles, $styles, $browserPage, $families, $default_fonts);
     }
 
+    public function getNodeAttribute(BrowserPageInterface $browserPage, string $selector, string $attributes)
+    {
+        $result = $browserPage->evaluateScript(
+            "brizy.dom.getNodeAttribute",
+            [
+                'selector' => $selector,
+                'attributeName' => $attributes,
+            ]
+        );
+
+        return $result['data'] ?? false;
+    }
+
 }

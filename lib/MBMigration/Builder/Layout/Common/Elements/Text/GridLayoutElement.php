@@ -199,7 +199,12 @@ abstract class GridLayoutElement extends AbstractElement
                 ->$method($value);
         }
 
-        $this->handleLink($mbSectionItem, $brizyComponent);
+        $this->handleLink(
+            $mbSectionItem,
+            $brizyComponent,
+            '[data-id="'.$mbSectionItem['id'].'"] .photo-container a',
+            $this->browserPage
+        );
     }
 
     abstract protected function getItemsPerRow(): int;
