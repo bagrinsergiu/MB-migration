@@ -2201,7 +2201,7 @@ const ex36: Data = {
   }
 };
 
-//#region Example 36 (Ember with spans unwrapped in p at first level)
+//#region Example 37 (Ember with spans unwrapped in p at first level)
 const ex37: Data = {
   html: `<div class="text-content text-2 editable" data-id="25872932" data-category="text"><div><div style="line-height: 1.4em; text-align: left;"><span class="clovercustom" style="font-size: 1em; letter-spacing: -0.175192px; font-weight: 600; text-align: right;">Pre-School:</span><span class="clovercustom" style="font-size: 1em; letter-spacing: -0.175192px; text-align: right;">&nbsp;</span><span class="clovercustom" style="text-align: right;">Our goal is to provide developmentally appropriate educational classes for each child in a safe, loving, Christian environment. Ages 6 weeks through 4 year olds.</span><p><span class="clovercustom" style="letter-spacing: -0.175192px; font-size: 1em; font-weight: 600; text-align: center;"><br></span></p><p><span class="clovercustom" style="letter-spacing: -0.175192px; font-size: 1em; font-weight: 600; text-align: center;">Men's and Women's Ministries </span>provide Bible Study, fellowship and service opportunities.<br></p><p><span class="clovercustom" style="font-size: 1em; letter-spacing: 0em; font-weight: 600;"><br></span></p><p><span class="clovercustom" style="font-size: 1em; letter-spacing: 0em; font-weight: 600;">Visitor Visitation ministry<span class="clovercustom">&nbsp;</span></span>is focused on providing a free gift&nbsp; &nbsp;bag to 1st and 2nd time visitors with a follow-up via phone or email.<br></p><p><br></p><p><span class="clovercustom" style="font-size: 0.9557em; font-weight: 600; letter-spacing: -0.01em;">Hearts Still Growing:</span><span class="clovercustom" style="font-size: 1em; letter-spacing: 0em;">&nbsp;</span>a Bible class, fellowship and service opportunities for our 'seniors'.<br></p><p><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><span class="clovercustom" style="font-size: 0.9557em; font-weight: 600; letter-spacing: -0.01em;">Children's Homes:</span><span class="clovercustom">&nbsp;</span>serve as a safe loving environment for foster children.<br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><span class="clovercustom" style="font-weight: 600;">Our Food Pantry<span class="clovercustom">&nbsp;</span></span>provides free food for individuals in our community.</p><p style="font-size: 0.9557em; line-height: 1.4em;"><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><span class="clovercustom" style="font-size: 0.9557em; letter-spacing: 0em; font-weight: 600;">Small Groups:</span><span class="clovercustom" style="font-size: 0.9557em; letter-spacing: 0em;">&nbsp;</span>10-12 people gather for prayer, Bible study, spiritual support and fellowship.<br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><br></p><p style="font-size: 0.9557em; line-height: 1.4em;"><br style="font-size: 16.0007px; letter-spacing: -0.167424px;"></p></div></div></div>`,
   entry: { ...entry, selector: '[data-id="25872932"]' },
@@ -2219,6 +2219,54 @@ const ex37: Data = {
                 _id: "1",
                 _styles: ["richText"],
                 text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-right brz-ls-lg-m_0_1"><span style="font-weight: 600; ">Pre-School:</span><span style="">&nbsp;</span><span style="">Our goal is to provide developmentally appropriate educational classes for each child in a safe, loving, Christian environment. Ages 6 weeks through 4 year olds.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; "><br></span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-m_0_1"><span style="font-weight: 600; ">Men\'s and Women\'s Ministries </span><span>provide Bible Study, fellowship and service opportunities.</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; "><br></span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; ">Visitor Visitation ministry<span>&nbsp;</span></span><span>is focused on providing a free gift&nbsp; &nbsp;bag to 1st and 2nd time visitors with a follow-up via phone or email.</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_0"><span style="font-weight: 600; ">Hearts Still Growing:</span><span style="">&nbsp;</span><span>a Bible class, fellowship and service opportunities for our \'seniors\'.</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_0"><span style="font-weight: 600; ">Children\'s Homes:</span><span>&nbsp;</span><span>serve as a safe loving environment for foster children.</span><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; ">Our Food Pantry<span>&nbsp;</span></span><span>provides free food for individuals in our community.</span></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; ">Small Groups:</span><span style="">&nbsp;</span><span>10-12 people gather for prayer, Bible study, spiritual support and fellowship.</span><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br style=""></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+//#endregion
+
+//#region Example 38 (Anthem duplicate embeds models)
+const ex38: Data = {
+  html: `<div class="text-content text-1 editable" data-category="text" data-id="11222015"><div><p></p><div class="embedded-paste" contenteditable="false" data-src="<p><br></p><div class=&quot;embedded-paste&quot; contenteditable=&quot;true&quot;><script src=&quot;https://s3-us-west-2.amazonaws.com/bloomerang-public-cdn/bestwa/.widget-js/73728.js&quot; type=&quot;text/javascript&quot;></script></div><p><br></p>"><p><br></p><div class="embedded-paste" contenteditable="true"><script src="https://s3-us-west-2.amazonaws.com/bloomerang-public-cdn/bestwa/.widget-js/73728.js" type="text/javascript"></script><style text="text/css">.email-registration-form label{color: #404040;                display: block;}.email-registration-form label.error{color:#900;                display: inline-block;                 padding: 0 10px;}.email-registration-form .field{padding: 4px 0;}.email-registration-form .consent{padding-bottom: 4px;}.email-registration-form .field .required-star{color: #aa0000;                 display: inline-block;                 margin-left: 5px;}.email-registration-form .field .checkboxes{max-width:275px;                border: 1px solid #A9A9A9;                -webkit-transition: all .3s ease-out;                -moz-transition: all .3s ease-out;                transition: all .3s ease-out;}.email-registration-form .field .checkbox{display:block;                position:relative;                -moz-box-sizing:border-box;                box-sizing:border-box;                height:30px;                line-height:26px;                padding:2px 28px 2px 8px;                border-bottom:1px solid rgba(0,0,0,0.1);                color:#404040;                  overflow:hidden;                text-decoration:none; }.email-registration-form .field .checkbox input{opacity:0.01;                position:absolute;                left:-50px;                  z-index:-5;}.email-registration-form .field .checkbox:last-child{border-bottom:none;}.email-registration-form .field .checkbox.selected{background: rgb(50, 142, 253);                color:#fff; }.email-registration-form .field .checkbox.selected:before{color:#fff;                line-height:30px;                position:absolute;                right:10px; }.email-registration-form .field input{padding: 4px;                 width: 275px;}.email-registration-form .errors{border: 1px solid #900;                color: #900;                  padding: 10px;}.email-registration-form .hidden{display: none;}.btn-group .btn-submit-email{padding: 4px 10px;}input, select, textarea, button{font-family: inherit;}</style><div id="email-registration-form-container">  <form action="javascript:void(0)" class="email-registration-form" id="email-registration-form" method="post" novalidate="novalidate">    <div class="errors hidden"></div>    <div class="section contact">      <h3>Contact Information</h3>      <div class="field text first-name required"><label for="first-name"><span class="label">First Name</span><span class="required-star">*</span></label><input class="required" id="first-name" name="first-name" type="text"></div><div class="field text last-name required"><label for="last-name"><span class="label">Last Name</span><span class="required-star">*</span></label><input class="required" id="last-name" name="last-name" type="text"></div><div class="field email email-address required"><label for="email-address"><span class="label">Email</span><span class="required-star">*</span></label><input class="email required" id="email-address" name="email-address" placeholder="someone@website.com" type="email"></div><div class="consent">I want to receive emails at this address</div></div>            <div class="btn-group">      <input class="btn btn-submit btn-submit-email" type="submit" value="Sign up">    </div>  </form></div></div><p><br></p></div><br><p></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="11222015"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "EmbedCode"
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<br><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"></p>'
               }
             }
           ]
@@ -2266,7 +2314,8 @@ describe.each([
   ex34,
   ex35,
   ex36,
-  ex37
+  ex37,
+  ex38
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
