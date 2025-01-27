@@ -1,10 +1,11 @@
+import { Families } from "elements/src/types/type";
 import { Literal } from "utils";
 
 export {};
 
 declare global {
   const SELECTOR: string;
-  const FAMILIES: Record<string, string>;
+  const FAMILIES: Families;
   const DEFAULT_FAMILY: string;
   const STYLE_PROPERTIES: Array<string>;
   const TARGET: string | undefined;

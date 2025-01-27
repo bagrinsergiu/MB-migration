@@ -91,8 +91,16 @@ export function copyColorStyleToTextNodes(element: Element): void {
         const parentOFParentStyle = getNodeStyle(parentOfParent);
         parentElement.style.color = `${parentOFParentStyle.color}`;
       }
-      if (!parentStyle?.fontWeight && parentOfParent.style?.fontWeight) {
-        parentElement.style.fontWeight = parentOfParent.style.fontWeight;
+
+      if (!parentStyle?.fontWeight) {
+        const fontWeight =
+          parentElement.tagName === "STRONG"
+            ? getComputedStyle(parentElement).fontWeight
+            : parentOfParent.style.fontWeight;
+
+        if (fontWeight) {
+          parentElement.style.fontWeight = fontWeight;
+        }
       }
 
       if (parentOfParent.tagName === "SPAN") {
