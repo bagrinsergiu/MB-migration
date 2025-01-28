@@ -45,6 +45,7 @@ abstract class HeadElement extends AbstractElement
             $this->basicHeadParams = array_merge($this->basicHeadParams, $this->headParams);
             $this->beforeTransformToItem($data);
             $component = $this->internalTransformToItem($data);
+            $this->generalSectionBehavior($data, $component);
             $this->afterTransformToItem($component);
 
             // save it as a global block
@@ -359,6 +360,11 @@ abstract class HeadElement extends AbstractElement
         }
 
         return $hoverMenuSubItemStyles['data'] ?? [];
+    }
+
+    private function generalSectionBehavior(ElementContextInterface $data, BrizyComponent $section): void
+    {
+        $section->getItemWithDepth(0)->addCustomCSS('blockquote{margin:0;}');
     }
 
     /**
