@@ -214,11 +214,15 @@ trait RichTextAble
                 case 'EmbedCode':
                     //wrapper
                     if(!isset($embeddedElements[$embeddIndex]))  break;
-                    $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embeddedElements[$embeddIndex++]);
+
+                    $embedCode = $embeddedElements[$embeddIndex++];
+                    $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embedCode['embed']);
                     $cssClass = 'custom-align-'.random_int(0, 10000);
                     $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
                     $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
-                        ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }"
+                        ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
+.{$cssClass} .embedded-paste:has(iframe) {display: grid;}
+.{$cssClass} .embedded-paste iframe {justify-self: {$embedCode['text-align']};}"
                     );
                     $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
                     break;
@@ -458,10 +462,14 @@ trait RichTextAble
         foreach ($divs as $div) {
             if ($div->hasAttribute('class') && $div->getAttribute('class') === 'embedded-paste') {
                 $dataSrc = $div->getAttribute('data-src');
+                preg_match('/text-align:\s*([^;]+)/', $div->getAttribute('style'), $matches);
                 $escapedDataSrc = str_replace('"', '\\"', $dataSrc);
                 $div->setAttribute('data-src', $escapedDataSrc);
 
-                $result[] = $dom->saveHTML($div);
+                $result[] = [
+                    'embed' => $dom->saveHTML($div),
+                    'text-align' => $matches[1] ?? 'left'
+                ];
             }
         }
 
