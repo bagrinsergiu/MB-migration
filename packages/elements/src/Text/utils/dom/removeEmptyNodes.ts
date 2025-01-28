@@ -1,3 +1,10 @@
+const trimSpacesAtStartOfTag = (html: string) =>
+  html.replace(
+    /(<[^>]+>)\s{2,}([^<]*)(<\/[^>]+>)/g, // Match tags with two or more spaces at the start of the text content
+    (_, openTag, textContent, closeTag) =>
+      `${openTag}${textContent.trimStart()}${closeTag}` // Trim leading spaces if no nested tags
+  );
+
 export function removeEmptyNodes(node: Element): Element {
   const children = Array.from(node.children);
 
@@ -11,7 +18,8 @@ export function removeEmptyNodes(node: Element): Element {
     }
   });
 
-  node.innerHTML = node.innerHTML.replace(/\n/g, " ");
+  const content = node.innerHTML.replace(/\n/g, " ");
+  node.innerHTML = trimSpacesAtStartOfTag(content);
 
   return node;
 }
