@@ -15,17 +15,41 @@ const listItemsColor = (node: Element) => {
   const listItems = Array.from(node.children) as HTMLElement[];
 
   listItems.forEach((listItem) => {
-    const child = listItem.firstChild as HTMLElement;
+    const child = listItem.children[0];
 
-    if (child.style?.color) {
-      listItem.style.color = child.style.color;
+    if (!child) {
+      return;
     }
+
+    listItem.style.color = window.getComputedStyle(child).color;
+  });
+};
+
+const removeParagraphsFromListAsFirstItem = (node: Element) => {
+  // Get all LI elements from the list
+  const list = Array.from(node.querySelectorAll("li"));
+
+  list.forEach((node) => {
+    // Get all P elements from the LI element
+    const paragraphs = Array.from(node.children).filter(
+      (element) => element.nodeName === "P"
+    );
+
+    paragraphs.forEach((paragraph) => {
+      // Move each child of the paragraph to the parent node (before the paragraph)
+      while (paragraph.firstChild) {
+        node.insertBefore(paragraph.firstChild, paragraph);
+      }
+      // Remove the empty paragraph element
+      node.removeChild(paragraph);
+    });
   });
 };
 
 const listStyles = (node: Element): void => {
   const allowedTags = ["UL", "OL"];
   if (allowedTags.includes(node.nodeName)) {
+    removeParagraphsFromListAsFirstItem(node);
     listMargins(node);
     listItemsColor(node);
   } else if (node.nodeType === Node.ELEMENT_NODE) {
