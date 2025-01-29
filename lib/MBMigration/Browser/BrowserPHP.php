@@ -6,9 +6,7 @@ use HeadlessChromium\Page;
 use Monolog\Logger;
 use Exception;
 use HeadlessChromium\BrowserFactory;
-use MBMigration\Core\Config;
 use Monolog\Handler\StreamHandler;
-use Nesk\Puphpeteer\Puppeteer;
 use Psr\Log\LoggerInterface;
 
 class BrowserPHP implements BrowserInterface
@@ -43,7 +41,7 @@ class BrowserPHP implements BrowserInterface
 
         // starts headless Chrome
         $this->browser = $browserFactory->createBrowser([
-            'windowSize' => [1920, 2000],
+            'windowSize' => [1920, 6000],
             //'enableImages' => true,
             'debugLogger' => $logger,
             'keepAlive' => false,

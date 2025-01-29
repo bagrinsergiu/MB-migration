@@ -92,11 +92,11 @@ class MediaController
         if ($favicon != null) {
             $parts = explode(".", $favicon);
             $downloadImageURL = self::getPicturesUrl($parts[0].'.'.$parts[1], 'favicons');
-            $resultImgeUpload = $brizyApi->createMedia($downloadImageURL, $projectId);
-            if ($resultImgeUpload) {
-                if (array_key_exists('status', $resultImgeUpload)) {
-                    if ($resultImgeUpload['status'] == 201) {
-                        $result = json_decode($resultImgeUpload['body'], true);
+            $resultImageUpload = $brizyApi->createMedia($downloadImageURL, $projectId);
+            if ($resultImageUpload) {
+                if (array_key_exists('status', $resultImageUpload)) {
+                    if ($resultImageUpload['status'] == 201) {
+                        $result = json_decode($resultImageUpload['body'], true);
                         $QueryBuilder->updateFaviconMetafield($result['name']);
                     }
                 }
@@ -121,7 +121,7 @@ class MediaController
                         $result = json_decode($result['body'], true);
                         $section['settings']['sections']['background']['photo'] = $result['name'];
                         $section['settings']['sections']['background']['filename'] = $result['filename'];
-                        Logger::instance()->debug('Success upload image', $result);
+                        Logger::instance()->debug('Success upload image', [$result]);
                     }
                 } else {
                     self::checkItemForMediaFiles($section['items'], $section['typeSection'], $projectId, $brizyApi);

@@ -6,9 +6,11 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
+use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettes;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
+use MBMigration\Builder\Utils\UrlUtils;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\Fonts\FontsController;
@@ -43,10 +45,13 @@ class PageController
     private QueryBuilder $QueryBuilder;
     private MBProjectDataCollector $parser;
     private int $projectID_Brizy;
+    private PageDto $pageDTO;
 
     public function __construct(MBProjectDataCollector $MBProjectDataCollector, BrizyAPI $brizyAPI, QueryBuilder $QueryBuilder, LoggerInterface $logger, $projectID_Brizy)
     {
         $this->cache = VariableCache::getInstance();
+        $this->pageDTO = new PageDTO();
+        $this->projectStyleDTO = new PageDTO();
         $this->brizyAPI = $brizyAPI;
         $this->QueryBuilder = $QueryBuilder;
         $this->projectID_Brizy = $projectID_Brizy;
@@ -76,20 +81,36 @@ class PageController
         $this->cache->set('pageMapping', $pageMapping);
 
         $workClass = __NAMESPACE__.'\\Layout\\Theme\\'.$design.'\\'.$design;
+        $_WorkClassTemplate = new $workClass();
 
         $layoutBasePath = dirname(__FILE__)."/Layout";
 
         $queryBuilder = $this->cache->getClass('QueryBuilder');
+
+        if(UrlUtils::checkRedirect($url)){
+            return true;
+        }
 
         $this->browser = BrowserPHP::instance($layoutBasePath);
         try {
             try {
                 $browserPage = $this->browser->openPage($url, $design);
             } catch (OperationTimedOut $e) {
+
                 Logger::instance()->critical($e->getMessage());
+
+                try{
+                    $this->browser->closePage();
+                    $this->browser->closeBrowser();
+                } catch (\Exception $e) {}
+
                 $this->browser = BrowserPHP::instance($layoutBasePath);
                 $browserPage = $this->browser->openPage($url, $design);
             }
+
+            $ParentPages = $this->cache->get('ParentPages');
+            $projectDomain = PathSlugExtractor::getProjectDomain();
+            $siteMap = PathSlugExtractor::getSiteMap($ParentPages, $projectDomain);
 
             $brizyKit = (new KitLoader($layoutBasePath))->loadKit($design);
             $layoutElementFactory = new LayoutElementFactory(
@@ -124,13 +145,19 @@ class PageController
                 $pageMapping,
                 $RootPalettesExtracted->extractRootPalettes(),
                 $this->browser,
-                $listSeries
+                $listSeries,
+                $this->pageDTO,
+                $this->cache->get('title','settings') ?? ''
             );
 
             /**
              * @var ThemeInterface $_WorkClassTemplate ;
              */
-            $_WorkClassTemplate = new $workClass($themeContext);
+
+            $_WorkClassTemplate->setThemeContext($themeContext);
+            $this->pageDTO->setPageStyleDetails($_WorkClassTemplate->beforeBuildPage());
+
+            $_WorkClassTemplate->setThemeContext($themeContext);
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
             $pageData = json_encode($brizySections);

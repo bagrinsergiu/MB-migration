@@ -51,10 +51,10 @@ class BrizyComponentValue implements JsonSerializable
         return $this;
     }
 
-    public function get($field, $value)
+    public function get($field)
     {
         if (!isset($this->fields[$field])) {
-            throw new Exception();
+            return null;
         }
 
         return $this->fields[$field];

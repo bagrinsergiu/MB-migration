@@ -48,9 +48,14 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
         return $brizySection;
     }
 
-    protected function getTopPaddingOfTheFirstElement(): int
+    protected function getAdditionalTopPaddingOfTheFirstElement(): int
     {
         return 0;
+    }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 20;
     }
 
     protected function getPropertiesMainSection(): array

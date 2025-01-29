@@ -134,6 +134,30 @@ class PathSlugExtractor
         return null;
     }
 
+    public static function getSiteMap(array $parentListPages, string $projectDomain): array {
+        $list = [];
+        foreach ($parentListPages as $parentPage) {
+            $list[] = $projectDomain . '/' . $parentPage['slug'];
+            if(!empty($parentPage['child'])){
+                foreach ($parentPage['child'] as $childPage) {
+                    $list[] = $projectDomain . '/' . $parentPage['slug'] . '/' . $childPage['slug'];
+                }
+            }
+        }
+
+        return $list;
+    }
+
+    public static function getProjectDomain(): string
+    {
+        $cache = VariableCache::getInstance();
+        $domain = $cache->get('settings')['domain'];
+
+        $UrlDomain = new UrlBuilder($domain);
+
+        return $UrlDomain->getDomain();
+    }
+
     public static function getOrderedPathString($data, $slug, $findBy): ?string
     {
         $orderedPath = self::getOrderedPath($data, $slug, $findBy);

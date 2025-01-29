@@ -3,6 +3,8 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
@@ -12,6 +14,8 @@ abstract class ListLayoutElement extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
+    use DonationsAble;
+    use ButtonAble;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -25,7 +29,12 @@ abstract class ListLayoutElement extends AbstractElement
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
@@ -33,41 +42,79 @@ abstract class ListLayoutElement extends AbstractElement
         $this->handleRichTextHead($elementContext, $this->browserPage);
 
         if ($showHeader) {
-            $this->afterTransformItem($elementContext, $this->getHeaderComponent($brizySection));
+            $this->transformHeadItem($elementContext, $this->getHeaderComponent($brizySection), $styleList);
         }
 
         $itemJson = json_decode($this->brizyKit['item-'.$photoPosition], true);
         $brizyComponentValue = $this->getSectionItemComponent($brizySection)->getValue();
+
         foreach ($mbSection['items'] as $item) {
             $brizySectionItem = new BrizyComponent($itemJson);
 
             $elementContext = $data->instanceWithMBSection($item);
             $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
-            $brizySectionItem->getValue()
-                ->set_paddingTop((int)$styles['margin-top'])
-                ->set_paddingBottom((int)$styles['margin-bottom'])
-                ->set_paddingRight((int)$styles['margin-right'])
-                ->set_paddingLeft((int)$styles['margin-left']);
+            $this->handleRowListItem($brizySectionItem);
+
+//            $brizySectionItem->getValue()
+//                ->set_paddingTop((int)$styles['margin-top'])
+//                ->set_paddingBottom((int)$styles['margin-bottom'])
+//                ->set_paddingRight((int)$styles['margin-right'])
+//                ->set_paddingLeft((int)$styles['margin-left']);
+
+            $this->handleItemTextContainerComponent($brizySectionItem);
 
             foreach ($item['items'] as $mbItem) {
-                if ($mbItem['item_type'] == 'title' || $mbItem['item_type'] == 'body') {
+                if ($mbItem['item_type'] == 'title') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
                         $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
                     );
+                    $this->handleRichTextItem($elementContext, $this->browserPage);
+
+                    $this->transformListItem($elementContext,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition),
+                        $styleList);
                 }
+            }
+
+            foreach ($item['items'] as $mbItem) {
+                if ($mbItem['item_type'] == 'body') {
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                        $mbItem,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                    );
+                    $this->handleRichTextItem($elementContext, $this->browserPage);
+                }
+            }
+
+            foreach ($item['items'] as $mbItem) {
+                if ($mbItem['category'] == 'button') {
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                        $mbItem,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                    );
+                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
+                }
+            }
+
+            foreach ($item['items'] as $mbItem) {
+                if ($mbItem['category'] == 'donation') {
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                        $mbItem,
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                    );
+                    $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+                }
+            }
+
+            foreach ($item['items'] as $mbItem) {
                 if ($mbItem['category'] == 'photo') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
                         $this->getItemImageComponent($brizySectionItem, $photoPosition)
                     );
-                }
-                $this->handleRichTextItem($elementContext, $this->browserPage);
-
-                if ($mbItem['item_type'] == 'title') {
-                    $this->afterTransformItem($elementContext,
-                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition));
+                    $this->handleRichTextItem($elementContext, $this->browserPage);
                 }
             }
 
@@ -89,7 +136,19 @@ abstract class ListLayoutElement extends AbstractElement
         string $photoPosition
     ): BrizyComponent;
 
-    abstract protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent;
+    abstract protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
+
+    protected function handleItemTextContainerComponent(BrizyComponent $brizySection): void
+    {
+
+    }
+
+    protected function handleRowListItem(BrizyComponent $brizySection): void
+    {
+        $brizySection
+            ->getItemWithDepth(0)
+            ->addPadding(55,0,55,0);
+    }
 
     protected function getPropertiesMainSection(): array
     {

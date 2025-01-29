@@ -6,12 +6,15 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
+use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -20,6 +23,8 @@ abstract class EventLayoutElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use BrizyQueryBuilderAware;
+    use CssPropertyExtractorAware;
+    use ButtonAble;
 
     /**
      * @param $brizyKit
@@ -40,7 +45,13 @@ abstract class EventLayoutElement extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['main'], true));
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
-        $DetailsPageLayout = new EventDetailsPageLayout($this->brizyKit['EventLayoutElement']['detail']);
+        $DetailsPageLayout = new EventDetailsPageLayout(
+            $this->brizyKit['EventLayoutElement']['detail'],
+            $this->getTopPaddingOfTheFirstElement(),
+            $this->getMobileTopPaddingOfTheFirstElement(),
+            $this->pageTDO,
+            $data
+        );
 
         $mbSection = $data->getMbSection();
 
@@ -54,9 +65,11 @@ abstract class EventLayoutElement extends AbstractElement
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
 
-        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent, [], $this->getAdditionalTopPaddingOfTheFirstElement());
 
         $this->handleRichTextHead($elementContext, $this->browserPage);
 
@@ -92,6 +105,12 @@ abstract class EventLayoutElement extends AbstractElement
                 ];
                 break;
         }
+
+        $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
+        $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
+
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
         $sectionProperties = [
             'eventDetailPageButtonText' => 'Learn More',
@@ -133,16 +152,16 @@ abstract class EventLayoutElement extends AbstractElement
             'listPaginationColorOpacity' => 1,
             'listPaginationColorPalette' => '',
 
-            'calendarHeadingColorHex' => $sectionPalette['text'],
-            'calendarDaysBgColorOpacity' => 1,
+            'calendarDaysBgColorHex' => $sectionPalette['bg'] ?? $basicButtonStyleNormal['background-color'],
+            'calendarDaysBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             'calendarDaysBgColorPalette' => '',
 
-            'calendarDaysBgColorHex' => $sectionPalette['bg'],
-            'calendarHeadingColorOpacity' => 1,
+            'calendarHeadingColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'],
+            'calendarHeadingColorOpacity' =>  $basicButtonStyleNormal['color-opacity'] ?? 1,
             'calendarHeadingColorPalette' => '',
 
-            'calendarDaysColorHex' => $sectionPalette['text'],
-            'calendarDaysColorOpacity' => 1,
+            'calendarDaysColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'],
+            'calendarDaysColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
             'calendarDaysColorPalette' => '',
 
             'eventsColorHex' => $sectionPalette['link'],
@@ -165,8 +184,8 @@ abstract class EventLayoutElement extends AbstractElement
             'listItemMetaColorOpacity' => 1,
             'listItemMetaColorPalette' => '',
 
-            'listItemDateColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'listItemDateColorOpacity' => 1,
+            'listItemDateColorHex' => $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'listItemDateColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 1,
             'listItemDateColorPalette' => '',
 
             'listTitleColorHex' => $sectionPalette['text'],
@@ -189,25 +208,37 @@ abstract class EventLayoutElement extends AbstractElement
             'dateColorOpacity' => 1,
             'dateColorPalette' => '',
 
-            'listItemDateBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'listItemDateBgColorOpacity' => 1,
+            'listItemDateBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'listItemDateBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             'listItemDateBgColorType' => 'solid',
             'listItemDateBgColorPalette' => '',
 
-            'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'detailButtonBgColorOpacity' => 1,
+            'detailButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'detailButtonBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             'detailButtonBgColorPalette' => '',
 
-            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'hoverDetailButtonBgColorOpacity' => 0.75,
+            'hoverDetailButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
             'hoverDetailButtonBgColorPalette' => '',
+
+            'detailButtonBorderStyle' => 'solid',
+            'detailButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
+            'detailButtonBorderColorPalette' => '',
+
+            "detailButtonBorderWidthType" => "grouped",
+            "detailButtonBorderWidth" => 1,
+            "detailButtonBorderTopWidth" => 1,
+            "detailButtonBorderRightWidth" => 1,
+            "detailButtonBorderBottomWidth" => 1,
+            "detailButtonBorderLeftWidth" => 1,
 
             'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'hoverDetailButtonColorOpacity' => 0.75,
+            'hoverDetailButtonColorHex' => $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 0.75,
             'hoverDetailButtonColorPalette' => '',
 
             'detailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],

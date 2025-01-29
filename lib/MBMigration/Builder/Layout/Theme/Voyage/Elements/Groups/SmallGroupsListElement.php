@@ -7,7 +7,7 @@ class SmallGroupsListElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 80;
+        return 50;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -25,15 +25,15 @@ class SmallGroupsListElement extends \MBMigration\Builder\Layout\Common\Elements
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 20,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 80,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 80,
+            "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

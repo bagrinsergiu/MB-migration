@@ -21,14 +21,19 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0, 0);
     }
 
-    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent
+    protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params=[]): BrizyComponent
     {
         return $brizySection;
     }
 
+    protected function handleItemTextContainerComponent(BrizyComponent $brizySection): void
+    {
+        $brizySection->addPadding(35, 0, 35, 0);
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 80;
+        return 50;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -46,20 +51,25 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 20,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 80,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 80,
+            "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",
             "paddingLeft" => 0,
             "paddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function transformHeadItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
     }
 }

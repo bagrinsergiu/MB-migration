@@ -86,7 +86,7 @@ class Browser implements BrowserInterface
             \MBMigration\Core\Logger::instance()->info($e->getMessage());
         }
 
-        return new BrowserPage($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
+        return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
     }
 
     public function closePage(): void

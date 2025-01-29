@@ -15,8 +15,17 @@ class Footer extends FooterElement
     protected function getPropertiesMainSection(): array
     {
         return [
-            "margin-left" => 0,
-            "margin-right" => 0,
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 10,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 10,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 10,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 10,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 10,
+            "mobilePaddingLeftSuffix" => "px",
         ];
     }
 

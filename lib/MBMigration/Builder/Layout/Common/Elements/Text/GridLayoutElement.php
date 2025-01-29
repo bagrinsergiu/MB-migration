@@ -3,7 +3,8 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
+use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -16,7 +17,8 @@ abstract class GridLayoutElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use ImageStylesAble;
-    use DanationsAble;
+    use DonationsAble;
+    use ButtonAble;
 
     private array $globalBrizyKit;
 
@@ -40,7 +42,6 @@ abstract class GridLayoutElement extends AbstractElement
         $rowJson = json_decode($this->brizyKit['row'], true);
         $itemJson = json_decode($this->brizyKit['item'], true);
 
-
         $accordionItems = $this->getItemsByCategory($mbSection,'list');
         $accordionItems = $this->sortItems($accordionItems);
         $itemsChunks = array_chunk($accordionItems, $this->getItemsPerRow());
@@ -52,6 +53,8 @@ abstract class GridLayoutElement extends AbstractElement
             $brizySectionRow->getValue()
                 ->set_size($rowWidth)
                 ->set_mobileSize(100);
+
+            $this->handleItemRowComponent($brizySectionRow);
 
             foreach ($row as $item) {
 
@@ -66,6 +69,11 @@ abstract class GridLayoutElement extends AbstractElement
 
                 $brizySectionItem = new BrizyComponent($itemJson);
 
+                $brizySectionItem
+                    ->addPadding(15,15,15,15)
+                    ->addMobilePadding(10)
+                    ->addMobileMargin();
+
                 $elementContext = $data->instanceWithMBSection($item);
                 $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
@@ -76,10 +84,12 @@ abstract class GridLayoutElement extends AbstractElement
                     ->set_borderWidth(2)
 
                     ->set_width($itemWidth)
-                    ->set_paddingTop((int)$styles['margin-top'])
-                    ->set_paddingBottom((int)$styles['margin-bottom'])
-                    ->set_paddingRight((int)$styles['margin-right'])
-                    ->set_paddingLeft((int)$styles['margin-left']);
+//                    ->set_paddingTop((int)$styles['margin-top'])
+//                    ->set_paddingBottom((int)$styles['margin-bottom'])
+//                    ->set_paddingRight((int)$styles['margin-right'])
+//                    ->set_paddingLeft((int)$styles['margin-left'])
+
+                    ->set_mobileWidth(100);
 
                 foreach ($item['items'] as $mbItem) {
                     switch ($mbItem['category']) {
@@ -100,7 +110,12 @@ abstract class GridLayoutElement extends AbstractElement
                                 "mobileMargin" => 20,
                             ];
 
-                            $this->handleBgPhotoItems($elementContext, $additionalOptions);
+                            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                $mbItem,
+                                $this->getItemImageComponent($brizySectionItem)
+                            );
+
+                            $this->handleBgPhotoItems($elementContext, $additionalOptions, $this->getTypeItemImageComponent());
 //                            $this->getItemImageComponent($brizySectionItem)
 //                                ->getValue()
 //                                ->set_widthSuffix('%')
@@ -113,9 +128,41 @@ abstract class GridLayoutElement extends AbstractElement
                                 $mbItem,
                                 $brizySectionItem
                             );
+
+                            $dataIdSelector = '[data-id="'.$mbItem['id'].'"]';
+
+                            $displayItem = $this->getDomElementStyles(
+                                $dataIdSelector,
+                                ['display'],
+                                $this->browserPage);
+
+                            if(trim($displayItem['display']) === 'none'){
+                                continue 2;
+                            }
+
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
                             $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
                             break;
+                    }
+                }
+
+                foreach ($item['items'] as $mbItem) {
+                    switch ($mbItem['category']) {
+                        case 'button':
+                            if($this->canShowButton($mbSection)){
+
+                                $buttonSelector = $item['id'];
+                                $selector = "[data-id='$buttonSelector'] a > button";
+
+                                if($this->hasNode($selector, $this->browserPage)){
+                                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                        $mbItem,
+                                        $brizySectionItem
+                                    );
+
+                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
+                                }
+                            }
                     }
                 }
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
@@ -127,15 +174,24 @@ abstract class GridLayoutElement extends AbstractElement
         return $brizySection;
     }
 
-    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [])
+    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [], $elementImageType = 'bg')
     {
         $mbSectionItem = $data->getMbSection();
         $brizyComponent = $data->getBrizySection();
 
-        $brizyComponent->getValue()
-            ->set_verticalAlign('bottom')
-            ->set_bgImageFileName($mbSectionItem['imageFileName'])
-            ->set_bgImageSrc($mbSectionItem['content']);
+        switch ($elementImageType){
+            case 'bg':
+                $brizyComponent->getValue()
+                    ->set_verticalAlign('bottom')
+                    ->set_bgImageFileName($mbSectionItem['imageFileName'])
+                    ->set_bgImageSrc($mbSectionItem['content']);
+                break;
+            case 'image':
+                $brizyComponent->getValue()
+                    ->set_imageFileName($mbSectionItem['imageFileName'])
+                    ->set_imageSrc($mbSectionItem['content']);
+                break;
+        }
 
         foreach ($options as $key => $value) {
             $method = 'set_'.$key;
@@ -143,7 +199,12 @@ abstract class GridLayoutElement extends AbstractElement
                 ->$method($value);
         }
 
-        $this->handleLink($mbSectionItem, $brizyComponent);
+        $this->handleLink(
+            $mbSectionItem,
+            $brizyComponent,
+            '[data-id="'.$mbSectionItem['id'].'"] .photo-container a',
+            $this->browserPage
+        );
     }
 
     abstract protected function getItemsPerRow(): int;
@@ -153,6 +214,18 @@ abstract class GridLayoutElement extends AbstractElement
     abstract protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent;
 
     abstract protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent;
+
+    protected function getTypeItemImageComponent(): string
+    {
+       return 'bg';
+    }
+
+    protected function handleItemRowComponent(BrizyComponent $brizyComponent):void
+    {
+        $brizyComponent
+            ->addPadding(20,0,20,0)
+            ->addMobilePadding(10);
+    }
 
     protected function getPropertiesMainSection(): array
     {

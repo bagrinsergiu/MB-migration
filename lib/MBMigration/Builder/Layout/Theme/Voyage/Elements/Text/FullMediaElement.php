@@ -9,12 +9,14 @@ class FullMediaElement extends FullMediaElementElement
 {
     protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0)
+            ->addMobileContentAlign();
     }
 
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
+            ->addMobileContentAlign();
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
@@ -28,7 +30,7 @@ class FullMediaElement extends FullMediaElementElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 80;
+        return 50;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -46,15 +48,15 @@ class FullMediaElement extends FullMediaElementElement
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 20,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 80,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 80,
+            "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

@@ -15,6 +15,19 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
+    protected function getTabTextComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0)
+            ->addMobileMargin([0,5,0,5]);
+    }
+
+    protected function afterTransformTabs(BrizyComponent $brizySection): void
+    {
+        $brizySection->getItemWithDepth(0)
+            ->addMobilePadding([0,0,0,0])
+            ->addMobileMargin([0,-20,0,-20]);
+    }
+
     /**
      * @param BrizyComponent $brizySection
      * @return mixed
@@ -26,7 +39,7 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 80;
+        return 50;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -44,15 +57,15 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 20,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 80,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 80,
+            "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

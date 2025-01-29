@@ -22,9 +22,10 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         $accordionElementStyles = $this->getAccordionElementStyles($sectionSelector, $this->browserPage, $families);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
@@ -76,13 +77,13 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
                 "mobileMarginType" => "ungrouped",
                 "mobileMargin" => 0,
                 "mobileMarginSuffix" => "px",
-                "mobileMarginTop" => 10,
+                "mobileMarginTop" => 15,
                 "mobileMarginTopSuffix" => "px",
-                "mobileMarginRight" => 11,
+                "mobileMarginRight" => 15,
                 "mobileMarginRightSuffix" => "px",
-                "mobileMarginBottom" => 10,
+                "mobileMarginBottom" => 15,
                 "mobileMarginBottomSuffix" => "px",
-                "mobileMarginLeft" => 11,
+                "mobileMarginLeft" => 15,
                 "mobileMarginLeftSuffix" => "px",
             ];
 
@@ -92,7 +93,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
                 "marginType" => "ungrouped",
                 "marginSuffix" => "px",
-                "marginTop" => 10,
+                "marginTop" => 0,
                 "marginTopSuffix" => "px",
                 "marginRight" => -11,
                 "marginRightSuffix" => "px",
@@ -170,11 +171,38 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 80;
+        return 50;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;
+    }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 20,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "paddingTop" => 50,
+            "paddingTopSuffix" => "px",
+            "paddingBottom" => 50,
+            "paddingBottomSuffix" => "px",
+            "paddingRight" => 20,
+            "paddingRightSuffix" => "px",
+            "paddingLeft" => 20,
+            "paddingLeftSuffix" => "px",
+        ];
     }
 }

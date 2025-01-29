@@ -9,8 +9,9 @@ use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\SlugAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
+use MBMigration\Builder\Layout\Common\Template\DetailPages\SermonDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -49,7 +50,9 @@ abstract class MediaLayoutElement extends AbstractElement
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection() );
+
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
@@ -59,11 +62,17 @@ abstract class MediaLayoutElement extends AbstractElement
 
         $dataIdSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
 
-        $nodeSelector = $dataIdSelector. ' .media-grid-container';
-        $mbSection['mediaGridContainer'] = $this->hasNode($nodeSelector, $this->browserPage);
+        $mbSection['mediaGridContainer'] = false;
 
-        $nodeSelector = $dataIdSelector. ' .media-player';
-        $mbSection['media-player'] = $this->hasNode($nodeSelector, $this->browserPage);
+        if($this->hasNode($dataIdSelector. ' .media-grid-container', $this->browserPage)){
+            $mbSection['mediaGridContainer'] = true;
+        } elseif ($this->hasNode($dataIdSelector. ' .media-list-container', $this->browserPage)){
+            $mbSection['mediaGridContainer'] = true;
+        }
+
+        if ($this->hasNode($dataIdSelector. ' .media-player', $this->browserPage)){
+            $mbSection['media-player'] = true;
+        }
 
         if ($mbSection['media-player']) {
             $titleSelector = $dataIdSelector. ' .media-video-title';
@@ -93,6 +102,10 @@ abstract class MediaLayoutElement extends AbstractElement
             $sectionProperties = [
                 'sermonSlug' => $this->createSlug($mbSection['containTitle']),
 
+                'showImage' => 'on',
+                'showVideo' => 'on',
+                'showAudio' => 'on',
+
                 'titleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
                 'titleColorOpacity' => 1,
                 'titleColorPalette' => "",
@@ -112,6 +125,8 @@ abstract class MediaLayoutElement extends AbstractElement
 
             $sectionPropertiesSecondLevel = [
                 'sermonSlug'=> $this->createSlug($mbSection['containTitle']),
+
+                'showMetaHeadings' => 'off',
 
                 'colorHex' => $textColorStyles ?? "#ebeff2",
                 'colorOpacity' => 1,
@@ -146,12 +161,28 @@ abstract class MediaLayoutElement extends AbstractElement
                     ->$properties($value);
             }
 
+            $brizySectionFeaturedDescription->getItemWithDepth(0)
+                ->typography()
+                ->dataTypography()
+                ->titleTypography()
+                ->previewTypography()
+                ->subscribeEventButtonTypography();
+
+            $brizySectionFeaturedDescription->addMobileMargin([0,-5,0,-5]);
+
             $brizySection->getItemValueWithDepth(0)
                 ->add('items', [$brizySectionFeaturedVideo])
                 ->add('items', [$brizySectionFeaturedDescription]);
         } else {
             $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
             $detailsSection = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['detail'], true));
+
+            $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['GridMediaLayout']['detail'],
+                $this->getTopPaddingOfTheFirstElement(),
+                $this->getMobileTopPaddingOfTheFirstElement(),
+                $this->pageTDO,
+                $data
+            );
 
             $resultColorStyles['text'] = $this->getDomElementStyles(
                 $dataIdSelector. ' .media-player-container .media-header .text-content',
@@ -213,7 +244,7 @@ abstract class MediaLayoutElement extends AbstractElement
 
             $sectionPalette['item-bg'] = $colorStyles['bg-color'];
 
-            $this->setStyleDetailPage($detailsSection, $sectionPalette);
+            $detailsSection = $DetailsPageLayout->setStyleDetailPage($sectionPalette);
 
             $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
             $detailCollectionItem = $this->createDetailsCollectionItem(
@@ -308,21 +339,21 @@ abstract class MediaLayoutElement extends AbstractElement
 
     private function setStyleDetailPage(BrizyComponent $detailsSection, array $sectionPalette)
     {
-
-        $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
+        $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text'] ?? $sectionPalette['text']);
 
         $richTextTitle = [
-            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-heading5" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
+            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-empty brz-ff-lato brz-ft-google brz-fs-lg-20 brz-fss-lg-px brz-fw-lg-400 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
             'typographyFontStyle' => 'heading5'
             ];
 
         $wrapperItemTitle = [
-            'bgColorHex' => $sectionPalette['btn-bg'],
+            'bgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
         ];
 
         $sectionStyle = [
+            'paddingTop' => $this->getTopPaddingOfTheFirstElement() ?? 0,
             'bgColorHex' => $sectionPalette['bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
@@ -455,31 +486,31 @@ abstract class MediaLayoutElement extends AbstractElement
             'hoverMetaLinksColorOpacity' => 0.75,
             'hoverMetaLinksColorPalette' => '',
 
-            'detailButtonColorHex' => $sectionPalette['btn-text'],
+            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'],
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text']  ?? $sectionPalette['text'],
             'hoverDetailButtonColorOpacity' => 0.75,
             'hoverDetailButtonColorPalette' => '',
 
-            'detailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'detailButtonBgColorOpacity' => 1,
             'detailButtonBgColorPalette' => '',
 
-            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'hoverDetailButtonBgColorOpacity' => 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'subscribeButtonColorHex' => $sectionPalette['btn-text'],
+            'subscribeButtonColorHex' => $sectionPalette['btn-text']  ?? $sectionPalette['text'],
             'subscribeButtonColorOpacity' => 1,
             'subscribeButtonColorPalette' => '',
 
-            'subscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'subscribeButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'subscribeButtonBgColorOpacity' => 1,
             'subscribeButtonBgColorPalette' => '',
 
-            'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'],
+            'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
             'hoverSubscribeButtonBgColorOpacity' => 0.75,
             'hoverSubscribeButtonBgColorPalette' => '',
 
@@ -519,6 +550,9 @@ abstract class MediaLayoutElement extends AbstractElement
             $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
                 ->$properties($value);
         }
+
+        $detailsSection->getItemWithDepth(0, 1, 0, 0, 0)->titleTypography();
+
         foreach ($sectionDescriptionStyle as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1)

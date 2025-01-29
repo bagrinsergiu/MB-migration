@@ -19,14 +19,22 @@ class FullWidthForm extends FormElement
     }
 
     protected function handleForm(ElementContextInterface $elementContext, BrowserPageInterface $browserPage): BrizyComponent {
-
         // add the form here.
-        return $elementContext->getBrizySection();
+        $mbSection = $elementContext->getMbSection();
+        $formId = $mbSection['settings']['sections']['form']['form_id'] ?? '';
+
+        $form = new BrizyComponent(json_decode($this->brizyKit['form-wrapper'], true));
+        $form->getItemWithDepth(0)->getValue()->set_form($formId);
+
+        $brizyComponent = $elementContext->getBrizySection();
+        $brizyComponent->getValue()->set_items([$form]);
+
+        return $brizyComponent;
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 80;
+        return 50;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -44,15 +52,15 @@ class FullWidthForm extends FormElement
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 20,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 80,
+            "paddingTop" => 50,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 80,
+            "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

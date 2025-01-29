@@ -5,28 +5,27 @@ namespace MBMigration\Builder\Layout\Theme\Bloom;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
-use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\AccordionLayoutElement;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Events\EventLayoutElement;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms\FullWidthForm;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms\LeftForm;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms\PrayerFormElement;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms\RightForm;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullMediaElement;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\FullText;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\GalleryLayoutElement;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\GridLayoutElement;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Gallery\GalleryLayoutElement;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Groups\SmallGroupsListElement;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Head;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMedia;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\LeftMediaCircle;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightMediaCircle;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\ListLayoutElement;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\RightMedia;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Prayer\PrayerFormElement;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Semons\MediaLayoutElement;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\SmallGroupsListElement;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\TabsLayoutElement;
-use MBMigration\Builder\Layout\Theme\Bloom\Elements\TwoRightMediaCircle;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\AccordionLayoutElement;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\FullMediaElement;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\FullText;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\GridLayoutElement;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\LeftMedia;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\LeftMediaCircle;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\ListLayoutElement;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\RightMedia;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\RightMediaCircle;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\TabsLayoutElement;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Text\TwoRightMediaCircle;
 
 class ElementFactory  extends AbstractThemeElementFactory
 {
@@ -69,14 +68,12 @@ class ElementFactory  extends AbstractThemeElementFactory
                 return new RightForm($this->blockKit['blocks']['form'], $browserPage);
             case 'accordion-layout':
                 return new AccordionLayoutElement($this->blockKit['blocks']['accordion-layout'], $browserPage);
+
             case 'event-list-layout':
-//                return new EventListLayout($this->blockKit['blocks']['event-list-layout'], $browserPage, $this->getQueryBuilder());
             case 'event-tile-layout':
-//                return new EventTileLayout($this->blockKit['blocks']['event-tile-layout'], $browserPage);
             case 'event-gallery-layout':
-//                return new EventGalleryLayout($this->blockKit['blocks']['event-gallery-layout'], $browserPage);
             case 'event-calendar-layout':
-                return new EventLayoutElement($this->blockKit['blocks']['event-calendar-layout'], $browserPage, $this->getQueryBuilder());
+                return new EventLayoutElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
 
 //            case 'prayer-list':
 //                return new PrayerListElement($this->blockKit['blocks']['prayer-list'], $browserPage);
@@ -98,7 +95,7 @@ class ElementFactory  extends AbstractThemeElementFactory
             case 'full-media':
                 return new FullMediaElement($this->blockKit['blocks']['full-media'], $browserPage);
             default:
-                throw new ElementNotFound("The Element [{$name}] was not found.");
+                return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
         }
     }
 

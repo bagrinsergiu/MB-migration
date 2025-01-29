@@ -1,5 +1,5 @@
 import { getModel } from "../utils/getModel";
-import { bgModel, model } from "./models";
+import { baseModel, bgModel, textModel } from "./models";
 import { Entry, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
 
@@ -10,21 +10,22 @@ interface NavData {
   families: Record<string, string>;
   defaultFamily: string;
 }
-const warns: Record<string, Record<string, string>> = {};
 
 const getTabsV = (data: NavData) => {
   const { node, list, selector } = data;
-  const tab = list.children[0];
+  const tab = list.querySelector(".tab-title");
 
   if (!tab) {
-    warns["tabs tab"] = {
-      message: `Tabs don't have .tabs-list > .tab-title in ${selector}`
+    return {
+      error: `Tabs don't have .tabs-list > .tab-title in ${selector}`
     };
   }
 
+  const tabText = tab.querySelector("span");
+
   const v = getModel({
     node: tab,
-    modelDefaults: model,
+    modelDefaults: baseModel,
     families: data.families,
     defaultFamily: data.defaultFamily
   });
@@ -36,9 +37,17 @@ const getTabsV = (data: NavData) => {
     defaultFamily: data.defaultFamily
   });
 
+  const textV = getModel({
+    node: tabText ?? tab,
+    modelDefaults: textModel,
+    families: data.families,
+    defaultFamily: data.defaultFamily
+  });
+
   return {
     ...v,
     ...bgV,
+    ...textV,
     navStyle: "style-3"
   };
 };

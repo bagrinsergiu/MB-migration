@@ -2,6 +2,8 @@
 
 namespace MBMigration\Builder\Utils;
 
+use MBMigration\Core\Logger;
+
 final class ColorConverter
 {
     /**
@@ -9,12 +11,51 @@ final class ColorConverter
      * @return string
      * @example pass: rgba(123,100,23,.5)
      */
-    static public function rgba2hex($rgba)
+    static public function rgba2hex($rgba): string
     {
-        // get the values
-        preg_match_all("/([\\d.]+)/", $rgba, $matches);
-        $fromRGB = self::fromRGB($matches[1][0], $matches[1][1], $matches[1][2]);
-        return $fromRGB;
+        $defaultColor = "#000000";
+
+        if (!is_string($rgba)) {
+            Logger::instance()->info("Input must be a string. Given: " . var_export($rgba, true));
+            return $defaultColor;
+        }
+
+        // Already in HEX format
+        if (preg_match("/^#([a-fA-F0-9]{6})$/", $rgba)) {
+            return $rgba;
+        }
+
+        // Normalize short HEX format (#abc -> #aabbcc)
+        if (preg_match("/^#([a-fA-F0-9]{3})$/", $rgba, $matches)) {
+            $hex = $matches[1];
+            $normalizedHex = "#" . $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+            Logger::instance()->info("Normalized short HEX $rgba to $normalizedHex.");
+            return $normalizedHex;
+        }
+
+        // Match RGBA or RGB values
+        if (preg_match("/rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)(?:,\\s*(\\d*(?:\\.\\d+)?))?\\)/", $rgba, $matches)) {
+            $r = (int)$matches[1];
+            $g = (int)$matches[2];
+            $b = (int)$matches[3];
+            $a = isset($matches[4]) ? (float)$matches[4] : null;
+
+            // Log presence of alpha channel
+            if ($a !== null) {
+                Logger::instance()->info("Alpha channel detected (ignored): $a.");
+            }
+
+            // Validate RGB ranges
+            if ($r < 0 || $r > 255 || $g < 0 || $g > 255 || $b < 0 || $b > 255) {
+                Logger::instance()->info("RGB values must be in the range 0–255. Given: R=$r, G=$g, B=$b.");
+                return $defaultColor;
+            }
+
+            return sprintf("#%02x%02x%02x", $r, $g, $b);
+        }
+
+        Logger::instance()->info("Input does not match any supported format. Given: $rgba.");
+        return $defaultColor;
     }
 
     static public function hex2Rgb($hex): string
@@ -60,17 +101,21 @@ final class ColorConverter
      */
     static public function rgba2opacity($rgba)
     {
-        // get the values
-        preg_match_all("/([\\d.]+)/", $rgba, $matches);
+        if (is_numeric($rgba)) {
+            $value = (float)$rgba;
+            return ($value === 0.0 || $value === 1.0) ? (int)$value : $value;
+        }
 
-        if(isset($matches[1][3]))
-        {
-            return sprintf("%.2f", (float)$matches[1][3]);
+        if (preg_match("/rgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*([\d.]+)\s*)?\)/", $rgba, $matches)) {
+
+            $alpha = isset($matches[1]) ? (float)$matches[1] : 1;
+
+            return ($alpha === 0.0 || $alpha === 1.0) ? (int)$alpha : $alpha;
         }
-        else{
-            return 1;
-        }
+
+        return 1;
     }
+
 
     public static function convertColor($color)
     {
@@ -87,7 +132,7 @@ final class ColorConverter
 
             $color = sprintf("#%02X%02X%02X", $r, $g, $b);
 
-            if ($a == 0 && $color === "#000000") {
+            if ($a == 1 && $color === "#000000") {
                 return '#ffffff';
             } else {
                 return [
@@ -179,27 +224,34 @@ final class ColorConverter
     }
 
     public static function getHoverOpacity(float $baseOpacity): float {
-        // Убедимся, что значение прозрачности находится в диапазоне от 0 до 1
         if ($baseOpacity < 0) {
             $baseOpacity = 0;
         } elseif ($baseOpacity > 1) {
             $baseOpacity = 1;
         }
 
-        // Если прозрачность больше или равна 0.8, уменьшим её
         if ($baseOpacity >= 0.8) {
             $hoverOpacity = $baseOpacity - 0.2;
             if ($hoverOpacity < 0) {
-                $hoverOpacity = 0; // Убедимся, что не выходит за пределы
+                $hoverOpacity = 0;
             }
         } else {
-            // В других случаях увеличим прозрачность
             $hoverOpacity = $baseOpacity + 0.2;
             if ($hoverOpacity > 1) {
-                $hoverOpacity = 1; // Убедимся, что не выходит за пределы
+                $hoverOpacity = 1;
             }
         }
 
         return $hoverOpacity;
+    }
+
+    public static function rewriteColorIfSetOpacity(array &$colors): void
+    {
+        foreach ($colors as $key => $color) {
+            if (is_array($color) && isset($color['color'], $color['opacity'])) {
+                $colors[$key] = $color['color'];
+                $colors[$key . '-opacity'] = $color['opacity'];
+            }
+        }
     }
 }

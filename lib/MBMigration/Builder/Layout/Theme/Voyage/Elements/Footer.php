@@ -27,6 +27,18 @@ class Footer extends FooterElement
             "paddingRightSuffix" => "px",
             "paddingLeft" => 0,
             "paddingLeftSuffix" => "px",
+
+            "mobilePaddingType"=> "grouped",
+            "mobilePadding" => 20,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 20,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 20,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
         ];
     }
 }

@@ -8,11 +8,9 @@ export function extractAllElementsStyles(
 ): Record<string, Literal> {
   const nodes = recursiveGetNodes(node);
   return nodes.reduce((acc, element) => {
-    const parentElementTag = ignoreStyleExtracting.some(selector => element.closest(selector));
-
-    if (parentElementTag) {
-      return acc;
-    }
+    const parentElementTag = ignoreStyleExtracting.some((selector) =>
+      element.closest(selector)
+    );
 
     const styles = getNodeStyle(element);
 
@@ -21,6 +19,10 @@ export function extractAllElementsStyles(
       delete styles["text-align"];
     }
 
-    return { ...acc, ...styles };
+    const innerStyles = parentElementTag
+      ? { "font-size": styles["font-size"] }
+      : styles;
+
+    return { ...acc, ...innerStyles };
   }, {});
 }

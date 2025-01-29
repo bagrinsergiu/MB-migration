@@ -61,11 +61,12 @@ class BrowserPagePHP implements BrowserPageInterface
         try {
             switch ($eventNameMethod) {
                 case 'hover':
-                    $this->page->mouse()->move(1, 1);
-                    $pos = $this->page->mouse()->find($elementSelector)->getPosition();
+                    $this->page->screenshot()->saveToFile('/project/var/cache/page.jpg');
+//                    $this->page->mouse()->move(1, 1);
+                    $pos = $this->page->mouse()->find($elementSelector, 0)->getPosition();
                     $this->page->mouse()->move($pos['x'], $pos['y']);
                     usleep(1000);
-                    $this->page->screenshot()->saveToFile('/project/var/cache/page.jpg');
+                    $this->page->screenshot()->saveToFile('/project/var/cache/page_af.jpg');
                     break;
                 case 'click':
                     $this->page->mouse()->find($elementSelector)->click();
@@ -77,6 +78,11 @@ class BrowserPagePHP implements BrowserPageInterface
             return false; // element not found
         }
         return true; // element found
+    }
+
+    public function getPageScreen($prefix = ''): void
+    {
+        $this->page->screenshot()->saveToFile('/project/var/cache/pageScreen'. $prefix .'.jpg');
     }
 
     public function extractHover($selector): void

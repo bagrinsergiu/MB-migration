@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\DanationsAble;
+use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -14,7 +14,7 @@ abstract class PhotoTextElement extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
-    use DanationsAble;
+    use DonationsAble;
     use ImageStylesAble;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -41,12 +41,8 @@ abstract class PhotoTextElement extends AbstractElement
 
                     $imageStyles = $this->obtainImageStyles($elementContext, $this->browserPage);
 
-                    $imageTarget
-                        ->getValue()
-                        ->set_width((int)$imageStyles['width'])
-                        ->set_height((int)$imageStyles['height'])
-                        ->set_heightSuffix((strpos($imageStyles['height'],'%')===true)?'%':'pix')
-                        ->set_widthSuffix((strpos($imageStyles['width'],'%')===true)?'%':'pix');
+                    $this->targetImageSize($imageTarget, (int)$imageStyles['width'], (int)$imageStyles['height']);
+
                     break;
                 case 'text':
 
@@ -74,11 +70,27 @@ abstract class PhotoTextElement extends AbstractElement
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
+
+        $this->transformItem($elementContext, $sectionItemComponent, $styleList);
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         return $brizySection;
+    }
+
+
+    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height){
+        $imageTarget
+            ->getValue()
+            ->set_width($width)
+            ->set_height($height)
+            ->set_heightSuffix((strpos($height,'%')===true)?'%':'pix')
+            ->set_widthSuffix((strpos($width,'%')===true)?'%':'pix');
     }
 
     /**
@@ -92,6 +104,7 @@ abstract class PhotoTextElement extends AbstractElement
      * @return mixed|null
      */
     abstract protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent;
+
 
     protected function getPropertiesMainSection(): array
     {
@@ -107,6 +120,16 @@ abstract class PhotoTextElement extends AbstractElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "paddingTop" => 20,
+            "paddingTopSuffix" => "px",
+            "paddingBottom" => 20,
+            "paddingBottomSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
         ];
     }
 

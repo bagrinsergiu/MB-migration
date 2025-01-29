@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Anthem\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 
 class LeftMediaCircle extends PhotoTextElement
@@ -50,5 +51,10 @@ class LeftMediaCircle extends PhotoTextElement
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
     }
 }

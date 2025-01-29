@@ -214,11 +214,15 @@ trait RichTextAble
                 case 'EmbedCode':
                     //wrapper
                     if(!isset($embeddedElements[$embeddIndex]))  break;
-                    $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embeddedElements[$embeddIndex++]);
+
+                    $embedCode = $embeddedElements[$embeddIndex++];
+                    $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embedCode['embed']);
                     $cssClass = 'custom-align-'.random_int(0, 10000);
                     $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
                     $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
-                        ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }"
+                        ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
+.{$cssClass} .embedded-paste:has(iframe) {display: grid;}
+.{$cssClass} .embedded-paste iframe {justify-self: {$embedCode['text-align']};}"
                     );
                     $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
                     break;
@@ -251,42 +255,57 @@ trait RichTextAble
         if (!empty($mbSectionItem['content'])) {
 
             $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container img';
-            $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+            $sizes = $this->handleSizeToInt($this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts));
             $sizeUnit = 'px';
-            if (strpos($sizes['width'], '%') !== false) {
-                $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container';
-                $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
-            }
 
             $brizyComponent->getValue()
                 ->set_imageFileName($mbSectionItem['imageFileName'])
-                ->set_imageSrc($mbSectionItem['content'])
-                ->set_width((int)$sizes['width'])
-                ->set_tabletWidth((int)$sizes['width'])
-                ->set_mobileWidth((int)$sizes['width'])
-                ->set_height((int)$sizes['height'])
-                ->set_tabletHeight((int)$sizes['height'])
-                ->set_mobileHeight((int)$sizes['height'])
-                ->set_imageWidth($mbSectionItem['settings']['image']['width'])
-                ->set_imageHeight($mbSectionItem['settings']['image']['height'])
-                ->set_widthSuffix($sizeUnit)
-                ->set_heightSuffix($sizeUnit)
-                ->set_tabletHeightSuffix($sizeUnit)
-                ->set_mobileWidthSuffix($sizeUnit)
-                ->set_mobileHeightSuffix($sizeUnit);
+                ->set_imageSrc($mbSectionItem['content']);
 
-            $this->handleLink($mbSectionItem, $brizyComponent);
+            if(!empty($sizes['width']) && !empty($sizes['height'])) {
+                if (strpos($sizes['width'], '%') !== false) {
+                    $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container';
+                    $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+                }
+
+                $brizyComponent->getValue()
+                    ->set_width((int)$sizes['width'])
+                    ->set_tabletWidth((int)$sizes['width'])
+                    ->set_mobileWidth((int)$sizes['width'])
+                    ->set_height((int)$sizes['height'])
+                    ->set_tabletHeight((int)$sizes['height'])
+                    ->set_mobileHeight((int)$sizes['height'])
+                    ->set_imageWidth($mbSectionItem['settings']['image']['width'])
+                    ->set_imageHeight($mbSectionItem['settings']['image']['height'])
+                    ->set_widthSuffix($sizeUnit)
+                    ->set_heightSuffix($sizeUnit)
+                    ->set_tabletHeightSuffix($sizeUnit)
+                    ->set_mobileWidthSuffix($sizeUnit)
+                    ->set_mobileHeightSuffix($sizeUnit);
+            }
+
+            $this->handleLink(
+                $mbSectionItem,
+                $brizyComponent,
+                '[data-id="'.$mbSectionItemId.'"] div.photo-container a',
+                $browserPage);
         }
 
         return $brizyComponent;
     }
 
-    private function handleLink($mbSectionItem, $brizyComponent)
+    private function handleLink($mbSectionItem, $brizyComponent, $selector, $browserPage)
     {
         if ($mbSectionItem['new_window']) {
             $mbSectionItem['new_window'] = 'on';
         } else {
-            $mbSectionItem['new_window'] = 'off';
+            $mbSectionItem['new_window'] = $this->openNewTab(
+                $this->getNodeAttribute(
+                    $browserPage,
+                    $selector,
+                    'target'
+                )
+            );
         }
 
         if ($mbSectionItem['link'] != '') {
@@ -443,10 +462,14 @@ trait RichTextAble
         foreach ($divs as $div) {
             if ($div->hasAttribute('class') && $div->getAttribute('class') === 'embedded-paste') {
                 $dataSrc = $div->getAttribute('data-src');
+                preg_match('/text-align:\s*([^;]+)/', $div->getAttribute('style'), $matches);
                 $escapedDataSrc = str_replace('"', '\\"', $dataSrc);
                 $div->setAttribute('data-src', $escapedDataSrc);
 
-                $result[] = $dom->saveHTML($div);
+                $result[] = [
+                    'embed' => $dom->saveHTML($div),
+                    'text-align' => $matches[1] ?? 'left'
+                ];
             }
         }
 
@@ -544,6 +567,37 @@ trait RichTextAble
         foreach ($attributes as $name => $value) {
             $fragment->setAttribute($name, $value);
         }
+    }
+
+    private function extractInteger($string): string
+    {
+        if (strpos($string, "px") !== false) {
+            $cleanedString = str_replace("px", "", $string);
+            return (int) $cleanedString;
+        }
+
+        return $string;
+    }
+
+    private function handleSizeToInt(array $size): array
+    {
+        $result = [];
+        foreach ($size as $key => $size) {
+            $result[$key] = $this->extractInteger($size);
+        }
+        return $result;
+    }
+
+    private function openNewTab(string $targetValue): string
+    {
+        switch ($targetValue) {
+            case '_blank':
+                return 'on';
+            case '_self':
+            default:
+                return 'off';
+        }
+
     }
 
 }

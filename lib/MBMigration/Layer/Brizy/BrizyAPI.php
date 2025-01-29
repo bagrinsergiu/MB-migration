@@ -203,20 +203,29 @@ class BrizyAPI extends Utils
             $this->nameFolder = $nameFolder;
         }
         $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
-        $mime_type = mime_content_type($pathToFileName);
+
+        if($pathToFileName['status'] === false) {
+            Logger::instance()->warning('Failed get path image!!! path: '.$pathOrUrlToFileName);
+            return false;
+        }
+
+        $mime_type = mime_content_type($pathToFileName['path']);
         Logger::instance()->debug('Mime type image; '.$mime_type);
         if ($this->getFileExtension($mime_type)) {
-            $file_contents = file_get_contents($pathToFileName);
+
+            $file_contents = file_get_contents($pathToFileName['path']);
             if (!$file_contents) {
-                Logger::instance()->warning('Failed get contents image!!! path: '.$pathToFileName);
+                Logger::instance()->warning('Failed get contents image!!! path: '.$pathToFileName['path']);
             }
             $base64_content = base64_encode($file_contents);
 
-            return $this->httpClient('POST', $this->createPrivateUrlAPI('media'), [
-                'filename' => $this->getFileName($pathToFileName),
+            $result = $this->httpClient('POST', $this->createPrivateUrlAPI('media'), [
+                'filename' => $this->getFileName($pathToFileName['path']),
                 'name' => $this->getNameHash($base64_content).'.'.$this->getFileExtension($mime_type),
                 'attachment' => $base64_content,
             ]);
+
+            return $result;
         }
 
         return false;
@@ -709,24 +718,176 @@ class BrizyAPI extends Utils
         }
     }
 
-    private function downloadImage($url): string
+    /**
+     * @throws Exception
+     */
+    private function downloadImage($url): array
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $image_data = curl_exec($ch);
         curl_close($ch);
 
-        $file_name = mb_strtolower(basename($url));
-        $fileName = explode(".", $file_name);
-        $file_name = $fileName[0].'.'.$this->fileExtension($fileName[1]);
-
-        $path = Config::$pathTmp.$this->nameFolder.'/media/'.$file_name;
-        $status = file_put_contents($path, $image_data);
-        if (!$status) {
-            Logger::instance()->warning('Failed to load image!!! path: '.$path);
+        if ($image_data === false) {
+            Logger::instance()->warning('Failed to download image from URL: ' . $url);
+            return ['status' => false];
         }
 
-        return $path;
+        $file_name = mb_strtolower(basename($url));
+        $fileNameParts = explode(".", $file_name);
+
+        if (count($fileNameParts) < 2) {
+            Logger::instance()->warning('Invalid file name format: ' . $file_name);
+            return ['status' => false];
+        }
+
+        $path = Config::$pathTmp . $this->nameFolder . '/media/' . $fileNameParts[0];
+
+        file_put_contents($path, $image_data);
+
+        if (!file_exists($path)) {
+            Logger::instance()->warning('Failed to save image to path: ' . $path);
+            return ['status' => false];
+        }
+
+        $currentExtensionImage = $fileNameParts[count($fileNameParts) - 1];
+
+        switch ($currentExtensionImage) {
+            case 'jfif':
+                $extensionImage = $this->getFileExtension(
+                    mime_content_type($path)
+                );
+                break;
+            default:
+                $extensionImage = $currentExtensionImage;
+        }
+
+        $newDetailsImage = $this->convertImageFormat($path, $extensionImage);
+
+        if($newDetailsImage['status'] === false) {
+            Logger::instance()->warning('Failed to convert image format: ' . $path);
+            return ['status' => false];
+        }
+
+        $this->resizeImageIfNeeded($newDetailsImage['path'], 9.5);
+
+        return [
+            'status' => true,
+            'originalExtension' => $fileNameParts[count($fileNameParts) - 1],
+            'fileName' => $fileNameParts[0] . '.' . $newDetailsImage['fileType'],
+            'path' => $newDetailsImage['path'],
+        ];
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function convertImageFormat($filePath, $targetExtension): array
+    {
+        if (!file_exists($filePath) || !is_readable($filePath)) {
+            Logger::instance()->warning('File not found or not readable: ' . $filePath);
+            return ['status' => false];
+        }
+
+        $image = file_get_contents($filePath);
+
+        if ($image === false) {
+            Logger::instance()->warning('Failed to create image resource for conversion: ' . $filePath);
+            return ['status' => false];
+        }
+
+        $newFilePath = $filePath . '.' . $targetExtension;
+        $saveResult = (bool) file_put_contents($newFilePath, $image);
+
+        if ($saveResult) {
+            if (!unlink($filePath)) {
+                Logger::instance()->warning('Failed to delete original file: ' . $filePath);
+            }
+        } else {
+            Logger::instance()->warning('Failed to save image in target format: ' . $newFilePath);
+            return ['status' => false];
+        }
+
+        return [
+            'status' => true,
+            'fileType' => $targetExtension,
+            'path' => $newFilePath
+        ];
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function resizeImageIfNeeded($filePath, $maxSizeMB = 10): void
+    {
+        $maxSizeBytes = $maxSizeMB * 1024 * 1024;
+
+        if (!file_exists($filePath)) {
+            Logger::instance()->warning('Compression file not found: ' . $filePath);
+
+            return;
+        }
+
+        $fileSize = filesize($filePath);
+        if ($fileSize <= $maxSizeBytes) {
+
+            return;
+        }
+
+        $imageInfo = getimagesize($filePath);
+        if (!$imageInfo) {
+            Logger::instance()->warning('The file is not an image: ' . $filePath);
+            return;
+        }
+
+        list($width, $height, $type) = $imageInfo;
+
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                $image = imagecreatefromjpeg($filePath);
+                break;
+            case IMAGETYPE_PNG:
+                $image = imagecreatefrompng($filePath);
+                break;
+            case IMAGETYPE_WEBP:
+                $image = imagecreatefromwebp($filePath);
+                break;
+            default:
+                Logger::instance()->warning('The image type is not supported: ' . $filePath);
+                return;
+        }
+
+        $scaleFactor = sqrt($maxSizeBytes / $fileSize);
+
+        $newWidth = (int)($width * $scaleFactor);
+        $newHeight = (int)($height * $scaleFactor);
+
+        $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        if ($type === IMAGETYPE_PNG || $type === IMAGETYPE_WEBP) {
+            imagealphablending($resizedImage, false);
+            imagesavealpha($resizedImage, true);
+        }
+
+        imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                imagejpeg($resizedImage, $filePath, 90);
+                break;
+            case IMAGETYPE_PNG:
+                imagepng($resizedImage, $filePath, 9);
+                break;
+            case IMAGETYPE_WEBP:
+                imagewebp($resizedImage, $filePath, 90);
+                break;
+        }
+
+        imagedestroy($image);
+        imagedestroy($resizedImage);
+
+        Logger::instance()->info('The image has been compressed to an acceptable size: ' . $filePath);
+
     }
 
     private function fileExtension($expansion): string
@@ -754,15 +915,25 @@ class BrizyAPI extends Utils
         return $data;
     }
 
-    private function isUrlOrFile($urlOrPath): string
+    /**
+     * @throws Exception
+     */
+    private function isUrlOrFile(string $urlOrPath): array
     {
         if (filter_var($urlOrPath, FILTER_VALIDATE_URL)) {
-            return $this->downloadImage($urlOrPath);
+
+            $detailsImage = $this->downloadImage($urlOrPath);
+
+            if ($detailsImage['status'] === false) {
+                return ['status' => false, 'message' => 'Failed to download image'];
+            }
+            return $detailsImage;
+
         } else {
             if (file_exists($urlOrPath)) {
-                return $urlOrPath;
+                return ['status' => false, 'message' => 'Failed to download image'];
             } else {
-                return "unknown";
+                return ['status' => false, 'message' => 'Failed to download image'];
             }
         }
     }

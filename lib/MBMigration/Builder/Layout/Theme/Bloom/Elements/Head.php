@@ -3,8 +3,11 @@
 namespace MBMigration\Builder\Layout\Theme\Bloom\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\DTO\PageDto;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\NumberProcessor;
 
 class Head extends HeadElement
 {
@@ -23,7 +26,7 @@ class Head extends HeadElement
      */
     protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0)->addVerticalContentAlign();
     }
 
     /**
@@ -47,12 +50,12 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#main-navigation ul li.has-sub > .sub-navigation li > a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation ul li.has-sub > .sub-navigation li:not(.selected) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li", "className" => "selected"];
     }
 
     public function getThemeMenuItemBgSelector(): array
@@ -77,8 +80,8 @@ class Head extends HeadElement
         $menuSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => 'body',
-                'styleProperties' => ['background-color', 'background-image'],
+                'selector' => '#main-content header',
+                'styleProperties' => ['background-color', 'height'],
                 'families' => [],
                 'defaultFamily' => '',
             ]
@@ -87,18 +90,42 @@ class Head extends HeadElement
             return;
         }
 
+        $bodySectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => 'body',
+                'styleProperties' => ['background-color'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        if (!isset($bodySectionStyles['data'])) {
+            return;
+        }
+
+        $bodySectionStyles = $bodySectionStyles['data'];
         $menuSectionStyles = $menuSectionStyles['data'];
+
+        $this->pageTDO->getHeadStyle()->setHeight(
+            NumberProcessor::convertToInt($menuSectionStyles['height'])
+        );
+
         $backgroundColorHex = ColorConverter::rgba2hex($menuSectionStyles['background-color']);
         $opacity = ColorConverter::rgba2opacity($menuSectionStyles['background-color']);
+
+        $bodyBackgroundColorHex = ColorConverter::rgba2hex($bodySectionStyles['background-color']);
+        $bodyBackgroundOpacity = ColorConverter::rgba2opacity($bodySectionStyles['background-color']);
 
         $brizySection->getItemWithDepth(0)
             ->getValue()
             ->set_bgColorHex($backgroundColorHex)
+            ->set_bgColorHexPalette('')
             ->set_bgColorOpacity($opacity)
             ->set_mobileBgColorType('solid')
-            ->set_mobileBgColorHex($backgroundColorHex)
+            ->set_mobileBgColorHex($bodyBackgroundColorHex)
             ->set_mobileBgColorPalette('')
-            ->set_mobileBgColorOpacity($opacity);
+            ->set_mobileBgColorOpacity($bodyBackgroundOpacity ?? 1);
 
         $imageLogoOptions = [
             'mobileSize' => 85,
@@ -106,19 +133,56 @@ class Head extends HeadElement
         ];
 
         $sectionlogoOptions = [
-            'mobileMarginType' => 'grouped',
-            'mobileMargin' => -20,
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => 10,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            'mobileMarginType' => 'ungrouped',
+            'mobileMargin' => 0,
             'mobileMarginSuffix' => 'px',
-            'mobileMarginTop' => -20,
+            'mobileMarginTop' => 5,
             'mobileMarginTopSuffix' => 'px',
-            'mobileMarginRight' => -20,
+            'mobileMarginRight' => 0,
             'mobileMarginRightSuffix' => 'px',
-            'mobileMarginBottom' => -20,
+            'mobileMarginBottom' => 5,
             'mobileMarginBottomSuffix' => 'px',
-            'mobileMarginLeft' => -20,
+            'mobileMarginLeft' => 0,
             'mobileMarginLeftSuffix' => 'px',
         ];
 
+        $sectionSectionOptions = [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 0,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => -210,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 0,
+            "marginLeftSuffix" => "px",
+
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 5,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 0,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 5,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 0,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
 
         foreach ($imageLogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
@@ -126,6 +190,8 @@ class Head extends HeadElement
                 ->getValue()
                 ->$nameOption($value);
         }
+
+        $brizySection->getItemWithDepth(0, 0, 0, 0, 0)->addPadding(20,20,20,20);
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
@@ -144,6 +210,13 @@ class Head extends HeadElement
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
             $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($sectionSectionOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -179,5 +252,15 @@ class Head extends HeadElement
             'mobileMarginLeft' => 0,
             'mobileMarginLeftSuffix' => "px",
         ];
+    }
+
+    protected function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub > .sub-navigation li > a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
     }
 }
