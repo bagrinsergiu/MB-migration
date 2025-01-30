@@ -358,8 +358,17 @@ class MigrationPlatform
     private function logFinalProcess(float $startTime, bool $successWorkCompletion = true): void
     {
         $endTime = microtime(true);
+
+        $projectSettings = $this->cache->get('settings');
         $executionTime = ($endTime - $startTime);
+
         $this->finalSuccess['UMID'] = $this->migrationID;
+
+        $this->finalSuccess['uuid'] = $projectSettings['uuid'] ?? null;
+        $this->finalSuccess['site_id'] = $projectSettings['id'] ?? null;
+        $this->finalSuccess['product_name'] = $projectSettings['name'] ?? null;
+        $this->finalSuccess['design'] = $projectSettings['design'] ?? null;
+
         if ($successWorkCompletion) {
             $this->finalSuccess['status'] = 'success';
         }
