@@ -164,6 +164,26 @@ class FontsController extends builderUtils
         return false;
     }
 
+    private function getPathFontByName($name)
+    {
+        $fontPack = [];
+        foreach ($this->fontsMap as $key => $font) {
+            if ($font['settings']['name'] === $name) {
+                foreach ($font['fonts'] as $fontWeight => $fontStyle) {
+                    $fontPack[$fontWeight] = $fontStyle['normal'];
+                }
+                $this->cache->add('fonsUpload', [$key => $fontPack]);
+
+                return [
+                    'displayName' => $font['settings']['display_name'],
+                    'fontsFile' => $fontPack,
+                ];
+            }
+        }
+
+        return false;
+    }
+
     static public function getFontsFamily(): array
     {
         $fontFamily = [];
