@@ -344,15 +344,15 @@ class MigrationPlatform
         }
     }
 
-    public function getLogs(): string
+    public function getLogs()
     {
         if ($this->finalSuccess['status'] === 'success') {
             Logger::instance()->debug(json_encode($this->errorDump->getDetailsMessage()));
 
-            return json_encode($this->finalSuccess);
+            return $this->finalSuccess;
         }
 
-        return json_encode($this->errorDump->getAllErrors());
+        return $this->errorDump->getAllErrors();
     }
 
     private function logFinalProcess(float $startTime, bool $successWorkCompletion = true): void
