@@ -1,4 +1,9 @@
-import { buttonSelector, embedSelector, iconSelector } from "../common";
+import {
+  allowedTags,
+  buttonSelector,
+  embedSelector,
+  iconSelector
+} from "../common";
 import { appendNodeStyles } from "./appendNodeStyles";
 
 export class Stack {
@@ -103,6 +108,14 @@ function removeNestedDivs(node: HTMLElement) {
   }
 }
 
+function appendNodeStylesToDivsWithoutStyles(node: HTMLElement) {
+  node.querySelectorAll("div").forEach((div) => {
+    if (div.style.cssText === "") {
+      appendNodeStyles(div);
+    }
+  });
+}
+
 const copyClassList = (
   sourceElement: HTMLElement,
   targetElement: HTMLElement
@@ -137,6 +150,8 @@ const flattenNode = (node: Element) => {
 
   removeNestedDivs(_node);
 
+  appendNodeStylesToDivsWithoutStyles(_node);
+
   _node.remove();
 
   return _node;
@@ -147,10 +162,32 @@ const replaceWrongTags = (node: HTMLElement) => {
   const replaceElements = node.querySelectorAll(tagsToReplace);
 
   replaceElements.forEach((element) => {
+    const wrapper = element.closest(
+      allowedTags.concat("div").join(",").toLowerCase()
+    );
+
+    if (!wrapper) {
+      return;
+    }
+
+    const clonedWrapper = wrapper.cloneNode(true) as HTMLElement;
+    const fontElement = clonedWrapper.querySelector(tagsToReplace);
+
+    if (!fontElement) {
+      return;
+    }
+
+    // we need to append the element to the body to get the computed styles correctly
+    document.body.appendChild(clonedWrapper);
+
+    // Create a span and copy styles from the element
     const span = document.createElement("span");
-    appendNodeStyles(element, span);
+    appendNodeStyles(fontElement, span, ["color"]);
     span.innerHTML = element.innerHTML;
+
     element.parentNode?.replaceChild(span, element);
+
+    document.body.removeChild(clonedWrapper);
   });
 };
 

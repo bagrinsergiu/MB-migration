@@ -11,7 +11,8 @@ export function removeEmptyNodes(node: Element): Element {
     }
   });
 
-  node.innerHTML = node.innerHTML.replace(/\n/g, " ");
+  const content = node.innerHTML.replace(/\n/g, " "); // Replace all \n with space
+  node.innerHTML = content.replace(/>\s{2,}/g, ">"); // Remove multiple spaces between tags
 
   return node;
 }
