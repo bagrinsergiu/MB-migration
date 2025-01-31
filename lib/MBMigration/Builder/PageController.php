@@ -62,6 +62,7 @@ class PageController
 
     /**
      * @throws ElementNotFound
+     * @throws Exception
      * []
      */
     public function run($preparedSectionOfThePage, $pageMapping): bool
@@ -130,9 +131,9 @@ class PageController
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
             $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
 
-            $RootListFontFamilyExtractor->getListFontFamily();
+            $fontListFromPage = $RootListFontFamilyExtractor->getListFontFamily();
 
-//            getPathFontByName():;
+            $fontController->upLoadCustomFonts($fontListFromPage);
 
             $themeContext = new ThemeContext(
                 $design,

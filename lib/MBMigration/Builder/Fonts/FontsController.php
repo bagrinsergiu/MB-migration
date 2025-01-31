@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Fonts;
 
 use Exception;
+use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Core\Logger;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\Utils\builderUtils;
@@ -12,19 +13,14 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 
 class FontsController extends builderUtils
 {
-    private $BrizyApi;
-    private $fontsMap;
-    /**
-     * @var mixed
-     */
-    private $projectId;
+    private BrizyAPI $BrizyApi;
+    private array $fontsMap;
+    private int $projectId;
 
-    protected $layoutName;
+    protected string $layoutName;
+    private VariableCache $cache;
 
-    /**
-     * @var VariableCache
-     */
-    private $cache;
+    private array $googeFontsMap;
 
     /**
      * @throws Exception
@@ -40,26 +36,84 @@ class FontsController extends builderUtils
 
     /**
      * @throws Exception
-     * @throws GuzzleException
      */
-    public function upLoadFont($fontName): string
+    public function getFontsMap(): void
     {
-        Logger::instance()->info("Create FontName $fontName");
-        $KitFonts = $this->getPathFont($fontName);
-        if ($KitFonts) {
-            $responseDataAddedNewFont = $this->BrizyApi->createFonts(
-                $fontName,
-                $this->projectId,
-                $KitFonts['fontsFile'],
-                $KitFonts['displayName']
-            );
-            $this->cache->add('responseDataAddedNewFont', [$fontName => $responseDataAddedNewFont]);
+        $this->layoutName = 'FontsController';
 
-            return $this->BrizyApi->addFontAndUpdateProject($responseDataAddedNewFont);
+        $file = __DIR__.'/fonts.json';
+        $fileContent = file_get_contents($file);
+        $this->fontsMap = json_decode($fileContent, true);
+
+        $file = __DIR__.'/googleFonts.json';
+        $fileContent = file_get_contents($file);
+        $this->googeFontsMap = json_decode($fileContent, true);
+    }
+
+    public function upLoadCustomFonts(array $fontsList): array
+    {
+        $result = [];
+
+        $allUpLoadFonts = $this->getAllUpLoadFonts();
+
+        foreach ($fontsList as $key => $font) {
+            if (!in_array($font, $allUpLoadFonts)) {
+                $result[] = $font;
+            }
         }
 
-        return 'lato';
+        return $result;
     }
+
+    public function getAllUpLoadFonts(): array
+    {
+        $result = [];
+        $containerID = $this->cache->get('projectId_Brizy');
+        $projectFullData = $this->BrizyApi->getProjectContainer($containerID, true);
+        $projectData = json_decode($projectFullData['data'], true);
+
+        foreach ($projectData['fonts']['config']['data'] as $projectFont) {
+            $fontFamily = FontUtils::convertFontFamily($projectFont['family']);
+            if (!in_array($fontFamily, $result)) {
+                $result[] = $fontFamily;
+            }
+        }
+
+        foreach ($projectData['fonts']['upload']['data']  as $projectFont) {
+            $fontFamily = FontUtils::convertFontFamily($projectFont['family']);
+            if (!in_array($fontFamily, $result)) {
+                $result[] = $fontFamily;
+            }
+        }
+
+        return $result;
+    }
+
+
+
+
+//    /**
+//     * @throws Exception
+//     * @throws GuzzleException
+//     */
+//    public function upLoadFont($fontName): string
+//    {
+//        Logger::instance()->info("Create FontName $fontName");
+//        $KitFonts = $this->getPathFont($fontName);
+//        if ($KitFonts) {
+//            $responseDataAddedNewFont = $this->BrizyApi->createFonts(
+//                $fontName,
+//                $this->projectId,
+//                $KitFonts['fontsFile'],
+//                $KitFonts['displayName']
+//            );
+//            $this->cache->add('responseDataAddedNewFont', [$fontName => $responseDataAddedNewFont]);
+//
+//            return $this->BrizyApi->addFontAndUpdateProject($responseDataAddedNewFont);
+//        }
+//
+//        return 'lato';
+//    }
 
     public function addFontsToBrizyProject(array $fontStyles): array
     {
@@ -126,22 +180,6 @@ class FontsController extends builderUtils
         }
 
         return $fontStyles;
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function getFontsMap(): void
-    {
-        $this->layoutName = 'FontsController';
-        if (Config::$urlJsonKits && Config::$devMode === false) {
-            $createUrlForFileFontsMap = Config::$urlJsonKits.'/fonts/fonts.json';
-            $this->fontsMap = $this->loadJsonFromUrl($createUrlForFileFontsMap);
-        } else {
-            $file = __DIR__.'/fonts.json';
-            $fileContent = file_get_contents($file);
-            $this->fontsMap = json_decode($fileContent, true);
-        }
     }
 
     private function getPathFont($name)

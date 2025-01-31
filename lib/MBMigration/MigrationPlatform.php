@@ -167,7 +167,8 @@ class MigrationPlatform
             $this->brizyApi,
             $this->QueryBuilder,
             $this->logger,
-            $this->projectID_Brizy
+            $this->projectID_Brizy,
+            $designName
         );
 
         $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
