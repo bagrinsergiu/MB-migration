@@ -220,12 +220,12 @@ abstract class HeadElement extends AbstractElement
         // check if the font exists and upload it if not.
         $fontFamily = $this->transliterateFontFamily($menuFont['data']['font-family']);
 
-//        if (!isset($families[$fontFamily])) {
-//            $fontName = $this->fisrtFontFamily($menuFont['data']['font-family']);
-//            $uid = $this->fontsController->upLoadFont($fontName);
-//            $families[$fontFamily] = $uid;
-//            $elementContext->getThemeContext()->setFamilies($families);
-//        }
+        if (!isset($families[$fontFamily])) {
+            $fontName = $this->firstFontFamily($menuFont['data']['font-family']);
+            $uid = $this->fontsController->upLoadFont($fontName);
+            $families[$fontFamily] = $uid;
+            $elementContext->getThemeContext()->setFamilies($families);
+        }
 
         $elementContext->getThemeContext()->setFamilies($families);
 

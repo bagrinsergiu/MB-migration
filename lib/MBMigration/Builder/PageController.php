@@ -131,9 +131,13 @@ class PageController
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
             $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
 
-            $fontListFromPage = $RootListFontFamilyExtractor->getListFontFamily();
+            $fontController->upLoadCustomFonts(
+                $RootListFontFamilyExtractor->getFontName(),
+                $RootListFontFamilyExtractor->getFontFamily(),
+                $RootListFontFamilyExtractor->getFontFamilyID()
+            );
 
-            $fontController->upLoadCustomFonts($fontListFromPage);
+            $fontFamily = FontsController::getFontsFamily();
 
             $themeContext = new ThemeContext(
                 $design,
