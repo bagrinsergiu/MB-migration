@@ -73,6 +73,12 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizySection;
     }
 
+    protected function handleRowListItem(BrizyComponent $brizySection): void
+    {
+        $brizySection
+            ->addMargin(20,0,20,0);
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 0;
