@@ -21,7 +21,7 @@ interface Data {
 const ex1: Data = {
   html: `<div class="text-content text-1 editable" data-id="141588" data-category="text"><div><p><br></p><p style="text-align: center; font-weight: 700; font-family: &quot;League Gothic&quot;, sans-serif; color: rgb(5, 3, 5);"><br></p><p style="text-align: center; font-weight: 400; font-family: &quot;League Gothic&quot;, sans-serif;"><a href="/about-us/who-we-are" class="sites-button cloverlinks" role="button" data-location="existing" data-detail="23432" data-category="button" target="_self" style="font-weight: 400; font-size: 0.8291em;"><span class="clovercustom" style="color: rgb(10, 9, 10); text-align: left; font-weight: 600; font-size: 1.6153em; font-family: Dosis, &quot;Dosis Regular&quot;, sans-serif;">I'm New</span><span data-socialicon="circlerightarrow"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">circlerightarrow</span></span> </a> <br></p><p style="text-align: center; font-weight: 300;"><br></p><p style="text-align: center; font-weight: 300;"><br></p><p style="text-align: center; font-weight: 300;"><br></p></div></div>`,
   // prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"141588\"]" },
+  entry: {...entry, selector: "[data-id=\"141588\"]"},
   output: {
     data: [
       {
@@ -116,7 +116,7 @@ const ex2: Data = {
 </li>
 </ul><p><span class="clovercustom" style="font-size: 0.94em; letter-spacing: 0.01em; font-weight: 700;">Calendar </span>is our Church-wide calendar.<br></p><p><br></p><p><br></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"15600705\"]" },
+  entry: {...entry, selector: "[data-id=\"15600705\"]"},
   output: {
     data: [
       {
@@ -147,7 +147,7 @@ const ex2: Data = {
 const ex3: Data = {
   html: `<div class="text-content text-0 editable" data-id="141413" data-category="text"><div><p style="text-align: center;">Address: 404 Church St. Columbia, LA 71418</p><p style="text-align: center;">Phone Number: 318-649-2202</p><p style="text-align: center;">Fax Number: 318-649-2206</p><p style="text-align: center;">Email: fbcbeyond@bellsouth.net</p><p style="text-align: center; font-size: 1.0667em;"><br></p><p style="text-align: center; font-size: 1.0667em;"><span data-socialicon="circlefacebook"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">circlefacebook</span></span>  <span data-socialicon="circletwitter"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">circletwitter</span></span>  [social=circleundefined]<br></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"141413\"]" },
+  entry: {...entry, selector: "[data-id=\"141413\"]"},
   output: {
     data: [
       {
@@ -227,7 +227,7 @@ const ex3: Data = {
 const ex4: Data = {
   html: `<div class="text-content text-1 editable" data-id="141447" data-category="text"><div><p style="font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center; font-size: 1.8495em;"> We are a church whose goal is to make followers of Jesus Christ.&nbsp;</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">We believe that Jesus Christ died on the cross for our sins,</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;"> was buried, and on the third day rose from the dead!&nbsp;</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">We believe that everyone who turns from their sins and believes in Jesus Christ will be saved. How?&nbsp;</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">One calls on the name of Jesus for salvation!</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;"><br></p><p style="font-weight: 700; font-style: italic; color: rgb(230, 230, 189); text-align: center; font-size: 1.5306em;"><span class="clovercustom" style="font-size: 1.0417em;">Our worship services here in Shady<span class="clovercustom" style="color: rgb(230, 230, 189);"> Side, Maryla</span>nd are 10–11am each Sunday morning</span>.</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">During this time, we will read Scripture, pray together, sing worship songs,&nbsp;</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">and listen to the Bible preached.</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;"><br></p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">We hope you will come and feel welcome as you listen to God’s word to us in the Bible.&nbsp;</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">Our Pastor and Elders are here for you if you have any questions about our church, baptism, or</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">following Jesus. Our atmosphere is casual, so do not feel like you need to dress up to attend.&nbsp;</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">We hope you will browse our website to find out more about our church,&nbsp;</p><p style="font-size: 1.4028em; font-weight: 700; font-style: italic; color: rgb(237, 227, 225); text-align: center;">our Baptist beliefs, and our ministries.</p><p><em style="color: red">Test</em></p><p style="font-size: 1.4028em;">&nbsp;</p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"141447\"]" },
+  entry: {...entry, selector: "[data-id=\"141447\"]"},
   output: {
     data: [
       {
@@ -258,7 +258,7 @@ const ex4: Data = {
 const ex5: Data = {
   html: `<div class="text-content text-1 editable" data-id="142241" data-category="text"><div><p data-uniq-id="aCG_1" data-generated-css="brz-css-kcw7Q" style="font-size: 15px; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><u>Our approach </u>to design is based on the art of combining style and functionality. We strive to create spaces that are not only visually impressive, <u>but also serve as comfortable</u> and practical living environments.</span></p><p data-uniq-id="aCG_1" data-generated-css="brz-css-kcw7Q" style="font-size: 15px; letter-spacing: -0.1px; line-height: 1.4;"><br></p><p data-uniq-id="aCG_1" data-generated-css="brz-css-kcw7Q" style="font-size: 15px; letter-spacing: -0.1px; line-height: 1.4;"><span data-socialicon="email"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">email</span></span><br></p><p><br></p><p data-uniq-id="sSLWq" data-generated-css="brz-css-hYqTF" style="font-size: 15px; font-weight: 600; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><u>Be inspired by our designs where modern lines blend with classic elements to create harmony and coziness. We play with colors, textures and light to ensure that every corner of your home is filled with warmth and style.</u></span></p><p data-uniq-id="sSLWq" data-generated-css="brz-css-hYqTF" style="font-size: 15px; font-weight: 600; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><br></span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3; text-align: right; color: rgb(235, 9, 9);"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;">Our team of talented designers and architects are ready to make your dreams come true.&nbsp;</span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><br></span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="letter-spacing: -0.1px; line-height: 1.3; text-align: center; color: rgb(242, 3, 55); font-size: 2.5196em;"><span class="clovercustom" style="font-weight: inherit; letter-spacing: inherit;"><span class="clovercustom" style="letter-spacing: -0.1px;">Our team of talented designers and architects are ready to make your dreams come true.&nbsp;</span><br></span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3; text-align: center;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><span class="clovercustom" style="letter-spacing: -0.1px;"><br></span></span></p><ul style="font-size: medium; letter-spacing: normal;"><li data-uniq-id="vteAp" data-generated-css="brz-css-hf4DG" style="font-size: 14px; letter-spacing: -0.1px; line-height: 1.4; text-align: left; color: rgb(70, 242, 12);"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;">We approach each project carefully, taking into account your preferences, budget and individual space features.</span></li><li data-uniq-id="vteAp" data-generated-css="brz-css-hf4DG" style="font-size: 14px; letter-spacing: -0.1px; line-height: 1.4; text-align: left; color: rgb(222, 95, 22);">We approach each project carefully, taking into account your preferences, budget and individual space features.</li></ul><p><a href="http://google.com" class="sites-button cloverlinks" role="button" data-location="external" data-detail="http://google.com" data-category="button" target="_blank"><span class="clovercustom" style="text-align: center;">LINK</span></a><span class="clovercustom" style="text-align: center;"> </span></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"142241\"]" },
+  entry: {...entry, selector: "[data-id=\"142241\"]"},
   output: {
     data: [
       {
@@ -357,7 +357,7 @@ const ex5: Data = {
 const ex6: Data = {
   html: `<div class="text-content text-1 editable" data-id="142239" data-category="text"><div><p data-uniq-id="aCG_1" data-generated-css="brz-css-kcw7Q" style="font-size: 15px; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><u>Our approach </u>to design is based on the art of combining style and functionality. We strive to create spaces that are not only visually impressive, <u>but also serve as comfortable</u> and practical living environments.</span></p><p data-uniq-id="aCG_1" data-generated-css="brz-css-kcw7Q" style="font-size: 15px; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><span data-socialicon="apple"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">apple</span></span> </span></p><p><br></p><p data-uniq-id="sSLWq" data-generated-css="brz-css-hYqTF" style="font-size: 15px; font-weight: 600; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;">Be inspired by our designs where modern lines blend with classic elements to create harmony and coziness. We play with colors, textures and light to ensure that every corner of your home is filled with warmth and style.</span></p><p data-uniq-id="sSLWq" data-generated-css="brz-css-hYqTF" style="font-size: 15px; font-weight: 600; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><br></span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3; text-align: right; color: rgb(9, 51, 237);"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;">Our team of talented designers and architects are ready to make your dreams come true.&nbsp;</span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><br></span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3; text-align: center; color: rgb(242, 3, 55);"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><span class="clovercustom" style="letter-spacing: -0.1px;">Our team of talented designers and architects are ready to make your dreams come true.&nbsp;</span><br></span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3; text-align: center;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><span class="clovercustom" style="letter-spacing: -0.1px;"><br></span></span></p><ul style="font-size: medium; letter-spacing: normal;"><li data-uniq-id="vteAp" data-generated-css="brz-css-hf4DG" style="font-size: 14px; letter-spacing: -0.1px; line-height: 1.4; text-align: left;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;">We approach each project carefully, taking into account your preferences,<span class="clovercustom">&nbsp;</span><span class="clovercustom">budget and individual space features.</span></span></li><li data-uniq-id="vteAp" data-generated-css="brz-css-hf4DG" style="font-size: 14px; letter-spacing: -0.1px; line-height: 1.4; text-align: left; color: rgb(22, 222, 38);">We approach each project carefully, taking into account your preferences, budget and individual space features.</li></ul><p><a href="http://google.com" class="sites-button cloverlinks" role="button" data-location="external" data-detail="http://google.com" data-category="button" target="_blank"><span class="clovercustom" style="text-align: center;">google</span></a><span class="clovercustom" style="text-align: center;"> </span></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"142239\"]" },
+  entry: {...entry, selector: "[data-id=\"142239\"]"},
   output: {
     data: [
       {
@@ -456,7 +456,7 @@ const ex6: Data = {
 const ex7: Data = {
   html: `<header class="text-content text-0 title-text editable" data-id="141416" data-category="text"><div><p style="font-size: 1.7389em;">Register Here!&nbsp;<br><span data-icon="running"><span class="clovericons fas" aria-hidden="true"></span><span class="sr-only">Running</span></span> </p><p>wwww</p></div></header>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"141416\"]" },
+  entry: {...entry, selector: "[data-id=\"141416\"]"},
   output: {
     data: [
       {
@@ -524,7 +524,7 @@ const ex7: Data = {
 const ex8: Data = {
   html: `<div class="text-content text-0 editable" data-id="141422" data-category="text"><div><p style="text-align: center;">Address: 404 Church St. Columbia, LA 71418</p><p style="text-align: center;">Phone Number: 318-649-2202</p><p style="text-align: center;">Fax Number: 318-649-2206</p><p style="text-align: center;">Email: fbcbeyond@bellsouth.net</p><p style="text-align: center; font-size: 1.0667em;"><br></p><p style="text-align: center; font-size: 1.0667em;"><span data-socialicon="circlefacebook"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">circlefacebook</span></span>  <span data-socialicon="circletwitter"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">circletwitter</span></span>  [social=circleundefined]</p><p style="text-align: center; font-size: 1.0667em;"><span data-socialicon="circlefacebook"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">circlefacebook</span></span>  <span data-socialicon="circletwitter"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">circletwitter</span></span>  [social=circleundefined]</p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"141422\"]" },
+  entry: {...entry, selector: "[data-id=\"141422\"]"},
   output: {
     data: [
       {
@@ -653,7 +653,7 @@ const ex8: Data = {
 const ex9: Data = {
   html: `<div class="text-content text-1 editable" data-id="142222" data-category="text"><div><p data-uniq-id="aCG_1" data-generated-css="brz-css-kcw7Q" style="font-size: 15px; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><u>Our approach </u>to design is based on the art of combining style and functionality. We strive to create spaces that are not only visually impressive, <u>but also serve as comfortable</u> and practical living environments.</span></p><p data-uniq-id="aCG_1" data-generated-css="brz-css-kcw7Q" style="font-size: 15px; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><span data-socialicon="apple"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">apple</span></span> </span></p><p><br></p><p data-uniq-id="sSLWq" data-generated-css="brz-css-hYqTF" style="font-size: 15px; font-weight: 600; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;">Be inspired by our designs where modern lines blend with classic elements to create harmony and coziness. We play with colors, textures and light to ensure that every corner of your home is filled with warmth and style.</span></p><p data-uniq-id="sSLWq" data-generated-css="brz-css-hYqTF" style="font-size: 15px; font-weight: 600; letter-spacing: -0.1px; line-height: 1.4;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><br></span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3; text-align: right; color: rgb(9, 51, 237);"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;">Our team of talented designers and architects are ready to make your dreams come true.&nbsp;</span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><br></span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3; text-align: center; color: rgb(242, 3, 55);"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><span class="clovercustom" style="letter-spacing: -0.1px;">Our team of talented designers and architects are ready to make your dreams come true.&nbsp;</span><br></span></p><p data-uniq-id="lUfdT" data-generated-css="brz-css-m4s3A" style="font-size: 19px; letter-spacing: -0.1px; line-height: 1.3; text-align: center;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;"><span class="clovercustom" style="letter-spacing: -0.1px;"><br></span></span></p><ul style="font-size: medium; letter-spacing: normal;"><li data-uniq-id="vteAp" data-generated-css="brz-css-hf4DG" style="font-size: 14px; letter-spacing: -0.1px; line-height: 1.4; text-align: left;"><span class="clovercustom" style="font-size: inherit; font-weight: inherit; letter-spacing: inherit;">We approach each project carefully, taking into account your preferences,<span class="clovercustom">&nbsp;</span><span class="clovercustom">budget and individual space features.</span></span></li><li data-uniq-id="vteAp" data-generated-css="brz-css-hf4DG" style="font-size: 14px; letter-spacing: -0.1px; line-height: 1.4; text-align: left; color: rgb(22, 222, 38);">We approach each project carefully, taking into account your preferences, budget and individual space features.</li></ul><p><a href="http://google.com" class="sites-button cloverlinks" role="button" data-location="external" data-detail="http://google.com" data-category="button" target="_blank"><span class="clovercustom" style="text-align: center;">google</span></a><span class="clovercustom" style="text-align: center;"> </span></p><p><a href="http://google.com" class="sites-button cloverlinks" role="button" data-location="external" data-detail="http://google.com" data-category="button" target="_blank"><span class="clovercustom" style="text-align: center;">google</span></a><span class="clovercustom" style="text-align: center;"> </span></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"142222\"]" },
+  entry: {...entry, selector: "[data-id=\"142222\"]"},
   output: {
     data: [
       {
@@ -783,7 +783,7 @@ const ex9: Data = {
 const ex10: Data = {
   html: `<div class="text-content text-1 editable" data-id="141588" data-category="text"><div><p><br></p><p style="text-align: center; font-weight: 700; font-family: &quot;League Gothic&quot;, sans-serif; color: rgb(5, 3, 5);"><br></p><p style="text-align: center; font-weight: 400; font-family: &quot;League Gothic&quot;, sans-serif;"><a href="/about-us/who-we-are" class="sites-button cloverlinks" role="button" data-location="existing" data-detail="23432" data-category="button" target="_self" style="font-weight: 400; font-size: 0.8291em;"><span class="clovercustom" style="color: rgb(10, 9, 10); text-align: left; font-weight: 600; font-size: 1.6153em; font-family: Dosis, &quot;Dosis Regular&quot;, sans-serif;">I'm New</span><span data-socialicon="circlerightarrow"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">circlerightarrow</span></span>&hairsp;</a>&hairsp;<br></p><p style="text-align: center; font-weight: 300;"><br></p><p style="text-align: center; font-weight: 300;"><br></p><p style="text-align: center; font-weight: 300;"><br></p></div><div><div data-type="text"><p class="brz-fs-lg-16 brz-ff-uid2222 brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_2 brz-text-lg-left brz-ls-lg-0"><br></p><p class="brz-fs-lg-16 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_2 brz-text-lg-center brz-ls-lg-0"><br></p></div><div data-type="text"><p class="brz-fs-lg-16 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_2 brz-text-lg-center brz-ls-lg-0">&hairsp;<br></p></div><div data-type="button"><p style="text-align: center; font-weight: 400; font-family: &quot;League Gothic&quot;, sans-serif;"><a href="/about-us/who-we-are" class="sites-button cloverlinks" role="button" data-location="existing" data-detail="23432" data-category="button" target="_self" style="font-weight: 400; font-size: 0.8291em;"><span class="clovercustom" style="color: rgb(10, 9, 10); text-align: left; font-weight: 600; font-size: 1.6153em; font-family: Dosis, &quot;Dosis Regular&quot;, sans-serif;">I'm New</span>&hairsp;</a>&hairsp;<br></p></div><div data-type="text"><p class="brz-fs-lg-16 brz-ff-uid2222 brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_2 brz-text-lg-center brz-ls-lg-0"><br></p><p class="brz-fs-lg-16 brz-ff-uid2222 brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_2 brz-text-lg-center brz-ls-lg-0"><br></p><p class="brz-fs-lg-16 brz-ff-uid2222 brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_2 brz-text-lg-center brz-ls-lg-0"><br></p></div></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"141588\"]" },
+  entry: {...entry, selector: "[data-id=\"141588\"]"},
   output: {
     data: [
       {
@@ -870,7 +870,7 @@ const ex10: Data = {
 const ex11: Data = {
   html: `<header class="text-content text-0 title-text editable" data-id="24167954" data-category="text"><div><p>Discipleships<br></p></div></header>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"24167954\"]" },
+  entry: {...entry, selector: "[data-id=\"24167954\"]"},
   output: {
     data: [
       {
@@ -899,7 +899,7 @@ const ex11: Data = {
 const ex12: Data = {
   html: `<div class="text-content text-1 editable" data-id="24213357" data-category="text" id="accordion-24213352-body" role="region" aria-labelledby="accordion-24213352-title"><div><p style="font-size: 1.25em;"><u>Nursery</u>&nbsp;&nbsp;</p><ul style="color: rgb(174, 116, 116);font-family: Aleo, &quot;Aleo Light&quot;, serif;font-style: normal;font-weight: 200;margin: 15px 0;"><li style="color: rgb(228, 233, 238);">We have 4 spots open in our nursery!</li><li style="color: rgb(228, 233, 238);">The nursery includes babies and toddlers from 6 weeks old through 2 years, 11 months</li><li style="color: rgb(228, 233, 238);">All volunteers must be willing to submit to a general background check</li><li style="color: rgb(228, 233, 238);">Please see our bulletin board in the main hallway or ask Bailey Stewart for a description of the specific duties and roles</li></ul><div style="font-size: 1.25em;"><u>Children's Church (ARROW Kids)</u></div><div><ul><li>We have 4 spots open with ARROW Kids Sunday Morning Children's Church!&nbsp;</li><li>ARROW Kids is designed for children ages 3 through 10</li><li>Volunteers are provided a fun, easy to follow lesson plan each week including Bible stories, games, and crafts</li><li>All volunteers must be willing to submit to a general background check</li><li>Please see our bulletin board in the main hallway, or ask Crystal Williford, for more information on duties and roles</li></ul></div></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"24213357\"]" },
+  entry: {...entry, selector: "[data-id=\"24213357\"]"},
   output: {
     data: [
       {
@@ -929,7 +929,7 @@ const ex12: Data = {
 const ex13: Data = {
   html: `<div class="text-content text-1 editable" data-id="13193659" data-category="text"><div><p style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 2.3271em; color: rgb(2, 78, 105);">What is it?</p><p style="font-family: Roboto, &quot;Roboto Light&quot;, sans-serif; font-weight: 300; font-size: 0.9973em; color: rgb(2, 78, 105);"><o:p>&nbsp;</o:p></p><p style="color: rgb(2, 78, 105);"><span class="clovercustom" style="font-size: 1.3298em;">Baptism is an outward expression of an inward faith. It’s showing everyone that you’ve confessed (you’ve said it out loud) that Jesus is Lord and believed in your heart God raised Him from the dead. Baptism is a way to symbolize the death and resurrection of Christ in our lives as believers.</span></p><p style="color: rgb(2, 78, 105);"><o:p>&nbsp;</o:p></p><p style="color: rgb(2, 78, 105);"><span class="clovercustom" style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 2.3271em;">Why submersion?</span></p><p style="color: rgb(2, 78, 105);"><br></p><p style="color: rgb(2, 78, 105);"><span class="clovercustom" style="font-size: 1.3298em;">We believe that by being placed completely underwater, baptism by submersion symbolizes the death and resurrection of Jesus in our lives as believers. Complete submersion also represents the total spiritual change a person experiences by being rescued and saved by Jesus.</span></p><p style="color: rgb(2, 78, 105);"><o:p>&nbsp;</o:p></p><p style="color: rgb(2, 78, 105);"><span lang="EN-US" class="clovercustom" style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 2.3271em;">Who should be baptized?</span></p><p style="color: rgb(2, 78, 105);"><br></p><p style="color: rgb(2, 78, 105);"><span lang="EN-US" class="clovercustom" style="font-size: 1.3298em;">If you have confessed with your mouth that Jesus is Lord, repented of your sin, and believed that God raised Him from the dead, and you’ve never been baptized before, your next step is to be baptized. Confessing, repenting, and believing makes you a Christian and all Christians are commanded by Jesus to be baptized. (Matthew 28:19) We encourage you to take your next step as a believer to be baptized and publicly share your faith in Him.</span></p><p style="color: rgb(2, 78, 105);"><o:p>&nbsp;</o:p></p><p style="color: rgb(2, 78, 105);"><span lang="EN-US" class="clovercustom" style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 2.3271em;">How can I be baptized?</span></p><p style="color: rgb(2, 78, 105);"><o:p>&nbsp;</o:p></p><p style="color: rgb(2, 78, 105);"><o:p>&nbsp;</o:p><span class="clovercustom" style="font-size: 1.3298em;">We have baptisms throughout the year and would love for you to be a part of one of the next one! <a href="/contact-us/decision-form" data-location="existing" data-detail="879092" data-category="link" target="_self" class="cloverlinks" style="color: rgb(17, 125, 2);">Contact us</a> so we can discuss you next step.</span></p><p><br></p><p><br></p><p></p><center><p><span class="clovercustom" style="text-align: center; font-size: 1.6029em;"><span class="clovercustom" style="font-size: 0.7407em;"><a href="/contact-us/decision-form" class="sites-button cloverlinks" role="button" data-location="existing" data-detail="879092" data-category="button" target="_self">Get Baptized</a></span></span></p> <p style="text-align: left; font-weight: 700; font-size: 2.6596em; font-family: &quot;League Spartan&quot;, sans-serif;"><span class="clovercustom" style="font-size: 34.9996px; letter-spacing: 0.1504px;">How can I help?</span><br></p><p style="text-align: left; font-size: 1.2633em;">We need dedicated volunteers to help prepare the baptismal every Baptismal Sunday.&nbsp; This includes set-up, tear-down, and providing necessary support to the ones being baptized.&nbsp;<br></p> <p><span class="clovercustom" style="text-align: center; font-size: 1.6029em;"><br></span></p> <p style="font-size: 1.0638em;"><a href="https://docs.google.com/forms/d/1Bt4ajELyGHt1jYtkf7X9QG_FTKcqX0p5r9xcxSCckYk/edit" class="sites-button cloverlinks" role="button" data-location="external" data-detail="https://docs.google.com/forms/d/1Bt4ajELyGHt1jYtkf7X9QG_FTKcqX0p5r9xcxSCckYk/edit" data-category="button" target="_blank">join the baptism support team</a></p></center><p></p><p><br></p><p><style> </style></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"13193659\"]" },
+  entry: {...entry, selector: "[data-id=\"13193659\"]"},
   output: {
     data: [
       {
@@ -1055,7 +1055,7 @@ const ex13: Data = {
 const ex14: Data = {
   html: `<div class="text-content text-0 editable" data-id="12866076" data-category="text"><div><p style="text-align: center; font-size: 1.0638em;">Follow us on:&nbsp;&nbsp;<a class="socialIconLink cloverlinks" style="font-size: 1.875em; color: rgb(94, 111, 224);" href="https://www.facebook.com/ConnectionMillen" data-location="external" data-button="false" data-detail="https://www.facebook.com/ConnectionMillen" data-category="link" target="_blank"><span data-icon="facebook"><span class="clovericons fab" aria-hidden="true"></span><span class="sr-only">Facebook</span></span></a><a class="socialIconLink cloverlinks" href="https://www.facebook.com/ConnectionMillen" data-location="external" data-button="false" data-detail="https://www.facebook.com/ConnectionMillen" data-category="link" target="_blank" style="font-size: 1.0638em; letter-spacing: 0.01em; background-color: rgb(80, 80, 80);"> </a>  &nbsp;&nbsp;<a class="socialIconLink cloverlinks" href="https://www.instagram.com/connectionchurchmillen/" data-location="external" data-button="false" data-detail="https://www.instagram.com/connectionchurchmillen/" data-category="link" target="_blank" style="letter-spacing: 0.01em; background-color: rgb(80, 80, 80); font-size: 1.875em;"><span data-icon="instagram"><span class="clovericons fab" style="color: rgb(214, 46, 4); font-size: 1em;" aria-hidden="true"></span><span class="sr-only">Instagram</span></span> </a> <a class="socialIconLink cloverlinks" style="color: rgb(250, 3, 3); font-size: 1.625em;" href="https://www.youtube.com/@ConnectionChurchMillen" data-location="external" data-button="false" data-detail="https://www.youtube.com/@ConnectionChurchMillen" data-category="link" target="_blank"><span data-socialicon="youtube"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">youtube</span></span></a></p><p style="text-align: center; font-size: 1.0638em;">&nbsp; &nbsp; &nbsp;&nbsp;<br></p><p>Connect with us:&nbsp;</p><div><p><span class="clovercustom" style="font-size: 10pt; font-weight: 700;">Church Office Address</span></p><p><span class="clovercustom" style="font-size: 10pt;">1178 E. Winthrope Ave. Millen, GA 30442</span></p><p style="font-weight: 500; font-size: 0.9973em;"><br></p><p style="font-weight: 500; font-size: 0.9973em;">Sunday Service</p><p style="font-weight: 300;">Located in the cafeteria behind Jenkins County High School off North Ave.&nbsp;</p><p style="font-weight: 300;"><a href="https://maps.app.goo.gl/Sb33XGmMfvqtsSAt5" data-location="external" data-button="true" data-detail="https://maps.app.goo.gl/Sb33XGmMfvqtsSAt5" data-category="link" target="_blank" class="cloverlinks sites-button" role="button">Click Here for Directions</a></p><p><span class="clovercustom" style="font-size: 10pt;"><br></span></p></div></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"12866076\"]" },
+  entry: {...entry, selector: "[data-id=\"12866076\"]"},
   output: {
     data: [
       {
@@ -1211,7 +1211,7 @@ const ex14: Data = {
 const ex15: Data = {
   html: `<div class="text-content text-1 editable" data-id="24610452" data-category="text"><div><p style="text-align: center; font-size: 2.1277em; font-weight: 500;"><u>Who's your one for 2024?</u></p><div dir="auto" style="text-align: center; font-size: 2.1277em; font-weight: 500;">Who's the one you are praying for this year to know Jesus?<div dir="auto">Who's the one you are investing in this year?<div dir="auto">Who's the one you are allowing to invest in you this year?</div><div dir="auto"><br></div><div dir="auto" style="font-size: 0.8125em; font-style: italic;">If you would like to tell us stories of your journey, we'd love to hear them!!&nbsp; <a href="https://docs.google.com/forms/d/1_AX6wHW5zGDd6082vCXVTC2QQbmFufL8ABmFqdQKU6Q/edit#settings" data-location="external" data-button="false" data-detail="https://docs.google.com/forms/d/1_AX6wHW5zGDd6082vCXVTC2QQbmFufL8ABmFqdQKU6Q/edit#settings" data-category="link" target="_blank" class="cloverlinks">Click Here</a> to share.</div><div dir="auto" style="font-size: 0.8125em; font-style: italic;">If you need some help finding someone to invest in or to invest in you, <a href="https://docs.google.com/forms/d/1LA-3CfWM4edzYng-vC26G5cNWddGtuUVAXkiYCAoWm8/edit" data-location="external" data-button="false" data-detail="https://docs.google.com/forms/d/1LA-3CfWM4edzYng-vC26G5cNWddGtuUVAXkiYCAoWm8/edit" data-category="link" target="_blank" class="cloverlinks">click here</a> and let us walk with you and help you on your journey.</div></div></div></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"24610452\"]" },
+  entry: {...entry, selector: "[data-id=\"24610452\"]"},
   output: {
     data: [
       {
@@ -1240,7 +1240,7 @@ const ex15: Data = {
 const ex16: Data = {
   html: `<div class="text-content text-1 editable" data-id="13239711" data-category="text"><div><p style="color: rgb(2, 78, 105);"><span class="clovercustom">Why do we give to the local church?</span></p><p style="color: rgb(2, 78, 105);"><br></p><p style="color: rgb(2, 78, 105);"><style></style></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">Jesus said that where your treasure is, your heart is there also. What He means is that if our money is our treasure, our heart belongs to our wallets and not to Him. The Bible also speaks about being a good steward of all the blessings God has given you, including your money. So we want to honor Him by giving back a portion of what He has so generously given to us.</p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"13239711\"]" },
+  entry: {...entry, selector: "[data-id=\"13239711\"]"},
   output: {
     data: [
       {
@@ -1270,7 +1270,7 @@ const ex16: Data = {
 const ex17: Data = {
   html: `<div class="text-content text-1 editable" data-id="13239755" data-category="text"><div><p style="color: rgb(2, 78, 105);"><span lang="EN-US" class="clovercustom" style="font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400; font-size: 1.9947em;">Why do we give to the local church?</span></p><p style="color: rgb(2, 78, 105);"><br></p><p style="color: rgb(2, 78, 105);"><style></style></p><p style="font-size: 1.3298em; color: rgb(2, 78, 105);">Jesus said that where your treasure is, your heart is there also. What He means is that if our money is our treasure, our heart belongs to our wallets and not to Him. The Bible also speaks about being a good steward of all the blessings God has given you, including your money. So we want to honor Him by giving back a portion of what He has so generously given to us.</p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"13239755\"]" },
+  entry: {...entry, selector: "[data-id=\"13239755\"]"},
   output: {
     data: [
       {
@@ -1406,7 +1406,7 @@ everlasting life and the other to everlasting damnation. (Matthew 25:46; Mark
 const ex19: Data = {
   html: `<div class="text-content text-1 editable" data-id="23300332" data-category="text"><div><p style="text-align: justify;"><span class="clovercustom" style="font-size: 1rem; letter-spacing: normal;">Hello and welcome to Connection Church Millen! </span><span class="clovercustom" style="font-size: 16px; letter-spacing: normal;">&nbsp;</span><span class="clovercustom" style="font-size: 1rem; letter-spacing: normal;">We are so glad that you have joined us.&nbsp; If you are new here, we would like to thank you for coming and worshiping with us. If you haven't filled out one of our Connect Cards yet, we would really</span><span style="font-size: 16px; letter-spacing: normal;"> love to learn a little more about you!</span><span class="clovercustom" style="font-size: 16px; letter-spacing: normal;">&nbsp;</span><span style="font-size: 1rem; letter-spacing: normal;">. If you would please follow this link <a style="font-size: 0.9375em;" href="/contact-us/first-time-guest" data-location="existing" data-button="true" data-detail="891913" data-category="link" target="_blank" class="cloverlinks sites-button" role="button">HERE.</a> We 'd love to find out what brought you here and what your experience was like.&nbsp; As well, every Sunday morning we have our Next Steps table available to find out about what YOUR next steps may be as a follower of Christ.</span><span style="font-size: 1rem; letter-spacing: normal;"> Thanks again for joining us and please make sure you follow us online on Facebook and Instagram (see links at bottom of page) and visit here often for all the latest info. Keep scrolling below to see all of our current announcements.</span></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"23300332\"]" },
+  entry: {...entry, selector: "[data-id=\"23300332\"]"},
   output: {
     data: [
       {
@@ -1437,7 +1437,7 @@ const ex19: Data = {
 const ex20: Data = {
   html: `<div class="text-content text-1 editable" data-id="16715709" data-category="text"><div><div class="embedded-paste" contenteditable="false" data-src="<div style=&quot;position: relative; padding-bottom: 56.25%; height: 0;&quot;><iframe src=&quot;https://c.streamhoster.com/embed/list/WwsdHp/9bUVcw1smfm/qbfVoIpsOkx_2_1&quot; style=&quot;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot; allow=&quot;autoplay; fullscreen;&quot;></iframe></div>"><div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://c.streamhoster.com/embed/list/WwsdHp/9bUVcw1smfm/qbfVoIpsOkx_2_1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allow="autoplay; fullscreen;"></iframe></div></div></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"16715709\"]" },
+  entry: {...entry, selector: "[data-id=\"16715709\"]"},
   output: {
     data: [
       {
@@ -1454,7 +1454,7 @@ const ex20: Data = {
 const ex21: Data = {
   html: `<div class="text-content text-1 editable" data-id="18004075" data-category="text"><div><p>We're pleased to welcome you to the Antioch Christian Church LIVE Stream page. We hope you enjoy our services and special occasions from wherever you are. Whenever possible, we hope you take the time to join us in person for our live in-person services.</p><p><br></p><p><br></p><div class="embedded-paste" contenteditable="false" data-src="<div style=&quot;position: relative; padding-bottom: 56.25%; height: 0;&quot;><iframe src=&quot;https://c.streamhoster.com/embed/media/WwsdHp/9bUVcw1smfm/iim6hLsYxHA_5&quot; style=&quot;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot; allow=&quot;autoplay; fullscreen;&quot;></iframe></div>"><div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://c.streamhoster.com/embed/media/WwsdHp/9bUVcw1smfm/iim6hLsYxHA_5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" scrolling="no" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allow="autoplay; fullscreen;"></iframe></div></div></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"18004075\"]" },
+  entry: {...entry, selector: "[data-id=\"18004075\"]"},
   output: {
     data: [
       {
@@ -1488,7 +1488,7 @@ const ex21: Data = {
 const ex22: Data = {
   html: `<div class="text-content text-0 editable" data-id="24125822" data-category="text"><div><div><p style="text-align: center; font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400;"><a style="font-size: 2.1875em; font-family: &quot;League Spartan&quot;, sans-serif; font-weight: 400;" href="https://www.tiktok.com/@friendshipbaptisthp?lang=en" data-location="external" data-button="false" data-detail="https://www.tiktok.com/@friendshipbaptisthp?lang=en" data-category="link" target="_blank" class="cloverlinks">TikTok</a></p></div></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"24125822\"]" },
+  entry: {...entry, selector: "[data-id=\"24125822\"]"},
   output: {
     data: [
       {
@@ -1517,7 +1517,7 @@ const ex22: Data = {
 const ex23: Data = {
   html: `<a href="/about-us/who-we-are" data-category="link" data-location="existing" data-detail="1313014" data-url="/about-us/who-we-are"><button class="sites-button editable" data-id="24286133" data-category="button" tabindex="-1"><div class="sites-button-text">More</div></button></a>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"24286133\"]" },
+  entry: {...entry, selector: "[data-id=\"24286133\"]"},
   output: {
     data: [
       {
@@ -1560,7 +1560,7 @@ const ex23: Data = {
 const ex24: Data = {
   html: `<div class="text-content text-1 editable" data-id="20010041" data-category="text"><div><p><br></p><p style="font-size: 1.0013em; color: rgb(0, 0, 0);"><span class="clovercustom" style="font-weight: 600;">Timberwood Church is a Bible-based church designed to help people experience </span><span class="clovercustom" style="font-weight: 600;">God’s goodness in their lives.</span>&nbsp;</p><p style="font-size: 1.0013em; color: rgb(0, 0, 0);">Through teaching and contemporary musical worship, we seek to make the timeless truth of the Bible relevant for everyday life.&nbsp;</p><p style="font-size: 1.0013em; color: rgb(0, 0, 0);">The purpose of Timberwood Church is to honor God by making more disciples for Jesus Christ.</p><p style="font-size: 1.1264em; font-weight: 600; line-height: 1.625;"><br></p><p style="font-weight: 600; line-height: 1.625; font-size: 1.5019em;"><span class="clovercustom" style="font-size: 1.1666em; font-style: italic; color: rgb(105, 142, 179);">We invite you to worship, serve, and celebrate with us!</span><br><span class="clovercustom" style="color: rgb(0, 0, 0);">Sunday services are at 9 a.m. and 10:30 a.m.</span></p><p style="font-size: 1.1264em; font-weight: 600; line-height: 1.625;"><br></p><p style="font-size: 1.1264em; font-weight: 600; line-height: 1.625;"><a href="https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&amp;usp=sharing" class="sites-button cloverlinks" role="button" data-location="external" data-detail="https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&amp;usp=sharing" data-category="button" target="_blank">Visit our Prayer Path</a> </p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"20010041\"]" },
+  entry: {...entry, selector: "[data-id=\"20010041\"]"},
   output: {
     data: [
       {
@@ -1621,7 +1621,7 @@ const ex24: Data = {
 const ex25: Data = {
   html: `<div class="text-content text-1 editable" data-id="25409950" data-category="text" id="accordion-25409945-body" role="region" aria-labelledby="accordion-25409945-title"><div><p><a href="https://f4c1f8a9.churchtrac.com/connect" class="sites-button cloverlinks" role="button" data-location="external" data-detail="https://f4c1f8a9.churchtrac.com/connect" data-category="button" target="_blank">make a donation</a><br></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"25409950\"]" },
+  entry: {...entry, selector: "[data-id=\"25409950\"]"},
   output: {
     data: [
       {
@@ -1664,7 +1664,7 @@ const ex25: Data = {
 const ex26: Data = {
   html: `<div class="text-content text-1 editable" data-id="25409950" data-category="text" id="accordion-25409945-body" role="region" aria-labelledby="accordion-25409945-title"><div><p>Once there, click on “Sign In” in the upper right corner. From there you can either sign into your existing account or create a new account. When creating a new account, it may take a few days for our treasurer to activate your account.</p><p><br></p><p><a href="https://f4c1f8a9.churchtrac.com/connect" class="sites-button cloverlinks" role="button" data-location="external" data-detail="https://f4c1f8a9.churchtrac.com/connect" data-category="button" target="_blank">make a donation</a><br></p><p><br></p><p>Please contact our Administrator at <a href="mailto:kchristian@rockhavenchurch.org" data-location="email" data-button="false" data-detail="kchristian@rockhavenchurch.org" data-category="link" target="_self" class="cloverlinks">kchristian@rockhavenchurch.org</a> if you need assistance.&nbsp;</p><p></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"25409950\"]" },
+  entry: {...entry, selector: "[data-id=\"25409950\"]"},
   output: {
     data: [
       {
@@ -1741,7 +1741,7 @@ const ex26: Data = {
 const ex27: Data = {
   html: `<header class="text-content text-1 title-text editable" data-id="23478402" data-category="text"><div><p>BROADCAST VIDEO</p><p style="font-size: 0.625em;">Interested in joining this team?</p><p style="font-size: 0.625em;"><a href="https://forms.ministryforms.net/viewForm.aspx?formId=e6c65131-c32a-49ed-b8c6-e63634a7f0d2" data-location="external" data-button="true" data-detail="https://forms.ministryforms.net/viewForm.aspx?formId=e6c65131-c32a-49ed-b8c6-e63634a7f0d2" data-category="link" target="_blank" class="cloverlinks sites-button" role="button" style="font-size: 1.0667em;">CLICK HERE</a></p></div></header>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"23478402\"]" },
+  entry: {...entry, selector: "[data-id=\"23478402\"]"},
   output: {
     data: [
       {
@@ -1805,7 +1805,7 @@ const ex27: Data = {
 const ex28: Data = {
   html: `<<header class="text-content text-1 title-text editable" data-id="23478396" data-category="text"><div><p>PRE-SCHOOL</p><p style="font-size: 0.75em;"><span class="clovercustom" style="font-size: 0.8333em;">Interested In Joining This Team?</span><a href="https://forms.ministryforms.net/viewForm.aspx?formId=10095747-3f27-49ab-a7a7-567fca858af3" data-location="external" data-button="true" data-detail="https://forms.ministryforms.net/viewForm.aspx?formId=10095747-3f27-49ab-a7a7-567fca858af3" data-category="link" target="_blank" class="cloverlinks sites-button" role="button" style="background-color: rgb(255, 255, 255); font-size: 0.8889em;">CLICK HERE</a></p></div></header>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"23478396\"]" },
+  entry: {...entry, selector: "[data-id=\"23478396\"]"},
   output: {
     data: [
       {
@@ -1834,7 +1834,7 @@ const ex28: Data = {
 const ex29: Data = {
   html: `<div class="text-content text-1 editable" data-id="23136535" data-category="text"><div><p style="text-align: left; font-weight: 600;"><strong style="font-size: 15px; letter-spacing: 0.45px;">MONTHLY PRAYER GATHERING</strong><br></p><div style="text-align: left; font-weight: 200;"><ul><li>Have you ever struggled praying out loud in front of other people? Consider joining us for our monthly prayer meeting as we seek to learn, encourage, and grow deeper with God through prayer together.&nbsp;</li><li>Our prayer meetings happen monthly on the second Tuesday of every month at 6pm.</li></ul></div></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"23136535\"]" },
+  entry: {...entry, selector: "[data-id=\"23136535\"]"},
   output: {
     data: [
       {
@@ -1870,7 +1870,7 @@ const ex30: Data = {
   parents. If you would like more information about Child Dedication, contact
   Eric Holst at </span><a href="mailto:eric.holst@timberwoodchurch.org" target="_self" data-location="email" data-button="false" data-detail="eric.holst@timberwoodchurch.org" data-category="link"><b><span class="clovercustom" style="font-size: 14pt;">eric.holst@timberwoodchurch.org</span></b></a><span class="clovercustom" style="font-size: 15pt;"></span></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"25300675\"]" },
+  entry: {...entry, selector: "[data-id=\"25300675\"]"},
   output: {
     data: [
       {
@@ -1921,7 +1921,7 @@ const ex31: Data = {
   })();
 </script></div><p><br></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"19657540\"]" },
+  entry: {...entry, selector: "[data-id=\"19657540\"]"},
   output: {
     data: [
       {
@@ -1953,7 +1953,7 @@ const ex31: Data = {
 const ex32: Data = {
   html: `<div class="text-content text-1 editable" data-id="13073170" data-category="text"><div><p style="font-size: calc(var(--regular-text) * 1.2); letter-spacing: normal; line-height: calc(var(--regular-text) * 2);"><span style="font-size: inherit; font-style: italic;"><a href="https://biblia.com/bible/csb/Exod%2024.4" data-reference="Exod 24.4" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Exodus 24:4</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Deut%204.1-2" data-reference="Deut 4.1-2" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Deuteronomy 4:1-2</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Deuteronomy%2017.19" data-reference="Deuteronomy 17.19" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">17:19</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Josh%208.34" data-reference="Josh 8.34" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Joshua 8:34</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Ps%2019.7-10" data-reference="Ps 19.7-10" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Psalms 19:7-10</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Psalms%20119.11" data-reference="Psalms 119.11" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">119:11</a>,<a href="https://biblia.com/bible/csb/Psalms%20119.89" data-reference="Psalms 119.89" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">89</a>,<a href="https://biblia.com/bible/csb/Psalms%20119.105" data-reference="Psalms 119.105" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">105</a>,<a href="https://biblia.com/bible/csb/Psalms%20119.140" data-reference="Psalms 119.140" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">140</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Isa%2034.16" data-reference="Isa 34.16" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Isaiah 34:16</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Isaiah%2040.8" data-reference="Isaiah 40.8" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">40:8</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Jer%2015.16" data-reference="Jer 15.16" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Jeremiah 15:16</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Jeremiah%2036.1-32" data-reference="Jeremiah 36.1-32" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">36:1-32</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Matt%205.17-18" data-reference="Matt 5.17-18" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Matthew 5:17-18</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Matthew%2022.29" data-reference="Matthew 22.29" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">22:29</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Luke%2021.33" data-reference="Luke 21.33" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Luke 21:33</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Luke%2024.44-46" data-reference="Luke 24.44-46" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">24:44-46</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/John%205.39" data-reference="John 5.39" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">John 5:39</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/John%2016.13-15" data-reference="John 16.13-15" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">16:13-15</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/John%2017.17" data-reference="John 17.17" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">17:17</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Acts%202.16ff" data-reference="Acts 2.16ff" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Acts 2:16ff</a>.;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Acts%2017.11" data-reference="Acts 17.11" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">17:11</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Rom%2015.4" data-reference="Rom 15.4" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Romans 15:4</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Romans%2016.25-26" data-reference="Romans 16.25-26" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">16:25-26</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/2%20Tim%203.15-17" data-reference="2 Tim 3.15-17" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">2 Timothy 3:15-17</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Heb%201.1-2" data-reference="Heb 1.1-2" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">Hebrews 1:1-2</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/Hebrews%204.12" data-reference="Hebrews 4.12" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">4:12</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/1%20Pet%201.25" data-reference="1 Pet 1.25" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">1 Peter 1:25</a>;<span class="clovercustom">&nbsp;</span><a href="https://biblia.com/bible/csb/2%20Pet%201.19-21" data-reference="2 Pet 1.19-21" data-version="csb" data-purpose="bible-reference" target="_blank" rel="noopener">2 Peter 1:19-21</a>.</span></p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"13073170\"]" },
+  entry: {...entry, selector: "[data-id=\"13073170\"]"},
   output: {
     data: [
       {
@@ -1982,7 +1982,7 @@ const ex32: Data = {
 const ex33: Data = {
   html: `<div class="text-content text-0 editable" data-id="18444100" data-category="text"><div><p style="font-size: 1.1968em;"><a href="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-location="external" data-button="false" data-detail="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-category="link" target="_blank" class="cloverlinks" style="color: rgb(227, 227, 227);">101 N Palm Ave.</a></p><p style="text-align: right;"><a class="socialIconLink cloverlinks" href="https://www.facebook.com/Firstpresfrostproof" data-location="external" data-button="false" data-detail="https://www.facebook.com/Firstpresfrostproof" data-category="link" target="_blank" style="letter-spacing: 0.1504px; background-color: rgb(80, 80, 80); outline-style: initial; outline-width: 0px; color: rgb(202, 232, 79); font-size: 26.9998px;"><span data-socialicon="facebook"><span class="socialIconSymbol" style="font-size: 1.8519em; color: rgb(227, 227, 227);" aria-hidden="true"></span><span class="sr-only">facebook</span></span> <span class="clovercustom" style="font-size: 1.8519em;"> &nbsp;</span></a><a class="socialIconLink cloverlinks" href="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-location="external" data-button="false" data-detail="https://www.google.com/maps/place/101+N+Palm+Ave,+Frostproof,+FL+33843/@27.7475396,-81.537104,17z/data=!3m1!4b1!4m5!3m4!1s0x88dd00b77fe4c2e9:0xe2e0f357efc9cf64!8m2!3d27.7475396!4d-81.5349153" data-category="link" target="_blank" style="letter-spacing: 0.1504px; background-color: rgb(80, 80, 80); color: rgb(227, 227, 227); font-size: 26.9998px;"><span data-socialicon="map"><span class="socialIconSymbol" style="font-size: 1.8519em;" aria-hidden="true"></span><span class="sr-only">map</span></span><span class="clovercustom" style="font-size: 1.8519em;"> </span></a> </p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"18444100\"]" },
+  entry: {...entry, selector: "[data-id=\"18444100\"]"},
   output: {
     data: [
       {
@@ -2062,7 +2062,7 @@ const ex33: Data = {
 const ex34: Data = {
   html: `<div class="text-content text-1 editable" data-id="13030114" data-category="text"><div><p style="font-family: &quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, &quot;Lucida Sans&quot;, Geneva, Verdana, sans-serif; font-weight: 700; text-align: left; font-size: 0.9973em; color: rgb(0, 83, 166); line-height: 1.4em;">Part 3 - We respond to God's Word</p><ol style="color: rgb(0, 83, 166); font-family: &quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, &quot;Lucida Sans&quot;, Geneva, Verdana, sans-serif; font-style: normal; font-weight: 400;"><li><font color="#0053a6" face="Lucida Grande, Lucida Sans Unicode, Lucida Sans, Geneva, Verdana, sans-serif" style="font-weight: 400;">In songs of praise</font></li><li><font color="#0053a6" face="Lucida Grande, Lucida Sans Unicode, Lucida Sans, Geneva, Verdana, sans-serif" style="font-weight: 400;">In offerings of thanks to God (We support the sharing of his Word)</font></li><li>In prayers for our congregation, our world, and the Church</li></ol></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"13030114\"]" },
+  entry: {...entry, selector: "[data-id=\"13030114\"]"},
   output: {
     data: [
       {
@@ -2091,7 +2091,7 @@ const ex34: Data = {
 const ex35: Data = {
   html: `<div class="text-content text-0 editable" data-id="23579203" data-category="text"><div><p><a class="socialIconLink cloverlinks sites-button" href="https://facebook.com/CanaanBaptistChurch.Birmingham" data-location="external" data-button="true" data-detail="https://facebook.com/CanaanBaptistChurch.Birmingham" data-category="link" target="_blank" role="button"><span data-socialicon="facebook"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">facebook</span></span></a> <a class="socialIconLink cloverlinks sites-button" href="https://www.youtube.com/@CanaanBaptistChurch-Birmingham" data-location="external" data-button="true" data-detail="https://www.youtube.com/@CanaanBaptistChurch-Birmingham" data-category="link" target="_blank" role="button"><span data-socialicon="youtube"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">youtube</span></span></a><br></p><p>Canaan Baptist Church</p><p>2543 Morgan Rd Bessemer, AL 35022</p><p>205-425-4381</p></div></div>`,
   //prettier-ignore
-  entry: { ...entry, selector: "[data-id=\"23579203\"]" },
+  entry: {...entry, selector: "[data-id=\"23579203\"]"},
   output: {
     data: [
       {
@@ -2258,6 +2258,418 @@ const ex38: Data = {
 
 //#endregion
 
+//#region Example 39 (Anthem text of icons are missing)
+const ex39: Data = {
+  html: `<div class="text-content text-1 editable" data-id="17909016" data-category="text"><div><p style="text-align: center; line-height: 2.3em; color: rgb(235, 235, 235);">Watch and listen to the latest sermons from Hillside.</p><p style="font-size: 18.56px; letter-spacing: 1.2992px; text-align: center; line-height: 2.3em;"><a href="https://podcasts.apple.com/us/podcast/hillside-evangelical-free-church/id1547915934" data-location="external" data-detail="https://podcasts.apple.com/us/podcast/hillside-evangelical-free-church/id1547915934" data-category="link" target="_blank" class="cloverlinks socialIconLink" style="font-size: 18.56px; letter-spacing: 1.2992px;"><span data-socialicon="roundedpodcast"><span class="socialIconSymbol" style="color: rgb(255, 255, 255);" aria-hidden="true"></span><span class="sr-only">roundedpodcast</span></span><span class="clovercustom" style="color: rgb(255, 255, 255);">&nbsp;</span>Apple Podcasts</a> <a class="socialIconLink cloverlinks" style="color: rgb(255, 255, 255);" href="https://podcasters.spotify.com/pod/show/hillsideefc" data-location="external" data-button="false" data-detail="https://podcasters.spotify.com/pod/show/hillsideefc" data-category="link" target="_blank"><span data-socialicon="roundedspotify"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">roundedspotify</span></span></a><a href="https://podcasters.spotify.com/pod/show/hillsideefc" data-location="external" data-detail="https://podcasters.spotify.com/pod/show/hillsideefc" data-category="link" target="_blank" class="cloverlinks socialIconLink" style="font-size: 18.56px; letter-spacing: 1.2992px;" data-button="false"> &nbsp;Spotify</a></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="17909016"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span style="color: rgb(235, 235, 235); ">Watch and listen to the latest sermons from Hillside.</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                colorHex: "#ffffff",
+                colorOpacity: "0.99",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#ffffff",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                linkExternal:
+                  "https://podcasts.apple.com/us/podcast/hillside-evangelical-free-church/id1547915934",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "podcast",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-18 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-1_2"><a data-location="external" data-detail="https://podcasts.apple.com/us/podcast/hillside-evangelical-free-church/id1547915934" data-category="link" target="_blank" style="" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fpodcasts.apple.com%2Fus%2Fpodcast%2Fhillside-evangelical-free-church%2Fid1547915934%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>Apple Podcasts</span></a></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                linkExternal:
+                  "https://podcasters.spotify.com/pod/show/hillsideefc",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "spotify",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-detail="https://podcasters.spotify.com/pod/show/hillsideefc" data-category="link" target="_blank" style="" data-button="false" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fpodcasters.spotify.com%2Fpod%2Fshow%2Fhillsideefc%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span> &nbsp;Spotify</span></a></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+//#endregion
+
+// #region Example 40 (Anthem multiple icons with text lose the text)
+const ex40: Data = {
+  html: `<div class="text-content text-1 editable" data-id="25322669" data-category="text"><div><p><span class="clovercustom" style="font-family: Biryani, sans-serif; font-weight: 300; font-size: 1.3125em;">The New Castle Public Library Book Mobile
+will be at the church </span><span style="font-family: Biryani, sans-serif; font-size: 21px; letter-spacing: 0.16px;">from 4:00 - 5:00P.M. on select </span><span style="font-family: Biryani, sans-serif; font-size: 1.3125em; letter-spacing: 0.01em;">WEDNESDAYS before AWANA.&nbsp; Stop in early to check out the books and stay for AWANA.</span></p><p><span class="clovercustom" style="font-family: Biryani, sans-serif; font-weight: 300; font-size: 1.3125em;"><br></span></p><p><span class="clovercustom" style="font-family: Biryani, sans-serif; font-weight: 300; font-size: 1.3125em;">September 11 &nbsp;<span data-icon="book-open"><span class="clovericons fas" aria-hidden="true"></span><span class="sr-only">Book Open</span></span> &nbsp; October 16 &nbsp;<span data-icon="book-open"><span class="clovericons fas" aria-hidden="true"></span><span class="sr-only">Book Open</span></span> &nbsp; November 6 <span data-icon="book-open"><span class="clovericons fas" aria-hidden="true"></span><span class="sr-only">Book Open</span></span> &nbsp; December 11 <span data-icon="book-open"><span class="clovericons fas" aria-hidden="true"></span><span class="sr-only">Book Open</span></span> &nbsp; January 15&nbsp; <span data-icon="book-open"><span class="clovericons fas" aria-hidden="true"></span><span class="sr-only">Book Open</span></span>&nbsp; February 5&nbsp; <span data-icon="book-open"><span class="clovericons fas" aria-hidden="true"></span><span class="sr-only">Book Open</span></span>&nbsp; March 5</span></p><p><span class="clovercustom" style="font-family: Biryani, sans-serif; font-weight: 300; font-size: 1.3125em;"><br></span></p><p><span class="clovercustom" style="font-family: Biryani, sans-serif; font-weight: 300; font-size: 1.3125em;">Please stop by and bring the
+kids or grandkids to check it out.</span><br></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="25322669"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0_0"><span style="font-weight: 300; ">The New Castle Public Library Book Mobile will be at the church </span><span style="">from 4:00 - 5:00P.M. on select </span><span style="">WEDNESDAYS before AWANA.&nbsp; Stop in early to check out the books and stay for AWANA.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; "><br></span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">September 11</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "book-open",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">October 16</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "book-open",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">November 6</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "book-open",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">December 11</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "book-open",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">January 15</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "book-open",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">February 5</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "book-open",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">March 5</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; "><br></span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">Please stop by and bring the kids or grandkids to check it out.</span><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -2296,7 +2708,9 @@ describe.each([
   ex35,
   ex36,
   ex37,
-  ex38
+  ex38,
+  ex39,
+  ex40
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;

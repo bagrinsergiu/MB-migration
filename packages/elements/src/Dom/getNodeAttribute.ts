@@ -1,6 +1,12 @@
-import {createData} from "../utils/getData";
+import { createData } from "../utils/getData";
 
-export const getNodeAttribute = ({selector, attributeName}) => {
+export const getNodeAttribute = ({
+  selector,
+  attributeName
+}: {
+  selector?: string;
+  attributeName: string;
+}) => {
   try {
     const element = document.querySelector(selector ?? "");
 
@@ -15,16 +21,15 @@ export const getNodeAttribute = ({selector, attributeName}) => {
     if (value) {
       return createData({
         data: value
-      })
+      });
     }
 
     return {
       data: false
-    }
-
+    };
   } catch (error) {
     return {
       data: false
-    }
+    };
   }
 };
