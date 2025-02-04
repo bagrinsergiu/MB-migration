@@ -160,10 +160,10 @@ trait SectionStylesAble
             $background = $mbSectionItem['settings']['sections']['background'];
             if (isset($background['filename']) && isset($background['photo'])) {
 
-                if($background['opacity']>=0.9)
-                {
-                    $background['opacity'] = 0.8;
-                }
+//                if($background['opacity']>=0.9)
+//                {
+//                    $background['opacity'] = 0.8;
+//                }
 
                 $brizySection->getValue()
                     ->set_bgImageFileName($background['filename'])
