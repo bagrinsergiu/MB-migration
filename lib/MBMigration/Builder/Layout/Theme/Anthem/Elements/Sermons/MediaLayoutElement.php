@@ -55,7 +55,7 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 20;
+        return 0;
     }
 
     protected function getPropertiesMainSection(): array
