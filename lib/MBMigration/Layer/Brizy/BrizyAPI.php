@@ -2,6 +2,7 @@
 
 namespace MBMigration\Layer\Brizy;
 
+use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Core\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Exception;
@@ -365,7 +366,7 @@ class BrizyAPI extends Utils
 
             $projectData['fonts']['config']['data'][] = $data;
 
-            $fontId = $data['family'];
+            $fontId = FontUtils::convertFontFamily($data['family']);
         }
 
         $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
