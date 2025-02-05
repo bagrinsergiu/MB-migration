@@ -229,7 +229,7 @@ class MBProjectDataCollector
         return $this->processFonts($dbFontStyles, $migrationDefaultFonts);
     }
 
-    private function processFonts($dbFontStyles, $migrationDefaultFonts)
+    private function processFonts($dbFontStyles, $migrationDefaultFonts): array
     {
         $fontStyles = [];
         foreach ($dbFontStyles as $font) {
@@ -285,15 +285,15 @@ class MBProjectDataCollector
     /**
      * @throws GuzzleException
      */
-    public function primaryDefaultFonts(&$fontStyle, $name)
-    {
-        $fontStyle[] = [
-            'name' => 'primary',
-            'fontName' => $name,
-            'fontFamily' => $this->transLiterationFontFamily($name),
-            'uuid' => $this->fontsController->upLoadFont($name),
-        ];
-    }
+//    public function primaryDefaultFonts(&$fontStyle, $name)
+//    {
+//        $fontStyle[] = [
+//            'name' => 'primary',
+//            'fontName' => $name,
+//            'fontFamily' => $this->transLiterationFontFamily($name),
+//            'uuid' => $this->fontsController->upLoadFont($name),
+//        ];
+//    }
 
 
     /**
@@ -664,6 +664,7 @@ class MBProjectDataCollector
         foreach ($requestItemsFromSection as $sectionsItems) {
             $settings = '';
             $uploadedFont = [];
+
 
             if ($settings = json_decode($sectionsItems['settings'], true)) {
                 if (isset($settings['used_fonts'])) {

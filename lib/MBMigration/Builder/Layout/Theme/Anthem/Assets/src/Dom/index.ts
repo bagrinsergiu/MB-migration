@@ -5,6 +5,7 @@ import { getRootPropertyStyles } from "elements/src/Dom/getRootPropertyStyles";
 import { hasNode } from "elements/src/Dom/hasNode";
 import { removeNodeClass } from "elements/src/Dom/removeNodeClass";
 import { getNodeAttribute } from "elements/src/Dom/getNodeAttribute";
+import { extractAllFontFamilies } from "elements/src/Dom/extractAllFontFamilies";
 
 export const dom = {
   hasNode,
@@ -13,5 +14,6 @@ export const dom = {
   detectSubpalette,
   addNodeClass,
   removeNodeClass,
-  getNodeAttribute
+  getNodeAttribute,
+  extractAllFontFamilies
 };

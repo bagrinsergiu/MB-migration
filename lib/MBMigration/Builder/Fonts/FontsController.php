@@ -3,6 +3,8 @@
 namespace MBMigration\Builder\Fonts;
 
 use Exception;
+use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
+use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Core\Logger;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\Utils\builderUtils;
@@ -12,19 +14,14 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 
 class FontsController extends builderUtils
 {
-    private $BrizyApi;
-    private $fontsMap;
-    /**
-     * @var mixed
-     */
-    private $projectId;
+    private BrizyAPI $BrizyApi;
+    private array $fontsMap;
+    private int $projectId;
 
-    protected $layoutName;
+    protected string $layoutName;
+    private VariableCache $cache;
 
-    /**
-     * @var VariableCache
-     */
-    private $cache;
+    private array $googeFontsMap;
 
     /**
      * @throws Exception
@@ -40,13 +37,117 @@ class FontsController extends builderUtils
 
     /**
      * @throws Exception
+     */
+    public function getFontsMap(): void
+    {
+        $this->layoutName = 'FontsController';
+
+        $file = __DIR__.'/fonts.json';
+        $fileContent = file_get_contents($file);
+        $this->fontsMap = json_decode($fileContent, true);
+
+        $file = __DIR__.'/googleFonts.json';
+        $fileContent = file_get_contents($file);
+        $this->googeFontsMap = json_decode($fileContent, true);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getProjectData(): array
+    {
+        $containerID = $this->cache->get('projectId_Brizy');
+        try{
+
+            return json_decode(
+                $this->BrizyApi->getProjectContainer($containerID, true)['data'],
+                true) ?? [];
+        } catch (Exception|GuzzleException $e){
+
+            return [];
+        }
+    }
+
+    public function upLoadCustomFonts(RootListFontFamilyExtractor $RootListFontFamilyExtractor): void
+    {
+        $result = [];
+
+        $allUpLoadFonts = $this->getAllUpLoadFonts();
+        $fontsList = $RootListFontFamilyExtractor->getAllFontName();
+
+        foreach ($fontsList as $key => $font) {
+            if (!in_array($font, $allUpLoadFonts)) {
+                $fontId = $RootListFontFamilyExtractor->getFontIdByName($font);
+                $RootListFontFamilyExtractor->getFontFamilyByName($font);
+
+                $this->upLoadMBFonts($font);
+                $this->upLoadGoogleFonts($font, $fontId);
+            }
+        }
+    }
+
+    public function upLoadMBFonts($fontName): void
+    {
+        foreach ($this->fontsMap as $font){
+            if($font === $fontName){
+                try{
+                    $this->upLoadFont($fontName);
+                } catch (Exception|GuzzleException $e){
+                    return;
+                }
+                return;
+            }
+        }
+
+    }
+
+    public function upLoadGoogleFonts($fontName, $fontFamilyId): void
+    {
+        try{
+            $this->upLoadGoogleFont($fontName, $fontFamilyId);
+        } catch (Exception|GuzzleException $e){
+            return;
+        }
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function getAllUpLoadFonts(): array
+    {
+        $result = [];
+
+        $projectData = $this->getProjectData();
+
+        foreach ($projectData['fonts']['config']['data'] as $projectFont) {
+            $fontFamily = FontUtils::convertFontFamily($projectFont['family']);
+            if (!in_array($fontFamily, $result)) {
+                $result[] = $fontFamily;
+            }
+        }
+
+        foreach ($projectData['fonts']['upload']['data']  as $projectFont) {
+            $fontFamily = FontUtils::convertFontFamily($projectFont['family']);
+            if (!in_array($fontFamily, $result)) {
+                $result[] = $fontFamily;
+            }
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * @throws Exception
      * @throws GuzzleException
      */
     public function upLoadFont($fontName): string
     {
-        Logger::instance()->info("Create FontName $fontName");
         $KitFonts = $this->getPathFont($fontName);
         if ($KitFonts) {
+            Logger::instance()->info("Create FontName $fontName");
+
             $responseDataAddedNewFont = $this->BrizyApi->createFonts(
                 $fontName,
                 $this->projectId,
@@ -55,10 +156,37 @@ class FontsController extends builderUtils
             );
             $this->cache->add('responseDataAddedNewFont', [$fontName => $responseDataAddedNewFont]);
 
-            return $this->BrizyApi->addFontAndUpdateProject($responseDataAddedNewFont);
+            $fontFamilyId = $this->BrizyApi->addFontAndUpdateProject($responseDataAddedNewFont);
+
+            $fontFamilyConverted = FontUtils::transliterateFontFamily($KitFonts['displayName']);
+
+            self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyConverted);
+
+            return $fontFamilyId;
         }
 
         return 'lato';
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function upLoadGoogleFont($fontName, $fontFamilyId)
+    {
+        if(!$this->cache->get($fontName, 'responseDataAddedNewFont')) {
+            $KitFonts = $this->getGoogleFontBnName($fontName);
+            if ($KitFonts) {
+                Logger::instance()->info("Create FontName $fontName");
+
+                $fontNameLower = FontUtils::convertFontFamily($KitFonts['family']);
+
+                $this->cache->add('responseDataAddedNewFont', [$fontNameLower => $KitFonts]);
+
+                $this->BrizyApi->addFontAndUpdateProject($KitFonts, true);
+
+                self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyId);
+            }
+        }
     }
 
     public function addFontsToBrizyProject(array $fontStyles): array
@@ -78,17 +206,19 @@ class FontsController extends builderUtils
             };
 
             $uploaded = false;
-            if(isset($projectData['fonts']['upload']['data']))
-            foreach ($projectData['fonts']['upload']['data'] as $projectFont) {
-                if ($projectFont['family'] == $KitFonts['displayName']) {
-                    foreach ($KitFonts['fontsFile'] as $type => $font) {
-                        if (!in_array($type, $projectFont['files'])){
-                            continue 2;
+
+            if(!empty($projectData['fonts']['upload']['data'])) {
+                foreach ($projectData['fonts']['upload']['data'] as $projectFont) {
+                    if ($projectFont['family'] == $KitFonts['displayName']) {
+                        foreach ($KitFonts['fontsFile'] as $type => $font) {
+                            if (!in_array($type, $projectFont['files'])) {
+                                continue 2;
+                            }
                         }
+                        $uploaded = true;
+                        $fontStyles[$index]['uuid'] = $projectFont['id'];
+                        break;
                     }
-                    $uploaded = true;
-                    $fontStyles[$index]['uuid'] = $projectFont['id'];
-                    break;
                 }
             }
 
@@ -96,14 +226,15 @@ class FontsController extends builderUtils
                 continue;
             }
 
-            $fontToAttach = $this->BrizyApi->createFonts(
-                $fontName,
-                $this->projectId,
-                $KitFonts['fontsFile'],
-                $KitFonts['displayName']
-            );
-
-            $this->cache->add('responseDataAddedNewFont', [$fontName => $fontToAttach]);
+            if(!$fontToAttach = $this->cache->get($fontName, 'responseDataAddedNewFont')){
+                $fontToAttach = $this->BrizyApi->createFonts(
+                    $fontName,
+                    $this->projectId,
+                    $KitFonts['fontsFile'],
+                    $KitFonts['displayName']
+                );
+                $this->cache->add('responseDataAddedNewFont', [$fontName => $fontToAttach]);
+            }
 
             $newData = [];
             $newData['family'] = $fontToAttach['family'];
@@ -128,20 +259,18 @@ class FontsController extends builderUtils
         return $fontStyles;
     }
 
-    /**
-     * @throws Exception
-     */
-    public function getFontsMap(): void
+    static public function addFontInMigration($fontName, $FontFamilyId, $FontFamily)
     {
-        $this->layoutName = 'FontsController';
-        if (Config::$urlJsonKits && Config::$devMode === false) {
-            $createUrlForFileFontsMap = Config::$urlJsonKits.'/fonts/fonts.json';
-            $this->fontsMap = $this->loadJsonFromUrl($createUrlForFileFontsMap);
-        } else {
-            $file = __DIR__.'/fonts.json';
-            $fileContent = file_get_contents($file);
-            $this->fontsMap = json_decode($fileContent, true);
-        }
+        $cache = VariableCache::getInstance();
+        $settings = $cache->get('settings');
+
+        $settings['fonts'][] = [
+            'fontName' => $fontName,
+            'fontFamily' => $FontFamily,
+            'uuid' => $FontFamilyId,
+        ];
+
+        $cache->set('settings', $settings);
     }
 
     private function getPathFont($name)
@@ -153,6 +282,36 @@ class FontsController extends builderUtils
                     $fontPack[$fontWeight] = $fontStyle['normal'];
                 }
                 $this->cache->add('fonsUpload', [$name => $fontPack]);
+
+                return [
+                    'displayName' => $font['settings']['display_name'],
+                    'fontsFile' => $fontPack,
+                ];
+            }
+        }
+
+        return false;
+    }
+
+    private function getGoogleFontBnName($fontName)
+    {
+        foreach ($this->googeFontsMap['items'] as $font) {
+            if (FontUtils::convertFontFamily($font['family']) === $fontName) {
+               return $font;
+            }
+        }
+        return false;
+    }
+
+    private function getPathFontByName($name)
+    {
+        $fontPack = [];
+        foreach ($this->fontsMap as $key => $font) {
+            if ($font['settings']['name'] === $name) {
+                foreach ($font['fonts'] as $fontWeight => $fontStyle) {
+                    $fontPack[$fontWeight] = $fontStyle['normal'];
+                }
+                $this->cache->add('fonsUpload', [$key => $fontPack]);
 
                 return [
                     'displayName' => $font['settings']['display_name'],
@@ -179,6 +338,8 @@ class FontsController extends builderUtils
 
         return $fontFamily;
     }
+
+
 
     static public function getFontsFamilyFromName($name): string
     {

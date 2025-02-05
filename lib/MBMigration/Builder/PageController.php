@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
+use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettes;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
@@ -61,6 +62,7 @@ class PageController
 
     /**
      * @throws ElementNotFound
+     * @throws Exception
      * []
      */
     public function run($preparedSectionOfThePage, $pageMapping): bool
@@ -127,6 +129,11 @@ class PageController
             $footerItem = $this->cache->get('footer', 'mainSection');
             $listSeries = $this->cache->get('series');
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
+            $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
+
+            $fontController->upLoadCustomFonts($RootListFontFamilyExtractor);
+
+            $fontFamily = FontsController::getFontsFamily();
 
             $themeContext = new ThemeContext(
                 $design,

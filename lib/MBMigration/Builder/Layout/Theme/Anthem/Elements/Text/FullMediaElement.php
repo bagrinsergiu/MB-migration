@@ -13,7 +13,9 @@ class FullMediaElement extends FullMediaElementElement
 
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0);
+        return $brizySection->getItemWithDepth(0, 1, 0)
+            ->addVerticalContentAlign()
+            ->mobileSize();
     }
 
     protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent

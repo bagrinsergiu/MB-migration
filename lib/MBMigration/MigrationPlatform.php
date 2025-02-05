@@ -146,6 +146,10 @@ class MigrationPlatform
             $this->cache->set('designName', $designName);
         }
 
+//        if (Config::$devMode) {
+//            $this->brizyApi->clearAllFontsInProject();
+//        }
+
         $this->checkDesign($designName);
 
         FoldersUtility::createProjectFolders($this->projectId);
@@ -167,7 +171,8 @@ class MigrationPlatform
             $this->brizyApi,
             $this->QueryBuilder,
             $this->logger,
-            $this->projectID_Brizy
+            $this->projectID_Brizy,
+            $designName
         );
 
         $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
