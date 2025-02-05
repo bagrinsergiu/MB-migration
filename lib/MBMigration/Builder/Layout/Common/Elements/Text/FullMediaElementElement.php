@@ -51,6 +51,7 @@ abstract class FullMediaElementElement extends AbstractElement
 
         $brizyImageComponent->getValue()
             ->set_width(100)
+            ->set_mobileSize(100)
             ->set_widthSuffix('%')
             ->set_height('')
             ->set_heightSuffix('');

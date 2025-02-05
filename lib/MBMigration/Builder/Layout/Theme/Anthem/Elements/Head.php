@@ -153,6 +153,20 @@ class Head extends HeadElement
             "menuPaddingLeftSuffix" => "px",
         ];
 
+        $sectionColumnPadding = [
+            "mobilePaddingType" => "ungrouped",
+            "mobilePadding" => 10,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 10,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 10,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 10,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+
         $sectionRowPadding = [
             "paddingType" => "ungrouped",
 
@@ -199,6 +213,18 @@ class Head extends HeadElement
             "marginRightSuffix" => "px",
             "marginLeft" => 0,
             "marginLeftSuffix" => "px",
+
+            'mobileMarginType' => 'ungrouped',
+            'mobileMargin' => 0,
+            'mobileMarginSuffix' => 'px',
+            'mobileMarginTop' => -65,
+            'mobileMarginTopSuffix' => 'px',
+            'mobileMarginRight' => 0,
+            'mobileMarginRightSuffix' => 'px',
+            'mobileMarginBottom' => 45,
+            'mobileMarginBottomSuffix' => 'px',
+            'mobileMarginLeft' => 200,
+            'mobileMarginLeftSuffix' => 'px',
         ];
 
         foreach ($sectionlogoOptions as $option => $value) {
@@ -211,6 +237,13 @@ class Head extends HeadElement
         foreach ($sectionRowPadding as $option => $value) {
             $nameOption = 'set_'.$option;
             $brizySection->getItemWithDepth(0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
+        foreach ($sectionColumnPadding as $option => $value) {
+            $nameOption = 'set_'.$option;
+            $brizySection->getItemWithDepth(0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
