@@ -12,4 +12,13 @@ class FontUtils
 
         return strtolower($inputString);
     }
+
+    public static function transliterateFontFamily($fontName): string
+    {
+        $inputString = str_replace(["\"", "'", ' '], ['', '', '_'], $fontName);
+
+        $inputString = str_replace(',', '', $inputString);
+
+        return strtolower($inputString);
+    }
 }

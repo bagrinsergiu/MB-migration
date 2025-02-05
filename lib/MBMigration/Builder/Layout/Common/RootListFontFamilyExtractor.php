@@ -35,9 +35,8 @@ class RootListFontFamilyExtractor
         $this->allFontFamilies = $allFontFamilies;
     }
 
-    public function getFontName(): array
+    public function getAllFontName(): array
     {
-
         $map = [];
         foreach ($this->allFontFamilies as $fontFamily) {
 
@@ -50,8 +49,42 @@ class RootListFontFamilyExtractor
             }
 
         }
+
         return $map;
     }
+
+    public function getFontIdByName($name)
+    {
+        foreach ($this->allFontFamilies as $fontFamily) {
+            $fontsMap = explode(',', $fontFamily[1]);
+            $converted = FontUtils::convertFontFamily(str_replace(' ', '', $fontsMap[0]));
+
+            if($name === $converted) {
+                return $fontFamily[0];
+            }
+        }
+    }
+
+    public function getFontFamilyByName($name): array
+    {
+        $map = [];
+        foreach ($this->allFontFamilies as $fontFamily) {
+
+            $fontsMap = explode(',', $fontFamily[1]);
+            foreach ($fontsMap as $font) {
+                $converted = FontUtils::convertFontFamily(str_replace(' ', '', $font));
+                if(!in_array($converted, $map)){
+                    $map[] = $converted;
+                }
+            }
+
+        }
+
+        return $map;
+    }
+
+
+
 
     public function getFontFamily(): array
     {
