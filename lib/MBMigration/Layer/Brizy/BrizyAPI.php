@@ -603,7 +603,6 @@ class BrizyAPI extends Utils
         }
 
         return false;
-
     }
 
     /**

@@ -63,10 +63,13 @@ return static function (array $context, Request $request): Response {
         return new JsonResponse(['error' => $e->getMessage()], 400);
     }
 
-    if (!$mb_project_uuid = $request->get('mb_project_uuid')) {
+    $mb_project_uuid = $request->get('mb_project_uuid');
+    if (!isset($mb_project_uuid)) {
         return new JsonResponse(['error' => 'Invalid mb_project_uuid'], 400);
     }
-    if (!$brz_project_id = $request->get('brz_project_id')) {
+
+    $brz_project_id = $request->get('brz_project_id');
+    if (!isset($brz_project_id)) {
         return new JsonResponse(['error' => 'Invalid brz_project_id'], 400);
     }
 

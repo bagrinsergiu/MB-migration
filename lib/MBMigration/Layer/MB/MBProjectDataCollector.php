@@ -103,6 +103,20 @@ class MBProjectDataCollector
         return $settingSite[0]['id'];
     }
 
+    public static function getDomainBySiteId(int $project_ID_MB)
+    {
+        $db = new DBConnector();
+        $settingSite = $db->requestArray("SELECT domain_name from domains WHERE site_id = '".$project_ID_MB."'");
+        if (empty($settingSite)) {
+            Logger::instance()->info(self::trace(0).'Message: MB project not found');
+            Logger::instance()->critical('MB project not found');
+
+            throw new Exception("MB project not found with uuid: $project_ID_MB");
+        }
+
+        return $settingSite[0]['domain_name'];
+    }
+
     /**
      * @throws Exception
      */

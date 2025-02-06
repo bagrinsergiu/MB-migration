@@ -136,6 +136,7 @@ class Config
             'menus/create' => '/menus/create',
             'workspaces' => '/workspaces',
             'projects' => '/projects',
+            'domain' => '/domain',
             'users' => '/users',
             'pages' => '/pages',
             'media' => '/media',
