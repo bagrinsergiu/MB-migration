@@ -153,14 +153,22 @@ const flattenNode = (node: Element) => {
 };
 
 const replaceWrongTags = (node: HTMLElement) => {
-  const tagsToReplace = "font";
-  const replaceElements = node.querySelectorAll(tagsToReplace);
+  const wrongTags = ["font", "blockquote", "table", "tbody", "tr", "td"];
+  const replaceElements = node.querySelectorAll<HTMLElement>(
+    wrongTags.join(", ")
+  );
 
   replaceElements.forEach((element) => {
-    const span = document.createElement("span");
-    appendNodeStyles(element, span);
-    span.innerHTML = element.innerHTML;
-    element.parentNode?.replaceChild(span, element);
+    const newElement =
+      element.tagName === "FONT"
+        ? document.createElement("span")
+        : document.createElement("div");
+
+    appendNodeStyles(element, newElement);
+    newElement.innerHTML = element.innerHTML;
+    element.parentNode?.replaceChild(newElement, element);
+
+    replaceWrongTags(newElement);
   });
 };
 
@@ -168,6 +176,10 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
   const container = document.createElement("div");
   const stack = new Stack();
   let appendNewText = false;
+
+  if (parentNode instanceof HTMLElement) {
+    replaceWrongTags(parentNode);
+  }
 
   const flatNode = flattenNode(parentNode);
 
@@ -317,8 +329,6 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           return;
         }
       }
-
-      replaceWrongTags(_node);
 
       if (appendNewText) {
         appendNewText = false;
