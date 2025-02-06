@@ -15,9 +15,9 @@ export const extractAllFontFamilies = () => {
   return Array.from(fontFamiliesSet);
 };
 
-function createId(font) {
+function createId(font: string) {
   return `${font}`
     .replace(/['"\,]/g, "") // eslint-disable-line
     .replace(/\s/g, "_")
-    .toLocaleLowerCase()
+    .toLocaleLowerCase();
 }
