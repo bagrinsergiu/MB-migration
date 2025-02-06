@@ -38,7 +38,12 @@ interface Container {
   destroy: () => void;
 }
 
-const extractInnerText = (node: Node, stack: Stack, selector: string): void => {
+const extractInnerText = (
+  node: Node,
+  stack: Stack,
+  selector: string,
+  styles: Record<string, string> = {}
+): void => {
   const _node = node.cloneNode(true);
 
   if (_node instanceof HTMLElement) {
@@ -56,6 +61,11 @@ const extractInnerText = (node: Node, stack: Stack, selector: string): void => {
       let appendedItem = _node;
       if (_node.tagName !== "P") {
         const container = document.createElement("p");
+
+        if (styles.textAlign) {
+          container.style.textAlign = styles.textAlign;
+        }
+
         container.append(_node.cloneNode(true));
         appendedItem = container;
       }
@@ -143,14 +153,22 @@ const flattenNode = (node: Element) => {
 };
 
 const replaceWrongTags = (node: HTMLElement) => {
-  const tagsToReplace = "font";
-  const replaceElements = node.querySelectorAll(tagsToReplace);
+  const wrongTags = ["font", "blockquote", "table", "tbody", "tr", "td"];
+  const replaceElements = node.querySelectorAll<HTMLElement>(
+    wrongTags.join(", ")
+  );
 
   replaceElements.forEach((element) => {
-    const span = document.createElement("span");
-    appendNodeStyles(element, span);
-    span.innerHTML = element.innerHTML;
-    element.parentNode?.replaceChild(span, element);
+    const newElement =
+      element.tagName === "FONT"
+        ? document.createElement("span")
+        : document.createElement("div");
+
+    appendNodeStyles(element, newElement);
+    newElement.innerHTML = element.innerHTML;
+    element.parentNode?.replaceChild(newElement, element);
+
+    replaceWrongTags(newElement);
   });
 };
 
@@ -158,6 +176,10 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
   const container = document.createElement("div");
   const stack = new Stack();
   let appendNewText = false;
+
+  if (parentNode instanceof HTMLElement) {
+    replaceWrongTags(parentNode);
+  }
 
   const flatNode = flattenNode(parentNode);
 
@@ -239,18 +261,59 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
               if (container.querySelector(iconSelector)) {
                 parentNode.parentElement?.append(_node);
                 appendNodeStyles(node);
-                // if latest appended is icon, icons must be wrapped in same node
-                if (appendedIcon) {
-                  stack.set(node);
-                } else {
-                  stack.append(node, { type: "icon" });
-                  appendedIcon = true;
-                }
+
+                Array.from(node.childNodes).forEach((child) => {
+                  if (child.nodeType === Node.TEXT_NODE) {
+                    const text = child.textContent?.trim();
+
+                    if (text) {
+                      const textNode = document.createElement("p");
+
+                      if (child.parentElement?.tagName === "A") {
+                        const parent = child.parentElement;
+                        const a = document.createElement("a");
+
+                        for (let i = 0; i < parent.attributes.length; i++) {
+                          const attr = parent.attributes[i];
+                          a.setAttribute(attr.name, attr.value);
+                        }
+
+                        a.textContent = text;
+                        textNode.append(a);
+                      } else {
+                        textNode.textContent = text;
+                      }
+
+                      appendNodeStyles(node, textNode);
+                      stack.append(textNode, { type: "text" });
+                      appendedIcon = false;
+                    }
+                  } else if (
+                    child instanceof Element &&
+                    !child.classList.contains("sr-only")
+                  ) {
+                    const parent = child.parentElement;
+
+                    if (!parent) return;
+
+                    // Clone parent to preserve its styles and structure
+                    const wrapper = parent.cloneNode(false); // Clone only the element, not its children
+                    wrapper.appendChild(child); // Move child into the cloned parent
+
+                    if (appendedIcon) {
+                      stack.set(wrapper as Element);
+                    } else {
+                      stack.append(wrapper, { type: "icon" });
+                      appendedIcon = true;
+                    }
+                  }
+                });
               } else {
                 const text = node.textContent;
 
                 if (text?.trim()) {
-                  extractInnerText(node, stack, iconSelector);
+                  const { textAlign } = getComputedStyle(node);
+                  extractInnerText(node, stack, iconSelector, { textAlign });
                   appendedIcon = false;
                 }
               }
@@ -266,8 +329,6 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           return;
         }
       }
-
-      replaceWrongTags(_node);
 
       if (appendNewText) {
         appendNewText = false;

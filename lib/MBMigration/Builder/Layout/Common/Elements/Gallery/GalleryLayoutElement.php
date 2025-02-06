@@ -24,6 +24,8 @@ abstract class GalleryLayoutElement extends AbstractElement
         $rotatorSpeed = 5;
 
         $mbSection = $data->getMbSection();
+
+        $aa =  json_encode($mbSection);
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $itemImage = new BrizyComponent(json_decode($this->brizyKit['itemImage'], true));
 
@@ -134,12 +136,12 @@ abstract class GalleryLayoutElement extends AbstractElement
 
                 $this->handleSectionGradient($brizySectionItem, $additionalOptions);
 
-                if(!empty($mbSection['settings']['sections']['background']['photo']) && !empty($mbSection['settings']['sections']['background']['filename'])) {
-                    $this->setSlideImage($brizySectionItemImage, $mbSection['settings']['sections']['background'], $properties);
-                    $this->setSlideLinks($brizySectionItemImage, $mbSection['settings']['sections']['background']);
-                } else {
+                if(!empty($mbSection['slide'][0])) {
                     $this->setSlideImage($brizySectionItemImage, $mbSection['slide'][0], $properties);
                     $this->setSlideLinks($brizySectionItemImage, $mbSection['slide'][0]);
+                } else if(!empty($mbSection['settings']['sections']['background']['photo']) && !empty($mbSection['settings']['sections']['background']['filename'])) {
+                    $this->setSlideImage($brizySectionItemImage, $mbSection['settings']['sections']['background'], $properties);
+                    $this->setSlideLinks($brizySectionItemImage, $mbSection['settings']['sections']['background']);
                 }
 
                 $brizySection->getValue()

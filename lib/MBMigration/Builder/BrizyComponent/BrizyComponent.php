@@ -697,6 +697,13 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function mobileSize($size = 100, $suffix = '%'): BrizyComponent
+    {
+        $this->getValue()->set('mobileSize', $size);
+        $this->getValue()->set('mobileSizeSuffix', $suffix);
+        return $this;
+    }
+
     public function tabletSizeTypeOriginal(): BrizyComponent
     {
         $this->getValue()->set('tabletSizeType', 'original');

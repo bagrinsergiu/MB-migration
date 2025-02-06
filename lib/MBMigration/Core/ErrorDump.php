@@ -8,6 +8,7 @@ use MBMigration\Builder\VariableCache;
 
 class ErrorDump
 {
+    public static array $warningMessage;
     private $log_file = 'error_log.txt';
 
     private $projectID;
@@ -42,7 +43,7 @@ class ErrorDump
 
     public function handleError($severity, $message, $file, $line, $fullError) {
         if(Config::$devMode) {
-            echo "Warning: " . $message . " in file " . $file . " on line " . $line . "\n";
+            self::$warningMessage[] = "Warning: " . $message . " in file " . $file . " on line " . $line;
         }
         $this->errorStatus = true;
         $this->errors[] = [
@@ -66,7 +67,7 @@ class ErrorDump
         }
 
     }
-    
+
     /**
      * @throws Exception
      */

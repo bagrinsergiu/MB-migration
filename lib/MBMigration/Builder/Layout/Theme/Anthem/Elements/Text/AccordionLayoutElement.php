@@ -155,12 +155,14 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getAccordionSectionComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0);
+        return $brizySection->getItemWithDepth(0)
+            ->addMobilePadding([0, 10, 0, 10]);
     }
 
     protected function getSectionHeaderComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0)
+            ->addMobilePadding([0, 10, 0, 10]);
     }
 
     protected function getAccordionParentComponent(BrizyComponent $brizySection): BrizyComponent
