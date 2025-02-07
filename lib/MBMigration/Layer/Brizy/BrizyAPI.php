@@ -364,7 +364,7 @@ class BrizyAPI extends Utils
         } else {
             $data['brizyId'] = self::generateCharID(36);
 
-            $projectData['fonts']['config']['data'][] = $data;
+            $projectData['fonts']['google']['data'][] = $data;
 
             $fontId = FontUtils::convertFontFamily($data['family']);
         }

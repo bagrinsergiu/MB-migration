@@ -448,73 +448,46 @@
     "fonts": {
       "100": {
         "normal": [
-          "fontsKit/helvetica/100-normal/HelveticaNeueCyr-Thin.eot",
-          "fontsKit/helvetica/100-normal/HelveticaNeueCyr-Thin.woff2",
-          "fontsKit/helvetica/100-normal/HelveticaNeueCyr-Thin.woff",
           "fontsKit/helvetica/100-normal/HelveticaNeueCyr-Thin.ttf"
         ]
       },
       "200": {
         "normal": [
-          "fontsKit/helvetica/200-normal/HelveticaNeueCyr-UltraLight.eot",
-          "fontsKit/helvetica/200-normal/HelveticaNeueCyr-UltraLight.woff2",
-          "fontsKit/helvetica/200-normal/HelveticaNeueCyr-UltraLight.woff",
           "fontsKit/helvetica/200-normal/HelveticaNeueCyr-UltraLight.ttf"
         ]
       },
       "300": {
         "normal": [
-          "fontsKit/helvetica/300-normal/HelveticaNeueCyr-Light.eot",
-          "fontsKit/helvetica/300-normal/HelveticaNeueCyr-Light.woff2",
-          "fontsKit/helvetica/300-normal/HelveticaNeueCyr-Light.woff",
           "fontsKit/helvetica/300-normal/HelveticaNeueCyr-Light.ttf"
         ]
       },
       "400": {
         "normal": [
-          "fontsKit/helvetica/400-normal/HelveticaNeueCyr-Roman.eot",
-          "fontsKit/helvetica/400-normal/HelveticaNeueCyr-Roman.woff2",
-          "fontsKit/helvetica/400-normal/HelveticaNeueCyr-Roman.woff",
           "fontsKit/helvetica/400-normal/HelveticaNeueCyr-Roman.ttf"
         ]
       },
       "500": {
         "normal": [
-          "fontsKit/helvetica/500-normal/HelveticaNeueCyr-Medium.eot",
-          "fontsKit/helvetica/500-normal/HelveticaNeueCyr-Medium.woff2",
-          "fontsKit/helvetica/500-normal/HelveticaNeueCyr-Medium.woff",
           "fontsKit/helvetica/500-normal/HelveticaNeueCyr-Medium.ttf"
         ]
       },
       "600": {
         "normal": [
-          "fontsKit/helvetica/600-normal/HelveticaNeueCyr-Bold.eot",
-          "fontsKit/helvetica/600-normal/HelveticaNeueCyr-Bold.woff2",
-          "fontsKit/helvetica/600-normal/HelveticaNeueCyr-Bold.woff",
           "fontsKit/helvetica/600-normal/HelveticaNeueCyr-Bold.ttf"
         ]
       },
       "700": {
         "normal": [
-          "fontsKit/helvetica/700-normal/HelveticaNeueCyr-Heavy.eot",
-          "fontsKit/helvetica/700-normal/HelveticaNeueCyr-Heavy.woff2",
-          "fontsKit/helvetica/700-normal/HelveticaNeueCyr-Heavy.woff",
           "fontsKit/helvetica/700-normal/HelveticaNeueCyr-Heavy.ttf"
         ]
       },
       "800": {
         "normal": [
-          "fontsKit/helvetica/800-normal/HelveticaNeueCyr-Black.eot",
-          "fontsKit/helvetica/800-normal/HelveticaNeueCyr-Black.woff2",
-          "fontsKit/helvetica/800-normal/HelveticaNeueCyr-Black.woff",
           "fontsKit/helvetica/800-normal/HelveticaNeueCyr-Black.ttf"
         ]
       },
       "900": {
         "normal": [
-          "fontsKit/helvetica/900-normal/HelveticaNeueBlackCondensed.eot",
-          "fontsKit/helvetica/900-normal/HelveticaNeueBlackCondensed.woff2",
-          "fontsKit/helvetica/900-normal/HelveticaNeueBlackCondensed.woff",
           "fontsKit/helvetica/900-normal/HelveticaNeueBlackCondensed.ttf"
         ]
       }

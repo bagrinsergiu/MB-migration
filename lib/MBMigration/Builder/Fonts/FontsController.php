@@ -104,7 +104,20 @@ class FontsController extends builderUtils
     public function upLoadGoogleFonts($fontName, $fontFamilyId): void
     {
         try{
-            $this->upLoadGoogleFont($fontName, $fontFamilyId);
+            if(!$this->cache->get($fontName, 'responseDataAddedNewFont')) {
+                $KitFonts = $this->getGoogleFontBnName($fontName);
+                if ($KitFonts) {
+                    Logger::instance()->info("Create FontName $fontName");
+
+                    $fontNameLower = FontUtils::convertFontFamily($KitFonts['family']);
+
+                    $this->cache->add('responseDataAddedNewFont', [$fontNameLower => $KitFonts]);
+
+                    $this->BrizyApi->addFontAndUpdateProject($KitFonts, true);
+
+                    self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyId);
+                }
+            }
         } catch (Exception|GuzzleException $e){
             return;
         }
@@ -173,20 +186,7 @@ class FontsController extends builderUtils
      */
     public function upLoadGoogleFont($fontName, $fontFamilyId)
     {
-        if(!$this->cache->get($fontName, 'responseDataAddedNewFont')) {
-            $KitFonts = $this->getGoogleFontBnName($fontName);
-            if ($KitFonts) {
-                Logger::instance()->info("Create FontName $fontName");
 
-                $fontNameLower = FontUtils::convertFontFamily($KitFonts['family']);
-
-                $this->cache->add('responseDataAddedNewFont', [$fontNameLower => $KitFonts]);
-
-                $this->BrizyApi->addFontAndUpdateProject($KitFonts, true);
-
-                self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyId);
-            }
-        }
     }
 
     public function addFontsToBrizyProject(array $fontStyles): array
