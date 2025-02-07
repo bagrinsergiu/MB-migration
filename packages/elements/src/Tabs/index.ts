@@ -1,13 +1,13 @@
 import { getModel } from "../utils/getModel";
 import { baseModel, bgModel, textModel } from "./models";
-import { Entry, Output } from "elements/src/types/type";
+import { Entry, Families, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
 
 interface NavData {
   node: Element;
   list: Element;
   selector: string;
-  families: Record<string, string>;
+  families: Families;
   defaultFamily: string;
 }
 

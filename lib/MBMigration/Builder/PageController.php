@@ -144,7 +144,7 @@ class PageController
                 $headItem,
                 $footerItem,
                 $fontFamily['kit'],
-                $fontFamily['Default'],
+                $fontFamily['Default']['name'],
                 $themeElementFactory,
                 $mainCollectionType,
                 $itemsID,

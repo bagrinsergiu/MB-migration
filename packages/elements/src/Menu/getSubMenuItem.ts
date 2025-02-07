@@ -1,5 +1,6 @@
 import { getModel } from "./utils/getModel";
 import {
+  Families,
   MenuItemElement,
   MenuItemEntry,
   Output
@@ -10,7 +11,7 @@ import { prefixed } from "utils/src/models/prefixed";
 interface MenuItemData {
   item: MenuItemElement;
   itemBg: MenuItemElement;
-  families: Record<string, string>;
+  families: Families;
   defaultFamily: string;
 }
 

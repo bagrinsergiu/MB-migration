@@ -1,10 +1,11 @@
+import { Families } from "./type";
 import { Literal } from "utils";
 
 export {};
 
 declare global {
   const SELECTOR: string;
-  const FAMILIES: Record<string, string>;
+  const FAMILIES: Families;
   const DEFAULT_FAMILY: string;
   const TARGET: string | undefined;
 

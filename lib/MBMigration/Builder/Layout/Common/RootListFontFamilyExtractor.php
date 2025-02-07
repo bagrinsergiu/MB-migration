@@ -56,6 +56,7 @@ class RootListFontFamilyExtractor
     public function getFontIdByName($name)
     {
         foreach ($this->allFontFamilies as $fontFamily) {
+            $fontFamily = str_replace(['_sans-serif', '_serif', 'sans-serif', 'serif'], '', $fontFamily);
             $fontsMap = explode(',', $fontFamily[1]);
             $converted = FontUtils::convertFontFamily(str_replace(' ', '', $fontsMap[0]));
 
