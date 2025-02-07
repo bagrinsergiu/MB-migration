@@ -1,6 +1,7 @@
 import { getModel } from "./utils/getModel";
 import { toMenuItemElement } from "./utils/toMenuItemElement";
 import {
+  Families,
   MenuItemElement,
   MenuItemEntry,
   Output
@@ -15,7 +16,7 @@ interface MenuItemData {
   itemPadding: MenuItemElement;
   itemMobileIcon?: MenuItemElement;
   itemMobileNav?: MenuItemElement;
-  families: Record<string, string>;
+  families: Families;
   defaultFamily: string;
 }
 

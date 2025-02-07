@@ -1,3 +1,4 @@
+import { getFontFamily } from "../../../../utils/getFontFamily";
 import { Data } from "../types";
 import {
   defaultDesktopNumberLineHeight,
@@ -57,23 +58,23 @@ export const getFontModel = (
   Object.keys(modelDefaults).forEach((key) => {
     switch (key) {
       case "font-family": {
-        const value = `${styles[key]}`;
-        const fontFamily = value
-          .replace(/['"\,]/g, "") // eslint-disable-line
-          .replace(/\s/g, "_")
-          .toLocaleLowerCase();
-
         if (!families || !defaultFamily) return;
 
-        if (!families[fontFamily]) {
+        const family = getFontFamily(styles, families);
+
+        if (!family) {
           dic[toCamelCase(key)] = defaultFamily;
         } else {
-          dic[toCamelCase(key)] = families[fontFamily];
+          dic[toCamelCase(key)] = family.name;
         }
         break;
       }
       case "font-family-type": {
-        dic[toCamelCase(key)] = "upload";
+        if (!families || !defaultFamily) return;
+
+        dic[toCamelCase(key)] =
+          getFontFamily(styles, families)?.type ?? "upload";
+
         break;
       }
       case "font-style": {
