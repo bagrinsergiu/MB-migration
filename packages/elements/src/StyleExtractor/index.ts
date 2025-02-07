@@ -1,11 +1,11 @@
-import { Output } from "../types/type";
+import { Families, Output } from "../types/type";
 import { createData } from "../utils/getData";
 import { getDataByEntry } from "../utils/getDataByEntry";
 import { Literal } from "utils";
 
 export interface Data {
   selector: string;
-  families: Record<string, string>;
+  families: Families;
   defaultFamily: string;
   styleProperties: Array<string>;
   urlMap: Record<string, string>;

@@ -1,5 +1,5 @@
 import { createWrapperModel } from "../../../Models/Wrapper";
-import { ElementModel } from "../../../types/type";
+import { ElementModel, Families } from "../../../types/type";
 import { removeAllStylesFromHTML } from "../../utils/dom/removeAllStylesFromHTML";
 import { removeEmptyNodes } from "../../utils/dom/removeEmptyNodes";
 import { transformDivsToParagraphs } from "../../utils/dom/transformDivsToParagraphs";
@@ -13,7 +13,7 @@ import { uuid } from "utils/src/uuid";
 
 interface Data {
   node: Element;
-  families: Record<string, string>;
+  families: Families;
   urlMap: Record<string, string>;
   defaultFamily: string;
 }
