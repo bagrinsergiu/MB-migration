@@ -1,3 +1,4 @@
+import { Families } from "../../../../types/type";
 import {
   defaultDesktopLineHeight,
   defaultMobileLineHeight,
@@ -10,7 +11,7 @@ import * as Num from "utils/src/reader/number";
 
 export const stylesToClasses = (
   styles: Record<string, Literal>,
-  families: Record<string, string>,
+  families: Families,
   defaultFamily: string
 ): Array<string> => {
   const classes: Array<string> = [];
@@ -32,7 +33,8 @@ export const stylesToClasses = (
           classes.push(`brz-ff-${defaultFamily}`, "brz-ft-upload");
           break;
         }
-        classes.push(`brz-ff-${families[fontFamily]}`, "brz-ft-upload");
+        const { name, type } = families[fontFamily];
+        classes.push(`brz-ff-${name}`, `brz-ft-${type}`);
         break;
       }
       case "font-weight": {
