@@ -115,7 +115,7 @@ class FontsController extends builderUtils
 
                     $this->BrizyApi->addFontAndUpdateProject($KitFonts, true);
 
-                    self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyId);
+                    self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyId, 'google');
                 }
             }
         } catch (Exception|GuzzleException $e){
@@ -216,6 +216,7 @@ class FontsController extends builderUtils
                             }
                         }
                         $uploaded = true;
+                        $fontStyles[$index]['uploadType'] = 'upload';
                         $fontStyles[$index]['uuid'] = $projectFont['id'];
                         break;
                     }
@@ -259,7 +260,7 @@ class FontsController extends builderUtils
         return $fontStyles;
     }
 
-    static public function addFontInMigration($fontName, $FontFamilyId, $FontFamily)
+    static public function addFontInMigration($fontName, $FontFamilyId, $FontFamily, $uploadType = null)
     {
         $cache = VariableCache::getInstance();
         $settings = $cache->get('settings');
@@ -267,6 +268,7 @@ class FontsController extends builderUtils
         $settings['fonts'][] = [
             'fontName' => $fontName,
             'fontFamily' => $FontFamily,
+            'uploadType' => $uploadType ?? 'upload',
             'uuid' => $FontFamilyId,
         ];
 
@@ -330,9 +332,16 @@ class FontsController extends builderUtils
         $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {
             if (isset($font['name']) && $font['name'] === 'primary') {
-                $fontFamily['Default'] = $font['uuid'];
+                $fontFamily['Default'] = [
+                    'name' => $font['uuid'],
+                    'type' => $font['uploadType'] ?? 'upload',
+                ];
             } else {
-                $fontFamily['kit'][$font['fontFamily']] = $font['uuid'];
+                $fontFamily['kit'][$font['fontFamily']] = [
+                   'name' => $font['uuid'],
+                   'type' => $font['uploadType'] ?? 'upload',
+
+                ];
             }
         }
 
