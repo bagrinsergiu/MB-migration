@@ -113,6 +113,14 @@ function removeNestedDivs(node: HTMLElement) {
   }
 }
 
+function appendNodeStylesToDivsWithoutStyles(node: HTMLElement) {
+  node.querySelectorAll("div").forEach((div) => {
+    if (div.style.cssText === "") {
+      appendNodeStyles(div);
+    }
+  });
+}
+
 const copyClassList = (
   sourceElement: HTMLElement,
   targetElement: HTMLElement
@@ -146,10 +154,22 @@ const flattenNode = (node: Element) => {
   }
 
   removeNestedDivs(_node);
+  appendNodeStylesToDivsWithoutStyles(_node);
 
   _node.remove();
 
   return _node;
+};
+
+const removeWrongTags = (node: HTMLElement) => {
+  const wrongTags = ["style"];
+
+  wrongTags.forEach((tag) => {
+    const elements = node.querySelectorAll(tag);
+    elements.forEach((element) => {
+      element.remove();
+    });
+  });
 };
 
 const replaceWrongTags = (node: HTMLElement) => {
@@ -159,13 +179,19 @@ const replaceWrongTags = (node: HTMLElement) => {
   );
 
   replaceElements.forEach((element) => {
-    const newElement =
-      element.tagName === "FONT"
-        ? document.createElement("span")
-        : document.createElement("div");
+    const isFont = element.tagName === "FONT";
+
+    const newElement = isFont
+      ? document.createElement("span")
+      : document.createElement("div");
 
     appendNodeStyles(element, newElement);
     newElement.innerHTML = element.innerHTML;
+
+    if (isFont) {
+      newElement.style.color = element.getAttribute("color") ?? "";
+    }
+
     element.parentNode?.replaceChild(newElement, element);
 
     replaceWrongTags(newElement);
@@ -178,6 +204,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
   let appendNewText = false;
 
   if (parentNode instanceof HTMLElement) {
+    removeWrongTags(parentNode);
     replaceWrongTags(parentNode);
   }
 
