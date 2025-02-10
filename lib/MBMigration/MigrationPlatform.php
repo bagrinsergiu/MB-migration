@@ -264,7 +264,8 @@ class MigrationPlatform
 
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
-        $this->launch($parentPages);
+        $this->launch($parentPages, false);
+        $this->launch($parentPages, true);
 
         $this->brizyApi->clearCompileds($projectID_Brizy);
 
@@ -276,10 +277,10 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function launch($parentPages): void
+    private function launch($parentPages, $hiddenPage): void
     {
         foreach ($parentPages as $i => $page) {
-//            if($page['hidden']){ continue; }
+            if($page['hidden'] !== $hiddenPage) { continue; }
 
             if (!empty($page['parentSettings'])) {
                 $settings = json_decode($page['parentSettings'], true);
@@ -294,7 +295,7 @@ class MigrationPlatform
             }
 
             if (!empty($page['child'])) {
-                $this->launch($page['child']);
+                $this->launch($page['child'], $hiddenPage);
             }
             if (Config::$devMode && $this->buildPage !== '') {
                 if ($page['slug'] !== $this->buildPage) {
@@ -317,7 +318,7 @@ class MigrationPlatform
         $this->cache->set('tookPage', $page);
         ExecutionTimer::start();
 
-         if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
+        if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
             $preparedSectionOfThePage = $this->pageController->getSectionsFromPage($page);
             if (!$preparedSectionOfThePage) {
                 return;
