@@ -12,6 +12,7 @@ use GuzzleHttp\Exception\RequestException;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
+use function _PHPStan_cc8d35ffb\Symfony\Component\String\s;
 
 class BrizyAPI extends Utils
 {
@@ -341,7 +342,7 @@ class BrizyAPI extends Utils
      * @throws GuzzleException
      * @throws Exception
      */
-    public function addFontAndUpdateProject(array $data, bool $configFonts = false): string
+    public function addFontAndUpdateProject(array $data, string $configFonts = 'upload'): string
     {
         Logger::instance()->info('Add font '.$data['family'].' in project and update project');
         $containerID = Utils::$cache->get('projectId_Brizy');
@@ -350,32 +351,33 @@ class BrizyAPI extends Utils
 
         $projectData = json_decode($projectFullData['data'], true);
 
-        if(!$configFonts) {
-            $newData['family'] = $data['family'];
-            $newData['files'] = $data['files'];
-            $newData['weights'] = $data['weights'];
-            $newData['type'] = $data['type'];
-            $newData['id'] = $data['uid'];
-            $newData['brizyId'] = self::generateCharID(36);
+        switch ($configFonts) {
+            case 'upload':
+                $newData['family'] = $data['family'];
+                $newData['files'] = $data['files'];
+                $newData['weights'] = $data['weights'];
+                $newData['type'] = $data['type'];
+                $newData['id'] = $data['uid'];
+                $newData['brizyId'] = self::generateCharID(36);
 
-            $projectData['fonts']['upload']['data'][] = $newData;
+                $projectData['fonts']['upload']['data'][] = $newData;
 
-            $fontId = $data['uid'];
-        } else {
-            $data['brizyId'] = self::generateCharID(36);
-
-            $projectData['fonts']['google']['data'][] = $data;
-
-            $fontId = FontUtils::convertFontFamily($data['family']);
+                $fontId = $data['uid'];
+                break;
+            case 'google':
+                $data['brizyId'] = self::generateCharID(36);
+                $projectData['fonts']['google']['data'][] = $data;
+                $fontId = FontUtils::convertFontFamily($data['family']);
+                break;
+            case 'config':
+                $data['brizyId'] = self::generateCharID(36);
+                $projectData['fonts']['config']['data'][] = $data;
+                $fontId = FontUtils::convertFontFamily($data['family']);
+                break;
         }
 
-        $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
-
-        $r_projectFullData['data'] = json_encode($projectData);
-        $r_projectFullData['is_autosave'] = 0;
-        $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
-
-        $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
+        $projectFullData['data'] = json_encode($projectData);
+        $this->updateProject($projectFullData);
 
         return $fontId;
     }

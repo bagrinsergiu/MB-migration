@@ -1633,6 +1633,32 @@
       }
     }
   },
+  "vollkorn_serif": {
+    "settings": {
+      "id": 100,
+      "name": "vollkorn",
+      "display_name": "Vollkorn",
+      "family": "Vollkorn, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/vollkorn/400-italic/0ybuGDoxxrvAnPhYGxksckM2WMCpRjDj-DJGWlmeObE.ttf"
+        ],
+        "normal": [
+          "fontsKit/vollkorn/400-normal/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df2MHGeHmmZ.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/vollkorn/700-italic/0ybuGDoxxrvAnPhYGxksckM2WMCpRjDj-DKhXVmeObE.ttf"
+        ],
+        "normal": [
+          "fontsKit/vollkorn/700-normal/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df213aeHmmZ.ttf"
+        ]
+      }
+    }
+  },
   "aleo_light": {
     "settings": {
       "id": 79,

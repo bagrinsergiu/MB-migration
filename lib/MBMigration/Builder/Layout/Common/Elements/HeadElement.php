@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Common\Elements;
 
+use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Fonts\FontsController;
@@ -186,6 +187,9 @@ abstract class HeadElement extends AbstractElement
         return $component;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     protected function extractBlockBrowserData(
         $sectionId,
         $families,
@@ -222,7 +226,7 @@ abstract class HeadElement extends AbstractElement
 
         if (!isset($families[$fontFamily])) {
             $fontName = $this->firstFontFamily($menuFont['data']['font-family']);
-            $uid = $this->fontsController->upLoadFont($fontName);
+            $uid = $this->fontsController->upLoadFont($fontName, $fontFamily);
             $families[$fontFamily] = $uid;
             $elementContext->getThemeContext()->setFamilies($families);
         }
