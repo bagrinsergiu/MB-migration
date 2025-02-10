@@ -104,6 +104,7 @@ class MigrationRunner
 
 
 $projectUuids = [
+    '662fcf33-223a-4b03-bab1-ae66c0929800'
 ];
 
 $migrationRunner = new MigrationRunner($projectUuids);

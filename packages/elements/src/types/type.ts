@@ -1,8 +1,15 @@
 import { Literal } from "utils";
 
+export interface Family {
+  name: string;
+  type: string;
+}
+
+export type Families = Record<string, Family>;
+
 export interface Entry {
   selector: string;
-  families: Record<string, string>;
+  families: Families;
   defaultFamily: string;
   urlMap: Record<string, string>;
   className?: string;
@@ -25,7 +32,7 @@ export interface MenuItemEntry {
   itemPaddingSelector: MenuItemSelector;
   itemMobileBtnSelector?: MenuItemSelector;
   itemMobileNavSelector?: MenuItemSelector;
-  families: Record<string, string>;
+  families: Families;
   defaultFamily: string;
 }
 

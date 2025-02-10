@@ -1,5 +1,7 @@
+import { Families } from "../types/type";
+
 interface Output {
-  families: Record<string, string>;
+  families: Families;
   defaultFamily: string;
   selector?: string;
   itemSelector?: string;

@@ -135,7 +135,7 @@ class PageController
 
             $fontFamily = FontsController::getFontsFamily();
 
-            $themeContext = new ThemeContext(
+             $themeContext = new ThemeContext(
                 $design,
                 $browserPage,
                 $brizyKit,
@@ -144,7 +144,7 @@ class PageController
                 $headItem,
                 $footerItem,
                 $fontFamily['kit'],
-                $fontFamily['Default'],
+                $fontFamily['Default']['name'],
                 $themeElementFactory,
                 $mainCollectionType,
                 $itemsID,
