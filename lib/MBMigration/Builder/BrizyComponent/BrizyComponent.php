@@ -181,6 +181,16 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addMargin($t, $r, $b, $l, $prefix = '', $measureType = 'px'): BrizyComponent
+    {
+        $this->addConstructMargin($t, 'top', $prefix, $measureType);
+        $this->addConstructMargin($r, 'right', $prefix, $measureType);
+        $this->addConstructMargin($b, 'bottom', $prefix, $measureType);
+        $this->addConstructMargin($l, 'left', $prefix, $measureType);
+
+        return $this;
+    }
+
     public function addMobilePadding($paddingPx = 0): BrizyComponent
     {
         if (is_array($paddingPx)) {
