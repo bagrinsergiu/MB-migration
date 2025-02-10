@@ -194,6 +194,7 @@ trait ButtonAble
             ->set_marginRight((int)$buttonStyles['margin-right'])
             ->set_marginTop((int)$buttonStyles['margin-top'])
             ->set_marginBottom((int)$buttonStyles['margin-bottom'])
+            ->set_borderRadiusType('custom')
             ->set_borderRadius((int)$buttonStyles['border-bottom-left-radius'])
             ->set_borderStyle($buttonStyles['border-top-style'])
             ->set_borderColorHex(ColorConverter::rgba2hex($buttonStyles['border-top-color']))

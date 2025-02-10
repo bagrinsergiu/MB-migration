@@ -99,16 +99,28 @@ final class ColorConverter
      * @return string
      * @example pass: rgba(123,100,23,.5)
      */
-    static public function rgba2opacity($rgba)
+    public static function rgba2opacity($rgba)
     {
         if (is_numeric($rgba)) {
             $value = (float)$rgba;
+
+            if ($value < 0) {
+                return 0;
+            } elseif ($value > 1) {
+                return 1;
+            }
+
             return ($value === 0.0 || $value === 1.0) ? (int)$value : $value;
         }
 
-        if (preg_match("/rgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*([\d.]+)\s*)?\)/", $rgba, $matches)) {
+        if (preg_match("/rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+)\s*)?\)/", $rgba, $matches)) {
+            $alpha = isset($matches[4]) ? (float)$matches[4] : 1;
 
-            $alpha = isset($matches[1]) ? (float)$matches[1] : 1;
+            if ($alpha < 0) {
+                return 0;
+            } elseif ($alpha > 1) {
+                return 1;
+            }
 
             return ($alpha === 0.0 || $alpha === 1.0) ? (int)$alpha : $alpha;
         }
@@ -254,4 +266,27 @@ final class ColorConverter
             }
         }
     }
+
+    public static function normalizeOpacity($opacity)
+    {
+        if (is_string($opacity)) {
+            $opacity = trim($opacity);
+        }
+
+        if (!is_numeric($opacity)) {
+            return 1;
+        }
+
+        $opacity = (float)$opacity;
+
+        if ($opacity < 0) {
+            return 0;
+        }
+        if ($opacity > 1) {
+            return 1;
+        }
+
+        return $opacity;
+    }
+
 }
