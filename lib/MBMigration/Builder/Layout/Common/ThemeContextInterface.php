@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Common;
 use MBMigration\Browser\BrowserInterface;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponentBuilder;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
 
 interface ThemeContextInterface
@@ -49,4 +50,6 @@ interface ThemeContextInterface
     public function getBrizyComponentBuilder(): BrizyComponentBuilder;
 
     public function getProjectName(): string;
+
+    public function getFontsController(): FontsController;
 }

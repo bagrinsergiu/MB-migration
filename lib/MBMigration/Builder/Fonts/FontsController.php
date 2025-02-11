@@ -71,19 +71,19 @@ class FontsController extends builderUtils
 
     public function upLoadCustomFonts(RootListFontFamilyExtractor $RootListFontFamilyExtractor): void
     {
-        $result = [];
-
         $allUpLoadFonts = $this->getAllUpLoadFonts();
         $fontsList = $RootListFontFamilyExtractor->getAllFontName();
 
-        foreach ($fontsList as $key => $font) {
-            if (!in_array($font, $allUpLoadFonts)) {
+        $fontListToAdd = array_unique(array_diff($fontsList, $allUpLoadFonts));
+
+        foreach ($fontListToAdd as $font) {
                 $fontId = $RootListFontFamilyExtractor->getFontIdByName($font);
                 $RootListFontFamilyExtractor->getFontFamilyByName($font);
 
                 $this->upLoadMBFonts($font);
                 $this->upLoadGoogleFonts($font, $fontId);
-            }
+
+                $dd = 1;
         }
     }
 
@@ -158,28 +158,36 @@ class FontsController extends builderUtils
      */
     public function upLoadFont($fontName, $fontFamily = null): string
     {
-        $KitFonts = $this->getPathFont($fontName);
-        if ($KitFonts) {
-            Logger::instance()->info("Create FontName $fontName");
+        $fontName = $fontFamily ?? $fontName;
 
-            $responseDataAddedNewFont = $this->BrizyApi->createFonts(
-                $fontName,
-                $this->projectId,
-                $KitFonts['fontsFile'],
-                $KitFonts['displayName']
-            );
-            $this->cache->add('responseDataAddedNewFont', [$fontName => $responseDataAddedNewFont]);
+        if(!$presentFont = $this->cache->get($fontName, 'responseDataAddedNewFont')) {
+            $KitFonts = $this->getPathFont($fontName);
+            if ($KitFonts) {
+                Logger::instance()->info("Create FontName $fontName");
 
-            $fontFamilyId = $this->BrizyApi->addFontAndUpdateProject($responseDataAddedNewFont);
+                $responseDataAddedNewFont = $this->BrizyApi->createFonts(
+                    $fontName,
+                    $this->projectId,
+                    $KitFonts['fontsFile'],
+                    $KitFonts['displayName']
+                );
 
-            $fontFamilyConverted = FontUtils::transliterateFontFamily($fontFamily ?? $KitFonts['displayName']);
+                $this->cache->add('responseDataAddedNewFont', [$fontName => $responseDataAddedNewFont]);
 
-            self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyConverted);
+                $fontFamilyId = $this->BrizyApi->addFontAndUpdateProject($responseDataAddedNewFont);
 
-            return $fontFamilyId;
+                $fontFamilyConverted = FontUtils::transliterateFontFamily($fontName ?? $KitFonts['displayName']);
+
+                self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyConverted);
+
+                return $fontFamilyId;
+            }
+
+            return 'lato';
+        } else {
+
+            return $presentFont['uid'];
         }
-
-        return 'lato';
     }
 
     /**

@@ -42,7 +42,8 @@ class RootListFontFamilyExtractor
 
             $fontsMap = explode(',', $fontFamily[1]);
             foreach ($fontsMap as $font) {
-                $converted = FontUtils::convertFontFamily(str_replace(' ', '', $font));
+                $font = trim($font);
+                $converted = FontUtils::convertFontFamily(str_replace(' ', '_', $font));
                 if(!in_array($converted, $map)){
                     $map[] = $converted;
                 }
@@ -56,12 +57,15 @@ class RootListFontFamilyExtractor
     public function getFontIdByName($name)
     {
         foreach ($this->allFontFamilies as $fontFamily) {
-            $fontFamily = str_replace(['_sans-serif', '_serif', 'sans-serif', 'serif'], '', $fontFamily);
+//            $fontFamily = str_replace(['_sans-serif', '_serif', 'sans-serif', 'serif'], '', $fontFamily);
             $fontsMap = explode(',', $fontFamily[1]);
-            $converted = FontUtils::convertFontFamily(str_replace(' ', '', $fontsMap[0]));
+            foreach ($fontsMap as $font) {
+                $font = trim($font);
+                $converted = FontUtils::convertFontFamily(str_replace(' ', '_', $font));
 
-            if($name === $converted) {
-                return $fontFamily[0];
+                if ($name === $converted) {
+                    return $fontFamily[0];
+                }
             }
         }
     }

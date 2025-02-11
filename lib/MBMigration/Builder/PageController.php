@@ -154,7 +154,8 @@ class PageController
                 $this->browser,
                 $listSeries,
                 $this->pageDTO,
-                $this->cache->get('title','settings') ?? ''
+                $this->cache->get('title','settings') ?? '',
+                 $fontController
             );
 
             /**

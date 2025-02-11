@@ -9,6 +9,8 @@ use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\Cacheable;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
+use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
 abstract class HeadElement extends AbstractElement
@@ -45,6 +47,9 @@ abstract class HeadElement extends AbstractElement
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
             $this->basicHeadParams = array_merge($this->basicHeadParams, $this->headParams);
             $this->beforeTransformToItem($data);
+
+            $this->fontHandle($data);
+
             $component = $this->internalTransformToItem($data);
             $this->generalSectionBehavior($data, $component);
             $this->afterTransformToItem($component);
@@ -226,12 +231,12 @@ abstract class HeadElement extends AbstractElement
 
         if (!isset($families[$fontFamily])) {
             $fontName = $this->firstFontFamily($menuFont['data']['font-family']);
-            $uid = $this->fontsController->upLoadFont($fontName, $fontFamily);
-            $families[$fontFamily] = $uid;
+
+            $this->fontsController->upLoadFont($fontName, $fontFamily);
+
+            $families = FontsController::getFontsFamily()['kit'];
             $elementContext->getThemeContext()->setFamilies($families);
         }
-
-        $elementContext->getThemeContext()->setFamilies($families);
 
         // -------------------------------------
         $menuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
@@ -372,6 +377,19 @@ abstract class HeadElement extends AbstractElement
     {
         $section->getItemWithDepth(0)->addCustomCSS('blockquote{margin:0;}'); //fix for table in richtext
         $section->getItemWithDepth(0)->addCustomCSS("@font-face {\n    font-family: 'Mono Social Icons Font';\n    src: url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.eot\");\n    src: url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.woff\") format(\"woff\"), url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.ttf\") format(\"truetype\"), url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.svg#MonoSocialIconsFont\") format(\"svg\");\n    src: url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.ttf\") format(\"truetype\");\n    font-weight: normal;\n    font-style: normal\n}\n\n.socialIconSymbol {\n    font-family: 'Mono Social Icons Font';\n    font-size: 2em;\n    font-style: normal !important;\n}\n\n.text-content span.socialIconSymbol, .text-content a.socialIconSymbol {\n    line-height: .5em;\n    font-weight: 300\n}"); //fix for icons in embed code
+    }
+
+    private function fontHandle(ElementContextInterface $data): void
+    {
+        $fontController = $data->getThemeContext()->getFontsController();
+
+        $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($this->browserPage);
+
+        $fontController->upLoadCustomFonts($RootListFontFamilyExtractor);
+
+        $families = FontsController::getFontsFamily()['kit'];
+
+        $data->getThemeContext()->setFamilies($families);
     }
 
     /**

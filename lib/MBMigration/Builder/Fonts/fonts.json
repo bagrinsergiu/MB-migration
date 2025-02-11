@@ -842,6 +842,32 @@
       }
     }
   },
+  "open_sans": {
+    "settings": {
+      "id": 46,
+      "name": "open_sans",
+      "display_name": "Open Sans Regular",
+      "family": "Open Sans, Open Sans Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/open_sans_regular/400-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0Rk8ZkWV4exQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/open_sans_regular/400-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4uaVc.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/open_sans_regular/700-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0RkyFjWV4exQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/open_sans_regular/700-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4uaVc.ttf"
+        ]
+      }
+    }
+  },
   "ostrich_sans_inline": {
     "settings": {
       "id": 47,
