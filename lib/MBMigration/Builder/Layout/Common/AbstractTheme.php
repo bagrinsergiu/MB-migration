@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Common;
 
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
@@ -31,6 +32,8 @@ abstract class AbstractTheme implements ThemeInterface
         $brizyComponent = new BrizyComponent(['value' => ['items' => []]]);
         $elementFactory = $this->themeContext->getElementFactory();
         $browserPage = $this->themeContext->getBrowserPage();
+
+        $this->fontHandle($browserPage);
 
         $brizyPage = $this->beforeTransformBlocks($brizyPage, $mbPageSections);
 
@@ -118,5 +121,10 @@ abstract class AbstractTheme implements ThemeInterface
     public function beforeBuildPage(): array
     {
         return [];
+    }
+
+    private function fontHandle(BrowserPageInterface $browserPage)
+    {
+        $this->themeContext->getFontsController()->refreshFontInProject($browserPage);
     }
 }

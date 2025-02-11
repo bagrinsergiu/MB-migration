@@ -281,6 +281,32 @@
       }
     }
   },
+  "courier_new": {
+    "settings": {
+      "id": 16,
+      "name": "courier_new",
+      "display_name": "Courier New",
+      "family": "'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/courier_new/400-italic/courier-new-italic.ttf"
+        ],
+        "normal": [
+          "fontsKit/courier_new/400-normal/courier-new.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/courier_new/700-italic/courier-new-bold-italic.ttf"
+        ],
+        "normal": [
+          "fontsKit/courier_new/700-normal/courier-new-bold.ttf"
+        ]
+      }
+    }
+  },
   "crete": {
     "settings": {
       "id": 17,
@@ -1503,10 +1529,18 @@
     "fonts": {
       "400": {
         "italic": [
-          "fontsKit/times_new_roman/400-italic/timesnewromanps_italicmt.ttf"
+          "fontsKit/times_new_roman/400-italic/italic_Times New Roman.ttf"
         ],
         "normal": [
-          "fontsKit/times_new_roman/400-normal/timesnewromanpsmt.ttf"
+          "fontsKit/times_new_roman/400-normal/Times New Roman.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/times_new_roman/700-italic/Times New Roman.ttf"
+        ],
+        "normal": [
+          "fontsKit/times_new_roman/700-normal/Times New Roman.ttf"
         ]
       }
     }

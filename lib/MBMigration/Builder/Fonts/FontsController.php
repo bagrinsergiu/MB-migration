@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Fonts;
 
 use Exception;
+use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Builder\Utils\UrlUtils;
@@ -59,7 +60,6 @@ class FontsController extends builderUtils
     {
         $containerID = $this->cache->get('projectId_Brizy');
         try{
-
             return json_decode(
                 $this->BrizyApi->getProjectContainer($containerID, true)['data'],
                 true) ?? [];
@@ -67,6 +67,14 @@ class FontsController extends builderUtils
 
             return [];
         }
+    }
+
+    public function refreshFontInProject(BrowserPageInterface $browserPage): void
+    {
+        $projectData = $this->getProjectData();
+
+        //$RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
+        //$this->upLoadCustomFonts($RootListFontFamilyExtractor);
     }
 
     public function upLoadCustomFonts(RootListFontFamilyExtractor $RootListFontFamilyExtractor): void
@@ -82,8 +90,6 @@ class FontsController extends builderUtils
 
                 $this->upLoadMBFonts($font);
                 $this->upLoadGoogleFonts($font, $fontId);
-
-                $dd = 1;
         }
     }
 

@@ -350,6 +350,7 @@ class BrizyAPI extends Utils
         $projectFullData = $this->getProjectContainer($containerID, true);
 
         $projectData = json_decode($projectFullData['data'], true);
+        $brzFontId = self::generateCharID(36);
 
         switch ($configFonts) {
             case 'upload':
@@ -358,19 +359,19 @@ class BrizyAPI extends Utils
                 $newData['weights'] = $data['weights'];
                 $newData['type'] = $data['type'];
                 $newData['id'] = $data['uid'];
-                $newData['brizyId'] = self::generateCharID(36);
+                $newData['brizyId'] = $brzFontId;
 
                 $projectData['fonts']['upload']['data'][] = $newData;
 
                 $fontId = $data['uid'];
                 break;
             case 'google':
-                $data['brizyId'] = self::generateCharID(36);
+                $data['brizyId'] = $brzFontId;
                 $projectData['fonts']['google']['data'][] = $data;
                 $fontId = FontUtils::convertFontFamily($data['family']);
                 break;
             case 'config':
-                $data['brizyId'] = self::generateCharID(36);
+                $data['brizyId'] = $brzFontId;
                 $projectData['fonts']['config']['data'][] = $data;
                 $fontId = FontUtils::convertFontFamily($data['family']);
                 break;
@@ -379,8 +380,22 @@ class BrizyAPI extends Utils
         $projectFullData['data'] = json_encode($projectData);
 
         $result = $this->updateProject($projectFullData);
+        $this->checkUpdateFonts($result, $brzFontId, $data['family']);
 
         return $fontId;
+    }
+
+    public function checkUpdateFonts(array $projectDataResponse, $brzFontId, $fontNmae = null) {
+        Logger::instance()->info("checking the response to see if there is a fontName: $fontNmae ");
+        foreach ($projectDataResponse['fonts'] as $fontsList) {
+            foreach ($fontsList['data'] as $font) {
+                if($font['brizyId'] === $brzFontId) {
+                    Logger::instance()->info("The font was successfully added to the project: $brzFontId => " . $font['brizyId']);
+                    return;
+                }
+            }
+        }
+        Logger::instance()->warning("The font has not been added to the project: $brzFontId");
     }
 
     /**
@@ -420,8 +435,8 @@ class BrizyAPI extends Utils
         $r_projectFullData['data'] = $projectFullData['data'];
 
         $result = $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
-
-        return json_decode($result->getBody(), true);
+        $body = json_decode($result->getBody(), true);
+        return json_decode($body['data'] ?? '', true);
     }
 
     public function getMetadata(): array
