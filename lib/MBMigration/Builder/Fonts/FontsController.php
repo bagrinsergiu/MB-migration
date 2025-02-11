@@ -108,7 +108,7 @@ class FontsController extends builderUtils
             if(!$this->cache->get($fontName, 'responseDataAddedNewFont')) {
                 $KitFonts = $this->getGoogleFontBnName($fontName);
                 if ($KitFonts) {
-                    Logger::instance()->info("Create FontName $fontName");
+                    Logger::instance()->info("Create FontName $fontName, type font: google");
 
                     $fontNameLower = FontUtils::convertFontFamily($KitFonts['family']);
 
@@ -163,7 +163,7 @@ class FontsController extends builderUtils
         if(!$presentFont = $this->cache->get($fontName, 'responseDataAddedNewFont')) {
             $KitFonts = $this->getPathFont($fontName);
             if ($KitFonts) {
-                Logger::instance()->info("Create FontName $fontName");
+                Logger::instance()->info("Create FontName $fontName, type font: upload");
 
                 $responseDataAddedNewFont = $this->BrizyApi->createFonts(
                     $fontName,

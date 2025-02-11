@@ -377,7 +377,8 @@ class BrizyAPI extends Utils
         }
 
         $projectFullData['data'] = json_encode($projectData);
-        $this->updateProject($projectFullData);
+
+        $result = $this->updateProject($projectFullData);
 
         return $fontId;
     }
@@ -410,6 +411,7 @@ class BrizyAPI extends Utils
 
     public function updateProject(array $projectFullData): array
     {
+        Logger::instance()->info('Update Project Data');
         $containerID = Utils::$cache->get('projectId_Brizy');
         $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
 
