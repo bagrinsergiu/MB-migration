@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
+use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettes;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
@@ -61,6 +62,7 @@ class PageController
 
     /**
      * @throws ElementNotFound
+     * @throws Exception
      * []
      */
     public function run($preparedSectionOfThePage, $pageMapping): bool
@@ -127,8 +129,13 @@ class PageController
             $footerItem = $this->cache->get('footer', 'mainSection');
             $listSeries = $this->cache->get('series');
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
+            $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
 
-            $themeContext = new ThemeContext(
+            $fontController->upLoadCustomFonts($RootListFontFamilyExtractor);
+
+            $fontFamily = FontsController::getFontsFamily();
+
+             $themeContext = new ThemeContext(
                 $design,
                 $browserPage,
                 $brizyKit,
@@ -137,7 +144,7 @@ class PageController
                 $headItem,
                 $footerItem,
                 $fontFamily['kit'],
-                $fontFamily['Default'],
+                $fontFamily['Default']['name'],
                 $themeElementFactory,
                 $mainCollectionType,
                 $itemsID,
@@ -147,7 +154,8 @@ class PageController
                 $this->browser,
                 $listSeries,
                 $this->pageDTO,
-                $this->cache->get('title','settings') ?? ''
+                $this->cache->get('title','settings') ?? '',
+                 $fontController
             );
 
             /**
@@ -203,53 +211,62 @@ class PageController
     /**
      * @throws Exception
      */
-    public function createBlankPages(array &$mbPages, $existingBrizyPages)
+    public function createBlankPages(array &$mbPageList, $existingBrizyPages)
     {
-        foreach ($mbPages as $i => &$page) {
-            $title = $page['name'];
+        $this->createPage($mbPageList, $existingBrizyPages, false);
+        $this->createPage($mbPageList, $existingBrizyPages, true);
+    }
 
-            if (!empty($page['child'])) {
-                $this->createBlankPages($page['child'], $existingBrizyPages);
-            }
+    /**
+     * @throws Exception
+     */
+    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage){
 
-            // this will avoid creating the new page when a single pate is migated
-            // on single page migratin the pages are not deleted
-            if (isset($existingBrizyPages[$page['slug']])) {
-                continue;
-            }
+        foreach ($pageList as $i => &$page) {
+            if ($page['hidden'] === $hiddenPage) {
+                $title = $page['name'];
 
-            // create the page if it is not found in the current page list
-            //if (!isset($existingBrizyPages['listPages'][$this->buildPage])) {
-            // create the page
-            if ($page['landing'] == true) {
-                $newPage = $this->creteNewPage(
-                    $page['slug'],
-                    $page['name'],
-                    $title,
-                    $page['protectedPage'],
-                    false,
-                    $page['position'] == 1 && !$page['parent_id']
-                );
-
-                if ($newPage === false) {
-                    Logger::instance()->warning('Failed created page', $page);
-                } else {
-                    Logger::instance()->debug('Success created page', $page);
-                    $page['collection'] = $newPage;
+                if (!empty($page['child'])) {
+                    $this->createPage($page['child'], $existingBrizyPages, $hiddenPage);
                 }
-            } else {
-                if (!empty($page['child']) && !$page['hidden']) {
-                    foreach ($page['child'] as $child) {
-                        if (!$child['hidden']) {
-                            $page['collection'] = $child['collection'];
-                            break;
+
+                // this will avoid creating the new page when a single pate is migated
+                // on single page migratin the pages are not deleted
+                if (isset($existingBrizyPages[$page['slug']])) {
+                    continue;
+                }
+
+                // create the page if it is not found in the current page list
+                //if (!isset($existingBrizyPages['listPages'][$this->buildPage])) {
+                // create the page
+                if ($page['landing'] == true) {
+                    $newPage = $this->creteNewPage(
+                        $page['slug'],
+                        $page['name'],
+                        $title,
+                        $page['protectedPage'],
+                        false,
+                        $page['position'] == 1 && !$page['parent_id']
+                    );
+
+                    if ($newPage === false) {
+                        Logger::instance()->warning('Failed created page', $page);
+                    } else {
+                        Logger::instance()->info('Success created page', $page);
+                        $page['collection'] = $newPage;
+                    }
+                } else {
+                    if (!empty($page['child']) && !$page['hidden']) {
+                        foreach ($page['child'] as $child) {
+                            if (!$child['hidden']) {
+                                $page['collection'] = $child['collection'];
+                                break;
+                            }
                         }
                     }
                 }
             }
-            //}
         }
-
     }
 
     /**

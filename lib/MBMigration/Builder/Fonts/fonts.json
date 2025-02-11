@@ -1,1 +1,1922 @@
-{"aleo":{"settings":{"id":1,"name":"aleo","display_name":"Aleo","family":"Aleo, sans-serif"},"fonts":{"400":{"normal":["fontsKit/aleo/400-normal/Aleo-Regular-webfont.eot","fontsKit/aleo/400-normal/Aleo-Regular-webfont.woff","fontsKit/aleo/400-normal/Aleo-Regular-webfont.ttf","fontsKit/aleo/400-normal/Aleo-Regular-webfont.svg"],"italic":["fontsKit/aleo/400-italic/Aleo-Italic-webfont.eot","fontsKit/aleo/400-italic/Aleo-Italic-webfont.woff","fontsKit/aleo/400-italic/Aleo-Italic-webfont.ttf","fontsKit/aleo/400-italic/Aleo-Italic-webfont.svg"]},"700":{"normal":["fontsKit/aleo/700-normal/Aleo-Bold-webfont.eot","fontsKit/aleo/700-normal/Aleo-Bold-webfont.woff","fontsKit/aleo/700-normal/Aleo-Bold-webfont.ttf","fontsKit/aleo/700-normal/Aleo-Bold-webfont.svg"],"italic":["fontsKit/aleo/700-italic/Aleo-BoldItalic-webfont.eot","fontsKit/aleo/700-italic/Aleo-BoldItalic-webfont.woff","fontsKit/aleo/700-italic/Aleo-BoldItalic-webfont.ttf","fontsKit/aleo/700-italic/Aleo-BoldItalic-webfont.svg"]}}},"antonio":{"settings":{"id":3,"name":"antonio","display_name":"Antonio","family":"Antonio, sans-serif"},"fonts":{"400":{"normal":["fontsKit/antonio/400-normal/antonio-regular-webfont.eot","fontsKit/antonio/400-normal/antonio-regular-webfont.woff2","fontsKit/antonio/400-normal/antonio-regular-webfont.woff","fontsKit/antonio/400-normal/antonio-regular-webfont.ttf","fontsKit/antonio/400-normal/antonio-regular-webfont.svg"]},"700":{"normal":["fontsKit/antonio/700-normal/antonio-bold-webfont.eot","fontsKit/antonio/700-normal/antonio-bold-webfont.woff2","fontsKit/antonio/700-normal/antonio-bold-webfont.woff","fontsKit/antonio/700-normal/antonio-bold-webfont.ttf","fontsKit/antonio/700-normal/antonio-bold-webfont.svg"]}}},"arvo":{"settings":{"id":4,"name":"arvo","display_name":"Arvo","family":"Arvo, sans-serif"},"fonts":{"400":{"italic":["fontsKit/arvo/400-italic/tDbN2oWUg0MKqSIg75Tq.ttf"],"normal":["fontsKit/arvo/400-normal/tDbD2oWUg0MKqScQ6A.ttf"]},"700":{"italic":["fontsKit/arvo/700-italic/tDbO2oWUg0MKqSIoVLH68dr6.ttf"],"normal":["fontsKit/arvo/700-normal/tDbM2oWUg0MKoZw1-LPK9g.ttf"]}}},"asap":{"settings":{"id":5,"name":"asap","display_name":"Asap","family":"Asap, sans-serif"},"fonts":{"400":{"italic":["fontsKit/asap/400-italic/KFOMCniXp96ayz4E7kSn66aGLdTylUAMQXC89YmC2DPNWubEbVmUiA8.ttf"],"normal":["fontsKit/asap/400-normal/KFOOCniXp96a4Tc2DaTeuDAoKsE617JFc49knOIYdjTYkqUcKWmT.ttf"]},"700":{"italic":["fontsKit/asap/700-italic/KFOMCniXp96ayz4E7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiA8.ttf"],"normal":["fontsKit/asap/700-normal/KFOOCniXp96a4Tc2DaTeuDAoKsE617JFc49knOIYdjTYdaIcKWmT.ttf"]}}},"bebas_neue":{"settings":{"id":7,"name":"bebas_neue","display_name":"Bebas Neue (CAPS ONLY)","family":"Bebas Neue, sans-serif"},"fonts":{"400":{"normal":["fontsKit/bebas_neue/400-normal/BebasNeue-webfont.eot","fontsKit/bebas_neue/400-normal/BebasNeue-webfont.woff","fontsKit/bebas_neue/400-normal/BebasNeue-webfont.ttf","fontsKit/bebas_neue/400-normal/BebasNeue-webfont.svg"]}}},"bitter":{"settings":{"id":8,"name":"bitter","display_name":"Bitter","family":"Bitter, sans-serif"},"fonts":{"400":{"normal":["fontsKit/bitter/400-normal/bitter-regular-webfont.eot","fontsKit/bitter/400-normal/bitter-regular-webfont.woff2","fontsKit/bitter/400-normal/bitter-regular-webfont.woff","fontsKit/bitter/400-normal/bitter-regular-webfont.ttf","fontsKit/bitter/400-normal/bitter-regular-webfont.svg"],"italic":["fontsKit/bitter/400-italic/bitter-italic-webfont.eot","fontsKit/bitter/400-italic/bitter-italic-webfont.woff2","fontsKit/bitter/400-italic/bitter-italic-webfont.woff","fontsKit/bitter/400-italic/bitter-italic-webfont.ttf","fontsKit/bitter/400-italic/bitter-italic-webfont.svg"]},"700":{"normal":["fontsKit/bitter/700-normal/bitter-bold-webfont.eot","fontsKit/bitter/700-normal/bitter-bold-webfont.woff2","fontsKit/bitter/700-normal/bitter-bold-webfont.woff","fontsKit/bitter/700-normal/bitter-bold-webfont.ttf","fontsKit/bitter/700-normal/bitter-bold-webfont.svg"],"italic":["fontsKit/bitter/700-italic/bitter-bolditalic-webfont.eot","fontsKit/bitter/700-italic/bitter-bolditalic-webfont.woff2","fontsKit/bitter/700-italic/bitter-bolditalic-webfont.woff","fontsKit/bitter/700-italic/bitter-bolditalic-webfont.ttf","fontsKit/bitter/700-italic/bitter-bolditalic-webfont.svg"]}}},"cabin_heavy":{"settings":{"id":11,"name":"cabin_heavy","display_name":"Cabin Heavy","family":"Cabin, Cabin Heavy, sans-serif"},"fonts":{"500":{"italic":["fontsKit/cabin_heavy/500-italic/u-4V0qWljRw-Pd815fNqc8T_wAFcX-c37MPiNYlWniJ2hJXH9fKVxUbq.ttf"],"normal":["fontsKit/cabin_heavy/500-normal/u-4X0qWljRw-PfU81xCKCpdpbgZJl6XFpfEd7eA9BIxxkW-EH7alwg.ttf"]},"700":{"italic":["fontsKit/cabin_heavy/700-italic/u-4V0qWljRw-Pd815fNqc8T_wAFcX-c37MPiNYlWniJ2hJXHIPWVxUbq.ttf"],"normal":["fontsKit/cabin_heavy/700-normal/u-4X0qWljRw-PfU81xCKCpdpbgZJl6XFpfEd7eA9BIxxkbqDH7alwg.ttf"]}}},"cabin_regular":{"settings":{"id":12,"name":"cabin_regular","display_name":"Cabin Regular","family":"Cabin, Cabin Regular, sans-serif"},"fonts":{"400":{"italic":["fontsKit/cabin_regular/400-italic/u-4V0qWljRw-Pd815fNqc8T_wAFcX-c37MPiNYlWniJ2hJXHx_KVxUbq.ttf"],"normal":["fontsKit/cabin_regular/400-normal/u-4X0qWljRw-PfU81xCKCpdpbgZJl6XFpfEd7eA9BIxxkV2EH7alwg.ttf"]},"600":{"italic":["fontsKit/cabin_regular/600-italic/u-4V0qWljRw-Pd815fNqc8T_wAFcX-c37MPiNYlWniJ2hJXHGfWVxUbq.ttf"],"normal":["fontsKit/cabin_regular/600-normal/u-4X0qWljRw-PfU81xCKCpdpbgZJl6XFpfEd7eA9BIxxkYODH7alwg.ttf"]}}},"clear_sans_light":{"settings":{"id":14,"name":"clear_sans_light","display_name":"Clear Sans Light","family":"Clear Sans, Clear Sans Light, sans-serif"},"fonts":{"200":{"normal":["fontsKit/clear_sans_light/200-normal/ClearSans-Thin-webfont.eot","fontsKit/clear_sans_light/200-normal/ClearSans-Thin-webfont.woff","fontsKit/clear_sans_light/200-normal/ClearSans-Thin-webfont.ttf","fontsKit/clear_sans_light/200-normal/ClearSans-Thin-webfont.svg"]},"400":{"normal":["fontsKit/clear_sans_light/400-normal/ClearSans-Regular-webfont.eot","fontsKit/clear_sans_light/400-normal/ClearSans-Regular-webfont.woff","fontsKit/clear_sans_light/400-normal/ClearSans-Regular-webfont.ttf","fontsKit/clear_sans_light/400-normal/ClearSans-Regular-webfont.svg"]}}},"clear_sans_regular":{"settings":{"id":15,"name":"clear_sans_regular","display_name":"Clear Sans Regular","family":"Clear Sans, Clear Sans Regular, sans-serif"},"fonts":{"300":{"normal":["fontsKit/clear_sans_regular/300-normal/ClearSans-Light-webfont.eot","fontsKit/clear_sans_regular/300-normal/ClearSans-Light-webfont.woff","fontsKit/clear_sans_regular/300-normal/ClearSans-Light-webfont.ttf","fontsKit/clear_sans_regular/300-normal/ClearSans-Light-webfont.svg"]},"500":{"normal":["fontsKit/clear_sans_regular/500-normal/ClearSans-Medium-webfont.eot","fontsKit/clear_sans_regular/500-normal/ClearSans-Medium-webfont.woff","fontsKit/clear_sans_regular/500-normal/ClearSans-Medium-webfont.ttf","fontsKit/clear_sans_regular/500-normal/ClearSans-Medium-webfont.svg"]}}},"crete":{"settings":{"id":17,"name":"crete","display_name":"Crete","family":"Crete Round, serif"},"fonts":{"400":{"italic":["fontsKit/crete/400-italic/55xqey1sJNPjPiv1ZZZrxK1-4b_oKw.ttf"],"normal":["fontsKit/crete/400-normal/55xoey1sJNPjPiv1ZZZrxK170bg.ttf"]}}},"domine":{"settings":{"id":18,"name":"domine","display_name":"Domine","family":"Domine, serif"},"fonts":{"400":{"normal":["fontsKit/domine/400-normal/L0xhDFMnlVwD4h3Lt9JWnbX3jG-2X3LAE1ofFg.ttf"]},"700":{"normal":["fontsKit/domine/700-normal/L0xhDFMnlVwD4h3Lt9JWnbX3jG-2X5XHE1ofFg.ttf"]}}},"dosis_light":{"settings":{"id":19,"name":"dosis_light","display_name":"Dosis Light","family":"Dosis, Dosis Light, sans-serif"},"fonts":{"300":{"normal":["fontsKit/dosis_light/300-normal/HhyJU5sn9vOmLxNkIwRSjTVNWLEJabMl2xMB.ttf"]},"500":{"normal":["fontsKit/dosis_light/500-normal/HhyJU5sn9vOmLxNkIwRSjTVNWLEJBbMl2xMB.ttf"]}}},"dosis_regular":{"settings":{"id":20,"name":"dosis_regular","display_name":"Dosis Regular","family":"Dosis, Dosis Regular, sans-serif"},"fonts":{"400":{"normal":["fontsKit/dosis_regular/400-normal/HhyJU5sn9vOmLxNkIwRSjTVNWLEJN7Ml2xMB.ttf"]},"600":{"normal":["fontsKit/dosis_regular/600-normal/HhyJU5sn9vOmLxNkIwRSjTVNWLEJ6bQl2xMB.ttf"]}}},"droid_sans":{"settings":{"id":21,"name":"droid_sans","display_name":"Droid Sans","family":"Droid Sans, sans-serif"},"fonts":{"400":{"normal":["fontsKit/droid_sans/400-normal/SlGVmQWMvZQIdix7AFxXkHNSaA.ttf"]},"700":{"normal":["fontsKit/droid_sans/700-normal/SlGWmQWMvZQIdix7AFxXmMh3eDs1Yg.ttf"]}}},"droid_serif":{"settings":{"id":22,"name":"droid_serif","display_name":"Droid Serif","family":"Droid Serif, serif"},"fonts":{"400":{"italic":["fontsKit/droid_serif/400-italic/tDbK2oqRg1oM3QBjjcaDkOr4nAfcGw.ttf"],"normal":["fontsKit/droid_serif/400-normal/tDbI2oqRg1oM3QBjjcaDkOr9rAA.ttf"]},"700":{"italic":["fontsKit/droid_serif/700-italic/tDbX2oqRg1oM3QBjjcaDkOr4lLz5CwOnTQ.ttf"],"normal":["fontsKit/droid_serif/700-normal/tDbV2oqRg1oM3QBjjcaDkOJGiRD7OwQ.ttf"]}}},"fanwood":{"settings":{"id":23,"name":"fanwood","display_name":"Fanwood","family":"Fanwood Text, serif"},"fonts":{"400":{"italic":["fontsKit/fanwood/400-italic/3XFzErwl05Ad_vSCF6Fq7xX2R-zb_Pw.ttf"],"normal":["fontsKit/fanwood/400-normal/3XFtErwl05Ad_vSCF6Fq7xX2Qtzc.ttf"]}}},"goudy_bookletter_1911":{"settings":{"id":29,"name":"goudy_bookletter_1911","display_name":"Goudy Bookletter 1911","family":"Goudy Bookletter 1911, serif"},"fonts":{"400":{"normal":["fontsKit/goudy_bookletter_1911/400-normal/sykt-z54laciWfKv-kX8krex0jDiD2HbY6IJshzT.ttf"]}}},"helvetica":{"settings":{"id":31,"name":"helvetica","display_name":"Helvetica","family":"Helvetica Neue, Helvetica, Arial, sans-serif"},"fonts":{"100":{"normal":["fontsKit/helvetica/100-normal/HelveticaNeueCyr-Thin.eot","fontsKit/helvetica/100-normal/HelveticaNeueCyr-Thin.woff2","fontsKit/helvetica/100-normal/HelveticaNeueCyr-Thin.woff","fontsKit/helvetica/100-normal/HelveticaNeueCyr-Thin.ttf"]},"200":{"normal":["fontsKit/helvetica/200-normal/HelveticaNeueCyr-UltraLight.eot","fontsKit/helvetica/200-normal/HelveticaNeueCyr-UltraLight.woff2","fontsKit/helvetica/200-normal/HelveticaNeueCyr-UltraLight.woff","fontsKit/helvetica/200-normal/HelveticaNeueCyr-UltraLight.ttf"]},"300":{"normal":["fontsKit/helvetica/300-normal/HelveticaNeueCyr-Light.eot","fontsKit/helvetica/300-normal/HelveticaNeueCyr-Light.woff2","fontsKit/helvetica/300-normal/HelveticaNeueCyr-Light.woff","fontsKit/helvetica/300-normal/HelveticaNeueCyr-Light.ttf"]},"400":{"normal":["fontsKit/helvetica/400-normal/HelveticaNeueCyr-Roman.eot","fontsKit/helvetica/400-normal/HelveticaNeueCyr-Roman.woff2","fontsKit/helvetica/400-normal/HelveticaNeueCyr-Roman.woff","fontsKit/helvetica/400-normal/HelveticaNeueCyr-Roman.ttf"]},"500":{"normal":["fontsKit/helvetica/500-normal/HelveticaNeueCyr-Medium.eot","fontsKit/helvetica/500-normal/HelveticaNeueCyr-Medium.woff2","fontsKit/helvetica/500-normal/HelveticaNeueCyr-Medium.woff","fontsKit/helvetica/500-normal/HelveticaNeueCyr-Medium.ttf"]},"600":{"normal":["fontsKit/helvetica/600-normal/HelveticaNeueCyr-Bold.eot","fontsKit/helvetica/600-normal/HelveticaNeueCyr-Bold.woff2","fontsKit/helvetica/600-normal/HelveticaNeueCyr-Bold.woff","fontsKit/helvetica/600-normal/HelveticaNeueCyr-Bold.ttf"]},"700":{"normal":["fontsKit/helvetica/700-normal/HelveticaNeueCyr-Heavy.eot","fontsKit/helvetica/700-normal/HelveticaNeueCyr-Heavy.woff2","fontsKit/helvetica/700-normal/HelveticaNeueCyr-Heavy.woff","fontsKit/helvetica/700-normal/HelveticaNeueCyr-Heavy.ttf"]},"800":{"normal":["fontsKit/helvetica/800-normal/HelveticaNeueCyr-Black.eot","fontsKit/helvetica/800-normal/HelveticaNeueCyr-Black.woff2","fontsKit/helvetica/800-normal/HelveticaNeueCyr-Black.woff","fontsKit/helvetica/800-normal/HelveticaNeueCyr-Black.ttf"]},"900":{"normal":["fontsKit/helvetica/900-normal/HelveticaNeueBlackCondensed.eot","fontsKit/helvetica/900-normal/HelveticaNeueBlackCondensed.woff2","fontsKit/helvetica/900-normal/HelveticaNeueBlackCondensed.woff","fontsKit/helvetica/900-normal/HelveticaNeueBlackCondensed.ttf"]}}},"lato_light":{"settings":{"id":33,"name":"lato_light","display_name":"Lato Light","family":"Lato, Lato Light, sans-serif"},"fonts":{"300":{"normal":["fontsKit/lato_light/300-normal/lato-light-webfont.eot","fontsKit/lato_light/300-normal/lato-light-webfont.woff2","fontsKit/lato_light/300-normal/lato-light-webfont.woff","fontsKit/lato_light/300-normal/lato-light-webfont.ttf","fontsKit/lato_light/300-normal/lato-light-webfont.svg"],"italic":["fontsKit/lato_light/300-italic/lato-lightitalic-webfont.eot","fontsKit/lato_light/300-italic/lato-lightitalic-webfont.woff2","fontsKit/lato_light/300-italic/lato-lightitalic-webfont.woff","fontsKit/lato_light/300-italic/lato-lightitalic-webfont.ttf","fontsKit/lato_light/300-italic/lato-lightitalic-webfont.svg"]},"500":{"normal":["fontsKit/lato_light/500-normal/Lato-Medium.ttf"],"italic":["fontsKit/lato_light/500-italic/Lato-MediumItalic.ttf"]},"600":{"normal":["fontsKit/lato_light/600-normal/lato-semibold-webfont.eot","fontsKit/lato_light/600-normal/lato-semibold-webfont.woff2","fontsKit/lato_light/600-normal/lato-semibold-webfont.woff","fontsKit/lato_light/600-normal/lato-semibold-webfont.ttf","fontsKit/lato_light/600-normal/lato-semibold-webfont.svg"],"italic":["fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.eot","fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.woff2","fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.woff","fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.ttf","fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.svg"]}}},"lato_regular":{"settings":{"id":34,"name":"lato_regular","display_name":"Lato Regular","family":"Lato, Lato Regular, sans-serif"},"fonts":{"400":{"normal":["fontsKit/lato_regular/400-normal/lato-regular-webfont.eot","fontsKit/lato_regular/400-normal/lato-regular-webfont.woff2","fontsKit/lato_regular/400-normal/lato-regular-webfont.woff","fontsKit/lato_regular/400-normal/lato-regular-webfont.ttf","fontsKit/lato_regular/400-normal/lato-regular-webfont.svg"],"italic":["fontsKit/lato_regular/400-italic/lato-italic-webfont.eot","fontsKit/lato_regular/400-italic/lato-italic-webfont.woff2","fontsKit/lato_regular/400-italic/lato-italic-webfont.woff","fontsKit/lato_regular/400-italic/lato-italic-webfont.ttf","fontsKit/lato_regular/400-italic/lato-italic-webfont.svg"]},"700":{"normal":["fontsKit/lato_regular/700-normal/lato-bold-webfont.eot","fontsKit/lato_regular/700-normal/lato-bold-webfont.woff2","fontsKit/lato_regular/700-normal/lato-bold-webfont.woff","fontsKit/lato_regular/700-normal/lato-bold-webfont.ttf","fontsKit/lato_regular/700-normal/lato-bold-webfont.svg"],"italic":["fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.eot","fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.woff2","fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.woff","fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.ttf","fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.svg"]}}},"league_gothic":{"settings":{"id":35,"name":"league_gothic","display_name":"League Gothic","family":"League Gothic, sans-serif"},"fonts":{"400":{"normal":["fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.eot","fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.woff2","fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.woff","fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.ttf","fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.svg"],"italic":["fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.eot","fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.woff2","fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.woff","fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.ttf","fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.svg"]}}},"league_script":{"settings":{"id":36,"name":"league_script","display_name":"League Script","family":"League Script, sans-serif"},"fonts":{"400":{"normal":["fontsKit/league_script/400-normal/leaguescript-webfont.eot","fontsKit/league_script/400-normal/leaguescript-webfont.woff2","fontsKit/league_script/400-normal/leaguescript-webfont.woff","fontsKit/league_script/400-normal/leaguescript-webfont.ttf","fontsKit/league_script/400-normal/leaguescript-webfont.svg"]}}},"league_spartan":{"settings":{"id":37,"name":"league_spartan","display_name":"League Spartan","family":"League Spartan, sans-serif"},"fonts":{"400":{"normal":["fontsKit/league_spartan/400-normal/leaguespartan-bold.eot","fontsKit/league_spartan/400-normal/leaguespartan-bold.woff2","fontsKit/league_spartan/400-normal/leaguespartan-bold.woff","fontsKit/league_spartan/400-normal/leaguespartan-bold.ttf","fontsKit/league_spartan/400-normal/leaguespartan-bold.svg"]}}},"libre_baskerville":{"settings":{"id":38,"name":"libre_baskerville","display_name":"Libre Baskerville","family":"Libre Baskerville, serif"},"fonts":{"400":{"italic":["fontsKit/libre_baskerville/400-italic/kmKhZrc3Hgbbcjq75U4uslyuy4kn0qNcWx8QCQ.ttf"],"normal":["fontsKit/libre_baskerville/400-normal/kmKnZrc3Hgbbcjq75U4uslyuy4kn0qNXaxY.ttf"]},"700":{"normal":["fontsKit/libre_baskerville/700-normal/kmKiZrc3Hgbbcjq75U4uslyuy4kn0qviTgY5KcU.ttf"]}}},"linden_hill":{"settings":{"id":39,"name":"linden_hill","display_name":"Linden Hill","family":"Linden Hill, serif"},"fonts":{"400":{"italic":["fontsKit/linden_hill/400-italic/-F63fjxoKSg9Yc3hZgO8yjFK1i8q0g.ttf"],"normal":["fontsKit/linden_hill/400-normal/-F61fjxoKSg9Yc3hZgO8yjFP5ig.ttf"]}}},"lobster":{"settings":{"id":40,"name":"lobster","display_name":"Lobster","family":"Lobster Two, cursive"},"fonts":{"400":{"italic":["fontsKit/lobster/400-italic/BngOUXZGTXPUvIoyV6yN5-fI1qeh4Q.ttf"],"normal":["fontsKit/lobster/400-normal/BngMUXZGTXPUvIoyV6yN5-fN5qA.ttf"]},"700":{"italic":["fontsKit/lobster/700-italic/BngTUXZGTXPUvIoyV6yN5-fI3hyE8R-iew.ttf"],"normal":["fontsKit/lobster/700-normal/BngRUXZGTXPUvIoyV6yN5-92w7CGwRg.ttf"]}}},"lora":{"settings":{"id":41,"name":"lora","display_name":"Lora","family":"Lora, serif"},"fonts":{"400":{"italic":["fontsKit/lora/400-italic/0QI8MX1D_JOuMw_hLdO6T2wV9KnW-MoFoq92mQ.ttf"],"normal":["fontsKit/lora/400-normal/0QI6MX1D_JOuGQbT0gvTJPa787weuxJBkqg.ttf"]},"700":{"italic":["fontsKit/lora/700-italic/0QI8MX1D_JOuMw_hLdO6T2wV9KnW-C0Coq92mQ.ttf"],"normal":["fontsKit/lora/700-normal/0QI6MX1D_JOuGQbT0gvTJPa787z5vBJBkqg.ttf"]}}},"montserrat":{"settings":{"id":43,"name":"montserrat","display_name":"Montserrat","family":"Montserrat, sans-serif"},"fonts":{"400":{"normal":["fontsKit/montserrat/400-normal/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aX8.ttf"]},"700":{"normal":["fontsKit/montserrat/700-normal/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM73w5aX8.ttf"]}}},"nunito":{"settings":{"id":44,"name":"nunito","display_name":"Nunito","family":"Nunito, sans-serif"},"fonts":{"400":{"normal":["fontsKit/nunito/400-normal/XRXI3I6Li01BKofiOc5wtlZ2di8HDLshdTQ3ig.ttf"]},"700":{"normal":["fontsKit/nunito/700-normal/XRXI3I6Li01BKofiOc5wtlZ2di8HDFwmdTQ3ig.ttf"]}}},"open_sans_light":{"settings":{"id":45,"name":"open_sans_light","display_name":"Open Sans Light","family":"Open Sans, Open Sans Light, sans-serif"},"fonts":{"300":{"italic":["fontsKit/open_sans_light/300-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0Rk5hkWV4exQ.ttf"],"normal":["fontsKit/open_sans_light/300-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsiH0B4uaVc.ttf"]},"600":{"italic":["fontsKit/open_sans_light/600-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0RkxhjWV4exQ.ttf"],"normal":["fontsKit/open_sans_light/600-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsgH1x4uaVc.ttf"]}}},"open_sans_regular":{"settings":{"id":46,"name":"open_sans_regular","display_name":"Open Sans Regular","family":"Open Sans, Open Sans Regular, sans-serif"},"fonts":{"400":{"italic":["fontsKit/open_sans_regular/400-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0Rk8ZkWV4exQ.ttf"],"normal":["fontsKit/open_sans_regular/400-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4uaVc.ttf"]},"700":{"italic":["fontsKit/open_sans_regular/700-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0RkyFjWV4exQ.ttf"],"normal":["fontsKit/open_sans_regular/700-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4uaVc.ttf"]}}},"ostrich_sans_inline":{"settings":{"id":47,"name":"ostrich_sans_inline","display_name":"Ostrich Sans Inline","family":"Ostrich Sans Inline, sans-serif"},"fonts":{"400":{"italic":["fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.eot","fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.woff2","fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.woff","fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.ttf","fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.svg"],"normal":["fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.eot","fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.woff2","fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.woff","fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.ttf","fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.svg"]}}},"ostrich_sans_regular":{"settings":{"id":48,"name":"ostrich_sans_regular","display_name":"Ostrich Sans Regular","family":"Ostrich Sans, sans-serif"},"fonts":{"400":{"normal":["fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.eot","fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.woff2","fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.woff","fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.ttf","fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.svg","fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.eot","fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.woff2","fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.woff","fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.ttf","fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.svg"]}}},"oswald_light":{"settings":{"id":49,"name":"oswald_light","display_name":"Oswald Light","family":"Oswald, Oswald Light, sans-serif"},"fonts":{"300":{"normal":["fontsKit/oswald_light/300-normal/TK3_WkUHHAIjg75cFRf3bXL8LICs169vsUhiYA.ttf"]},"400":{"normal":["fontsKit/oswald_light/400-normal/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvsUhiYA.ttf"]}}},"oswald_regular":{"settings":{"id":50,"name":"oswald_regular","display_name":"Oswald Regular","family":"Oswald, Oswald Regular, sans-serif"},"fonts":{"400":{"normal":["fontsKit/oswald_regular/400-normal/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvsUhiYA.ttf"]},"700":{"normal":["fontsKit/oswald_regular/700-normal/TK3_WkUHHAIjg75cFRf3bXL8LICs1xZosUhiYA.ttf"]}}},"oswald_stencil":{"settings":{"id":51,"name":"oswald_stencil","display_name":"Oswald Stencil","family":"Oswald Stencil, sans-serif"},"fonts":{"400":{"normal":["fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.eot","fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.woff2","fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.woff","fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.ttf","fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.svg"]}}},"oxygen":{"settings":{"id":52,"name":"oxygen","display_name":"Oxygen","family":"Oxygen, sans-serif"},"fonts":{"400":{"normal":["fontsKit/oxygen/400-normal/oxygen-webfont.eot","fontsKit/oxygen/400-normal/oxygen-webfont.woff2","fontsKit/oxygen/400-normal/oxygen-webfont.woff","fontsKit/oxygen/400-normal/oxygen-webfont.ttf","fontsKit/oxygen/400-normal/oxygen-webfont.svg"],"italic":["fontsKit/oxygen/400-italic/oxygen-italic-webfont.eot","fontsKit/oxygen/400-italic/oxygen-italic-webfont.woff2","fontsKit/oxygen/400-italic/oxygen-italic-webfont.woff","fontsKit/oxygen/400-italic/oxygen-italic-webfont.ttf","fontsKit/oxygen/400-italic/oxygen-italic-webfont.svg"]},"700":{"normal":["fontsKit/oxygen/700-normal/oxygen-bold-webfont.eot","fontsKit/oxygen/700-normal/oxygen-bold-webfont.woff2","fontsKit/oxygen/700-normal/oxygen-bold-webfont.woff","fontsKit/oxygen/700-normal/oxygen-bold-webfont.ttf","fontsKit/oxygen/700-normal/oxygen-bold-webfont.svg"],"italic":["fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.eot","fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.woff2","fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.woff","fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.ttf","fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.svg"]}}},"pt_sans":{"settings":{"id":53,"name":"pt_sans","display_name":"PT Sans","family":"PT Sans, sans-serif"},"fonts":{"400":{"italic":["fontsKit/pt_sans/400-italic/jizYRExUiTo99u79D0e0ycmN.ttf"],"normal":["fontsKit/pt_sans/400-normal/jizaRExUiTo99u79D0yEwA.ttf"]},"700":{"italic":["fontsKit/pt_sans/700-italic/jizdRExUiTo99u79D0e8fOydIRUY.ttf"],"normal":["fontsKit/pt_sans/700-normal/jizfRExUiTo99u79B_mh0OCtKA.ttf"]}}},"pt_sans_narrow":{"settings":{"id":54,"name":"pt_sans_narrow","display_name":"PT Sans Narrow","family":"PT Sans Narrow, sans-serif"},"fonts":{"400":{"normal":["fontsKit/pt_sans_narrow/400-normal/BngRUXNadjH0qYEzV7ab-oWlsbCIwRg.ttf"]},"700":{"normal":["fontsKit/pt_sans_narrow/700-normal/BngSUXNadjH0qYEzV7ab-oWlsbg95AiLW_g.ttf"]}}},"pacifico":{"settings":{"id":55,"name":"pacifico","display_name":"Pacifico","family":"Pacifico, cursive"},"fonts":{"400":{"normal":["fontsKit/pacifico/400-normal/FwZY7-Qmy14u9lezJ-6H6Mw.ttf"]}}},"proxima_nova_light":{"settings":{"id":56,"name":"proxima_nova_light","display_name":"Proxima Nova Light","family":"Proxima Nova, Proxima Nova Light, sans-serif"},"fonts":{"100":{"normal":["fontsKit/proxima_nova_light/100-normal/proximanova-thin.eot","fontsKit/proxima_nova_light/100-normal/proximanova-thin.woff","fontsKit/proxima_nova_light/100-normal/proximanova-thin.ttf","fontsKit/proxima_nova_light/100-normal/proximanova-thin.svg"],"italic":["fontsKit/proxima_nova_light/100-italic/proximanova-thinit.eot","fontsKit/proxima_nova_light/100-italic/proximanova-thinit.woff","fontsKit/proxima_nova_light/100-italic/proximanova-thinit.ttf","fontsKit/proxima_nova_light/100-italic/proximanova-thinit.svg"]},"400":{"normal":["fontsKit/proxima_nova_light/400-normal/proximanova-reg.eot","fontsKit/proxima_nova_light/400-normal/proximanova-reg.woff","fontsKit/proxima_nova_light/400-normal/proximanova-reg.ttf","fontsKit/proxima_nova_light/400-normal/proximanova-reg.svg"],"italic":["fontsKit/proxima_nova_light/400-italic/proximanova-regit.eot","fontsKit/proxima_nova_light/400-italic/proximanova-regit.woff","fontsKit/proxima_nova_light/400-italic/proximanova-regit.ttf","fontsKit/proxima_nova_light/400-italic/proximanova-regit.svg"]}}},"proxima_nova_regular":{"settings":{"id":57,"name":"proxima_nova_regular","display_name":"Proxima Nova Regular","family":"Proxima Nova, Proxima Nova Regular, sans-serif"},"fonts":{"200":{"normal":["fontsKit/proxima_nova_regular/200-normal/proximanova-light.eot","fontsKit/proxima_nova_regular/200-normal/proximanova-light.woff","fontsKit/proxima_nova_regular/200-normal/proximanova-light.ttf","fontsKit/proxima_nova_regular/200-normal/proximanova-light.svg"],"italic":["fontsKit/proxima_nova_regular/200-italic/proximanova-lightit.eot","fontsKit/proxima_nova_regular/200-italic/proximanova-lightit.woff","fontsKit/proxima_nova_regular/200-italic/proximanova-lightit.ttf","fontsKit/proxima_nova_regular/200-italic/proximanova-lightit.svg"]},"600":{"normal":["fontsKit/proxima_nova_regular/600-normal/proximanova-sbold.eot","fontsKit/proxima_nova_regular/600-normal/proximanova-sbold.woff","fontsKit/proxima_nova_regular/600-normal/proximanova-sbold.ttf","fontsKit/proxima_nova_regular/600-normal/proximanova-sbold.svg"],"italic":["fontsKit/proxima_nova_regular/600-italic/proximanova-sboldit.eot","fontsKit/proxima_nova_regular/600-italic/proximanova-sboldit.woff","fontsKit/proxima_nova_regular/600-italic/proximanova-sboldit.ttf","fontsKit/proxima_nova_regular/600-italic/proximanova-sboldit.svg"]}}},"proxima_nova_heavy":{"settings":{"id":58,"name":"proxima_nova_heavy","display_name":"Proxima Nova Heavy","family":"Proxima Nova, Proxima Nova Heavy, sans-serif"},"fonts":{"400":{"normal":["fontsKit/proxima_nova_heavy/400-normal/proximanova-reg.eot","fontsKit/proxima_nova_heavy/400-normal/proximanova-reg.woff","fontsKit/proxima_nova_heavy/400-normal/proximanova-reg.ttf","fontsKit/proxima_nova_heavy/400-normal/proximanova-reg.svg"],"italic":["fontsKit/proxima_nova_heavy/400-italic/proximanova-regit.eot","fontsKit/proxima_nova_heavy/400-italic/proximanova-regit.woff","fontsKit/proxima_nova_heavy/400-italic/proximanova-regit.ttf","fontsKit/proxima_nova_heavy/400-italic/proximanova-regit.svg"]},"700":{"normal":["fontsKit/proxima_nova_heavy/700-normal/proximanova-bold.eot","fontsKit/proxima_nova_heavy/700-normal/proximanova-bold.woff","fontsKit/proxima_nova_heavy/700-normal/proximanova-bold.ttf","fontsKit/proxima_nova_heavy/700-normal/proximanova-bold.svg"],"italic":["fontsKit/proxima_nova_heavy/700-italic/proximanova-boldit.eot","fontsKit/proxima_nova_heavy/700-italic/proximanova-boldit.woff","fontsKit/proxima_nova_heavy/700-italic/proximanova-boldit.ttf","fontsKit/proxima_nova_heavy/700-italic/proximanova-boldit.svg"]}}},"questrial":{"settings":{"id":59,"name":"questrial","display_name":"Questrial","family":"Questrial, sans-serif"},"fonts":{"400":{"normal":["fontsKit/questrial/400-normal/QdVUSTchPBm7nuUeVf70viFg.ttf"]}}},"quicksand_light":{"settings":{"id":60,"name":"quicksand_light","display_name":"Quicksand Light","family":"Quicksand, Quicksand Light, sans-serif"},"fonts":{"300":{"normal":["fontsKit/quicksand_light/300-normal/quicksand-light-webfont.eot","fontsKit/quicksand_light/300-normal/quicksand-light-webfont.woff2","fontsKit/quicksand_light/300-normal/quicksand-light-webfont.woff","fontsKit/quicksand_light/300-normal/quicksand-light-webfont.ttf","fontsKit/quicksand_light/300-normal/quicksand-light-webfont.svg"],"italic":["fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.eot","fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.woff2","fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.woff","fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.ttf","fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.svg"]},"400":{"normal":["fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.eot","fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.woff2","fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.woff","fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.ttf","fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.svg"],"italic":["fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.eot","fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.woff2","fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.woff","fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.ttf","fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.svg"]}}},"quicksand_regular":{"settings":{"id":61,"name":"quicksand_regular","display_name":"Quicksand Regular","family":"Quicksand, Quicksand Regular, sans-serif"},"fonts":{"400":{"normal":["fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.eot","fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.woff2","fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.woff","fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.ttf","fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.svg"],"italic":["fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.eot","fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.woff2","fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.woff","fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.ttf","fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.svg"]},"700":{"normal":["fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.eot","fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.woff2","fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.woff","fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.ttf","fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.svg"],"italic":["fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.eot","fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.woff2","fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.woff","fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.ttf","fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.svg"]}}},"raleway":{"settings":{"id":62,"name":"raleway","display_name":"Raleway","family":"Raleway, sans-serif"},"fonts":{"400":{"normal":["fontsKit/raleway/400-normal/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVvaorCIPrQ.ttf"]},"700":{"normal":["fontsKit/raleway/700-normal/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVs9pbCIPrQ.ttf"]}}},"roboto_condensed":{"settings":{"id":63,"name":"roboto_condensed","display_name":"Roboto Condensed","family":"Roboto Condensed, sans-serif"},"fonts":{"400":{"italic":["fontsKit/roboto_condensed/400-italic/ieVj2ZhZI2eCN5jzbjEETS9weq8-19eLAQM4.ttf"],"normal":["fontsKit/roboto_condensed/400-normal/ieVl2ZhZI2eCN5jzbjEETS9weq8-19y7CA.ttf"]},"700":{"italic":["fontsKit/roboto_condensed/700-italic/ieVg2ZhZI2eCN5jzbjEETS9weq8-19eDtCYoY9Nc.ttf"],"normal":["fontsKit/roboto_condensed/700-normal/ieVi2ZhZI2eCN5jzbjEETS9weq8-32meGCoYag.ttf"]}}},"roboto_light":{"settings":{"id":64,"name":"roboto_light","display_name":"Roboto Light","family":"Roboto, Roboto Light, sans-serif"},"fonts":{"300":{"italic":["fontsKit/roboto_light/300-italic/KFOjCnqEu92Fr1Mu51TjASc0CsE.ttf"],"normal":["fontsKit/roboto_light/300-normal/KFOlCnqEu92Fr1MmSU5fChc9.ttf"]},"500":{"italic":["fontsKit/roboto_light/500-italic/KFOjCnqEu92Fr1Mu51S7ACc0CsE.ttf"],"normal":["fontsKit/roboto_light/500-normal/KFOlCnqEu92Fr1MmEU9fChc9.ttf"]}}},"roboto_regular":{"settings":{"id":65,"name":"roboto_regular","display_name":"Roboto Regular","family":"Roboto, Roboto Regular, sans-serif"},"fonts":{"400":{"italic":["fontsKit/roboto_regular/400-italic/KFOkCnqEu92Fr1Mu51xGIzc.ttf"],"normal":["fontsKit/roboto_regular/400-normal/KFOmCnqEu92Fr1Mu7GxP.ttf"]},"700":{"italic":["fontsKit/roboto_regular/700-italic/KFOjCnqEu92Fr1Mu51TzBic0CsE.ttf"],"normal":["fontsKit/roboto_regular/700-normal/KFOlCnqEu92Fr1MmWUlfChc9.ttf"]}}},"rokkitt":{"settings":{"id":67,"name":"rokkitt","display_name":"Rokkitt","family":"Rokkitt, serif"},"fonts":{"400":{"normal":["fontsKit/rokkitt/400-normal/qFdb35qfgYFjGy5hukqqhw5XeRgdi1ryd6DMGbo.ttf"]},"700":{"normal":["fontsKit/rokkitt/700-normal/qFdb35qfgYFjGy5hukqqhw5XeRgdi1oVcKDMGbo.ttf"]}}},"source_sans_light":{"settings":{"id":68,"name":"source_sans_light","display_name":"Source Sans Light","family":"Source Sans Pro, Source Sans Light, sans-serif"},"fonts":{"300":{"italic":["fontsKit/source_sans_light/300-italic/6xKwdSBYKcSV-LCoeQqfX1RYOo3qPZZMkidi18E.ttf"],"normal":["fontsKit/source_sans_light/300-normal/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwmRdr.ttf"]},"600":{"italic":["fontsKit/source_sans_light/600-italic/6xKwdSBYKcSV-LCoeQqfX1RYOo3qPZY4lCdi18E.ttf"],"normal":["fontsKit/source_sans_light/600-normal/6xKydSBYKcSV-LCoeQqfX1RYOo3i54rwmRdr.ttf"]}}},"source_sans_regular":{"settings":{"id":69,"name":"source_sans_regular","display_name":"Source Sans Regular","family":"Source Sans Pro, Source Sans Regular, sans-serif"},"fonts":{"400":{"italic":["fontsKit/source_sans_regular/400-italic/6xK1dSBYKcSV-LCoeQqfX1RYOo3qPZ7psDc.ttf"],"normal":["fontsKit/source_sans_regular/400-normal/6xK3dSBYKcSV-LCoeQqfX1RYOo3qNq7g.ttf"]},"700":{"italic":["fontsKit/source_sans_regular/700-italic/6xKwdSBYKcSV-LCoeQqfX1RYOo3qPZZclSdi18E.ttf"],"normal":["fontsKit/source_sans_regular/700-normal/6xKydSBYKcSV-LCoeQqfX1RYOo3ig4vwmRdr.ttf"]}}},"special_elite":{"settings":{"id":70,"name":"special_elite","display_name":"Special Elite","family":"Special Elite, cursive"},"fonts":{"400":{"normal":["fontsKit/special_elite/400-normal/XLYgIZbkc4JPUL5CVArUVL0ntnAOTQ.ttf"]}}},"tahoma":{"settings":{"id":71,"name":"tahoma","display_name":"Tahoma","family":"Tahoma, Verdana, Segoe, sans-serif"},"fonts":{"400":{"normal":["fontsKit/tahoma/400-normal/tahoma.ttf"]}}},"times_new_roman":{"settings":{"id":72,"name":"times_new_roman","display_name":"Times New Roman","family":"Tahoma, Verdana, Segoe, sans-serif"},"fonts":{"400":{"italic":["fontsKit/times_new_roman/400-italic/timesnewromanps_italicmt.ttf"],"normal":["fontsKit/times_new_roman/400-normal/timesnewromanpsmt.ttf"]}}},"titillium_light":{"settings":{"id":73,"name":"titillium_light","display_name":"Titillium Light","family":"Titillium Web, Titillium Light, sans-serif"},"fonts":{"300":{"italic":["fontsKit/titillium_light/300-italic/NaPFcZTIAOhVxoMyOr9n_E7fdMbepI5Db5yZ.ttf"],"normal":["fontsKit/titillium_light/300-normal/NaPDcZTIAOhVxoMyOr9n_E7ffGjEGIVzZg.ttf"]},"600":{"italic":["fontsKit/titillium_light/600-italic/NaPFcZTIAOhVxoMyOr9n_E7fdMbe0IhDb5yZ.ttf"],"normal":["fontsKit/titillium_light/600-normal/NaPDcZTIAOhVxoMyOr9n_E7ffBzCGIVzZg.ttf"]}}},"titillium_regular":{"settings":{"id":74,"name":"titillium_regular","display_name":"Titillium Regular","family":"Titillium Web, Titillium Regular, sans-serif"},"fonts":{"400":{"italic":["fontsKit/titillium_regular/400-italic/NaPAcZTIAOhVxoMyOr9n_E7fdMbWAaxT.ttf"],"normal":["fontsKit/titillium_regular/400-normal/NaPecZTIAOhVxoMyOr9n_E7fdM3mCA.ttf"]},"700":{"italic":["fontsKit/titillium_regular/700-italic/NaPFcZTIAOhVxoMyOr9n_E7fdMbetIlDb5yZ.ttf"],"normal":["fontsKit/titillium_regular/700-normal/NaPDcZTIAOhVxoMyOr9n_E7ffHjDGIVzZg.ttf"]}}},"trebuchet_ms":{"settings":{"id":75,"name":"trebuchet_ms","display_name":"Trebuchet MS","family":"Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif"},"fonts":{"400":{"italic":["fontsKit/trebuchet_ms/400-italic/Trebuchet-MS-Italic.ttf"],"normal":["fontsKit/trebuchet_ms/400-normal/trebuc.ttf"]}}},"ubuntu_light":{"settings":{"id":76,"name":"ubuntu_light","display_name":"Ubuntu Light","family":"Ubuntu, Ubuntu Light, sans-serif"},"fonts":{"300":{"italic":["fontsKit/ubuntu_light/300-italic/4iCp6KVjbNBYlgoKejZftVyBN4Q.ttf"],"normal":["fontsKit/ubuntu_light/300-normal/4iCv6KVjbNBYlgoC1CzjvmyI.ttf"]},"500":{"italic":["fontsKit/ubuntu_light/500-italic/4iCp6KVjbNBYlgoKejYHtFyBN4Q.ttf"],"normal":["fontsKit/ubuntu_light/500-normal/4iCv6KVjbNBYlgoCjC3jvmyI.ttf"]}}},"ubuntu_regular":{"settings":{"id":77,"name":"ubuntu_regular","display_name":"Ubuntu Regular","family":"Ubuntu, Ubuntu Regular, sans-serif"},"fonts":{"400":{"italic":["fontsKit/ubuntu_regular/400-italic/4iCu6KVjbNBYlgoKej76l0w.ttf"],"normal":["fontsKit/ubuntu_regular/400-normal/4iCs6KVjbNBYlgoKcQ7z.ttf"]},"700":{"italic":["fontsKit/ubuntu_regular/700-italic/4iCp6KVjbNBYlgoKejZPslyBN4Q.ttf"],"normal":["fontsKit/ubuntu_regular/700-normal/4iCv6KVjbNBYlgoCxCvjvmyI.ttf"]}}},"vollkorn":{"settings":{"id":78,"name":"vollkorn","display_name":"Vollkorn","family":"Vollkorn, serif"},"fonts":{"400":{"italic":["fontsKit/vollkorn/400-italic/0ybuGDoxxrvAnPhYGxksckM2WMCpRjDj-DJGWlmeObE.ttf"],"normal":["fontsKit/vollkorn/400-normal/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df2MHGeHmmZ.ttf"]},"700":{"italic":["fontsKit/vollkorn/700-italic/0ybuGDoxxrvAnPhYGxksckM2WMCpRjDj-DKhXVmeObE.ttf"],"normal":["fontsKit/vollkorn/700-normal/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df213aeHmmZ.ttf"]}}},"aleo_light":{"settings":{"id":79,"name":"aleo_light","display_name":"Aleo Light","family":"Aleo, Aleo Light, serif"},"fonts":{"200":{"normal":["fontsKit/aleo_light/200-normal/Aleo-Light-webfont.eot","fontsKit/aleo_light/200-normal/Aleo-Light-webfont.woff","fontsKit/aleo_light/200-normal/Aleo-Light-webfont.ttf","fontsKit/aleo_light/200-normal/Aleo-Light-webfont.svg"],"italic":["fontsKit/aleo_light/200-italic/Aleo-LightItalic-webfont.eot","fontsKit/aleo_light/200-italic/Aleo-LightItalic-webfont.woff","fontsKit/aleo_light/200-italic/Aleo-LightItalic-webfont.ttf","fontsKit/aleo_light/200-italic/Aleo-LightItalic-webfont.svg"]},"400":{"normal":["fontsKit/aleo_light/400-normal/Aleo-Regular-webfont.eot","fontsKit/aleo_light/400-normal/Aleo-Regular-webfont.woff","fontsKit/aleo_light/400-normal/Aleo-Regular-webfont.ttf","fontsKit/aleo_light/400-normal/Aleo-Regular-webfont.svg"],"italic":["fontsKit/aleo_light/400-italic/Aleo-Italic-webfont.eot","fontsKit/aleo_light/400-italic/Aleo-Italic-webfont.woff","fontsKit/aleo_light/400-italic/Aleo-Italic-webfont.ttf","fontsKit/aleo_light/400-italic/Aleo-Italic-webfont.svg"]}}},"playfair_display_sc":{"settings":{"id":80,"name":"playfair_display_sc","display_name":"Playfair Display SC","family":"Playfair, Playfair Display SC, serif"},"fonts":{"400":{"italic":["fontsKit/playfair_display_sc/400-italic/playfairdisplaysc-italic-webfont.woff2","fontsKit/playfair_display_sc/400-italic/playfairdisplaysc-italic-webfont.woff"],"normal":["fontsKit/playfair_display_sc/400-normal/playfairdisplaysc-regular-webfont.woff2","fontsKit/playfair_display_sc/400-normal/playfairdisplaysc-regular-webfont.woff"]},"700":{"normal":["fontsKit/playfair_display_sc/700-normal/playfairdisplaysc-bold-webfont.woff2","fontsKit/playfair_display_sc/700-normal/playfairdisplaysc-bold-webfont.woff"],"italic":["fontsKit/playfair_display_sc/700-italic/playfairdisplaysc-bolditalic-webfont.woff2","fontsKit/playfair_display_sc/700-italic/playfairdisplaysc-bolditalic-webfont.woff"]}}},"biryani":{"settings":{"id":81,"name":"biryani","display_name":"Biryani","family":"Biryani, sans-serif"},"fonts":{"300":{"normal":["fontsKit/biryani/300-normal/Biryani-Light-webfont.woff"]},"900":{"normal":["fontsKit/biryani/900-normal/Biryani-Heavy-webfont.woff"]}}},"fira_sans":{"settings":{"id":82,"name":"fira_sans","display_name":"Fira Sans","family":"Fira, Fira Sans, sans-serif"},"fonts":{"300":{"normal":["fontsKit/fira_sans/300-normal/firasans-light-webfont.woff2","fontsKit/fira_sans/300-normal/firasans-light-webfont.woff"],"italic":["fontsKit/fira_sans/300-italic/firasans-lightitalic-webfont.woff2","fontsKit/fira_sans/300-italic/firasans-lightitalic-webfont.woff"]},"900":{"normal":["fontsKit/fira_sans/900-normal/firasans-heavy-webfont.woff2","fontsKit/fira_sans/900-normal/firasans-heavy-webfont.woff"],"italic":["fontsKit/fira_sans/900-italic/firasans-heavyitalic-webfont.woff2","fontsKit/fira_sans/900-italic/firasans-heavyitalic-webfont.woff"]}}},"poppins":{"settings":{"id":82,"name":"poppins","display_name":"Poppins","family":"Poppins, Poppins, sans-serif"},"fonts":{"100":{"normal":["fontsKit/poppins/100-thin/Poppins-Thin.ttf"],"italic":["fontsKit/poppins/100-thin-italic/Poppins-ThinItalic.ttf"]},"200":{"normal":["fontsKit/poppins/200-extra/Poppins-ExtraLight.ttf"],"italic":["fontsKit/poppins/200-extra-italic/Poppins-ExtraLightItalic.ttf"]},"300":{"normal":["fontsKit/poppins/300-light/Poppins-Light.ttf"],"italic":["fontsKit/poppins/300-light-italic/Poppins-LightItalic.ttf"]},"400":{"normal":["fontsKit/poppins/400-normal/Poppins-Regular.ttf"],"italic":["fontsKit/poppins/400-italic/Poppins-Italic.ttf"]},"500":{"normal":["fontsKit/poppins/500-medium/Poppins-Medium.ttf"],"italic":["fontsKit/poppins/500-medium-italic/Poppins-MediumItalic.ttf"]},"600":{"normal":["fontsKit/poppins/600-semi-bold/Poppins-SemiBold.ttf"],"italic":["fontsKit/poppins/600-semi-bold-italic/Poppins-SemiBoldItalic.ttf"]},"700":{"normal":["fontsKit/poppins/700-bold/Poppins-Bold.ttf"],"italic":["fontsKit/poppins/800-extra-bold/Poppins-ExtraBold.ttf"]},"800":{"normal":["fontsKit/poppins/800-extra-bold/Poppins-ExtraBold.ttf"],"italic":["fontsKit/poppins/800-extra-bold-italic/Poppins-ExtraBoldItalic.ttf"]},"900":{"normal":["fontsKit/poppins/900-black/Poppins-Black.ttf"],"italic":["fontsKit/poppins/900-black-italic/Poppins-BlackItalic.ttf"]}}}}
+{
+  "aleo": {
+    "settings": {
+      "id": 1,
+      "name": "aleo",
+      "display_name": "Aleo",
+      "family": "Aleo, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/aleo/400-normal/Aleo-Regular-webfont.eot",
+          "fontsKit/aleo/400-normal/Aleo-Regular-webfont.woff",
+          "fontsKit/aleo/400-normal/Aleo-Regular-webfont.ttf",
+          "fontsKit/aleo/400-normal/Aleo-Regular-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/aleo/400-italic/Aleo-Italic-webfont.eot",
+          "fontsKit/aleo/400-italic/Aleo-Italic-webfont.woff",
+          "fontsKit/aleo/400-italic/Aleo-Italic-webfont.ttf",
+          "fontsKit/aleo/400-italic/Aleo-Italic-webfont.svg"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/aleo/700-normal/Aleo-Bold-webfont.eot",
+          "fontsKit/aleo/700-normal/Aleo-Bold-webfont.woff",
+          "fontsKit/aleo/700-normal/Aleo-Bold-webfont.ttf",
+          "fontsKit/aleo/700-normal/Aleo-Bold-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/aleo/700-italic/Aleo-BoldItalic-webfont.eot",
+          "fontsKit/aleo/700-italic/Aleo-BoldItalic-webfont.woff",
+          "fontsKit/aleo/700-italic/Aleo-BoldItalic-webfont.ttf",
+          "fontsKit/aleo/700-italic/Aleo-BoldItalic-webfont.svg"
+        ]
+      }
+    }
+  },
+  "antonio": {
+    "settings": {
+      "id": 3,
+      "name": "antonio",
+      "display_name": "Antonio",
+      "family": "Antonio, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/antonio/400-normal/antonio-regular-webfont.eot",
+          "fontsKit/antonio/400-normal/antonio-regular-webfont.woff2",
+          "fontsKit/antonio/400-normal/antonio-regular-webfont.woff",
+          "fontsKit/antonio/400-normal/antonio-regular-webfont.ttf",
+          "fontsKit/antonio/400-normal/antonio-regular-webfont.svg"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/antonio/700-normal/antonio-bold-webfont.eot",
+          "fontsKit/antonio/700-normal/antonio-bold-webfont.woff2",
+          "fontsKit/antonio/700-normal/antonio-bold-webfont.woff",
+          "fontsKit/antonio/700-normal/antonio-bold-webfont.ttf",
+          "fontsKit/antonio/700-normal/antonio-bold-webfont.svg"
+        ]
+      }
+    }
+  },
+  "arvo": {
+    "settings": {
+      "id": 4,
+      "name": "arvo",
+      "display_name": "Arvo",
+      "family": "Arvo, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/arvo/400-italic/tDbN2oWUg0MKqSIg75Tq.ttf"
+        ],
+        "normal": [
+          "fontsKit/arvo/400-normal/tDbD2oWUg0MKqScQ6A.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/arvo/700-italic/tDbO2oWUg0MKqSIoVLH68dr6.ttf"
+        ],
+        "normal": [
+          "fontsKit/arvo/700-normal/tDbM2oWUg0MKoZw1-LPK9g.ttf"
+        ]
+      }
+    }
+  },
+  "asap": {
+    "settings": {
+      "id": 5,
+      "name": "asap",
+      "display_name": "Asap",
+      "family": "Asap, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/asap/400-italic/KFOMCniXp96ayz4E7kSn66aGLdTylUAMQXC89YmC2DPNWubEbVmUiA8.ttf"
+        ],
+        "normal": [
+          "fontsKit/asap/400-normal/KFOOCniXp96a4Tc2DaTeuDAoKsE617JFc49knOIYdjTYkqUcKWmT.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/asap/700-italic/KFOMCniXp96ayz4E7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiA8.ttf"
+        ],
+        "normal": [
+          "fontsKit/asap/700-normal/KFOOCniXp96a4Tc2DaTeuDAoKsE617JFc49knOIYdjTYdaIcKWmT.ttf"
+        ]
+      }
+    }
+  },
+  "bebas_neue": {
+    "settings": {
+      "id": 7,
+      "name": "bebas_neue",
+      "display_name": "Bebas Neue (CAPS ONLY)",
+      "family": "Bebas Neue, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/bebas_neue/400-normal/BebasNeue-webfont.eot",
+          "fontsKit/bebas_neue/400-normal/BebasNeue-webfont.woff",
+          "fontsKit/bebas_neue/400-normal/BebasNeue-webfont.ttf",
+          "fontsKit/bebas_neue/400-normal/BebasNeue-webfont.svg"
+        ]
+      }
+    }
+  },
+  "bitter": {
+    "settings": {
+      "id": 8,
+      "name": "bitter",
+      "display_name": "Bitter",
+      "family": "Bitter, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/bitter/400-normal/bitter-regular-webfont.eot",
+          "fontsKit/bitter/400-normal/bitter-regular-webfont.woff2",
+          "fontsKit/bitter/400-normal/bitter-regular-webfont.woff",
+          "fontsKit/bitter/400-normal/bitter-regular-webfont.ttf",
+          "fontsKit/bitter/400-normal/bitter-regular-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/bitter/400-italic/bitter-italic-webfont.eot",
+          "fontsKit/bitter/400-italic/bitter-italic-webfont.woff2",
+          "fontsKit/bitter/400-italic/bitter-italic-webfont.woff",
+          "fontsKit/bitter/400-italic/bitter-italic-webfont.ttf",
+          "fontsKit/bitter/400-italic/bitter-italic-webfont.svg"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/bitter/700-normal/bitter-bold-webfont.eot",
+          "fontsKit/bitter/700-normal/bitter-bold-webfont.woff2",
+          "fontsKit/bitter/700-normal/bitter-bold-webfont.woff",
+          "fontsKit/bitter/700-normal/bitter-bold-webfont.ttf",
+          "fontsKit/bitter/700-normal/bitter-bold-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/bitter/700-italic/bitter-bolditalic-webfont.eot",
+          "fontsKit/bitter/700-italic/bitter-bolditalic-webfont.woff2",
+          "fontsKit/bitter/700-italic/bitter-bolditalic-webfont.woff",
+          "fontsKit/bitter/700-italic/bitter-bolditalic-webfont.ttf",
+          "fontsKit/bitter/700-italic/bitter-bolditalic-webfont.svg"
+        ]
+      }
+    }
+  },
+  "cabin_heavy": {
+    "settings": {
+      "id": 11,
+      "name": "cabin_heavy",
+      "display_name": "Cabin Heavy",
+      "family": "Cabin, Cabin Heavy, sans-serif"
+    },
+    "fonts": {
+      "500": {
+        "italic": [
+          "fontsKit/cabin_heavy/500-italic/u-4V0qWljRw-Pd815fNqc8T_wAFcX-c37MPiNYlWniJ2hJXH9fKVxUbq.ttf"
+        ],
+        "normal": [
+          "fontsKit/cabin_heavy/500-normal/u-4X0qWljRw-PfU81xCKCpdpbgZJl6XFpfEd7eA9BIxxkW-EH7alwg.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/cabin_heavy/700-italic/u-4V0qWljRw-Pd815fNqc8T_wAFcX-c37MPiNYlWniJ2hJXHIPWVxUbq.ttf"
+        ],
+        "normal": [
+          "fontsKit/cabin_heavy/700-normal/u-4X0qWljRw-PfU81xCKCpdpbgZJl6XFpfEd7eA9BIxxkbqDH7alwg.ttf"
+        ]
+      }
+    }
+  },
+  "cabin_regular": {
+    "settings": {
+      "id": 12,
+      "name": "cabin_regular",
+      "display_name": "Cabin Regular",
+      "family": "Cabin, Cabin Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/cabin_regular/400-italic/u-4V0qWljRw-Pd815fNqc8T_wAFcX-c37MPiNYlWniJ2hJXHx_KVxUbq.ttf"
+        ],
+        "normal": [
+          "fontsKit/cabin_regular/400-normal/u-4X0qWljRw-PfU81xCKCpdpbgZJl6XFpfEd7eA9BIxxkV2EH7alwg.ttf"
+        ]
+      },
+      "600": {
+        "italic": [
+          "fontsKit/cabin_regular/600-italic/u-4V0qWljRw-Pd815fNqc8T_wAFcX-c37MPiNYlWniJ2hJXHGfWVxUbq.ttf"
+        ],
+        "normal": [
+          "fontsKit/cabin_regular/600-normal/u-4X0qWljRw-PfU81xCKCpdpbgZJl6XFpfEd7eA9BIxxkYODH7alwg.ttf"
+        ]
+      }
+    }
+  },
+  "clear_sans_light": {
+    "settings": {
+      "id": 14,
+      "name": "clear_sans_light",
+      "display_name": "Clear Sans Light",
+      "family": "Clear Sans, Clear Sans Light, sans-serif"
+    },
+    "fonts": {
+      "200": {
+        "normal": [
+          "fontsKit/clear_sans_light/200-normal/ClearSans-Thin-webfont.eot",
+          "fontsKit/clear_sans_light/200-normal/ClearSans-Thin-webfont.woff",
+          "fontsKit/clear_sans_light/200-normal/ClearSans-Thin-webfont.ttf",
+          "fontsKit/clear_sans_light/200-normal/ClearSans-Thin-webfont.svg"
+        ]
+      },
+      "400": {
+        "normal": [
+          "fontsKit/clear_sans_light/400-normal/ClearSans-Regular-webfont.eot",
+          "fontsKit/clear_sans_light/400-normal/ClearSans-Regular-webfont.woff",
+          "fontsKit/clear_sans_light/400-normal/ClearSans-Regular-webfont.ttf",
+          "fontsKit/clear_sans_light/400-normal/ClearSans-Regular-webfont.svg"
+        ]
+      }
+    }
+  },
+  "clear_sans_regular": {
+    "settings": {
+      "id": 15,
+      "name": "clear_sans_regular",
+      "display_name": "Clear Sans Regular",
+      "family": "Clear Sans, Clear Sans Regular, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "normal": [
+          "fontsKit/clear_sans_regular/300-normal/ClearSans-Light-webfont.eot",
+          "fontsKit/clear_sans_regular/300-normal/ClearSans-Light-webfont.woff",
+          "fontsKit/clear_sans_regular/300-normal/ClearSans-Light-webfont.ttf",
+          "fontsKit/clear_sans_regular/300-normal/ClearSans-Light-webfont.svg"
+        ]
+      },
+      "500": {
+        "normal": [
+          "fontsKit/clear_sans_regular/500-normal/ClearSans-Medium-webfont.eot",
+          "fontsKit/clear_sans_regular/500-normal/ClearSans-Medium-webfont.woff",
+          "fontsKit/clear_sans_regular/500-normal/ClearSans-Medium-webfont.ttf",
+          "fontsKit/clear_sans_regular/500-normal/ClearSans-Medium-webfont.svg"
+        ]
+      }
+    }
+  },
+  "courier_new": {
+    "settings": {
+      "id": 16,
+      "name": "courier_new",
+      "display_name": "Courier New",
+      "family": "'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/courier_new/400-italic/courier-new-italic.ttf"
+        ],
+        "normal": [
+          "fontsKit/courier_new/400-normal/courier-new.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/courier_new/700-italic/courier-new-bold-italic.ttf"
+        ],
+        "normal": [
+          "fontsKit/courier_new/700-normal/courier-new-bold.ttf"
+        ]
+      }
+    }
+  },
+  "crete": {
+    "settings": {
+      "id": 17,
+      "name": "crete",
+      "display_name": "Crete",
+      "family": "Crete Round, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/crete/400-italic/55xqey1sJNPjPiv1ZZZrxK1-4b_oKw.ttf"
+        ],
+        "normal": [
+          "fontsKit/crete/400-normal/55xoey1sJNPjPiv1ZZZrxK170bg.ttf"
+        ]
+      }
+    }
+  },
+  "domine": {
+    "settings": {
+      "id": 18,
+      "name": "domine",
+      "display_name": "Domine",
+      "family": "Domine, serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/domine/400-normal/L0xhDFMnlVwD4h3Lt9JWnbX3jG-2X3LAE1ofFg.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/domine/700-normal/L0xhDFMnlVwD4h3Lt9JWnbX3jG-2X5XHE1ofFg.ttf"
+        ]
+      }
+    }
+  },
+  "dosis_light": {
+    "settings": {
+      "id": 19,
+      "name": "dosis_light",
+      "display_name": "Dosis Light",
+      "family": "Dosis, Dosis Light, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "normal": [
+          "fontsKit/dosis_light/300-normal/HhyJU5sn9vOmLxNkIwRSjTVNWLEJabMl2xMB.ttf"
+        ]
+      },
+      "500": {
+        "normal": [
+          "fontsKit/dosis_light/500-normal/HhyJU5sn9vOmLxNkIwRSjTVNWLEJBbMl2xMB.ttf"
+        ]
+      }
+    }
+  },
+  "dosis_regular": {
+    "settings": {
+      "id": 20,
+      "name": "dosis_regular",
+      "display_name": "Dosis Regular",
+      "family": "Dosis, Dosis Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/dosis_regular/400-normal/HhyJU5sn9vOmLxNkIwRSjTVNWLEJN7Ml2xMB.ttf"
+        ]
+      },
+      "600": {
+        "normal": [
+          "fontsKit/dosis_regular/600-normal/HhyJU5sn9vOmLxNkIwRSjTVNWLEJ6bQl2xMB.ttf"
+        ]
+      }
+    }
+  },
+  "droid_sans": {
+    "settings": {
+      "id": 21,
+      "name": "droid_sans",
+      "display_name": "Droid Sans",
+      "family": "Droid Sans, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/droid_sans/400-normal/SlGVmQWMvZQIdix7AFxXkHNSaA.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/droid_sans/700-normal/SlGWmQWMvZQIdix7AFxXmMh3eDs1Yg.ttf"
+        ]
+      }
+    }
+  },
+  "droid_serif": {
+    "settings": {
+      "id": 22,
+      "name": "droid_serif",
+      "display_name": "Droid Serif",
+      "family": "Droid Serif, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/droid_serif/400-italic/tDbK2oqRg1oM3QBjjcaDkOr4nAfcGw.ttf"
+        ],
+        "normal": [
+          "fontsKit/droid_serif/400-normal/tDbI2oqRg1oM3QBjjcaDkOr9rAA.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/droid_serif/700-italic/tDbX2oqRg1oM3QBjjcaDkOr4lLz5CwOnTQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/droid_serif/700-normal/tDbV2oqRg1oM3QBjjcaDkOJGiRD7OwQ.ttf"
+        ]
+      }
+    }
+  },
+  "fanwood": {
+    "settings": {
+      "id": 23,
+      "name": "fanwood",
+      "display_name": "Fanwood",
+      "family": "Fanwood Text, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/fanwood/400-italic/3XFzErwl05Ad_vSCF6Fq7xX2R-zb_Pw.ttf"
+        ],
+        "normal": [
+          "fontsKit/fanwood/400-normal/3XFtErwl05Ad_vSCF6Fq7xX2Qtzc.ttf"
+        ]
+      }
+    }
+  },
+  "goudy_bookletter_1911": {
+    "settings": {
+      "id": 29,
+      "name": "goudy_bookletter_1911",
+      "display_name": "Goudy Bookletter 1911",
+      "family": "Goudy Bookletter 1911, serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/goudy_bookletter_1911/400-normal/sykt-z54laciWfKv-kX8krex0jDiD2HbY6IJshzT.ttf"
+        ]
+      }
+    }
+  },
+  "helvetica": {
+    "settings": {
+      "id": 31,
+      "name": "helvetica",
+      "display_name": "Helvetica",
+      "family": "Helvetica Neue, Helvetica, Arial, sans-serif"
+    },
+    "fonts": {
+      "100": {
+        "normal": [
+          "fontsKit/helvetica/100-normal/HelveticaNeueCyr-Thin.ttf"
+        ]
+      },
+      "200": {
+        "normal": [
+          "fontsKit/helvetica/200-normal/HelveticaNeueCyr-UltraLight.ttf"
+        ]
+      },
+      "300": {
+        "normal": [
+          "fontsKit/helvetica/300-normal/HelveticaNeueCyr-Light.ttf"
+        ]
+      },
+      "400": {
+        "normal": [
+          "fontsKit/helvetica/400-normal/HelveticaNeueCyr-Roman.ttf"
+        ]
+      },
+      "500": {
+        "normal": [
+          "fontsKit/helvetica/500-normal/HelveticaNeueCyr-Medium.ttf"
+        ]
+      },
+      "600": {
+        "normal": [
+          "fontsKit/helvetica/600-normal/HelveticaNeueCyr-Bold.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/helvetica/700-normal/HelveticaNeueCyr-Heavy.ttf"
+        ]
+      },
+      "800": {
+        "normal": [
+          "fontsKit/helvetica/800-normal/HelveticaNeueCyr-Black.ttf"
+        ]
+      },
+      "900": {
+        "normal": [
+          "fontsKit/helvetica/900-normal/HelveticaNeueBlackCondensed.ttf"
+        ]
+      }
+    }
+  },
+  "lato_light": {
+    "settings": {
+      "id": 33,
+      "name": "lato_light",
+      "display_name": "Lato Light",
+      "family": "Lato, Lato Light, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "normal": [
+          "fontsKit/lato_light/300-normal/lato-light-webfont.eot",
+          "fontsKit/lato_light/300-normal/lato-light-webfont.woff2",
+          "fontsKit/lato_light/300-normal/lato-light-webfont.woff",
+          "fontsKit/lato_light/300-normal/lato-light-webfont.ttf",
+          "fontsKit/lato_light/300-normal/lato-light-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/lato_light/300-italic/lato-lightitalic-webfont.eot",
+          "fontsKit/lato_light/300-italic/lato-lightitalic-webfont.woff2",
+          "fontsKit/lato_light/300-italic/lato-lightitalic-webfont.woff",
+          "fontsKit/lato_light/300-italic/lato-lightitalic-webfont.ttf",
+          "fontsKit/lato_light/300-italic/lato-lightitalic-webfont.svg"
+        ]
+      },
+      "500": {
+        "normal": [
+          "fontsKit/lato_light/500-normal/Lato-Medium.ttf"
+        ],
+        "italic": [
+          "fontsKit/lato_light/500-italic/Lato-MediumItalic.ttf"
+        ]
+      },
+      "600": {
+        "normal": [
+          "fontsKit/lato_light/600-normal/lato-semibold-webfont.eot",
+          "fontsKit/lato_light/600-normal/lato-semibold-webfont.woff2",
+          "fontsKit/lato_light/600-normal/lato-semibold-webfont.woff",
+          "fontsKit/lato_light/600-normal/lato-semibold-webfont.ttf",
+          "fontsKit/lato_light/600-normal/lato-semibold-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.eot",
+          "fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.woff2",
+          "fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.woff",
+          "fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.ttf",
+          "fontsKit/lato_light/600-italic/lato-semibolditalic-webfont.svg"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/lato_light/700-normal/Lato-Bold.ttf"
+        ],
+        "italic": [
+          "fontsKit/lato_light/700-italic/Lato-BoldItalic.ttf"
+        ]
+      }
+    }
+  },
+  "lato_regular": {
+    "settings": {
+      "id": 34,
+      "name": "lato_regular",
+      "display_name": "Lato Regular",
+      "family": "Lato, Lato Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/lato_regular/400-normal/lato-regular-webfont.eot",
+          "fontsKit/lato_regular/400-normal/lato-regular-webfont.woff2",
+          "fontsKit/lato_regular/400-normal/lato-regular-webfont.woff",
+          "fontsKit/lato_regular/400-normal/lato-regular-webfont.ttf",
+          "fontsKit/lato_regular/400-normal/lato-regular-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/lato_regular/400-italic/lato-italic-webfont.eot",
+          "fontsKit/lato_regular/400-italic/lato-italic-webfont.woff2",
+          "fontsKit/lato_regular/400-italic/lato-italic-webfont.woff",
+          "fontsKit/lato_regular/400-italic/lato-italic-webfont.ttf",
+          "fontsKit/lato_regular/400-italic/lato-italic-webfont.svg"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/lato_regular/700-normal/lato-bold-webfont.eot",
+          "fontsKit/lato_regular/700-normal/lato-bold-webfont.woff2",
+          "fontsKit/lato_regular/700-normal/lato-bold-webfont.woff",
+          "fontsKit/lato_regular/700-normal/lato-bold-webfont.ttf",
+          "fontsKit/lato_regular/700-normal/lato-bold-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.eot",
+          "fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.woff2",
+          "fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.woff",
+          "fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.ttf",
+          "fontsKit/lato_regular/700-italic/lato-bolditalic-webfont.svg"
+        ]
+      }
+    }
+  },
+  "league_gothic": {
+    "settings": {
+      "id": 35,
+      "name": "league_gothic",
+      "display_name": "League Gothic",
+      "family": "League Gothic, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.eot",
+          "fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.woff2",
+          "fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.woff",
+          "fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.ttf",
+          "fontsKit/league_gothic/400-normal/leaguegothic-regular-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.eot",
+          "fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.woff2",
+          "fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.woff",
+          "fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.ttf",
+          "fontsKit/league_gothic/400-italic/leaguegothic-italic-webfont.svg"
+        ]
+      }
+    }
+  },
+  "league_script": {
+    "settings": {
+      "id": 36,
+      "name": "league_script",
+      "display_name": "League Script",
+      "family": "League Script, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/league_script/400-normal/leaguescript-webfont.eot",
+          "fontsKit/league_script/400-normal/leaguescript-webfont.woff2",
+          "fontsKit/league_script/400-normal/leaguescript-webfont.woff",
+          "fontsKit/league_script/400-normal/leaguescript-webfont.ttf",
+          "fontsKit/league_script/400-normal/leaguescript-webfont.svg"
+        ]
+      }
+    }
+  },
+  "league_spartan": {
+    "settings": {
+      "id": 37,
+      "name": "league_spartan",
+      "display_name": "League Spartan",
+      "family": "League Spartan, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/league_spartan/400-normal/leaguespartan-bold.eot",
+          "fontsKit/league_spartan/400-normal/leaguespartan-bold.woff2",
+          "fontsKit/league_spartan/400-normal/leaguespartan-bold.woff",
+          "fontsKit/league_spartan/400-normal/leaguespartan-bold.ttf",
+          "fontsKit/league_spartan/400-normal/leaguespartan-bold.svg"
+        ]
+      }
+    }
+  },
+  "libre_baskerville": {
+    "settings": {
+      "id": 38,
+      "name": "libre_baskerville",
+      "display_name": "Libre Baskerville",
+      "family": "Libre Baskerville, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/libre_baskerville/400-italic/kmKhZrc3Hgbbcjq75U4uslyuy4kn0qNcWx8QCQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/libre_baskerville/400-normal/kmKnZrc3Hgbbcjq75U4uslyuy4kn0qNXaxY.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/libre_baskerville/700-normal/kmKiZrc3Hgbbcjq75U4uslyuy4kn0qviTgY5KcU.ttf"
+        ]
+      }
+    }
+  },
+  "linden_hill": {
+    "settings": {
+      "id": 39,
+      "name": "linden_hill",
+      "display_name": "Linden Hill",
+      "family": "Linden Hill, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/linden_hill/400-italic/-F63fjxoKSg9Yc3hZgO8yjFK1i8q0g.ttf"
+        ],
+        "normal": [
+          "fontsKit/linden_hill/400-normal/-F61fjxoKSg9Yc3hZgO8yjFP5ig.ttf"
+        ]
+      }
+    }
+  },
+  "lobster": {
+    "settings": {
+      "id": 40,
+      "name": "lobster",
+      "display_name": "Lobster",
+      "family": "Lobster Two, cursive"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/lobster/400-italic/BngOUXZGTXPUvIoyV6yN5-fI1qeh4Q.ttf"
+        ],
+        "normal": [
+          "fontsKit/lobster/400-normal/BngMUXZGTXPUvIoyV6yN5-fN5qA.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/lobster/700-italic/BngTUXZGTXPUvIoyV6yN5-fI3hyE8R-iew.ttf"
+        ],
+        "normal": [
+          "fontsKit/lobster/700-normal/BngRUXZGTXPUvIoyV6yN5-92w7CGwRg.ttf"
+        ]
+      }
+    }
+  },
+  "lora": {
+    "settings": {
+      "id": 41,
+      "name": "lora",
+      "display_name": "Lora",
+      "family": "Lora, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/lora/400-italic/0QI8MX1D_JOuMw_hLdO6T2wV9KnW-MoFoq92mQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/lora/400-normal/0QI6MX1D_JOuGQbT0gvTJPa787weuxJBkqg.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/lora/700-italic/0QI8MX1D_JOuMw_hLdO6T2wV9KnW-C0Coq92mQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/lora/700-normal/0QI6MX1D_JOuGQbT0gvTJPa787z5vBJBkqg.ttf"
+        ]
+      }
+    }
+  },
+  "montserrat": {
+    "settings": {
+      "id": 43,
+      "name": "montserrat",
+      "display_name": "Montserrat",
+      "family": "Montserrat, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/montserrat/400-normal/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aX8.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/montserrat/700-normal/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM73w5aX8.ttf"
+        ]
+      }
+    }
+  },
+  "nunito": {
+    "settings": {
+      "id": 44,
+      "name": "nunito",
+      "display_name": "Nunito",
+      "family": "Nunito, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/nunito/400-normal/XRXI3I6Li01BKofiOc5wtlZ2di8HDLshdTQ3ig.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/nunito/700-normal/XRXI3I6Li01BKofiOc5wtlZ2di8HDFwmdTQ3ig.ttf"
+        ]
+      }
+    }
+  },
+  "open_sans_light": {
+    "settings": {
+      "id": 45,
+      "name": "open_sans_light",
+      "display_name": "Open Sans Light",
+      "family": "Open Sans, Open Sans Light, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "italic": [
+          "fontsKit/open_sans_light/300-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0Rk5hkWV4exQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/open_sans_light/300-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsiH0B4uaVc.ttf"
+        ]
+      },
+      "600": {
+        "italic": [
+          "fontsKit/open_sans_light/600-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0RkxhjWV4exQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/open_sans_light/600-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsgH1x4uaVc.ttf"
+        ]
+      }
+    }
+  },
+  "open_sans_regular": {
+    "settings": {
+      "id": 46,
+      "name": "open_sans_regular",
+      "display_name": "Open Sans Regular",
+      "family": "Open Sans, Open Sans Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/open_sans_regular/400-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0Rk8ZkWV4exQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/open_sans_regular/400-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4uaVc.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/open_sans_regular/700-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0RkyFjWV4exQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/open_sans_regular/700-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4uaVc.ttf"
+        ]
+      }
+    }
+  },
+  "open_sans": {
+    "settings": {
+      "id": 46,
+      "name": "open_sans",
+      "display_name": "Open Sans Regular",
+      "family": "Open Sans, Open Sans Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/open_sans_regular/400-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0Rk8ZkWV4exQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/open_sans_regular/400-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4uaVc.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/open_sans_regular/700-italic/memQYaGs126MiZpBA-UFUIcVXSCEkx2cmqvXlWq8tWZ0Pw86hd0RkyFjWV4exQ.ttf"
+        ],
+        "normal": [
+          "fontsKit/open_sans_regular/700-normal/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4uaVc.ttf"
+        ]
+      }
+    }
+  },
+  "ostrich_sans_inline": {
+    "settings": {
+      "id": 47,
+      "name": "ostrich_sans_inline",
+      "display_name": "Ostrich Sans Inline",
+      "family": "Ostrich Sans Inline, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.eot",
+          "fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.woff2",
+          "fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.woff",
+          "fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.ttf",
+          "fontsKit/ostrich_sans_inline/400-italic/ostrich_sans_inline-italic-webfont.svg"
+        ],
+        "normal": [
+          "fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.eot",
+          "fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.woff2",
+          "fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.woff",
+          "fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.ttf",
+          "fontsKit/ostrich_sans_inline/400-normal/ostrich_sans_inline-regular-webfont.svg"
+        ]
+      }
+    }
+  },
+  "ostrich_sans_regular": {
+    "settings": {
+      "id": 48,
+      "name": "ostrich_sans_regular",
+      "display_name": "Ostrich Sans Regular",
+      "family": "Ostrich Sans, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.eot",
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.woff2",
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.woff",
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.ttf",
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-regular-webfont.svg",
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.eot",
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.woff2",
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.woff",
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.ttf",
+          "fontsKit/ostrich_sans_regular/400-normal/ostrich-black-webfont.svg"
+        ]
+      }
+    }
+  },
+  "oswald_light": {
+    "settings": {
+      "id": 49,
+      "name": "oswald_light",
+      "display_name": "Oswald Light",
+      "family": "Oswald, Oswald Light, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "normal": [
+          "fontsKit/oswald_light/300-normal/TK3_WkUHHAIjg75cFRf3bXL8LICs169vsUhiYA.ttf"
+        ]
+      },
+      "400": {
+        "normal": [
+          "fontsKit/oswald_light/400-normal/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvsUhiYA.ttf"
+        ]
+      }
+    }
+  },
+  "oswald_regular": {
+    "settings": {
+      "id": 50,
+      "name": "oswald_regular",
+      "display_name": "Oswald Regular",
+      "family": "Oswald, Oswald Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/oswald_regular/400-normal/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvsUhiYA.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/oswald_regular/700-normal/TK3_WkUHHAIjg75cFRf3bXL8LICs1xZosUhiYA.ttf"
+        ]
+      }
+    }
+  },
+  "oswald_stencil": {
+    "settings": {
+      "id": 51,
+      "name": "oswald_stencil",
+      "display_name": "Oswald Stencil",
+      "family": "Oswald Stencil, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.eot",
+          "fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.woff2",
+          "fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.woff",
+          "fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.ttf",
+          "fontsKit/oswald_stencil/400-normal/oswald-stencil-webfont.svg"
+        ]
+      }
+    }
+  },
+  "oxygen": {
+    "settings": {
+      "id": 52,
+      "name": "oxygen",
+      "display_name": "Oxygen",
+      "family": "Oxygen, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/oxygen/400-normal/oxygen-webfont.eot",
+          "fontsKit/oxygen/400-normal/oxygen-webfont.woff2",
+          "fontsKit/oxygen/400-normal/oxygen-webfont.woff",
+          "fontsKit/oxygen/400-normal/oxygen-webfont.ttf",
+          "fontsKit/oxygen/400-normal/oxygen-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/oxygen/400-italic/oxygen-italic-webfont.eot",
+          "fontsKit/oxygen/400-italic/oxygen-italic-webfont.woff2",
+          "fontsKit/oxygen/400-italic/oxygen-italic-webfont.woff",
+          "fontsKit/oxygen/400-italic/oxygen-italic-webfont.ttf",
+          "fontsKit/oxygen/400-italic/oxygen-italic-webfont.svg"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/oxygen/700-normal/oxygen-bold-webfont.eot",
+          "fontsKit/oxygen/700-normal/oxygen-bold-webfont.woff2",
+          "fontsKit/oxygen/700-normal/oxygen-bold-webfont.woff",
+          "fontsKit/oxygen/700-normal/oxygen-bold-webfont.ttf",
+          "fontsKit/oxygen/700-normal/oxygen-bold-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.eot",
+          "fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.woff2",
+          "fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.woff",
+          "fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.ttf",
+          "fontsKit/oxygen/700-italic/oxygen-bolditalic-webfont.svg"
+        ]
+      }
+    }
+  },
+  "pt_sans": {
+    "settings": {
+      "id": 53,
+      "name": "pt_sans",
+      "display_name": "PT Sans",
+      "family": "PT Sans, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/pt_sans/400-italic/jizYRExUiTo99u79D0e0ycmN.ttf"
+        ],
+        "normal": [
+          "fontsKit/pt_sans/400-normal/jizaRExUiTo99u79D0yEwA.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/pt_sans/700-italic/jizdRExUiTo99u79D0e8fOydIRUY.ttf"
+        ],
+        "normal": [
+          "fontsKit/pt_sans/700-normal/jizfRExUiTo99u79B_mh0OCtKA.ttf"
+        ]
+      }
+    }
+  },
+  "pt_sans_narrow": {
+    "settings": {
+      "id": 54,
+      "name": "pt_sans_narrow",
+      "display_name": "PT Sans Narrow",
+      "family": "PT Sans Narrow, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/pt_sans_narrow/400-normal/BngRUXNadjH0qYEzV7ab-oWlsbCIwRg.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/pt_sans_narrow/700-normal/BngSUXNadjH0qYEzV7ab-oWlsbg95AiLW_g.ttf"
+        ]
+      }
+    }
+  },
+  "pacifico": {
+    "settings": {
+      "id": 55,
+      "name": "pacifico",
+      "display_name": "Pacifico",
+      "family": "Pacifico, cursive"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/pacifico/400-normal/FwZY7-Qmy14u9lezJ-6H6Mw.ttf"
+        ]
+      }
+    }
+  },
+  "proxima_nova_light": {
+    "settings": {
+      "id": 56,
+      "name": "proxima_nova_light",
+      "display_name": "Proxima Nova Light",
+      "family": "Proxima Nova, Proxima Nova Light, sans-serif"
+    },
+    "fonts": {
+      "100": {
+        "normal": [
+          "fontsKit/proxima_nova_light/100-normal/proximanova-thin.eot",
+          "fontsKit/proxima_nova_light/100-normal/proximanova-thin.woff",
+          "fontsKit/proxima_nova_light/100-normal/proximanova-thin.ttf",
+          "fontsKit/proxima_nova_light/100-normal/proximanova-thin.svg"
+        ],
+        "italic": [
+          "fontsKit/proxima_nova_light/100-italic/proximanova-thinit.eot",
+          "fontsKit/proxima_nova_light/100-italic/proximanova-thinit.woff",
+          "fontsKit/proxima_nova_light/100-italic/proximanova-thinit.ttf",
+          "fontsKit/proxima_nova_light/100-italic/proximanova-thinit.svg"
+        ]
+      },
+      "400": {
+        "normal": [
+          "fontsKit/proxima_nova_light/400-normal/proximanova-reg.eot",
+          "fontsKit/proxima_nova_light/400-normal/proximanova-reg.woff",
+          "fontsKit/proxima_nova_light/400-normal/proximanova-reg.ttf",
+          "fontsKit/proxima_nova_light/400-normal/proximanova-reg.svg"
+        ],
+        "italic": [
+          "fontsKit/proxima_nova_light/400-italic/proximanova-regit.eot",
+          "fontsKit/proxima_nova_light/400-italic/proximanova-regit.woff",
+          "fontsKit/proxima_nova_light/400-italic/proximanova-regit.ttf",
+          "fontsKit/proxima_nova_light/400-italic/proximanova-regit.svg"
+        ]
+      }
+    }
+  },
+  "proxima_nova_regular": {
+    "settings": {
+      "id": 57,
+      "name": "proxima_nova_regular",
+      "display_name": "Proxima Nova Regular",
+      "family": "Proxima Nova, Proxima Nova Regular, sans-serif"
+    },
+    "fonts": {
+      "200": {
+        "normal": [
+          "fontsKit/proxima_nova_regular/200-normal/proximanova-light.eot",
+          "fontsKit/proxima_nova_regular/200-normal/proximanova-light.woff",
+          "fontsKit/proxima_nova_regular/200-normal/proximanova-light.ttf",
+          "fontsKit/proxima_nova_regular/200-normal/proximanova-light.svg"
+        ],
+        "italic": [
+          "fontsKit/proxima_nova_regular/200-italic/proximanova-lightit.eot",
+          "fontsKit/proxima_nova_regular/200-italic/proximanova-lightit.woff",
+          "fontsKit/proxima_nova_regular/200-italic/proximanova-lightit.ttf",
+          "fontsKit/proxima_nova_regular/200-italic/proximanova-lightit.svg"
+        ]
+      },
+      "600": {
+        "normal": [
+          "fontsKit/proxima_nova_regular/600-normal/proximanova-sbold.eot",
+          "fontsKit/proxima_nova_regular/600-normal/proximanova-sbold.woff",
+          "fontsKit/proxima_nova_regular/600-normal/proximanova-sbold.ttf",
+          "fontsKit/proxima_nova_regular/600-normal/proximanova-sbold.svg"
+        ],
+        "italic": [
+          "fontsKit/proxima_nova_regular/600-italic/proximanova-sboldit.eot",
+          "fontsKit/proxima_nova_regular/600-italic/proximanova-sboldit.woff",
+          "fontsKit/proxima_nova_regular/600-italic/proximanova-sboldit.ttf",
+          "fontsKit/proxima_nova_regular/600-italic/proximanova-sboldit.svg"
+        ]
+      }
+    }
+  },
+  "proxima_nova_heavy": {
+    "settings": {
+      "id": 58,
+      "name": "proxima_nova_heavy",
+      "display_name": "Proxima Nova Heavy",
+      "family": "Proxima Nova, Proxima Nova Heavy, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/proxima_nova_heavy/400-normal/proximanova-reg.eot",
+          "fontsKit/proxima_nova_heavy/400-normal/proximanova-reg.woff",
+          "fontsKit/proxima_nova_heavy/400-normal/proximanova-reg.ttf",
+          "fontsKit/proxima_nova_heavy/400-normal/proximanova-reg.svg"
+        ],
+        "italic": [
+          "fontsKit/proxima_nova_heavy/400-italic/proximanova-regit.eot",
+          "fontsKit/proxima_nova_heavy/400-italic/proximanova-regit.woff",
+          "fontsKit/proxima_nova_heavy/400-italic/proximanova-regit.ttf",
+          "fontsKit/proxima_nova_heavy/400-italic/proximanova-regit.svg"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/proxima_nova_heavy/700-normal/proximanova-bold.eot",
+          "fontsKit/proxima_nova_heavy/700-normal/proximanova-bold.woff",
+          "fontsKit/proxima_nova_heavy/700-normal/proximanova-bold.ttf",
+          "fontsKit/proxima_nova_heavy/700-normal/proximanova-bold.svg"
+        ],
+        "italic": [
+          "fontsKit/proxima_nova_heavy/700-italic/proximanova-boldit.eot",
+          "fontsKit/proxima_nova_heavy/700-italic/proximanova-boldit.woff",
+          "fontsKit/proxima_nova_heavy/700-italic/proximanova-boldit.ttf",
+          "fontsKit/proxima_nova_heavy/700-italic/proximanova-boldit.svg"
+        ]
+      }
+    }
+  },
+  "questrial": {
+    "settings": {
+      "id": 59,
+      "name": "questrial",
+      "display_name": "Questrial",
+      "family": "Questrial, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/questrial/400-normal/QdVUSTchPBm7nuUeVf70viFg.ttf"
+        ]
+      }
+    }
+  },
+  "quicksand_light": {
+    "settings": {
+      "id": 60,
+      "name": "quicksand_light",
+      "display_name": "Quicksand Light",
+      "family": "Quicksand, Quicksand Light, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "normal": [
+          "fontsKit/quicksand_light/300-normal/quicksand-light-webfont.eot",
+          "fontsKit/quicksand_light/300-normal/quicksand-light-webfont.woff2",
+          "fontsKit/quicksand_light/300-normal/quicksand-light-webfont.woff",
+          "fontsKit/quicksand_light/300-normal/quicksand-light-webfont.ttf",
+          "fontsKit/quicksand_light/300-normal/quicksand-light-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.eot",
+          "fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.woff2",
+          "fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.woff",
+          "fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.ttf",
+          "fontsKit/quicksand_light/300-italic/quicksand-lightitalic-webfont.svg"
+        ]
+      },
+      "400": {
+        "normal": [
+          "fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.eot",
+          "fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.woff2",
+          "fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.woff",
+          "fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.ttf",
+          "fontsKit/quicksand_light/400-normal/quicksand-regular-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.eot",
+          "fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.woff2",
+          "fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.woff",
+          "fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.ttf",
+          "fontsKit/quicksand_light/400-italic/quicksand-italic-webfont.svg"
+        ]
+      }
+    }
+  },
+  "quicksand_regular": {
+    "settings": {
+      "id": 61,
+      "name": "quicksand_regular",
+      "display_name": "Quicksand Regular",
+      "family": "Quicksand, Quicksand Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.eot",
+          "fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.woff2",
+          "fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.woff",
+          "fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.ttf",
+          "fontsKit/quicksand_regular/400-normal/quicksand-regular-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.eot",
+          "fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.woff2",
+          "fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.woff",
+          "fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.ttf",
+          "fontsKit/quicksand_regular/400-italic/quicksand-italic-webfont.svg"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.eot",
+          "fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.woff2",
+          "fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.woff",
+          "fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.ttf",
+          "fontsKit/quicksand_regular/700-normal/quicksand-bold-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.eot",
+          "fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.woff2",
+          "fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.woff",
+          "fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.ttf",
+          "fontsKit/quicksand_regular/700-italic/quicksand-bolditalic-webfont.svg"
+        ]
+      }
+    }
+  },
+  "raleway": {
+    "settings": {
+      "id": 62,
+      "name": "raleway",
+      "display_name": "Raleway",
+      "family": "Raleway, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/raleway/400-normal/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVvaorCIPrQ.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/raleway/700-normal/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVs9pbCIPrQ.ttf"
+        ]
+      }
+    }
+  },
+  "roboto_condensed": {
+    "settings": {
+      "id": 63,
+      "name": "roboto_condensed",
+      "display_name": "Roboto Condensed",
+      "family": "Roboto Condensed, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/roboto_condensed/400-italic/ieVj2ZhZI2eCN5jzbjEETS9weq8-19eLAQM4.ttf"
+        ],
+        "normal": [
+          "fontsKit/roboto_condensed/400-normal/ieVl2ZhZI2eCN5jzbjEETS9weq8-19y7CA.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/roboto_condensed/700-italic/ieVg2ZhZI2eCN5jzbjEETS9weq8-19eDtCYoY9Nc.ttf"
+        ],
+        "normal": [
+          "fontsKit/roboto_condensed/700-normal/ieVi2ZhZI2eCN5jzbjEETS9weq8-32meGCoYag.ttf"
+        ]
+      }
+    }
+  },
+  "roboto_light": {
+    "settings": {
+      "id": 64,
+      "name": "roboto_light",
+      "display_name": "Roboto Light",
+      "family": "Roboto, Roboto Light, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "italic": [
+          "fontsKit/roboto_light/300-italic/KFOjCnqEu92Fr1Mu51TjASc0CsE.ttf"
+        ],
+        "normal": [
+          "fontsKit/roboto_light/300-normal/KFOlCnqEu92Fr1MmSU5fChc9.ttf"
+        ]
+      },
+      "500": {
+        "italic": [
+          "fontsKit/roboto_light/500-italic/KFOjCnqEu92Fr1Mu51S7ACc0CsE.ttf"
+        ],
+        "normal": [
+          "fontsKit/roboto_light/500-normal/KFOlCnqEu92Fr1MmEU9fChc9.ttf"
+        ]
+      }
+    }
+  },
+  "roboto_regular": {
+    "settings": {
+      "id": 65,
+      "name": "roboto_regular",
+      "display_name": "Roboto Regular",
+      "family": "Roboto, Roboto Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/roboto_regular/400-italic/KFOkCnqEu92Fr1Mu51xGIzc.ttf"
+        ],
+        "normal": [
+          "fontsKit/roboto_regular/400-normal/KFOmCnqEu92Fr1Mu7GxP.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/roboto_regular/700-italic/KFOjCnqEu92Fr1Mu51TzBic0CsE.ttf"
+        ],
+        "normal": [
+          "fontsKit/roboto_regular/700-normal/KFOlCnqEu92Fr1MmWUlfChc9.ttf"
+        ]
+      }
+    }
+  },
+  "rokkitt": {
+    "settings": {
+      "id": 67,
+      "name": "rokkitt",
+      "display_name": "Rokkitt",
+      "family": "Rokkitt, serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/rokkitt/400-normal/qFdb35qfgYFjGy5hukqqhw5XeRgdi1ryd6DMGbo.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/rokkitt/700-normal/qFdb35qfgYFjGy5hukqqhw5XeRgdi1oVcKDMGbo.ttf"
+        ]
+      }
+    }
+  },
+  "source_sans_light": {
+    "settings": {
+      "id": 68,
+      "name": "source_sans_light",
+      "display_name": "Source Sans Light",
+      "family": "Source Sans Pro, Source Sans Light, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "italic": [
+          "fontsKit/source_sans_light/300-italic/6xKwdSBYKcSV-LCoeQqfX1RYOo3qPZZMkidi18E.ttf"
+        ],
+        "normal": [
+          "fontsKit/source_sans_light/300-normal/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwmRdr.ttf"
+        ]
+      },
+      "600": {
+        "italic": [
+          "fontsKit/source_sans_light/600-italic/6xKwdSBYKcSV-LCoeQqfX1RYOo3qPZY4lCdi18E.ttf"
+        ],
+        "normal": [
+          "fontsKit/source_sans_light/600-normal/6xKydSBYKcSV-LCoeQqfX1RYOo3i54rwmRdr.ttf"
+        ]
+      }
+    }
+  },
+  "source_sans_regular": {
+    "settings": {
+      "id": 69,
+      "name": "source_sans_regular",
+      "display_name": "Source Sans Regular",
+      "family": "Source Sans Pro, Source Sans Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/source_sans_regular/400-italic/6xK1dSBYKcSV-LCoeQqfX1RYOo3qPZ7psDc.ttf"
+        ],
+        "normal": [
+          "fontsKit/source_sans_regular/400-normal/6xK3dSBYKcSV-LCoeQqfX1RYOo3qNq7g.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/source_sans_regular/700-italic/6xKwdSBYKcSV-LCoeQqfX1RYOo3qPZZclSdi18E.ttf"
+        ],
+        "normal": [
+          "fontsKit/source_sans_regular/700-normal/6xKydSBYKcSV-LCoeQqfX1RYOo3ig4vwmRdr.ttf"
+        ]
+      }
+    }
+  },
+  "special_elite": {
+    "settings": {
+      "id": 70,
+      "name": "special_elite",
+      "display_name": "Special Elite",
+      "family": "Special Elite, cursive"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/special_elite/400-normal/XLYgIZbkc4JPUL5CVArUVL0ntnAOTQ.ttf"
+        ]
+      }
+    }
+  },
+  "tahoma": {
+    "settings": {
+      "id": 71,
+      "name": "tahoma",
+      "display_name": "Tahoma",
+      "family": "Tahoma, Verdana, Segoe, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/tahoma/400-normal/tahoma.ttf"
+        ]
+      }
+    }
+  },
+  "times_new_roman": {
+    "settings": {
+      "id": 72,
+      "name": "times_new_roman",
+      "display_name": "Times New Roman",
+      "family": "Tahoma, Verdana, Segoe, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/times_new_roman/400-italic/italic_Times New Roman.ttf"
+        ],
+        "normal": [
+          "fontsKit/times_new_roman/400-normal/Times New Roman.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/times_new_roman/700-italic/Times New Roman.ttf"
+        ],
+        "normal": [
+          "fontsKit/times_new_roman/700-normal/Times New Roman.ttf"
+        ]
+      }
+    }
+  },
+  "titillium_light": {
+    "settings": {
+      "id": 73,
+      "name": "titillium_light",
+      "display_name": "Titillium Light",
+      "family": "Titillium Web, Titillium Light, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "italic": [
+          "fontsKit/titillium_light/300-italic/NaPFcZTIAOhVxoMyOr9n_E7fdMbepI5Db5yZ.ttf"
+        ],
+        "normal": [
+          "fontsKit/titillium_light/300-normal/NaPDcZTIAOhVxoMyOr9n_E7ffGjEGIVzZg.ttf"
+        ]
+      },
+      "600": {
+        "italic": [
+          "fontsKit/titillium_light/600-italic/NaPFcZTIAOhVxoMyOr9n_E7fdMbe0IhDb5yZ.ttf"
+        ],
+        "normal": [
+          "fontsKit/titillium_light/600-normal/NaPDcZTIAOhVxoMyOr9n_E7ffBzCGIVzZg.ttf"
+        ]
+      }
+    }
+  },
+  "titillium_regular": {
+    "settings": {
+      "id": 74,
+      "name": "titillium_regular",
+      "display_name": "Titillium Regular",
+      "family": "Titillium Web, Titillium Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/titillium_regular/400-italic/NaPAcZTIAOhVxoMyOr9n_E7fdMbWAaxT.ttf"
+        ],
+        "normal": [
+          "fontsKit/titillium_regular/400-normal/NaPecZTIAOhVxoMyOr9n_E7fdM3mCA.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/titillium_regular/700-italic/NaPFcZTIAOhVxoMyOr9n_E7fdMbetIlDb5yZ.ttf"
+        ],
+        "normal": [
+          "fontsKit/titillium_regular/700-normal/NaPDcZTIAOhVxoMyOr9n_E7ffHjDGIVzZg.ttf"
+        ]
+      }
+    }
+  },
+  "trebuchet_ms": {
+    "settings": {
+      "id": 75,
+      "name": "trebuchet_ms",
+      "display_name": "Trebuchet MS",
+      "family": "Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/trebuchet_ms/400-italic/Trebuchet-MS-Italic.ttf"
+        ],
+        "normal": [
+          "fontsKit/trebuchet_ms/400-normal/trebuc.ttf"
+        ]
+      }
+    }
+  },
+  "ubuntu_light": {
+    "settings": {
+      "id": 76,
+      "name": "ubuntu_light",
+      "display_name": "Ubuntu Light",
+      "family": "Ubuntu, Ubuntu Light, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "italic": [
+          "fontsKit/ubuntu_light/300-italic/4iCp6KVjbNBYlgoKejZftVyBN4Q.ttf"
+        ],
+        "normal": [
+          "fontsKit/ubuntu_light/300-normal/4iCv6KVjbNBYlgoC1CzjvmyI.ttf"
+        ]
+      },
+      "500": {
+        "italic": [
+          "fontsKit/ubuntu_light/500-italic/4iCp6KVjbNBYlgoKejYHtFyBN4Q.ttf"
+        ],
+        "normal": [
+          "fontsKit/ubuntu_light/500-normal/4iCv6KVjbNBYlgoCjC3jvmyI.ttf"
+        ]
+      }
+    }
+  },
+  "ubuntu_regular": {
+    "settings": {
+      "id": 77,
+      "name": "ubuntu_regular",
+      "display_name": "Ubuntu Regular",
+      "family": "Ubuntu, Ubuntu Regular, sans-serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/ubuntu_regular/400-italic/4iCu6KVjbNBYlgoKej76l0w.ttf"
+        ],
+        "normal": [
+          "fontsKit/ubuntu_regular/400-normal/4iCs6KVjbNBYlgoKcQ7z.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/ubuntu_regular/700-italic/4iCp6KVjbNBYlgoKejZPslyBN4Q.ttf"
+        ],
+        "normal": [
+          "fontsKit/ubuntu_regular/700-normal/4iCv6KVjbNBYlgoCxCvjvmyI.ttf"
+        ]
+      }
+    }
+  },
+  "vollkorn": {
+    "settings": {
+      "id": 78,
+      "name": "vollkorn",
+      "display_name": "Vollkorn",
+      "family": "Vollkorn, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/vollkorn/400-italic/0ybuGDoxxrvAnPhYGxksckM2WMCpRjDj-DJGWlmeObE.ttf"
+        ],
+        "normal": [
+          "fontsKit/vollkorn/400-normal/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df2MHGeHmmZ.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/vollkorn/700-italic/0ybuGDoxxrvAnPhYGxksckM2WMCpRjDj-DKhXVmeObE.ttf"
+        ],
+        "normal": [
+          "fontsKit/vollkorn/700-normal/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df213aeHmmZ.ttf"
+        ]
+      }
+    }
+  },
+  "vollkorn_serif": {
+    "settings": {
+      "id": 100,
+      "name": "vollkorn",
+      "display_name": "Vollkorn",
+      "family": "Vollkorn, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/vollkorn/400-italic/0ybuGDoxxrvAnPhYGxksckM2WMCpRjDj-DJGWlmeObE.ttf"
+        ],
+        "normal": [
+          "fontsKit/vollkorn/400-normal/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df2MHGeHmmZ.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/vollkorn/700-italic/0ybuGDoxxrvAnPhYGxksckM2WMCpRjDj-DKhXVmeObE.ttf"
+        ],
+        "normal": [
+          "fontsKit/vollkorn/700-normal/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df213aeHmmZ.ttf"
+        ]
+      }
+    }
+  },
+  "aleo_light": {
+    "settings": {
+      "id": 79,
+      "name": "aleo_light",
+      "display_name": "Aleo Light",
+      "family": "Aleo, Aleo Light, serif"
+    },
+    "fonts": {
+      "200": {
+        "normal": [
+          "fontsKit/aleo_light/200-normal/Aleo-Light-webfont.eot",
+          "fontsKit/aleo_light/200-normal/Aleo-Light-webfont.woff",
+          "fontsKit/aleo_light/200-normal/Aleo-Light-webfont.ttf",
+          "fontsKit/aleo_light/200-normal/Aleo-Light-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/aleo_light/200-italic/Aleo-LightItalic-webfont.eot",
+          "fontsKit/aleo_light/200-italic/Aleo-LightItalic-webfont.woff",
+          "fontsKit/aleo_light/200-italic/Aleo-LightItalic-webfont.ttf",
+          "fontsKit/aleo_light/200-italic/Aleo-LightItalic-webfont.svg"
+        ]
+      },
+      "400": {
+        "normal": [
+          "fontsKit/aleo_light/400-normal/Aleo-Regular-webfont.eot",
+          "fontsKit/aleo_light/400-normal/Aleo-Regular-webfont.woff",
+          "fontsKit/aleo_light/400-normal/Aleo-Regular-webfont.ttf",
+          "fontsKit/aleo_light/400-normal/Aleo-Regular-webfont.svg"
+        ],
+        "italic": [
+          "fontsKit/aleo_light/400-italic/Aleo-Italic-webfont.eot",
+          "fontsKit/aleo_light/400-italic/Aleo-Italic-webfont.woff",
+          "fontsKit/aleo_light/400-italic/Aleo-Italic-webfont.ttf",
+          "fontsKit/aleo_light/400-italic/Aleo-Italic-webfont.svg"
+        ]
+      }
+    }
+  },
+  "playfair_display_sc": {
+    "settings": {
+      "id": 80,
+      "name": "playfair_display_sc",
+      "display_name": "Playfair Display SC",
+      "family": "Playfair, Playfair Display SC, serif"
+    },
+    "fonts": {
+      "400": {
+        "italic": [
+          "fontsKit/playfair_display_sc/400-italic/playfairdisplaysc-italic-webfont.woff2",
+          "fontsKit/playfair_display_sc/400-italic/playfairdisplaysc-italic-webfont.woff"
+        ],
+        "normal": [
+          "fontsKit/playfair_display_sc/400-normal/playfairdisplaysc-regular-webfont.woff2",
+          "fontsKit/playfair_display_sc/400-normal/playfairdisplaysc-regular-webfont.woff"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/playfair_display_sc/700-normal/playfairdisplaysc-bold-webfont.woff2",
+          "fontsKit/playfair_display_sc/700-normal/playfairdisplaysc-bold-webfont.woff"
+        ],
+        "italic": [
+          "fontsKit/playfair_display_sc/700-italic/playfairdisplaysc-bolditalic-webfont.woff2",
+          "fontsKit/playfair_display_sc/700-italic/playfairdisplaysc-bolditalic-webfont.woff"
+        ]
+      }
+    }
+  },
+  "biryani": {
+    "settings": {
+      "id": 81,
+      "name": "biryani",
+      "display_name": "Biryani",
+      "family": "Biryani, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "normal": [
+          "fontsKit/biryani/300-normal/Biryani-Light-webfont.woff"
+        ]
+      },
+      "900": {
+        "normal": [
+          "fontsKit/biryani/900-normal/Biryani-Heavy-webfont.woff"
+        ]
+      }
+    }
+  },
+  "fira_sans": {
+    "settings": {
+      "id": 82,
+      "name": "fira_sans",
+      "display_name": "Fira Sans",
+      "family": "Fira, Fira Sans, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "normal": [
+          "fontsKit/fira_sans/300-normal/firasans-light-webfont.woff2",
+          "fontsKit/fira_sans/300-normal/firasans-light-webfont.woff"
+        ],
+        "italic": [
+          "fontsKit/fira_sans/300-italic/firasans-lightitalic-webfont.woff2",
+          "fontsKit/fira_sans/300-italic/firasans-lightitalic-webfont.woff"
+        ]
+      },
+      "900": {
+        "normal": [
+          "fontsKit/fira_sans/900-normal/firasans-heavy-webfont.woff2",
+          "fontsKit/fira_sans/900-normal/firasans-heavy-webfont.woff"
+        ],
+        "italic": [
+          "fontsKit/fira_sans/900-italic/firasans-heavyitalic-webfont.woff2",
+          "fontsKit/fira_sans/900-italic/firasans-heavyitalic-webfont.woff"
+        ]
+      }
+    }
+  },
+  "poppins": {
+    "settings": {
+      "id": 82,
+      "name": "poppins",
+      "display_name": "Poppins",
+      "family": "Poppins, Poppins, sans-serif"
+    },
+    "fonts": {
+      "100": {
+        "normal": [
+          "fontsKit/poppins/100-thin/Poppins-Thin.ttf"
+        ],
+        "italic": [
+          "fontsKit/poppins/100-thin-italic/Poppins-ThinItalic.ttf"
+        ]
+      },
+      "200": {
+        "normal": [
+          "fontsKit/poppins/200-extra/Poppins-ExtraLight.ttf"
+        ],
+        "italic": [
+          "fontsKit/poppins/200-extra-italic/Poppins-ExtraLightItalic.ttf"
+        ]
+      },
+      "300": {
+        "normal": [
+          "fontsKit/poppins/300-light/Poppins-Light.ttf"
+        ],
+        "italic": [
+          "fontsKit/poppins/300-light-italic/Poppins-LightItalic.ttf"
+        ]
+      },
+      "400": {
+        "normal": [
+          "fontsKit/poppins/400-normal/Poppins-Regular.ttf"
+        ],
+        "italic": [
+          "fontsKit/poppins/400-italic/Poppins-Italic.ttf"
+        ]
+      },
+      "500": {
+        "normal": [
+          "fontsKit/poppins/500-medium/Poppins-Medium.ttf"
+        ],
+        "italic": [
+          "fontsKit/poppins/500-medium-italic/Poppins-MediumItalic.ttf"
+        ]
+      },
+      "600": {
+        "normal": [
+          "fontsKit/poppins/600-semi-bold/Poppins-SemiBold.ttf"
+        ],
+        "italic": [
+          "fontsKit/poppins/600-semi-bold-italic/Poppins-SemiBoldItalic.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
+          "fontsKit/poppins/700-bold/Poppins-Bold.ttf"
+        ],
+        "italic": [
+          "fontsKit/poppins/800-extra-bold/Poppins-ExtraBold.ttf"
+        ]
+      },
+      "800": {
+        "normal": [
+          "fontsKit/poppins/800-extra-bold/Poppins-ExtraBold.ttf"
+        ],
+        "italic": [
+          "fontsKit/poppins/800-extra-bold-italic/Poppins-ExtraBoldItalic.ttf"
+        ]
+      },
+      "900": {
+        "normal": [
+          "fontsKit/poppins/900-black/Poppins-Black.ttf"
+        ],
+        "italic": [
+          "fontsKit/poppins/900-black-italic/Poppins-BlackItalic.ttf"
+        ]
+      }
+    }
+  }
+}

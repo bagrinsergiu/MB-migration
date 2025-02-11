@@ -181,6 +181,16 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addMargin($t, $r, $b, $l, $prefix = '', $measureType = 'px'): BrizyComponent
+    {
+        $this->addConstructMargin($t, 'top', $prefix, $measureType);
+        $this->addConstructMargin($r, 'right', $prefix, $measureType);
+        $this->addConstructMargin($b, 'bottom', $prefix, $measureType);
+        $this->addConstructMargin($l, 'left', $prefix, $measureType);
+
+        return $this;
+    }
+
     public function addMobilePadding($paddingPx = 0): BrizyComponent
     {
         if (is_array($paddingPx)) {
@@ -694,6 +704,13 @@ class BrizyComponent implements JsonSerializable
     public function mobileSizeTypeOriginal(): BrizyComponent
     {
         $this->getValue()->set('mobileSizeType', 'original');
+        return $this;
+    }
+
+    public function mobileSize($size = 100, $suffix = '%'): BrizyComponent
+    {
+        $this->getValue()->set('mobileSize', $size);
+        $this->getValue()->set('mobileSizeSuffix', $suffix);
         return $this;
     }
 

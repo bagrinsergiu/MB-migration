@@ -103,6 +103,20 @@ class MBProjectDataCollector
         return $settingSite[0]['id'];
     }
 
+    public static function getDomainBySiteId(int $project_ID_MB)
+    {
+        $db = new DBConnector();
+        $settingSite = $db->requestArray("SELECT domain_name from domains WHERE site_id = '".$project_ID_MB."'");
+        if (empty($settingSite)) {
+            Logger::instance()->info(self::trace(0).'Message: MB project not found');
+            Logger::instance()->critical('MB project not found');
+
+            throw new Exception("MB project not found with uuid: $project_ID_MB");
+        }
+
+        return $settingSite[0]['domain_name'];
+    }
+
     /**
      * @throws Exception
      */
@@ -229,7 +243,7 @@ class MBProjectDataCollector
         return $this->processFonts($dbFontStyles, $migrationDefaultFonts);
     }
 
-    private function processFonts($dbFontStyles, $migrationDefaultFonts)
+    private function processFonts($dbFontStyles, $migrationDefaultFonts): array
     {
         $fontStyles = [];
         foreach ($dbFontStyles as $font) {
@@ -285,15 +299,15 @@ class MBProjectDataCollector
     /**
      * @throws GuzzleException
      */
-    public function primaryDefaultFonts(&$fontStyle, $name)
-    {
-        $fontStyle[] = [
-            'name' => 'primary',
-            'fontName' => $name,
-            'fontFamily' => $this->transLiterationFontFamily($name),
-            'uuid' => $this->fontsController->upLoadFont($name),
-        ];
-    }
+//    public function primaryDefaultFonts(&$fontStyle, $name)
+//    {
+//        $fontStyle[] = [
+//            'name' => 'primary',
+//            'fontName' => $name,
+//            'fontFamily' => $this->transLiterationFontFamily($name),
+//            'uuid' => $this->fontsController->upLoadFont($name),
+//        ];
+//    }
 
 
     /**
@@ -664,6 +678,7 @@ class MBProjectDataCollector
         foreach ($requestItemsFromSection as $sectionsItems) {
             $settings = '';
             $uploadedFont = [];
+
 
             if ($settings = json_decode($sectionsItems['settings'], true)) {
                 if (isset($settings['used_fonts'])) {

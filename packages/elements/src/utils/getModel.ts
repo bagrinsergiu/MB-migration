@@ -1,3 +1,5 @@
+import { Families } from "../types/type";
+import { getFontFamily } from "./getFontFamily";
 import {
   defaultDesktopNumberLineHeight,
   defaultMobileNumberLineHeight,
@@ -11,7 +13,7 @@ import { toCamelCase } from "utils/src/text/toCamelCase";
 
 interface Model {
   node: Element;
-  families: Record<string, string>;
+  families: Families;
   modelDefaults: Record<string, MValue<Literal | boolean>>;
   defaultFamily: string;
 }
@@ -24,21 +26,18 @@ export const getModel = (data: Model) => {
   Object.keys(modelDefaults).forEach((key) => {
     switch (key) {
       case "font-family": {
-        const value = `${styles[key]}`;
-        const fontFamily = value
-          .replace(/['"\,]/g, "") // eslint-disable-line
-          .replace(/\s/g, "_")
-          .toLocaleLowerCase();
+        const family = getFontFamily(styles, families);
 
-        if (!families[fontFamily]) {
+        if (!family) {
           dic[toCamelCase(key)] = defaultFamily;
         } else {
-          dic[toCamelCase(key)] = families[fontFamily];
+          dic[toCamelCase(key)] = family.name;
         }
         break;
       }
       case "font-family-type": {
-        dic[toCamelCase(key)] = "upload";
+        dic[toCamelCase(key)] =
+          getFontFamily(styles, families)?.type ?? "upload";
         break;
       }
       case "font-style": {

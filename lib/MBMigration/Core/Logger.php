@@ -9,11 +9,31 @@ use Psr\Log\LoggerInterface;
 class Logger extends \Monolog\Logger
 {
     static private LoggerInterface $instance;
+    /**
+     * @var mixed|null
+     */
+    private static $path;
+    /**
+     * @var mixed
+     */
+    private static $logLevel;
 
-    static public function initialize($name, $level, $path): LoggerInterface
+    static public function initialize($name, $logLevel = null, $path = null): LoggerInterface
     {
+        if(!empty(self::$logLevel)){
+            $logLevel = self::$logLevel;
+        } else {
+            self::$logLevel = $logLevel;
+        }
+
+        if(!empty(self::$path)) {
+            $path = self::$path;
+        } else {
+            self::$path = $path;
+        }
+
         self::$instance = new self($name);
-        self::$instance->pushHandler(new StreamHandler($path, $level));
+        self::$instance->pushHandler(new StreamHandler($path, $logLevel));
 
         return self::$instance;
     }

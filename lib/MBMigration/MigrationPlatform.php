@@ -45,6 +45,14 @@ class MigrationPlatform
     private LoggerInterface $logger;
     private array $pageMapping;
     private Config $config;
+    /**
+     * @var false|mixed
+     */
+    private $brizyProjectDomain;
+    /**
+     * @var mixed
+     */
+    private $mb_projectDomain;
 
     use checking;
     use DebugBackTrace;
@@ -122,15 +130,19 @@ class MigrationPlatform
 
         if (!($projectID_MB = $this->cache->get('projectId_MB'))) {
             $projectID_MB = MBProjectDataCollector::getIdByUUID($projectUUID_MB);
+            $this->mb_projectDomain = MBProjectDataCollector::getDomainBySiteId($projectID_MB);
         }
 
         if ($projectID_Brizy == 0) {
-            $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4352671, 'id');
+            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, 22020775, 'id');
 //            $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4423676, 'id');
+
+            \MBMigration\Core\Logger::initialize("brizy-$this->projectID_Brizy");
         } else {
             $this->projectID_Brizy = $projectID_Brizy;
         }
 
+        $this->brizyProjectDomain = $this->brizyApi->getDomain($this->projectID_Brizy);
         $this->projectId = $projectUUID_MB.'_'.$this->projectID_Brizy.'_';
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
@@ -144,6 +156,10 @@ class MigrationPlatform
         if (!$designName = $this->cache->get('designName')) {
             $designName = $this->parser->getDesignSite();
             $this->cache->set('designName', $designName);
+        }
+
+        if (Config::$devMode) {
+            $this->brizyApi->clearAllFontsInProject();
         }
 
         $this->checkDesign($designName);
@@ -167,7 +183,8 @@ class MigrationPlatform
             $this->brizyApi,
             $this->QueryBuilder,
             $this->logger,
-            $this->projectID_Brizy
+            $this->projectID_Brizy,
+            $designName
         );
 
         $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
@@ -242,16 +259,13 @@ class MigrationPlatform
             $parentPages = $this->cache->get('menuList')['list'];
         }
 
-        if (Config::$devMode) {
-            echo $this->cache->get('design', 'settings')."\n";
-        }
-
         // lets dump the cache there.
         $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
 
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
-        $this->launch($parentPages);
+        $this->launch($parentPages, false);
+        $this->launch($parentPages, true);
 
         $this->brizyApi->clearCompileds($projectID_Brizy);
 
@@ -263,10 +277,10 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
-    private function launch($parentPages): void
+    private function launch($parentPages, $hiddenPage): void
     {
         foreach ($parentPages as $i => $page) {
-//            if($page['hidden']){ continue; }
+            if($page['hidden'] !== $hiddenPage) { continue; }
 
             if (!empty($page['parentSettings'])) {
                 $settings = json_decode($page['parentSettings'], true);
@@ -281,7 +295,7 @@ class MigrationPlatform
             }
 
             if (!empty($page['child'])) {
-                $this->launch($page['child']);
+                $this->launch($page['child'], $hiddenPage);
             }
             if (Config::$devMode && $this->buildPage !== '') {
                 if ($page['slug'] !== $this->buildPage) {
@@ -304,7 +318,7 @@ class MigrationPlatform
         $this->cache->set('tookPage', $page);
         ExecutionTimer::start();
 
-         if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
+        if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
             $preparedSectionOfThePage = $this->pageController->getSectionsFromPage($page);
             if (!$preparedSectionOfThePage) {
                 return;
@@ -344,27 +358,46 @@ class MigrationPlatform
         }
     }
 
-    public function getLogs(): string
+    public function getLogs()
     {
         if ($this->finalSuccess['status'] === 'success') {
             Logger::instance()->debug(json_encode($this->errorDump->getDetailsMessage()));
 
-            return json_encode($this->finalSuccess);
+            return $this->finalSuccess;
         }
 
-        return json_encode($this->errorDump->getAllErrors());
+        return $this->errorDump->getAllErrors();
     }
 
     private function logFinalProcess(float $startTime, bool $successWorkCompletion = true): void
     {
         $endTime = microtime(true);
+
+        $projectSettings = $this->cache->get('settings');
         $executionTime = ($endTime - $startTime);
-        $this->finalSuccess['UMID'] = $this->migrationID;
+
+        if (Config::$devMode) {
+            $this->finalSuccess['DEV_MODE'] = true;
+        }
+
+        $this->finalSuccess['theme'] = $projectSettings['design'] ?? null;
+
+        $this->finalSuccess['migration_id'] = $this->migrationID;
+
+        $this->finalSuccess['mb_uuid'] = $projectSettings['uuid'] ?? null;
+        $this->finalSuccess['mb_site_id'] = $projectSettings['id'] ?? null;
+        $this->finalSuccess['mb_product_name'] = $projectSettings['name'] ?? null;
+        $this->finalSuccess['mb_project_domain'] = $this->mb_projectDomain ?? null;
+
+        $this->finalSuccess['brizy_project_id'] = $this->projectID_Brizy ?? null;
+        $this->finalSuccess['brizy_project_domain'] = $this->brizyProjectDomain ?? null;
+
         if ($successWorkCompletion) {
             $this->finalSuccess['status'] = 'success';
         }
         $this->finalSuccess['progress'] = $this->cache->get('Status');
-        $this->finalSuccess['processTime'] = round($executionTime, 1);
+        $this->finalSuccess['progress']['processTime'] = round($executionTime, 1);
+        $this->finalSuccess['message']['warning'] = ErrorDump::$warningMessage ?? [];
 
         Logger::instance()->info('Work time: '.TimeUtility::Time($executionTime).' (seconds: '.round($executionTime, 1).')');
     }

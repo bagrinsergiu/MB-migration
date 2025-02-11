@@ -8,8 +8,14 @@ export const getData = (): Entry => {
       ? {
           selector: `[data-id='${window.elementId}']`,
           families: {
-            "proxima_nova_proxima_nova_regular_sans-serif": "uid1111",
-            "helvetica_neue_helveticaneue_helvetica_arial_sans-serif": "uid2222"
+            "proxima_nova_proxima_nova_regular_sans-serif": {
+              name: "uid1111",
+              type: "upload"
+            },
+            "helvetica_neue_helveticaneue_helvetica_arial_sans-serif": {
+              name: "uid2222",
+              type: "upload"
+            }
           },
           defaultFamily: "lato",
           urlMap: {}
@@ -22,8 +28,8 @@ export const getData = (): Entry => {
         };
   } catch (e) {
     const familyMock = {
-      lato: "uid_for_lato",
-      roboto: "uid_for_roboto"
+      lato: { name: "uid_for_lato", type: "upload" },
+      roboto: { name: "uid_for_roboto", type: "upload" }
     };
     const mock: Entry = {
       selector: ".my-div",

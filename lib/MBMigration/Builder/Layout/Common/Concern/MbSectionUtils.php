@@ -79,7 +79,7 @@ trait MbSectionUtils
         return strtolower($inputString);
     }
 
-    protected function fisrtFontFamily($fontName): string
+    protected function firstFontFamily($fontName): string
     {
         $inputString = explode(',',  $fontName);
 
