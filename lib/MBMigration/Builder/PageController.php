@@ -135,7 +135,7 @@ class PageController
 
             $fontFamily = FontsController::getFontsFamily();
 
-             $themeContext = new ThemeContext(
+            $themeContext = new ThemeContext(
                 $design,
                 $browserPage,
                 $brizyKit,
@@ -223,12 +223,13 @@ class PageController
     public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage){
 
         foreach ($pageList as $i => &$page) {
+
+            if (!empty($page['child'])) {
+                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage);
+            }
+
             if ($page['hidden'] === $hiddenPage) {
                 $title = $page['name'];
-
-                if (!empty($page['child'])) {
-                    $this->createPage($page['child'], $existingBrizyPages, $hiddenPage);
-                }
 
                 // this will avoid creating the new page when a single pate is migated
                 // on single page migratin the pages are not deleted
@@ -252,7 +253,8 @@ class PageController
                     if ($newPage === false) {
                         Logger::instance()->warning('Failed created page', $page);
                     } else {
-                        Logger::instance()->info('Success created page', $page);
+                        $pageStatus = $hiddenPage ? "hidden" : "public";
+                        Logger::instance()->info('Success created ' . $pageStatus . ' page', $page);
                         $page['collection'] = $newPage;
                     }
                 } else {
