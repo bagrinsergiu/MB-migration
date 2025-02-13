@@ -88,24 +88,25 @@ class FontsController extends builderUtils
                 $fontId = $RootListFontFamilyExtractor->getFontIdByName($font);
                 $RootListFontFamilyExtractor->getFontFamilyByName($font);
 
-                $this->upLoadMBFonts($font);
-                $this->upLoadGoogleFonts($font, $fontId);
+                if (!$this->upLoadMBFonts($font)) {
+                    $this->upLoadGoogleFonts($font, $fontId);
+                }
         }
     }
 
-    public function upLoadMBFonts($fontName): void
+    public function upLoadMBFonts($fontName): bool
     {
         foreach ($this->fontsMap as $font){
             if($font === $fontName){
                 try{
-                    $this->upLoadFont($fontName);
+                   $this->upLoadFont($fontName);
+                   return true;
                 } catch (Exception|GuzzleException $e){
-                    return;
+                    return false;
                 }
-                return;
             }
         }
-
+        return false;
     }
 
     public function upLoadGoogleFonts($fontName, $fontFamilyId): void
@@ -122,7 +123,7 @@ class FontsController extends builderUtils
 
                     $this->BrizyApi->addFontAndUpdateProject($KitFonts, 'google');
 
-                    self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyId, 'google');
+                    self::addFontInMigration($fontName, $fontName, $fontFamilyId, 'google');
                 }
             }
         } catch (Exception|GuzzleException $e){
