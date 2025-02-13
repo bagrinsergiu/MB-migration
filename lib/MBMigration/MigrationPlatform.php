@@ -280,8 +280,6 @@ class MigrationPlatform
     private function launch($parentPages, $hiddenPage): void
     {
         foreach ($parentPages as $i => $page) {
-            if($page['hidden'] !== $hiddenPage) { continue; }
-
             if (!empty($page['parentSettings'])) {
                 $settings = json_decode($page['parentSettings'], true);
 //                if (array_key_exists('external_url', $settings)) {
@@ -305,6 +303,8 @@ class MigrationPlatform
             if ($page['landing'] !== true) {
                 continue;
             }
+
+            if($page['hidden'] !== $hiddenPage) { continue; }
             $this->collector($page);
         }
     }
