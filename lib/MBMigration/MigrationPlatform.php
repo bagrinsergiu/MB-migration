@@ -134,7 +134,7 @@ class MigrationPlatform
         }
 
         if ($projectID_Brizy == 0) {
-            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, 22020775, 'id');
+            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, 22072459, 'id');
 //            $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4423676, 'id');
 
             \MBMigration\Core\Logger::initialize("brizy-$this->projectID_Brizy");
