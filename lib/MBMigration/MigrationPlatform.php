@@ -134,7 +134,7 @@ class MigrationPlatform
         }
 
         if ($projectID_Brizy == 0) {
-            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, 22020775, 'id');
+            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, 22072459, 'id');
 //            $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4423676, 'id');
 
             \MBMigration\Core\Logger::initialize("brizy-$this->projectID_Brizy");
@@ -280,8 +280,6 @@ class MigrationPlatform
     private function launch($parentPages, $hiddenPage): void
     {
         foreach ($parentPages as $i => $page) {
-            if($page['hidden'] !== $hiddenPage) { continue; }
-
             if (!empty($page['parentSettings'])) {
                 $settings = json_decode($page['parentSettings'], true);
 //                if (array_key_exists('external_url', $settings)) {
@@ -305,6 +303,8 @@ class MigrationPlatform
             if ($page['landing'] !== true) {
                 continue;
             }
+
+            if($page['hidden'] !== $hiddenPage) { continue; }
             $this->collector($page);
         }
     }

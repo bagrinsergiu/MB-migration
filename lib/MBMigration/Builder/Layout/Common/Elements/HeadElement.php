@@ -232,6 +232,8 @@ abstract class HeadElement extends AbstractElement
         if (!isset($families[$fontFamily])) {
             $fontName = $this->firstFontFamily($menuFont['data']['font-family']);
 
+            $pd = $this->fontsController->getProjectData();
+
             $this->fontsController->upLoadFont($fontName, $fontFamily);
 
             $families = FontsController::getFontsFamily()['kit'];

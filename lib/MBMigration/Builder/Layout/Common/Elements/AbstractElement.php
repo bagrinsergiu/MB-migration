@@ -24,6 +24,7 @@ abstract class AbstractElement implements ElementInterface
 
     public PageDto $pageTDO;
     public ThemeContextInterface $themeContext;
+    public array $globalBrizyKit;
     protected array $brizyKit = [];
     protected array $headParams = [];
     protected array $basicHeadParams = [];
@@ -43,6 +44,7 @@ abstract class AbstractElement implements ElementInterface
     {
         $this->pageTDO = $data->getThemeContext()->getPageDTO();
         $this->themeContext = $data->getThemeContext();
+        $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
         $this->initialBehavior($data);
 

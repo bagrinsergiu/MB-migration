@@ -20,7 +20,7 @@ abstract class GridLayoutElement extends AbstractElement
     use DonationsAble;
     use ButtonAble;
 
-    private array $globalBrizyKit;
+    public array $globalBrizyKit;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {

@@ -17,8 +17,6 @@ class TwoHorizontalTextElement extends AbstractElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
-
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
