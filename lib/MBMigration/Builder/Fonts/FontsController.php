@@ -69,6 +69,22 @@ class FontsController extends builderUtils
         }
     }
 
+    public static function getProject_Data()
+    {
+        $cache = VariableCache::getInstance();
+        $containerID = $cache->get('projectId_Brizy');
+        try{
+            $BrizyApi = new BrizyAPI();
+
+            return json_decode(
+                $BrizyApi->getProjectContainer($containerID, true)['data'],
+                true) ?? [];
+        } catch (Exception|GuzzleException $e){
+
+            return [];
+        }
+    }
+
     public function refreshFontInProject(BrowserPageInterface $browserPage): void
     {
         $projectData = $this->getProjectData();

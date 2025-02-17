@@ -170,6 +170,7 @@ class PageController
 
             $pageData = json_encode($brizySections);
             $queryBuilder = $this->cache->getClass('QueryBuilder');
+            $pd = FontsController::getProject_Data();
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
             Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
