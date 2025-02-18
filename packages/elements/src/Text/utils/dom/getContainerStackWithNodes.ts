@@ -1,4 +1,9 @@
-import { buttonSelector, embedSelector, iconSelector } from "../common";
+import {
+  buttonSelector,
+  embedSelector,
+  iconSelector,
+  imageSelector
+} from "../common";
 import { appendNodeStyles } from "./appendNodeStyles";
 
 export class Stack {
@@ -172,6 +177,16 @@ const replaceWrongTags = (node: HTMLElement) => {
   });
 };
 
+const getImageSizes = (node: Element) => {
+  const images = node.querySelectorAll(imageSelector);
+
+  return images.forEach((image) => {
+    const { width, height } = image.getBoundingClientRect();
+    image.setAttribute("width", width.toString());
+    image.setAttribute("height", height.toString());
+  });
+};
+
 export const getContainerStackWithNodes = (parentNode: Element): Container => {
   const container = document.createElement("div");
   const stack = new Stack();
@@ -180,6 +195,8 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
   if (parentNode instanceof HTMLElement) {
     replaceWrongTags(parentNode);
   }
+
+  getImageSizes(parentNode); // We should get sizes before flattening, because after flattening we can't get sizes of images
 
   const flatNode = flattenNode(parentNode);
 
@@ -196,6 +213,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
     if (_node instanceof HTMLElement) {
       const icons = containerOfNode.querySelectorAll(iconSelector);
       const buttons = containerOfNode.querySelectorAll(buttonSelector);
+      const images = containerOfNode.querySelectorAll(imageSelector);
 
       if (excludeIcons) {
         icons.forEach((node) => {
@@ -328,6 +346,12 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           _node.remove();
           return;
         }
+      }
+
+      if (images.length > 0) {
+        appendNewText = true;
+        stack.append(_node, { type: "image" });
+        return;
       }
 
       if (appendNewText) {

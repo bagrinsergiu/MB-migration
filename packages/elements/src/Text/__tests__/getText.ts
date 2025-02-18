@@ -2703,6 +2703,96 @@ const ex41: Data = {
 
 //#endregion
 
+//#region Example 42 (Anthem text with img tag)
+const ex42: Data = {
+  html: `<div class="text-content text-1 editable" data-id="21313223" data-category="text"><div><p style="font-size: 0.8464em;"><a target="_blank" href="https://www.givelify.com/givenow/1.0/Mzg3MTM=/selection"><img src="https://images.givelify.com/PrimaryGiveButton2x.png" alt="Givelify" width="654" height="105"></a></p><div><br></div><div><br></div><div><br></div><p style="text-align: left; font-family: Montserrat, sans-serif; font-weight: 400; font-size: 1.3021em;">“For where your treasure is, there your heart will be also,” (<b style="">Matthew 6:21</b>)</p><p style="text-align: left; font-family: Montserrat, sans-serif; font-weight: 400; font-size: 1.3021em;"><br></p><p style="font-style: normal; font-weight: 400; letter-spacing: normal; text-align: start; font-family: Montserrat, sans-serif; font-size: 1.3021em;">At Walnut Grove Christian Church, we deeply appreciate and value your contributions. Your act of giving has a profound impact, not only on the church, but also on the lives of countless individuals. We want to express our sincere gratitude for your support.</p><p style="font-style: normal; font-weight: 400; letter-spacing: normal; text-align: start; font-family: Montserrat, sans-serif; font-size: 1.3021em;"><br></p><p style="text-align: left; font-family: Montserrat, sans-serif; font-weight: 400; font-size: 1.3021em;"><a target="_blank" href="https://www.givelify.com/givenow/1.0/Mzg3MTM=/selection"><img src="https://images.givelify.com/DarkGiveButton2x.png" alt="Givelify" width="654" height="105"></a><br></p><p style="text-align: left; font-size: 1.3672em;"><br></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="21313223"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--image"],
+          items: [
+            {
+              type: "Image",
+              value: {
+                alt: "Givelify",
+                imageHeight: 0,
+                imageWidth: 0,
+                imageSrc: "https://images.givelify.com/PrimaryGiveButton2x.png",
+                linkExternal:
+                  "https://www.givelify.com/givenow/1.0/Mzg3MTM=/selection",
+                linkExternalBlank: "on",
+                linkType: "external"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; ">“For where your treasure is, there your heart will be also,” (</span><b style=""><span style="font-weight: bold; ">Matthew 6:21</span></b><span style="font-weight: 400; ">)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><span style="font-weight: 400; ">At Walnut Grove Christian Church, we deeply appreciate and value your contributions. Your act of giving has a profound impact, not only on the church, but also on the lives of countless individuals. We want to express our sincere gratitude for your support.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--image"],
+          items: [
+            {
+              type: "Image",
+              value: {
+                alt: "Givelify",
+                imageHeight: 0,
+                imageWidth: 0,
+                imageSrc: "https://images.givelify.com/DarkGiveButton2x.png",
+                linkExternal:
+                  "https://www.givelify.com/givenow/1.0/Mzg3MTM=/selection",
+                linkExternalBlank: "on",
+                linkType: "external"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+//#endregion
+
 describe.each([
   ex1,
   ex2,
@@ -2744,7 +2834,8 @@ describe.each([
   ex38,
   ex39,
   ex40,
-  ex41
+  ex41,
+  ex42
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
