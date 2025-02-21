@@ -18,7 +18,7 @@ class FontsController extends builderUtils
 {
     private BrizyAPI $BrizyApi;
     private array $fontsMap;
-    private int $projectId;
+    private $projectId;
 
     protected string $layoutName;
     private VariableCache $cache;
