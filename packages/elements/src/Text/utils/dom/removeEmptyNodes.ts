@@ -11,7 +11,7 @@ export function removeEmptyNodes(node: Element): Element {
     }
   });
 
-  node.innerHTML = node.innerHTML.replace(/\n/g, " ");
+  node.innerHTML = node.innerHTML.replace(/\n/g, " ").replace(/>\s{2,}/g, "> ");
 
   return node;
 }
