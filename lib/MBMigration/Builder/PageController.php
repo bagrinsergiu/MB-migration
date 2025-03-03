@@ -214,19 +214,19 @@ class PageController
      */
     public function createBlankPages(array &$mbPageList, $existingBrizyPages)
     {
+        $setHomePage = false;
         $this->createPage($mbPageList, $existingBrizyPages, false);
-        $this->createPage($mbPageList, $existingBrizyPages, true);
+        $this->createPage($mbPageList, $existingBrizyPages, true, $setHomePage);
     }
 
     /**
      * @throws Exception
      */
-    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage){
-
+    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, &$setHomePage = false, $i = 0, $parent = null){
         foreach ($pageList as $i => &$page) {
 
             if (!empty($page['child'])) {
-                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage);
+                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage, $setHomePage, $i, $page['parent_id']);
             }
 
             if ($page['hidden'] === $hiddenPage) {
@@ -242,13 +242,27 @@ class PageController
                 //if (!isset($existingBrizyPages['listPages'][$this->buildPage])) {
                 // create the page
                 if ($page['landing'] == true) {
+                    if(!$setHomePage) {
+                        if ($i === 0 && $parent === null) {
+                            $isHome = true;
+                            $setHomePage = true;
+                        } elseif ($page['position'] == 1 && !$page['parent_id']) {
+                            $isHome = true;
+                            $setHomePage = true;
+                        } else {
+                            $isHome = false;
+                        }
+                    } else {
+                        $isHome = false;
+                    }
+
                     $newPage = $this->creteNewPage(
                         $page['slug'],
                         $page['name'],
                         $title,
                         $page['protectedPage'],
                         false,
-                        $page['position'] == 1 && !$page['parent_id']
+                        $isHome
                     );
 
                     if ($newPage === false) {
