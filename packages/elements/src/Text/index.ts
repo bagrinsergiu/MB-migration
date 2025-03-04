@@ -4,6 +4,7 @@ import { getDataByEntry } from "../utils/getDataByEntry";
 import { getButtonModel } from "./models/Button";
 import { getEmbedModel } from "./models/Embed";
 import { getIconModel } from "./models/Icon";
+import { getImageModel } from "./models/Image";
 import { getTextModel } from "./models/Text";
 import { getContainerStackWithNodes } from "./utils/dom/getContainerStackWithNodes";
 
@@ -62,6 +63,10 @@ export const getText = (_entry: Entry): Output => {
           const models = getIconModel(node, urlMap);
           data.push(...models);
           break;
+        }
+        case "image": {
+          const models = getImageModel(node);
+          data.push(...models);
         }
       }
     }
