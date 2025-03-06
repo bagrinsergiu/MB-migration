@@ -92,7 +92,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
                 "marginType" => "ungrouped",
                 "marginSuffix" => "px",
-                "marginTop" => 10,
+                "marginTop" => 0,
                 "marginTopSuffix" => "px",
                 "marginRight" => -11,
                 "marginRightSuffix" => "px",
