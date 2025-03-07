@@ -175,6 +175,12 @@ trait SectionStylesAble
                     ->set_mobileBgColorType('solid')
                     ->set_mobileBgColorHex($sectionStyles['background-color'])
                     ->set_mobileBgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']));
+
+                $brizySection
+                    ->getParent()
+                    ->getValue()
+                    ->set_sectionHeight(str_replace('px', '', $sectionStyles['height']) ?? 500)
+                    ->set_fullHeight('custom');
             }
         } else if ($this->hasVideoBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
