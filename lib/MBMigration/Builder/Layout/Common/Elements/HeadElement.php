@@ -11,6 +11,7 @@ use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
+use MBMigration\Core\Logger;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
 abstract class HeadElement extends AbstractElement
@@ -379,6 +380,7 @@ abstract class HeadElement extends AbstractElement
     {
         $section->getItemWithDepth(0)->addCustomCSS('blockquote{margin:0;}'); //fix for table in richtext
         $section->getItemWithDepth(0)->addCustomCSS("@font-face {\n    font-family: 'Mono Social Icons Font';\n    src: url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.eot\");\n    src: url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.woff\") format(\"woff\"), url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.ttf\") format(\"truetype\"), url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.svg#MonoSocialIconsFont\") format(\"svg\");\n    src: url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.ttf\") format(\"truetype\");\n    font-weight: normal;\n    font-style: normal\n}\n\n.socialIconSymbol {\n    font-family: 'Mono Social Icons Font';\n    font-size: 2em;\n    font-style: normal !important;\n}\n\n.text-content span.socialIconSymbol, .text-content a.socialIconSymbol {\n    line-height: .5em;\n    font-weight: 300\n}"); //fix for icons in embed code
+        $section->getItemWithDepth(0)->addCustomCSS('@media (max-width: 768px) {.brz-a.brz-btn, .brz-a.brz-btn > span {white-space: normal  !important; }}');
     }
 
     private function fontHandle(ElementContextInterface $data): void
