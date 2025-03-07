@@ -15,7 +15,7 @@ abstract class EventGalleryLayout extends AbstractElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['main'], true));
         $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['head'], true));
         $brizyComponent = $this->getSectionItemComponent($brizySection);
 
