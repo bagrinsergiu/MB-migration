@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Bloom;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
+use MBMigration\Builder\Layout\Theme\Bloom\Elements\Events\EventGalleryLayout;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Events\EventLayoutElement;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Bloom\Elements\Forms\FullWidthForm;
@@ -72,6 +73,7 @@ class ElementFactory  extends AbstractThemeElementFactory
             case 'event-list-layout':
             case 'event-tile-layout':
             case 'event-gallery-layout':
+                return new EventGalleryLayout($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
             case 'event-calendar-layout':
                 return new EventLayoutElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
 
