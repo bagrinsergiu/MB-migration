@@ -33,6 +33,8 @@ abstract class EventGalleryLayout extends AbstractElement
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventGalleryLayoutElement']['main'], true));
+        $brizyWidget = new BrizyComponent(json_decode($this->brizyKit['EventGalleryLayoutElement']['widget'], true));
+
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
         $DetailsPageLayout = new EventDetailsPageLayout(
             $this->brizyKit['EventGalleryLayoutElement']['detail'],
@@ -60,7 +62,12 @@ abstract class EventGalleryLayout extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent, [], $this->getAdditionalTopPaddingOfTheFirstElement());
 
-        $this->handleRichTextHead($elementContext, $this->browserPage);
+        if(!empty($mbSection['head'])){
+            $this->handleRichTextHead($elementContext, $this->browserPage);
+
+        } else {
+            $this->handleRichTextItems($elementContext, $this->browserPage);
+        }
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
 
@@ -77,23 +84,6 @@ abstract class EventGalleryLayout extends AbstractElement
             ->getValue()
             ->set_eventDetailPageSource($collectionTypeUri)
             ->set_eventDetailPage("{{placeholder content='$placeholder'}}");
-
-        switch ($mbSection['typeSection']){
-            case 'event-tile-layout':
-                $eventTabs = [
-                    'featuredViewOrder' => 1,
-                    "listViewOrder"=> 2,
-                    'calendarViewOrder' => 3,
-                ];
-                break;
-            default:
-                $eventTabs = [
-                    'featuredViewOrder' => 3,
-                    "listViewOrder"=> 2,
-                    'calendarViewOrder' => 1,
-                ];
-                break;
-        }
 
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
         $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
@@ -247,15 +237,20 @@ abstract class EventGalleryLayout extends AbstractElement
             'layoutViewTypographyFontFamilyType' => 'upload',
         ];
 
-        $sectionProperties = array_merge($sectionProperties, $eventTabs);
-
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_'.$key;
-            $brizySection->getItemValueWithDepth(0, 0, 0)
+            $brizyWidget->getValue()
                 ->$properties($value);
         }
 
+        $sectionItemComponent->getValue()->add_items([$brizyWidget]);
+
         return $brizySection;
+    }
+
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
