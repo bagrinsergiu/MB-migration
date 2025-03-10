@@ -214,20 +214,16 @@ class PageController
      */
     public function createBlankPages(array &$mbPageList, $existingBrizyPages)
     {
-        $setHomePage = false;
+        $this->cache->set('setHomePage', false);
         $this->createPage($mbPageList, $existingBrizyPages, false);
-        $this->createPage($mbPageList, $existingBrizyPages, true, $setHomePage);
+        $this->createPage($mbPageList, $existingBrizyPages, true);
     }
 
     /**
      * @throws Exception
      */
-    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, &$setHomePage = false, $i = 0, $parent = null){
+    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, $i = 0, $parent = null){
         foreach ($pageList as $i => &$page) {
-
-            if (!empty($page['child'])) {
-                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage, $setHomePage, $i, $page['parent_id']);
-            }
 
             if ($page['hidden'] === $hiddenPage) {
                 $title = $page['name'];
@@ -242,13 +238,13 @@ class PageController
                 //if (!isset($existingBrizyPages['listPages'][$this->buildPage])) {
                 // create the page
                 if ($page['landing'] == true) {
-                    if(!$setHomePage) {
+                    if(!$this->cache->get('setHomePage')) {
                         if ($i === 0 && $parent === null) {
                             $isHome = true;
-                            $setHomePage = true;
+                            $this->cache->set('setHomePage', true);
                         } elseif ($page['position'] == 1 && !$page['parent_id']) {
                             $isHome = true;
-                            $setHomePage = true;
+                            $this->cache->set('setHomePage', true);
                         } else {
                             $isHome = false;
                         }
@@ -282,6 +278,10 @@ class PageController
                         }
                     }
                 }
+            }
+
+            if (!empty($page['child'])) {
+                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage, $i, $page['parent_id']);
             }
         }
     }
