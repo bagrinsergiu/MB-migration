@@ -196,6 +196,8 @@ class MigrationPlatform
         if (!$this->cache->get('settings')) {
             $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0).' Message: Site not found');
             $this->cache->set('settings', $settings);
+        } else {
+            $settings = $this->cache->get('settings');
         }
 
         $this->brizyApi->setMetaDate();

@@ -225,6 +225,10 @@ class PageController
     public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, $i = 0, $parent = null){
         foreach ($pageList as $i => &$page) {
 
+            if (!empty($page['child'])) {
+                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage, $i, $page['parent_id']);
+            }
+
             if ($page['hidden'] === $hiddenPage) {
                 $title = $page['name'];
 
@@ -280,9 +284,6 @@ class PageController
                 }
             }
 
-            if (!empty($page['child'])) {
-                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage, $i, $page['parent_id']);
-            }
         }
     }
 
