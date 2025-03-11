@@ -242,6 +242,14 @@ abstract class EventGalleryLayout extends AbstractElement
             $brizyWidget->getValue()
                 ->$properties($value);
         }
+        $brizyWidget
+            ->getItemWithDepth(0)
+            ->typography()
+            ->titleTypography()
+            ->dataTypography()
+            ->previewTypography()
+            ->detailButtonTypography()
+            ->subscribeEventButtonTypography();
 
         $sectionItemComponent->getValue()->add_items([$brizyWidget]);
 
@@ -256,6 +264,11 @@ abstract class EventGalleryLayout extends AbstractElement
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0, 0, 0);
+    }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
     }
 
     protected function getPropertiesMainSection(): array
