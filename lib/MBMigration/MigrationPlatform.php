@@ -2,6 +2,7 @@
 
 namespace MBMigration;
 
+use MBMigration\Builder\Cms\SiteSEO;
 use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Menu\MenuHandler;
 use MBMigration\Builder\Utils\ArrayManipulator;
@@ -225,6 +226,8 @@ class MigrationPlatform
         }
 
         MediaController::setFavicon($settings['favicon'] ?? null, $this->projectId, $this->brizyApi, $this->QueryBuilder);
+
+        SiteSEO::setSiteTitle($this->projectId, $this->QueryBuilder, $this->cache);
 
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();

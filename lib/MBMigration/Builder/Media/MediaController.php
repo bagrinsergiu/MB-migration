@@ -63,7 +63,7 @@ class MediaController
         }
     }
 
-    private static function getPicturesUrl($nameImage, $type): string
+    public static function getPicturesUrl($nameImage, $type): string
     {
         $cache = VariableCache::getInstance();
 
