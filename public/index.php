@@ -104,7 +104,13 @@ return static function (array $context, Request $request): Response {
         return new JsonResponse(['error' => $e->getMessage()], 400);
     } finally {
         \MBMigration\Core\Logger::instance()->info('Releasing lock file', [$lockFile]);
-        unlink($lockFile);
+        if (file_exists($lockFile)) {
+            if (!unlink($lockFile)) {
+                \MBMigration\Core\Logger::instance()->warning('Failed to release lock file.', [$lockFile]);
+            }
+        } else {
+            \MBMigration\Core\Logger::instance()->warning('Lock file does not exist, nothing to release.', [$lockFile]);
+        }
     }
 
     return new JsonResponse($migrationPlatform->getLogs());
