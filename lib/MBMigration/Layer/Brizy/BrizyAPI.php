@@ -2,6 +2,7 @@
 
 namespace MBMigration\Layer\Brizy;
 
+use GuzzleHttp\Exception\ConnectException;
 use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Core\Logger;
 use Psr\Http\Message\ResponseInterface;
@@ -1000,25 +1001,18 @@ class BrizyAPI extends Utils
      */
     private function request(
         string $method,
-        $uri = '',
+        string $uri = '',
         array $options = [],
-        $contentType = false
-    ): ResponseInterface {
+        $contentType = null,
+        int $retryAttempts = 3
+    ): ?ResponseInterface {
         $client = new Client();
         $headers = [
             'x-auth-user-token' => Config::$mainToken,
         ];
 
-        if ($method === 'PUT') {
-            $headers['X-HTTP-Method-Override'] = 'PUT';
-        }
-
-        if ($method === 'POST') {
-            $headers['X-HTTP-Method-Override'] = 'POST';
-        }
-
-        if ($method === 'PATCH') {
-            $headers['X-HTTP-Method-Override'] = 'PATCH';
+        if (in_array($method, ['PUT', 'POST', 'PATCH'], true)) {
+            $headers['X-HTTP-Method-Override'] = $method;
         }
 
         if ($contentType) {
@@ -1032,96 +1026,96 @@ class BrizyAPI extends Utils
         ];
         $options = array_merge_recursive($defaultOptions, $options);
 
-        return $client->request($method, $uri, $options);
+        for ($attempt = 1; $attempt <= $retryAttempts; $attempt++) {
+            try {
+                return $client->request($method, $uri, $options);
+            } catch (ConnectException $e) {
+                Logger::instance()->error("Connection error ({$attempt}/{$retryAttempts}): " . $e->getMessage());
+            } catch (RequestException $e) {
+                $response = $e->getResponse();
+                $statusCode = $response ? $response->getStatusCode() : 'N/A';
+                Logger::instance()->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage());
+
+                if ($response && $statusCode >= 400 && $statusCode < 500) {
+                    return $response;
+                }
+            }
+
+            if ($attempt < $retryAttempts) {
+                sleep(5);
+            }
+        }
+
+        Logger::instance()->critical("Request failed after {$retryAttempts} attempts: {$method} {$uri}");
+        return null;
     }
 
     /**
      * @throws Exception
      */
-    private function httpClient($method, $url, $data = null, $contentType = 'application/x-www-form-urlencoded'): array
-    {
-        $nameFunction = __FUNCTION__;
 
-        $statusCode = '';
-        $body = '';
-
+    private function httpClient(
+        string $method,
+        string $url,
+        $data = null,
+        string $contentType = 'application/x-www-form-urlencoded',
+        int $retryAttempts = 3
+    ): array {
         $client = new Client();
-
         $token = Config::$mainToken;
-        try {
 
-            if ($contentType !== '') {
-                $headers['Content-Type'] = $contentType;
-            } else {
-                $headers['Content-Type'] = 'application/x-www-form-urlencoded';
-            }
-            $headers['x-auth-user-token'] = $token;
+        $headers = [
+            'x-auth-user-token' => $token,
+            'Content-Type' => $contentType ?: 'application/x-www-form-urlencoded',
+        ];
 
-            $options = [
-                'headers' => $headers,
-                'timeout' => 0,
-                'connect_timeout' => 50,
-            ];
+        $options = [
+            'headers' => $headers,
+            'timeout' => 60,
+            'connect_timeout' => 50,
+        ];
 
-            if ($method === 'POST' && isset($data)) {
-                $options['form_params'] = $data;
-            }
-
-            if ($method === 'GET' && isset($data)) {
-                $data = http_build_query($data);
-                $url = sprintf("%s?%s", $url, $data);
-            }
-
-            if ($method === 'GET_P' && isset($data)) {
-                $method = 'GET';
-                $url = $url.'/'.$data;
-            }
-
-            if ($method === 'PUT' && isset($data) && $headers['Content-Type'] == 'application/x-www-form-urlencoded') {
-                $options['form_params'] = $data;
-            } else if ($method === 'PUT' && isset($data)) {
-                $options['json'] = $data;
-            }
-
-            $response = $client->request($method, $url, $options);
-
-            $statusCode = $response->getStatusCode();
-            $body = $response->getBody()->getContents();
-
-            return ['status' => $statusCode, 'body' => $body];
-
-        } catch (RequestException $e) {
-            if ($e->hasResponse()) {
-                $response = $e->getResponse();
-                $statusCode = $response->getStatusCode();
-                $body = $response->getBody()->getContents();
-
-                Logger::instance()->critical(json_encode(['status' => $statusCode, 'body' => $body]));
-                if ($statusCode > 200) {
-                    Logger::instance()->info(
-                        "Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body])
-                    );
-                }
-                Logger::instance()->info(
-                    "Error: RequestException Message:".json_encode(['status' => $statusCode, 'body' => $body])
-                );
-
-                return ['status' => $statusCode, 'body' => $body];
-            } else {
-                Logger::instance()->info(
-                    "Error: GuzzleException Message:".json_encode(['status' => false, 'body' => 'Request timed out.'])
-                );
-                Logger::instance()->critical(json_encode(['status' => false, 'body' => 'Request timed out.']));
-
-                return ['status' => false, 'body' => 'Request timed out.'];
-            }
-        } catch (GuzzleException $e) {
-            Logger::instance()->info("Error: GuzzleException Message:".json_encode($e->getMessage()));
-            Logger::instance()->info("Error: GuzzleException Message: code".$statusCode."Response: ".$body);
-            Logger::instance()->critical(json_encode(['status' => false, 'body' => $e->getMessage()]));
-
-            return ['status' => false, 'body' => $e->getMessage()];
+        // Обработка данных для разных методов
+        if ($method === 'POST' || $method === 'PUT') {
+            $options[$contentType === 'application/json' ? 'json' : 'form_params'] = $data;
+        } elseif ($method === 'GET' && !empty($data)) {
+            $url .= '?' . http_build_query($data);
+        } elseif ($method === 'GET_P' && !empty($data)) {
+            $method = 'GET';
+            $url .= '/' . $data;
         }
+
+        for ($attempt = 1; $attempt <= $retryAttempts; $attempt++) {
+            try {
+                $response = $client->request($method, $url, $options);
+                return [
+                    'status' => $response->getStatusCode(),
+                    'body' => $response->getBody()->getContents(),
+                ];
+            } catch (ConnectException $e) {
+                Logger::instance()->error("Connection error ({$attempt}/{$retryAttempts}): " . $e->getMessage());
+            } catch (RequestException $e) {
+                $response = $e->getResponse();
+                $statusCode = $response ? $response->getStatusCode() : 'N/A';
+                $body = $response ? $response->getBody()->getContents() : 'No response body';
+                Logger::instance()->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage());
+
+                if ($statusCode >= 400 && $statusCode < 500) {
+                    return ['status' => $statusCode, 'body' => $body];
+                }
+            } catch (GuzzleException $e) {
+                Logger::instance()->critical("GuzzleException: " . $e->getMessage());
+                return ['status' => false, 'body' => $e->getMessage()];
+            }
+
+            if ($attempt < $retryAttempts) {
+                sleep(5);
+            }
+        }
+
+        Logger::instance()->critical("Request failed after {$retryAttempts} attempts: {$method} {$url}");
+        return ['status' => false, 'body' => 'Request failed after retries'];
     }
+
 
 }

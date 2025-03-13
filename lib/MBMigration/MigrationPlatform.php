@@ -54,11 +54,15 @@ class MigrationPlatform
      * @var mixed
      */
     private $mb_projectDomain;
+    /**
+     * @var int|mixed
+     */
+    private $workspacesId;
 
     use checking;
     use DebugBackTrace;
 
-    public function __construct(Config $config, LoggerInterface $logger, $buildPage = '')
+    public function __construct(Config $config, LoggerInterface $logger, $buildPage = '', $workspacesId = 0)
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
         $this->logger = $logger;
@@ -70,6 +74,7 @@ class MigrationPlatform
         $this->finalSuccess['status'] = 'start';
 
         $this->buildPage = $buildPage;
+        $this->workspacesId = $workspacesId;
 
         $this->config = $config;
     }
@@ -134,8 +139,8 @@ class MigrationPlatform
             $this->mb_projectDomain = MBProjectDataCollector::getDomainBySiteId($projectID_MB);
         }
 
-        if ($projectID_Brizy == 0) {
-            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, 22072459, 'id');
+        if ($projectID_Brizy == 0 && $this->workspacesId !== 0) {
+            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, $this->workspacesId, 'id');
 //            $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4423676, 'id');
 
             \MBMigration\Core\Logger::initialize("brizy-$this->projectID_Brizy");
