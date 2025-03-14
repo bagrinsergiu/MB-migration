@@ -5,6 +5,7 @@ namespace MBMigration\Core;
 use ErrorException;
 use Exception;
 use MBMigration\Builder\VariableCache;
+use Throwable;
 
 class ErrorDump
 {
@@ -57,9 +58,11 @@ class ErrorDump
 //            'cache' => $this->cache->getCache()
         ];
     }
-    public function handleExceptions($message) {
+    public function handleExceptions($message, $file, $line) {
         self::$warningMessage['UncaughtExceptions'][] = [
             'message' => $message,
+            'file' => $file,
+            'line' => $line,
         ];
     }
 
@@ -73,8 +76,12 @@ class ErrorDump
         }
     }
 
-    public function handleUncaughtExceptions($e) {
-            $this->handleExceptions($e->getMessage());
+    public function handleUncaughtExceptions(Throwable $e) {
+            $this->handleExceptions(
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            );
     }
 
     /**
