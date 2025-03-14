@@ -8,6 +8,7 @@ use MBMigration\Builder\VariableCache;
 
 class ErrorDump
 {
+    public static array  $errorsMessage;
     public static array $warningMessage;
     private $log_file = 'error_log.txt';
 
@@ -56,6 +57,11 @@ class ErrorDump
 //            'cache' => $this->cache->getCache()
         ];
     }
+    public function handleExceptions($message) {
+        self::$warningMessage['UncaughtExceptions'][] = [
+            'message' => $message,
+        ];
+    }
 
     /**
      * @throws Exception
@@ -65,7 +71,10 @@ class ErrorDump
         if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
             $this->handleError($error['type'], $error['message'], $error['file'], $error['line'], $error);
         }
+    }
 
+    public function handleUncaughtExceptions($e) {
+            $this->handleExceptions($e->getMessage());
     }
 
     /**
