@@ -142,7 +142,7 @@ return static function (array $context, Request $request): Response {
             \MBMigration\Core\Logger::instance()->warning('Lock file does not exist, nothing to release.', [$lockFile]);
         }
 
-        $fullLogUrl =$s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
+        $fullLogUrl = $s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
 
     }
     $migrationStatus = $migrationPlatform->getLogs() ?? [];

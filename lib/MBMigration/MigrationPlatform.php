@@ -71,6 +71,7 @@ class MigrationPlatform
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
         register_shutdown_function([$this->errorDump, 'handleFatalError']);
+        set_exception_handler([$this->errorDump, 'handleUncaughtExceptions']);
 
         $this->finalSuccess['status'] = 'start';
 
@@ -90,17 +91,7 @@ class MigrationPlatform
             Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
             throw $e;
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
-            $statusCode = $response ? $response->getStatusCode() : 'N/A';
-            $body = $response ? $response->getBody()->getContents() : 'No response body';
-            Logger::instance()->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage());
-
-            if ($statusCode >= 400 && $statusCode < 500) {
-                return ['status' => $statusCode, 'body' => $body];
-            }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
             throw $e;
