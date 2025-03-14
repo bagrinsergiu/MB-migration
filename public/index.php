@@ -15,6 +15,25 @@ return static function (array $context, Request $request): Response {
         ]);
     }
 
+    if ($request->getPathInfo() === '/migration_log') {
+        $migrationId = $request->get('brz_project_id');
+        if (!$migrationId) {
+            return new JsonResponse(['error' => 'Missing brz_project_id parameter'], 400);
+        }
+
+        $logFile = $context['LOG_FILE_PATH'];
+        if (!file_exists($logFile)) {
+            return new JsonResponse(['error' => 'Log file not found'], 404);
+        }
+
+        $command = sprintf('grep %s %s 2>/dev/null', escapeshellarg("brizy-$migrationId"), escapeshellarg($logFile));
+        $output = shell_exec($command);
+
+        $logs = $output ? explode("\n", trim($output)) : [];
+
+        return new JsonResponse(['migration_id' => $migrationId, 'logs' => $logs]);
+    }
+
     $settings = [
         'devMode' => (bool) $context['DEV_MODE'] ?? false,
         'db' => [
