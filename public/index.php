@@ -1,6 +1,7 @@
 <?php
 
 use MBMigration\Core\Config;
+use MBMigration\Core\S3Uploader;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -95,10 +96,20 @@ return static function (array $context, Request $request): Response {
 
     $brz_workspaces_id = (int) $request->get('brz_workspaces_id') ?? 0;
 
+    $s3Uploader = new S3Uploader(
+        (bool) $context['AWS_BUCKET_ACTIVE'],
+        $context['AWS_KEY'],
+        $context['AWS_SECRET'],
+        $context['AWS_REGION'],
+        $context['AWS_BUCKET']
+    );
+
+    $logFilePath = $context['LOG_FILE_PATH'].'_'.$brz_project_id.'.log';
+
     $logger = \MBMigration\Core\Logger::initialize(
         "brizy-$brz_project_id",
         $context['LOG_LEVEL'],
-        $context['LOG_FILE_PATH']
+        $logFilePath
     );
 
     $mb_page_slug = $request->get('mb_page_slug') ?? '';
@@ -130,7 +141,12 @@ return static function (array $context, Request $request): Response {
         } else {
             \MBMigration\Core\Logger::instance()->warning('Lock file does not exist, nothing to release.', [$lockFile]);
         }
-    }
 
-    return new JsonResponse($migrationPlatform->getLogs());
+        $fullLogUrl =$s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
+
+    }
+    $migrationStatus = $migrationPlatform->getLogs() ?? [];
+    $migrationStatus['fullLogUrl'] = $fullLogUrl;
+
+    return new JsonResponse($migrationStatus);
 };
