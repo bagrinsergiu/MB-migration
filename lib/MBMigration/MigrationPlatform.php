@@ -2,6 +2,7 @@
 
 namespace MBMigration;
 
+use GuzzleHttp\Exception\RequestException;
 use MBMigration\Builder\Cms\SiteSEO;
 use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Menu\MenuHandler;
@@ -89,7 +90,17 @@ class MigrationPlatform
             Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
             throw $e;
-        } catch (Exception $e) {
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            $statusCode = $response ? $response->getStatusCode() : 'N/A';
+            $body = $response ? $response->getBody()->getContents() : 'No response body';
+            Logger::instance()->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage());
+
+            if ($statusCode >= 400 && $statusCode < 500) {
+                return ['status' => $statusCode, 'body' => $body];
+            }
+        }
+        catch (Exception $e) {
             Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
             throw $e;
