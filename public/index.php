@@ -2,11 +2,27 @@
 
 use MBMigration\Core\Config;
 use MBMigration\Core\S3Uploader;
+use MBMigration\Layer\MB\MonkcmsAPI;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+
+
+//$configM = [
+//    'siteId' => 20568,
+//    'siteSecret' => 'SGO7EQwHH5FLAWKk4wievxWXqkn53ypK',
+////    'url' => 'https://cms-production-api.monkcms.com'
+//    'url' => 'https://beta.cms-staging-backend.monkcms.com'
+////    'url' => 'http://api.monkcms.com'
+//];
+//
+//$mCms = new MonkcmsAPI($configM);
+//
+//$mCms->getGroupSeriesGroupBySlug();
+//
+//die();
 
 return static function (array $context, Request $request): Response {
 

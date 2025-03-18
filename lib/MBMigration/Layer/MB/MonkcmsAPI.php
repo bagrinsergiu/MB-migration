@@ -9,18 +9,19 @@ use MBMigration\Core\Config;
 
 
 class MonkcmsAPI
-{/**
- * Default config values to fall back to when a value isn't set.
- *
- * @var array
- */
+{
+    /**
+     * Default config values to fall back to when a value isn't set.
+     *
+     * @var array
+     */
     private static array $defaultConfig = [
-        'request'    => null,
-        'siteId'     => null,
+        'request' => null,
+        'siteId' => null,
         'siteSecret' => null,
-        'cmsCode'    => 'EKK',
-        'cmsType'    => 'CMS',
-        'url'        => ''
+        'cmsCode' => 'EKK',
+        'cmsType' => 'CMS',
+        'url' => ''
     ];
 
     /**
@@ -47,8 +48,8 @@ class MonkcmsAPI
     /**
      * Constructor.
      *
-     * @param  array $config Config values.
-     * @param  array $requestOptions Request options.
+     * @param array $config Config values.
+     * @param array $requestOptions Request options.
      */
     public function __construct(array $config = array(), array $requestOptions = array())
     {
@@ -62,7 +63,7 @@ class MonkcmsAPI
     /**
      * Set the default config values to fall back to when a value isn't set.
      *
-     * @param  array $defaultConfig
+     * @param array $defaultConfig
      * @return array New default config values.
      */
     public static function setDefaultConfig(array $defaultConfig): array
@@ -74,7 +75,7 @@ class MonkcmsAPI
     /**
      * Set the config values.
      *
-     * @param  array $config
+     * @param array $config
      * @return self
      */
     public function setConfig(array $config): MonkcmsAPI
@@ -96,7 +97,7 @@ class MonkcmsAPI
     /**
      * Set the request option values.
      *
-     * @param  array $requestOptions
+     * @param array $requestOptions
      * @return self
      */
     public function setRequestOptions(array $requestOptions): MonkcmsAPI
@@ -129,7 +130,7 @@ class MonkcmsAPI
     /**
      * Build query params in the format required by the API.
      *
-     * @param  array $queryParams Param name => value associative array.
+     * @param array $queryParams Param name => value associative array.
      * @return array
      */
     private static function buildRequestQueryParams(array $queryParams): array
@@ -163,7 +164,7 @@ class MonkcmsAPI
     /**
      * Build a request query string with query params.
      *
-     * @param  array $queryParams Param name => value associative array.
+     * @param array $queryParams Param name => value associative array.
      * @return string
      */
     private function buildRequestQueryString(array $queryParams): string
@@ -187,7 +188,7 @@ class MonkcmsAPI
     /**
      * Build a request URL with query params.
      *
-     * @param  array $queryParams Param name => value associative array.
+     * @param array $queryParams Param name => value associative array.
      * @return string
      */
     private function buildRequestUrl(array $queryParams): string
@@ -200,7 +201,7 @@ class MonkcmsAPI
     /**
      * Make a request to the API.
      *
-     * @param  array $queryParams Param name => value associative array.
+     * @param array $queryParams Param name => value associative array.
      * @return array JSON-decoded associative array.
      * @throws Exception If the request fails.
      */
@@ -247,7 +248,8 @@ class MonkcmsAPI
         return $body;
     }
 
-    private function fixJsonFormat($response) {
+    private function fixJsonFormat($response)
+    {
         $response = trim($response);
 
         if (empty($response)) {
@@ -281,7 +283,7 @@ class MonkcmsAPI
     /**
      * Build query params from function arguments.
      *
-     * @param  array $args Function arguments to parse.
+     * @param array $args Function arguments to parse.
      * @return array Param name => value associative array.
      */
     private static function buildQueryParamsFromArgs(array $args): array
@@ -321,6 +323,20 @@ class MonkcmsAPI
         return $this->groupBySlug($response);
     }
 
+    public function getGroupSeriesGroupBySlug(): array
+    {
+        try {
+            $response = $this->get([
+                'module' => 'member',
+                'display' => 'list',
+            ]);
+//            $res = 'a';
+        } catch (Exception $e) {
+            $response = [];
+        }
+
+        return $this->groupBySlug($response);
+    }
 
     public function groupBySlug($data): array
     {

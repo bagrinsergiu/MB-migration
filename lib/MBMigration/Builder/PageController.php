@@ -133,7 +133,11 @@ class PageController
 
             $fontController->upLoadCustomFonts($RootListFontFamilyExtractor);
 
+            $fontFamilyS = $fontController->getFontsForSnippet();
+
             $fontFamily = FontsController::getFontsFamily();
+
+            $fontFamily['kit'] = array_merge($fontFamily['kit'], $fontFamilyS);
 
             $themeContext = new ThemeContext(
                 $design,
