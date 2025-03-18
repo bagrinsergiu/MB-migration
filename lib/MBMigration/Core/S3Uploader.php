@@ -35,16 +35,17 @@ class S3Uploader
     public function uploadLogFile(int $migrationId, string $filePath): string
     {
         if (!$this->statusActive) {
-            throw new Exception("S3Uploader is inactive.");
+            \MBMigration\Core\Logger::instance()->info("S3Uploader is inactive.");
+            return '';
         }
 
         if (!file_exists($filePath)) {
-            throw new Exception("Log file not found: $filePath");
+            \MBMigration\Core\Logger::instance()->info("Log file not found: $filePath");
+            return '';
         }
 
-        $s3Key = 'ministryBrandsMigrationLogs/' . $migrationId;
-
         try {
+            $s3Key = 'ministryBrandsMigrationLogs/' . $migrationId;
             $this->s3Client->putObject([
                 'Bucket'      => $this->bucketName,
                 'Key'         => $s3Key,
@@ -54,7 +55,8 @@ class S3Uploader
 
             return $this->s3Client->getObjectUrl($this->bucketName, $s3Key);
         } catch (AwsException $e) {
-            throw new Exception("Loading error in S3:" . $e->getMessage());
+            \MBMigration\Core\Logger::instance()->info("Loading error in S3:" . $e->getMessage());
+            return '';
         }
     }
 }
