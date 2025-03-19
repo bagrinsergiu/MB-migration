@@ -33,7 +33,9 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 140;
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return 140 + $dtoPageStyle['headerHeight'];
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

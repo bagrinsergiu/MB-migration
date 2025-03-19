@@ -113,6 +113,7 @@ class MediaController
         foreach ($sectionsItems as &$section) {
             if (ArrayManipulator::checkArrayPath($section, 'settings/sections/background/photo')) {
                 if ($section['settings']['sections']['background']['photo'] != null) {
+
                     $result = $brizyApi->createMedia(
                         $section['settings']['sections']['background']['photo'],
                         $projectId

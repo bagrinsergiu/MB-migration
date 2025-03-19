@@ -167,7 +167,9 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 150;
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return 140 + $dtoPageStyle['headerHeight'];
     }
 
     protected function getPropertiesMainSection(): array
