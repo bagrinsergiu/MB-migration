@@ -145,6 +145,26 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             $brizyAccordionItems[] = $brizyAccordionItemComponent;
         }
 
+        $accordionElementStyle = [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 10,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 10,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+
+        foreach ($accordionElementStyle as $key => $value) {
+            $method = "set_".$key;
+            $brizySection->getItemWithDepth(0,1)->getValue()
+                ->$method($value);
+        }
+
         $brizyAccordionComponent->set_items($brizyAccordionItems);
 
         return $brizySection;
