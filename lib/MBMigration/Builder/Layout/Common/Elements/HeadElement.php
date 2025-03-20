@@ -235,7 +235,7 @@ abstract class HeadElement extends AbstractElement
 
             $pd = $this->fontsController->getProjectData();
 
-            $this->fontsController->upLoadFont($fontName, $fontFamily);
+            $this->fontsController->upLoadFont($fontName, $fontFamily, '[Head] extractBlockBrowserData');
 
             $families = FontsController::getFontsFamily()['kit'];
             $elementContext->getThemeContext()->setFamilies($families);

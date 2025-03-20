@@ -129,7 +129,7 @@ class FontsController extends builderUtils
         foreach ($this->fontsMap as $font){
             if($font === $fontName){
                 try{
-                   $this->upLoadFont($fontName);
+                   $this->upLoadFont($fontName, null, 'upLoadMBFonts');
                    return true;
                 } catch (Exception|GuzzleException $e){
                     return false;
@@ -218,14 +218,14 @@ class FontsController extends builderUtils
      * @throws Exception
      * @throws GuzzleException
      */
-    public function upLoadFont($fontName, $fontFamily = null): string
+    public function upLoadFont($fontName, $fontFamily = null, $nameFunctionExec = ''): string
     {
         $fontName = $fontFamily ?? $fontName;
 
         if(!$presentFont = $this->cache->get($fontName, 'responseDataAddedNewFont')) {
             $KitFonts = $this->getPathFont($fontName);
             if ($KitFonts) {
-                Logger::instance()->info("Create FontName $fontName, type font: upload");
+                Logger::instance()->info("Create FontName $fontName, type font: upload", [$nameFunctionExec]);
 
                 $responseDataAddedNewFont = $this->BrizyApi->createFonts(
                     $fontName,
