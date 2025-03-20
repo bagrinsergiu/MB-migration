@@ -19,7 +19,9 @@ class FullText extends FullTextElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 150;
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return 50 + $dtoPageStyle['headerHeight'];
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

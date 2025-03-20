@@ -168,9 +168,7 @@ class MigrationPlatform
 
         if (Config::$devMode) {
             $this->brizyApi->clearAllFontsInProject();
-        }
-
-        $this->checkDesign($designName);
+        }$this->checkDesign($designName);
 
         FoldersUtility::createProjectFolders($this->projectId);
 
