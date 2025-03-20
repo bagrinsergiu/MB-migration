@@ -342,7 +342,7 @@ class MBProjectDataCollector
                             $uploadedFont[] = [
                                 'fontName' => $fontName,
                                 'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
-                                'uuid' => $this->fontsController->upLoadFont($fontName),
+                                'uuid' => $this->fontsController->upLoadFont($fontName, null, 'getMainSection'),
                             ];
 
                             $defaultFont = array_merge($defaultFont, $uploadedFont);
@@ -691,7 +691,7 @@ class MBProjectDataCollector
                         $uploadedFont[] = [
                             'fontName' => $fontName,
                             'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
-                            'uuid' => $this->fontsController->upLoadFont($fontName),
+                            'uuid' => $this->fontsController->upLoadFont($fontName, null, 'getItemsFromSection'),
                         ];
 
                         $defaultFont = array_merge($defaultFont, $uploadedFont);
