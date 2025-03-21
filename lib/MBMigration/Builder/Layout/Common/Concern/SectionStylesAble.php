@@ -148,7 +148,6 @@ trait SectionStylesAble
             return;
         }
 
-
         $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
             ColorConverter::rgba2opacity($sectionStyles['background-color'])
         );
@@ -165,9 +164,17 @@ trait SectionStylesAble
 //                    $background['opacity'] = 0.8;
 //                }
 
+                if ($backImag = $sectionStyles['background-image']) {
+                    preg_match('/url\(["\']?(.*?)["\']?\)/', $backImag, $matches);
+                    if (!is_null($backImag = $matches[1] ?? null)) {
+                        $brizySection->getValue()->set_bgImageSrc($backImag);
+                    }
+                } else {
+                    $brizySection->getValue()->set_bgImageSrc($background['photo']);
+                }
+
                 $brizySection->getValue()
                     ->set_bgImageFileName($background['filename'])
-                    ->set_bgImageSrc($background['photo'])
                     ->set_bgSize($sectionStyles['background-size'])
                     ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
                     ->set_bgColorHex($sectionStyles['background-color'])
@@ -196,7 +203,7 @@ trait SectionStylesAble
                         $brizySection->getValue()->set_bgAttachment('fixed');
                         break;
                     case 'fill':
-
+                        $brizySection->getValue()->set_bgAttachment('none');
                         break;
                     case 'tile':
                         $brizySection->getValue()->set_bgRepeat('on');
@@ -313,6 +320,7 @@ trait SectionStylesAble
             'color',
             'background-size',
             'background-color',
+            'background-image',
             'opacity',
             'border-bottom-color',
             'padding-top',
