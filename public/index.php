@@ -98,11 +98,11 @@ return static function (array $context, Request $request): Response {
     $brz_workspaces_id = (int) $request->get('brz_workspaces_id') ?? 0;
 
     $s3Uploader = new S3Uploader(
-        (bool) $context['AWS_BUCKET_ACTIVE'],
-        $context['AWS_KEY'],
-        $context['AWS_SECRET'],
-        $context['AWS_REGION'],
-        $context['AWS_BUCKET']
+        (bool) $context['AWS_BUCKET_ACTIVE'] ?? false,
+        $context['AWS_KEY'] ?? '',
+        $context['AWS_SECRET'] ?? '',
+        $context['AWS_REGION'] ?? '',
+        $context['AWS_BUCKET'] ?? ''
     );
 
     $logFilePath = $context['LOG_FILE_PATH'].'_'.$brz_project_id.'.log';
