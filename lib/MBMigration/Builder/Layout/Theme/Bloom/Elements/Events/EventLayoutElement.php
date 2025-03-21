@@ -35,7 +35,7 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
     {
         $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
 
-        return 50 + $dtoPageStyle['headerHeight'];
+        return 25 + $dtoPageStyle['headerHeight'];
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
