@@ -80,10 +80,10 @@ abstract class EventGalleryLayout extends AbstractElement
 
         $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
 
-        $this->getDetailsLinksComponent($brizySection)
+        $this->getDetailsLinksComponent($brizyWidget)
             ->getValue()
-            ->set_eventDetailPageSource($collectionTypeUri)
-            ->set_eventDetailPage("{{placeholder content='$placeholder'}}");
+            ->set_source($collectionTypeUri)
+            ->set_detailPage("{{placeholder content='$placeholder'}}");
 
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
         $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
@@ -239,9 +239,10 @@ abstract class EventGalleryLayout extends AbstractElement
 
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_'.$key;
-            $brizyWidget->getValue()
+            $brizyWidget->getItemWithDepth(0)->getValue()
                 ->$properties($value);
         }
+
         $brizyWidget
             ->getItemWithDepth(0)
             ->typography()
@@ -263,7 +264,7 @@ abstract class EventGalleryLayout extends AbstractElement
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getTopPaddingOfTheFirstElement(): int

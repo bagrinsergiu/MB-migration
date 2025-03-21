@@ -72,10 +72,10 @@ class ElementFactory  extends AbstractThemeElementFactory
 
             case 'event-list-layout':
             case 'event-tile-layout':
-            case 'event-gallery-layout':
-                return new EventGalleryLayout($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
             case 'event-calendar-layout':
                 return new EventLayoutElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
+            case 'event-gallery-layout':
+                return new EventGalleryLayout($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
 
 //            case 'prayer-list':
 //                return new PrayerListElement($this->blockKit['blocks']['prayer-list'], $browserPage);
