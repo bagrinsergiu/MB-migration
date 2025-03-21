@@ -1,4 +1,5 @@
 import { Families } from "../../../../types/type";
+import { getFontFamily } from "../../../../utils/getFontFamily";
 import {
   defaultDesktopLineHeight,
   defaultMobileLineHeight,
@@ -24,16 +25,13 @@ export const stylesToClasses = (
         break;
       }
       case "font-family": {
-        const fontFamily = `${value}`
-          .replace(/['"\,]/g, "") // eslint-disable-line
-          .replace(/\s/g, "_")
-          .toLocaleLowerCase();
+        const family = getFontFamily(styles, families);
 
-        if (!families[fontFamily]) {
+        if (!family) {
           classes.push(`brz-ff-${defaultFamily}`, "brz-ft-upload");
           break;
         }
-        const { name, type } = families[fontFamily];
+        const { name, type } = family;
         classes.push(`brz-ff-${name}`, `brz-ft-${type}`);
         break;
       }

@@ -12,5 +12,7 @@ export const getFontFamily = (
     .replace(/\s/g, "_")
     .toLocaleLowerCase();
 
-  return families[fontFamily];
+  const [firstFontFamily] = fontFamily.split("_");
+
+  return families[fontFamily] ?? families[firstFontFamily];
 };
