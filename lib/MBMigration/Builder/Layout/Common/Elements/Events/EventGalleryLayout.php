@@ -108,6 +108,10 @@ abstract class EventGalleryLayout extends AbstractElement
             'previewColorOpacity' => 1,
             'previewColorPalette' => '',
 
+            'colorHex' => $sectionPalette['text'],
+            'colorOpacity' => 1,
+            'colorPalette' => '',
+
             'hoverPreviewColorHex' => '#f8f8f8',
             'hoverPreviewColorOpacity' => 0.8,
             'hoverPreviewColorPalette' => '',
@@ -235,6 +239,14 @@ abstract class EventGalleryLayout extends AbstractElement
             'layoutViewTypographyFontFamily' => $fonts,
             'layoutViewTypographyFontStyle' => '',
             'layoutViewTypographyFontFamilyType' => 'upload',
+
+            "metaLinksColorHex" => $sectionPalette['link'],
+            "metaLinksColorOpacity" => 1,
+            "metaLinksColorPalette" => "",
+
+            "hoverMetaLinksColorHex" => $sectionPalette['link'],
+            "hoverMetaLinksColorOpacity" => 0.75,
+            "hoverMetaLinksColorPalette" => "",
         ];
 
         foreach ($sectionProperties as $key => $value) {
