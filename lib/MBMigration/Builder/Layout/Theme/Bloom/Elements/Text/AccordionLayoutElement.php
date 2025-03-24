@@ -159,9 +159,27 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             "mobilePaddingLeftSuffix" => "px",
         ];
 
+        $accordionHeadTextStyle = [
+            'mobileMarginType' => 'ungrouped',
+            'mobileMarginTop' => 0,
+            'mobileMarginTopSuffix' => 'px',
+            'mobileMarginBottom' => 0,
+            'mobileMarginBottomSuffix' => 'px',
+            'mobileMarginRight' => 10,
+            'mobileMarginRightSuffix' => 'px',
+            'mobileMarginLeft' => 10,
+            'mobileMarginLeftSuffix' => 'px',
+        ];
+
         foreach ($accordionElementStyle as $key => $value) {
             $method = "set_".$key;
             $brizySection->getItemWithDepth(0,1)->getValue()
+                ->$method($value);
+        }
+
+        foreach ($accordionHeadTextStyle as $key => $value) {
+            $method = "set_".$key;
+            $brizySection->getItemWithDepth(0,0)->getValue()
                 ->$method($value);
         }
 
