@@ -9,7 +9,7 @@ class PrayerFormElement extends \MBMigration\Builder\Layout\Common\Elements\Pray
     {
         $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
 
-        return 50 + $dtoPageStyle['headerHeight'];
+        return 25 + $dtoPageStyle['headerHeight'];
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

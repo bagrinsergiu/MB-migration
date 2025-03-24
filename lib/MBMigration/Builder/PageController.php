@@ -48,7 +48,13 @@ class PageController
     private int $projectID_Brizy;
     private PageDto $pageDTO;
 
-    public function __construct(MBProjectDataCollector $MBProjectDataCollector, BrizyAPI $brizyAPI, QueryBuilder $QueryBuilder, LoggerInterface $logger, $projectID_Brizy)
+    public function __construct(
+        MBProjectDataCollector $MBProjectDataCollector,
+        BrizyAPI $brizyAPI,
+        QueryBuilder $QueryBuilder,
+        LoggerInterface $logger,
+        $projectID_Brizy
+    )
     {
         $this->cache = VariableCache::getInstance();
         $this->pageDTO = new PageDTO();
