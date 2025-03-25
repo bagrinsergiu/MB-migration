@@ -51,7 +51,8 @@ abstract class EventLayoutElement extends AbstractElement
             $this->getTopPaddingOfTheFirstElement(),
             $this->getMobileTopPaddingOfTheFirstElement(),
             $this->pageTDO,
-            $data
+            $data,
+            $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
         );
 
         $mbSection = $data->getMbSection();
@@ -87,9 +88,8 @@ abstract class EventLayoutElement extends AbstractElement
             $detailsSection
         );
 
-        $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
-
-        $this->getDetailsLinksComponent($brizySection)
+        $placeholder = base64_encode('{{ brizy_dc_url_post entityType="'.$detailCollectionItem['type']['id'].'" entityId="' . $detailCollectionItem['id'] . '" }}');
+        $this->getDetailsLinksComponent($brizyWidget)
             ->getValue()
             ->set_eventDetailPageSource($collectionTypeUri)
             ->set_eventDetailPage("{{placeholder content='$placeholder'}}");
@@ -267,7 +267,7 @@ abstract class EventLayoutElement extends AbstractElement
 
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_'.$key;
-            $brizyWidget->getItemValueWithDepth(0, 0, 0)
+            $brizyWidget->getItemValueWithDepth(0)
                 ->$properties($value);
         }
 
@@ -279,7 +279,7 @@ abstract class EventLayoutElement extends AbstractElement
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getPropertiesMainSection(): array

@@ -45,7 +45,8 @@ class EventFeaturedLayoutElement  extends AbstractElement
             $this->getTopPaddingOfTheFirstElement(),
             $this->getMobileTopPaddingOfTheFirstElement(),
             $this->pageTDO,
-            $data
+            $data,
+            $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
         );
 
 
@@ -81,7 +82,7 @@ class EventFeaturedLayoutElement  extends AbstractElement
             $detailsSection
         );
 
-        $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
+        $placeholder = base64_encode('{{ brizy_dc_url_post entityType="'.$detailCollectionItem['type']['id'].'" entityId="' . $detailCollectionItem['id'] . '" }}');
 
         $this->getDetailsLinksComponent($brizySection)
             ->getValue()

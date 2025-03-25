@@ -58,10 +58,12 @@ abstract class EventListLayout extends AbstractElement
             ]
         );
 
+        $placeholder = base64_encode('{{ brizy_dc_url_post entityType="'.$detailCollectionItem['type']['id'].'" entityId="' . $detailCollectionItem['id'] . '" }}');
+
         $this->getDetailsComponent($detailsSection)
             ->getValue()
             ->set_source($collectionTypeUri)
-            ->set_detailPage("{{ brizy_dc_url_post id=\"".$detailCollectionItem['id']."\" }}");
+            ->set_detailPage("{{placeholder content='$placeholder'}}");
 
 
         return $brizySection;
