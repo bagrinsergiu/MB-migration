@@ -183,7 +183,6 @@ class MediaController
         $background
     ) {
         if (empty($background)) {
-            Logger::instance()->debug('Background style is empty');
             return false;
         }
 
@@ -195,21 +194,19 @@ class MediaController
             } else {
                 preg_match('/url\(["\']?(.*?)["\']?\)/', $background, $matches);
             }
-            
+
             $imageUrl = $matches[1] ?? null;
-            
+
             if ($imageUrl) {
                 $imageUrl = trim($imageUrl, "'\"");
             }
         }
 
         if (empty($imageUrl)) {
-            Logger::instance()->debug('No valid image URL found in background: ' . $background);
             return false;
         }
 
         if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            Logger::instance()->warning("Invalid URL format: $imageUrl");
             return false;
         }
 
@@ -222,19 +219,16 @@ class MediaController
         try {
             $response = $client->get($imageUrl);
             if ($response->getStatusCode() !== 200) {
-                Logger::instance()->warning("Invalid status code for image: {$response->getStatusCode()} - $imageUrl");
                 return false;
             }
 
             $contentType = $response->getHeaderLine('Content-Type');
             $validImageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
             if (!in_array(strtolower($contentType), $validImageTypes)) {
-                Logger::instance()->warning("Invalid content type for image: $contentType - $imageUrl");
                 return false;
             }
 
             if (strtolower($contentType) === 'image/svg+xml') {
-                Logger::instance()->debug("Successfully validated SVG image: $imageUrl");
                 return $imageUrl;
             }
 
@@ -243,9 +237,8 @@ class MediaController
             file_put_contents($tempFile, $imageData);
             $imageInfo = @getimagesize($tempFile);
             unlink($tempFile);
-            
+
             if ($imageInfo === false) {
-                Logger::instance()->warning("Invalid image data for: $imageUrl");
                 return false;
             }
 
@@ -254,14 +247,11 @@ class MediaController
             $width = $imageInfo[0];
             $height = $imageInfo[1];
             if ($width < $minWidth || $height < $minHeight) {
-                Logger::instance()->warning("Image dimensions too small: {$width}x{$height} - $imageUrl");
                 return false;
             }
 
-            Logger::instance()->debug("Successfully validated image: $imageUrl ({$width}x{$height})");
             return $imageUrl;
         } catch (RequestException $e) {
-            Logger::instance()->warning("Failed to access background section image: $imageUrl - " . $e->getMessage());
             return false;
         } catch (\Exception $e) {
             Logger::instance()->error("Unexpected error validating image: $imageUrl - " . $e->getMessage());
