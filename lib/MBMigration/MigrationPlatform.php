@@ -270,14 +270,14 @@ class MigrationPlatform
         }
 
         // lets dump the cache there.
-        $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
+        $this->cache->dumpCache($projectID_MB, $this->projectID_Brizy);
 
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
         $this->launch($parentPages, false);
         $this->launch($parentPages, true);
 
-        $this->brizyApi->clearCompileds($projectID_Brizy);
+        $this->brizyApi->clearCompileds($this->projectID_Brizy);
 
         Logger::instance()->info('Project migration completed successfully!');
 
