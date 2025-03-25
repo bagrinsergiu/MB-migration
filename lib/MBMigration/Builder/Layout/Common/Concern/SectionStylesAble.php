@@ -6,6 +6,7 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
 use Wrench\Exception\Exception;
@@ -47,7 +48,7 @@ trait SectionStylesAble
             )
         ) {
             foreach ($options as $key => $value) {
-               $method = 'set_'.$key;
+                $method = 'set_'.$key;
                 $section->getValue()
                     ->$method($value);
             }
@@ -122,11 +123,11 @@ trait SectionStylesAble
 
         foreach ($additionalOptions as $key => $value) {
             if (is_array($value)) {
-               continue;
+                continue;
             }
             $method = 'set_'.$key;
             $brizySection->getValue()
-                    ->$method($value);
+                ->$method($value);
         }
 
         return $brizySection;
@@ -158,22 +159,16 @@ trait SectionStylesAble
         if ($this->hasImageBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
             if (isset($background['filename']) && isset($background['photo'])) {
+                $validatedUrl = MediaController::validateBgImag($sectionStyles['background-image']);
+                $bgImg = $validatedUrl ? $validatedUrl : $background['photo'];
 
-//                if($background['opacity']>=0.9)
+                //                if($background['opacity']>=0.9)
 //                {
 //                    $background['opacity'] = 0.8;
 //                }
 
-                if ($backImag = $sectionStyles['background-image']) {
-                    preg_match('/url\(["\']?(.*?)["\']?\)/', $backImag, $matches);
-                    if (!is_null($backImag = $matches[1] ?? null)) {
-                        $brizySection->getValue()->set_bgImageSrc($backImag);
-                    }
-                } else {
-                    $brizySection->getValue()->set_bgImageSrc($background['photo']);
-                }
-
                 $brizySection->getValue()
+                    ->set_bgImageSrc($bgImg)
                     ->set_bgImageFileName($background['filename'])
                     ->set_bgSize($sectionStyles['background-size'])
                     ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
@@ -393,3 +388,4 @@ trait SectionStylesAble
     }
 
 }
+
