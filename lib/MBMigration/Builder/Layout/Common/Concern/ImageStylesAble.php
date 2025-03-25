@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Core\Logger;
 
 trait ImageStylesAble
 {
@@ -54,15 +55,14 @@ trait ImageStylesAble
         );
 
         if (isset($imageStyles['error'])) {
-            throw new BrowserScriptException($imageStyles['error']);
+            Logger::instance()->error('getObtainStyles get error, details -> ', [$imageStyles['error']]);
+            return [];
         }
 
         if (empty($imageStyles)) {
-            throw new BrowserScriptException(
-                "The element with selector {$selector} was not found in page."
-            );
+            Logger::instance()->error("The element with selector {$selector} was not found in page.");
+            return [];
         }
-
 
         return $imageStyles['data'];
     }
