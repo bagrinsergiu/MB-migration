@@ -15,6 +15,7 @@ class DetailsPage
     protected int $topPaddingOfTheFirstElement;
     protected int $mobileTopPaddingOfTheFirstElement;
     protected array $colorPalettes;
+    protected string $subpalette;
     protected PageDto $pageTDO;
 
     /**
@@ -25,7 +26,8 @@ class DetailsPage
         int $topPaddingOfTheFirstElement,
         int $mobileTopPaddingOfTheFirstElement,
         PageDto $pageTDO,
-        ElementContextInterface $data
+        ElementContextInterface $data,
+        string $subpalette = 'subpalette1'
     )
     {
         $this->detailsSection = new BrizyComponent(json_decode($detailsSection, true));
@@ -33,6 +35,7 @@ class DetailsPage
         $this->mobileTopPaddingOfTheFirstElement = $mobileTopPaddingOfTheFirstElement;
         $this->pageTDO = $pageTDO;
         $this->colorPalettes = $data->getThemeContext()->getRootPalettes()->getSubPalettes();
+        $this->subpalette = $subpalette;
     }
 
     protected function rewriteColorIfSetOpacity(array &$colors): void
