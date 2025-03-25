@@ -44,6 +44,7 @@ abstract class EventLayoutElement extends AbstractElement
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['main'], true));
+        $brizyWidget = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['widget'], true));
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
         $DetailsPageLayout = new EventDetailsPageLayout(
             $this->brizyKit['EventLayoutElement']['detail'],
@@ -71,7 +72,11 @@ abstract class EventLayoutElement extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent, [], $this->getAdditionalTopPaddingOfTheFirstElement());
 
-        $this->handleRichTextHead($elementContext, $this->browserPage);
+        if (!empty($mbSection['head'])){
+            $this->handleRichTextHead($elementContext, $this->browserPage);
+        } else {
+            $this->handleRichTextItems($elementContext, $this->browserPage);
+        }
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
 
@@ -262,9 +267,12 @@ abstract class EventLayoutElement extends AbstractElement
 
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_'.$key;
-            $brizySection->getItemValueWithDepth(0, 0, 0)
+            $brizyWidget->getItemValueWithDepth(0, 0, 0)
                 ->$properties($value);
         }
+
+        $brizySection->getItemValueWithDepth(0)->add_items([$brizyWidget]);
+
 
         return $brizySection;
     }
