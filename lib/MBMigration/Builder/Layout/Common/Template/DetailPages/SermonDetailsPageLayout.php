@@ -43,7 +43,7 @@ class SermonDetailsPageLayout extends DetailsPage
 
         $sectionStyle = [
             'paddingTop' => $this->getTopPaddingOfTheFirstElement ?? 0,
-            'bgColorHex' => $this->colorPalettes['subpalette1']['bg'] ?? $sectionPalette['bg'],
+            'bgColorHex' => $this->colorPalettes[$this->subpalette]['bg'] ?? $sectionPalette['bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
         ];
