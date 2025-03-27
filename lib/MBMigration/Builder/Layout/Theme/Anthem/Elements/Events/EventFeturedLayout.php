@@ -45,10 +45,15 @@ class EventFeturedLayout extends EventFeaturedLayoutElement
                 ->set_borderColorHex($headStyle['line-color']);
 
 
-            $brizySection->getItemWithDepth(0)
+            $brizySection
+                ->getItemWithDepth(0)
                 ->getValue()
                 ->add_items([$wrapperLine], 1);
         }
+
+        $brizySection
+            ->getItemWithDepth(0)
+            ->addPadding(20, 20, 50, 20);
 
         return $brizySection;
     }

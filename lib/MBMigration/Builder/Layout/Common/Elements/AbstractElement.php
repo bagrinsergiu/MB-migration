@@ -259,7 +259,7 @@ abstract class AbstractElement implements ElementInterface
     private function sectionIndentations(BrizyComponent $section){
         $section
             ->getItemWithDepth(0)
-            ->addPadding($this->pageTDO->getHeadStyle()->getHeight() ?? 10, 0, 0, 0)
+            ->addPadding($this->pageTDO->getHeadStyle()->getHeight() ?? 50, 0, 50, 0)
             ->addGroupedMargin()
             ->addMobilePadding()
             ->addMobileMargin()
