@@ -15,4 +15,12 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
     {
         return $brizySection;
     }
+
+//    protected function getMobileTopMarginOfTheFirstElement(): int
+//    {
+//        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+//
+//        return (int) $dtoPageStyle['headerHeight'];
+//    }
+
 }
