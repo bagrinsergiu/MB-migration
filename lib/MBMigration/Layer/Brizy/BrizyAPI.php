@@ -335,7 +335,7 @@ class BrizyAPI extends Utils
         ]);
 
         $res = $this->request('POST', $this->createPrivateUrlAPI('fonts'), $options);
-
+        sleep(1);
         return json_decode($res->getBody()->getContents(), true);
     }
 
@@ -381,6 +381,8 @@ class BrizyAPI extends Utils
         $projectFullData['data'] = json_encode($projectData);
 
         $result = $this->updateProject($projectFullData);
+
+        sleep(3);
         $this->checkUpdateFonts($result, $brzFontId, $data['family']);
 
         return $fontId;

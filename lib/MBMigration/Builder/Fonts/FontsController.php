@@ -121,6 +121,7 @@ class FontsController extends builderUtils
                 if (!$this->upLoadMBFonts($font)) {
                     $this->upLoadGoogleFonts($font, $fontId);
                 }
+                sleep(2);
         }
     }
 
@@ -233,6 +234,8 @@ class FontsController extends builderUtils
                     $KitFonts['fontsFile'],
                     $KitFonts['displayName']
                 );
+
+                sleep(2);
 
                 $this->cache->add('responseDataAddedNewFont', [$fontName => $responseDataAddedNewFont]);
 
