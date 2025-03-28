@@ -33,6 +33,14 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             ->addMobilePadding(10);
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function getTypeItemImageComponent(): string
     {
         return 'image';

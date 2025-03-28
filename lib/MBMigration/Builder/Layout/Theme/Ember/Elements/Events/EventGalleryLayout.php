@@ -21,6 +21,14 @@ class EventGalleryLayout extends \MBMigration\Builder\Layout\Common\Elements\Eve
         ];
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function getAdditionalTopPaddingOfTheFirstElement(): int
     {
         return 0;

@@ -53,8 +53,9 @@ class Head extends HeadElement
             'mobileMarginLeftSuffix' => 'px',
         ];
 
-//        $brizySection->getItemWithDepth(0)
-//            ->addCustomCSS('.brz-section__header{height: auto !important;}');
+        $brizySection->getItemWithDepth(0)
+            ->addCustomCSS('.brz-section__header{height: auto !important;}')
+            ->setMobileBgColorStyle(null, 1);
 
         $brizySection->getItemWithDepth(0, 0, 0, 0)
             ->addHorizontalContentAlign()
