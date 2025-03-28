@@ -40,6 +40,9 @@ trait SectionStylesAble
             $options['mobilePaddingTop'] = $this->getMobileTopPaddingOfTheFirstElement();
         }
 
+        $options['mobileMarginType'] = 'ungrouped';
+        $options['mobileMarginTop'] = $this->getMobileTopMarginOfTheFirstElement();
+
         if(
             $mustBeAdded ||
             (

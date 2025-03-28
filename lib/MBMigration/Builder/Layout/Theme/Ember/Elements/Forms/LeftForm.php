@@ -36,6 +36,14 @@ class LeftForm extends FormWithTextElement
         return $this->handleRichTextItems($elementContext, $this->browserPage);
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function getJsonFromBrizyKit()
     {
         return $this->brizyKit['left-form'];

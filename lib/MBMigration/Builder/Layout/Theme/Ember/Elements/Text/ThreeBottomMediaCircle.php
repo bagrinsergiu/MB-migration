@@ -51,6 +51,14 @@ class ThreeBottomMediaCircle extends FullTextElement
             ->set_imageSrc($mbSectionItem['content']);
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {
         return $brizySection;

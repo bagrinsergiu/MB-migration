@@ -197,6 +197,14 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         return 95;
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function getPropertiesMainSection(): array
     {
         return array(

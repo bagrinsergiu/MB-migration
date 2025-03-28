@@ -12,6 +12,14 @@ class FullWidthForm extends FormElement
         return $this->brizyKit['full-width'];
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent
     {
         return $brizyComponent->getItemWithDepth(0);

@@ -30,6 +30,14 @@ class EventFeturedLayout extends EventFeaturedLayoutElement
         return 95;
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function getPropertiesMainSection(): array
     {
         return [

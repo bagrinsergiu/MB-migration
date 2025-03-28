@@ -32,6 +32,14 @@ class RightMedia extends PhotoTextElement
             ->addPaddingLeft(35, '%');
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 110;

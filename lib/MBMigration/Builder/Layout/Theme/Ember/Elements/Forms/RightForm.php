@@ -19,6 +19,14 @@ class RightForm extends FormWithTextElement
         return $brizyComponent->getItemWithDepth(0, 0, 1);
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function handleForm(
         ElementContextInterface $elementContext,
         BrowserPageInterface $browserPage
