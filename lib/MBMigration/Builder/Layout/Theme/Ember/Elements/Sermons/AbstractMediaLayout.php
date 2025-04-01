@@ -50,5 +50,13 @@ abstract class AbstractMediaLayout extends AbstractElement
         return $brizySection;
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
 
 }

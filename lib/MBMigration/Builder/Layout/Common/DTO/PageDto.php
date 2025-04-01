@@ -8,7 +8,7 @@ use MBMigration\Builder\Layout\Common\DTOObjects\Head\HeadStyle;
 
 class PageDto implements DTO
 {
-    private array $pageStyleDetails;
+    private array $pageStyleDetails = [];
     private ButtonStyle $buttonStyle;
     private HeadStyle $headStyle;
     private PageStyle $pageStyle;
@@ -21,7 +21,7 @@ class PageDto implements DTO
     }
 
     public function setPageStyleDetails(array $pageStyleDetails) {
-        $this->pageStyleDetails = $pageStyleDetails;
+        $this->pageStyleDetails = array_merge($this->pageStyleDetails, $pageStyleDetails);
     }
 
     public function getPageStyleDetails(): array

@@ -11,6 +11,7 @@ use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettes;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
+use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\Utils\UrlUtils;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
@@ -47,10 +48,18 @@ class PageController
     private MBProjectDataCollector $parser;
     private int $projectID_Brizy;
     private PageDto $pageDTO;
+    private ArrayManipulator $ArrayManipulator;
 
-    public function __construct(MBProjectDataCollector $MBProjectDataCollector, BrizyAPI $brizyAPI, QueryBuilder $QueryBuilder, LoggerInterface $logger, $projectID_Brizy)
+    public function __construct(
+        MBProjectDataCollector $MBProjectDataCollector,
+        BrizyAPI $brizyAPI,
+        QueryBuilder $QueryBuilder,
+        LoggerInterface $logger,
+        $projectID_Brizy
+    )
     {
         $this->cache = VariableCache::getInstance();
+        $this->ArrayManipulator = new ArrayManipulator();
         $this->pageDTO = new PageDTO();
         $this->projectStyleDTO = new PageDTO();
         $this->brizyAPI = $brizyAPI;
@@ -74,6 +83,15 @@ class PageController
         $slug = $this->cache->get('tookPage')['slug'];
         $pageId = $this->cache->get('tookPage')['id'];
         $fontController = new FontsController($brizyContainerId);
+        $fontsFromProject= $fontController->getFontsFromProjectData();
+        $previousFonts = $this->ArrayManipulator->getComparePreviousArray();
+
+        if(!$this->ArrayManipulator->compareArrays($fontsFromProject))
+        {
+            Logger::instance()->error('There is a difference in fonts -> saved: ['.json_encode($previousFonts).'], project: ['.json_encode($fontsFromProject).']');
+        } else {
+            Logger::instance()->info('Project fonts and migration fonts without damage');
+        }
 
         $fontFamily = FontsController::getFontsFamily();
 
@@ -133,7 +151,11 @@ class PageController
 
             $fontController->upLoadCustomFonts($RootListFontFamilyExtractor);
 
+            $fontFamilyS = $fontController->getFontsForSnippet();
+
             $fontFamily = FontsController::getFontsFamily();
+
+            $fontFamily['kit'] = array_merge($fontFamily['kit'], $fontFamilyS);
 
             $themeContext = new ThemeContext(
                 $design,
@@ -171,6 +193,9 @@ class PageController
             $pageData = json_encode($brizySections);
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $pd = FontsController::getProject_Data();
+
+            sleep(5);
+
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
             Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
@@ -214,19 +239,19 @@ class PageController
      */
     public function createBlankPages(array &$mbPageList, $existingBrizyPages)
     {
-        $setHomePage = false;
+        $this->cache->set('setHomePage', false);
         $this->createPage($mbPageList, $existingBrizyPages, false);
-        $this->createPage($mbPageList, $existingBrizyPages, true, $setHomePage);
+        $this->createPage($mbPageList, $existingBrizyPages, true);
     }
 
     /**
      * @throws Exception
      */
-    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, &$setHomePage = false, $i = 0, $parent = null){
+    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, $i = 0, $parent = null){
         foreach ($pageList as $i => &$page) {
 
             if (!empty($page['child'])) {
-                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage, $setHomePage, $i, $page['parent_id']);
+                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage, $i, $page['parent_id']);
             }
 
             if ($page['hidden'] === $hiddenPage) {
@@ -242,13 +267,13 @@ class PageController
                 //if (!isset($existingBrizyPages['listPages'][$this->buildPage])) {
                 // create the page
                 if ($page['landing'] == true) {
-                    if(!$setHomePage) {
+                    if(!$this->cache->get('setHomePage')) {
                         if ($i === 0 && $parent === null) {
                             $isHome = true;
-                            $setHomePage = true;
+                            $this->cache->set('setHomePage', true);
                         } elseif ($page['position'] == 1 && !$page['parent_id']) {
                             $isHome = true;
-                            $setHomePage = true;
+                            $this->cache->set('setHomePage', true);
                         } else {
                             $isHome = false;
                         }
@@ -283,6 +308,7 @@ class PageController
                     }
                 }
             }
+
         }
     }
 

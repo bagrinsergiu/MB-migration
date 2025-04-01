@@ -2,6 +2,8 @@
 
 namespace MBMigration;
 
+use GuzzleHttp\Exception\RequestException;
+use MBMigration\Builder\Cms\SiteSEO;
 use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Menu\MenuHandler;
 use MBMigration\Builder\Utils\ArrayManipulator;
@@ -53,11 +55,15 @@ class MigrationPlatform
      * @var mixed
      */
     private $mb_projectDomain;
+    /**
+     * @var int|mixed
+     */
+    private $workspacesId;
 
     use checking;
     use DebugBackTrace;
 
-    public function __construct(Config $config, LoggerInterface $logger, $buildPage = '')
+    public function __construct(Config $config, LoggerInterface $logger, $buildPage = '', $workspacesId = 0)
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
         $this->logger = $logger;
@@ -65,10 +71,12 @@ class MigrationPlatform
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
         register_shutdown_function([$this->errorDump, 'handleFatalError']);
+        set_exception_handler([$this->errorDump, 'handleUncaughtExceptions']);
 
         $this->finalSuccess['status'] = 'start';
 
         $this->buildPage = $buildPage;
+        $this->workspacesId = $workspacesId;
 
         $this->config = $config;
     }
@@ -133,8 +141,8 @@ class MigrationPlatform
             $this->mb_projectDomain = MBProjectDataCollector::getDomainBySiteId($projectID_MB);
         }
 
-        if ($projectID_Brizy == 0) {
-            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, 22072459, 'id');
+        if ($projectID_Brizy == 0 && $this->workspacesId !== 0) {
+            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, $this->workspacesId, 'id');
 //            $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4423676, 'id');
 
             \MBMigration\Core\Logger::initialize("brizy-$this->projectID_Brizy");
@@ -196,6 +204,8 @@ class MigrationPlatform
         if (!$this->cache->get('settings')) {
             $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0).' Message: Site not found');
             $this->cache->set('settings', $settings);
+        } else {
+            $settings = $this->cache->get('settings');
         }
 
         $this->brizyApi->setMetaDate();
@@ -223,6 +233,8 @@ class MigrationPlatform
         }
 
         MediaController::setFavicon($settings['favicon'] ?? null, $this->projectId, $this->brizyApi, $this->QueryBuilder);
+
+        SiteSEO::setSiteTitle($this->projectId, $this->QueryBuilder, $this->cache);
 
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
@@ -260,14 +272,14 @@ class MigrationPlatform
         }
 
         // lets dump the cache there.
-        $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
+        $this->cache->dumpCache($projectID_MB, $this->projectID_Brizy);
 
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
         $this->launch($parentPages, false);
         $this->launch($parentPages, true);
 
-        $this->brizyApi->clearCompileds($projectID_Brizy);
+        $this->brizyApi->clearCompileds($this->projectID_Brizy);
 
         Logger::instance()->info('Project migration completed successfully!');
 

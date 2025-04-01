@@ -117,7 +117,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 
         $brizySectionItems = [];
 
-        if (isset($mbSection['settings']['sections']['background']['video'])){
+        if (isset($mbSection['settings']['sections']['background']['video']) && count($mbSection['slide']) <= 1){
             $brizySectionItem = new BrizyComponent($videoJson);
             $brizyComponentValue = $this->getSlideVideoComponent($brizySectionItem)->getValue();
             $brizyComponentValue

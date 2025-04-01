@@ -55,7 +55,9 @@ class FullMediaElement extends FullMediaElementElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 150;
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return 25 + $dtoPageStyle['headerHeight'];
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

@@ -44,13 +44,15 @@ abstract class EventLayoutElement extends AbstractElement
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['main'], true));
+        $brizyWidget = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['widget'], true));
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
         $DetailsPageLayout = new EventDetailsPageLayout(
             $this->brizyKit['EventLayoutElement']['detail'],
             $this->getTopPaddingOfTheFirstElement(),
             $this->getMobileTopPaddingOfTheFirstElement(),
             $this->pageTDO,
-            $data
+            $data,
+            $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
         );
 
         $mbSection = $data->getMbSection();
@@ -71,7 +73,11 @@ abstract class EventLayoutElement extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent, [], $this->getAdditionalTopPaddingOfTheFirstElement());
 
-        $this->handleRichTextHead($elementContext, $this->browserPage);
+        if (!empty($mbSection['head'])){
+            $this->handleRichTextHead($elementContext, $this->browserPage);
+        } else {
+            $this->handleRichTextItems($elementContext, $this->browserPage);
+        }
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
 
@@ -82,9 +88,8 @@ abstract class EventLayoutElement extends AbstractElement
             $detailsSection
         );
 
-        $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
-
-        $this->getDetailsLinksComponent($brizySection)
+        $placeholder = base64_encode('{{ brizy_dc_url_post entityType="'.$detailCollectionItem['type']['id'].'" entityId="' . $detailCollectionItem['id'] . '" }}');
+        $this->getDetailsLinksComponent($brizyWidget)
             ->getValue()
             ->set_eventDetailPageSource($collectionTypeUri)
             ->set_eventDetailPage("{{placeholder content='$placeholder'}}");
@@ -262,16 +267,19 @@ abstract class EventLayoutElement extends AbstractElement
 
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_'.$key;
-            $brizySection->getItemValueWithDepth(0, 0, 0)
+            $brizyWidget->getItemValueWithDepth(0)
                 ->$properties($value);
         }
+
+        $brizySection->getItemValueWithDepth(0)->add_items([$brizyWidget]);
+
 
         return $brizySection;
     }
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getPropertiesMainSection(): array

@@ -88,17 +88,17 @@ class MBProjectDataCollector
      */
     public static function getIdByUUID($projectUUID_MB)
     {
-
         self::checkUUID($projectUUID_MB);
 
         $db = new DBConnector();
         $settingSite = $db->requestArray("SELECT id from sites WHERE uuid = '".$projectUUID_MB."'");
+
         if (empty($settingSite)) {
             Logger::instance()->info(self::trace(0).'Message: MB project not found');
             Logger::instance()->critical("MB project not found with uuid: $projectUUID_MB");
         }
 
-        return $settingSite[0]['id'];
+        return (int) $settingSite[0]['id'];
     }
 
     public static function getDomainBySiteId(int $project_ID_MB)
@@ -342,7 +342,7 @@ class MBProjectDataCollector
                             $uploadedFont[] = [
                                 'fontName' => $fontName,
                                 'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
-                                'uuid' => $this->fontsController->upLoadFont($fontName),
+                                'uuid' => $this->fontsController->upLoadFont($fontName, null, 'getMainSection'),
                             ];
 
                             $defaultFont = array_merge($defaultFont, $uploadedFont);
@@ -691,12 +691,13 @@ class MBProjectDataCollector
                         $uploadedFont[] = [
                             'fontName' => $fontName,
                             'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
-                            'uuid' => $this->fontsController->upLoadFont($fontName),
+                            'uuid' => $this->fontsController->upLoadFont($fontName, null, 'getItemsFromSection'),
                         ];
 
                         $defaultFont = array_merge($defaultFont, $uploadedFont);
                         $this->cache->set('fonts', $defaultFont, 'settings');
                         $settings['used_fonts'] = $uploadedFont;
+                        sleep(1);
                     }
                 }
             }

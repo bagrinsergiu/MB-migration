@@ -3,6 +3,8 @@
 namespace MBMigration\Builder\Media;
 
 use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
@@ -63,7 +65,7 @@ class MediaController
         }
     }
 
-    private static function getPicturesUrl($nameImage, $type): string
+    public static function getPicturesUrl($nameImage, $type): string
     {
         $cache = VariableCache::getInstance();
 
@@ -113,6 +115,7 @@ class MediaController
         foreach ($sectionsItems as &$section) {
             if (ArrayManipulator::checkArrayPath($section, 'settings/sections/background/photo')) {
                 if ($section['settings']['sections']['background']['photo'] != null) {
+
                     $result = $brizyApi->createMedia(
                         $section['settings']['sections']['background']['photo'],
                         $projectId
@@ -175,4 +178,86 @@ class MediaController
             }
         }
     }
+
+    public static function validateBgImag(
+        $background
+    ) {
+        if (empty($background)) {
+            return false;
+        }
+
+        if (filter_var($background, FILTER_VALIDATE_URL)) {
+            $imageUrl = $background;
+        } else {
+            if (strpos($background, 'background-image') !== false) {
+                preg_match('/background-image:\s*url\(["\']?(.*?)["\']?\)/', $background, $matches);
+            } else {
+                preg_match('/url\(["\']?(.*?)["\']?\)/', $background, $matches);
+            }
+
+            $imageUrl = $matches[1] ?? null;
+
+            if ($imageUrl) {
+                $imageUrl = trim($imageUrl, "'\"");
+            }
+        }
+
+        if (empty($imageUrl)) {
+            return false;
+        }
+
+        if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            return false;
+        }
+
+        $client = new Client([
+            'verify' => false,
+            'timeout' => 15,
+            'connect_timeout' => 5
+        ]);
+
+        try {
+            $response = $client->get($imageUrl);
+            if ($response->getStatusCode() !== 200) {
+                return false;
+            }
+
+            $contentType = $response->getHeaderLine('Content-Type');
+            $validImageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
+            if (!in_array(strtolower($contentType), $validImageTypes)) {
+                return false;
+            }
+
+            if (strtolower($contentType) === 'image/svg+xml') {
+                return $imageUrl;
+            }
+
+            $imageData = $response->getBody()->getContents();
+            $tempFile = tempnam(sys_get_temp_dir(), 'img');
+            file_put_contents($tempFile, $imageData);
+            $imageInfo = @getimagesize($tempFile);
+            unlink($tempFile);
+
+            if ($imageInfo === false) {
+                return false;
+            }
+
+            $minWidth = 20;
+            $minHeight = 20;
+            $width = $imageInfo[0];
+            $height = $imageInfo[1];
+            if ($width < $minWidth || $height < $minHeight) {
+                return false;
+            }
+
+            return $imageUrl;
+        } catch (RequestException $e) {
+            return false;
+        } catch (\Exception $e) {
+            Logger::instance()->error("Unexpected error validating image: $imageUrl - " . $e->getMessage());
+            return false;
+        }
+    }
+
 }
+

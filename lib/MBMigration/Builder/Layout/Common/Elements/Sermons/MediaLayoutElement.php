@@ -175,13 +175,13 @@ abstract class MediaLayoutElement extends AbstractElement
                 ->add('items', [$brizySectionFeaturedDescription]);
         } else {
             $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
-            $detailsSection = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['detail'], true));
 
             $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['GridMediaLayout']['detail'],
                 $this->getTopPaddingOfTheFirstElement(),
                 $this->getMobileTopPaddingOfTheFirstElement(),
                 $this->pageTDO,
-                $data
+                $data,
+                $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
             );
 
             $resultColorStyles['text'] = $this->getDomElementStyles(
@@ -254,7 +254,7 @@ abstract class MediaLayoutElement extends AbstractElement
                 self::DETAILS_PAGE_NAME,
             );
 
-            $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
+            $placeholder = base64_encode('{{ brizy_dc_url_post entityType="'.$detailCollectionItem['type']['id'].'" entityId="' . $detailCollectionItem['id'] . '" }}');
 
             $this->getDetailsLinksComponent($brizySectionGrid)
                 ->getValue()

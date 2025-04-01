@@ -92,7 +92,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
                 "marginType" => "ungrouped",
                 "marginSuffix" => "px",
-                "marginTop" => 10,
+                "marginTop" => 0,
                 "marginTopSuffix" => "px",
                 "marginRight" => -11,
                 "marginRightSuffix" => "px",
@@ -145,6 +145,44 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             $brizyAccordionItems[] = $brizyAccordionItemComponent;
         }
 
+        $accordionElementStyle = [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 10,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 10,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+
+        $accordionHeadTextStyle = [
+            'mobileMarginType' => 'ungrouped',
+            'mobileMarginTop' => 0,
+            'mobileMarginTopSuffix' => 'px',
+            'mobileMarginBottom' => 0,
+            'mobileMarginBottomSuffix' => 'px',
+            'mobileMarginRight' => 10,
+            'mobileMarginRightSuffix' => 'px',
+            'mobileMarginLeft' => 10,
+            'mobileMarginLeftSuffix' => 'px',
+        ];
+
+        foreach ($accordionElementStyle as $key => $value) {
+            $method = "set_".$key;
+            $brizySection->getItemWithDepth(0,1)->getValue()
+                ->$method($value);
+        }
+
+        foreach ($accordionHeadTextStyle as $key => $value) {
+            $method = "set_".$key;
+            $brizySection->getItemWithDepth(0,0)->getValue()
+                ->$method($value);
+        }
+
         $brizyAccordionComponent->set_items($brizyAccordionItems);
 
         return $brizySection;
@@ -167,7 +205,9 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 150;
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return 25 + $dtoPageStyle['headerHeight'];
     }
 
     protected function getPropertiesMainSection(): array

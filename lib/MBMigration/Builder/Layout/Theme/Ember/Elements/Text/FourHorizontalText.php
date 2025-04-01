@@ -75,6 +75,14 @@ class FourHorizontalText extends AbstractElement
         return $brizySection;
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 110;

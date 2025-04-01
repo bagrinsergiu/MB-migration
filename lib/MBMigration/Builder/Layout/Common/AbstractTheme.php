@@ -53,6 +53,14 @@ abstract class AbstractTheme implements ThemeInterface
 
         $elementsList = ['event'];
         $processedItems = [];
+        $processedEventsSectionCount = [];
+
+        foreach ($mbPageSections as $events){
+            $elementName = explode("-", $events['typeSection']);
+            if (in_array($elementName[0], $elementsList)) {
+                $processedEventsSectionCount[] = $events['typeSection'];
+            }
+        }
 
         foreach ($mbPageSections as $mbPageSection) {
 
@@ -64,6 +72,11 @@ abstract class AbstractTheme implements ThemeInterface
                 } else {
                     continue;
                 }
+            }
+
+            if (count($processedEventsSectionCount) > 1 )
+            {
+                $mbPageSection['typeSection'] = 'event-calendar-layout';
             }
 
             $elementName = $mbPageSection['typeSection'];

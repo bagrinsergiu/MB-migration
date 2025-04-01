@@ -15,6 +15,14 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     /**
      * @param BrizyComponent $brizySection
      * @return mixed

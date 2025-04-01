@@ -663,6 +663,23 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function setMobileBgColorStyle($color, $opacity): BrizyComponent
+    {
+        if($color === null || $color === '') {
+            $color = $this->getValue()->get('mobileBgColorHex');
+        }
+
+        if($opacity === null || $opacity === '') {
+            $opacity = $this->getValue()->get('mobileBgColorOpacity');
+        }
+
+        $this->getValue()->set('mobileBgColorHex', $color);
+        $this->getValue()->set('mobileBgColorOpacity', $opacity);
+        $this->getValue()->set('mobileBgColorPalette', '');
+
+        return $this;
+    }
+
     private function addConstructPadding($padding, $position, $prefix = '', $measureType = 'px'): void
     {
         $formattedPrefix = $prefix !== '' ? strtolower($prefix) : '';

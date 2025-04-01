@@ -24,9 +24,11 @@ class SermonDetailsPageLayout extends DetailsPage
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
-        $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text']);
-
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text'] ?? $sectionPalette['text']);
+
+        if($basicButtonStyleNormal['background-color-opacity'] == 0 ){
+            $basicButtonStyleNormal['background-color-opacity'] = 0.5;
+        }
 
         $richTextTitle = [
             'text' => '<p class="brz-text-lg-center brz-fss-lg-px brz-fw-lg-700 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0 brz-tp-lg-empty brz-ff-lato brz-ft-google brz-fs-lg-21" data-generated-css="brz-css-bLAMY" data-uniq-id="qQD1W"><span style="color: '.$colorTitle.';">Sermon Details</span></p>',
@@ -41,7 +43,7 @@ class SermonDetailsPageLayout extends DetailsPage
 
         $sectionStyle = [
             'paddingTop' => $this->getTopPaddingOfTheFirstElement ?? 0,
-            'bgColorHex' => $this->colorPalettes['subpalette1']['bg'] ?? $sectionPalette['bg'],
+            'bgColorHex' => $this->colorPalettes[$this->subpalette]['bg'] ?? $sectionPalette['bg'],
             'bgColorPalette' => '',
             'bgColorOpacity' => 1,
         ];
@@ -165,7 +167,7 @@ class SermonDetailsPageLayout extends DetailsPage
             "subscribeButtonBorderLeftWidth" => 1,
 
             'subscribeButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
-            'subscribeButtonBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
+            'subscribeButtonBgColorOpacity' => (int) $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             'subscribeButtonBgColorPalette' => '',
 
             'hoverSubscribeButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
@@ -177,7 +179,7 @@ class SermonDetailsPageLayout extends DetailsPage
             'subscribeEventButtonColorPalette' => '',
 
             'subscribeEventButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
-            'subscribeEventButtonBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
+            'subscribeEventButtonBgColorOpacity' =>  (int) $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             'subscribeEventButtonBgColorPalette' => '',
 
             'hoverSubscribeEventButtonBgColorHex' =>  $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
@@ -186,7 +188,7 @@ class SermonDetailsPageLayout extends DetailsPage
 
             'subscribeEventButtonBorderStyle' => 'solid',
             'subscribeEventButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'subscribeEventButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
+            'subscribeEventButtonBorderColorOpacity' => (int) $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
             'subscribeEventButtonBorderColorPalette' => '',
 
             "subscribeEventButtonBorderWidthType" => "grouped",

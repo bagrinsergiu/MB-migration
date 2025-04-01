@@ -1839,7 +1839,7 @@
   },
   "poppins": {
     "settings": {
-      "id": 82,
+      "id": 83,
       "name": "poppins",
       "display_name": "Poppins",
       "family": "Poppins, Poppins, sans-serif"
@@ -1915,6 +1915,46 @@
         ],
         "italic": [
           "fontsKit/poppins/900-black-italic/Poppins-BlackItalic.ttf"
+        ]
+      }
+    }
+  },
+  "crete_round": {
+    "settings": {
+      "id": 84,
+      "name": "crete_round",
+      "display_name": "Crete Round",
+      "family": "Crete Round, serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/crete_round/400-normal/CreteRound-Regular.ttf"
+
+        ],
+        "italic": [
+          "fontsKit/crete_round/400-italic/CreteRound-Italic.ttf"
+        ]
+      }
+    }
+  },
+  "georgia": {
+    "settings": {
+      "id": 27,
+      "name": "georgia",
+      "display_name": "Georgia",
+      "family": "Georgia, Times, 'Times New Roman', serif"
+    },
+    "fonts": {
+      "400": {
+        "normal": [
+          "fontsKit/georgia/400-normal/georgia.ttf",
+          "fontsKit/georgia/700-normal/georgiab.ttf"
+
+        ],
+        "italic": [
+          "fontsKit/georgia/400-italic/georgiai.ttf",
+          "fontsKit/georgia/700-italic/georgiaz.ttf"
         ]
       }
     }

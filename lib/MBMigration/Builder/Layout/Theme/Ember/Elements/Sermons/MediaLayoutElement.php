@@ -15,6 +15,14 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
         return $brizySection;
     }
 
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        $dtoPageStyle = $this->pageTDO->getPageStyleDetails();
+
+        return (int) $dtoPageStyle['headerHeight'];
+    }
+
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 110;

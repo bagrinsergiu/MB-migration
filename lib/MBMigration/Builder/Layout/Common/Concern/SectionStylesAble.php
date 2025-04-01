@@ -6,6 +6,7 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
 use Wrench\Exception\Exception;
@@ -39,6 +40,9 @@ trait SectionStylesAble
             $options['mobilePaddingTop'] = $this->getMobileTopPaddingOfTheFirstElement();
         }
 
+        $options['mobileMarginType'] = 'ungrouped';
+        $options['mobileMarginTop'] = $this->getMobileTopMarginOfTheFirstElement();
+
         if(
             $mustBeAdded ||
             (
@@ -47,7 +51,7 @@ trait SectionStylesAble
             )
         ) {
             foreach ($options as $key => $value) {
-               $method = 'set_'.$key;
+                $method = 'set_'.$key;
                 $section->getValue()
                     ->$method($value);
             }
@@ -122,11 +126,11 @@ trait SectionStylesAble
 
         foreach ($additionalOptions as $key => $value) {
             if (is_array($value)) {
-               continue;
+                continue;
             }
             $method = 'set_'.$key;
             $brizySection->getValue()
-                    ->$method($value);
+                ->$method($value);
         }
 
         return $brizySection;
@@ -148,7 +152,6 @@ trait SectionStylesAble
             return;
         }
 
-
         $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
             ColorConverter::rgba2opacity($sectionStyles['background-color'])
         );
@@ -159,15 +162,17 @@ trait SectionStylesAble
         if ($this->hasImageBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
             if (isset($background['filename']) && isset($background['photo'])) {
+                $validatedUrl = MediaController::validateBgImag($sectionStyles['background-image']);
+                $bgImg = $validatedUrl ? $validatedUrl : $background['photo'];
 
-//                if($background['opacity']>=0.9)
+                //                if($background['opacity']>=0.9)
 //                {
 //                    $background['opacity'] = 0.8;
 //                }
 
                 $brizySection->getValue()
+                    ->set_bgImageSrc($bgImg)
                     ->set_bgImageFileName($background['filename'])
-                    ->set_bgImageSrc($background['photo'])
                     ->set_bgSize($sectionStyles['background-size'])
                     ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
                     ->set_bgColorHex($sectionStyles['background-color'])
@@ -175,6 +180,12 @@ trait SectionStylesAble
                     ->set_mobileBgColorType('solid')
                     ->set_mobileBgColorHex($sectionStyles['background-color'])
                     ->set_mobileBgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']));
+
+                $brizySection
+                    ->getParent()
+                    ->getValue()
+                    ->set_sectionHeight(str_replace('px', '', $sectionStyles['height']) ?? 500)
+                    ->set_fullHeight('custom');
             }
         } else if ($this->hasVideoBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
@@ -196,7 +207,7 @@ trait SectionStylesAble
                         $brizySection->getValue()->set_bgAttachment('fixed');
                         break;
                     case 'fill':
-
+                        $brizySection->getValue()->set_bgAttachment('none');
                         break;
                     case 'tile':
                         $brizySection->getValue()->set_bgRepeat('on');
@@ -313,6 +324,7 @@ trait SectionStylesAble
             'color',
             'background-size',
             'background-color',
+            'background-image',
             'opacity',
             'border-bottom-color',
             'padding-top',
@@ -379,3 +391,4 @@ trait SectionStylesAble
     }
 
 }
+

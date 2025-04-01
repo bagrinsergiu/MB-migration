@@ -167,20 +167,16 @@ abstract class AbstractElement implements ElementInterface
 
     private function globalTransformSection(BrizyComponent $component)
     {
-        try {
-            $section = $component->getItemWithDepth(0);
-                if($section !== null){
-                    $section->addCustomCSS('@media (max-width: 768px) {.brz-a.brz-btn {white-space: normal;}}');
-                }
-        } catch (\Exception $e) {
-            Logger::instance()->error($e->getMessage());
-        }
-
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 50;
+    }
+
+    protected function getMobileTopMarginOfTheFirstElement(): int
+    {
+        return 0;
     }
 
     protected function getAdditionalTopPaddingOfTheFirstElement(): int
@@ -268,7 +264,7 @@ abstract class AbstractElement implements ElementInterface
     private function sectionIndentations(BrizyComponent $section){
         $section
             ->getItemWithDepth(0)
-            ->addPadding($this->pageTDO->getHeadStyle()->getHeight() ?? 10, 0, 0, 0)
+            ->addPadding($this->pageTDO->getHeadStyle()->getHeight() ?? 50, 0, 50, 0)
             ->addGroupedMargin()
             ->addMobilePadding()
             ->addMobileMargin()

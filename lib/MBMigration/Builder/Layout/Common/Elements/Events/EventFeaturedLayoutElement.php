@@ -38,6 +38,9 @@ class EventFeaturedLayoutElement  extends AbstractElement
      */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $mbSection = $data->getMbSection();
+        $mbPageSlug = $data->getThemeContext()->getSlug();
+
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventFeatured']['main'], true));
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventDetailsPage']['main'], true));
         $DetailsPageLayout = new EventDetailsPageLayout(
@@ -45,13 +48,9 @@ class EventFeaturedLayoutElement  extends AbstractElement
             $this->getTopPaddingOfTheFirstElement(),
             $this->getMobileTopPaddingOfTheFirstElement(),
             $this->pageTDO,
-            $data
+            $data,
+            $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
         );
-
-
-
-        $mbSection = $data->getMbSection();
-        $mbPageSlug = $data->getThemeContext()->getSlug();
 
         $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
         $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
@@ -81,7 +80,7 @@ class EventFeaturedLayoutElement  extends AbstractElement
             $detailsSection
         );
 
-        $placeholder = base64_encode('{{ brizy_dc_url_post entityId="' . $detailCollectionItem['id'] . '" }}');
+        $placeholder = base64_encode('{{ brizy_dc_url_post entityType="'.$detailCollectionItem['type']['id'].'" entityId="' . $detailCollectionItem['id'] . '" }}');
 
         $this->getDetailsLinksComponent($brizySection)
             ->getValue()
