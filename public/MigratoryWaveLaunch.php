@@ -6,8 +6,9 @@ class MigrationRunner
     private int $batchSize;
     private string $baseUrl;
     private string $logFile;
+    const ID_WORKSPACE = 22353065;
 
-    public function __construct(array $projectUuids, int $batchSize = 5)
+    public function __construct(array $projectUuids, int $batchSize = 3)
     {
         $this->projectUuids = $projectUuids;
         $this->batchSize = $batchSize;
@@ -78,7 +79,7 @@ class MigrationRunner
         $params = http_build_query([
             'mb_project_uuid' => $uuid,
             'brz_project_id' => 0,
-            'brz_workspaces_id' => 22334610,
+            'brz_workspaces_id' => self::ID_WORKSPACE,
             'mb_site_id' => '31383',
             'mb_secret' => 'b0kcNmG1cvoMl471cFK2NiOvCIwtPB5Q',
         ]);

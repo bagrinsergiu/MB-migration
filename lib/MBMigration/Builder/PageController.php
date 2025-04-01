@@ -11,6 +11,7 @@ use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettes;
 use MBMigration\Builder\Layout\Common\ThemeInterface;
+use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\Utils\UrlUtils;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
@@ -47,6 +48,7 @@ class PageController
     private MBProjectDataCollector $parser;
     private int $projectID_Brizy;
     private PageDto $pageDTO;
+    private ArrayManipulator $ArrayManipulator;
 
     public function __construct(
         MBProjectDataCollector $MBProjectDataCollector,
@@ -57,6 +59,7 @@ class PageController
     )
     {
         $this->cache = VariableCache::getInstance();
+        $this->ArrayManipulator = new ArrayManipulator();
         $this->pageDTO = new PageDTO();
         $this->projectStyleDTO = new PageDTO();
         $this->brizyAPI = $brizyAPI;
@@ -80,6 +83,15 @@ class PageController
         $slug = $this->cache->get('tookPage')['slug'];
         $pageId = $this->cache->get('tookPage')['id'];
         $fontController = new FontsController($brizyContainerId);
+        $fontsFromProject= $fontController->getFontsFromProjectData();
+        $previousFonts = $this->ArrayManipulator->getComparePreviousArray();
+
+        if(!$this->ArrayManipulator->compareArrays($fontsFromProject))
+        {
+            Logger::instance()->error('There is a difference in fonts -> saved: ['.json_encode($previousFonts).'], project: ['.json_encode($fontsFromProject).']');
+        } else {
+            Logger::instance()->info('Project fonts and migration fonts without damage');
+        }
 
         $fontFamily = FontsController::getFontsFamily();
 
@@ -181,6 +193,9 @@ class PageController
             $pageData = json_encode($brizySections);
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $pd = FontsController::getProject_Data();
+
+            sleep(5);
+
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
             Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());

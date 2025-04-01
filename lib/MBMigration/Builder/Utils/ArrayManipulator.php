@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Utils;
 class ArrayManipulator
 {
     private $array;
+    private array $previousArray = [];
 
     public function init(array $array) {
         $this->array = $array;
@@ -254,8 +255,66 @@ class ArrayManipulator
     private function groupItemsGalery(array $items): array
     {
 
-
         return $sections;
+    }
+
+    public function getComparePreviousArray(): array
+    {
+        return $this->previousArray;
+    }
+
+    public function compareArrays(array $newArray): bool {
+        if (empty($this->previousArray)) {
+            $this->previousArray = $newArray;
+            return true;
+        }
+
+        if ($this->hasDeletions($this->previousArray, $newArray) || !$this->hasSameUUIDs($this->previousArray, $newArray)) {
+            return false;
+        }
+
+        $this->previousArray = $newArray;
+        return true;
+    }
+
+    private function hasDeletions(array $old, array $new): bool {
+        foreach ($old as $key => $value) {
+            if (is_array($value)) {
+                if (!isset($new[$key]) || !is_array($new[$key]) || $this->hasDeletions($value, $new[$key])) {
+                    return true;
+                }
+            } elseif (!array_key_exists($key, $new)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function hasSameUUIDs(array $old, array $new): bool {
+        $oldFamilies = $this->extractFamilies($old);
+        $newFamilies = $this->extractFamilies($new);
+
+        foreach ($oldFamilies as $family => $uuid) {
+            if (isset($newFamilies[$family]) && $newFamilies[$family] !== $uuid) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function extractFamilies(array $array): array {
+        $families = [];
+        foreach ($array as $value) {
+            if (is_array($value)) {
+                if (isset($value['family'], $value['uuid'])) {
+                    $families[$value['family']] = $value['uuid'];
+                } else {
+                    $families = array_merge($families, $this->extractFamilies($value));
+                }
+            }
+        }
+        return $families;
     }
 
 }

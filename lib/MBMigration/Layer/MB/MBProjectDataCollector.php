@@ -697,6 +697,7 @@ class MBProjectDataCollector
                         $defaultFont = array_merge($defaultFont, $uploadedFont);
                         $this->cache->set('fonts', $defaultFont, 'settings');
                         $settings['used_fonts'] = $uploadedFont;
+                        sleep(1);
                     }
                 }
             }
