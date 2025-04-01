@@ -8,6 +8,8 @@ use MBMigration\Builder\Utils\ColorConverter;
 
 class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\ListLayoutElement
 {
+    private $borderColor = '';
+
     protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
         return $brizyComponent->getItemWithDepth(0);
@@ -70,11 +72,25 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
         $brizySection->getValue()->add_items([$wrapperLine]);
 
+        $sectionSubPalette = $this->getNodeSubPalette($menuSectionSelector, $this->browserPage);
+        $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
+
+        $this->borderColor = !empty($headStyle['line-color']) ? $headStyle['line-color'] : $sectionPalette['text'];
+
         return $brizySection;
     }
 
     protected function handleRowListItem(BrizyComponent $brizySection): void
     {
+        $brizySection->getValue()
+            ->set_mobileBorderColorPalette('')
+            ->set_mobileBorderColorHex($this->borderColor)
+            ->set_mobileBorderTopColor($this->borderColor)
+            ->set_mobileBorderRightColor($this->borderColor)
+            ->set_mobileBorderBottomColor($this->borderColor)
+            ->set_mobileBorderLeftColor($this->borderColor)
+            ->set_mobileBorderColorOpacity(1);
+
         $brizySection
             ->addMargin(20,0,20,0);
     }
