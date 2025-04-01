@@ -38,6 +38,9 @@ class EventFeaturedLayoutElement  extends AbstractElement
      */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $mbSection = $data->getMbSection();
+        $mbPageSlug = $data->getThemeContext()->getSlug();
+
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventFeatured']['main'], true));
 //        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventDetailsPage']['main'], true));
         $DetailsPageLayout = new EventDetailsPageLayout(
@@ -48,11 +51,6 @@ class EventFeaturedLayoutElement  extends AbstractElement
             $data,
             $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
         );
-
-
-
-        $mbSection = $data->getMbSection();
-        $mbPageSlug = $data->getThemeContext()->getSlug();
 
         $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
         $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
