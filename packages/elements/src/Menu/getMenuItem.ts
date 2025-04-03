@@ -41,6 +41,7 @@ const getV = (entry: MenuItemData) => {
     "font-style": "",
     "color-hex": undefined,
     "color-opacity": 1,
+    "color-palette": "",
     italic: false
   };
 
@@ -62,7 +63,8 @@ const getV = (entry: MenuItemData) => {
 
   const bgModel = {
     "menu-bg-color-hex": undefined,
-    "menu-bg-color-opacity": 1
+    "menu-bg-color-opacity": 1,
+    "menu-bg-color-palette": ""
   };
 
   const bgV = getModel({
@@ -87,7 +89,8 @@ const getV = (entry: MenuItemData) => {
 
   const mobileMenuModel = {
     "m-menu-bg-color-hex": undefined,
-    "m-menu-bg-color-opacity": 1
+    "m-menu-bg-color-opacity": 1,
+    "m-menu-bg-color-palette": ""
   };
 
   if (itemMobileNav) {
@@ -104,7 +107,8 @@ const getV = (entry: MenuItemData) => {
 
   const mobileIconModel = {
     "m-menu-icon-color-hex": undefined,
-    "m-menu-icon-color-opacity": undefined
+    "m-menu-icon-color-opacity": undefined,
+    "m-menu-icon-color-palette": ""
   };
 
   if (itemMobileIcon) {
@@ -128,8 +132,10 @@ const getHoverV = (entry: MenuItemData) => {
   const model = {
     "hover-color-hex": undefined,
     "hover-color-opacity": 1,
+    "hover-color-palette": "",
     "active-color-hex": undefined,
-    "active-color-opacity": 1
+    "active-color-opacity": 1,
+    "active-color-palette": ""
   };
 
   const v = getModel({
@@ -142,7 +148,8 @@ const getHoverV = (entry: MenuItemData) => {
   const mMenu = prefixed(v, "mMenu");
   const bgModel = {
     "hover-menu-bg-color-hex": undefined,
-    "hover-menu-bg-color-opacity": undefined
+    "hover-menu-bg-color-opacity": undefined,
+    "hover-menu-bg-color-palette": ""
   };
 
   const bgV = getModel({

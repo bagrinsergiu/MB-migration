@@ -25,11 +25,14 @@ const ex1: Data = {
     data: {
       borderColorHex: "#000000",
       borderColorOpacity: 1,
+      borderColorPalette: "",
       bgColorHex: "#ffffff",
       bgColorOpacity: 1,
+      bgColorPalette: "",
       borderWidth: NaN,
       colorHex: "#000000",
       colorOpacity: 1,
+      colorPalette: "",
       fontFamily: "lato",
       fontFamilyType: "upload",
       fontSize: NaN,
@@ -42,7 +45,8 @@ const ex1: Data = {
       navStyle: "style-3",
       uppercase: false,
       contentBgColorHex: "#ffffff",
-      contentBgColorOpacity: 1
+      contentBgColorOpacity: 1,
+      contentBgColorPalette: ""
     }
   }
 };
@@ -79,13 +83,17 @@ const ex2: Data = {
     data: {
       bgColorHex: "#ffffff",
       bgColorOpacity: 1,
+      bgColorPalette: "",
       borderColorHex: "#000000",
       borderColorOpacity: 1,
+      borderColorPalette: "",
       borderWidth: NaN,
       colorHex: "#000000",
       colorOpacity: 1,
+      colorPalette: "",
       contentBgColorHex: "#ffffff",
       contentBgColorOpacity: 1,
+      contentBgColorPalette: "",
       fontFamily: "lato",
       fontFamilyType: "upload",
       fontSize: 16,
