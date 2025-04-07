@@ -297,19 +297,23 @@ trait RichTextAble
 
     private function handleLink($mbSectionItem, $brizyComponent, $selector, $browserPage)
     {
-        if ($mbSectionItem['new_window']) {
-            $mbSectionItem['new_window'] = 'on';
-        } else {
-            $mbSectionItem['new_window'] = $this->openNewTab(
-                $this->getNodeAttribute(
-                    $browserPage,
-                    $selector,
-                    'target'
-                )
-            );
-        }
+        if (!empty($mbSectionItem['link'])) {
+            if ($mbSectionItem['new_window']) {
+                $mbSectionItem['new_window'] = 'on';
+            } else {
+                try{
+                    $mbSectionItem['new_window'] = $this->openNewTab(
+                        $this->getNodeAttribute(
+                            $browserPage,
+                            $selector,
+                            'target'
+                        )
+                    );
+                } catch (Exception $e) {
+                    $mbSectionItem['new_window'] = 'on';
+                }
+            }
 
-        if ($mbSectionItem['link'] != '') {
             if ($this->findTag($mbSectionItem['link'], 'iframe')) {
                 $popupFromKit = $this->globalBrizyKit['popup']['popup--embedCode'];
                 $popupSection = new BrizyComponent(json_decode($popupFromKit, true));
