@@ -160,7 +160,7 @@ abstract class GridLayoutElement extends AbstractElement
                                         $brizySectionItem
                                     );
 
-                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
+                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, null, $mbItem['id'] ?? null);
                                 }
                             }
                     }
