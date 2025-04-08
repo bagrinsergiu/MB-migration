@@ -23,12 +23,42 @@ class MediaController
         return Config::$MBMediaStaging."/".$prefix.'/'.$uuid.'/documents/'.$fileName;
     }
 
-    public static function is_doc($file): bool
+    public static function getMediaURL(string $fileName, string $directory): string
+    {
+        $cache = VariableCache::getInstance();
+        $uuid = $cache->get('settings')['uuid'];
+        $prefix = substr($uuid, 0, 2);
+
+        return rtrim(Config::$MBMediaStaging, '/') . "/{$prefix}/{$uuid}/{$directory}/{$fileName}";
+    }
+
+    public static function isDoc($file): bool
     {
         if(!filter_var($file, FILTER_VALIDATE_URL)){
             $extension = pathinfo($file, PATHINFO_EXTENSION);
             if ($extension === 'pdf' || $extension === 'doc' || $extension === 'docx') {
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function isVideo($file): bool
+    {
+        if (!filter_var($file, FILTER_VALIDATE_URL)) {
+            $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+            $videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', 'wmv', 'm4v'];
+
+            if (in_array($extension, $videoExtensions)) {
+                return true;
+            }
+
+            if (file_exists($file)) {
+                $mimeType = mime_content_type($file);
+                if (strpos($mimeType, 'video/') === 0) {
+                    return true;
+                }
             }
         }
 
