@@ -23,7 +23,12 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0,0);
+        $brizyComponent
+            ->getItemWithDepth(0)
+            ->addPadding(0,0,10,0);
+
+        return $brizyComponent
+            ->getItemWithDepth(0,0);
     }
 
     protected function handleItemRowComponent(BrizyComponent $brizyComponent):void
