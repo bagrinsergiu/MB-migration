@@ -18,6 +18,8 @@ abstract class FormElement extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->getJsonFromBrizyKit(), true));
         $brizySection->getValue()->set_marginTop(0);
+        $brizySection->getValue()->set_tabletMarginTop(0);
+        $brizySection->getValue()->set_mobileMarginTop(0);
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
 
