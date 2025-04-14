@@ -9,16 +9,19 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrizyKitNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Core\Logger;
 
 trait DonationsAble
 {
     /**
      * Process and add all items the same brizy section
+     * @throws Exception
      */
     protected function handleDonations(
         ElementContextInterface $data,
         BrowserPageInterface    $browserPage,
-        array                   $brizyKit
+        array                   $brizyKit,
+        array                   $options = null
     ): BrizyComponent
     {
 
@@ -26,7 +29,8 @@ trait DonationsAble
         $brizySection = $data->getBrizySection();
 
         if (!isset($brizyKit['donation-button'])) {
-            throw new BrizyKitNotFound('The BrizyKit does not contain the key: donation-button');
+            Logger::instance()->critical('The BrizyKit does not contain the key: donation-button', [$mbSection['typeSection']]);
+            return $brizySection;
         }
 
         try {
@@ -50,14 +54,38 @@ trait DonationsAble
                         $mbSection
                     );
 
+                    if ($options && $this->hasMobilePaddingOptions($options)) {
+                        $brizyDonationButton->addMobilePadding([
+                            $options['mobilePaddingTop'] ?? 0,
+                            $options['mobilePaddingRight'] ?? 0,
+                            $options['mobilePaddingBottom'] ?? 0,
+                            $options['mobilePaddingLeft'] ?? 0,
+                        ]);
+                    } else {
+                        $brizyDonationButton->addMobilePadding([10, 0, 10, 0,]);
+                    }
+
                     $brizySection->getValue()->add_items([$brizyDonationButton]);
                     break;
             }
         } catch (Exception $e) {
-
+            Logger::instance()->error('The Donate Button element returns an error message', [$e->getMessage(), $e->getTraceAsString(), $mbSection['typeSection']]);
+            return $brizySection;
         }
 
         return $brizySection;
+    }
+
+    private function hasMobilePaddingOptions(array $options): bool
+    {
+        $paddingKeys = [
+            'mobilePaddingTop',
+            'mobilePaddingRight',
+            'mobilePaddingBottom',
+            'mobilePaddingLeft',
+        ];
+
+        return (bool) array_intersect($paddingKeys, array_keys($options));
     }
 
     /**

@@ -8,6 +8,7 @@ use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 
 abstract class FullMediaElementElement extends AbstractElement
 {
@@ -15,6 +16,9 @@ abstract class FullMediaElementElement extends AbstractElement
     use SectionStylesAble;
     use DonationsAble;
 
+    /**
+     * @throws BadJsonProvided
+     */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -30,7 +34,7 @@ abstract class FullMediaElementElement extends AbstractElement
         $brizySectionItemComponent = $this->getTextContainerComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
         $brizyImageWrapperComponent = $this->getImageWrapperComponent($brizySection);
         $brizyImageComponent = $this->getImageComponent($brizySection);

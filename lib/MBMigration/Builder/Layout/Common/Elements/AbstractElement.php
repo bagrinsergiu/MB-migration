@@ -202,6 +202,16 @@ abstract class AbstractElement implements ElementInterface
         ];
     }
 
+    protected function getDonationsButtonOptions(): array
+    {
+        return [
+            'mobilePaddingTop' => 0,
+            'mobilePaddingRight' => 0,
+            'mobilePaddingBottom' => 0,
+            'mobilePaddingLeft' => 0,
+        ];
+    }
+
     private function initialBehavior(ElementContextInterface $data): void
     {
         $this->getBasicStyleForButton($data);

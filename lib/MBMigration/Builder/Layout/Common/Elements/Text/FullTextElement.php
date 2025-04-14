@@ -36,7 +36,7 @@ abstract class FullTextElement extends AbstractElement
 
         $elementContext = $data->instanceWithBrizyComponent($textContainerComponent);
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
         // not sure if this must be there or in a concrete theme
         // the image in the bg is not always correctly fitted
