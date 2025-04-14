@@ -31,6 +31,16 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             ->getItemWithDepth(0,0);
     }
 
+    protected function getDonationsButtonOptions(): array
+    {
+        return [
+            'mobilePaddingTop' => 10,
+            'mobilePaddingRight' => 0,
+            'mobilePaddingBottom' => 10,
+            'mobilePaddingLeft' => 0,
+        ];
+    }
+
     protected function handleItemRowComponent(BrizyComponent $brizyComponent):void
     {
         $brizyComponent

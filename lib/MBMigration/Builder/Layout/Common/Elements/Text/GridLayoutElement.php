@@ -141,7 +141,7 @@ abstract class GridLayoutElement extends AbstractElement
                             }
 
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
-                            $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+                            $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
                             break;
                     }
                 }

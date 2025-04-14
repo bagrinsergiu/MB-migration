@@ -104,7 +104,7 @@ abstract class ListLayoutElement extends AbstractElement
                         $mbItem,
                         $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
                     );
-                    $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+                    $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
                 }
             }
 
