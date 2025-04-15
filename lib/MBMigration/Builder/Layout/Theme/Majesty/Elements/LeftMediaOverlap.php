@@ -57,7 +57,7 @@ class LeftMediaOverlap extends AbstractElement
         }
 
         $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0, 0, 1));
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit);
 
         $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
         $this->handleSectionStyles($elementContext, $this->browserPage);

@@ -47,7 +47,7 @@ class FourHorizontalText extends AbstractElement
         }
         $brizySection->getItemValueWithDepth(0,0)->add_items($columns);
 
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit);
 
         return $brizySection;
     }

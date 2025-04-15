@@ -184,7 +184,7 @@ trait SectionStylesAble
                 $brizySection
                     ->getParent()
                     ->getValue()
-                    ->set_sectionHeight(str_replace('px', '', $sectionStyles['height']) ?? 500)
+                    ->set_sectionHeight((int) str_replace('px', '', $sectionStyles['height']) ?? 500)
                     ->set_fullHeight('custom');
             }
         } else if ($this->hasVideoBackground($mbSectionItem)) {
