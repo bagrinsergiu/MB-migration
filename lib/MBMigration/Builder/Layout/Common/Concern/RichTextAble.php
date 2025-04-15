@@ -140,6 +140,44 @@ trait RichTextAble
         return $brizySection;
     }
 
+    protected function handleOnlyRichTextItems(ElementContextInterface $data, BrowserPageInterface $browserPage): BrizyComponent
+    {
+        $mbSectionItem = $data->getMbSection();
+        $brizySection = $data->getBrizySection();
+
+        $sectionCategory = $mbSectionItem['category'];
+        $showHeader = $this->canShowHeader($mbSectionItem);
+        $showBody = $this->canShowBody($mbSectionItem);
+
+        // sort items
+        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+
+        foreach ((array)$mbSectionItem['items'] as $mbItem) {
+
+            if ($mbItem['category'] == $sectionCategory && isset($mbItem['item_type'])) {
+                if ($mbItem['item_type'] == 'title' && !$showHeader) {
+                    continue;
+                }
+                if ($mbItem['item_type'] == 'body' && !$showBody) {
+                    continue;
+                }
+
+            }
+
+            $elementContext = $data->instanceWithMBSection($mbItem);
+            try {
+                $this->handleOnlyRichTextItem(
+                    $elementContext,
+                    $browserPage
+                );
+            } catch (Exception $e) {
+                Logger::instance()->info($e->getMessage());
+            }
+        }
+
+        return $brizySection;
+    }
+
     /**
      * Process single rich text item and place it the brizy section
      */
@@ -148,7 +186,7 @@ trait RichTextAble
         BrowserPageInterface    $browserPage,
                                 $selector = null,
                                 $settings = []
-    )
+    ): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
@@ -185,6 +223,34 @@ trait RichTextAble
                 );
 
                 break;
+        }
+
+        return $brizyComponent;
+    }
+
+    protected function handleOnlyRichTextItem(
+        ElementContextInterface $data,
+        BrowserPageInterface    $browserPage,
+                                $selector = null,
+                                $settings = []
+    ): BrizyComponent
+    {
+        $mbSectionItem = $data->getMbSection();
+        $families = $data->getFontFamilies();
+        $default_fonts = $data->getDefaultFontFamily();
+        $brizyComponent = $data->getBrizySection();
+
+        if ($mbSectionItem['category'] == 'text') {
+            $brizyComponent = $this->handleTextItem(
+                $mbSectionItem,
+                $brizyComponent,
+                $browserPage,
+                $families,
+                $default_fonts,
+                $data->getThemeContext()->getUrlMap(),
+                $selector,
+                $settings
+            );
         }
 
         return $brizyComponent;
@@ -254,7 +320,7 @@ trait RichTextAble
         BrowserPageInterface $browserPage,
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
-    )
+    ): BrizyComponent
     {
 
         if (!empty($mbSectionItem['content'])) {

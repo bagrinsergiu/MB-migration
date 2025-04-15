@@ -31,10 +31,10 @@ abstract class FullMediaElementElement extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $brizySectionItemComponent);
 
-        $brizySectionItemComponent = $this->getTextContainerComponent($brizySection);
-        $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
-        $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
+        $brizyTextContainerComponent = $this->getTextContainerComponent($brizySection);
+        $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyTextContainerComponent);
+        $this->handleRichTextItems($elementTextContainerComponentContext, $this->browserPage);
+        $this->handleDonationsButton($elementTextContainerComponentContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
         $brizyImageWrapperComponent = $this->getImageWrapperComponent($brizySection);
         $brizyImageComponent = $this->getImageComponent($brizySection);
@@ -63,7 +63,14 @@ abstract class FullMediaElementElement extends AbstractElement
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
         $images = $this->getItemsByCategory($mbSectionItem, 'photo');
         $imageMb = array_pop($images);
-        $this->handlePhotoItem($imageMb['id'],$imageMb,$brizyImageComponent,$this->browserPage,$data->getFontFamilies(),$data->getDefaultFontFamily());
+        $this->handlePhotoItem(
+            $imageMb['id'],
+            $imageMb,
+            $brizyImageComponent,
+            $this->browserPage,
+            $data->getFontFamilies(),
+            $data->getDefaultFontFamily()
+        );
 
         return $brizySection;
     }

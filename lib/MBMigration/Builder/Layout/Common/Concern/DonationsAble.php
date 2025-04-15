@@ -17,7 +17,7 @@ trait DonationsAble
      * Process and add all items the same brizy section
      * @throws Exception
      */
-    protected function handleDonations(
+    protected function handleDonationsButton(
         ElementContextInterface $data,
         BrowserPageInterface    $browserPage,
         array                   $brizyKit,
