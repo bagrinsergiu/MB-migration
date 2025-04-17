@@ -141,7 +141,7 @@ abstract class GridLayoutElement extends AbstractElement
                             }
 
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
-                            $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+                            $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
                             break;
                     }
                 }
@@ -160,7 +160,7 @@ abstract class GridLayoutElement extends AbstractElement
                                         $brizySectionItem
                                     );
 
-                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
+                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, null, $mbItem['id'] ?? null);
                                 }
                             }
                     }

@@ -743,5 +743,20 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addHeight(int $int, string $string = 'px')
+    {
+        $this->getValue()->set('height', $int);
+        $this->getValue()->set('heightSuffix', $string);
+        return $this;
+    }
+
+    public function addSectionHeight(int $int, string $suffix = 'vh')
+    {
+        $this->getValue()->set('sectionHeight', $int);
+        $this->getValue()->set('fullHeight', 'custom');
+        $this->getValue()->set('sectionHeightSuffix', $suffix);
+        return $this;
+    }
+
 
 }

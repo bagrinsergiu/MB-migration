@@ -80,7 +80,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizySection;
     }
 
-    protected function handleRowListItem(BrizyComponent $brizySection): void
+    protected function handleRowListItem(BrizyComponent $brizySection, $position = null): void
     {
         $brizySection->getValue()
             ->set_mobileBorderColorPalette('')

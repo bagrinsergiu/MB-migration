@@ -21,7 +21,7 @@ trait ButtonAble
         ElementContextInterface $data,
         BrowserPageInterface $browserPage,
         array $brizyKit,
-        $selector = '',
+        $selector = null,
         $options = null
     ): BrizyComponent {
 
@@ -45,6 +45,7 @@ trait ButtonAble
                     $selector = $selector ?? '[data-id="'.$mbSection['id'].'"]';
 
                     $brizyButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
+
                     $brizyButton = $this->setButtonStyles(
                         $brizyButton,
                         $browserPage,

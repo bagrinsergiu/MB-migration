@@ -32,6 +32,16 @@ class FullText extends FullTextElement
         return $brizySection;
     }
 
+    protected function getDonationsButtonOptions(): array
+    {
+        return [
+            'mobilePaddingTop' => 10,
+            'mobilePaddingRight' => 0,
+            'mobilePaddingBottom' => 10,
+            'mobilePaddingLeft' => 0,
+        ];
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

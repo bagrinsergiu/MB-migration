@@ -47,7 +47,7 @@ class TwoRightMediaCircle extends PhotoTextElement
         }
 
         $elementContext = $data->instanceWithBrizyComponent($this->getTextComponent($brizySection));
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit);
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
