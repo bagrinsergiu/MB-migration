@@ -71,6 +71,10 @@ abstract class TabsLayoutElement extends AbstractElement
             $tabContainerComponentValue->set_bgColorOpacity(0);
         }
 
+        $this->afterTransformToTabsItem($brizySection);
+
+
+
         return $brizySection;
     }
 
@@ -121,6 +125,10 @@ background-color:transparent !important;
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function afterTransformToTabsItem(BrizyComponent $brizyTabSection)
+    {
     }
 
 }
