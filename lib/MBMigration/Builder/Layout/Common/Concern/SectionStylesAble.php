@@ -97,7 +97,9 @@ trait SectionStylesAble
             $sectionStyles['bg-gradient'] = $additionalOptions['bg-gradient'];
         }
 
-        $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles);
+        $options = ['heightType' => $this->getHeightTypeHandleSectionStyles()];
+
+        $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles, $options);
 
         // set the background color paddings and margins
         $brizySection->getValue()
@@ -146,7 +148,7 @@ trait SectionStylesAble
         return isset($mbSectionItem['settings']['sections']['background']['video']) && $mbSectionItem['settings']['sections']['background']['video'] != '';
     }
 
-    private function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles)
+    private function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom'])
     {
         if ($brizySection->getType() == 'Section') {
             return;
@@ -181,11 +183,20 @@ trait SectionStylesAble
                     ->set_mobileBgColorHex($sectionStyles['background-color'])
                     ->set_mobileBgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']));
 
-                $brizySection
-                    ->getParent()
-                    ->getValue()
-                    ->set_sectionHeight((int) str_replace('px', '', $sectionStyles['height']) ?? 500)
-                    ->set_fullHeight('custom');
+                if($options['heightType'] == 'auto'){
+                    $brizySection
+                        ->getParent()
+                        ->getValue()
+                        ->set_sectionHeight(500)
+                        ->set_fullHeight('auto');
+                } else if ($options['heightType'] == 'custom') {
+                    $brizySection
+                        ->getParent()
+                        ->getValue()
+                        ->set_sectionHeight((int) str_replace('px', '', $sectionStyles['height']) ?? 500)
+                        ->set_fullHeight('custom');
+                }
+
             }
         } else if ($this->hasVideoBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];

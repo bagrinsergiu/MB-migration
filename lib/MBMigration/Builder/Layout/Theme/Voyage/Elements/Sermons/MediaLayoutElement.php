@@ -15,6 +15,13 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
         return 25;
     }
 
+    protected function getHeightTypeHandleSectionStyles(): string
+    {
+        // default option custom
+        // auto/custom/full
+        return 'auto';
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
@@ -31,7 +38,7 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 50,
+            "paddingTop" => 70,
             "paddingTopSuffix" => "px",
             "paddingBottom" => 50,
             "paddingBottomSuffix" => "px",
