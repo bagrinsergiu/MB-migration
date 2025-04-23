@@ -169,6 +169,14 @@ abstract class AbstractElement implements ElementInterface
     {
     }
 
+    protected function getHeightTypeHandleSectionStyles(): string
+    {
+        // default option custom
+        // auto/custom/full
+        return 'custom';
+    }
+
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 50;
