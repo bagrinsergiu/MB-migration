@@ -165,6 +165,7 @@ abstract class GridLayoutElement extends AbstractElement
                             }
                     }
                 }
+                $this->handleColumItemComponent($brizySectionItem);
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
             }
             $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
@@ -225,6 +226,10 @@ abstract class GridLayoutElement extends AbstractElement
         $brizyComponent
             ->addPadding(20,0,20,0)
             ->addMobilePadding(10);
+    }
+
+    protected function handleColumItemComponent(BrizyComponent $brizyComponent):void
+    {
     }
 
     protected function getPropertiesMainSection(): array
