@@ -115,6 +115,31 @@ return static function (array $context, Request $request): Response {
 
     $mb_page_slug = $request->get('mb_page_slug') ?? '';
 
+    if ($request->getPathInfo() === '/bridge') {
+        $targetProjectID = $request->get('target_project_id');
+        $sourceProjectID = $request->get('source_project_id');
+
+        if (!$targetProjectID || !$sourceProjectID) {
+            return new JsonResponse(['error' => 'Missing brz_project_id parameter'], 400);
+        }
+
+        try{
+            $bridge = new MBMigration\Bridge\Bridge(
+                $config,
+                $targetProjectID,
+                $sourceProjectID,
+            );
+
+            $bridge->startProjectTransfer();
+
+
+        } catch (Exception $e) {
+
+        }
+
+    }
+
+
     $lockFile = $context['CACHE_PATH']."/".$mb_project_uuid."-".$brz_project_id.".lock";
 
     if (file_exists($lockFile)) {
