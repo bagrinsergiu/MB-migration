@@ -115,26 +115,26 @@ return static function (array $context, Request $request): Response {
 
     $mb_page_slug = $request->get('mb_page_slug') ?? '';
 
-    if ($request->getPathInfo() === '/bridge') {
-        $targetProjectID = $request->get('target_project_id');
+    if ($request->getPathInfo() === '/mapping') {
         $sourceProjectID = $request->get('source_project_id');
 
-        if (!$targetProjectID || !$sourceProjectID) {
+        if (!$sourceProjectID) {
             return new JsonResponse(['error' => 'Missing brz_project_id parameter'], 400);
         }
 
         try{
-            $bridge = new MBMigration\Bridge\Bridge(
-                $config,
-                $targetProjectID,
-                $sourceProjectID,
-            );
+            $bridge = new MBMigration\Bridge\Bridge($config);
+            $bridge->setSourceProject($sourceProjectID);
 
-            $bridge->startProjectTransfer();
+           $preparedProjectID = $bridge->checkPreparedProject();
 
-
+           if ($preparedProjectID) {
+               return new JsonResponse(['data' => $preparedProjectID], 404);
+           } else {
+               return new JsonResponse(['error' => 'Project not found'], 404);
+           }
         } catch (Exception $e) {
-
+            return new JsonResponse(['error' => 'Project not found'], 404);
         }
 
     }
