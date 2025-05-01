@@ -1,14 +1,14 @@
 x-environment:
   - &service
 
-networks:
-  migration_networks:
-    driver: bridge
-
 services:
   migration:
     platform: linux/amd64
+    container_name: mg_migration
     restart: "no"
+    depends_on:
+      mg_mysql:
+        condition: service_healthy
     ports:
       - 8080:80
     build:
@@ -19,32 +19,33 @@ services:
       APP_DEBUG: 1
     volumes:
       - ./:/project
-    networks:
-      - migration_networks
 
-  mysql:
+  mg_mysql:
     platform: linux/amd64
     image: mysql:8.0
-    container_name: migration_mysql
+    container_name: mg_mysql
     restart: unless-stopped
     tty: true
     ports:
       - 3306:3306
     volumes:
       - ./mysql:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
     environment:
-      MYSQL_DATABASE: migration_DB
+      MYSQL_DATABASE: MG_prepare_mapping
       MYSQL_USER: user
       MYSQL_PASSWORD: user
       MYSQL_ROOT_PASSWORD: root
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    networks:
-      - migration_networks
 
   dependencies:
     platform: linux/amd64
+    container_name: mg_dependencies
     restart: "no"
     build:
       context: ./

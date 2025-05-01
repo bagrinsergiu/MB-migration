@@ -2,6 +2,7 @@
 
 namespace MBMigration\Layer\DataSource\driver;
 
+use mysql_xdevapi\Exception;
 use PDO;
 use PDOException;
 
@@ -35,7 +36,7 @@ class MySQL
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            die("Error : " . $e->getMessage());
+            throw new Exception("Database connection failed: ".$e->getMessage());
         }
     }
 

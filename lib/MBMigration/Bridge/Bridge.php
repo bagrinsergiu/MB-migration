@@ -3,30 +3,43 @@
 namespace MBMigration\Bridge;
 
 use MBMigration\Core\Config;
+use MBMigration\Layer\DataSource\driver\MySQL;
+use Symfony\Component\HttpFoundation\Request;
 
 class Bridge
 {
     private Config $config;
+
+    private MgResponse $mgResponse;
     private string $sourceProject;
+    private Request $request;
+    private array $allList;
+    private int $preparedProject;
 
     public function __construct(
-        Config $config
+        Config $config,
+        Request $request
     )
     {
         $this->config = $config;
+        $this->request = $request;
 
-        return $this;
+        $this->mgResponse = new MgResponse();
     }
 
-    public function checkPreparedProject()
+    public function checkPreparedProject(): Bridge
     {
+        $this->doConnectionToDB();
 
-        $this->doConnectionToLocalDB();
-        $preparedProjectID = null;
+        $this->request->get('source_project_id');
 
+        $this->preparedProject = 1231231231;
 
-        return $preparedProjectID;
+        $this->mgResponse
+            ->setMessage($this->preparedProject)
+            ->setStatusCode(200);
 
+        return $this;
     }
 
     public function getSourceProject()
@@ -41,12 +54,32 @@ class Bridge
         return $this;
     }
 
-    private function doConnectionToLocalDB()
+    private function doConnectionToDB()
     {
+        $PDOconnection = new MySQL(
+            Config::$mgConfigMySQL['dbUser'],
+            Config::$mgConfigMySQL['dbPass'],
+            Config::$mgConfigMySQL['dbName'],
+            Config::$mgConfigMySQL['dbHost'],
+        );
+        $PDOconnection->doConnect();
 
+    }
 
+    public function getMessageResponse(): MgResponse
+    {
+        return $this->mgResponse;
+    }
 
+    public function getPreparedMappingList(): Bridge
+    {
+        $this->allList = [1231231231=> 'asdasd-ewe33-asd-czxcddbn'];
 
+        $this->mgResponse
+            ->setMessage($this->allList)
+            ->setStatusCode(200);
+
+        return $this;
     }
 
 
