@@ -4,7 +4,7 @@ namespace MBMigration\Bridge;
 
 class MgResponse
 {
-    private array $message;
+    private array $message = ['code' => 200, 'body' => ''];
 
     public function getMessage(): array
     {

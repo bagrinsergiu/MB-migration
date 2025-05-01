@@ -32,9 +32,7 @@ return static function (array $context, Request $request): Response
                 $response->getStatusCode()
             );
         case '/mapping/list':
-            $response = $bridge
-                ->getPreparedMappingList()
-                ->getMessageResponse();
+            $response = $bridge->mappingList();
 
             return new JsonResponse(
                 $response->getMessage(),

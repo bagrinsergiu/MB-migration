@@ -2,7 +2,7 @@
 
 namespace MBMigration\Layer\DataSource\driver;
 
-use mysql_xdevapi\Exception;
+use Exception;
 use PDO;
 use PDOException;
 
@@ -25,7 +25,11 @@ class MySQL
         $this->setPassword($password);
     }
 
-    public function doConnect() {
+    /**
+     * @throws Exception
+     */
+    public function doConnect(): MySQL
+    {
         try {
             $this->pdo = new PDO(
                 $this->getDSN(),
@@ -38,20 +42,35 @@ class MySQL
         } catch (PDOException $e) {
             throw new Exception("Database connection failed: ".$e->getMessage());
         }
+
+        return $this;
     }
 
-    // Получить одно значение (например, имя пользователя по ID)
     public function getSingleValue($sql, $params = []) {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
-        return $stmt->fetchColumn();  // возвращает первую колонку первой строки
+        return $stmt->fetchColumn();
     }
 
-    // Получить массив строк (например, список всех пользователей)
     public function getAllRows($sql, $params = []) {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
-        return $stmt->fetchAll();  // возвращает все строки
+        return $stmt->fetchAll();
+    }
+
+    public function insert($table, $data) {
+        $columns = implode(", ", array_keys($data));
+        $placeholders = ":" . implode(", :", array_keys($data));
+
+        $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
+        $stmt = $this->pdo->prepare($sql);
+
+        foreach ($data as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+
+        $stmt->execute();
+        return $this->pdo->lastInsertId();
     }
 
     private function setUserName($username)
