@@ -59,9 +59,9 @@ class LeftMedia extends PhotoTextElement
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 0,
+            "paddingTop" => 100,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 0,
+            "paddingBottom" => 100,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",
