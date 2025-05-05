@@ -25,7 +25,17 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     {
         $brizySection->getItemWithDepth(0)
             ->addMobilePadding([0,0,0,0])
-            ->addMobileMargin([0,-20,0,-20]);
+            ->addMobileMargin([0,0,0,0])
+            ->addMargin(
+                0,
+                -20,
+                0,
+                -20);
+    }
+
+    protected function afterTransformToTabsItem(BrizyComponent $brizyTabSection)
+    {
+        $brizyTabSection->addMobileMargin([0, 10, 0, 10]);
     }
 
     /**

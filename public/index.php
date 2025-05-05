@@ -36,6 +36,25 @@ return static function (array $context, Request $request): Response {
         return new JsonResponse(['migration_id' => $migrationId, 'logs' => $logs]);
     }
 
+    if ($request->getPathInfo() === '/mapping') {
+        $sourceProjectID = $request->get('source_project_id');
+
+        if (!$sourceProjectID) {
+            return new JsonResponse(['error' => 'Missing brz_project_id parameter'], 400);
+        }
+
+        try{
+            if ($sourceProjectID === '0fcd78d5-081d-4b45-a085-fd3c7e8b2803'){
+                return new JsonResponse(['value' => 12345678], 200);
+            }else{
+                return new JsonResponse(['error' => 'Project not found'], 404);
+            }
+        } catch (Exception $e) {
+            return new JsonResponse(['error' => 'Project not found'], 400);
+        }
+
+    }
+
     $settings = [
         'devMode' => (bool) $context['DEV_MODE'] ?? false,
         'db' => [

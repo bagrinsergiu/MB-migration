@@ -8,6 +8,7 @@ use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 
 abstract class FullTextElement extends AbstractElement
 {
@@ -15,6 +16,10 @@ abstract class FullTextElement extends AbstractElement
     use SectionStylesAble;
     use DonationsAble;
 
+    /**
+     * @throws BadJsonProvided
+     * @throws \Exception
+     */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -36,7 +41,7 @@ abstract class FullTextElement extends AbstractElement
 
         $elementContext = $data->instanceWithBrizyComponent($textContainerComponent);
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
         // not sure if this must be there or in a concrete theme
         // the image in the bg is not always correctly fitted

@@ -5,10 +5,14 @@ namespace MBMigration\Builder\Layout\Theme\Serene\Elements\Text;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 
 class TwoRightMediaCircle extends PhotoTextElement
 {
 
+    /**
+     * @throws BadJsonProvided
+     */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
@@ -47,7 +51,7 @@ class TwoRightMediaCircle extends PhotoTextElement
         }
 
         $elementContext = $data->instanceWithBrizyComponent($this->getTextComponent($brizySection));
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);

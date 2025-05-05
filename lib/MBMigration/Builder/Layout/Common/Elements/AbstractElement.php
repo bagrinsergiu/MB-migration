@@ -169,6 +169,14 @@ abstract class AbstractElement implements ElementInterface
     {
     }
 
+    protected function getHeightTypeHandleSectionStyles(): string
+    {
+        // default option custom
+        // auto/custom/full
+        return 'custom';
+    }
+
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 50;
@@ -199,6 +207,16 @@ abstract class AbstractElement implements ElementInterface
         return [
             "marginLeft" => 0,
             "marginRight" => 0,
+        ];
+    }
+
+    protected function getDonationsButtonOptions(): array
+    {
+        return [
+            'mobilePaddingTop' => 0,
+            'mobilePaddingRight' => 0,
+            'mobilePaddingBottom' => 0,
+            'mobilePaddingLeft' => 0,
         ];
     }
 

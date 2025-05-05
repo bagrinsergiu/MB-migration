@@ -28,6 +28,7 @@ const getV = (entry: MenuItemData) => {
     "font-style": "",
     "color-hex": undefined,
     "color-opacity": undefined,
+    "color-palette": "",
     italic: false
   };
 
@@ -40,7 +41,8 @@ const getV = (entry: MenuItemData) => {
 
   const bgModel = {
     "bg-color-hex": undefined,
-    "bg-color-opacity": undefined
+    "bg-color-opacity": undefined,
+    "bg-color-palette": ""
   };
   const bgV = getModel({
     node: itemBg,
@@ -57,7 +59,8 @@ const getHoverV = (entry: MenuItemData) => {
 
   const model = {
     "color-hex": undefined,
-    "color-opacity": undefined
+    "color-opacity": undefined,
+    "color-palette": ""
   };
 
   const v = getModel({
@@ -69,7 +72,8 @@ const getHoverV = (entry: MenuItemData) => {
 
   const bgModel = {
     "bg-color-hex": undefined,
-    "bg-color-opacity": 1
+    "bg-color-opacity": 1,
+    "bg-color-palette": ""
   };
 
   const bgV = getModel({

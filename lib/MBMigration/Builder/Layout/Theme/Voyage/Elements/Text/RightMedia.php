@@ -35,6 +35,30 @@ class RightMedia extends PhotoTextElement
 
     protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {
+        $sectionRow = $brizySection->getItemWithDepth(0);
+
+        $imageColumn = $sectionRow->getItemWithDepth(1);
+        $textColumn  = $sectionRow->getItemWithDepth(0);
+
+        if ($imageColumn && $imageColumn->getType() === 'Column') {
+            $imageColumn->getValue()
+                ->set_paddingType('ungrouped')
+                ->set_paddingTop(0)
+                ->set_paddingTopSuffix('px')
+                ->set_paddingBottom(0)
+                ->set_verticalAlign('center')
+                ->set_paddingBottomSuffix('px');
+        }
+
+        if ($textColumn && $textColumn->getType() === 'Column') {
+            $textColumn->getValue()
+                ->set_paddingType('ungrouped')
+                ->set_paddingTop(100)
+                ->set_paddingTopSuffix('px')
+                ->set_paddingBottom(100)
+                ->set_paddingBottomSuffix('px');
+        }
+
         return $brizySection;
     }
 
@@ -46,6 +70,16 @@ class RightMedia extends PhotoTextElement
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;
+    }
+
+    protected function getDonationsButtonOptions(): array
+    {
+        return [
+            'mobilePaddingTop' => 10,
+            'mobilePaddingRight' => 0,
+            'mobilePaddingBottom' => 10,
+            'mobilePaddingLeft' => 0,
+        ];
     }
 
     protected function getPropertiesMainSection(): array
@@ -64,9 +98,9 @@ class RightMedia extends PhotoTextElement
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType" => "ungrouped",
-            "paddingTop" => 50,
+            "paddingTop" => 100,
             "paddingTopSuffix" => "px",
-            "paddingBottom" => 50,
+            "paddingBottom" => 100,
             "paddingBottomSuffix" => "px",
             "paddingRight" => 0,
             "paddingRightSuffix" => "px",

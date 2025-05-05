@@ -9,34 +9,39 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrizyKitNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Core\Logger;
 
 trait DonationsAble
 {
     /**
      * Process and add all items the same brizy section
+     * @throws Exception
      */
-    protected function handleDonations(
+    protected function handleDonationsButton(
         ElementContextInterface $data,
-        BrowserPageInterface $browserPage,
-        array $brizyKit
-    ): BrizyComponent {
+        BrowserPageInterface    $browserPage,
+        array                   $brizyKit,
+        array                   $options = null
+    ): BrizyComponent
+    {
 
         $mbSection = $data->getMbSection();
         $brizySection = $data->getBrizySection();
 
         if (!isset($brizyKit['donation-button'])) {
-            throw new BrizyKitNotFound('The BrizyKit does not contain the key: donation-button');
+            Logger::instance()->critical('The BrizyKit does not contain the key: donation-button', [$mbSection['typeSection']]);
+            return $brizySection;
         }
 
         try {
             switch ($mbSection['category']) {
                 case "donation":
-                    $selector = '[data-id="'.$mbSection['sectionId'].'"] button.sites-button';
+                    $selector = '[data-id="' . $mbSection['sectionId'] . '"]';
                     $brizyDonationButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
                     $brizyDonationButton = $this->setButtonDonationStyles(
                         $brizyDonationButton,
                         $browserPage,
-                        $selector,
+                        $selector . '  button.sites-button',
                         $data,
                         $mbSection
                     );
@@ -44,20 +49,43 @@ trait DonationsAble
                     $brizyDonationButton = $this->setHoveDonationButtonStyles(
                         $brizyDonationButton,
                         $browserPage,
-                        $selector,
+                        $selector . ' button.sites-button',
                         $data,
                         $mbSection
                     );
+
+                    if ($options && $this->hasMobilePaddingOptions($options)) {
+                        $brizyDonationButton->addMobilePadding([
+                            $options['mobilePaddingTop'] ?? 0,
+                            $options['mobilePaddingRight'] ?? 0,
+                            $options['mobilePaddingBottom'] ?? 0,
+                            $options['mobilePaddingLeft'] ?? 0,
+                        ]);
+                    } else {
+                        $brizyDonationButton->addMobilePadding([10, 0, 10, 0,]);
+                    }
 
                     $brizySection->getValue()->add_items([$brizyDonationButton]);
                     break;
             }
         } catch (Exception $e) {
-
+            Logger::instance()->error('The Donate Button element returns an error message', [$e->getMessage(), $e->getTraceAsString(), $mbSection['typeSection']]);
+            return $brizySection;
         }
 
-
         return $brizySection;
+    }
+
+    private function hasMobilePaddingOptions(array $options): bool
+    {
+        $paddingKeys = [
+            'mobilePaddingTop',
+            'mobilePaddingRight',
+            'mobilePaddingBottom',
+            'mobilePaddingLeft',
+        ];
+
+        return (bool) array_intersect($paddingKeys, array_keys($options));
     }
 
     /**
@@ -70,14 +98,15 @@ trait DonationsAble
      * @throws BrowserScriptException
      */
     protected function setButtonDonationStyles(
-        BrizyComponent $brizyDonationButton,
-        BrowserPageInterface $browserPage,
-        string $selector,
+        BrizyComponent          $brizyDonationButton,
+        BrowserPageInterface    $browserPage,
+        string                  $selector,
         ElementContextInterface $data,
-        array $mbSection
-    ): BrizyComponent {
+        array                   $mbSection
+    ): BrizyComponent
+    {
 
-        $browserPage->triggerEvent('hover', 'body');
+        $browserPage->triggerEvent('hover', 'html');
 
         $buttonStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
@@ -144,7 +173,7 @@ trait DonationsAble
             ]
         );
 
-        $buttonAlignment= $browserPage->evaluateScript(
+        $buttonAlignment = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
                 'selector' => $selector . ' span',
@@ -170,7 +199,7 @@ trait DonationsAble
             throw new BrowserScriptException($buttonStyles['error']);
         }
 
-        if(isset($buttonAlignment['text-align'])){
+        if (isset($buttonAlignment['text-align'])) {
             $brizyDonationButton->getValue()
                 ->set_horizontalAlign($buttonAlignment['text-align'])
                 ->set_mobileHorizontalAlign($buttonAlignment['text-align']);
@@ -192,7 +221,7 @@ trait DonationsAble
                     ->set_uppercase(true)
                     ->set_lowercase(false);
 
-                    $buttonText = strtoupper($mbSection['settings']['sections']['donations']['text']);
+                $buttonText = strtoupper($mbSection['settings']['sections']['donations']['text']);
                 break;
             case 'lowercase':
                 $brizyDonationButton->getItemValueWithDepth(0)
@@ -208,8 +237,28 @@ trait DonationsAble
                 break;
         }
 
-        if(empty($buttonText)){
+        if (empty($buttonText)) {
             $buttonText = 'MAKE A DONATION';
+        }
+
+        if ((int)$paddingButtonStyles['padding-top'] == 0) {
+            if ((int)$buttonStyles['padding-top'] !== 0) {
+                $b_paddingTB = (int)$buttonStyles['padding-top'];
+            } else {
+                $b_paddingTB = 10;
+            }
+        } else {
+            $b_paddingTB = (int)$paddingButtonStyles['padding-top'];
+        }
+
+        if ((int)$paddingButtonStyles['padding-right'] == 0) {
+            if ((int)$buttonStyles['padding-right'] !== 0) {
+                $b_paddingRL = (int)$buttonStyles['padding-right'];
+            } else {
+                $b_paddingRL = 10;
+            }
+        } else {
+            $b_paddingRL = (int)$paddingButtonStyles['padding-right'];
         }
 
         $brizyDonationButton->getItemValueWithDepth(0)
@@ -218,11 +267,13 @@ trait DonationsAble
             ->set_linkExternalBlank($this->detectLinkExternalBlank($mbSection, $browserPage))
             ->set_size('custom')
             ->set_paddingType('ungrouped')
-            ->set_paddingTB((int)$paddingButtonStyles['padding-top'])
+            ->set_paddingTB($b_paddingTB)
+            ->set_paddingTBSuffix('px')
             ->set_paddingTop((int)$paddingButtonStyles['padding-top'])
             ->set_paddingBottom((int)$paddingButtonStyles['padding-bottom'])
             ->set_paddingRight((int)$paddingButtonStyles['padding-right'])
-            ->set_paddingRL((int)$paddingButtonStyles['padding-right'])
+            ->set_paddingRL($b_paddingRL)
+            ->set_paddingRLSuffix('px')
             ->set_paddingLeft((int)$paddingButtonStyles['padding-left'])
             ->set_marginType('ungrouped')
             ->set_marginLeft((int)$buttonStyles['margin-left'])
@@ -247,7 +298,7 @@ trait DonationsAble
 
     protected function detectLinkExternalBlank(array $mbSection, BrowserPageInterface $browserPage): string
     {
-        $selector = '[data-id="'.$mbSection['sectionId'].'"] .donation > a';
+        $selector = '[data-id="' . $mbSection['sectionId'] . '"] .donation > a';
 
         $buttonTarget = $browserPage->evaluateScript(
             'brizy.getAttributes',
@@ -265,7 +316,7 @@ trait DonationsAble
 
         $buttonTarget = $buttonTarget['data'];
 
-        if($buttonTarget['target'] == '_blank') {
+        if ($buttonTarget['target'] == '_blank') {
 
             return 'on';
         } else {
@@ -275,13 +326,15 @@ trait DonationsAble
     }
 
     protected function setHoveDonationButtonStyles(
-        BrizyComponent $brizyDonationButton,
-        BrowserPageInterface $browserPage,
-        string $selector,
+        BrizyComponent          $brizyDonationButton,
+        BrowserPageInterface    $browserPage,
+        string                  $selector,
         ElementContextInterface $data,
-        array $mbSection
-    ): BrizyComponent {
+        array                   $mbSection
+    ): BrizyComponent
+    {
         $browserPage->triggerEvent('hover', $selector);
+        usleep(500);
         $browserPage->getPageScreen('_btn');
         $buttonStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
@@ -311,19 +364,11 @@ trait DonationsAble
         }
         $buttonStyles = $buttonStyles['data'];
 
-        if (!empty($mbSection['settings']['sections']['donations']['alignment'])) {
-            $brizyDonationButton->getValue()->set_horizontalAlign(
-                $mbSection['settings']['sections']['donations']['alignment']
-            );
-        } else {
-            $brizyDonationButton->getValue()->set_horizontalAlign('left');
-        }
-
         $brizyDonationButton->getItemValueWithDepth(0)
             ->set_fillType('filled')
             ->set_hoverBgColorHex(ColorConverter::rgba2hex($buttonStyles['background-color']))
             ->set_hoverBgColorPalette("")
-            ->set_hoverBgColorOpacity(ColorConverter::rgba2opacity($buttonStyles['background-color']))
+            ->set_hoverBgColorOpacity(0.75 ?? ColorConverter::rgba2opacity($buttonStyles['background-color']))
             ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-top-color']))
             ->set_hoverBorderColorPalette("")
             ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
