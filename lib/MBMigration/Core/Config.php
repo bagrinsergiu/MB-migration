@@ -76,6 +76,7 @@ class Config
      * @var false|mixed
      */
     public static $MB_MONKCMS_API;
+    public static bool $mgrMode;
 
     /**
      * @throws Exception
@@ -94,6 +95,7 @@ class Config
 
         self::$defaultSettings = [
             'devMode' => false,
+            'mgrMode' => false,
             'debugMode' => false,
             'urlJsonKit' => false,
             'graphqlToken' => false,
@@ -106,6 +108,7 @@ class Config
 
         self::$debugMode = (bool)$this->checkSettings('debugMode');
         self::$devMode = (bool)$this->checkSettings('devMode');
+        self::$mgrMode = (bool)$this->checkSettings('mgrMode');
 
         self::$metaData = $this->checkMetaData();
 

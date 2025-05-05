@@ -59,14 +59,21 @@ class MigrationPlatform
      * @var int|mixed
      */
     private $workspacesId;
+    private bool $manualMigrate;
+    private array $projectPagesList;
+    private string $projectUUID_MB;
+    private bool $mMgrIgnore;
+    private bool $mgr_manual;
 
     use checking;
     use DebugBackTrace;
 
-    public function __construct(Config $config, LoggerInterface $logger, $buildPage = '', $workspacesId = 0)
+    public function __construct(Config $config, LoggerInterface $logger, $buildPage = '', $workspacesId = 0, bool $mMgrIgnore = true, $mgr_manual = false)
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
         $this->logger = $logger;
+        $this->mMgrIgnore = $mMgrIgnore;
+        $this->mgr_manual = $mgr_manual;
 
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
@@ -81,7 +88,7 @@ class MigrationPlatform
         $this->config = $config;
     }
 
-    public function start(string $projectID_MB, int $projectID_Brizy = 0): bool
+    public function start(string $projectID_MB, int $projectID_Brizy = 0)
     {
         try {
             $this->cache->loadDump($projectID_MB, $projectID_Brizy);
@@ -96,8 +103,6 @@ class MigrationPlatform
 
             throw $e;
         }
-
-        return true;
     }
 
     /**
@@ -123,6 +128,8 @@ class MigrationPlatform
         $this->cache->set('headBlockCreated', false);
         $this->cache->set('footerBlockCreated', false);
 
+        $this->manualMigrate = false;
+
         $this->parser = new MBProjectDataCollector();
     }
 
@@ -130,7 +137,7 @@ class MigrationPlatform
      * @throws Exception
      * @throws GuzzleException
      */
-    private function run(string $projectUUID_MB, int $projectID_Brizy = 0): void
+    private function run(string $projectUUID_MB, int $projectID_Brizy = 0): bool
     {
         $this->brizyApi = new BrizyAPI();
 
@@ -151,6 +158,7 @@ class MigrationPlatform
         }
 
         $this->brizyProjectDomain = $this->brizyApi->getDomain($this->projectID_Brizy);
+        $this->projectUUID_MB = $projectUUID_MB;
         $this->projectId = $projectUUID_MB.'_'.$this->projectID_Brizy.'_';
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
@@ -194,6 +202,15 @@ class MigrationPlatform
             $this->projectID_Brizy,
             $designName
         );
+
+        if(!$this->mMgrIgnore) {
+            $this->manualMigrate = $this->brizyApi->checkProjectManualMigration($this->projectID_Brizy);
+            if ($this->manualMigrate) {
+                $this->projectPagesList = $this->parser->getPages();
+
+                return true;
+            }
+        }
 
         $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
 
@@ -281,9 +298,12 @@ class MigrationPlatform
 
         $this->brizyApi->clearCompileds($this->projectID_Brizy);
 
+
+
         Logger::instance()->info('Project migration completed successfully!');
 
         $this->logFinalProcess($this->startTime);
+        return true;
     }
 
     /**
@@ -370,7 +390,10 @@ class MigrationPlatform
         }
     }
 
-    public function getLogs()
+    /**
+     * @throws Exception
+     */
+    public function getLogs(): array
     {
         if ($this->finalSuccess['status'] === 'success') {
             Logger::instance()->debug(json_encode($this->errorDump->getDetailsMessage()));
@@ -395,6 +418,7 @@ class MigrationPlatform
         $this->finalSuccess['theme'] = $projectSettings['design'] ?? null;
 
         $this->finalSuccess['migration_id'] = $this->migrationID;
+        $this->finalSuccess['date'] = date('Y-m-d');
 
         $this->finalSuccess['mb_uuid'] = $projectSettings['uuid'] ?? null;
         $this->finalSuccess['mb_site_id'] = $projectSettings['id'] ?? null;
@@ -412,6 +436,22 @@ class MigrationPlatform
         $this->finalSuccess['message']['warning'] = ErrorDump::$warningMessage ?? [];
 
         Logger::instance()->info('Work time: '.TimeUtility::Time($executionTime).' (seconds: '.round($executionTime, 1).')');
+    }
+
+    public function getProjectPagesList(): array
+    {
+        return $this->projectPagesList;
+    }
+
+
+    public function getStatusManualMigration(): bool
+    {
+        return $this->manualMigrate;
+    }
+
+    public function getProjectUUID(): string
+    {
+        return $this->projectUUID_MB;
     }
 
 }

@@ -22,6 +22,7 @@ final class MBMigrationTable extends AbstractMigration
         $this->table('migrations_mapping')
             ->addColumn('brz_project_id', 'integer', ['null' => true])
             ->addColumn('mb_project_uuid', 'string', ['null' => true])
+            ->addColumn('changes_json', 'string', ['null' => true])
             ->addColumn('created_at', 'datetime', ['default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'datetime', ['default' => 'CURRENT_TIMESTAMP', 'update' => 'CURRENT_TIMESTAMP'])
             ->create();

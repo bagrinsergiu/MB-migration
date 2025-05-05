@@ -13,6 +13,7 @@ class ApplicationBootstrapper
     private array $context;
     private Request $request;
     private Config $config;
+    private MigrationPlatform $migrationPlatform;
 
     public function __construct(array $context, Request $request)
     {
@@ -27,6 +28,7 @@ class ApplicationBootstrapper
     {
         $settings = [
             'devMode' => (bool) $this->context['DEV_MODE'] ?? false,
+            'mgrMode' => (bool) $this->context['MGR_MODE'] ?? false,
             'db' => [
                 'dbHost' => $this->context['MB_DB_HOST'],
                 'dbPort' => $this->context['MB_DB_PORT'],
@@ -110,7 +112,7 @@ class ApplicationBootstrapper
     /**
      * @throws Exception
      */
-    public function migrationNormalFlow(): array
+    public function migrationNormalFlow($mMgrIgnore = false): array
     {
         $mb_project_uuid = $this->request->get('mb_project_uuid');
         if (!isset($mb_project_uuid)) {
@@ -143,6 +145,7 @@ class ApplicationBootstrapper
         );
 
         $mb_page_slug = $this->request->get('mb_page_slug') ?? '';
+        $mgr_manual = $this->request->get('mgr_manual') ?? 0;
 
         $lockFile = $this->context['CACHE_PATH']."/".$mb_project_uuid."-".$brz_project_id.".lock";
 
@@ -152,14 +155,12 @@ class ApplicationBootstrapper
             throw new Exception('The process migration is already running.', 400);
         }
 
-        # start the DB tunnel
         try {
-            // create lock file
             file_put_contents($lockFile, $mb_project_uuid."-".$brz_project_id);
             Logger::instance()->info('Creating lock file', [$lockFile]);
 
-            $migrationPlatform = new \MBMigration\MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id);
-            $result = $migrationPlatform->start($mb_project_uuid, $brz_project_id);
+            $this->migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore);
+            $this->migrationPlatform->start($mb_project_uuid, $brz_project_id);
         } catch (Exception $e) {
 
             throw new Exception($e->getMessage(), 400);
@@ -176,12 +177,31 @@ class ApplicationBootstrapper
                 Logger::instance()->warning('Lock file does not exist, nothing to release.', [$lockFile]);
             }
 
-            $fullLogUrl = $s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
+            try {
+                $fullLogUrl = $s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
+            }catch (\Exception $e) {
+
+            }
+
+
 
         }
-        $migrationStatus = $migrationPlatform->getLogs() ?? [];
+
+        $migrationStatus = $this->migrationPlatform->getLogs() ?? [];
+        $migrationStatus['mMigration'] = $this->migrationPlatform->getStatusManualMigration();
         $migrationStatus['fullLogUrl'] = $fullLogUrl;
 
         return $migrationStatus;
     }
+
+    public function getPageList(): array
+    {
+        return $this->migrationPlatform->getProjectPagesList();
+    }
+
+    public function getProjectUUDI(): string
+    {
+        return $this->migrationPlatform->getProjectUUID();
+    }
+
 }

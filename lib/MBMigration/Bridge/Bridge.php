@@ -14,7 +14,7 @@ class Bridge
     private MgResponse $mgResponse;
     private string $sourceProject;
     private Request $request;
-    private array $allList;
+    private array $allList = [];
     private int $preparedProject;
     private MySQL $db;
 
@@ -32,13 +32,18 @@ class Bridge
 
     public function checkPreparedProject(): Bridge
     {
-        $this->request->get('source_project_id');
+        try {
+            $inputProperties = $this->checkInputProperties(['source_project_id'], true);
 
-        $this->preparedProject = 1231231231;
+            switch ($this->request->getMethod()) {
+                case 'GET':
+                    $this->preparedSearchByUUID($inputProperties['source_project_id']);
+                    break;
+            }
 
-        $this->mgResponse
-            ->setMessage($this->preparedProject)
-            ->setStatusCode(200);
+        } catch (\Exception $e) {
+            $this->prepareResponseMessage($e->getMessage(), 'error', 400);
+        }
 
         return $this;
     }
@@ -52,16 +57,7 @@ class Bridge
             return $this;
         }
 
-        try {
-            $this->db->insert('migrations_mapping',
-                [
-                    'brz_project_id' => (int) $inputProperties['brz_project_id'],
-                    'mb_project_uuid' => $inputProperties['source_project_id']
-                ]);
-        } catch (\Exception $e) {
-            $this->prepareResponseMessage($e->getMessage(), 'error', 400);
-            return $this;
-        }
+        $this->insertMigrationMapping($inputProperties['brz_project_id'], $inputProperties['source_project_id']);
 
         $this->prepareResponseMessage(
             [
@@ -102,13 +98,25 @@ class Bridge
         return $this->mgResponse;
     }
 
+
     public function getPreparedMappingList(): Bridge
     {
-        $this->allList = [1231231231 => 'asdasd-ewe33-asd-czxcddbn'];
+        try {
+            $allList = $this->db->getAllRows('SELECT * FROM migrations_mapping');
 
-        $this->mgResponse
-            ->setMessage($this->allList)
-            ->setStatusCode(200);
+            foreach ($allList as $value) {
+                $this->allList[(int) $value['brz_project_id']] = $value['mb_project_uuid'];
+            }
+
+            $this->mgResponse
+                ->setMessage($this->allList)
+                ->setStatusCode(200);
+
+        } catch (\Exception $e) {
+            $this->mgResponse
+                ->setMessage($e->getMessage(), 'error')
+                ->setStatusCode(200);
+        }
 
         return $this;
     }
@@ -157,5 +165,79 @@ class Bridge
         return $checkedProperties;
     }
 
+    public function insertMigrationMapping($brz_project_id, $source_project_id, $mata_data = '{}')
+    {
+        try {
+            $this->db->insert('migrations_mapping',
+                [
+                    'brz_project_id' => (int) $brz_project_id,
+                    'mb_project_uuid' => $source_project_id,
+                    'changes_json' => $mata_data
+                ]);
+        } catch (\Exception $e) {
+            $this->prepareResponseMessage($e->getMessage(), 'error', 400);
+        }
+    }
 
+    /**
+     * @throws Exception
+     */
+    public function checkPageChanges($mbProjectId, array $pageList): bool
+    {
+        try {
+            $mgr_resultBrzId = $this->searchByUUID($mbProjectId);
+
+
+
+
+
+
+
+        } catch (\Exception $e) {
+            $this->mgResponse
+                ->setMessage($e->getMessage(), 'error')
+                ->setStatusCode(400);
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function searchByUUID(string $inputProperties): int
+    {
+        try {
+            $brzID = $this->db->find('SELECT brz_project_id FROM migrations_mapping WHERE mb_project_uuid = ?', [$inputProperties]);
+
+            if (empty($brzID['brz_project_id'])) {
+                throw new Exception('Project not found', 400);
+            }
+
+            return (int) $brzID['brz_project_id'];
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage(), 400);
+        }
+    }
+
+    private function preparedSearchByUUID($source_project_id)
+    {
+        try {
+            $resultBrzId = $this->searchByUUID($source_project_id);
+
+            $this->mgResponse
+                ->setMessage($resultBrzId)
+                ->setStatusCode(200);
+        } catch (\Exception $e) {
+            $this->mgResponse
+                ->setMessage($e->getMessage(), 'error')
+                ->setStatusCode(400);
+        }
+    }
+
+    public function checkPageChangesReport(): string
+    {
+
+        return '';
+    }
 }

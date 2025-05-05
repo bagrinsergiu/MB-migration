@@ -14,6 +14,9 @@ return static function (array $context, Request $request): Response
     try {
         $config = $app->doInnitConfig();
     } catch (Exception $e) {
+        if ($e->getCode() < 100) {
+            return new JsonResponse(['error' => $e->getMessage()], 404);
+        }
         return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
     }
 
@@ -46,12 +49,51 @@ return static function (array $context, Request $request): Response
             }
         default:
             try {
+                $mgr_manual = (int) $request->get('mgr_manual');
 
-                return new JsonResponse($app->migrationNormalFlow());
+                if(empty($mgr_manual)){
+                    $mgr_manual = false;
+                } else {
+                    $mgr_manual = true;
+                }
+
+                $result = $app->migrationNormalFlow();
+
+                if(!empty($result['mMigration']) && $result['mMigration'] === true) {
+                    $projectUUID = $app->getProjectUUDI();
+                    $pageList = $app->getPageList();
+
+                    $checkResult = $bridge->checkPageChanges($projectUUID, $pageList);
+
+                    if(!$checkResult){
+                        return new JsonResponse(
+                            $bridge->checkPageChangesReport(),
+                            200
+                        );
+                    } else {
+                        $result = $app->migrationNormalFlow(true);
+                        return new JsonResponse($result, 200);
+                    }
+
+                } else {
+
+                    if($mgr_manual){
+                        $bridge->insertMigrationMapping(
+                            $result['brizy_project_id'],
+                            $result['mb_uuid'],
+                            json_encode(['data' => $result['date']])
+                        );
+                    }
+
+                    return new JsonResponse($result, 200);
+                }
             } catch (Exception $e) {
+
+                if ($e->getCode() < 100) {
+                    return new JsonResponse(['error' => $e->getMessage()], 404);
+                }
 
                 return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
             }
     }
-
 };

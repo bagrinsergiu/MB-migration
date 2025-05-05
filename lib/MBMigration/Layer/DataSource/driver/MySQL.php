@@ -58,6 +58,26 @@ class MySQL
         return $stmt->fetchAll();
     }
 
+    public function getColumns($table, $columns = ['*'], $where = '', $params = []) {
+        $cols = implode(", ", $columns);
+        $sql = "SELECT $cols FROM $table";
+
+        if (!empty($where)) {
+            $sql .= " WHERE $where";
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll();
+    }
+
+    public function find($sql, $params = []) {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch();
+    }
+
     public function insert($table, $data) {
         $columns = implode(", ", array_keys($data));
         $placeholders = ":" . implode(", :", array_keys($data));
