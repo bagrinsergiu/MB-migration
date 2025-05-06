@@ -105,3 +105,7 @@ export const normalizeOpacity = (color: Color): Color => {
 export const encodeToString = <T>(value: T): string => {
   return encodeURIComponent(JSON.stringify(value));
 };
+
+export const EMPTY_SPACES_REGEX =
+  // eslint-disable-next-line no-misleading-character-class
+  /[\u200A\u200B\u200C\u200D\u200E\u200F\u2060\uFEFF]/g;
