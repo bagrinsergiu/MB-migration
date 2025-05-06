@@ -427,6 +427,19 @@ class BrizyAPI extends Utils
         $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
     }
 
+    public function setLabelManualMigration()
+    {
+        Logger::instance()->info('set Label Manual Migration');
+
+        $containerID = Utils::$cache->get('projectId_Brizy');
+
+        $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
+
+        $r_projectFullData['dataVersion'] = 77777;
+
+        $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
+    }
+
     public function updateProject(array $projectFullData): array
     {
         Logger::instance()->info('Update Project Data');

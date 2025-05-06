@@ -68,7 +68,14 @@ class MigrationPlatform
     use checking;
     use DebugBackTrace;
 
-    public function __construct(Config $config, LoggerInterface $logger, $buildPage = '', $workspacesId = 0, bool $mMgrIgnore = true, $mgr_manual = false)
+    public function __construct(
+        Config $config,
+        LoggerInterface $logger,
+        $buildPage = '',
+        $workspacesId = 0,
+        bool $mMgrIgnore = true,
+        $mgr_manual = false
+    )
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
         $this->logger = $logger;
@@ -176,6 +183,10 @@ class MigrationPlatform
 
         if (Config::$devMode) {
             $this->brizyApi->clearAllFontsInProject();
+        }
+
+        if($this->mgr_manual){
+            $this->brizyApi->setLabelManualMigration();
         }
 
         $this->checkDesign($designName);

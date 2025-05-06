@@ -8,7 +8,7 @@ use PDOException;
 
 class MySQL
 {
-    private $pdo;
+    private PDO $pdo;
     private string $dsn;
     /**
      * @var mixed
@@ -19,7 +19,8 @@ class MySQL
      */
     private $userName;
 
-    public function __construct($username, $password, $dbname = 'migration_DB', $host = 'localhost' ) {
+    public function __construct($username, $password, $dbname = 'migration_DB', $host = 'localhost')
+    {
         $this->setDSN($host, $dbname);
         $this->setUserName($username);
         $this->setPassword($password);
@@ -40,25 +41,28 @@ class MySQL
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Database connection failed: ".$e->getMessage());
+            throw new Exception("Database connection failed: " . $e->getMessage());
         }
 
         return $this;
     }
 
-    public function getSingleValue($sql, $params = []) {
+    public function getSingleValue($sql, $params = [])
+    {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchColumn();
     }
 
-    public function getAllRows($sql, $params = []) {
+    public function getAllRows($sql, $params = [])
+    {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
-    public function getColumns($table, $columns = ['*'], $where = '', $params = []) {
+    public function getColumns($table, $columns = ['*'], $where = '', $params = [])
+    {
         $cols = implode(", ", $columns);
         $sql = "SELECT $cols FROM $table";
 
@@ -72,13 +76,22 @@ class MySQL
         return $stmt->fetchAll();
     }
 
-    public function find($sql, $params = []) {
+    public function find($sql, $params = [])
+    {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetch();
     }
 
-    public function insert($table, $data) {
+    public function delete($table, $where, $params = []): bool
+    {
+        $sql = "DELETE FROM {$table} WHERE {$where}";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($params);
+    }
+
+    public function insert($table, $data)
+    {
         $columns = implode(", ", array_keys($data));
         $placeholders = ":" . implode(", :", array_keys($data));
 

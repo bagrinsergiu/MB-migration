@@ -112,7 +112,7 @@ class ApplicationBootstrapper
     /**
      * @throws Exception
      */
-    public function migrationNormalFlow($mMgrIgnore = false): array
+    public function migrationNormalFlow($mMgrIgnore = false, $mrgManual = false): array
     {
         $mb_project_uuid = $this->request->get('mb_project_uuid');
         if (!isset($mb_project_uuid)) {
@@ -159,7 +159,7 @@ class ApplicationBootstrapper
             file_put_contents($lockFile, $mb_project_uuid."-".$brz_project_id);
             Logger::instance()->info('Creating lock file', [$lockFile]);
 
-            $this->migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore);
+            $this->migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore, $mrgManual);
             $this->migrationPlatform->start($mb_project_uuid, $brz_project_id);
         } catch (Exception $e) {
 
@@ -180,11 +180,8 @@ class ApplicationBootstrapper
             try {
                 $fullLogUrl = $s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
             }catch (\Exception $e) {
-
+                Logger::instance()->warning('Failed to upload log file to S3.', [$e->getMessage()]);
             }
-
-
-
         }
 
         $migrationStatus = $this->migrationPlatform->getLogs() ?? [];

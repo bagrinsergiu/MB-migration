@@ -41,6 +41,13 @@ return static function (array $context, Request $request): Response
                 $response->getMessage(),
                 $response->getStatusCode()
             );
+        case '/mapping/list/all':
+            $response = $bridge->addAllMappingList();
+
+            return new JsonResponse(
+                $response->getMessage(),
+                $response->getStatusCode()
+            );
         case '/migration_log':
             try {
                 return new JsonResponse($app->getMigrationLogs());
@@ -57,26 +64,27 @@ return static function (array $context, Request $request): Response
                     $mgr_manual = true;
                 }
 
-                $result = $app->migrationNormalFlow();
+                $result = $app->migrationNormalFlow(false, $mgr_manual);
 
                 if(!empty($result['mMigration']) && $result['mMigration'] === true) {
                     $projectUUID = $app->getProjectUUDI();
                     $pageList = $app->getPageList();
 
-                    $checkResult = $bridge->checkPageChanges($projectUUID, $pageList);
+                    if($bridge->checkPageChanges($projectUUID, $pageList)){
 
-                    if(!$checkResult){
+                        // to do, ned add return project details
+
                         return new JsonResponse(
-                            $bridge->checkPageChangesReport(),
+                            $bridge->getReportPageChanges(),
                             200
                         );
                     } else {
-                        $result = $app->migrationNormalFlow(true);
+                        $result = $app->migrationNormalFlow(true, $mgr_manual);
+                        $result['mgrClone'] = 'failed';
                         return new JsonResponse($result, 200);
                     }
 
                 } else {
-
                     if($mgr_manual){
                         $bridge->insertMigrationMapping(
                             $result['brizy_project_id'],
@@ -88,7 +96,6 @@ return static function (array $context, Request $request): Response
                     return new JsonResponse($result, 200);
                 }
             } catch (Exception $e) {
-
                 if ($e->getCode() < 100) {
                     return new JsonResponse(['error' => $e->getMessage()], 404);
                 }
