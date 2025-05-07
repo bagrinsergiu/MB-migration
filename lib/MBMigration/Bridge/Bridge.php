@@ -4,17 +4,19 @@ namespace MBMigration\Bridge;
 
 use DateTime;
 use Exception;
+use MBMigration\ApplicationBootstrapper;
 use MBMigration\Core\Config;
+use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\DataSource\driver\MySQL;
 use MBMigration\Layer\HTTP\RequestHandlerDELETE;
 use MBMigration\Layer\HTTP\RequestHandlerGET;
 use MBMigration\Layer\HTTP\RequestHandlerPOST;
+use MBMigration\MigrationRunnerWave;
 use Symfony\Component\HttpFoundation\Request;
 
 class Bridge
 {
     private Config $config;
-
     private MgResponse $mgResponse;
     private string $sourceProject;
     private Request $request;
@@ -25,14 +27,16 @@ class Bridge
     private RequestHandlerPOST $POST;
     private RequestHandlerDELETE $DELETE;
     private array $listReport;
+    private ApplicationBootstrapper $app;
 
     public function __construct(
-        Config  $config,
-        Request $request
+        ApplicationBootstrapper $app,
+        Config                  $config,
+        Request                 $request
     )
     {
         $this->listReport = [];
-
+        $this->app = $app;
         $this->config = $config;
         $this->request = $request;
 
@@ -66,13 +70,13 @@ class Bridge
     public function addPreparedProject(): Bridge
     {
         try {
-            $inputProperties = $this->POST->checkInputProperties(['brz_project_id', 'source_project_id'], true);
+            $inputProperties = $this->POST->checkInputProperties(['brz_project_id', 'source_project_id', 'meta_data']);
         } catch (Exception $e) {
             $this->prepareResponseMessage($e->getMessage(), 'error', $e->getCode());
             return $this;
         }
 
-        $this->insertMigrationMapping($inputProperties['brz_project_id'], $inputProperties['source_project_id']);
+        $result = $this->insertMigrationMapping($inputProperties['brz_project_id'], $inputProperties['source_project_id'], json_encode($inputProperties['meta_data']));
 
         $this->prepareResponseMessage(
             [
@@ -228,7 +232,7 @@ class Bridge
         try {
             $mgr_mapping = $this->searchMappingByUUID($mbProjectId);
 
-            if(!empty($mgr_mapping['changes_json'])) {
+            if (!empty($mgr_mapping['changes_json'])) {
                 $changes_json = json_decode($mgr_mapping['changes_json'], true);
                 if (empty($changes_json)) {
                     $changes_json = ['data' => date('Y-m-d')];
@@ -268,7 +272,7 @@ class Bridge
 
     function compareDate($projectDate, $snapShotDate): bool
     {
-        try{
+        try {
             $projectDate = new DateTime($projectDate);
             $snapShotDate = new DateTime($snapShotDate);
 
@@ -384,6 +388,133 @@ class Bridge
         }
         $this->prepareResponseMessage($returnList);
 
+        return $this;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function runMigration(): Bridge
+    {
+        $mgr_manual = (int)$this->request->get('mgr_manual');
+
+        $mb_project_uuid = $this->request->get('mb_project_uuid');
+        if (!isset($mb_project_uuid)) {
+
+            throw new Exception('Invalid mb_project_uuid', 400);
+        }
+
+        $brz_project_id = $this->request->get('brz_project_id');
+        if (!isset($brz_project_id)) {
+
+            throw new Exception('Invalid brz_project_id', 400);
+        }
+
+        $brz_workspaces_id = (int)$this->request->get('brz_workspaces_id') ?? 0;
+        $mb_page_slug = $this->request->get('mb_page_slug') ?? '';
+
+        if ($mgr_manual) {
+            $mgr_manual = false;
+        } else {
+            $mgr_manual = true;
+        }
+
+        $result = $this->app->migrationFlow(
+            $mb_project_uuid,
+            $brz_project_id,
+            $brz_workspaces_id,
+            $mb_page_slug,
+            false,
+            $mgr_manual
+        );
+
+        if (!empty($result['mMigration']) && $result['mMigration'] === true) {
+            $projectUUID = $this->app->getProjectUUDI();
+            $pageList = $this->app->getPageList();
+
+            if ($this->checkPageChanges($projectUUID, $pageList)) {
+
+                // to do, ned add return project details
+                $this->prepareResponseMessage(
+                    $this->getReportPageChanges()
+                );
+            } else {
+                $result = $this->app->migrationFlow(
+                    $mb_project_uuid,
+                    $brz_project_id,
+                    $brz_workspaces_id,
+                    $mb_page_slug,
+                    true,
+                    $mgr_manual
+                );
+                $result['mgrClone'] = 'failed';
+                $this->prepareResponseMessage($result);
+            }
+
+        } else {
+            if ($mgr_manual) {
+                $this->insertMigrationMapping(
+                    $result['brizy_project_id'],
+                    $result['mb_uuid'],
+                    json_encode(['data' => $result['date']])
+                );
+            }
+
+            $this->prepareResponseMessage($result);
+        }
+
+        return $this;
+    }
+
+    public function migrationWave(): MgResponse
+    {
+        switch ($this->request->getMethod()) {
+            case 'GET':
+                $this->mgResponse
+                    ->setMessage('Input method handler was not found', 'error')
+                    ->setStatusCode(404);
+                break;
+            case 'POST':
+                return $this->runMigrationWave()
+                    ->getMessageResponse();
+        }
+        return $this->getMessageResponse();
+    }
+
+    private function runMigrationWave(): Bridge
+    {
+        try {
+            $inputProperties = $this->POST->checkInputProperties(['list_uuid', 'workspaces', 'batchSize', 'mgrManual']);
+        } catch (Exception $e) {
+            $this->prepareResponseMessage(
+                $e->getMessage(),
+                'error',
+                $e->getCode());
+            return $this;
+        }
+
+        $migrationRunner = new MigrationRunnerWave($this->app, $this, $inputProperties['list_uuid'], $inputProperties['workspaces'], $inputProperties['batchSize'], $inputProperties['mgrManual']);
+        $migrationRunner->runMigrations();
+
+        $this->prepareResponseMessage('migrationWave completed');
+
+        return $this;
+    }
+
+    public function clearWorkspace(): Bridge
+    {
+        $brizyApi = new BrizyAPI();
+
+        $result = $brizyApi->getAllProjectFromContainer(22436421);
+
+        foreach ($result as $value) {
+            $brizyApi->deleteProject($value['id']);
+        }
+
+        $this->prepareResponseMessage(
+            "Workspace cleared",
+            'message'
+        );
         return $this;
     }
 }

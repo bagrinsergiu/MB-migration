@@ -14,11 +14,20 @@ class ApplicationBootstrapper
     private Request $request;
     private Config $config;
     private MigrationPlatform $migrationPlatform;
+    private array $projectPagesList;
+    private string $projectUUID;
 
     public function __construct(array $context, Request $request)
     {
         $this->context = $context;
         $this->request = $request;
+        $logFilePath = $this->context['LOG_FILE_PATH'] . '_ApplicationBootstrapper.log';
+
+        $logger = Logger::initialize(
+            "ApplicationBootstrapper",
+            $this->context['LOG_LEVEL'],
+            $logFilePath
+        );
     }
 
     /**
@@ -27,8 +36,8 @@ class ApplicationBootstrapper
     function doInnitConfig(): Config
     {
         $settings = [
-            'devMode' => (bool) $this->context['DEV_MODE'] ?? false,
-            'mgrMode' => (bool) $this->context['MGR_MODE'] ?? false,
+            'devMode' => (bool)$this->context['DEV_MODE'] ?? false,
+            'mgrMode' => (bool)$this->context['MGR_MODE'] ?? false,
             'db' => [
                 'dbHost' => $this->context['MB_DB_HOST'],
                 'dbPort' => $this->context['MB_DB_PORT'],
@@ -56,18 +65,18 @@ class ApplicationBootstrapper
         $authorization_token = $this->request->get('token') ?? '';
         $brizyCloudToken = $this->request->get('brizy_cloud_token') ?? null;
 
-        if(isset($this->context['APP_AUTHORIZATION_TOKEN']) && !empty($this->context['APP_AUTHORIZATION_TOKEN'])) {
-            if($authorization_token !== $this->context['APP_AUTHORIZATION_TOKEN']) {
+        if (isset($this->context['APP_AUTHORIZATION_TOKEN']) && !empty($this->context['APP_AUTHORIZATION_TOKEN'])) {
+            if ($authorization_token !== $this->context['APP_AUTHORIZATION_TOKEN']) {
                 throw new Exception('Unauthorized', 401);
             }
         }
 
-        if(!empty($mb_site_id) && !empty($mb_secret)) {
+        if (!empty($mb_site_id) && !empty($mb_secret)) {
             $settings['metaData']['mb_site_id'] = $mb_site_id;
             $settings['metaData']['mb_secret'] = $mb_secret;
         }
 
-        if( !empty($this->context['MB_MONKCMS_API'])){
+        if (!empty($this->context['MB_MONKCMS_API'])) {
             $settings['monkcms_api'] = $this->context['MB_MONKCMS_API'];
         }
 
@@ -112,31 +121,24 @@ class ApplicationBootstrapper
     /**
      * @throws Exception
      */
-    public function migrationNormalFlow($mMgrIgnore = false, $mrgManual = false): array
+    public function migrationFlow(
+        $mb_project_uuid,
+        $brz_project_id,
+        $brz_workspaces_id,
+        $mb_page_slug,
+        $mMgrIgnore = false,
+        $mrgManual = false
+    ): array
     {
-        $mb_project_uuid = $this->request->get('mb_project_uuid');
-        if (!isset($mb_project_uuid)) {
-
-            throw new Exception('Invalid mb_project_uuid', 400);
-        }
-
-        $brz_project_id = $this->request->get('brz_project_id');
-        if (!isset($brz_project_id)) {
-
-            throw new Exception('Invalid brz_project_id', 400);
-        }
-
-        $brz_workspaces_id = (int) $this->request->get('brz_workspaces_id') ?? 0;
-
         $s3Uploader = new S3Uploader(
-            (bool) $this->context['AWS_BUCKET_ACTIVE'] ?? false,
+            (bool)$this->context['AWS_BUCKET_ACTIVE'] ?? false,
             $this->context['AWS_KEY'] ?? '',
             $this->context['AWS_SECRET'] ?? '',
             $this->context['AWS_REGION'] ?? '',
             $this->context['AWS_BUCKET'] ?? ''
         );
 
-        $logFilePath = $this->context['LOG_FILE_PATH'].'_'.$brz_project_id.'.log';
+        $logFilePath = $this->context['LOG_FILE_PATH'] . '_' . $brz_project_id . '.log';
 
         $logger = Logger::initialize(
             "brizy-$brz_project_id",
@@ -144,10 +146,7 @@ class ApplicationBootstrapper
             $logFilePath
         );
 
-        $mb_page_slug = $this->request->get('mb_page_slug') ?? '';
-        $mgr_manual = $this->request->get('mgr_manual') ?? 0;
-
-        $lockFile = $this->context['CACHE_PATH']."/".$mb_project_uuid."-".$brz_project_id.".lock";
+        $lockFile = $this->context['CACHE_PATH'] . "/" . $mb_project_uuid . "-" . $brz_project_id . ".lock";
 
         if (file_exists($lockFile)) {
             Logger::instance()->warning('The process migration is already running.', [$lockFile]);
@@ -156,11 +155,16 @@ class ApplicationBootstrapper
         }
 
         try {
-            file_put_contents($lockFile, $mb_project_uuid."-".$brz_project_id);
+            file_put_contents($lockFile, $mb_project_uuid . "-" . $brz_project_id);
             Logger::instance()->info('Creating lock file', [$lockFile]);
 
             $this->migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore, $mrgManual);
             $this->migrationPlatform->start($mb_project_uuid, $brz_project_id);
+
+            $this->projectPagesList = $this->migrationPlatform->getProjectPagesList();
+            $this->projectUUID = $this->migrationPlatform->getProjectUUID();
+
+
         } catch (Exception $e) {
 
             throw new Exception($e->getMessage(), 400);
@@ -179,26 +183,27 @@ class ApplicationBootstrapper
 
             try {
                 $fullLogUrl = $s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
-            }catch (\Exception $e) {
+            } catch (\Exception $e) {
                 Logger::instance()->warning('Failed to upload log file to S3.', [$e->getMessage()]);
             }
         }
 
         $migrationStatus = $this->migrationPlatform->getLogs() ?? [];
         $migrationStatus['mMigration'] = $this->migrationPlatform->getStatusManualMigration();
-        $migrationStatus['fullLogUrl'] = $fullLogUrl;
+        $migrationStatus['fullLogUrl'] = $fullLogUrl ?? '';
 
+        unset($this->migrationPlatform);
         return $migrationStatus;
     }
 
     public function getPageList(): array
     {
-        return $this->migrationPlatform->getProjectPagesList();
+        return $this->projectPagesList ?? [];
     }
 
     public function getProjectUUDI(): string
     {
-        return $this->migrationPlatform->getProjectUUID();
+        return $this->projectUUID ?? '';
     }
 
 }

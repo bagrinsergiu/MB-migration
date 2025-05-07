@@ -1,14 +1,14 @@
 <?php
 
 use MBMigration\ApplicationBootstrapper;
+use MBMigration\MigrationRunnerWave;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
 
-return static function (array $context, Request $request): Response
-{
+return static function (array $context, Request $request): Response {
     $app = new ApplicationBootstrapper($context, $request);
 
     try {
@@ -20,7 +20,7 @@ return static function (array $context, Request $request): Response
         return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
     }
 
-    $bridge = new MBMigration\Bridge\Bridge($config, $request);
+    $bridge = new MBMigration\Bridge\Bridge($app, $config, $request);
 
     switch ($request->getPathInfo()) {
         case '/health':
@@ -54,47 +54,31 @@ return static function (array $context, Request $request): Response
             } catch (Exception $e) {
                 return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
             }
+        case '/utils/clearWorkspace':
+            try {
+                return new JsonResponse(
+                    $bridge->clearWorkspace()
+                        ->getMessageResponse()
+                );
+            } catch (Exception $e) {
+                return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
+            }
+        case '/migration/wave':
+            $response = $bridge->migrationWave();
+
+            return new JsonResponse(
+                $response->getMessage(),
+                $response->getStatusCode()
+            );
         default:
             try {
-                $mgr_manual = (int) $request->get('mgr_manual');
+                $response = $bridge->runMigration()
+                    ->getMessageResponse();
 
-                if(empty($mgr_manual)){
-                    $mgr_manual = false;
-                } else {
-                    $mgr_manual = true;
-                }
-
-                $result = $app->migrationNormalFlow(false, $mgr_manual);
-
-                if(!empty($result['mMigration']) && $result['mMigration'] === true) {
-                    $projectUUID = $app->getProjectUUDI();
-                    $pageList = $app->getPageList();
-
-                    if($bridge->checkPageChanges($projectUUID, $pageList)){
-
-                        // to do, ned add return project details
-
-                        return new JsonResponse(
-                            $bridge->getReportPageChanges(),
-                            200
-                        );
-                    } else {
-                        $result = $app->migrationNormalFlow(true, $mgr_manual);
-                        $result['mgrClone'] = 'failed';
-                        return new JsonResponse($result, 200);
-                    }
-
-                } else {
-                    if($mgr_manual){
-                        $bridge->insertMigrationMapping(
-                            $result['brizy_project_id'],
-                            $result['mb_uuid'],
-                            json_encode(['data' => $result['date']])
-                        );
-                    }
-
-                    return new JsonResponse($result, 200);
-                }
+                return new JsonResponse(
+                    $response->getMessage(),
+                    $response->getStatusCode()
+                );
             } catch (Exception $e) {
                 if ($e->getCode() < 100) {
                     return new JsonResponse(['error' => $e->getMessage()], 404);

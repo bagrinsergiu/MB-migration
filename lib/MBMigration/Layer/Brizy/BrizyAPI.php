@@ -13,7 +13,6 @@ use GuzzleHttp\Exception\RequestException;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
-use function _PHPStan_cc8d35ffb\Symfony\Component\String\s;
 
 class BrizyAPI extends Utils
 {
@@ -59,6 +58,33 @@ class BrizyAPI extends Utils
 
         return json_decode($result['metadata'], true);
 
+    }
+
+    public function getAllProjectFromContainer($containerId)
+    {
+        $param = [
+            'page' => 1,
+            'count' => 100,
+            'workspace' => $containerId,
+        ];
+
+        $url = $this->createUrlAPI('projects');
+
+        $result = $this->httpClient('GET', $url, $param);
+        if ($result['status'] > 200) {
+            Logger::instance()->warning('Response: '.json_encode($result));
+            Logger::instance()->info('Response: '.json_encode($result));
+            throw new Exception('Bad Response from Brizy: '.json_encode($result));
+        }else{
+            return json_decode($result['body'], true);
+        }
+    }
+
+    public function deleteProject($projectID): bool
+    {
+        $url = $this->createUrlAPI('projects');
+        $response = $this->httpClient('DELETE', $url."/".$projectID);
+        return $response['status']==200;
     }
 
     public function getProjectHomePage($projectId, $homePageId)
