@@ -26,10 +26,11 @@ class Config
     public static $graphqlToken;
 
     public static $DBConnection;
-    public static $configPostgreSQL;
-    public static $configMySQL;
+    public static array $configPostgreSQL;
+    public static array $configMySQL;
+    public static array $mgConfigMySQL;
 
-    public static $nameMigration; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
+    public static string $nameMigration; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
 
     private static $cloud_host;
 
@@ -41,7 +42,7 @@ class Config
     /**
      * @var bool
      */
-    public static $devMode;
+    public static bool $devMode;
     /**
      * @var mixed
      */
@@ -57,24 +58,25 @@ class Config
      */
     public static $MBMediaStaging;
 
-    public static $path;
+    public static string $path;
     /**
      * @var array|string[]
      */
-    public static $designInDevelop;
+    public static array $designInDevelop;
     /**
      * @var array
      */
-    private static $settings;
+    private static array $settings;
     /**
      * @var array
      */
-    private static $defaultSettings;
+    private static array $defaultSettings;
     public static string $cachePath;
     /**
      * @var false|mixed
      */
     public static $MB_MONKCMS_API;
+    public static bool $mgrMode;
 
     /**
      * @throws Exception
@@ -89,8 +91,11 @@ class Config
 
         $DBConnection = $this->checkDBConnection($settings['db']);
 
+        $MGConnection = $this->checkDBConnection($settings['db_mg']);
+
         self::$defaultSettings = [
             'devMode' => false,
+            'mgrMode' => false,
             'debugMode' => false,
             'urlJsonKit' => false,
             'graphqlToken' => false,
@@ -103,6 +108,7 @@ class Config
 
         self::$debugMode = (bool)$this->checkSettings('debugMode');
         self::$devMode = (bool)$this->checkSettings('devMode');
+        self::$mgrMode = (bool)$this->checkSettings('mgrMode');
 
         self::$metaData = $this->checkMetaData();
 
@@ -157,6 +163,13 @@ class Config
             'dbName' => $DBConnection['dbName'],
             'dbUser' => $DBConnection['dbUser'],
             'dbPass' => $DBConnection['dbPass'],
+        ];
+
+        self::$mgConfigMySQL = [
+            'dbHost' => $MGConnection['dbHost'],
+            'dbName' => $MGConnection['dbName'],
+            'dbUser' => $MGConnection['dbUser'],
+            'dbPass' => $MGConnection['dbPass'],
         ];
 
         self::$designInDevelop = [

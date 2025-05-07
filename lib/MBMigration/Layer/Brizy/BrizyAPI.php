@@ -13,7 +13,6 @@ use GuzzleHttp\Exception\RequestException;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
-use function _PHPStan_cc8d35ffb\Symfony\Component\String\s;
 
 class BrizyAPI extends Utils
 {
@@ -59,6 +58,33 @@ class BrizyAPI extends Utils
 
         return json_decode($result['metadata'], true);
 
+    }
+
+    public function getAllProjectFromContainer($containerId)
+    {
+        $param = [
+            'page' => 1,
+            'count' => 100,
+            'workspace' => $containerId,
+        ];
+
+        $url = $this->createUrlAPI('projects');
+
+        $result = $this->httpClient('GET', $url, $param);
+        if ($result['status'] > 200) {
+            Logger::instance()->warning('Response: '.json_encode($result));
+            Logger::instance()->info('Response: '.json_encode($result));
+            throw new Exception('Bad Response from Brizy: '.json_encode($result));
+        }else{
+            return json_decode($result['body'], true);
+        }
+    }
+
+    public function deleteProject($projectID): bool
+    {
+        $url = $this->createUrlAPI('projects');
+        $response = $this->httpClient('DELETE', $url."/".$projectID);
+        return $response['status']==200;
     }
 
     public function getProjectHomePage($projectId, $homePageId)
@@ -422,7 +448,20 @@ class BrizyAPI extends Utils
 
         $r_projectFullData['data'] = json_encode($projectData);
         $r_projectFullData['is_autosave'] = 0;
-        $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
+//        $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
+
+        $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
+    }
+
+    public function setLabelManualMigration()
+    {
+        Logger::instance()->info('set Label Manual Migration');
+
+        $containerID = Utils::$cache->get('projectId_Brizy');
+
+        $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
+
+        $r_projectFullData['dataVersion'] = 77777;
 
         $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
     }
@@ -434,7 +473,7 @@ class BrizyAPI extends Utils
         $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
 
         $r_projectFullData['is_autosave'] = 0;
-        $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
+//        $r_projectFullData['dataVersion'] = $projectFullData["dataVersion"] + 1;
         $r_projectFullData['data'] = $projectFullData['data'];
 
         $result = $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
@@ -623,6 +662,36 @@ class BrizyAPI extends Utils
 
         if (!empty($value['name'])) {
             return $value['name'];
+        }
+
+        return false;
+    }
+
+    public function checkProjectManualMigration($projectID): bool
+    {
+        $result = $this->getProjectsDataVersion($projectID);
+        if($result === 77777) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getProjectsDataVersion($projectID)
+    {
+        $url = $this->createPrivateUrlAPI('projects').'/'.$projectID;
+
+        try {
+            $result = $this->httpClient('GET', $url);
+
+            $value = json_decode($result['body'], true);
+
+            if (!empty($value['dataVersion'])) {
+                return $value['dataVersion'];
+            }
+        } catch (Exception $e) {
+            return false;
         }
 
         return false;
