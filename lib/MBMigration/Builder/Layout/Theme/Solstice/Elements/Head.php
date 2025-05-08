@@ -13,6 +13,14 @@ class Head extends HeadElement
      */
     protected function getLogoComponent(BrizyComponent $brizySection): BrizyComponent
     {
+        $brizySection->getItemWithDepth(0, 0, 0)
+            ->getValue()
+            ->set_width(30);
+
+        $brizySection->getItemWithDepth(0, 0, 1)
+            ->getValue()
+            ->set_width(70);
+
         return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
