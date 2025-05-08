@@ -292,4 +292,8 @@ abstract class AbstractElement implements ElementInterface
         $this->pageTDO->getPageStyle()->setPreviousSectionEmpty(true);
     }
 
+    protected function getThemeMenuHeaderStyle($headStyles, $section): BrizyComponent
+    {
+        return $section;
+    }
 }

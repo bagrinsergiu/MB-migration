@@ -100,4 +100,16 @@ class Head extends HeadElement
     {
         return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li a", "pseudoEl" => ""];
     }
+
+    public function getThemeMenuHeaderStyle($headStyles, $section): BrizyComponent
+    {
+        if (isset($headSts['style']['opacity'])) {
+            $section->getItemWithDepth(0)
+                ->getValue()
+                ->set_bgColorOpacity($headStyles['style']['opacity'])
+                ->set_mobileBgColorOpacity($headStyles['style']['opacity']);
+        }
+
+        return $section;
+    }
 }
