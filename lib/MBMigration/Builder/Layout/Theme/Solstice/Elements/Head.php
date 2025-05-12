@@ -111,7 +111,7 @@ class Head extends HeadElement
 
     public function getThemeMenuHeaderStyle($headStyles, $section): BrizyComponent
     {
-        if (isset($headSts['style']['opacity'])) {
+        if (isset($headStyles['style']['opacity'])) {
             $section->getItemWithDepth(0)
                 ->getValue()
                 ->set_bgColorOpacity($headStyles['style']['opacity'])
