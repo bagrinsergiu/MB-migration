@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
 
 return static function (array $context, Request $request): Response {
+    switch ($request->getPathInfo()) {
+        case '/health':
+            return new JsonResponse(["status" => "success",], 200);
+    }
+
     $app = new ApplicationBootstrapper($context, $request);
 
     try {
@@ -23,8 +28,6 @@ return static function (array $context, Request $request): Response {
     $bridge = new MBMigration\Bridge\Bridge($app, $config, $request);
 
     switch ($request->getPathInfo()) {
-        case '/health':
-            return new JsonResponse(["status" => "success",], 200);
         case '/mapping':
             $response = $bridge
                 ->checkPreparedProject()
