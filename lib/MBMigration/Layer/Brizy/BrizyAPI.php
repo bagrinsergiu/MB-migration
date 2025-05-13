@@ -453,7 +453,7 @@ class BrizyAPI extends Utils
         $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
     }
 
-    public function setLabelManualMigration()
+    public function setLabelManualMigration( bool $value)
     {
         Logger::instance()->info('set Label Manual Migration');
 
@@ -461,7 +461,12 @@ class BrizyAPI extends Utils
 
         $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
 
-        $r_projectFullData['dataVersion'] = 77777;
+        if($value) {
+            $r_projectFullData['dataVersion'] = 700;
+        }
+        else {
+            $r_projectFullData['dataVersion'] = 1;
+        }
 
         $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
     }
@@ -670,7 +675,7 @@ class BrizyAPI extends Utils
     public function checkProjectManualMigration($projectID): bool
     {
         $result = $this->getProjectsDataVersion($projectID);
-        if($result === 77777) {
+        if($result >= 700) {
 
             return true;
         }
@@ -689,6 +694,25 @@ class BrizyAPI extends Utils
 
             if (!empty($value['dataVersion'])) {
                 return $value['dataVersion'];
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+
+        return false;
+    }
+
+    public function getProjectsData($projectID)
+    {
+        $url = $this->createPrivateUrlAPI('projects').'/'.$projectID;
+
+        try {
+            $result = $this->httpClient('GET', $url);
+
+            $value = json_decode($result['body'], true);
+
+            if (!empty($value)) {
+                return $value;
             }
         } catch (Exception $e) {
             return false;

@@ -1,7 +1,6 @@
 <?php
 
 use MBMigration\ApplicationBootstrapper;
-use MBMigration\MigrationRunnerWave;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

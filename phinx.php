@@ -1,4 +1,14 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
+Dotenv::createMutable(__DIR__)->safeLoad();
+
+$prodEnv = '.env.prod.local';
+if (file_exists(__DIR__ . '/' . $prodEnv)) {
+    Dotenv::createMutable(__DIR__, [$prodEnv])->safeLoad();
+}
 
 return [
     'paths' => [
@@ -10,11 +20,11 @@ return [
         'default_environment' => 'production',
         'production' => [
             'adapter' => 'mysql',
-            'host' => 'mg_mysql',
-            'name' => 'MG_prepare_mapping',
-            'user' => 'user',
-            'pass' => 'user',
-            'port' => 3306,
+            'host' => $_ENV['MG_DB_HOST'],
+            'name' => $_ENV['MG_DB_NAME'],
+            'user' => $_ENV['MG_DB_USER'],
+            'pass' => $_ENV['MG_DB_PASS'],
+            'port' => $_ENV['MG_DB_PORT'],
             'charset' => 'utf8mb4',
         ],
     ],

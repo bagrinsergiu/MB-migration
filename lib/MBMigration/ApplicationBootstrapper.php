@@ -13,7 +13,6 @@ class ApplicationBootstrapper
     private array $context;
     private Request $request;
     private Config $config;
-    private MigrationPlatform $migrationPlatform;
     private array $projectPagesList;
     private string $projectUUID;
 
@@ -21,6 +20,8 @@ class ApplicationBootstrapper
     {
         $this->context = $context;
         $this->request = $request;
+        $this->projectPagesList = [];
+
         $logFilePath = $this->context['LOG_FILE_PATH'] . '_ApplicationBootstrapper.log';
 
         $logger = Logger::initialize(
@@ -158,11 +159,11 @@ class ApplicationBootstrapper
             file_put_contents($lockFile, $mb_project_uuid . "-" . $brz_project_id);
             Logger::instance()->info('Creating lock file', [$lockFile]);
 
-            $this->migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore, $mrgManual);
-            $this->migrationPlatform->start($mb_project_uuid, $brz_project_id);
+            $migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore, $mrgManual);
+            $migrationPlatform->start($mb_project_uuid, $brz_project_id);
 
-            $this->projectPagesList = $this->migrationPlatform->getProjectPagesList();
-            $this->projectUUID = $this->migrationPlatform->getProjectUUID();
+            $this->projectPagesList = $migrationPlatform->getProjectPagesList();
+            $this->projectUUID = $migrationPlatform->getProjectUUID();
 
 
         } catch (Exception $e) {
@@ -171,28 +172,29 @@ class ApplicationBootstrapper
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
 
             throw new Exception($e->getMessage(), 400);
-        } finally {
-            Logger::instance()->info('Releasing lock file', [$lockFile]);
-            if (file_exists($lockFile)) {
-                if (!unlink($lockFile)) {
-                    Logger::instance()->warning('Failed to release lock file.', [$lockFile]);
-                }
-            } else {
-                Logger::instance()->warning('Lock file does not exist, nothing to release.', [$lockFile]);
-            }
-
-            try {
-                $fullLogUrl = $s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
-            } catch (\Exception $e) {
-                Logger::instance()->warning('Failed to upload log file to S3.', [$e->getMessage()]);
-            }
         }
 
-        $migrationStatus = $this->migrationPlatform->getLogs() ?? [];
-        $migrationStatus['mMigration'] = $this->migrationPlatform->getStatusManualMigration();
+        Logger::instance()->info('Releasing lock file', [$lockFile]);
+        if (file_exists($lockFile)) {
+            if (!unlink($lockFile)) {
+                Logger::instance()->warning('Failed to release lock file.', [$lockFile]);
+            }
+        } else {
+            Logger::instance()->warning('Lock file does not exist, nothing to release.', [$lockFile]);
+        }
+
+        try {
+            $fullLogUrl = $s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
+        } catch (\Exception $e) {
+            Logger::instance()->warning('Failed to upload log file to S3.', [$e->getMessage()]);
+        }
+
+        $migrationStatus = $migrationPlatform->getLogs() ?? [];
+        $migrationStatus['mMigration'] = $migrationPlatform->getStatusManualMigration();
         $migrationStatus['fullLogUrl'] = $fullLogUrl ?? '';
 
-        unset($this->migrationPlatform);
+        unset($migrationPlatform);
+
         return $migrationStatus;
     }
 

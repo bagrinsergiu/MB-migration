@@ -38,8 +38,8 @@ class RightMediaCircle extends PhotoTextElement
             ->set_height($height)
             ->set_mobileWidth(286)
             ->set_mobileHeight(286)
-            ->set_heightSuffix((strpos($height,'%')===true)?'%':'pix')
-            ->set_widthSuffix((strpos($height,'%')===true)?'%':'pix');
+            ->set_heightSuffix((strpos($height,'%')===true)?'%':'px')
+            ->set_widthSuffix((strpos($height,'%')===true)?'%':'px');
     }
 
     protected function getMobileTopMarginOfTheFirstElement(): int

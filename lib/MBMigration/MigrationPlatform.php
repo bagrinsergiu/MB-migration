@@ -88,6 +88,7 @@ class MigrationPlatform
         set_exception_handler([$this->errorDump, 'handleUncaughtExceptions']);
 
         $this->finalSuccess['status'] = 'start';
+        $this->projectPagesList = [];
 
         $this->buildPage = $buildPage;
         $this->workspacesId = $workspacesId;
@@ -186,9 +187,7 @@ class MigrationPlatform
             $this->brizyApi->clearAllFontsInProject();
         }
 
-        if($this->mgr_manual){
-            $this->brizyApi->setLabelManualMigration();
-        }
+//        $this->brizyApi->setLabelManualMigration(false);
 
         $this->checkDesign($designName);
 
@@ -315,6 +314,11 @@ class MigrationPlatform
         Logger::instance()->info('Project migration completed successfully!');
 
         $this->logFinalProcess($this->startTime);
+
+        if($this->mgr_manual){
+            $this->brizyApi->setLabelManualMigration(true);
+        }
+
         return true;
     }
 
