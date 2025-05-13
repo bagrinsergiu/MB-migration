@@ -390,6 +390,7 @@ class MBProjectDataCollector
                        settings as parentSettings,
                        landing,
                        hidden,
+                       updated_at,
                        (CASE WHEN (password_protected IS NULL OR password_protected IS FALSE) THEN false ELSE true END) as protectedPage
                 FROM pages
                 WHERE site_id = {$this->siteId} and trashed_at is null"
@@ -405,30 +406,30 @@ class MBProjectDataCollector
             return $page;
         }, $allPages);
 
-        function getPagesByParent($parent, $allpages)
-        {
-            $pages = array_filter($allpages, function ($page) use ($parent) {
-                return $page['parent_id'] == $parent;
-            });
-
-            foreach ($pages as $i => $page) {
-                $pages[$i]['child'] = getPagesByParent($page['id'], $allpages);
-            }
-
-            usort($pages, function ($a, $b) {
-                return $a['position'] <=> $b['position'];
-            });
-
-            return $pages;
-        }
-
-        $result = getPagesByParent(null, $allPages);
+        $result =  $this->getPagesByParent(null, $allPages);
         $this->cache->set('ParentPages', $result);
 
         Logger::instance()->info(count($result).' pages found.');
 
         return $result;
 
+    }
+
+    private function getPagesByParent($parent, $allpages)
+    {
+        $pages = array_filter($allpages, function ($page) use ($parent) {
+            return $page['parent_id'] == $parent;
+        });
+
+        foreach ($pages as $i => $page) {
+            $pages[$i]['child'] = $this->getPagesByParent($page['id'], $allpages);
+        }
+
+        usort($pages, function ($a, $b) {
+            return $a['position'] <=> $b['position'];
+        });
+
+        return $pages;
     }
 
     /**

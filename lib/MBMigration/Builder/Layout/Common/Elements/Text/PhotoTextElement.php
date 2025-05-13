@@ -89,8 +89,8 @@ abstract class PhotoTextElement extends AbstractElement
             ->getValue()
             ->set_width($width)
             ->set_height($height)
-            ->set_heightSuffix((strpos($height,'%')===true)?'%':'pix')
-            ->set_widthSuffix((strpos($width,'%')===true)?'%':'pix');
+            ->set_heightSuffix((strpos($height,'%')===true)?'%':'px')
+            ->set_widthSuffix((strpos($width,'%')===true)?'%':'px');
     }
 
     /**
