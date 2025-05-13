@@ -57,9 +57,10 @@ trait RichTextAble
 
     protected function handleRichTextHeadFromItems(
         ElementContextInterface $data,
-        BrowserPageInterface $browserPage,
-        callable $acllback = null
-    ): BrizyComponent {
+        BrowserPageInterface    $browserPage,
+        callable                $acllback = null
+    ): BrizyComponent
+    {
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
 
@@ -139,15 +140,54 @@ trait RichTextAble
         return $brizySection;
     }
 
+    protected function handleOnlyRichTextItems(ElementContextInterface $data, BrowserPageInterface $browserPage): BrizyComponent
+    {
+        $mbSectionItem = $data->getMbSection();
+        $brizySection = $data->getBrizySection();
+
+        $sectionCategory = $mbSectionItem['category'];
+        $showHeader = $this->canShowHeader($mbSectionItem);
+        $showBody = $this->canShowBody($mbSectionItem);
+
+        // sort items
+        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+
+        foreach ((array)$mbSectionItem['items'] as $mbItem) {
+
+            if ($mbItem['category'] == $sectionCategory && isset($mbItem['item_type'])) {
+                if ($mbItem['item_type'] == 'title' && !$showHeader) {
+                    continue;
+                }
+                if ($mbItem['item_type'] == 'body' && !$showBody) {
+                    continue;
+                }
+
+            }
+
+            $elementContext = $data->instanceWithMBSection($mbItem);
+            try {
+                $this->handleOnlyRichTextItem(
+                    $elementContext,
+                    $browserPage
+                );
+            } catch (Exception $e) {
+                Logger::instance()->info($e->getMessage());
+            }
+        }
+
+        return $brizySection;
+    }
+
     /**
      * Process single rich text item and place it the brizy section
      */
     protected function handleRichTextItem(
         ElementContextInterface $data,
-        BrowserPageInterface $browserPage,
-        $selector = null,
-        $settings = []
-    ) {
+        BrowserPageInterface    $browserPage,
+                                $selector = null,
+                                $settings = []
+    ): BrizyComponent
+    {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
@@ -188,6 +228,34 @@ trait RichTextAble
         return $brizyComponent;
     }
 
+    protected function handleOnlyRichTextItem(
+        ElementContextInterface $data,
+        BrowserPageInterface    $browserPage,
+                                $selector = null,
+                                $settings = []
+    ): BrizyComponent
+    {
+        $mbSectionItem = $data->getMbSection();
+        $families = $data->getFontFamilies();
+        $default_fonts = $data->getDefaultFontFamily();
+        $brizyComponent = $data->getBrizySection();
+
+        if ($mbSectionItem['category'] == 'text') {
+            $brizyComponent = $this->handleTextItem(
+                $mbSectionItem,
+                $brizyComponent,
+                $browserPage,
+                $families,
+                $default_fonts,
+                $data->getThemeContext()->getUrlMap(),
+                $selector,
+                $settings
+            );
+        }
+
+        return $brizyComponent;
+    }
+
     private function handleTextItem(
         $mbSectionItem,
         BrizyComponent $brizySection,
@@ -197,11 +265,12 @@ trait RichTextAble
         $urlMap = [],
         $selector = null,
         $settings = []
-    ) {
+    )
+    {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
-        $richTextBrowserData = $this->extractTexts($selector ?? '[data-id="'.$sectionId.'"]', $browserPage, $families, $defaultFont, $urlMap);
+        $richTextBrowserData = $this->extractTexts($selector ?? '[data-id="' . $sectionId . '"]', $browserPage, $families, $defaultFont, $urlMap);
         $styles = $this->getDomElementStyles(
-            $selector ?? '[data-id="'.$sectionId.'"]',
+            $selector ?? '[data-id="' . $sectionId . '"]',
             ['text-align', 'font-family'],
             $browserPage,
             $families,
@@ -213,11 +282,11 @@ trait RichTextAble
             switch ($textItem['type']) {
                 case 'EmbedCode':
                     //wrapper
-                    if(!isset($embeddedElements[$embeddIndex]))  break;
+                    if (!isset($embeddedElements[$embeddIndex])) break;
 
                     $embedCode = $embeddedElements[$embeddIndex++];
                     $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embedCode['embed']);
-                    $cssClass = 'custom-align-'.random_int(0, 10000);
+                    $cssClass = 'custom-align-' . random_int(0, 10000);
                     $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
                     $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_overflow('on');
                     $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
@@ -230,8 +299,8 @@ trait RichTextAble
                 case 'Cloneable':
                 case 'Wrapper':
                     //wrapper--richText
-                    if(empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
-                            $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
+                    if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
+                        $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
                     } elseif ($settings['setEmptyText'] === true) {
                         if ($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])) {
                             $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
@@ -251,11 +320,12 @@ trait RichTextAble
         BrowserPageInterface $browserPage,
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
-    ) {
+    ): BrizyComponent
+    {
 
         if (!empty($mbSectionItem['content'])) {
 
-            $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container img';
+            $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container img';
             $sizes = $this->handleSizeToInt($this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts));
             $sizeUnit = 'px';
 
@@ -263,9 +333,9 @@ trait RichTextAble
                 ->set_imageFileName($mbSectionItem['imageFileName'])
                 ->set_imageSrc($mbSectionItem['content']);
 
-            if(!empty($sizes['width']) && !empty($sizes['height'])) {
+            if (!empty($sizes['width']) && !empty($sizes['height'])) {
                 if (strpos($sizes['width'], '%') !== false) {
-                    $selectorImageSizes = '[data-id="'.$mbSectionItemId.'"] .photo-container';
+                    $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container';
                     $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
                 }
 
@@ -288,7 +358,7 @@ trait RichTextAble
             $this->handleLink(
                 $mbSectionItem,
                 $brizyComponent,
-                '[data-id="'.$mbSectionItemId.'"] div.photo-container a',
+                '[data-id="' . $mbSectionItemId . '"] div.photo-container a',
                 $browserPage);
         }
 
@@ -297,19 +367,23 @@ trait RichTextAble
 
     private function handleLink($mbSectionItem, $brizyComponent, $selector, $browserPage)
     {
-        if ($mbSectionItem['new_window']) {
-            $mbSectionItem['new_window'] = 'on';
-        } else {
-            $mbSectionItem['new_window'] = $this->openNewTab(
-                $this->getNodeAttribute(
-                    $browserPage,
-                    $selector,
-                    'target'
-                )
-            );
-        }
+        if (!empty($mbSectionItem['link'])) {
+            if ($mbSectionItem['new_window']) {
+                $mbSectionItem['new_window'] = 'on';
+            } else {
+                try {
+                    $mbSectionItem['new_window'] = $this->openNewTab(
+                        $this->getNodeAttribute(
+                            $browserPage,
+                            $selector,
+                            'target'
+                        )
+                    );
+                } catch (Exception $e) {
+                    $mbSectionItem['new_window'] = 'on';
+                }
+            }
 
-        if ($mbSectionItem['link'] != '') {
             if ($this->findTag($mbSectionItem['link'], 'iframe')) {
                 $popupFromKit = $this->globalBrizyKit['popup']['popup--embedCode'];
                 $popupSection = new BrizyComponent(json_decode($popupFromKit, true));
@@ -349,20 +423,22 @@ trait RichTextAble
                     case 'mail':
                         $external = [
                             'linkType' => 'external',
-                            'linkExternal' => 'mailto:'.$mbSectionItem['link'],
+                            'linkExternal' => 'mailto:' . $mbSectionItem['link'],
                             'linkExternalBlank' => $mbSectionItem['new_window']
                         ];
                         break;
                     case 'phone':
                         $external = [
                             'linkType' => 'external',
-                            'linkExternal' => 'tel:'.$mbSectionItem['link'],
+                            'linkExternal' => 'tel:' . $mbSectionItem['link'],
                             'linkExternalBlank' => $mbSectionItem['new_window']
                         ];
                         break;
                     case 'string':
                     case 'link':
-                        if(MediaController::is_doc($mbSectionItem['link'])) {
+                        if (MediaController::isDoc($mbSectionItem['link'])) {
+                            $mbSectionItem['link'] = MediaController::getURLDoc($mbSectionItem['link']);
+                        } else if (MediaController::isVideo($mbSectionItem['link'])) {
                             $mbSectionItem['link'] = MediaController::getURLDoc($mbSectionItem['link']);
                         }
 
@@ -564,7 +640,8 @@ trait RichTextAble
         return false;
     }
 
-    private function setAttribute(DOMElement $fragment, array $attributes){
+    private function setAttribute(DOMElement $fragment, array $attributes)
+    {
         foreach ($attributes as $name => $value) {
             $fragment->setAttribute($name, $value);
         }
@@ -574,7 +651,7 @@ trait RichTextAble
     {
         if (strpos($string, "px") !== false) {
             $cleanedString = str_replace("px", "", $string);
-            return (int) $cleanedString;
+            return (int)$cleanedString;
         }
 
         return $string;

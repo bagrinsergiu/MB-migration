@@ -41,6 +41,29 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return 25;
     }
 
+    protected function handleRowListItem(BrizyComponent $brizySection, $position = 'left'): void
+    {
+        if ($position == 'left') {
+            $brizySection
+                ->getItemWithDepth(1)
+                ->addPadding(15,0,15,20);
+        } else {
+            $brizySection
+                ->getItemWithDepth(0)
+                ->addPadding(15,20,15,0);
+        }
+    }
+
+    protected function getDonationsButtonOptions(): array
+    {
+        return [
+            'mobilePaddingTop' => 10,
+            'mobilePaddingRight' => 0,
+            'mobilePaddingBottom' => 10,
+            'mobilePaddingLeft' => 0,
+        ];
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

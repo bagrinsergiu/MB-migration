@@ -9,6 +9,7 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrizyKitNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Core\Logger;
 
 trait ButtonAble
 {
@@ -21,7 +22,7 @@ trait ButtonAble
         ElementContextInterface $data,
         BrowserPageInterface $browserPage,
         array $brizyKit,
-        $selector = '',
+        $selector = null,
         $options = null
     ): BrizyComponent {
 
@@ -29,7 +30,7 @@ trait ButtonAble
         $brizySection = $data->getBrizySection();
 
         if (!isset($brizyKit['donation-button'])) {
-            throw new BrizyKitNotFound('The BrizyKit does not contain the key: button');
+            Logger::instance()->critical('The BrizyKit does not contain the key: donation-button', [$mbSection['typeSection']]);
         }
 
         try {
@@ -45,6 +46,7 @@ trait ButtonAble
                     $selector = $selector ?? '[data-id="'.$mbSection['id'].'"]';
 
                     $brizyButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
+
                     $brizyButton = $this->setButtonStyles(
                         $brizyButton,
                         $browserPage,

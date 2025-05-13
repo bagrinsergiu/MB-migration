@@ -1,4 +1,5 @@
 import {
+  EMPTY_SPACES_REGEX,
   buttonSelector,
   embedSelector,
   iconSelector,
@@ -309,7 +310,9 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
 
                 Array.from(node.childNodes).forEach((child) => {
                   if (child.nodeType === Node.TEXT_NODE) {
-                    const text = child.textContent?.trim();
+                    const text = child.textContent
+                      ?.replace(EMPTY_SPACES_REGEX, "")
+                      .trim();
 
                     if (text) {
                       const textNode = document.createElement("p");

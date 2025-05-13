@@ -125,7 +125,7 @@ export const getModel = (data: Model) => {
         break;
       }
       default: {
-        dic[toCamelCase(key)] = styles[key];
+        dic[toCamelCase(key)] = styles[key] ?? modelDefaults[key];
       }
     }
   });

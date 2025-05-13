@@ -19,6 +19,8 @@ abstract class TabsLayoutElement extends AbstractElement
         $mbSection = $data->getMbSection();
         $families = $data->getFontFamilies();
 
+        $this->CustomCSSForSections($brizySection);
+
         $brizyComponent = $this->getSectionItemComponent($brizySection);
 
         $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
@@ -69,6 +71,10 @@ abstract class TabsLayoutElement extends AbstractElement
             $tabContainerComponentValue->set_bgColorOpacity(0);
         }
 
+        $this->afterTransformToTabsItem($brizySection);
+
+
+
         return $brizySection;
     }
 
@@ -89,6 +95,21 @@ abstract class TabsLayoutElement extends AbstractElement
     {
     }
 
+    protected function CustomCSSForSections(BrizyComponent $brizySection): void
+    {
+        $brizySection
+            ->getItemWithDepth(0)
+            ->addCustomCSS('.brz-tabs.brz-tabs--horizontal{
+padding: 0 !important;
+}
+
+.brz-tabs__nav.brz-tabs__nav--style-3 .brz-tabs__nav--item::before,
+.brz-tabs__nav.brz-tabs__nav--style-3 .brz-tabs__nav--item::after {
+background-color:transparent !important;
+}');
+    }
+
+
     protected function getPropertiesMainSection(): array
     {
         return [
@@ -104,6 +125,10 @@ abstract class TabsLayoutElement extends AbstractElement
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function afterTransformToTabsItem(BrizyComponent $brizyTabSection)
+    {
     }
 
 }

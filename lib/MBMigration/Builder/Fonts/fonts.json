@@ -1948,12 +1948,19 @@
     "fonts": {
       "400": {
         "normal": [
-          "fontsKit/georgia/400-normal/georgia.ttf",
+          "fontsKit/georgia/400-normal/georgia.ttf"
+
+        ],
+        "italic": [
+          "fontsKit/georgia/400-italic/georgiai.ttf"
+        ]
+      },
+      "700": {
+        "normal": [
           "fontsKit/georgia/700-normal/georgiab.ttf"
 
         ],
         "italic": [
-          "fontsKit/georgia/400-italic/georgiai.ttf",
           "fontsKit/georgia/700-italic/georgiaz.ttf"
         ]
       }

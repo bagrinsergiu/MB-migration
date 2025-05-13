@@ -12,6 +12,8 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
     {
         $brizySection = parent::internalTransformToItem($data);
 
+        $brizySection->addSectionHeight(100);
+
         return $brizySection;
     }
 

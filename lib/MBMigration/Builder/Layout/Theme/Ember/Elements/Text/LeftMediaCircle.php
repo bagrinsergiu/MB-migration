@@ -39,8 +39,8 @@ class LeftMediaCircle extends PhotoTextElement
             ->set_height($height)
             ->set_mobileWidth(286)
             ->set_mobileHeight(286)
-            ->set_heightSuffix((strpos($height,'%')===true)?'%':'pix')
-            ->set_widthSuffix((strpos($width,'%')===true)?'%':'pix');
+            ->set_heightSuffix((strpos($height,'%')===true)?'%':'px')
+            ->set_widthSuffix((strpos($width,'%')===true)?'%':'px');
     }
 
     protected function getMobileTopMarginOfTheFirstElement(): int

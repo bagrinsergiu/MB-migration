@@ -46,6 +46,16 @@ class RightMediaOverlap extends PhotoTextElement
         return 25;
     }
 
+    protected function getDonationsButtonOptions(): array
+    {
+        return [
+            'mobilePaddingTop' => 10,
+            'mobilePaddingRight' => 0,
+            'mobilePaddingBottom' => 10,
+            'mobilePaddingLeft' => 0,
+        ];
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

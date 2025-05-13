@@ -54,7 +54,7 @@ abstract class ListLayoutElement extends AbstractElement
             $elementContext = $data->instanceWithMBSection($item);
             $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
-            $this->handleRowListItem($brizySectionItem);
+            $this->handleRowListItem($brizySectionItem, $photoPosition);
 
 //            $brizySectionItem->getValue()
 //                ->set_paddingTop((int)$styles['margin-top'])
@@ -104,7 +104,7 @@ abstract class ListLayoutElement extends AbstractElement
                         $mbItem,
                         $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
                     );
-                    $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+                    $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
                 }
             }
 
@@ -143,7 +143,7 @@ abstract class ListLayoutElement extends AbstractElement
 
     }
 
-    protected function handleRowListItem(BrizyComponent $brizySection): void
+    protected function handleRowListItem(BrizyComponent $brizySection, $position = 'left'): void
     {
         $brizySection
             ->getItemWithDepth(0)

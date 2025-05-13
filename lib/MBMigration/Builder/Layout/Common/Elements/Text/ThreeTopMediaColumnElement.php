@@ -51,15 +51,15 @@ class ThreeTopMediaColumnElement extends AbstractElement
 
         $elementContext = $data->instanceWithBrizyComponent($this->getText1Component($brizySection));
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getText2Component($brizySection));
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getText3Component($brizySection));
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+        $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit);
 
         return $brizySection;
     }

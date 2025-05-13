@@ -141,7 +141,7 @@ abstract class GridLayoutElement extends AbstractElement
                             }
 
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
-                            $this->handleDonations($elementContext, $this->browserPage, $this->brizyKit);
+                            $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
                             break;
                     }
                 }
@@ -160,11 +160,12 @@ abstract class GridLayoutElement extends AbstractElement
                                         $brizySectionItem
                                     );
 
-                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
+                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, null, $mbItem['id'] ?? null);
                                 }
                             }
                     }
                 }
+                $this->handleColumItemComponent($brizySectionItem);
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
             }
             $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
@@ -225,6 +226,10 @@ abstract class GridLayoutElement extends AbstractElement
         $brizyComponent
             ->addPadding(20,0,20,0)
             ->addMobilePadding(10);
+    }
+
+    protected function handleColumItemComponent(BrizyComponent $brizyComponent):void
+    {
     }
 
     protected function getPropertiesMainSection(): array
