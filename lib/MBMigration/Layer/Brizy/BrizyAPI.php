@@ -453,11 +453,15 @@ class BrizyAPI extends Utils
         $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
     }
 
-    public function setLabelManualMigration( bool $value)
+    public function setLabelManualMigration( bool $value, $projectID = null)
     {
         Logger::instance()->info('set Label Manual Migration');
 
-        $containerID = Utils::$cache->get('projectId_Brizy');
+        if(empty($projectID)) {
+            $containerID = Utils::$cache->get('projectId_Brizy');
+        } else {
+            $containerID = $projectID;
+        }
 
         $url = $this->createPrivateUrlAPI('projects').'/'.$containerID;
 

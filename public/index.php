@@ -72,6 +72,19 @@ return static function (array $context, Request $request): Response {
                 $response->getMessage(),
                 $response->getStatusCode()
             );
+
+        case '/app':
+            $response = $bridge->mApp();
+            return new JsonResponse(
+                $response->getMessage(),
+                $response->getStatusCode()
+            );
+        case '/addTagManualMigration':
+            $response = $bridge->addTagManualMigration();
+            return new JsonResponse(
+                $response->getMessage(),
+                $response->getStatusCode()
+            );
         default:
             try {
                 $response = $bridge->runMigration()

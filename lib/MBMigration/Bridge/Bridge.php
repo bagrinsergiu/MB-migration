@@ -413,7 +413,7 @@ class Bridge
         $brz_workspaces_id = (int)$this->request->get('brz_workspaces_id') ?? 0;
         $mb_page_slug = $this->request->get('mb_page_slug') ?? '';
 
-        if ($mgr_manual) {
+        if (!$mgr_manual) {
             $mgr_manual = false;
         } else {
             $mgr_manual = true;
@@ -505,7 +505,7 @@ class Bridge
     {
         $brizyApi = new BrizyAPI();
 
-        $result = $brizyApi->getAllProjectFromContainer(22436421);
+        $result = $brizyApi->getAllProjectFromContainer(0);
 
         foreach ($result as $value) {
             $brizyApi->deleteProject($value['id']);
@@ -516,5 +516,87 @@ class Bridge
             'message'
         );
         return $this;
+    }
+
+    public function addTagManualMigrationFromDB(): Bridge
+    {
+        $brizyApi = new BrizyAPI();
+
+        $result = $this->db->getAllRows('SELECT * FROM migrations_mapping WHERE `ignore` = 0');
+
+        try {
+            foreach ($result as $value) {
+                $brizyApi->setLabelManualMigration(true, (int) $value['brz_project_id']);
+
+            }
+        } catch (\Exception $e) {
+
+            $sas= $e->getMessage();
+        }
+
+        $this->prepareResponseMessage(
+            "Workspace cleared",
+            'message'
+        );
+        return $this;
+    }
+
+    public function addTagManualMigration(): MgResponse
+    {
+        $brizyApi = new BrizyAPI();
+
+        try {
+            $inputProperties = $this->POST->checkInputProperties(['brz_project_id']);
+            $brizyApi->setLabelManualMigration(true, (int)$inputProperties['brz_project_id']);
+
+            $this->prepareResponseMessage(
+                "Tag set",
+                'message'
+            );
+        } catch (\Exception $e) {
+            $this->prepareResponseMessage(
+                $e->getMessage(),
+                'error',
+                404
+            );
+        }
+
+        return $this->getMessageResponse();
+    }
+
+    public function mApp(): MgResponse
+    {
+        //$this->addTagManualMigration();
+
+
+
+//        $dir1 = dirname(__DIR__) . '/../../public/migration_results_07-05-2025_21.json';
+//        $dir2 = dirname(__DIR__) . '/../../public/migration_results_08-05-2025_22.json';
+//
+//        $fileCont1 = array_merge(
+//            json_decode(file_get_contents($dir1), true),
+//            json_decode(file_get_contents($dir2), true)
+//        );
+//        try{
+//            foreach ($fileCont1 as $key => $value) {
+//                if (empty($value['brizy_project_id'])) {
+//                    continue;
+//                }
+//
+//                $result = $this->insertMigrationMapping($value['brizy_project_id'], $key, json_encode(['data' => '2025-05-13']));
+//            }
+//
+//            $eee= 12;
+//        } catch (\Exception $e) {
+//
+//            $Eee = $e->getMessage();
+//        }
+
+        $this->prepareResponseMessage(
+            "List added",
+            'message'
+        );
+
+        return $this->getMessageResponse();
     }
 }
