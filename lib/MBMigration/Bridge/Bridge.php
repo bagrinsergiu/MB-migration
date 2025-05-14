@@ -243,7 +243,7 @@ class Bridge
                 $changes_json = ['data' => date('Y-m-d')];
             }
 
-            $this->checkProjectPageChanges($pageList, '2023-04-15' ?? $changes_json['data'], $this->listReport);
+            $this->checkProjectPageChanges($pageList, $changes_json['data'], $this->listReport);
 
             return true;
         } catch (\Exception $e) {
@@ -435,9 +435,11 @@ class Bridge
             if ($this->checkPageChanges($projectUUID, $pageList)) {
 
                 // to do, ned add return project details
-                $this->prepareResponseMessage(
-                    $this->getReportPageChanges()
-                );
+                $this->prepareResponseMessage([
+                    'projectId' => $brz_project_id,
+                    'uuid' => $projectUUID,
+                    'report' => $this->getReportPageChanges()
+                ]);
             } else {
                 $result = $this->app->migrationFlow(
                     $mb_project_uuid,
@@ -541,6 +543,29 @@ class Bridge
         return $this;
     }
 
+    public function delTagManualMigration(): MgResponse
+    {
+        $brizyApi = new BrizyAPI();
+
+        try {
+            $inputProperties = $this->POST->checkInputProperties(['brz_project_id']);
+            $brizyApi->setLabelManualMigration(false, (int)$inputProperties['brz_project_id']);
+
+            $this->prepareResponseMessage(
+                "Tag deleted",
+                'message'
+            );
+        } catch (\Exception $e) {
+            $this->prepareResponseMessage(
+                $e->getMessage(),
+                'error',
+                404
+            );
+        }
+
+        return $this->getMessageResponse();
+    }
+
     public function addTagManualMigration(): MgResponse
     {
         $brizyApi = new BrizyAPI();
@@ -564,33 +589,59 @@ class Bridge
         return $this->getMessageResponse();
     }
 
+    public function setCloningLincMigration(): MgResponse
+    {
+        $brizyApi = new BrizyAPI();
+
+        try {
+            $inputProperties = $this->POST->checkInputProperties(['brz_project_id']);
+            $brizyApi->setCloningLink(true, (int)$inputProperties['brz_project_id']);
+
+            $this->prepareResponseMessage(
+                "Tag set",
+                'message'
+            );
+        } catch (\Exception $e) {
+            $this->prepareResponseMessage(
+                $e->getMessage(),
+                'error',
+                404
+            );
+        }
+
+        return $this->getMessageResponse();
+    }
+
     public function mApp(): MgResponse
     {
         //$this->addTagManualMigration();
+        $brizyApi = new BrizyAPI();
 
 
 
-//        $dir1 = dirname(__DIR__) . '/../../public/migration_results_07-05-2025_21.json';
-//        $dir2 = dirname(__DIR__) . '/../../public/migration_results_08-05-2025_22.json';
-//
-//        $fileCont1 = array_merge(
-//            json_decode(file_get_contents($dir1), true),
-//            json_decode(file_get_contents($dir2), true)
-//        );
-//        try{
-//            foreach ($fileCont1 as $key => $value) {
-//                if (empty($value['brizy_project_id'])) {
-//                    continue;
-//                }
-//
+        $dir1 = dirname(__DIR__) . '/../../public/migration_results_07-05-2025_21.json';
+        $dir2 = dirname(__DIR__) . '/../../public/migration_results_08-05-2025_22.json';
+
+        $fileCont1 = array_merge(
+            json_decode(file_get_contents($dir1), true),
+            json_decode(file_get_contents($dir2), true)
+        );
+        try{
+            foreach ($fileCont1 as $key => $value) {
+                if (empty($value['brizy_project_id'])) {
+                    continue;
+                }
+
+                $brizyApi->setCloningLink(true, (int)$value['brizy_project_id']);
+
 //                $result = $this->insertMigrationMapping($value['brizy_project_id'], $key, json_encode(['data' => '2025-05-13']));
-//            }
-//
-//            $eee= 12;
-//        } catch (\Exception $e) {
-//
-//            $Eee = $e->getMessage();
-//        }
+            }
+
+            $eee= 12;
+        } catch (\Exception $e) {
+
+            $Eee = $e->getMessage();
+        }
 
         $this->prepareResponseMessage(
             "List added",
@@ -598,5 +649,23 @@ class Bridge
         );
 
         return $this->getMessageResponse();
+    }
+
+    public function doCloningProjects(): MgResponse
+    {
+
+        $brizyApi = new BrizyAPI();
+
+        $inputProperties = $this->POST->checkInputProperties(['brz_project_id', 'workspace']);
+
+        $brizyApi->cloneProject($inputProperties['brz_project_id'], $inputProperties['workspace']);
+
+        $this->prepareResponseMessage(
+            "Cloning completed",
+            'message'
+        );
+
+        return $this->getMessageResponse();
+
     }
 }

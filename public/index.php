@@ -85,15 +85,41 @@ return static function (array $context, Request $request): Response {
                 $response->getMessage(),
                 $response->getStatusCode()
             );
+        case '/delTagManualMigration':
+            $response = $bridge->delTagManualMigration();
+            return new JsonResponse(
+                $response->getMessage(),
+                $response->getStatusCode()
+            );
+        case '/setCloningLink':
+            $response = $bridge->setCloningLincMigration();
+            return new JsonResponse(
+                $response->getMessage(),
+                $response->getStatusCode()
+            );
+        case '/cloning':
+            $response = $bridge->doCloningProjects();
+            return new JsonResponse(
+                $response->getMessage(),
+                $response->getStatusCode()
+            );
         default:
             try {
+
+
+//                $response = $bridge->runMigration()
+//                    ->getMessageResponse();
+//
+//                return new JsonResponse(
+//                    $response->getMessage(),
+//                    $response->getStatusCode()
+//                );
+
                 $response = $bridge->runMigration()
                     ->getMessageResponse();
 
                 return new JsonResponse(
-                    $response->getMessage(),
-                    $response->getStatusCode()
-                );
+                    ['status' => 'success'], 200,);
             } catch (Exception $e) {
                 if ($e->getCode() < 100) {
                     return new JsonResponse(['error' => $e->getMessage()], 404);

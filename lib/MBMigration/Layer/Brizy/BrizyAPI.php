@@ -475,6 +475,31 @@ class BrizyAPI extends Utils
         $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
     }
 
+    public function setCloningLink( bool $value, $projectID = null)
+    {
+        Logger::instance()->info('set Label Manual Migration');
+
+        if(empty($projectID)) {
+            $containerID = Utils::$cache->get('projectId_Brizy');
+        } else {
+            $containerID = $projectID;
+        }
+
+        $url = $this->createUrlAPI('projects').'/'.$containerID.'/duplicates';
+
+
+        if($value) {
+            $r_projectFullData['workspace'] = 1;
+        }
+        else {
+            $r_projectFullData['enabled'] = 0;
+        }
+
+        $r_projectFullData['regenerate'] = 0;
+
+        $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
+    }
+
     public function updateProject(array $projectFullData): array
     {
         Logger::instance()->info('Update Project Data');
@@ -826,6 +851,24 @@ class BrizyAPI extends Utils
     private function createPrivateUrlAPI($endPoint): string
     {
         return Config::$urlAPI.Config::$endPointApi[$endPoint];
+    }
+
+    public function cloneProject($projectId, $workspaceId)
+    {
+        try{
+            $url = $this->createUrlAPI('projects').'/'.$projectId.'/duplicates';
+
+            $result = $this->httpClient('POST', $url, [
+                'workspace' => $workspaceId,
+            ]);
+
+            $result = json_decode($result['body'], true);
+
+            return $result;
+
+        }catch (exception $e) {
+            return false;
+        }
     }
 
 
