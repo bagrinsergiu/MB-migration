@@ -118,6 +118,12 @@ class Head extends HeadElement
                 ->set_mobileBgColorOpacity($headStyles['style']['opacity']);
         }
 
+        if (isset($headStyles['menu']['activeSubMenuColorHex'])) {
+            $section->getItemWithDepth(0, 0, 1, 0, 0)
+                ->getValue()
+                ->set_activeColorHex($headStyles['menu']['activeSubMenuColorHex']);
+        }
+
         return $section;
     }
 }
