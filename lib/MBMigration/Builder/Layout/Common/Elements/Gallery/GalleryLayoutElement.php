@@ -25,9 +25,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 
         $mbSection = $data->getMbSection();
 
-        $aa =  json_encode($mbSection);
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-        $itemImage = new BrizyComponent(json_decode($this->brizyKit['itemImage'], true));
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
