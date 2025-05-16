@@ -126,8 +126,8 @@ class Head extends HeadElement
 
         $section->getItemWithDepth(0,0,1)
             ->getValue()
-            ->set_mobileMarginRight('28')
-            ->set_tempMobileMarginRight('28');
+            ->set_mobileMarginRight('25')
+            ->set_tempMobileMarginRight('25');
 
         return $section;
     }
