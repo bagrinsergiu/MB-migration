@@ -11,9 +11,12 @@ use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\SlugAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Template\DetailPages\SermonDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
+use mysql_xdevapi\Exception;
 
 abstract class MediaLayoutElement extends AbstractElement
 {
@@ -33,11 +36,17 @@ abstract class MediaLayoutElement extends AbstractElement
      */
     public function __construct($brizyKit, BrowserPageInterface $browserPage, QueryBuilder $queryBuilder)
     {
-        parent::__construct($brizyKit, $browserPage);
-        $this->setQueryBuilder($queryBuilder);
+        try {
+            parent::__construct($brizyKit, $browserPage);
+            $this->setQueryBuilder($queryBuilder);
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage(), ['MediaLayoutElement']);
+        }
     }
 
-
+    /**
+     * @throws BadJsonProvided
+     */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['Section']['main'], true));
@@ -177,7 +186,7 @@ abstract class MediaLayoutElement extends AbstractElement
             $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
 
             $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['GridMediaLayout']['detail'],
-                $this->getTopPaddingOfTheFirstElement(),
+                $this->getTopPaddingOfTheFirstElement() + $this->getAdditionalTopPaddingOfDetailPage(),
                 $this->getMobileTopPaddingOfTheFirstElement(),
                 $this->pageTDO,
                 $data,
