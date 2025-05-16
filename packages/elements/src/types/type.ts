@@ -31,6 +31,7 @@ export interface MenuItemEntry {
   itemBgSelector: MenuItemSelector;
   itemPaddingSelector: MenuItemSelector;
   itemMobileBtnSelector?: MenuItemSelector;
+  itemActiveSelector?: MenuItemSelector;
   itemMobileNavSelector?: MenuItemSelector;
   families: Families;
   defaultFamily: string;
