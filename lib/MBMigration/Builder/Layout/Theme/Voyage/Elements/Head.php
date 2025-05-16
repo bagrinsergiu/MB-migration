@@ -97,6 +97,11 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
+    public function getThemeMenuItemActiveSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
     public function getThemeMobileBtnSelector(): array
     {
         return $this->getThemeMenuItemMobileSelector();
