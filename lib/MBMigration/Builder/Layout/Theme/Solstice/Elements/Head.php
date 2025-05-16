@@ -25,6 +25,11 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
+    public function getThemeMenuItemActiveSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
     public function getThemeMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected)>a", "pseudoEl" => ""];

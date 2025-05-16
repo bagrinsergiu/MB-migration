@@ -42,18 +42,24 @@ abstract class AbstractElement implements ElementInterface
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $this->pageTDO = $data->getThemeContext()->getPageDTO();
-        $this->themeContext = $data->getThemeContext();
-        $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
+        try {
+            $this->pageTDO = $data->getThemeContext()->getPageDTO();
+            $this->themeContext = $data->getThemeContext();
+            $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
-        $this->initialBehavior($data);
+            $this->initialBehavior($data);
 
-        $this->beforeTransformToItem($data);
-        $component = $this->internalTransformToItem($data);
-        $this->globalTransformSection($component);
-        $this->afterTransformToItem($component);
+            $this->beforeTransformToItem($data);
+            $component = $this->internalTransformToItem($data);
+            $this->globalTransformSection($component);
+            $this->afterTransformToItem($component);
 
-        $this->generalSectionBehavior($data, $component);
+            $this->generalSectionBehavior($data, $component);
+
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage(), ['AbstractElement', 'transformToItem']);
+            $component = $this->internalTransformToItem($data);
+        }
 
         return $component;
     }
@@ -188,6 +194,11 @@ abstract class AbstractElement implements ElementInterface
     }
 
     protected function getAdditionalTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
+    protected function getAdditionalTopPaddingOfDetailPage(): int
     {
         return 0;
     }
