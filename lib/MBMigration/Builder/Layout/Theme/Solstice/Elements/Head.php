@@ -124,6 +124,11 @@ class Head extends HeadElement
                 ->set_activeColorHex($headStyles['menu']['activeSubMenuColorHex']);
         }
 
+        $section->getItemWithDepth(0,0,1)
+            ->getValue()
+            ->set_mobileMarginRight('28')
+            ->set_tempMobileMarginRight('28');
+
         return $section;
     }
 }
