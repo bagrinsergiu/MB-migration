@@ -5,6 +5,7 @@ import { parseColorString } from "utils/src/color/parseColorString";
 import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { toCamelCase } from "utils/src/text/toCamelCase";
+import { roundToPrecision } from "../../utils/number";
 
 interface Model {
   node: MenuItemElement;
@@ -76,7 +77,7 @@ export const getModel = (data: Model) => {
         break;
       }
       case "font-size": {
-        Object.assign(dic, dicKeyForDevices(key, parseInt(`${styles[key]}`)));
+        Object.assign(dic, dicKeyForDevices(key, roundToPrecision(styles[key], 2)));
         break;
       }
       case "letter-spacing": {
