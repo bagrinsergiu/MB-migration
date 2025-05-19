@@ -4,9 +4,10 @@ export const cleanClassNames = (node: Element): void => {
   elementsWithClasses.forEach(function (element) {
     element.classList.forEach((cls) => {
       if (!classListExcepts.some((except) => cls.startsWith(except))) {
-        if (cls === "finaldraft_placeholder") {
-          element.innerHTML = "";
-        }
+        // TODO : Need to check if this code is needed
+        // if (cls === "finaldraft_placeholder") {
+        //   element.innerHTML = "";
+        // }
         element.classList.remove(cls);
       }
     });

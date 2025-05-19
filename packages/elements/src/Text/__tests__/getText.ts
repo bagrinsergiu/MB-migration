@@ -3038,6 +3038,38 @@ const ex47: Data = {
 };
 //#endregion
 
+// Solstice example 48 (Solstice empty text)
+const ex48: Data = {
+  html: `<header class="text-content text-0 title-text editable" data-id="23914520" data-category="text"><div><p class="finaldraft_placeholder">Upcoming Events</p></div></header>`,
+  entry: { ...entry, selector: '[data-id="23914520"]' },
+  output: {
+    data: [
+      {
+        "type": "Wrapper",
+        "value": {
+          "_id": "1",
+          "_styles": [
+            "wrapper",
+            "wrapper--richText"
+          ],
+          "items": [
+            {
+              "type": "RichText",
+              "value": {
+                "_id": "1",
+                "_styles": [
+                  "richText"
+                ],
+                "text": "<p class=\"brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0\"><span>Upcoming Events</span></p>"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -3085,7 +3117,8 @@ describe.each([
   ex44,
   ex45,
   ex46,
-  ex47
+  ex47,
+  ex48
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
