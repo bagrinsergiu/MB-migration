@@ -54,12 +54,12 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li:has(.sub-navigation) .sub-navigation>li>a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation>ul>li.has-sub>ul>li:not(.selected)>a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
+        return ["selector" => "#main-navigation>ul>li.has-sub>ul>li.selected>a", "className" => "selected"];
     }
 
     public function getThemeMenuItemBgSelector(): array
@@ -123,41 +123,41 @@ class Head extends HeadElement
                 ->set_mobileBgColorOpacity($headStyles['style']['opacity']);
         }
 
-        if (isset($headStyles['menu']['activeSubMenuColorHex'])) {
-            $section->getItemWithDepth(0, 0, 1, 0, 0)
-                ->getValue()
-                ->set_activeColorHex($headStyles['menu']['activeSubMenuColorHex']);
-        }
-
-        $section->getItemWithDepth(0,0,1)
-            ->getValue()
-            ->set_mobileMarginRight('25')
-            ->set_tempMobileMarginRight('25');
-
-        $section->getItemWithDepth(0, 0, 1, 0, 0)
-            ->getValue()
-            ->set_menuPaddingTop('10')
-            ->set_menuPaddingTopSuffix('px')
-            ->set_menuPaddingRight('15')
-            ->set_menuPaddingRightSuffix('px')
-            ->set_menuPaddingBottom('10')
-            ->set_menuPaddingBottomSuffix('px')
-            ->set_menuPaddingLeft('15')
-            ->set_menuPaddingLeftSuffix('px')
-            ->set_menuBorderRadius('50')
-            ->set_menuBorderRadiusSuffix('px');
-
-        if (isset($headStyles['menu']['mMenuHoverColorHex'])) {
-            $section->getItemWithDepth(0, 0, 1, 0, 0)
-                ->getValue()
-                ->set_hoverMenuBgColorHex($headStyles['menu']['mMenuHoverColorHex']);
-        }
-
-        if (isset($headStyles['menu']['mMenuHoverColorOpacity'])) {
-            $section->getItemWithDepth(0, 0, 1, 0, 0)
-                ->getValue()
-                ->set_hoverMenuBgColorOpacity($headStyles['menu']['mMenuHoverColorOpacity']);
-        }
+//        if (isset($headStyles['menu']['activeSubMenuColorHex'])) {
+//            $section->getItemWithDepth(0, 0, 1, 0, 0)
+//                ->getValue()
+//                ->set_activeColorHex($headStyles['menu']['activeSubMenuColorHex']);
+//        }
+//
+//        $section->getItemWithDepth(0,0,1)
+//            ->getValue()
+//            ->set_mobileMarginRight('25')
+//            ->set_tempMobileMarginRight('25');
+//
+//        $section->getItemWithDepth(0, 0, 1, 0, 0)
+//            ->getValue()
+//            ->set_menuPaddingTop('10')
+//            ->set_menuPaddingTopSuffix('px')
+//            ->set_menuPaddingRight('15')
+//            ->set_menuPaddingRightSuffix('px')
+//            ->set_menuPaddingBottom('10')
+//            ->set_menuPaddingBottomSuffix('px')
+//            ->set_menuPaddingLeft('15')
+//            ->set_menuPaddingLeftSuffix('px')
+//            ->set_menuBorderRadius('50')
+//            ->set_menuBorderRadiusSuffix('px');
+//
+//        if (isset($headStyles['menu']['mMenuHoverColorHex'])) {
+//            $section->getItemWithDepth(0, 0, 1, 0, 0)
+//                ->getValue()
+//                ->set_hoverMenuBgColorHex($headStyles['menu']['mMenuHoverColorHex']);
+//        }
+//
+//        if (isset($headStyles['menu']['mMenuHoverColorOpacity'])) {
+//            $section->getItemWithDepth(0, 0, 1, 0, 0)
+//                ->getValue()
+//                ->set_hoverMenuBgColorOpacity($headStyles['menu']['mMenuHoverColorOpacity']);
+//        }
 
         return $section;
     }
