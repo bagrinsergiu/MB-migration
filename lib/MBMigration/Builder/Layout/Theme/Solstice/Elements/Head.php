@@ -123,17 +123,11 @@ class Head extends HeadElement
                 ->set_mobileBgColorOpacity($headStyles['style']['opacity']);
         }
 
-//        if (isset($headStyles['menu']['activeSubMenuColorHex'])) {
-//            $section->getItemWithDepth(0, 0, 1, 0, 0)
-//                ->getValue()
-//                ->set_activeColorHex($headStyles['menu']['activeSubMenuColorHex']);
-//        }
-//
-//        $section->getItemWithDepth(0,0,1)
-//            ->getValue()
-//            ->set_mobileMarginRight('25')
-//            ->set_tempMobileMarginRight('25');
-//
+        $section->getItemWithDepth(0,0,1)
+            ->getValue()
+            ->set_mobileMarginRight('25')
+            ->set_tempMobileMarginRight('25');
+
 //        $section->getItemWithDepth(0, 0, 1, 0, 0)
 //            ->getValue()
 //            ->set_menuPaddingTop('10')
