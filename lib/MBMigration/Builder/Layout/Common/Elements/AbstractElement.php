@@ -12,6 +12,7 @@ use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\ThemeContextInterface;
+use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -160,11 +161,25 @@ abstract class AbstractElement implements ElementInterface
 
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {
+        $menuEnt = $data->getThemeContext()->getBrizyMenuEntity();
+        $deepSlug = PathSlugExtractor::findDeepestSlug($menuEnt['list']);
+        $menuUrl = PathSlugExtractor::getFullUrl($deepSlug['slug']);
+        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
+        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
+        $layoutName = $data->getThemeContext()->getLayoutName();
+        $browser = $data->getThemeContext()->getBrowser();
 
+        $this->browserPage = $browser->openPage($menuUrl, $layoutName);
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
+        $currentMigrateSlugPage = $this->themeContext->getSlug();
+        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
+        $layoutName = $this->themeContext->getLayoutName();
+        $browser = $this->themeContext->getBrowser();
+
+        $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
     }
 
     protected function afterTransformTabs(BrizyComponent $brizySection): void
