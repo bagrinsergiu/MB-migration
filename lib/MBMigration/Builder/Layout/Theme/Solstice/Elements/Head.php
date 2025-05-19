@@ -129,6 +129,31 @@ class Head extends HeadElement
             ->set_mobileMarginRight('25')
             ->set_tempMobileMarginRight('25');
 
+        $section->getItemWithDepth(0, 0, 1, 0, 0)
+            ->getValue()
+            ->set_menuPaddingTop('10')
+            ->set_menuPaddingTopSuffix('px')
+            ->set_menuPaddingRight('15')
+            ->set_menuPaddingRightSuffix('px')
+            ->set_menuPaddingBottom('10')
+            ->set_menuPaddingBottomSuffix('px')
+            ->set_menuPaddingLeft('15')
+            ->set_menuPaddingLeftSuffix('px')
+            ->set_menuBorderRadius('50')
+            ->set_menuBorderRadiusSuffix('px');
+
+        if (isset($headStyles['menu']['mMenuHoverColorHex'])) {
+            $section->getItemWithDepth(0, 0, 1, 0, 0)
+                ->getValue()
+                ->set_hoverMenuBgColorHex($headStyles['menu']['mMenuHoverColorHex']);
+        }
+
+        if (isset($headStyles['menu']['mMenuHoverColorOpacity'])) {
+            $section->getItemWithDepth(0, 0, 1, 0, 0)
+                ->getValue()
+                ->set_hoverMenuBgColorOpacity($headStyles['menu']['mMenuHoverColorOpacity']);
+        }
+
         return $section;
     }
 }
