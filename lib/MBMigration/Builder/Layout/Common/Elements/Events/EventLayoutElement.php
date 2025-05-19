@@ -251,12 +251,16 @@ abstract class EventLayoutElement extends AbstractElement
             'detailButtonGradientColorPalette' => '',
 
             'hoverViewColorHex' => $sectionPalette['text'],
-            'hoverViewColorOpacity' => 0.7,
+            'hoverViewColorOpacity' => 1,
             'hoverViewColorPalette' => '',
 
             'viewColorHex' => $sectionPalette['text'],
-            'viewColorOpacity' => 1,
+            'viewColorOpacity' => 0.7,
             'viewColorPalette' => '',
+
+            'activeViewColorHex' => $sectionPalette['text'],
+            'activeViewColorOpacity' => 1,
+            'activeViewColorPalette' => '',
 
             'layoutViewTypographyFontFamily' => $fonts,
             'layoutViewTypographyFontStyle' => '',
