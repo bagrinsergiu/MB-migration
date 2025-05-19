@@ -230,7 +230,7 @@ class PageController
             if (!empty($page['child'])){
                 $this->pageMapping($page['child'],$mapping, $domain);
             }
-            $mapping['/'.PathSlugExtractor::getFullUrl($page['slug'], true)] = $domain.'/'.$page['slug'];
+            $mapping['/'.PathSlugExtractor::getFullUrlById($page['id'], true)] = $domain.'/'.$page['slug'];
         }
     }
 
