@@ -161,25 +161,12 @@ abstract class AbstractElement implements ElementInterface
 
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {
-        $menuEnt = $data->getThemeContext()->getBrizyMenuEntity();
-        $deepSlug = PathSlugExtractor::findDeepestSlug($menuEnt['list']);
-        $menuUrl = PathSlugExtractor::getFullUrl($deepSlug['slug']);
-        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
-        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
-        $layoutName = $data->getThemeContext()->getLayoutName();
-        $browser = $data->getThemeContext()->getBrowser();
 
-        $this->browserPage = $browser->openPage($menuUrl, $layoutName);
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
-        $currentMigrateSlugPage = $this->themeContext->getSlug();
-        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
-        $layoutName = $this->themeContext->getLayoutName();
-        $browser = $this->themeContext->getBrowser();
 
-        $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
     }
 
     protected function afterTransformTabs(BrizyComponent $brizySection): void
