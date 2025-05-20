@@ -3,7 +3,9 @@
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\HeadElement;
+use MBMigration\Builder\Utils\PathSlugExtractor;
 
 class Head extends HeadElement
 {
@@ -24,6 +26,30 @@ class Head extends HeadElement
     {
         return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
+
+    protected function beforeTransformToItem(ElementContextInterface $data): void
+    {
+        $menuEnt = $data->getThemeContext()->getBrizyMenuEntity();
+        $deepSlug = PathSlugExtractor::findDeepestSlug($menuEnt['list']);
+        $menuUrl = PathSlugExtractor::getFullUrl($deepSlug['slug']);
+        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
+        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
+        $layoutName = $data->getThemeContext()->getLayoutName();
+        $browser = $data->getThemeContext()->getBrowser();
+
+        $this->browserPage = $browser->openPage($menuUrl, $layoutName);
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $currentMigrateSlugPage = $this->themeContext->getSlug();
+        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
+        $layoutName = $this->themeContext->getLayoutName();
+        $browser = $this->themeContext->getBrowser();
+
+        $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
+    }
+
 
     public function getThemeMenuItemActiveSelector(): array
     {
