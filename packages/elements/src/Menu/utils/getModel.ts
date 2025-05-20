@@ -107,6 +107,7 @@ export const getModel = (data: Model) => {
         break;
       }
       case "bg-color-hex":
+      case "hover-menu-bg-color-hex":
       case "menu-bg-color-hex": {
         const toHex = parseColorString(`${styles["background-color"]}`);
         dic[toCamelCase(key)] = toHex?.hex ?? "#ffffff";
@@ -121,6 +122,7 @@ export const getModel = (data: Model) => {
         break;
       }
       case "bg-color-opacity":
+      case "hover-menu-bg-color-opacity":
       case "menu-bg-color-opacity": {
         const toHex = parseColorString(`${styles["background-color"]}`);
         const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
@@ -142,6 +144,74 @@ export const getModel = (data: Model) => {
         const isItalic = value === "italic";
 
         dic[toCamelCase(key)] = isItalic;
+        break;
+      }
+      case "menu-border-radius": {
+        const topLeft= `${styles["border-start-start-radius"]}`.replace(/px/g, "");
+        const topRight = `${styles["border-end-start-radius"]}`.replace(/px/g, "");
+        const bottomLeft = `${styles["border-start-end-radius"]}`.replace(/px/g, "");
+        const bottomRight = `${styles["border-end-end-radius"]}`.replace(/px/g, "");
+
+        const topLeftValue = parseInt(topLeft);
+        const topRightValue = parseInt(topRight);
+        const bottomLeftValue = parseInt(bottomLeft);
+        const bottomRightValue = parseInt(bottomRight);
+
+        const topLeftKey = "menuBorderTopLeftRadius";
+        const topRightKey = "menuBorderTopRightRadius";
+        const bottomLeftKey = "menuBorderBottomLeftRadius";
+        const bottomRightKey = "menuBorderBottomRightRadius";
+
+        dic[topLeftKey] = topLeftValue;
+        dic[topRightKey] = topRightValue;
+        dic[bottomLeftKey] = bottomLeftValue;
+        dic[bottomRightKey] = bottomRightValue;
+
+        if (
+          topLeftValue === topRightValue &&
+          bottomLeftValue === bottomRightValue &&
+          topLeftValue === bottomLeftValue
+        ) {
+          dic[toCamelCase(key)] = topLeftValue;
+          dic["menuBorderRadiusType"] = "grouped";
+        } else {
+          dic["menuBorderRadiusType"] = "ungrouped";
+        }
+
+        break;
+      }
+      case "menu-padding": {
+        const left = `${styles["padding-left"]}`.replace(/px/g, "");
+        const right = `${styles["padding-right"]}`.replace(/px/g, "");
+        const top = `${styles["padding-top"]}`.replace(/px/g, "");
+        const bottom = `${styles["padding-bottom"]}`.replace(/px/g, "");
+
+        const leftValue = parseInt(left);
+        const rightValue = parseInt(right);
+        const topValue = parseInt(top);
+        const bottomValue = parseInt(bottom);
+
+        const leftKey = "menuPaddingLeft";
+        const rightKey = "menuPaddingRight";
+        const topKey = "menuPaddingTop";
+        const bottomKey = "menuPaddingBottom";
+
+        dic[leftKey] = leftValue;
+        dic[rightKey] = rightValue;
+        dic[topKey] = topValue;
+        dic[bottomKey] = bottomValue;
+
+        if (
+          leftValue === rightValue &&
+          rightValue === topValue &&
+          topValue === bottomValue
+        ) {
+          dic[toCamelCase(key)] = leftValue;
+          dic["menuPaddingType"] = "grouped";
+        } else {
+          dic["menuPaddingType"] = "ungrouped";
+        }
+
         break;
       }
       default: {

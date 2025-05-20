@@ -82,7 +82,9 @@ const getV = (entry: MenuItemData) => {
   const bgModel = {
     "menu-bg-color-hex": undefined,
     "menu-bg-color-opacity": 1,
-    "menu-bg-color-palette": ""
+    "menu-bg-color-palette": "",
+    "menu-border-radius": 0,
+    "menu-padding": 0,
   };
 
   const bgV = getModel({
