@@ -161,12 +161,10 @@ abstract class AbstractElement implements ElementInterface
 
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {
-
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
-
     }
 
     protected function afterTransformTabs(BrizyComponent $brizySection): void
