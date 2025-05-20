@@ -35,7 +35,7 @@ const ex1: Data = {
       colorPalette: "",
       fontFamily: "lato",
       fontFamilyType: "upload",
-      fontSize: NaN,
+      fontSize: 0,
       fontStyle: "",
       fontWeight: NaN,
       letterSpacing: 0,
