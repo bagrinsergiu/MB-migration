@@ -105,17 +105,13 @@ return static function (array $context, Request $request): Response {
             );
         default:
             try {
-
-//                $response = $bridge->runMigration()
-//                    ->getMessageResponse();
-//
-//                return new JsonResponse(
-//                    $response->getMessage(),
-//                    $response->getStatusCode()
-//                );
+                $response = $bridge->runMigration()
+                    ->getMessageResponse();
 
                 return new JsonResponse(
-                    ['status' => 'success'], 200);
+                    $response->getMessage(),
+                    $response->getStatusCode()
+                );
             } catch (Exception $e) {
                 if ($e->getCode() < 100) {
                     return new JsonResponse(['error' => $e->getMessage()], 404);
