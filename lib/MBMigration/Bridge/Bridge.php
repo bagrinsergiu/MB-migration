@@ -2,41 +2,50 @@
 
 namespace MBMigration\Bridge;
 
-use DateTime;
 use Exception;
 use MBMigration\ApplicationBootstrapper;
+use MBMigration\Bridge\Interfaces\DatabaseManagerInterface;
+use MBMigration\Bridge\Interfaces\MappingManagerInterface;
+use MBMigration\Bridge\Interfaces\MigrationExecutorInterface;
+use MBMigration\Bridge\Interfaces\PageChangeDetectorInterface;
+use MBMigration\Bridge\Interfaces\ResponseHandlerInterface;
 use MBMigration\Core\Config;
 use MBMigration\Layer\Brizy\BrizyAPI;
-use MBMigration\Layer\DataSource\driver\MySQL;
 use MBMigration\Layer\HTTP\RequestHandlerDELETE;
 use MBMigration\Layer\HTTP\RequestHandlerGET;
 use MBMigration\Layer\HTTP\RequestHandlerPOST;
-use MBMigration\Layer\MB\MBProjectDataCollector;
-use MBMigration\MigrationRunnerWave;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Bridge class that coordinates between different components
+ */
 class Bridge
 {
     private Config $config;
-    private MgResponse $mgResponse;
-    private string $sourceProject;
     private Request $request;
-    private array $allList = [];
-    private int $preparedProject;
-    private MySQL $db;
     private RequestHandlerGET $GET;
     private RequestHandlerPOST $POST;
     private RequestHandlerDELETE $DELETE;
-    private array $listReport;
     private ApplicationBootstrapper $app;
 
+    // Service classes
+    private DatabaseManagerInterface $databaseManager;
+    private MappingManagerInterface $mappingManager;
+    private ResponseHandlerInterface $responseHandler;
+    private PageChangeDetectorInterface $pageChangeDetector;
+    private MigrationExecutorInterface $migrationExecutor;
+
     public function __construct(
-        ApplicationBootstrapper $app,
-        Config                  $config,
-        Request                 $request
+        ApplicationBootstrapper      $app,
+        Config                       $config,
+        Request                      $request,
+        DatabaseManagerInterface     $databaseManager,
+        ResponseHandlerInterface     $responseHandler,
+        MappingManagerInterface      $mappingManager,
+        PageChangeDetectorInterface  $pageChangeDetector,
+        MigrationExecutorInterface   $migrationExecutor
     )
     {
-        $this->listReport = [];
         $this->app = $app;
         $this->config = $config;
         $this->request = $request;
@@ -45,11 +54,19 @@ class Bridge
         $this->POST = new RequestHandlerPOST($request);
         $this->DELETE = new RequestHandlerDELETE($request);
 
-        $this->mgResponse = new MgResponse();
-
-        $this->db = $this->doConnectionToDB();
+        // Set service classes
+        $this->databaseManager = $databaseManager;
+        $this->responseHandler = $responseHandler;
+        $this->mappingManager = $mappingManager;
+        $this->pageChangeDetector = $pageChangeDetector;
+        $this->migrationExecutor = $migrationExecutor;
     }
 
+    /**
+     * Check if a project is prepared for migration
+     *
+     * @return Bridge
+     */
     public function checkPreparedProject(): Bridge
     {
         try {
@@ -57,138 +74,126 @@ class Bridge
 
             switch ($this->request->getMethod()) {
                 case 'GET':
-                    $this->preparedSearchByUUID($inputProperties['source_project_id']);
+                    try {
+                        $brzProjectId = $this->mappingManager->findBrizyIdBySourceId($inputProperties['source_project_id']);
+                        $this->responseHandler->success($brzProjectId);
+                    } catch (Exception $e) {
+                        $this->responseHandler->error($e->getMessage(), 400);
+                    }
                     break;
             }
-
-        } catch (\Exception $e) {
-            $this->prepareResponseMessage($e->getMessage(), 'error', 400);
+        } catch (Exception $e) {
+            $this->responseHandler->error($e->getMessage(), 400);
         }
 
         return $this;
     }
 
+    /**
+     * Add a prepared project mapping
+     *
+     * @return Bridge
+     */
     public function addPreparedProject(): Bridge
     {
         try {
             $inputProperties = $this->POST->checkInputProperties(['brz_project_id', 'source_project_id', 'meta_data']);
-        } catch (Exception $e) {
-            $this->prepareResponseMessage($e->getMessage(), 'error', $e->getCode());
-            return $this;
-        }
 
-        $result = $this->insertMigrationMapping($inputProperties['brz_project_id'], $inputProperties['source_project_id'], json_encode($inputProperties['meta_data']));
+            $this->mappingManager->insertMapping(
+                (int)$inputProperties['brz_project_id'],
+                $inputProperties['source_project_id'],
+                json_encode($inputProperties['meta_data'])
+            );
 
-        $this->prepareResponseMessage(
-            [
+            $this->responseHandler->success([
                 'brz_project_id' => (int)$inputProperties['brz_project_id'],
                 'source_project_id' => $inputProperties['source_project_id']
-            ],
-            'message');
+            ], 200);
+        } catch (Exception $e) {
+            $this->responseHandler->error($e->getMessage(), $e->getCode() ?: 400);
+        }
 
         return $this;
     }
 
+    /**
+     * Add multiple prepared project mappings
+     *
+     * @return Bridge
+     */
     public function addALLPreparedProject(): Bridge
     {
         try {
             $inputProperties = $this->POST->checkInputProperties(['list']);
+            $inputProperties = $inputProperties['list'];
+
+            foreach ($inputProperties as $value) {
+                if (empty($value['brz_project_id']) || empty($value['source_project_id'])) {
+                    $this->responseHandler->error(
+                        'Value is not valid or empty. brz_project_id and source_project_id are required.',
+                        404
+                    );
+                    return $this;
+                }
+            }
+
+            $returnList = [];
+
+            foreach ($inputProperties as $value) {
+                try {
+                    $this->mappingManager->insertMapping(
+                        (int)$value['brz_project_id'],
+                        $value['source_project_id'],
+                        json_encode($value['changes_json'] ?? [])
+                    );
+                } catch (Exception $e) {
+                    $value['message'] = 'Potential insert error: ' . $e->getMessage();
+                }
+                $returnList[] = $value;
+            }
+
+            $this->responseHandler->success($returnList);
         } catch (Exception $e) {
-            $this->prepareResponseMessage(
-                $e->getMessage(),
-                'error',
-                $e->getCode());
-            return $this;
+            $this->responseHandler->error($e->getMessage(), $e->getCode() ?: 400);
         }
-
-        $inputProperties = $inputProperties['list'];
-
-        foreach ($inputProperties as $value) {
-            if (empty($value['brz_project_id']) || empty($value['source_project_id'])) {
-                $this->prepareResponseMessage('Value is not valid or empty. brz_project_id and source_project_id are required.',
-                    'error',
-                    404
-                );
-                return $this;
-            }
-        }
-
-        $returnList = [];
-
-        foreach ($inputProperties as $value) {
-            $insertResult = $this->insertMigrationMapping(
-                $value['brz_project_id'],
-                $value['source_project_id'],
-                json_encode($value['changes_json'] ?? [])
-            );
-
-            if (empty($insertResult)) {
-                $value['message'] = 'Potential insert error.';
-            }
-            $returnList[] = $value;
-        }
-
-        $this->prepareResponseMessage($returnList);
 
         return $this;
     }
 
-    public function getSourceProject()
-    {
-        return $this->sourceProject;
-    }
-
-    public function setSourceProject($sourceProject)
-    {
-        $this->sourceProject = $sourceProject;
-
-        return $this;
-    }
-
-    private function doConnectionToDB(): MySQL
-    {
-        $PDOconnection = new MySQL(
-            Config::$mgConfigMySQL['dbUser'],
-            Config::$mgConfigMySQL['dbPass'],
-            Config::$mgConfigMySQL['dbName'],
-            Config::$mgConfigMySQL['dbHost'],
-        );
-
-        return $PDOconnection->doConnect();
-    }
-
+    /**
+     * Get the response object
+     *
+     * @return MgResponse
+     */
     public function getMessageResponse(): MgResponse
     {
-        return $this->mgResponse;
+        return $this->responseHandler->getResponse();
     }
 
-
+    /**
+     * Get the list of prepared mappings
+     *
+     * @return Bridge
+     */
     public function getPreparedMappingList(): Bridge
     {
         try {
-            $allList = $this->db->getAllRows('SELECT * FROM migrations_mapping');
-
-            foreach ($allList as $value) {
-                $this->allList[(int)$value['brz_project_id']] = $value['mb_project_uuid'];
-            }
-
-            $this->mgResponse
-                ->setMessage($this->allList)
-                ->setStatusCode(200);
-
-        } catch (\Exception $e) {
-            $this->mgResponse
-                ->setMessage($e->getMessage(), 'error')
-                ->setStatusCode(200);
+            $mappings = $this->mappingManager->getAllMappings();
+            $this->responseHandler->success($mappings);
+        } catch (Exception $e) {
+            $this->responseHandler->error($e->getMessage(), 400);
         }
 
         return $this;
     }
 
+    /**
+     * Handle mapping list requests
+     *
+     * @return MgResponse
+     */
     public function mappingList()
     {
-        $getMethod = $this->request->getMethod();
-
         switch ($this->request->getMethod()) {
             case 'GET':
                 return $this->getPreparedMappingList()
@@ -203,155 +208,54 @@ class Bridge
         return $this->getMessageResponse();
     }
 
-    public function prepareResponseMessage($body, $type = 'value', $code = 200): void
-    {
-        $this->mgResponse
-            ->setMessage($body, $type)
-            ->setStatusCode($code);
-    }
-
-    public function insertMigrationMapping($brz_project_id, $source_project_id, $mata_data = '{}')
-    {
-        try {
-            return $this->db->insert('migrations_mapping',
-                [
-                    'brz_project_id' => (int)$brz_project_id,
-                    'mb_project_uuid' => $source_project_id,
-                    'changes_json' => $mata_data
-                ]);
-        } catch (\Exception $e) {
-            $this->prepareResponseMessage($e->getMessage(), 'error', 400);
-            return null;
-        }
-    }
-
     /**
-     * @throws Exception
+     * Check if pages have changed
+     *
+     * @param string $mbProjectId The Ministry Brands project ID
+     * @param array $pageList The list of pages
+     * @return bool True if successful, false otherwise
      */
     public function checkPageChanges($mbProjectId, array $pageList): bool
     {
         try {
-            $mgr_mapping = $this->searchMappingByUUID($mbProjectId);
+            $mapping = $this->mappingManager->findMappingBySourceId($mbProjectId);
+            $snapshotDate = date('Y-m-d');
 
-            if (!empty($mgr_mapping['changes_json'])) {
-                $changes_json = json_decode($mgr_mapping['changes_json'], true);
-                if (empty($changes_json)) {
-                    $changes_json = ['data' => date('Y-m-d')];
-                } elseif (!isset($changes_json['data'])) {
-                    $changes_json = ['data' => date('Y-m-d')];
+            if (!empty($mapping['changes_json'])) {
+                $changes_json = json_decode($mapping['changes_json'], true);
+                if (!empty($changes_json) && isset($changes_json['data'])) {
+                    $snapshotDate = $changes_json['data'];
                 }
-            } else {
-                $changes_json = ['data' => date('Y-m-d')];
             }
 
-            $this->checkProjectPageChanges($pageList, $changes_json['data'], $this->listReport);
-
+            $this->listReport = $this->pageChangeDetector->detectChanges($pageList, $snapshotDate);
             return true;
-        } catch (\Exception $e) {
-            $this->mgResponse
-                ->setMessage($e->getMessage(), 'error')
-                ->setStatusCode(400);
-            return false;
-        }
-    }
-
-    private function checkProjectPageChanges(array $dataPage, string $snapShotDate, &$listReport)
-    {
-        foreach ($dataPage as $page) {
-
-            $result = $this->compareDate($page['updated_at'], $snapShotDate);
-
-            if ($result) {
-                $listReport[$page['slug']] = $page['updated_at'];
-            }
-
-            if (isset($page['child'])) {
-                $this->checkProjectPageChanges($page['child'], $snapShotDate, $listReport);
-            }
-        }
-    }
-
-    function compareDate($projectDate, $snapShotDate): bool
-    {
-        try {
-            $projectDate = new DateTime($projectDate);
-            $snapShotDate = new DateTime($snapShotDate);
-
-            $date1Only = $projectDate->format('Y-m-d');
-            $date2Only = $snapShotDate->format('Y-m-d');
-
-            if ($date1Only === $date2Only) {
-
-                return true;
-            }
-
-            return !(($date1Only < $date2Only));
-        } catch (\Exception $e) {
-
+        } catch (Exception $e) {
+            $this->responseHandler->error($e->getMessage(), 400);
             return false;
         }
     }
 
     /**
-     * @throws Exception
+     * Get the report of page changes
+     *
+     * @return array
      */
-    private function searchByUUID(string $inputProperties): int
-    {
-        try {
-            $brzID = $this->db->find('SELECT brz_project_id FROM migrations_mapping WHERE mb_project_uuid = ?', [$inputProperties]);
-
-            if (empty($brzID['brz_project_id'])) {
-                throw new Exception('Project not found', 400);
-            }
-
-            return (int)$brzID['brz_project_id'];
-        } catch (\Exception $e) {
-            throw new Exception($e->getMessage(), 400);
-        }
-    }
-
-    private function searchMappingByUUID(string $inputProperties): array
-    {
-        try {
-            $mapping = $this->db->find('SELECT * FROM migrations_mapping WHERE mb_project_uuid = ?', [$inputProperties]);
-
-            if (empty($mapping['brz_project_id'])) {
-                throw new Exception('Project not found', 400);
-            }
-
-            return $mapping;
-        } catch (\Exception $e) {
-            throw new Exception($e->getMessage(), 400);
-        }
-    }
-
-    private function preparedSearchByUUID($source_project_id)
-    {
-        try {
-            $resultBrzId = $this->searchByUUID($source_project_id);
-
-            $this->mgResponse
-                ->setMessage($resultBrzId)
-                ->setStatusCode(200);
-        } catch (\Exception $e) {
-            $this->mgResponse
-                ->setMessage($e->getMessage(), 'error')
-                ->setStatusCode(400);
-        }
-    }
-
     public function getReportPageChanges(): array
     {
-        return $this->listReport;
+        return $this->listReport ?? [];
     }
 
+    /**
+     * Add all mapping list
+     *
+     * @return MgResponse
+     */
     public function addAllMappingList(): MgResponse
     {
         switch ($this->request->getMethod()) {
             case 'GET':
-                $this->mgResponse
-                    ->setMessage('Input method handler was not found', 'error')
-                    ->setStatusCode(404);
+                $this->responseHandler->error('Input method handler was not found', 404);
                 break;
             case 'POST':
                 return $this->addALLPreparedProject()
@@ -360,175 +264,74 @@ class Bridge
         return $this->getMessageResponse();
     }
 
+    /**
+     * Delete a prepared project mapping
+     *
+     * @return Bridge
+     */
     private function delPreparedProject(): Bridge
     {
         try {
             $inputProperties = $this->DELETE->checkInputProperties(['id']);
-        } catch (Exception $e) {
-            $this->prepareResponseMessage(
-                $e->getMessage(),
-                'error',
-                $e->getCode());
-            return $this;
-        }
+            $inputProperties = $inputProperties['id'];
+            $returnList = [];
 
-        $inputProperties = $inputProperties['id'];
-        $returnList = [];
-
-        foreach ($inputProperties as $value) {
-            try {
-                if (!$this->db->delete('migrations_mapping', 'id = ?', [(int)$value])) {
-                    $value['value'] = $value;
-                    $value['message'] = 'Potential delete error.';
+            foreach ($inputProperties as $value) {
+                try {
+                    $result = $this->mappingManager->deleteMapping((int)$value);
+                    if (!$result) {
+                        $value['value'] = $value;
+                        $value['message'] = 'Potential delete error.';
+                    }
+                    $returnList[] = $value;
+                } catch (Exception $e) {
+                    $this->responseHandler->error($e->getMessage(), 400);
+                    return $this;
                 }
-                $returnList[] = $value;
-            } catch (\Exception $e) {
-                $this->prepareResponseMessage($e->getMessage(), 'error', 400);
-                return $this;
             }
+            $this->responseHandler->success($returnList);
+        } catch (Exception $e) {
+            $this->responseHandler->error($e->getMessage(), $e->getCode() ?: 400);
         }
-        $this->prepareResponseMessage($returnList);
 
         return $this;
     }
 
     /**
-     * @throws Exception
+     * Run a migration
+     *
+     * @return Bridge
      */
     public function runMigration(): Bridge
     {
-        $mgr_manual = (int)$this->request->get('mgr_manual');
+        try {
+            $mgr_manual = (bool)(int)$this->request->get('mgr_manual');
 
-        $mb_project_uuid = $this->request->get('mb_project_uuid');
-        if (!isset($mb_project_uuid)) {
-            throw new Exception('Invalid mb_project_uuid', 400);
-        }
-
-        $brz_project_id = $this->request->get('brz_project_id');
-        if (!isset($brz_project_id)) {
-            throw new Exception('Invalid brz_project_id', 400);
-        }
-
-        $brz_workspaces_id = (int)$this->request->get('brz_workspaces_id') ?? 0;
-        $mb_page_slug = $this->request->get('mb_page_slug') ?? '';
-
-        if (!$mgr_manual) {
-            $mgr_manual = false;
-        } else {
-            $mgr_manual = true;
-        }
-
-        // Check if the project was manually migrated
-        $brizyAPI = new BrizyAPI();
-        $isManuallyMigrated = $brizyAPI->checkProjectManualMigration($brz_project_id);
-
-        if ($isManuallyMigrated) {
-            // Scenario 1: Project was manually migrated
-            try {
-                // Get the project ID from the UUID
-                try {
-                    $projectId = MBProjectDataCollector::getIdByUUID($mb_project_uuid);
-                } catch (Exception $e) {
-                    throw new Exception('Failed to get project ID: ' . $e->getMessage(), 400);
-                }
-
-                // Create an instance of MBProjectDataCollector to work independently
-                $mbProjectDataCollector = new MBProjectDataCollector($projectId);
-
-                // Get the project data
-                $projectPages = $mbProjectDataCollector->getPages();
-
-                if (empty($projectPages)) {
-                    throw new Exception('No pages found for the project', 400);
-                }
-
-                // Get the migration date from the mapping
-                $mgr_mapping = $this->searchMappingByUUID($mb_project_uuid);
-                $migrationDate = date('Y-m-d');
-
-                if (!empty($mgr_mapping['changes_json'])) {
-                    $changes_json = json_decode($mgr_mapping['changes_json'], true);
-                    if (!empty($changes_json) && isset($changes_json['data'])) {
-                        $migrationDate = $changes_json['data'];
-                    }
-                }
-
-                // Filter pages that were modified after the migration date
-                $modifiedPages = [];
-                $this->filterModifiedPages($projectPages, $migrationDate, $modifiedPages);
-
-                // Format the response
-                $formattedPages = [];
-                foreach ($modifiedPages as $slug => $date_updated) {
-                    $formattedPages[] = [
-                        'slug' => $slug,
-                        'date_updated' => $date_updated
-                    ];
-                }
-
-                // Return the response
-                $this->prepareResponseMessage([
-                    'success' => true,
-                    'pages' => $formattedPages
-                ]);
-
-                return $this;
-            } catch (Exception $e) {
-                $this->prepareResponseMessage([
-                    'success' => false,
-                    'error' => $e->getMessage()
-                ], 'error', 400);
-
-                return $this;
+            $mb_project_uuid = $this->request->get('mb_project_uuid');
+            if (!isset($mb_project_uuid)) {
+                throw new Exception('Invalid mb_project_uuid', 400);
             }
-        } else {
-            // Scenario 2: Default migration flow
-            $result = $this->app->migrationFlow(
+
+            $brz_project_id = $this->request->get('brz_project_id');
+            if (!isset($brz_project_id)) {
+                throw new Exception('Invalid brz_project_id', 400);
+            }
+
+            $brz_workspaces_id = (int)$this->request->get('brz_workspaces_id') ?? 0;
+            $mb_page_slug = $this->request->get('mb_page_slug') ?? '';
+
+            $this->migrationExecutor->executeMigration(
                 $mb_project_uuid,
-                $brz_project_id,
+                (int)$brz_project_id,
                 $brz_workspaces_id,
                 $mb_page_slug,
-                false,
                 $mgr_manual
             );
-
-            if (!empty($result['mMigration']) && $result['mMigration'] === true) {
-                $projectUUID = $this->app->getProjectUUDI();
-                $pageList = $this->app->getPageList();
-
-                if ($this->checkPageChanges($projectUUID, $pageList)) {
-                    // to do, ned add return project details
-                    $this->prepareResponseMessage([
-                        'projectId' => $brz_project_id,
-                        'uuid' => $projectUUID,
-                        'report' => $this->getReportPageChanges()
-                    ]);
-                } else {
-                    $result = $this->app->migrationFlow(
-                        $mb_project_uuid,
-                        $brz_project_id,
-                        $brz_workspaces_id,
-                        $mb_page_slug,
-                        true,
-                        $mgr_manual
-                    );
-                    $result['mgrClone'] = 'failed';
-                    $this->prepareResponseMessage($result);
-                }
-            } else {
-                if ($mgr_manual) {
-                    $this->insertMigrationMapping(
-                        $result['brizy_project_id'],
-                        $result['mb_uuid'],
-                        json_encode(['data' => $result['date']])
-                    );
-                }
-
-                $this->prepareResponseMessage($result);
-            }
-
-            return $this;
+        } catch (Exception $e) {
+            $this->responseHandler->error($e->getMessage(), 400);
         }
+
+        return $this;
     }
 
     /**
@@ -540,28 +343,19 @@ class Bridge
      */
     private function filterModifiedPages(array $pages, string $migrationDate, array &$modifiedPages): void
     {
-        foreach ($pages as $page) {
-            if (isset($page['updated_at'])) {
-                $result = $this->compareDate($page['updated_at'], $migrationDate);
-
-                if ($result) {
-                    $modifiedPages[$page['slug']] = $page['updated_at'];
-                }
-            }
-
-            if (isset($page['child']) && !empty($page['child'])) {
-                $this->filterModifiedPages($page['child'], $migrationDate, $modifiedPages);
-            }
-        }
+        $this->pageChangeDetector->filterModifiedPages($pages, $migrationDate, $modifiedPages);
     }
 
+    /**
+     * Handle migration wave requests
+     *
+     * @return MgResponse
+     */
     public function migrationWave(): MgResponse
     {
         switch ($this->request->getMethod()) {
             case 'GET':
-                $this->mgResponse
-                    ->setMessage('Input method handler was not found', 'error')
-                    ->setStatusCode(404);
+                $this->responseHandler->error('Input method handler was not found', 404);
                 break;
             case 'POST':
                 return $this->runMigrationWave()
@@ -570,40 +364,49 @@ class Bridge
         return $this->getMessageResponse();
     }
 
+    /**
+     * Run a migration wave
+     *
+     * @return Bridge
+     */
     private function runMigrationWave(): Bridge
     {
         try {
             $inputProperties = $this->POST->checkInputProperties(['list_uuid', 'workspaces', 'batchSize', 'mgrManual']);
+
+            $migrationRunner = new MigrationRunnerWave(
+                $this->app,
+                $this,
+                $inputProperties['list_uuid'],
+                $inputProperties['workspaces'],
+                $inputProperties['batchSize'],
+                $inputProperties['mgrManual']
+            );
+            $migrationRunner->runMigrations();
+
+            $this->responseHandler->success('migrationWave completed');
         } catch (Exception $e) {
-            $this->prepareResponseMessage(
-                $e->getMessage(),
-                'error',
-                $e->getCode());
-            return $this;
+            $this->responseHandler->error($e->getMessage(), $e->getCode() ?: 400);
         }
-
-        $migrationRunner = new MigrationRunnerWave($this->app, $this, $inputProperties['list_uuid'], $inputProperties['workspaces'], $inputProperties['batchSize'], $inputProperties['mgrManual']);
-        $migrationRunner->runMigrations();
-
-        $this->prepareResponseMessage('migrationWave completed');
 
         return $this;
     }
 
+    /**
+     * Clear a workspace
+     *
+     * @return Bridge
+     */
     public function clearWorkspace(): Bridge
     {
-        $brizyApi = new BrizyAPI();
-
-        $result = $brizyApi->getAllProjectFromContainer(0);
-
-        foreach ($result as $value) {
-            $brizyApi->deleteProject($value['id']);
+        try {
+            $workspaceId = (int)$this->request->get('workspace_id', 0);
+            $this->migrationExecutor->clearWorkspace($workspaceId);
+            $this->responseHandler->success("Workspace cleared");
+        } catch (Exception $e) {
+            $this->responseHandler->error($e->getMessage(), 400);
         }
 
-        $this->prepareResponseMessage(
-            "Workspace cleared",
-            'message'
-        );
         return $this;
     }
 
