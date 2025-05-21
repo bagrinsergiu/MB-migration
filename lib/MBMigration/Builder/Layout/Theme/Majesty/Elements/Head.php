@@ -274,4 +274,14 @@ class Head extends HeadElement
             "mobilePaddingLeftSuffix" => "px",
         ];
     }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li a", "pseudoEl" => ""];
+    }
 }

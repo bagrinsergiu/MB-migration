@@ -11,6 +11,7 @@ use MBMigration\Layer\DataSource\driver\MySQL;
 use MBMigration\Layer\HTTP\RequestHandlerDELETE;
 use MBMigration\Layer\HTTP\RequestHandlerGET;
 use MBMigration\Layer\HTTP\RequestHandlerPOST;
+use MBMigration\Layer\MB\MBProjectDataCollector;
 use MBMigration\MigrationRunnerWave;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -400,13 +401,11 @@ class Bridge
 
         $mb_project_uuid = $this->request->get('mb_project_uuid');
         if (!isset($mb_project_uuid)) {
-
             throw new Exception('Invalid mb_project_uuid', 400);
         }
 
         $brz_project_id = $this->request->get('brz_project_id');
         if (!isset($brz_project_id)) {
-
             throw new Exception('Invalid brz_project_id', 400);
         }
 
@@ -419,53 +418,141 @@ class Bridge
             $mgr_manual = true;
         }
 
-        $result = $this->app->migrationFlow(
-            $mb_project_uuid,
-            $brz_project_id,
-            $brz_workspaces_id,
-            $mb_page_slug,
-            false,
-            $mgr_manual
-        );
+        // Check if the project was manually migrated
+        $brizyAPI = new BrizyAPI();
+        $isManuallyMigrated = $brizyAPI->checkProjectManualMigration($brz_project_id);
 
-        if (!empty($result['mMigration']) && $result['mMigration'] === true) {
-            $projectUUID = $this->app->getProjectUUDI();
-            $pageList = $this->app->getPageList();
+        if ($isManuallyMigrated) {
+            // Scenario 1: Project was manually migrated
+            try {
+                // Get the project ID from the UUID
+                try {
+                    $projectId = MBProjectDataCollector::getIdByUUID($mb_project_uuid);
+                } catch (Exception $e) {
+                    throw new Exception('Failed to get project ID: ' . $e->getMessage(), 400);
+                }
 
-            if ($this->checkPageChanges($projectUUID, $pageList)) {
+                // Create an instance of MBProjectDataCollector to work independently
+                $mbProjectDataCollector = new MBProjectDataCollector($projectId);
 
-                // to do, ned add return project details
+                // Get the project data
+                $projectPages = $mbProjectDataCollector->getPages();
+
+                if (empty($projectPages)) {
+                    throw new Exception('No pages found for the project', 400);
+                }
+
+                // Get the migration date from the mapping
+                $mgr_mapping = $this->searchMappingByUUID($mb_project_uuid);
+                $migrationDate = date('Y-m-d');
+
+                if (!empty($mgr_mapping['changes_json'])) {
+                    $changes_json = json_decode($mgr_mapping['changes_json'], true);
+                    if (!empty($changes_json) && isset($changes_json['data'])) {
+                        $migrationDate = $changes_json['data'];
+                    }
+                }
+
+                // Filter pages that were modified after the migration date
+                $modifiedPages = [];
+                $this->filterModifiedPages($projectPages, $migrationDate, $modifiedPages);
+
+                // Format the response
+                $formattedPages = [];
+                foreach ($modifiedPages as $slug => $date_updated) {
+                    $formattedPages[] = [
+                        'slug' => $slug,
+                        'date_updated' => $date_updated
+                    ];
+                }
+
+                // Return the response
                 $this->prepareResponseMessage([
-                    'projectId' => $brz_project_id,
-                    'uuid' => $projectUUID,
-                    'report' => $this->getReportPageChanges()
+                    'success' => true,
+                    'pages' => $formattedPages
                 ]);
+
+                return $this;
+            } catch (Exception $e) {
+                $this->prepareResponseMessage([
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ], 'error', 400);
+
+                return $this;
+            }
+        } else {
+            // Scenario 2: Default migration flow
+            $result = $this->app->migrationFlow(
+                $mb_project_uuid,
+                $brz_project_id,
+                $brz_workspaces_id,
+                $mb_page_slug,
+                false,
+                $mgr_manual
+            );
+
+            if (!empty($result['mMigration']) && $result['mMigration'] === true) {
+                $projectUUID = $this->app->getProjectUUDI();
+                $pageList = $this->app->getPageList();
+
+                if ($this->checkPageChanges($projectUUID, $pageList)) {
+                    // to do, ned add return project details
+                    $this->prepareResponseMessage([
+                        'projectId' => $brz_project_id,
+                        'uuid' => $projectUUID,
+                        'report' => $this->getReportPageChanges()
+                    ]);
+                } else {
+                    $result = $this->app->migrationFlow(
+                        $mb_project_uuid,
+                        $brz_project_id,
+                        $brz_workspaces_id,
+                        $mb_page_slug,
+                        true,
+                        $mgr_manual
+                    );
+                    $result['mgrClone'] = 'failed';
+                    $this->prepareResponseMessage($result);
+                }
             } else {
-                $result = $this->app->migrationFlow(
-                    $mb_project_uuid,
-                    $brz_project_id,
-                    $brz_workspaces_id,
-                    $mb_page_slug,
-                    true,
-                    $mgr_manual
-                );
-                $result['mgrClone'] = 'failed';
+                if ($mgr_manual) {
+                    $this->insertMigrationMapping(
+                        $result['brizy_project_id'],
+                        $result['mb_uuid'],
+                        json_encode(['data' => $result['date']])
+                    );
+                }
+
                 $this->prepareResponseMessage($result);
             }
 
-        } else {
-            if ($mgr_manual) {
-                $this->insertMigrationMapping(
-                    $result['brizy_project_id'],
-                    $result['mb_uuid'],
-                    json_encode(['data' => $result['date']])
-                );
+            return $this;
+        }
+    }
+
+    /**
+     * Helper method to filter pages that were modified after the migration date
+     *
+     * @param array $pages The list of pages to check
+     * @param string $migrationDate The date of the migration
+     * @param array &$modifiedPages Reference to the array that will hold modified pages
+     */
+    private function filterModifiedPages(array $pages, string $migrationDate, array &$modifiedPages): void
+    {
+        foreach ($pages as $page) {
+            if (isset($page['updated_at'])) {
+                $result = $this->compareDate($page['updated_at'], $migrationDate);
+
+                if ($result) {
+                    $modifiedPages[$page['slug']] = $page['updated_at'];
+                }
             }
 
-            $this->prepareResponseMessage($result);
+            if (isset($page['child']) && !empty($page['child'])) {
+                $this->filterModifiedPages($page['child'], $migrationDate, $modifiedPages);
+            }
         }
-
-        return $this;
     }
 
     public function migrationWave(): MgResponse
@@ -616,8 +703,6 @@ class Bridge
     {
         //$this->addTagManualMigration();
         $brizyApi = new BrizyAPI();
-
-
 
         $dir1 = dirname(__DIR__) . '/../../public/migration_results_07-05-2025_21.json';
         $dir2 = dirname(__DIR__) . '/../../public/migration_results_08-05-2025_22.json';
