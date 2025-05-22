@@ -165,6 +165,7 @@ abstract class AbstractElement implements ElementInterface
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
+
     }
 
     protected function afterTransformTabs(BrizyComponent $brizySection): void
@@ -303,4 +304,8 @@ abstract class AbstractElement implements ElementInterface
         $this->pageTDO->getPageStyle()->setPreviousSectionEmpty(true);
     }
 
+    protected function getThemeMenuHeaderStyle($headStyles, $section): BrizyComponent
+    {
+        return $section;
+    }
 }

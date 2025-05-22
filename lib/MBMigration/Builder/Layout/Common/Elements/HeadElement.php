@@ -92,6 +92,8 @@ abstract class HeadElement extends AbstractElement
 
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
+        $this->getThemeMenuHeaderStyle($headStyles, $section);
+
         return $section;
     }
 
