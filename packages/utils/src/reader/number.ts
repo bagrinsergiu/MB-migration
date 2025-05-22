@@ -20,3 +20,11 @@ export const readInt: Reader<number> = (v) => {
 
   return read(v);
 };
+
+export const readFloat: Reader<number> = (v) => {
+  if (typeof v === "string") {
+    return parseFloat(v);
+  }
+
+  return read(v);
+};

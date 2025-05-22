@@ -12,6 +12,7 @@ use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\ThemeContextInterface;
+use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -42,18 +43,24 @@ abstract class AbstractElement implements ElementInterface
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $this->pageTDO = $data->getThemeContext()->getPageDTO();
-        $this->themeContext = $data->getThemeContext();
-        $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
+        try {
+            $this->pageTDO = $data->getThemeContext()->getPageDTO();
+            $this->themeContext = $data->getThemeContext();
+            $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
-        $this->initialBehavior($data);
+            $this->initialBehavior($data);
 
-        $this->beforeTransformToItem($data);
-        $component = $this->internalTransformToItem($data);
-        $this->globalTransformSection($component);
-        $this->afterTransformToItem($component);
+            $this->beforeTransformToItem($data);
+            $component = $this->internalTransformToItem($data);
+            $this->globalTransformSection($component);
+            $this->afterTransformToItem($component);
 
-        $this->generalSectionBehavior($data, $component);
+            $this->generalSectionBehavior($data, $component);
+
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage(), ['AbstractElement', 'transformToItem']);
+            $component = $this->internalTransformToItem($data);
+        }
 
         return $component;
     }
@@ -154,11 +161,11 @@ abstract class AbstractElement implements ElementInterface
 
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {
-
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
+
     }
 
     protected function afterTransformTabs(BrizyComponent $brizySection): void
@@ -188,6 +195,11 @@ abstract class AbstractElement implements ElementInterface
     }
 
     protected function getAdditionalTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
+    protected function getAdditionalTopPaddingOfDetailPage(): int
     {
         return 0;
     }
@@ -292,4 +304,8 @@ abstract class AbstractElement implements ElementInterface
         $this->pageTDO->getPageStyle()->setPreviousSectionEmpty(true);
     }
 
+    protected function getThemeMenuHeaderStyle($headStyles, $section): BrizyComponent
+    {
+        return $section;
+    }
 }

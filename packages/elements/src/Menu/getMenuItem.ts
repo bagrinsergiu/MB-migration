@@ -16,6 +16,7 @@ interface MenuItemData {
   itemPadding: MenuItemElement;
   itemMobileIcon?: MenuItemElement;
   itemMobileNav?: MenuItemElement;
+  itemActive?: MenuItemElement;
   families: Families;
   defaultFamily: string;
 }
@@ -26,6 +27,7 @@ const getV = (entry: MenuItemData) => {
     itemBg,
     itemPadding,
     itemMobileIcon,
+    itemActive,
     itemMobileNav,
     families,
     defaultFamily
@@ -45,12 +47,28 @@ const getV = (entry: MenuItemData) => {
     italic: false
   };
 
+  const activeModel = {
+    "active-color-hex": undefined,
+    "active-color-opacity": 1,
+    "active-color-palette": ""
+  };
+
   const v = getModel({
     node: item,
     modelDefaults: model,
     families: families,
     defaultFamily: defaultFamily
   });
+
+  const activeV = itemActive
+    ? getModel({
+        node: itemActive,
+        modelDefaults: activeModel,
+        families: families,
+        defaultFamily: defaultFamily
+      })
+    : {};
+
   const mMenu = prefixed(v, "mMenu");
   Object.assign(
     mMenu,
@@ -64,7 +82,9 @@ const getV = (entry: MenuItemData) => {
   const bgModel = {
     "menu-bg-color-hex": undefined,
     "menu-bg-color-opacity": 1,
-    "menu-bg-color-palette": ""
+    "menu-bg-color-palette": "",
+    "menu-border-radius": 0,
+    "menu-padding": 0,
   };
 
   const bgV = getModel({
@@ -123,7 +143,14 @@ const getV = (entry: MenuItemData) => {
     );
   }
 
-  return { ...v, ...mMenu, ...bgV, ...paddingV, ...mobileMenuV };
+  return {
+    ...v,
+    ...activeV,
+    ...mMenu,
+    ...bgV,
+    ...paddingV,
+    ...mobileMenuV,
+  };
 };
 
 const getHoverV = (entry: MenuItemData) => {
@@ -132,10 +159,7 @@ const getHoverV = (entry: MenuItemData) => {
   const model = {
     "hover-color-hex": undefined,
     "hover-color-opacity": 1,
-    "hover-color-palette": "",
-    "active-color-hex": undefined,
-    "active-color-opacity": 1,
-    "active-color-palette": ""
+    "hover-color-palette": ""
   };
 
   const v = getModel({
@@ -164,6 +188,7 @@ const getHoverV = (entry: MenuItemData) => {
 const getMenuItem = (entry: MenuItemEntry): Output => {
   const {
     itemSelector,
+    itemActiveSelector,
     itemBgSelector,
     itemPaddingSelector,
     itemMobileBtnSelector,
@@ -174,6 +199,10 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
   } = entry;
   const itemElement = document.querySelector(itemSelector.selector);
   const itemBgElement = document.querySelector(itemBgSelector.selector);
+  const itemActiveElement = itemActiveSelector?.selector
+    ? document.querySelector(itemActiveSelector?.selector)
+    : null;
+
   const itemPaddingElement = document.querySelector(
     itemPaddingSelector.selector
   );
@@ -208,6 +237,12 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
   }
 
   const item = { item: itemElement, pseudoEl: itemSelector.pseudoEl };
+  const itemActive = itemActiveElement
+    ? {
+        item: itemActiveElement,
+        pseudoEl: itemActiveSelector?.pseudoEl ?? ""
+      }
+    : undefined;
   const itemBg = { item: itemBgElement, pseudoEl: itemBgSelector.pseudoEl };
   const itemPadding = {
     item: itemPaddingElement,
@@ -229,6 +264,7 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
   if (!hover) {
     data = getV({
       item,
+      itemActive,
       itemBg,
       itemPadding,
       itemMobileIcon,

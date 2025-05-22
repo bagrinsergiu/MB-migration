@@ -170,6 +170,11 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
+    public function getThemeMenuItemActiveSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
     public function getThemeParentMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
@@ -268,5 +273,15 @@ class Head extends HeadElement
             "mobilePaddingLeft" => 0,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li a", "pseudoEl" => ""];
     }
 }
