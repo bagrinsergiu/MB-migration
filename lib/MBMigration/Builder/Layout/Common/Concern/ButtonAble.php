@@ -23,7 +23,8 @@ trait ButtonAble
         BrowserPageInterface $browserPage,
         array $brizyKit,
         $selector = null,
-        $options = null
+        $options = null,
+        array $customStyles = []
     ): BrizyComponent {
 
         $mbSection = $data->getMbSection();
@@ -62,16 +63,28 @@ trait ButtonAble
                         $data,
                         $mbSection
                     );
+
+                    $this->setCustomStyles($customStyles, $brizyButton);
+
                     self::$buttonCache['id'] = $options;
                     self::$buttonCache['button'] = $brizyButton;
                     $brizySection->getValue()->add_items([$brizyButton]);
                     break;
             }
         } catch (Exception $e) {
-            // Handle exception
+            Logger::instance()->critical($e->getMessage(), [$mbSection['typeSection']]);
         }
 
         return $brizySection;
+    }
+
+    protected function setCustomStyles(array $customStyles, $brizyButton)
+    {
+        foreach ($customStyles as $key => $value) {
+            $paramName = 'set_' . $key;
+            $brizyButton->getItemValueWithDepth(0)
+                ->$paramName($value);
+        }
     }
 
     /**
@@ -162,21 +175,21 @@ trait ButtonAble
                     ->set_uppercase(true)
                     ->set_lowercase(false);
 
-                $buttonText = strtoupper(strip_tags($mbSection['content']));
+                $buttonText = strtoupper($this->stripAnyCode($mbSection['content']));
                 break;
             case 'lowercase':
                 $brizyButton->getItemValueWithDepth(0)
                     ->set_lowercase(true)
                     ->set_uppercase(false);
 
-                $buttonText = strtolower(strip_tags($mbSection['content']));
+                $buttonText = strtolower($this->stripAnyCode($mbSection['content']));
                 break;
             default:
                 $brizyButton->getItemValueWithDepth(0)
                     ->set_uppercase(false)
                     ->set_lowercase(false);
 
-                $buttonText = strtolower(strip_tags($mbSection['content']));
+                $buttonText = strtolower($this->stripAnyCode($mbSection['content']));
                 break;
         }
         $buttonItem = $brizyButton->getItemValueWithDepth(0);
@@ -210,6 +223,16 @@ trait ButtonAble
             ->set_colorPalette("");
 
         return $brizyButton;
+    }
+
+    protected function stripAnyCode($content): string
+    {
+        $content = html_entity_decode($content);
+        $content = strip_tags($content);
+
+        $content = preg_replace('/\s+/', ' ', $content);
+
+        return trim($content);
     }
 
     /**

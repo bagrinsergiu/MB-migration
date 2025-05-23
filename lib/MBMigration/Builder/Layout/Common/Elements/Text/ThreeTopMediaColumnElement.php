@@ -36,7 +36,7 @@ class ThreeTopMediaColumnElement extends AbstractElement
 
             $brizyColumnItem = new BrizyComponent(json_decode($this->brizyKit['column'], true));
 
-            $brizyColumnItem->getItemValueWithDepth(1,0)
+            $brizyColumnItem->getItemValueWithDepth(1, 0)
                 ->set_bgColorHex(ColorConverter::rgba2hex($result['background-color']))
                 ->set_bgColorPalette('')
                 ->set_bgColorType('solid')
@@ -95,12 +95,12 @@ class ThreeTopMediaColumnElement extends AbstractElement
             foreach ($mbSectionItem['items'] as $mbItem) {
                 if ($mbItem['category'] == 'button') {
                     $image = $brizyColumnItem->getItemWithDepth(1, 0);
-                    // add the photo items on the right side of the block
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
                         $image
                     );
-                    $this->handleButton($elementContext, $this->browserPage,$this->brizyKit, null, $mbItem['id']);
+
+                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, null, $mbItem['id'], $this->getCustomStylesForButton());
                 }
             }
 
@@ -112,6 +112,34 @@ class ThreeTopMediaColumnElement extends AbstractElement
         return $brizySection;
     }
 
+    protected function getCustomStylesForButton(): array
+    {
+        return [
+            "marginType" => "ungrouped",
+            "margin" => 0,
+            "marginSuffix" => "px",
+            "marginTop" => 10,
+            "marginTopSuffix" => "px",
+            "marginRight" => 0,
+            "marginRightSuffix" => "px",
+            "marginBottom" => -42,
+            "marginBottomSuffix" => "px",
+            "marginLeft" => 30,
+            "marginLeftSuffix" => "px",
+
+            "mobileMarginType" => "ungrouped",
+            "mobileMargin" => 0,
+            "mobileMarginSuffix" => "px",
+            "mobileMarginTop" => 10,
+            "mobileMarginTopSuffix" => "px",
+            "mobileMarginRight" => 0,
+            "mobileMarginRightSuffix" => "px",
+            "mobileMarginBottom" => 0,
+            "mobileMarginBottomSuffix" => "px",
+            "mobileMarginLeft" => 0,
+            "mobileMarginLeftSuffix" => "px",
+        ];
+    }
 
     protected function getBgColumnStyles(
         $sectionId,
@@ -149,6 +177,18 @@ class ThreeTopMediaColumnElement extends AbstractElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "padding" => 0,
+            "paddingSuffix" => "px",
+            "paddingTop" => 0,
+            "paddingTopSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingBottom" => 50,
+            "paddingBottomSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
         ];
     }
 }
