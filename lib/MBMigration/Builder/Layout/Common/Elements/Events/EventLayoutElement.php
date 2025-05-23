@@ -6,7 +6,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
-use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\Component\Button;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -24,7 +24,7 @@ abstract class EventLayoutElement extends AbstractElement
     use SectionStylesAble;
     use BrizyQueryBuilderAware;
     use CssPropertyExtractorAware;
-    use ButtonAble;
+    use Button;
 
     /**
      * @param $brizyKit

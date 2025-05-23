@@ -6,12 +6,12 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
-use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\Component\Button;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
@@ -22,7 +22,7 @@ abstract class EventGalleryLayout extends AbstractElement
     use RichTextAble;
     use BrizyQueryBuilderAware;
     use CssPropertyExtractorAware;
-    use ButtonAble;
+    use Button;
 
     public function __construct($brizyKit, BrowserPageInterface $browserPage, QueryBuilder $queryBuilder)
     {

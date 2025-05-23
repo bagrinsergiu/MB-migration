@@ -2,68 +2,58 @@
 
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
+use Exception;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\Component\Line;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Core\Logger;
 
 class ThreeTopMediaColumnElement extends AbstractElement
 {
     use RichTextAble;
     use SectionStylesAble;
     use DonationsAble;
+    use Line;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $mbSection = $data->getMbSection();
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        try {
+            $mbSection = $data->getMbSection();
+            $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
-        $brizyComponent = $this->getSectionItemComponent($brizySection);
-        $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+            $brizyComponent = $this->getSectionItemComponent($brizySection);
+            $elementContext = $data->instanceWithBrizyComponent($brizyComponent);
+            $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
 
-        $countCount = count($mbSection['items']);
+            $countCount = count($mbSection['items']);
 
-        $width = 100 / $countCount;
+            $width = 100 / $countCount;
 
-        foreach ((array)$mbSection['items'] as $mbSectionItem) {
+            foreach ((array)$mbSection['items'] as $mbSectionItem) {
 
-            $result = $this->getBgColumnStyles($mbSectionItem['id'], $this->browserPage);
+                $result = $this->getBgColumnStyles($mbSectionItem['id'], $this->browserPage);
 
-            $brizyColumnItem = new BrizyComponent(json_decode($this->brizyKit['column'], true));
+                $brizyColumnItem = new BrizyComponent(json_decode($this->brizyKit['column'], true));
 
-            $brizyColumnItem->getItemValueWithDepth(1, 0)
-                ->set_bgColorHex(ColorConverter::rgba2hex($result['background-color']))
-                ->set_bgColorPalette('')
-                ->set_bgColorType('solid')
-                ->set_bgColorOpacity((int)$result['opacity'])
-                ->set_mobileBgColorType('solid')
-                ->set_mobileBgColorHex(ColorConverter::rgba2hex($result['background-color']))
-                ->set_mobileBgColorOpacity((int)$result['opacity'])
-                ->set_mobileBgColorPalette('');
+                $brizyColumnItem->getItemValueWithDepth(1, 0)
+                    ->set_bgColorHex(ColorConverter::rgba2hex($result['background-color']))
+                    ->set_bgColorPalette('')
+                    ->set_bgColorType('solid')
+                    ->set_bgColorOpacity((int)$result['opacity'])
+                    ->set_mobileBgColorType('solid')
+                    ->set_mobileBgColorHex(ColorConverter::rgba2hex($result['background-color']))
+                    ->set_mobileBgColorOpacity((int)$result['opacity'])
+                    ->set_mobileBgColorPalette('');
 
-            foreach ($mbSectionItem['items'] as $mbItem) {
-                if ($mbItem['category'] == 'photo') {
-                    $image = $brizyColumnItem->getItemWithDepth(0, 0, 0, 0);
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbItem,
-                        $image
-                    );
-                    $this->handleRichTextItem(
-                        $elementContext,
-                        $this->browserPage
-                    );
-                }
-            }
-
-            foreach ($mbSectionItem['items'] as $mbItem) {
-                if ($mbItem['category'] == 'text') {
-                    if ($mbItem['item_type'] === 'title') {
-                        $image = $brizyColumnItem->getItemWithDepth(1, 0);
+                foreach ($mbSectionItem['items'] as $mbItem) {
+                    if ($mbItem['category'] == 'photo') {
+                        $image = $brizyColumnItem->getItemWithDepth(0, 0, 0, 0);
                         $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                             $mbItem,
                             $image
@@ -74,39 +64,71 @@ class ThreeTopMediaColumnElement extends AbstractElement
                         );
                     }
                 }
-            }
 
-            foreach ($mbSectionItem['items'] as $mbItem) {
-                if ($mbItem['category'] == 'text') {
-                    if ($mbItem['item_type'] === 'body') {
+                foreach ($mbSectionItem['items'] as $mbItem) {
+                    if ($mbItem['category'] == 'text') {
+                        if ($mbItem['item_type'] === 'title') {
+                            $image = $brizyColumnItem->getItemWithDepth(1, 0);
+                            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                $mbItem,
+                                $image
+                            );
+                            $this->handleRichTextItem(
+                                $elementContext,
+                                $this->browserPage
+                            );
+
+                            try {
+                                $brizyLineItem = new BrizyComponent(json_decode($this->brizyKit['line'], true));
+                                $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                    $mbItem,
+                                    $image
+                                );
+                                $this->handleLine($brizyLineItem, $elementContext, $this->browserPage, $mbItem['id']. ':after');
+
+
+                            } catch (Exception $e) {
+                                Logger::instance()->info('line utilization is not foreseen');
+                            }
+
+                        }
+                    }
+                }
+
+                foreach ($mbSectionItem['items'] as $mbItem) {
+                    if ($mbItem['category'] == 'text') {
+                        if ($mbItem['item_type'] === 'body') {
+                            $image = $brizyColumnItem->getItemWithDepth(1, 0);
+                            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                $mbItem,
+                                $image
+                            );
+                            $this->handleRichTextItem(
+                                $elementContext,
+                                $this->browserPage
+                            );
+                        }
+                    }
+                }
+
+                foreach ($mbSectionItem['items'] as $mbItem) {
+                    if ($mbItem['category'] == 'button') {
                         $image = $brizyColumnItem->getItemWithDepth(1, 0);
                         $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                             $mbItem,
                             $image
                         );
-                        $this->handleRichTextItem(
-                            $elementContext,
-                            $this->browserPage
-                        );
+
+                        $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, null, $mbItem['id'], $this->getCustomStylesForButton());
                     }
                 }
+
+                $brizyColumnItem->getValue()->set_width($width);
+
+                $brizySection->getItemWithDepth(0, 0)->getValue()->add_items([$brizyColumnItem]);
             }
+        } catch (Exception $e) {
 
-            foreach ($mbSectionItem['items'] as $mbItem) {
-                if ($mbItem['category'] == 'button') {
-                    $image = $brizyColumnItem->getItemWithDepth(1, 0);
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbItem,
-                        $image
-                    );
-
-                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, null, $mbItem['id'], $this->getCustomStylesForButton());
-                }
-            }
-
-            $brizyColumnItem->getValue()->set_width($width);
-
-            $brizySection->getItemWithDepth(0, 0)->getValue()->add_items([$brizyColumnItem]);
         }
 
         return $brizySection;

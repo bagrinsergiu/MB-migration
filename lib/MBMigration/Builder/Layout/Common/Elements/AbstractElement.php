@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Common\Elements;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\Component\Button;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
 use MBMigration\Builder\Layout\Common\Concern\TextsExtractorAware;
@@ -12,7 +12,6 @@ use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\ThemeContextInterface;
-use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
 
@@ -21,7 +20,7 @@ abstract class AbstractElement implements ElementInterface
     use CssPropertyExtractorAware;
     use MbSectionUtils;
     use TextsExtractorAware;
-    use ButtonAble;
+    use Button;
 
     public PageDto $pageTDO;
     public ThemeContextInterface $themeContext;

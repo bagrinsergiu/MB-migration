@@ -1,17 +1,17 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Concern;
+namespace MBMigration\Builder\Layout\Common\Concern\Component;
 
 use Exception;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\Exception\BrizyKitNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Core\Logger;
 
-trait ButtonAble
+trait Button
 {
     use CssPropertyExtractorAware;
     private static $buttonCache = ['id' => 0 , 'button' => null];
