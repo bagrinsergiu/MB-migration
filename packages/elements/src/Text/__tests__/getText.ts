@@ -3045,22 +3045,164 @@ const ex48: Data = {
   output: {
     data: [
       {
-        "type": "Wrapper",
-        "value": {
-          "_id": "1",
-          "_styles": [
-            "wrapper",
-            "wrapper--richText"
-          ],
-          "items": [
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
             {
-              "type": "RichText",
-              "value": {
-                "_id": "1",
-                "_styles": [
-                  "richText"
-                ],
-                "text": "<p class=\"brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0\"><span>Upcoming Events</span></p>"
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Upcoming Events</span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+// Majesty example 49 (Text content is missing in text with icons)
+const ex49: Data = {
+  html: `<div class="text-content text-2 editable" data-id="2564559" data-category="text"><div><p><a href="https://www.facebook.com/New-Life-Downtown-Hickory-161798330532473/" data-location="external" data-detail="https://www.facebook.com/New-Life-Downtown-Hickory-161798330532473/" data-category="link" target="_blank" class="cloverlinks" style="font-weight: 600; font-size: 1.125em; letter-spacing: 0em; background-color: rgb(249, 250, 247); color: rgb(141, 197, 63);"><span class="clovercustom" style="color: rgb(94, 94, 94);">To connect with us on </span><span data-socialicon="circlefacebook"><span class="socialIconSymbol" style="font-weight: 700;" aria-hidden="true"></span><span class="sr-only">circlefacebook</span></span> <span class="clovercustom"> click here </span></a></p><p style="color: rgb(141, 197, 63); font-weight: 600;"><br></p><p style="color: rgb(141, 197, 63); font-weight: 600;"><a href="https://www.instagram.com/newlifehky/" data-location="external" data-detail="https://www.instagram.com/newlifehky/" data-category="link" target="_blank" class="cloverlinks" style="color: rgb(141, 197, 63); font-size: 1.1111em;" data-button="false"><span class="clovercustom" style="color: rgb(94, 94, 94);">To connect with us on</span>&nbsp;&nbsp;<span data-icon="instagram"><span class="clovericons fab" aria-hidden="true"></span><span class="sr-only">Instagram</span></span> </a> <a style="font-size: 1.1111em;" href="https://www.instagram.com/newlifehky/" data-location="external" data-button="false" data-detail="https://www.instagram.com/newlifehky/" data-category="link" target="_blank" class="cloverlinks">click here</a></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="2564559"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-detail="https://www.facebook.com/New-Life-Downtown-Hickory-161798330532473/" data-category="link" target="_blank" style="font-weight: 600; background-color: rgb(249, 250, 247); color: rgb(141, 197, 63); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.facebook.com%2FNew-Life-Downtown-Hickory-161798330532473%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="color: rgb(94, 94, 94); font-weight: 600; ">To connect with us on </span></a></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                bgColorHex: "#f9faf7",
+                bgColorPalette: "",
+                bgColorOpacity: undefined,
+                customSize: 26,
+                linkExternal:
+                  "https://www.facebook.com/New-Life-Downtown-Hickory-161798330532473/",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "facebook-square",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-detail="https://www.facebook.com/New-Life-Downtown-Hickory-161798330532473/" data-category="link" target="_blank" style="font-weight: 600; background-color: rgb(249, 250, 247); color: rgb(141, 197, 63); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.facebook.com%2FNew-Life-Downtown-Hickory-161798330532473%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="color: rgb(141, 197, 63); font-weight: 600; "> click here </span></a></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-detail="https://www.instagram.com/newlifehky/" data-category="link" target="_blank" style="color: rgb(141, 197, 63); " data-button="false" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.instagram.com%2Fnewlifehky%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="color: rgb(94, 94, 94); ">To connect with us on</span></a></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                linkExternal: "https://www.instagram.com/newlifehky/",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "instagram",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a style="" data-location="external" data-button="false" data-detail="https://www.instagram.com/newlifehky/" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.instagram.com%2Fnewlifehky%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>click here</span></a></p>'
               }
             }
           ]
@@ -3118,7 +3260,8 @@ describe.each([
   ex45,
   ex46,
   ex47,
-  ex48
+  ex48,
+  ex49
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
