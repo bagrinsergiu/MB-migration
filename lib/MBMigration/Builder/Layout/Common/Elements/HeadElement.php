@@ -247,7 +247,7 @@ abstract class HeadElement extends AbstractElement
         $menuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
             'itemSelector' => $menuItemSelector,
             'itemActiveSelector' => $this->getThemeMenuItemActiveSelector(),
-            'itemBgSelector' => $this->getThemeMenuItemBgSelector(),
+            'itemBgSelector' => $this->getMenuItemBgSelector(),
             'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
             'itemMobileSelector' => $itemMobileSelector,
             'itemMobileBtnSelector' => $this->getThemeMobileBtnSelector(),
@@ -257,10 +257,10 @@ abstract class HeadElement extends AbstractElement
             'hover' => false,
         ]);
 
-        if ($this->browserPage->triggerEvent('hover', $menuItemSelector['selector'])) {
+        if ($this->browserPage->triggerEvent('hover', $this->getNotSelectedMenuItemBgSelector()['selector'])) {
             $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
                 'itemSelector' => $menuItemSelector,
-                'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                'itemBgSelector' => $this->getMenuHoverItemBgSelector(),
                 'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,
@@ -433,9 +433,13 @@ abstract class HeadElement extends AbstractElement
 
     abstract public function getThemeSubMenuItemBGSelector(): array;
 
-    abstract public function getThemeMenuItemBgSelector(): array;
-
     abstract public function getThemeMenuItemPaddingSelector(): array;
 
     abstract public function getThemeMenuItemActiveSelector(): array;
+
+    abstract public function getNotSelectedMenuItemBgSelector(): array;
+
+    abstract public function getMenuItemBgSelector(): array;
+
+    abstract public function getMenuHoverItemBgSelector(): array;
 }

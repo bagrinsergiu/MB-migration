@@ -88,11 +88,6 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation>ul>li.has-sub>ul>li.selected>a", "className" => "selected"];
     }
 
-    public function getThemeMenuItemBgSelector(): array
-    {
-        return $this->getThemeMenuItemSelector();
-    }
-
     public function getThemeSubMenuItemBGSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li:has(.sub-navigation) .sub-navigation", "pseudoEl" => ""];
@@ -154,31 +149,25 @@ class Head extends HeadElement
             ->set_mobileMarginRight('25')
             ->set_tempMobileMarginRight('25');
 
-//        $section->getItemWithDepth(0, 0, 1, 0, 0)
-//            ->getValue()
-//            ->set_menuPaddingTop('10')
-//            ->set_menuPaddingTopSuffix('px')
-//            ->set_menuPaddingRight('15')
-//            ->set_menuPaddingRightSuffix('px')
-//            ->set_menuPaddingBottom('10')
-//            ->set_menuPaddingBottomSuffix('px')
-//            ->set_menuPaddingLeft('15')
-//            ->set_menuPaddingLeftSuffix('px')
-//            ->set_menuBorderRadius('50')
-//            ->set_menuBorderRadiusSuffix('px');
-//
-//        if (isset($headStyles['menu']['mMenuHoverColorHex'])) {
-//            $section->getItemWithDepth(0, 0, 1, 0, 0)
-//                ->getValue()
-//                ->set_hoverMenuBgColorHex($headStyles['menu']['mMenuHoverColorHex']);
-//        }
-//
-//        if (isset($headStyles['menu']['mMenuHoverColorOpacity'])) {
-//            $section->getItemWithDepth(0, 0, 1, 0, 0)
-//                ->getValue()
-//                ->set_hoverMenuBgColorOpacity($headStyles['menu']['mMenuHoverColorOpacity']);
-//        }
+        $section->getItemWithDepth(0,0,1,0,0)
+            ->getValue()
+            ->set_itemPadding('10');
 
         return $section;
+    }
+
+    public function getMenuItemBgSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li:not(.selected) a span", "pseudoEl" => ""];
+    }
+
+    public function getMenuHoverItemBgSelector(): array
+    {
+        return $this->getMenuItemBgSelector();
+    }
+
+    public function getNotSelectedMenuItemBgSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li:not(.selected)", "pseudoEl" => ""];
     }
 }
