@@ -3,13 +3,13 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\Component\Button;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Utils\ColorConverter;
 
 abstract class GridLayoutElement extends AbstractElement
@@ -18,7 +18,7 @@ abstract class GridLayoutElement extends AbstractElement
     use SectionStylesAble;
     use ImageStylesAble;
     use DonationsAble;
-    use ButtonAble;
+    use Button;
 
     public array $globalBrizyKit;
 
