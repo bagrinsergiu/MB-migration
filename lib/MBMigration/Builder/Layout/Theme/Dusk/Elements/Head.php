@@ -336,4 +336,14 @@ class Head extends HeadElement
     {
         return $this->getThemeMenuItemSelector();
     }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation ul li.selected a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
+    }
 }
