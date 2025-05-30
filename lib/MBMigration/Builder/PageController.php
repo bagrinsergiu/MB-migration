@@ -464,7 +464,7 @@ class PageController
 
                 switch ($section['category']) {
                     case 'gallery':
-                        if (!empty($sectionItems['list'])) {
+                        if (!empty($sectionItems['list']) && $this->checkSubGalleryLayout($sectionItems['list'])) {
                             $itemsSubGallery = [
                                 'sectionId' => $section['id'],
                                 'typeSection' => 'sub-gallery-layout',
@@ -518,5 +518,34 @@ class PageController
         }
 
         return $result;
+    }
+
+    private function checkSubGalleryLayout(array $list): bool
+    {
+        if (empty($list)) {
+            return false;
+        }
+
+        foreach ($list as $listObject) {
+            if (empty($listObject['items'])) {
+                continue;
+            }
+
+            foreach ($listObject['items'] as $item) {
+                if ($item['category'] === 'photo' && !empty($item['content'])) {
+                    return true;
+                }
+
+                if ($item['category'] === 'text' && !empty($item['content'])) {
+                    $textContent = strip_tags($item['content']);
+                    $textContent = trim($textContent);
+                    if (!empty($textContent)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }

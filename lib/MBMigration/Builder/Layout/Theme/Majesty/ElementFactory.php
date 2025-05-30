@@ -26,6 +26,7 @@ use MBMigration\Builder\Layout\Theme\Majesty\Elements\Text\ListLayoutElement;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\Text\RightMedia;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\Text\TabsLayoutElement;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\Text\ThreeTopMediaCircle;
+use MBMigration\Builder\Layout\Theme\Majesty\Elements\Text\ThreeHorizontalText;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\Text\ThreeTopMediaColumn;
 use MBMigration\Builder\Layout\Theme\Majesty\Elements\Text\TwoRightMediaCircle;
 
@@ -93,6 +94,8 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new RightForm($this->blockKit['blocks']['form'], $browserPage);
             case 'prayer-form':
                 return new PrayerFormElement($this->blockKit['blocks']['prayer-form'], $browserPage);
+            case 'three-horizontal-text':
+                return new ThreeHorizontalText($this->blockKit['blocks']['three-horizontal-text'], $browserPage);
 
             case 'grid-media-layout':
             case 'list-media-layout':
