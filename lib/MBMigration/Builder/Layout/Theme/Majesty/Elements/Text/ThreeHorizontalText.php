@@ -8,10 +8,10 @@ use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
+use MBMigration\Builder\Layout\Common\Elements\Text\ThreeHorizontalTextElement;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 
-class ThreeHorizontalText extends AbstractElement
+class ThreeHorizontalText extends ThreeHorizontalTextElement
 {
     use RichTextAble;
     use SectionStylesAble;
@@ -28,20 +28,20 @@ class ThreeHorizontalText extends AbstractElement
         $brizySection->getValue()->set_marginTop(0);
 
         $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
+        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
 
-        $rowJson = json_decode($this->brizyKit['row'], true);
         $colJson = json_decode($this->brizyKit['column'], true);
-        $itemJson = json_decode($this->brizyKit['item'], true);
-
-        $brizySectionRow = new BrizyComponent($rowJson);
-
-        $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
 
         $mbElements = $this->sortItemsInGroups($mbSection);
 
         foreach ($mbElements as $mbElement) {
 
             $brizySectionCol = new BrizyComponent($colJson);
+
+            if (!$this->checkColumnContent($mbElement))
+            {
+                continue;
+            }
 
             foreach ($mbElement as $mbItem) {
 
@@ -56,7 +56,7 @@ class ThreeHorizontalText extends AbstractElement
                 );
             }
 
-            $brizySectionRow->getValue()->add_items([$brizySectionCol]);
+            $brizySection->getItemWithDepth(0, 0)->getValue()->add_items([$brizySectionCol]);
 
         }
 
@@ -64,6 +64,29 @@ class ThreeHorizontalText extends AbstractElement
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
         return $brizySection;
+    }
+
+    private function checkColumnContent(array $contentColumn): bool
+    {
+        if (empty($contentColumn)) {
+            return false;
+        }
+
+        foreach ($contentColumn as $item) {
+            if ($item['category'] === 'photo' && !empty($item['content'])) {
+                return true;
+            }
+
+            if ($item['category'] === 'text' && !empty($item['content'])) {
+                $textContent = strip_tags($item['content']);
+                $textContent = trim($textContent);
+                if (!empty($textContent)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private function sortItemsInGroups($mbSection): array
