@@ -6,7 +6,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
-use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\Component\Button;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -24,7 +24,7 @@ abstract class EventLayoutElement extends AbstractElement
     use SectionStylesAble;
     use BrizyQueryBuilderAware;
     use CssPropertyExtractorAware;
-    use ButtonAble;
+    use Button;
 
     /**
      * @param $brizyKit
@@ -251,12 +251,16 @@ abstract class EventLayoutElement extends AbstractElement
             'detailButtonGradientColorPalette' => '',
 
             'hoverViewColorHex' => $sectionPalette['text'],
-            'hoverViewColorOpacity' => 0.7,
+            'hoverViewColorOpacity' => 1,
             'hoverViewColorPalette' => '',
 
             'viewColorHex' => $sectionPalette['text'],
-            'viewColorOpacity' => 1,
+            'viewColorOpacity' => 0.7,
             'viewColorPalette' => '',
+
+            'activeViewColorHex' => $sectionPalette['text'],
+            'activeViewColorOpacity' => 1,
+            'activeViewColorPalette' => '',
 
             'layoutViewTypographyFontFamily' => $fonts,
             'layoutViewTypographyFontStyle' => '',

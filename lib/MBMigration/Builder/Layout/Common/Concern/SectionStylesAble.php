@@ -155,7 +155,7 @@ trait SectionStylesAble
         }
 
         $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
-            ColorConverter::rgba2opacity($sectionStyles['background-color'])
+            $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'])
         );
         $sectionStyles['background-color'] = ColorConverter::rgba2hex($sectionStyles['background-color']);
 
@@ -307,8 +307,11 @@ trait SectionStylesAble
                 $families,
                 $defaultFont
             );
+            $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity']);
 
-            $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
+            if($sectionBgStyles['opacity'] === 0){
+                $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
+            }
         }
         catch (\Exception $e) {
         }
