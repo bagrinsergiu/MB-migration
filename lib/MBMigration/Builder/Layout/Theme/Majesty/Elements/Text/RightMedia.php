@@ -34,40 +34,7 @@ class RightMedia extends PhotoTextElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $brizySection = parent::internalTransformToItem($data);
-        $mbSectionItem = $data->getMbSection();
-        $itemsKit = $data->getThemeContext()->getBrizyKit();
-
-        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
-
-        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
-        $titleMb = $this->getItemByType($mbSectionItem, 'title');
-
-        $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
-        $wrapperLineStyles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $menuSectionSelector,
-                'styleProperties' => ['border-bottom-color',],
-                'families' => [],
-                'defaultFamily' => '',
-            ]
-        );
-
-        $headStyle = [
-            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
-        ];
-
-        $wrapperLine->getItemWithDepth(0)
-            ->getValue()
-            ->set_borderColorHex($headStyle['line-color']);
-
-
-        $brizySection->getItemWithDepth(0,0,0)
-            ->getValue()
-            ->add_items([$wrapperLine], 1);
-
-        return $brizySection;
+        return parent::internalTransformToItem($data);
     }
 
     protected function getPropertiesMainSection(): array

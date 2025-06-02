@@ -411,9 +411,9 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addVerticalContentAlign($verticalAlign = 'center'): BrizyComponent
+    public function addVerticalContentAlign($verticalAlign = 'top'): BrizyComponent
     {
-        if (!in_array($verticalAlign, ['center', 'left', 'right'])) {
+        if (!in_array($verticalAlign, ['center', 'bottom', 'top'])) {
             $verticalAlign = 'center';
         }
 
@@ -766,5 +766,20 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addImage($mbSectionItem, $options = [])
+    {
+        $image = new BrizyImageComponent();
+
+        $imageConfig = [
+            'imageSrc' => $mbSectionItem['content'] ?? '',
+            'imageFileName' => $mbSectionItem['imageFileName']
+        ];
+
+        foreach ($imageConfig as $key => $value) {
+            $image->getValue()->set($key, $value);
+        }
+
+        $this->getValue()->add('items', [$image]);
+    }
 
 }

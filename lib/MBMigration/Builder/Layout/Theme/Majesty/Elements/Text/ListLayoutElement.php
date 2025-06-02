@@ -29,37 +29,6 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {
-        $mbSectionItem = $data->getMbSection();
-        $itemsKit = $data->getThemeContext()->getBrizyKit();
-
-        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
-        if(!isset($mbSectionItem['item_type']) || $mbSectionItem['item_type'] !== 'title'){
-            $titleMb = $this->getByType($mbSectionItem['head'], 'title');
-        } else {
-            $titleMb['id'] =  $mbSectionItem['id'];
-        }
-
-        $menuSectionSelector = '[data-id="' . $titleMb['id']. '"]';
-        $wrapperLineStyles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $menuSectionSelector,
-                'styleProperties' => ['border-bottom-color',],
-                'families' => [],
-                'defaultFamily' => '',
-            ]
-        );
-
-        $headStyle = [
-            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
-        ];
-
-        $wrapperLine->getItemWithDepth(0)
-            ->getValue()
-            ->set_borderColorHex($headStyle['line-color']);
-
-        $brizySection->getValue()->add_items([$wrapperLine]);
-
         return $brizySection;
     }
 }

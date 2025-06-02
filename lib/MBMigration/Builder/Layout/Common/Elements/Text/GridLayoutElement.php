@@ -77,18 +77,18 @@ abstract class GridLayoutElement extends AbstractElement
                 $elementContext = $data->instanceWithMBSection($item);
                 $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
-                $brizySectionItem->getValue()
-                    ->set_borderColorHex($resultColorStyles['border-bottom-color'])
-                    ->set_borderColorPalette('')
-                    ->set_borderColorOpacity(1)
-                    ->set_borderWidth(2)
-
+                $brizySectionItem
+                    ->addVerticalContentAlign()
+                    ->getValue()
+//                    ->set_borderColorHex($resultColorStyles['border-bottom-color'])
+//                    ->set_borderColorPalette('')
+//                    ->set_borderColorOpacity(1)
+                    ->set_borderWidth(0)
                     ->set_width($itemWidth)
 //                    ->set_paddingTop((int)$styles['margin-top'])
 //                    ->set_paddingBottom((int)$styles['margin-bottom'])
 //                    ->set_paddingRight((int)$styles['margin-right'])
 //                    ->set_paddingLeft((int)$styles['margin-left'])
-
                     ->set_mobileWidth(100);
 
                 foreach ($item['items'] as $mbItem) {
@@ -188,9 +188,7 @@ abstract class GridLayoutElement extends AbstractElement
                     ->set_bgImageSrc($mbSectionItem['content']);
                 break;
             case 'image':
-                $brizyComponent->getValue()
-                    ->set_imageFileName($mbSectionItem['imageFileName'])
-                    ->set_imageSrc($mbSectionItem['content']);
+                $brizyComponent->addImage($mbSectionItem, );
                 break;
         }
 

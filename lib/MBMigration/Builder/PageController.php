@@ -536,13 +536,13 @@ class PageController
                     return true;
                 }
 
-                if ($item['category'] === 'text' && !empty($item['content'])) {
-                    $textContent = strip_tags($item['content']);
-                    $textContent = trim($textContent);
-                    if (!empty($textContent)) {
-                        return true;
-                    }
-                }
+//                if ($item['category'] === 'text' && !empty($item['content'])) {
+//                    $textContent = strip_tags($item['content']);
+//                    $textContent = trim($textContent);
+//                    if (!empty($textContent)) {
+//                        return true;
+//                    }
+//                }
             }
         }
 

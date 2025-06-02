@@ -309,7 +309,7 @@ trait SectionStylesAble
             );
             $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity']);
 
-            if($sectionBgStyles['opacity'] === 0){
+            if($sectionBgStyles['opacity'] !== 0){
                 $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
             }
         }
