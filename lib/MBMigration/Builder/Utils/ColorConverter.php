@@ -282,6 +282,9 @@ final class ColorConverter
         if ($opacity < 0) {
             return 0;
         }
+        if ($opacity === 0.0){
+            return 0;
+        }
         if ($opacity > 1) {
             return 1;
         }
