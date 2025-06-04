@@ -194,7 +194,7 @@ class PageController
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $pd = FontsController::getProject_Data();
 
-            sleep(5);
+            sleep(1);
 
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
