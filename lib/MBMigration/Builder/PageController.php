@@ -146,6 +146,7 @@ class PageController
             $headItem = $this->cache->get('header', 'mainSection');
             $footerItem = $this->cache->get('footer', 'mainSection');
             $listSeries = $this->cache->get('series');
+            $projectID = $this->cache->get('projectId_Brizy');
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
             $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
 
@@ -178,7 +179,8 @@ class PageController
                 $this->pageDTO,
                 $this->cache->get('title','settings') ?? '',
                 $fontController,
-                $this->brizyAPI
+                $this->brizyAPI,
+                $projectID
             );
 
             /**

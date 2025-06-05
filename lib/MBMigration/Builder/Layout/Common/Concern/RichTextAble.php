@@ -194,6 +194,7 @@ trait RichTextAble
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
         $brizyAPI =  $data->getBrizyAPI();
+        $projectID =  $data->getThemeContext()->getProjectId();
 
         switch ($mbSectionItem['category']) {
             case 'text':
@@ -202,6 +203,7 @@ trait RichTextAble
                     $brizyComponent,
                     $browserPage,
                     $brizyAPI,
+                    $projectID,
                     $families,
                     $default_fonts,
                     $data->getThemeContext()->getUrlMap(),
@@ -242,6 +244,7 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
+        $projectID =  $data->getThemeContext()->getProjectId();
 
         if ($mbSectionItem['category'] == 'text') {
             $brizyComponent = $this->handleTextItem(
@@ -249,6 +252,7 @@ trait RichTextAble
                 $brizyComponent,
                 $browserPage,
                 $data->getBrizyAPI(),
+                $projectID,
                 $families,
                 $default_fonts,
                 $data->getThemeContext()->getUrlMap(),
@@ -265,6 +269,7 @@ trait RichTextAble
         BrizyComponent $brizySection,
         BrowserPageInterface $browserPage,
         BrizyAPI $brizyAPI,
+        int $projectID,
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $urlMap = [],
@@ -306,7 +311,7 @@ trait RichTextAble
                         if(!empty($clonableItem['value']['code']) && $clonableItem['type'] === 'Icon' ){
                            try{
                                 $customIconUploadResult = $brizyAPI->uploadCustomIcon(
-                                    22510466,
+                                    $projectID,
                                     $clonableItem['value']['filename'],
                                     $clonableItem['value']['code']
                                 );
