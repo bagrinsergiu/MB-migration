@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Common;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 final class ElementContext implements ElementContextInterface
 {
@@ -182,5 +183,10 @@ final class ElementContext implements ElementContextInterface
     public function getThemeInstance(): ThemeInterface
     {
         return $this->themeInstance;
+    }
+
+    public function getBrizyAPI(): BrizyAPI
+    {
+        return $this->themeContext->getBrizyAPI();
     }
 }

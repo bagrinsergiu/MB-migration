@@ -8,6 +8,7 @@ use MBMigration\Browser\BrowserPHP;
 use MBMigration\Builder\BrizyComponent\BrizyComponentBuilder;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 final class ThemeContext implements ThemeContextInterface
 {
@@ -80,6 +81,8 @@ final class ThemeContext implements ThemeContextInterface
     private array $listSeries;
     private PageDto $pageDTO;
     private string $projectName;
+    private BrizyAPI $brizyAPIClient;
+    private FontsController $fontsController;
 
     public function __construct(
         string $layoutName,
@@ -101,7 +104,8 @@ final class ThemeContext implements ThemeContextInterface
         array $listSeries,
         PageDto $pageDTO,
         string $projectName,
-        FontsController $fontsController
+        FontsController $fontsController,
+        BrizyAPI $brizyAPIClient
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
@@ -123,6 +127,7 @@ final class ThemeContext implements ThemeContextInterface
         $this->pageDTO = $pageDTO;
         $this->projectName = $projectName;
         $this->fontsController = $fontsController;
+        $this->brizyAPIClient = $brizyAPIClient;
     }
 
     public function getLayoutName(): string
@@ -235,5 +240,10 @@ final class ThemeContext implements ThemeContextInterface
     public function getFontsController(): FontsController
     {
         return $this->fontsController;
+    }
+
+    public function getBrizyAPI(): BrizyAPI
+    {
+        return $this->brizyAPIClient;
     }
 }
