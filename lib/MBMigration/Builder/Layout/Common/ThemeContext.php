@@ -83,6 +83,7 @@ final class ThemeContext implements ThemeContextInterface
     private string $projectName;
     private BrizyAPI $brizyAPIClient;
     private FontsController $fontsController;
+    private int $projectID;
 
     public function __construct(
         string $layoutName,
@@ -105,7 +106,8 @@ final class ThemeContext implements ThemeContextInterface
         PageDto $pageDTO,
         string $projectName,
         FontsController $fontsController,
-        BrizyAPI $brizyAPIClient
+        BrizyAPI $brizyAPIClient,
+        int $projectID
     ) {
         $this->layoutName = $layoutName;
         $this->brizyKit = $brizyKit;
@@ -128,6 +130,7 @@ final class ThemeContext implements ThemeContextInterface
         $this->projectName = $projectName;
         $this->fontsController = $fontsController;
         $this->brizyAPIClient = $brizyAPIClient;
+        $this->projectID = $projectID;
     }
 
     public function getLayoutName(): string
@@ -245,5 +248,10 @@ final class ThemeContext implements ThemeContextInterface
     public function getBrizyAPI(): BrizyAPI
     {
         return $this->brizyAPIClient;
+    }
+
+    public function getProjectID(): int
+    {
+        return $this->projectID;
     }
 }

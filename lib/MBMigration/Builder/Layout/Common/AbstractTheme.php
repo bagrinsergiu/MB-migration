@@ -14,9 +14,12 @@ abstract class AbstractTheme implements ThemeInterface
 {
     protected ThemeContextInterface $themeContext;
 
+    public int $projectID;
+
     public function setThemeContext(ThemeContextInterface $themeContext)
     {
         $this->themeContext = $themeContext;
+        $this->projectID = $themeContext->getProjectID();
     }
 
     /**
