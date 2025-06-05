@@ -1,5 +1,6 @@
 import { ElementModel } from "../../../../types/type";
 import { getGlobalIconModel } from "../../../../utils/getGlobalIconModel";
+import { roundToPrecision } from "../../../../utils/number";
 import { getHref, normalizeOpacity } from "../../../utils/common";
 import { codeToBuilderMap, defaultIcon } from "./iconMapping";
 import { mPipe } from "fp-utilities";
@@ -29,12 +30,14 @@ export const getParentStyles = (node: Element) => {
   return parentElement ? getNodeStyle(parentElement) : {};
 };
 
-export const getStyleModel = (node: Element) => {
+export const getStyleModel = (node: Element, isCustom?: boolean) => {
   const style = getStyles(node);
   const parentStyle = getParentStyles(node);
   const opacity = +style.opacity;
   const color = getColor(style);
   const bgColor = getBgColor(parentStyle);
+
+  const customSize = roundToPrecision(style.width, 2) || 26;
 
   return {
     ...(color && {
@@ -61,6 +64,9 @@ export const getStyleModel = (node: Element) => {
       bgColorPalette: "",
 
       padding: 7
+    }),
+    ...(isCustom && {
+      customSize
     })
   };
 };
@@ -72,7 +78,8 @@ export function getModel(
   const parentNode = getParentElementOfTextNode(node);
   const isIconText = parentNode?.nodeName === "#text";
   const iconNode = isIconText ? node : parentNode;
-  const modelStyle = getStyleModel(node);
+  const isSvg = node instanceof SVGElement;
+  const modelStyle = getStyleModel(node, isSvg);
   const iconCode = iconNode?.textContent?.charCodeAt(0);
   const globalModel = getGlobalIconModel();
 
@@ -81,17 +88,24 @@ export function getModel(
   const href = getHref(parentElement) ?? getHref(node) ?? "";
   const mappedHref = href && urlMap[href] !== undefined ? urlMap[href] : href;
 
+  const fileName = node.getAttribute("sodipodi:docname");
+
   return {
     type: "Icon",
     value: {
       _id: uuid(),
       _styles: ["icon"],
+      customSize: 26,
       ...globalModel,
       ...modelStyle,
-      customSize: 26,
       padding: 7,
       name: iconCode ? codeToBuilderMap[iconCode] ?? defaultIcon : defaultIcon,
       type: iconCode ? "fa" : "glyph",
+      ...(isSvg && {
+        code: node.outerHTML,
+        type: "custom",
+        filename: fileName || "icon.svg"
+      }),
       ...(isLink && {
         linkExternal: mappedHref,
         linkType: "external",
