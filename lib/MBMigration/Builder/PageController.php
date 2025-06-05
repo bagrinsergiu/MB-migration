@@ -177,7 +177,8 @@ class PageController
                 $listSeries,
                 $this->pageDTO,
                 $this->cache->get('title','settings') ?? '',
-                 $fontController
+                $fontController,
+                $this->brizyAPI
             );
 
             /**

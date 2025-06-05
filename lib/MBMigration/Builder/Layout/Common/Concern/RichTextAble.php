@@ -12,6 +12,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyEmbedCodeComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 trait RichTextAble
 {
@@ -192,6 +193,7 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
+        $brizyAPI =  $data->getBrizyAPI();
 
         switch ($mbSectionItem['category']) {
             case 'text':
@@ -199,6 +201,7 @@ trait RichTextAble
                     $mbSectionItem,
                     $brizyComponent,
                     $browserPage,
+                    $brizyAPI,
                     $families,
                     $default_fonts,
                     $data->getThemeContext()->getUrlMap(),
@@ -245,6 +248,7 @@ trait RichTextAble
                 $mbSectionItem,
                 $brizyComponent,
                 $browserPage,
+                $data->getBrizyAPI(),
                 $families,
                 $default_fonts,
                 $data->getThemeContext()->getUrlMap(),
@@ -260,6 +264,7 @@ trait RichTextAble
         $mbSectionItem,
         BrizyComponent $brizySection,
         BrowserPageInterface $browserPage,
+        BrizyAPI $brizyAPI,
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $urlMap = [],
@@ -297,6 +302,32 @@ trait RichTextAble
                     $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
                     break;
                 case 'Cloneable':
+                    foreach ($textItem['value']['items'] as &$clonableItem){
+                        if(!empty($clonableItem['value']['code']) && $clonableItem['type'] === 'Icon' ){
+                           try{
+                                $customIconUploadResult = $brizyAPI->uploadCustomIcon(
+                                    22510466,
+                                    $clonableItem['value']['filename'],
+                                    $clonableItem['value']['code']
+                                );
+
+                                if(!empty($customIconUploadResult['filename']) && !empty($customIconUploadResult['uid'])){
+                                    $clonableItem['value']['name'] = $customIconUploadResult['uid'];
+                                    $clonableItem['value']['filename'] = $customIconUploadResult['filename'];
+                                }
+
+                                unset($clonableItem['value']['code']);
+
+
+                            } catch (Exception $e){
+
+                               $ddd = $e->getMessage();
+                           }
+
+                        }
+                    }
+                    $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
+                    break;
                 case 'Wrapper':
                     //wrapper--richText
                     if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
