@@ -10,7 +10,7 @@ class WaveProc
     private string $logFile;
     const ID_WORKSPACE = 22509458;
 
-    public function __construct(array $projectUuids, int $batchSize = 3)
+    public function __construct(array $projectUuids, int $batchSize = 5)
     {
         $this->projectUuids = $projectUuids;
         $this->batchSize = $batchSize;
@@ -109,7 +109,6 @@ class WaveProc
 
 
 $projectUuids = [
-    "13d842c6-85d4-4340-9cad-3725521e54c3",
 //    "3648f55a-aacf-46e4-bf3a-36a52190eafe",
 //    "c9a79857-d275-4b5c-a786-037e05e14e2f",
 //    "d16ebb98-6467-43c8-9867-12a1d0755962",
