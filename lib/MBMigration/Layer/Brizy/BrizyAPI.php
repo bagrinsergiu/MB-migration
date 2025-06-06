@@ -278,11 +278,31 @@ class BrizyAPI extends Utils
             }
             $base64_content = base64_encode($file_contents);
 
-            $result = $this->httpClient('POST', $this->createPrivateUrlAPI('media'), [
-                'filename' => $this->getFileName($pathToFileName['path']),
-                'name' => $this->getNameHash($base64_content) . '.' . $this->getFileExtension($mime_type),
-                'attachment' => $base64_content,
-            ]);
+            $projectID = $this->cacheBR->get('projectId_Brizy');
+
+            $url = $this->createUrlAPI('projects') . '/' . $projectID . '/media';
+
+
+            $result = $this->httpClient(
+                'POST',
+                $url,
+                [
+                    'type' => 'image',
+                    'filename' => $this->getFileName($pathToFileName['path']),
+                    'name' => $this->getNameHash($base64_content).'.'.$this->getFileExtension($mime_type),
+                    'attachment' => $base64_content,
+                ]
+            );
+
+//            $result2 = $this->httpClient(
+//                'POST',
+//                $this->createPrivateUrlAPI('media'),
+//                [
+//                'filename' => $this->getFileName($pathToFileName['path']),
+//                'name' => $this->getNameHash($base64_content).'.'.$this->getFileExtension($mime_type),
+//                'attachment' => $base64_content,
+//                ]
+//            );
 
             return $result;
         }
