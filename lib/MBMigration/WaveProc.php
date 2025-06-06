@@ -10,7 +10,7 @@ class WaveProc
     private string $logFile;
     const ID_WORKSPACE = 22509458;
 
-    public function __construct(array $projectUuids, int $batchSize = 3)
+    public function __construct(array $projectUuids, int $batchSize = 5)
     {
         $this->projectUuids = $projectUuids;
         $this->batchSize = $batchSize;
@@ -179,6 +179,59 @@ $projectUuids = [
 //    "3e7895b6-9689-4abe-955a-fd9546a5a886",
 //    "c8215956-7e33-40d5-b9c5-4af71dcc1008",
 //    "c126e302-fd26-41ab-b274-b734dc7f793e",
+//    "1846e59e-3b2d-4562-b981-0c42c2fc8969",
+//    "8a0c9148-8587-44ff-8972-772749aa03de",
+//    "34fd728c-82c1-4a6c-bd3b-2a07f83c3d44",
+//    "f20f7899-2b33-4a64-a319-c2fe3f8c5f87",
+//    "34740b93-2d8f-46be-a4a4-e7f157fcde83",
+//    "19d5cd8f-b131-4e4d-bb63-261c7d03aa65",
+//    "3272e34d-d5b5-4c4a-818b-d645ba86eb3c",
+//    "60b359f6-2674-4f56-b0e1-007b7f1dd535",
+//    "376d1570-160f-4d6d-b3e5-b453ad4b2bc1",
+//    "d175eb84-8b80-4993-9965-4cd2246a6b99",
+//    "9b931b86-4f33-4f69-a00b-c969cb3c872e",
+//    "58b688d2-04c7-4c15-ae77-fabf9a1a25bb",
+//    "0592f336-b2f7-44b8-a650-c917b2cf1734",
+//    "42972945-cb79-420a-b0e8-8b7b6ff95f63",
+//    "69d80829-c5c2-4fe0-93f7-c705c07c4e45",
+//    "f62a78e7-3d32-4e1e-b847-64e3469d71d6",
+//    "660bded8-6e1e-4e4e-bcfd-491ea7b4c63a",
+//    "c958804b-fb89-44a5-b15e-273f86c45725",
+//    "12e448ee-fb88-4a88-a3c2-ececad9275d2",
+//    "24b84e35-27ef-4ea3-892b-f8442f30c773",
+//    "9b8e0e93-5ac6-40c3-8ff2-c570d2d6d3a7",
+//    "bb4b01a3-41d1-4215-b4e7-8813987a69e0",
+//    "fd1606c5-07d5-41e1-afe5-e47f0df1a267",
+//    "7ab46fa1-7875-4ac6-bd68-8d4fba26044c",
+//    "75090a2d-24a1-444c-a35c-8fdccbe24f13",
+//    "ee8b579e-0a9a-4c4d-b9ff-013ce6b9c46a",
+//    "ce5d225f-248b-4b91-a9c9-681e20701906",
+//    "d5a943e7-0eb5-453e-97f2-37660d54b981",
+//    "e1c23b3e-4562-4c4f-b95d-e0cc3ab3a64d",
+//    "be1a0489-ff5a-4b06-a593-431d60c432db",
+//    "2e3d100e-c8de-4645-b4c7-9fbb8e0f8f1f",
+//    "4f67a5f1-9f8c-405b-a56c-6a22fc59c09e",
+//    "e5e1b98d-03be-446f-99b4-770b09966d6f",
+//    "7d0e6e97-2a8d-4b71-b2cb-e118b79e790e",
+//    "d96b2b85-07ed-47e5-97c4-48e9d5ae1c41",
+//    "ca8037a2-274e-44ed-86d3-68b097c6d1d0",
+//    "da0ebce1-4b7c-4be5-9e10-1888fa8d14ce",
+//    "7bb3ae4e-1ef9-465f-9708-32b788ebfef1",
+//    "c0e12fa3-25c3-40c3-a731-1d1d59d482d7",
+//    "c9f155f3-bfd9-4a36-8e5f-4b2f60c1533c",
+//    "89e75920-8802-464c-92cc-dcf9934ea5c6",
+//    "0f3cecf1-50d0-403c-b8ed-abe4db6c105f",
+//    "ef351b90-f7f5-4627-8604-b703bd76462e",
+//    "f5943ab1-98e4-46fd-b738-b70b3b426d72",
+//    "de76f5db-4f70-4177-8e62-c1e6833e5eb7",
+//    "482d2a44-9588-49d2-b327-1e6a02c11f14",
+//    "e95b44a7-79a5-4487-ae0b-eef2167a2fbe",
+//    "0f79a7a2-e382-426f-a321-9f709a4f3efb",
+//    "72d15c4c-3831-407f-86b7-fd37c366f9a3",
+//    "702aab63-c9c1-4e2d-97a3-878b73e3273e",
+//    "f2a3f35e-48fd-43c3-ae11-79d69ab2c6e5",
+//    "6b4c41d8-54f3-42de-8188-cb65fc2a7e31"
+  ];
 
     '56db701c-3fd7-4cab-98c9-06c4ee4a7531',
     'f70435bd-3767-4360-96c7-e61bb4a29247',
