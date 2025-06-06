@@ -4,7 +4,7 @@ namespace MBMigration\Builder\Layout\Common\Elements;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\Component\Button;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\MbSectionUtils;
 use MBMigration\Builder\Layout\Common\Concern\TextsExtractorAware;
@@ -20,7 +20,7 @@ abstract class AbstractElement implements ElementInterface
     use CssPropertyExtractorAware;
     use MbSectionUtils;
     use TextsExtractorAware;
-    use ButtonAble;
+    use Button;
 
     public PageDto $pageTDO;
     public ThemeContextInterface $themeContext;
@@ -42,18 +42,24 @@ abstract class AbstractElement implements ElementInterface
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $this->pageTDO = $data->getThemeContext()->getPageDTO();
-        $this->themeContext = $data->getThemeContext();
-        $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
+        try {
+            $this->pageTDO = $data->getThemeContext()->getPageDTO();
+            $this->themeContext = $data->getThemeContext();
+            $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
-        $this->initialBehavior($data);
+            $this->initialBehavior($data);
 
-        $this->beforeTransformToItem($data);
-        $component = $this->internalTransformToItem($data);
-        $this->globalTransformSection($component);
-        $this->afterTransformToItem($component);
+            $this->beforeTransformToItem($data);
+            $component = $this->internalTransformToItem($data);
+            $this->globalTransformSection($component);
+            $this->afterTransformToItem($component);
 
-        $this->generalSectionBehavior($data, $component);
+            $this->generalSectionBehavior($data, $component);
+
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage(), ['AbstractElement', 'transformToItem']);
+            $component = $this->internalTransformToItem($data);
+        }
 
         return $component;
     }
@@ -154,11 +160,11 @@ abstract class AbstractElement implements ElementInterface
 
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {
-
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
+
     }
 
     protected function afterTransformTabs(BrizyComponent $brizySection): void
@@ -188,6 +194,11 @@ abstract class AbstractElement implements ElementInterface
     }
 
     protected function getAdditionalTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
+    protected function getAdditionalTopPaddingOfDetailPage(): int
     {
         return 0;
     }
@@ -292,4 +303,8 @@ abstract class AbstractElement implements ElementInterface
         $this->pageTDO->getPageStyle()->setPreviousSectionEmpty(true);
     }
 
+    protected function getThemeMenuHeaderStyle($headStyles, $section): BrizyComponent
+    {
+        return $section;
+    }
 }
