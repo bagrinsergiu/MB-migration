@@ -52,4 +52,6 @@ interface ThemeContextInterface
     public function getProjectName(): string;
 
     public function getFontsController(): FontsController;
+
+    public function getProjectID(): int;
 }

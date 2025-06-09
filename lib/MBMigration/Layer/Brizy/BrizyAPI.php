@@ -223,6 +223,36 @@ class BrizyAPI extends Utils
         $this->projectToken = $newToken;
     }
 
+    public function uploadCustomIcon($projectId, $fileName, $attachment)
+    {
+        try {
+            $url = $this->createPrivateUrlAPI('customicons');
+
+            $result = $this->httpClient(
+                'POST',
+                $url,
+                [
+                    'filename' => $fileName,
+                    'attachment' => base64_encode($attachment),
+                    'project' => $projectId,
+                ]
+            );
+
+            $result = json_decode($result['body'], true);
+
+            if (!is_array($result)) {
+
+                return false;
+            }
+
+            return $result;
+        } catch (Exception $e) {
+
+            return false;
+        }
+    }
+
+
     /**
      * @throws Exception
      */
@@ -248,6 +278,13 @@ class BrizyAPI extends Utils
             }
             $base64_content = base64_encode($file_contents);
 
+
+//             $result = $this->httpClient('POST', $this->createPrivateUrlAPI('media'), [
+//                 'filename' => $this->getFileName($pathToFileName['path']),
+//                 'name' => $this->getNameHash($base64_content) . '.' . $this->getFileExtension($mime_type),
+//                 'attachment' => $base64_content,
+//             ]);
+  
             $projectID = $this->cacheBR->get('projectId_Brizy');
 
             $url = $this->createUrlAPI('projects') . '/' . $projectID . '/media';
