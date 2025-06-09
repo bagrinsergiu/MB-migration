@@ -354,7 +354,9 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                       .trim();
 
                     // Inside icons node can be text, so we should extract the text from icon node and append it to stack
-                    const shouldAppendText = !!childTextContent && child.classList.contains("clovercustom");
+                    const shouldAppendText =
+                      !!childTextContent &&
+                      child.classList.contains("clovercustom");
 
                     if (shouldAppendText) {
                       let newWrapper = wrapper;
@@ -386,6 +388,12 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                   appendedIcon = false;
                 }
               }
+            } else if (node instanceof SVGElement) {
+              appendNewText = true;
+
+              stack.append(node.cloneNode(true), {
+                type: "icon"
+              });
             } else {
               const text = node.textContent;
 
