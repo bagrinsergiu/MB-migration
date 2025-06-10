@@ -50,6 +50,13 @@ return static function (array $context, Request $request): Response {
                 $response->getMessage(),
                 $response->getStatusCode()
             );
+        case '/changes/checkAll':
+            $response = $bridge->checkAllProjectchanges();
+
+            return new JsonResponse(
+                $response->getMessage(),
+                $response->getStatusCode()
+            );
         case '/migration_log':
             try {
                 return new JsonResponse($app->getMigrationLogs());

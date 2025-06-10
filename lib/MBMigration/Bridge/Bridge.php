@@ -615,12 +615,12 @@ class Bridge
 
         try {
             foreach ($result as $value) {
-                $brizyApi->setLabelManualMigration(true, (int) $value['brz_project_id']);
+                $brizyApi->setLabelManualMigration(true, (int)$value['brz_project_id']);
 
             }
         } catch (\Exception $e) {
 
-            $sas= $e->getMessage();
+            $sas = $e->getMessage();
         }
 
         $this->prepareResponseMessage(
@@ -711,7 +711,7 @@ class Bridge
             json_decode(file_get_contents($dir1), true),
             json_decode(file_get_contents($dir2), true)
         );
-        try{
+        try {
             foreach ($fileCont1 as $key => $value) {
                 if (empty($value['brizy_project_id'])) {
                     continue;
@@ -722,7 +722,7 @@ class Bridge
 //                $result = $this->insertMigrationMapping($value['brizy_project_id'], $key, json_encode(['data' => '2025-05-13']));
             }
 
-            $eee= 12;
+            $eee = 12;
         } catch (\Exception $e) {
 
             $Eee = $e->getMessage();
@@ -752,5 +752,52 @@ class Bridge
 
         return $this->getMessageResponse();
 
+    }
+
+    public function checkAllProjectChanges(): MgResponse
+    {
+        try {
+            $result = $this->db->getAllRows('SELECT * FROM migrations_mapping WHERE `ignore` = 0');
+
+            $allMigrationProjects = [];
+
+            foreach ($result as $migrations) {
+                try {
+                    $projectId = MBProjectDataCollector::getIdByUUID($migrations['mb_project_uuid']);
+
+                    $mbProjectDataCollector = new MBProjectDataCollector($projectId);
+
+                    $projectPages = $mbProjectDataCollector->getPages();
+
+
+                    $migrationDate = date('Y-m-d');
+
+                    if (!empty($migrations['changes_json'])) {
+                        $changes_json = json_decode($migrations['changes_json'], true);
+                        if (!empty($changes_json) && isset($changes_json['data'])) {
+                            $migrationDate = $changes_json['data'];
+                        }
+                    }
+
+                    $modifiedPages = [];
+                    $this->filterModifiedPages($projectPages, $migrationDate, $modifiedPages);
+
+                    $allMigrationProjects[$migrations['mb_project_uuid']] = $modifiedPages;
+
+                } catch (Exception $e) {
+                    throw new Exception('Failed to get project ID: ' . $e->getMessage(), 400);
+                }
+            }
+
+            $this->prepareResponseMessage(
+                $allMigrationProjects,
+            );
+
+        } catch (\Exception $e) {
+            $eww = $e->getMessage();
+        }
+
+
+        return $this->getMessageResponse();
     }
 }
