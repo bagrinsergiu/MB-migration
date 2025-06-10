@@ -1,5 +1,6 @@
 import { Families } from "../../../../types/type";
 import { getFontFamily } from "../../../../utils/getFontFamily";
+import { roundToPrecision, splitNumberParts } from "../../../../utils/number";
 import {
   defaultDesktopLineHeight,
   defaultMobileLineHeight,
@@ -20,8 +21,13 @@ export const stylesToClasses = (
   Object.entries(styles).forEach(([key, value]) => {
     switch (key) {
       case "font-size": {
-        const size = Math.round(Num.readInt(value) ?? 1);
-        classes.push(`brz-fs-lg-${size}`);
+        const size = roundToPrecision(Num.readFloat(value) ?? 1, 2);
+        const { integerPart, decimalPart } = splitNumberParts(size);
+        const parsedSize = decimalPart
+          ? `${integerPart}_${decimalPart}`
+          : integerPart;
+
+        classes.push(`brz-fs-lg-${parsedSize}`);
         break;
       }
       case "font-family": {

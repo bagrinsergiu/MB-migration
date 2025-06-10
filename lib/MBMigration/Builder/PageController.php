@@ -146,6 +146,7 @@ class PageController
             $headItem = $this->cache->get('header', 'mainSection');
             $footerItem = $this->cache->get('footer', 'mainSection');
             $listSeries = $this->cache->get('series');
+            $projectID = $this->cache->get('projectId_Brizy');
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
             $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
 
@@ -177,7 +178,9 @@ class PageController
                 $listSeries,
                 $this->pageDTO,
                 $this->cache->get('title','settings') ?? '',
-                 $fontController
+                $fontController,
+                $this->brizyAPI,
+                $projectID
             );
 
             /**
@@ -194,7 +197,7 @@ class PageController
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $pd = FontsController::getProject_Data();
 
-            sleep(5);
+            sleep(1);
 
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
@@ -230,7 +233,7 @@ class PageController
             if (!empty($page['child'])){
                 $this->pageMapping($page['child'],$mapping, $domain);
             }
-            $mapping['/'.PathSlugExtractor::getFullUrl($page['slug'], true)] = $domain.'/'.$page['slug'];
+            $mapping['/'.PathSlugExtractor::getFullUrlById($page['id'], true)] = $domain.'/'.$page['slug'];
         }
     }
 
@@ -464,7 +467,7 @@ class PageController
 
                 switch ($section['category']) {
                     case 'gallery':
-                        if (!empty($sectionItems['list'])) {
+                        if (!empty($sectionItems['list']) && $this->checkSubGalleryLayout($sectionItems['list'])) {
                             $itemsSubGallery = [
                                 'sectionId' => $section['id'],
                                 'typeSection' => 'sub-gallery-layout',
@@ -518,5 +521,34 @@ class PageController
         }
 
         return $result;
+    }
+
+    private function checkSubGalleryLayout(array $list): bool
+    {
+        if (empty($list)) {
+            return false;
+        }
+
+        foreach ($list as $listObject) {
+            if (empty($listObject['items'])) {
+                continue;
+            }
+
+            foreach ($listObject['items'] as $item) {
+                if ($item['category'] === 'photo' && !empty($item['content'])) {
+                    return true;
+                }
+
+//                if ($item['category'] === 'text' && !empty($item['content'])) {
+//                    $textContent = strip_tags($item['content']);
+//                    $textContent = trim($textContent);
+//                    if (!empty($textContent)) {
+//                        return true;
+//                    }
+//                }
+            }
+        }
+
+        return false;
     }
 }
