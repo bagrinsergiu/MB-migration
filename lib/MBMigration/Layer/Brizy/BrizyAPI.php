@@ -284,7 +284,7 @@ class BrizyAPI extends Utils
 //                 'name' => $this->getNameHash($base64_content) . '.' . $this->getFileExtension($mime_type),
 //                 'attachment' => $base64_content,
 //             ]);
-  
+
             $projectID = $this->cacheBR->get('projectId_Brizy');
 
             $url = $this->createUrlAPI('projects') . '/' . $projectID . '/media';

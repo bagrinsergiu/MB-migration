@@ -115,13 +115,14 @@ abstract class GridLayoutElement extends AbstractElement
                                 $this->getItemImageComponent($brizySectionItem)
                             );
 
-                            $this->handleBgPhotoItems($elementContext, $additionalOptions, $this->getTypeItemImageComponent());
+                            $this->handleBgPhotoItems($elementContext, $additionalOptions, $this->getTypeItemImageComponent(), $this->getPropertiesItemPhoto());
 //                            $this->getItemImageComponent($brizySectionItem)
 //                                ->getValue()
 //                                ->set_widthSuffix('%')
 //                                ->set_heightSuffix('%')
 //                                ->set_width(100)
 //                                ->set_height(100);
+                            $this->handleItemPhotoAfter($elementContext);
                             break;
                         default:
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
@@ -175,7 +176,7 @@ abstract class GridLayoutElement extends AbstractElement
         return $brizySection;
     }
 
-    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [], $elementImageType = 'bg')
+    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [], $elementImageType = 'bg', array $propertiesItemPhoto = [])
     {
         $mbSectionItem = $data->getMbSection();
         $brizyComponent = $data->getBrizySection();
@@ -186,10 +187,16 @@ abstract class GridLayoutElement extends AbstractElement
                     ->set_verticalAlign('bottom')
                     ->set_bgImageFileName($mbSectionItem['imageFileName'])
                     ->set_bgImageSrc($mbSectionItem['content']);
+
+                $itemPhoto = $brizyComponent;
                 break;
             case 'image':
-                $brizyComponent->addImage($mbSectionItem, );
+                $brizyComponent->addImage($mbSectionItem, $propertiesItemPhoto);
+
+                $itemPhoto = $brizyComponent->getItemWithDepth(0);
                 break;
+            default:
+                $itemPhoto = $brizyComponent;
         }
 
         foreach ($options as $key => $value) {
@@ -200,7 +207,7 @@ abstract class GridLayoutElement extends AbstractElement
 
         $this->handleLink(
             $mbSectionItem,
-            $brizyComponent,
+            $itemPhoto,
             '[data-id="'.$mbSectionItem['id'].'"] .photo-container a',
             $this->browserPage
         );

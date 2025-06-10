@@ -175,6 +175,15 @@ abstract class AbstractElement implements ElementInterface
     {
     }
 
+    protected function handleItemPhotoAfter(ElementContextInterface $component)
+    {
+    }
+
+    protected function getPropertiesItemPhoto(): array
+    {
+        return [];
+    }
+
     protected function getHeightTypeHandleSectionStyles(): string
     {
         // default option custom

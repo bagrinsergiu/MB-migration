@@ -775,6 +775,8 @@ class BrizyComponent implements JsonSerializable
             'imageFileName' => $mbSectionItem['imageFileName']
         ];
 
+        $imageConfig = array_merge($imageConfig, $options);
+
         foreach ($imageConfig as $key => $value) {
             $image->getValue()->set($key, $value);
         }
