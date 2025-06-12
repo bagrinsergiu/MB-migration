@@ -146,9 +146,7 @@ export const getModel = ({
     const model = getIconModel(icon, urlMap);
     const name = Str.read(model.value.name);
     const iconCode = icon?.textContent?.charCodeAt(0);
-    const iconName = iconCode
-      ? codeToBuilderMap[iconCode] ?? defaultIcon
-      : defaultIcon;
+    const iconName = iconCode ? codeToBuilderMap[iconCode] ?? defaultIcon : "";
 
     // Remove the html for Icon
     // have conflicts with text of button
@@ -187,6 +185,7 @@ export const getModel = ({
       _id: uuid(),
       _styles: ["button"],
       text,
+      iconName: "",
       ...globalModel,
       ...modelStyle,
       ...iconModel,
