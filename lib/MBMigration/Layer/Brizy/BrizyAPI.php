@@ -542,18 +542,22 @@ class BrizyAPI extends Utils
             $containerID = $projectID;
         }
 
-        $url = $this->createUrlAPI('projects') . '/' . $containerID . '/duplicates';
+        $url = $this->createPrivateUrlAPI('projects') . '/' . $containerID . '/cloning_link';
 
 
         if ($value) {
-            $r_projectFullData['workspace'] = 1;
+            $r_projectFullData['enabled'] = 1;
         } else {
             $r_projectFullData['enabled'] = 0;
         }
 
         $r_projectFullData['regenerate'] = 0;
 
-        $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
+        try{
+            $return = $this->request('PUT', $url, ['form_params' => $r_projectFullData]);
+        } catch(\Exception $e) {
+            $ddd = $e;
+        }
     }
 
     public function updateProject(array $projectFullData): array
