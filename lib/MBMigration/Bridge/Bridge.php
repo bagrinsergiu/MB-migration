@@ -104,7 +104,7 @@ class Bridge
         $inputProperties = $inputProperties['list'];
 
         foreach ($inputProperties as $value) {
-            if (empty($value['brz_project_id']) || empty($value['source_project_id'])) {
+            if (empty($value['brz_project_id']) || empty($value['source_project_ids'])) {
                 $this->prepareResponseMessage('Value is not valid or empty. brz_project_id and source_project_id are required.',
                     'error',
                     404
@@ -118,7 +118,7 @@ class Bridge
         foreach ($inputProperties as $value) {
             $insertResult = $this->insertMigrationMapping(
                 $value['brz_project_id'],
-                $value['source_project_id'],
+                $value['source_project_ids'],
                 json_encode($value['changes_json'] ?? [])
             );
 
@@ -699,25 +699,62 @@ class Bridge
         return $this->getMessageResponse();
     }
 
+    public function mApp_2(): MgResponse
+    {
+        //$this->addTagManualMigration();
+        $brizyApi = new BrizyAPI();
+
+        $dir1 = dirname(__DIR__) . '/../../public/migration_results_mapping.json';
+//        $dir2 = dirname(__DIR__) . '/../../public/migration_results_08-05-2025_22.json';
+
+        $fileCont1 = array_merge(
+            json_decode(file_get_contents($dir1), true),
+//            json_decode(file_get_contents($dir2), true)
+        );
+        try {
+            foreach ($fileCont1['list'] as $key => $value) {
+                if (empty($value['brz_project_id'])) {
+                    continue;
+                }
+
+                $brizyApi->setCloningLink(true, (int)$value['brz_project_id']);
+
+//                $result = $this->insertMigrationMapping($value['brizy_project_id'], $key, json_encode(['data' => '2025-05-13']));
+            }
+
+            $eee = 12;
+        } catch (\Exception $e) {
+
+            $Eee = $e->getMessage();
+        }
+
+        $this->prepareResponseMessage(
+            "List added",
+            'message'
+        );
+
+        return $this->getMessageResponse();
+    }
+
     public function mApp(): MgResponse
     {
         //$this->addTagManualMigration();
         $brizyApi = new BrizyAPI();
 
-        $dir1 = dirname(__DIR__) . '/../../public/migration_results_07-05-2025_21.json';
-        $dir2 = dirname(__DIR__) . '/../../public/migration_results_08-05-2025_22.json';
+        $dir1 = dirname(__DIR__) . '/../../public/migration_results_mapping.json';
+//        $dir2 = dirname(__DIR__) . '/../../public/migration_results_08-05-2025_22.json';
 
         $fileCont1 = array_merge(
             json_decode(file_get_contents($dir1), true),
-            json_decode(file_get_contents($dir2), true)
+//            json_decode(file_get_contents($dir2), true)
         );
         try {
-            foreach ($fileCont1 as $key => $value) {
-                if (empty($value['brizy_project_id'])) {
+            foreach ($fileCont1['list'] as $key => $value) {
+                if (empty($value['brz_project_id'])) {
                     continue;
                 }
 
-                $brizyApi->setCloningLink(true, (int)$value['brizy_project_id']);
+                $brizyApi->setLabelManualMigration(true, (int)$value['brz_project_id']);
 
 //                $result = $this->insertMigrationMapping($value['brizy_project_id'], $key, json_encode(['data' => '2025-05-13']));
             }
