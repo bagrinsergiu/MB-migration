@@ -51,4 +51,8 @@ class FourHorizontalText extends AbstractElement
 
         return $brizySection;
     }
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
 }

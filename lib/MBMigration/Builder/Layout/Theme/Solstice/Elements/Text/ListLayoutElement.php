@@ -26,6 +26,11 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0,0);
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
     protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {
         return $brizySection;

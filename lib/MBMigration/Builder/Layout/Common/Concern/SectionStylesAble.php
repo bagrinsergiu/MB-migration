@@ -126,6 +126,16 @@ trait SectionStylesAble
             ->set_mobilePaddingLeft((int)$sectionStyles['margin-bottom'])
             ->set_mobilePaddingLeftSuffix('px');
 
+        if($mbSectionItem['typeSection'] === 'main'){
+            $brizySection->getItemWithDepth(0)->getValue()
+                ->set_heightStyle('custom')
+                ->set_heightSuffix('px')
+                ->set_height((int)$sectionStyles['height'])
+                ->set_columnsHeightStyle('custom')
+                ->set_columnsHeightSuffix('px')
+                ->set_columnsHeight((int)$sectionStyles['height']);
+        }
+
         foreach ($additionalOptions as $key => $value) {
             if (is_array($value)) {
                 continue;

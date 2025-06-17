@@ -5,11 +5,12 @@ namespace MBMigration\Builder\Layout\Theme\Solstice\Elements\Text;
 use DOMException;
 use Exception;
 use MBMigration\Builder\ItemBuilder;
+use MBMigration\Builder\Layout\Common\Elements\Text\ThreeTopMediaColumnElement;
 use MBMigration\Builder\Layout\Theme\Anthem\Elements\Element;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Logger;
 
-class ThreeTopMedia extends Element
+class ThreeTopMedia extends ThreeTopMediaColumnElement
 {
     /**
      * @var VariableCache

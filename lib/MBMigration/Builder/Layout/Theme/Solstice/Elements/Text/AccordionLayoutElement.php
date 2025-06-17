@@ -15,4 +15,8 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
     {
         return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
 }

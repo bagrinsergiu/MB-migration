@@ -25,6 +25,11 @@ class RightMedia extends PhotoTextElement
         return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
     protected function getMobileTopMarginOfTheFirstElement(): int
     {
         return 50;

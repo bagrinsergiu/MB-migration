@@ -36,6 +36,11 @@ class ThreeBottomMediaCircle extends FullTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
     private function handleMediaCircle($mbSectionItem, BrizyComponent $brizyComponent)
     {
         $brizyComponent->getValue()
