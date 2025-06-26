@@ -340,7 +340,8 @@ const ex5: Data = {
                 lineHeight: 1.3,
                 linkExternal: "http://google.com/",
                 linkType: "external",
-                linkExternalBlank: "on"
+                linkExternalBlank: "on",
+                iconName: ""
               }
             }
           ],
@@ -439,7 +440,8 @@ const ex6: Data = {
                 tabletLineHeight: 1.2,
                 linkExternal: "http://google.com/",
                 linkType: "external",
-                linkExternalBlank: "on"
+                linkExternalBlank: "on",
+                iconName: ""
               }
             }
           ],
@@ -735,7 +737,8 @@ const ex9: Data = {
                 tabletLineHeight: 1.2,
                 linkExternal: "http://google.com/",
                 linkType: "external",
-                linkExternalBlank: "on"
+                linkExternalBlank: "on",
+                iconName: ""
               }
             }
           ],
@@ -766,7 +769,8 @@ const ex9: Data = {
                 tabletLineHeight: 1.2,
                 linkExternal: "http://google.com/",
                 linkType: "external",
-                linkExternalBlank: "on"
+                linkExternalBlank: "on",
+                iconName: ""
               }
             }
           ],
@@ -973,7 +977,8 @@ const ex13: Data = {
                 tabletLineHeight: 1.2,
                 linkExternal: "/contact-us/decision-form",
                 linkType: "external",
-                linkExternalBlank: "off"
+                linkExternalBlank: "off",
+                iconName: ""
               }
             }
           ],
@@ -1022,7 +1027,8 @@ const ex13: Data = {
                 linkExternal:
                   "https://docs.google.com/forms/d/1Bt4ajELyGHt1jYtkf7X9QG_FTKcqX0p5r9xcxSCckYk/edit",
                 linkType: "external",
-                linkExternalBlank: "on"
+                linkExternalBlank: "on",
+                iconName: ""
               }
             }
           ],
@@ -1178,7 +1184,8 @@ const ex14: Data = {
                 tabletLineHeight: 1.2,
                 linkExternal: "https://maps.app.goo.gl/Sb33XGmMfvqtsSAt5",
                 linkType: "external",
-                linkExternalBlank: "on"
+                linkExternalBlank: "on",
+                iconName: ""
               }
             }
           ],
@@ -1544,7 +1551,8 @@ const ex23: Data = {
                 tabletLineHeight: 1.2,
                 linkExternal: "/about-us/who-we-are",
                 linkType: "external",
-                linkExternalBlank: "on"
+                linkExternalBlank: "on",
+                iconName: ""
               }
             }
           ],
@@ -1606,7 +1614,8 @@ const ex24: Data = {
                   "https://www.google.com/maps/d/edit?mid=1q-aNw687DnrS5vW9y0EE1SBnydw&usp=sharing",
                 linkExternalBlank: "on",
                 linkType: "external",
-                text: "Visit our Prayer Path"
+                text: "Visit our Prayer Path",
+                iconName: ""
               }
             }
           ]
@@ -1649,7 +1658,8 @@ const ex25: Data = {
                 linkExternal: "https://f4c1f8a9.churchtrac.com/connect",
                 linkExternalBlank: "on",
                 linkType: "external",
-                text: "make a donation"
+                text: "make a donation",
+                iconName: ""
               }
             }
           ]
@@ -1709,7 +1719,8 @@ const ex26: Data = {
                 size: "custom",
                 tabletFontStyle: "",
                 tabletLineHeight: 1.2,
-                text: "make a donation"
+                text: "make a donation",
+                iconName: ""
               }
             }
           ]
@@ -1790,7 +1801,8 @@ const ex27: Data = {
                 tabletFontSize: 1,
                 tabletFontStyle: "",
                 tabletLineHeight: 1.2,
-                text: "CLICK HERE"
+                text: "CLICK HERE",
+                iconName: ""
               }
             }
           ]
