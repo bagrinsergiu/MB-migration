@@ -3274,6 +3274,361 @@ const ex50: Data = {
   }
 };
 
+// Solstice example 51 (Text duplicated inside icons)
+const ex51: Data = {
+  html: `<div class="text-content text-0 editable" data-id="512765" data-category="text"><div><p style="letter-spacing: -0.1536px; line-height: 21.504px; font-size: 0.6em;"><br></p><p style="letter-spacing: -0.1536px;"><a href="https://www.facebook.com/groups/DooWopMusicHallofFame/" data-location="external" data-detail="https://www.facebook.com/groups/DooWopMusicHallofFame/" data-category="link" target="_blank" class="cloverlinks"><span data-socialicon="roundedfacebook"><span class="socialIconSymbol" aria-hidden="true"></span><span class="sr-only">roundedfacebook</span></span></a> ​&nbsp; <span class="clovercustom" style="font-weight: 400; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; color: rgb(247, 248, 250);">facebook</span><span class="clovercustom" style="color: rgb(247, 248, 250);">&nbsp;</span> &nbsp;<a href="https://twitter.com/globaldoowop" data-location="external" data-category="link" target="_blank" class="cloverlinks" data-detail="https://twitter.com/globaldoowop"></a><a href="http://www.twitter.com/globaldoowop1" data-location="external" data-detail="http://www.twitter.com/globaldoowop1" data-category="link" target="_blank" class="cloverlinks"><span data-socialicon="roundedtwitterbird"><span class="socialIconSymbol" style="color: rgb(53, 224, 227);" aria-hidden="true"></span><span class="sr-only">roundedtwitterbird</span></span></a> <span class="clovercustom" style="color: rgb(245, 178, 10);"> </span> <span class="clovercustom" style="color: rgb(250, 250, 250);">&nbsp;</span><span class="clovercustom" style="font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-weight: 400;"><span class="clovercustom" style="color: rgb(250, 250, 250);">twitter</span> &nbsp;<a href="/contact-us" data-location="existing" data-detail="38858" data-category="link" target="_self" class="cloverlinks"><span data-socialicon="roundedemail"><span class="socialIconSymbol" style="color: rgb(235, 227, 73);" aria-hidden="true"></span><span class="sr-only">roundedemail</span></span></a>  &nbsp;<span class="clovercustom" style="color: rgb(247, 248, 250);">email </span></span></p><p style="letter-spacing: -0.1536px; line-height: 21.504px;"><br></p><p style="letter-spacing: -0.1536px; line-height: 21.504px;">&nbsp;<a href="https://www.pinterest.com/globaldoowop/" data-location="external" data-detail="https://www.pinterest.com/globaldoowop/" data-category="link" target="_self" class="cloverlinks">&nbsp;</a><a href="/events/meet-ups" data-location="existing" data-detail="56202" data-category="link" target="_self" class="cloverlinks"><span data-socialicon="roundedmeetup"><span class="socialIconSymbol" style="color: rgb(128, 36, 181);" aria-hidden="true"></span><span class="sr-only">roundedmeetup</span></span></a> ​&nbsp;<span class="clovercustom" style="color: rgb(229, 142, 232); font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-weight: 400;"><span class="clovercustom" style="color: rgb(245, 240, 245);">meetup &nbsp;</span> &nbsp;<a href="/donate" data-location="existing" data-detail="56455" data-category="link" target="_self" class="cloverlinks"><span data-socialicon="roundedheart"><span class="socialIconSymbol" style="color: rgb(18, 204, 77);" aria-hidden="true"></span><span class="sr-only">roundedheart</span></span></a> <span class="clovercustom"> </span>  <span class="clovercustom" style="color: rgb(250, 247, 250);">donate</span></span></p><p style="letter-spacing: -0.1536px; line-height: 21.504px;"><br></p><p style="font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-weight: 400;"><a href="https://www.pinterest.com/globaldoowop/" data-location="external" data-detail="https://www.pinterest.com/globaldoowop/" data-category="link" target="_blank" class="cloverlinks"><span data-socialicon="roundedaddme"><span class="socialIconSymbol" style="font-weight: 400; color: rgb(207, 19, 16);" aria-hidden="true"></span><span class="sr-only">roundedaddme</span></span></a>  <span class="clovercustom" style="font-weight: 400; color: rgb(240, 241, 245);">pinterest</span></p><p><br></p><p style="letter-spacing: -0.1536px; line-height: 21.504px;"><br></p><p style="letter-spacing: -0.1536px; line-height: 21.504px;"><span style="font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.8em; letter-spacing: -0.1536px; line-height: 1.4em;">The Global Doo Wop Coalition &nbsp;&nbsp;</span></p><p style="letter-spacing: -0.1536px; font-weight: 400; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.8em;"> 10153 Riverside Drive &nbsp;Suite 405</p><p style="letter-spacing: -0.1536px; font-weight: 400; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.8em;"> Los Angeles, CA &nbsp;91602</p><p style="letter-spacing: -0.1536px; font-weight: 400; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.8em;"><br></p><p style="letter-spacing: -0.1536px; font-weight: 400; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.8em;">globaldoowop.org &nbsp; &nbsp;1-800-495-1964</p><p style="letter-spacing: -0.1536px; font-weight: 400; line-height: 21.504px; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.6667em;"><br></p><p style="letter-spacing: -0.1536px; font-weight: 400; line-height: 21.504px; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.8em;">A 501C3 nonprofit organization dedicated to </p><p style="letter-spacing: -0.1536px; font-weight: 400; line-height: 21.504px; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.8em;">promoting, preserving, perpetuating </p><p style="letter-spacing: -0.1536px; font-weight: 400; line-height: 21.504px; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.8em;">and developing doo wop music. &nbsp; &nbsp;</p><p style="letter-spacing: -0.1536px; font-weight: 700; line-height: 21.504px; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.6667em;">EIN: &nbsp;80 0825662</p><p style="letter-spacing: -0.1536px; font-weight: 700; line-height: 21.504px; font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.6667em;"><br></p><p style="letter-spacing: -0.1536px; font-weight: 400; line-height: 21.504px; color: rgb(3, 3, 0); font-family: 'Open Sans', 'Open Sans Regular', sans-serif; font-size: 0.8em;"><br></p><p style="letter-spacing: -0.1536px; line-height: 21.504px; font-size: 0.4em;">​&nbsp; &nbsp; &nbsp;</p></div></div>`,
+  entry: { ...entry, selector: '[data-id="512765"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_6 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                linkExternal:
+                  "https://www.facebook.com/groups/DooWopMusicHallofFame/",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "facebook-square",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; color: rgb(247, 248, 250); ">facebook</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                colorHex: "#35e0e3",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#35e0e3",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                linkExternal: "http://www.twitter.com/globaldoowop1",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "twitter-square",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; "><span style="color: rgb(250, 250, 250); font-weight: 400; ">twitter</span></span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                colorHex: "#ebe349",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#ebe349",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                linkExternal: "/contact-us",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "envelope-square",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; "><span style="color: rgb(247, 248, 250); font-weight: 400; ">email </span></span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                colorHex: "#8024b5",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#8024b5",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                linkExternal: "/events/meet-ups",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "meetup",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(229, 142, 232); font-weight: 400; "><span style="color: rgb(245, 240, 245); font-weight: 400; ">meetup &nbsp;</span></span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                colorHex: "#12cc4d",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#12cc4d",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                linkExternal: "/donate",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "heart",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(229, 142, 232); font-weight: 400; "><span style="color: rgb(250, 247, 250); font-weight: 400; ">donate</span></span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                colorHex: "#cf1310",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#cf1310",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                linkExternal: "https://www.pinterest.com/globaldoowop/",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "plus-circle",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; color: rgb(240, 241, 245); ">pinterest</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><br></p><p class="brz-fs-lg-0_8 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="">The Global Doo Wop Coalition &nbsp;&nbsp;</span></p><p class="brz-fs-lg-0_8 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="font-weight: 400; "> 10153 Riverside Drive &nbsp;Suite 405</span></p><p class="brz-fs-lg-0_8 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="font-weight: 400; "> Los Angeles, CA &nbsp;91602</span></p><p class="brz-fs-lg-0_8 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><br></p><p class="brz-fs-lg-0_8 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="font-weight: 400; ">globaldoowop.org &nbsp; &nbsp;1-800-495-1964</span></p><p class="brz-fs-lg-0_67 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><br></p><p class="brz-fs-lg-0_8 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="font-weight: 400; ">A 501C3 nonprofit organization dedicated to </span></p><p class="brz-fs-lg-0_8 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="font-weight: 400; ">promoting, preserving, perpetuating </span></p><p class="brz-fs-lg-0_8 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="font-weight: 400; ">and developing doo wop music. &nbsp; &nbsp;</span></p><p class="brz-fs-lg-0_67 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="font-weight: 700; ">EIN: &nbsp;80 0825662</span></p><p class="brz-fs-lg-0_67 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><br></p><p class="brz-fs-lg-0_8 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><br></p><p class="brz-fs-lg-0_4 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span>​&nbsp; &nbsp; &nbsp;</span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -3324,7 +3679,8 @@ describe.each([
   ex47,
   ex48,
   ex49,
-  ex50
+  ex50,
+  ex51
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
