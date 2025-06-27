@@ -166,6 +166,11 @@ class Head extends HeadElement
         return $this->getMenuItemBgSelector();
     }
 
+    public function isBgHoverItemMenu(): bool
+    {
+        return true;
+    }
+
     public function getNotSelectedMenuItemBgSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected)", "pseudoEl" => ""];

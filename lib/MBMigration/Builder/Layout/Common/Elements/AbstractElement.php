@@ -191,6 +191,11 @@ abstract class AbstractElement implements ElementInterface
         return 'custom';
     }
 
+    public function isBgHoverItemMenu(): bool
+    {
+        return false;
+    }
+
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
