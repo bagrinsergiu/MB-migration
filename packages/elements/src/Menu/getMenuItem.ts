@@ -7,6 +7,7 @@ import {
   Output
 } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
+import { Literal, MValue } from "utils";
 import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { prefixed } from "utils/src/models/prefixed";
 
@@ -19,6 +20,7 @@ interface MenuItemData {
   itemActive?: MenuItemElement;
   families: Families;
   defaultFamily: string;
+  isBgHoverItemMenu?: boolean;
 }
 
 const getV = (entry: MenuItemData) => {
@@ -30,7 +32,8 @@ const getV = (entry: MenuItemData) => {
     itemActive,
     itemMobileNav,
     families,
-    defaultFamily
+    defaultFamily,
+    isBgHoverItemMenu = false
   } = entry;
 
   const model = {
@@ -79,13 +82,16 @@ const getV = (entry: MenuItemData) => {
     dicKeyForDevices("m-menu-color-opacity", mMenu["mMenuColorOpacity"])
   );
 
-  const bgModel = {
+  const bgModel: Record<string, MValue<Literal | boolean>> = {
     "menu-bg-color-hex": undefined,
     "menu-bg-color-opacity": 1,
-    "menu-bg-color-palette": "",
-    "menu-border-radius": 0,
-    "menu-padding": 0
+    "menu-bg-color-palette": ""
   };
+
+  if (isBgHoverItemMenu) {
+    bgModel["menu-border-radius"] = 0;
+    bgModel["menu-padding"] = 0;
+  }
 
   const bgV = getModel({
     node: itemBg,
@@ -154,7 +160,7 @@ const getV = (entry: MenuItemData) => {
 };
 
 const getHoverV = (entry: MenuItemData) => {
-  const { item, itemBg, families, defaultFamily } = entry;
+  const { item, itemBg, families, defaultFamily, isBgHoverItemMenu } = entry;
 
   const model = {
     "hover-color-hex": undefined,
@@ -179,8 +185,9 @@ const getHoverV = (entry: MenuItemData) => {
   const bgV = getModel({
     node: itemBg,
     modelDefaults: bgModel,
-    families: families,
-    defaultFamily: defaultFamily
+    families,
+    defaultFamily,
+    isBgHoverItemMenu
   });
   return { ...v, ...bgV, ...mMenu };
 };
@@ -195,7 +202,8 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
     itemMobileNavSelector,
     hover,
     families,
-    defaultFamily
+    defaultFamily,
+    isBgHoverItemMenu
   } = entry;
   const itemElement = document.querySelector(itemSelector.selector);
   const itemBgElement = document.querySelector(itemBgSelector.selector);
@@ -270,7 +278,8 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
       itemMobileIcon,
       itemMobileNav,
       families,
-      defaultFamily
+      defaultFamily,
+      isBgHoverItemMenu
     });
   } else {
     data = getHoverV({
@@ -278,7 +287,8 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
       itemBg,
       itemPadding,
       families,
-      defaultFamily
+      defaultFamily,
+      isBgHoverItemMenu
     });
   }
 

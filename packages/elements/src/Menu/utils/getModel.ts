@@ -1,17 +1,18 @@
 import { Families, MenuItemElement } from "../../types/type";
 import { getFontFamily } from "../../utils/getFontFamily";
+import { roundToPrecision } from "../../utils/number";
 import { Literal, MValue } from "utils";
 import { parseColorString } from "utils/src/color/parseColorString";
 import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { toCamelCase } from "utils/src/text/toCamelCase";
-import { roundToPrecision } from "../../utils/number";
 
 interface Model {
   node: MenuItemElement;
   modelDefaults: Record<string, MValue<Literal | boolean>>;
   families: Families;
   defaultFamily: string;
+  isBgHoverItemMenu?: boolean;
 }
 
 const pxToEm = (lineHeightValue: string, fontSize: string | number): number => {
@@ -21,7 +22,8 @@ const pxToEm = (lineHeightValue: string, fontSize: string | number): number => {
 };
 
 export const getModel = (data: Model) => {
-  const { node, modelDefaults, families, defaultFamily } = data;
+  const { node, modelDefaults, families, defaultFamily, isBgHoverItemMenu } =
+    data;
   const styles = getNodeStyle(node.item, node.pseudoEl);
   const dic: Record<string, Literal | boolean> = {};
 
@@ -77,7 +79,10 @@ export const getModel = (data: Model) => {
         break;
       }
       case "font-size": {
-        Object.assign(dic, dicKeyForDevices(key, roundToPrecision(styles[key], 2)));
+        Object.assign(
+          dic,
+          dicKeyForDevices(key, roundToPrecision(styles[key], 2))
+        );
         break;
       }
       case "letter-spacing": {
@@ -125,6 +130,10 @@ export const getModel = (data: Model) => {
       case "bg-color-opacity":
       case "hover-menu-bg-color-opacity":
       case "menu-bg-color-opacity": {
+        if (key === "hover-menu-bg-color-opacity" && !isBgHoverItemMenu) {
+          dic[toCamelCase(key)] = 0;
+          break;
+        }
         const toHex = parseColorString(`${styles["background-color"]}`);
         const opacity = isNaN(+styles.opacity) ? 1 : styles.opacity;
 
@@ -148,10 +157,22 @@ export const getModel = (data: Model) => {
         break;
       }
       case "menu-border-radius": {
-        const topLeft= `${styles["border-start-start-radius"]}`.replace(/px/g, "");
-        const topRight = `${styles["border-end-start-radius"]}`.replace(/px/g, "");
-        const bottomLeft = `${styles["border-start-end-radius"]}`.replace(/px/g, "");
-        const bottomRight = `${styles["border-end-end-radius"]}`.replace(/px/g, "");
+        const topLeft = `${styles["border-start-start-radius"]}`.replace(
+          /px/g,
+          ""
+        );
+        const topRight = `${styles["border-end-start-radius"]}`.replace(
+          /px/g,
+          ""
+        );
+        const bottomLeft = `${styles["border-start-end-radius"]}`.replace(
+          /px/g,
+          ""
+        );
+        const bottomRight = `${styles["border-end-end-radius"]}`.replace(
+          /px/g,
+          ""
+        );
 
         const topLeftValue = parseInt(topLeft);
         const topRightValue = parseInt(topRight);
