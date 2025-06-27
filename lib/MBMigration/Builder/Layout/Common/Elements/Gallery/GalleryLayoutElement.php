@@ -86,8 +86,8 @@ abstract class GalleryLayoutElement extends AbstractElement
             ->set_hoverSliderDotsColorOpacity(1)
             ->set_hoverSliderDotsColorPalette('')
 
-            ->set_fullHeight('custom')
-            ->set_sectionHeight(650)
+//            ->set_fullHeight('custom')
+//            ->set_sectionHeight(650)
 
             ->set_mobileFullHeight('custom')
             ->set_mobileSectionHeight(300)
