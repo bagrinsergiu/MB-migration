@@ -258,14 +258,18 @@ abstract class HeadElement extends AbstractElement
         ]);
 
         if ($this->browserPage->triggerEvent('hover', $this->getNotSelectedMenuItemBgSelector()['selector'])) {
-            $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
+
+            $options = [
                 'itemSelector' => $menuItemSelector,
                 'itemBgSelector' => $this->getMenuHoverItemBgSelector(),
                 'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,
                 'hover' => true,
-            ]);
+                'showHoverStyles' => $this->isBgHoverItemMenu()
+            ];
+
+            $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', $options);
         }
 
         return [
