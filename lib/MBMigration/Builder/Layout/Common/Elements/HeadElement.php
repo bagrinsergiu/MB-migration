@@ -92,6 +92,8 @@ abstract class HeadElement extends AbstractElement
 
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
+        $this->getThemeMenuHeaderStyle($headStyles, $section);
+
         return $section;
     }
 
@@ -244,9 +246,10 @@ abstract class HeadElement extends AbstractElement
         // -------------------------------------
         $menuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
             'itemSelector' => $menuItemSelector,
-            'itemMobileSelector' => $itemMobileSelector,
-            'itemBgSelector' => $this->getThemeMenuItemBgSelector(),
+            'itemActiveSelector' => $this->getThemeMenuItemActiveSelector(),
+            'itemBgSelector' => $this->getMenuItemBgSelector(),
             'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
+            'itemMobileSelector' => $itemMobileSelector,
             'itemMobileBtnSelector' => $this->getThemeMobileBtnSelector(),
             'itemMobileNavSelector' => $this->getThemeMobileNavSelector(),
             'families' => $families,
@@ -254,15 +257,19 @@ abstract class HeadElement extends AbstractElement
             'hover' => false,
         ]);
 
-        if ($this->browserPage->triggerEvent('hover', $menuItemSelector['selector'])) {
-            $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
+        if ($this->browserPage->triggerEvent('hover', $this->getNotSelectedMenuItemBgSelector()['selector'])) {
+
+            $options = [
                 'itemSelector' => $menuItemSelector,
-                'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                'itemBgSelector' => $this->getMenuHoverItemBgSelector(),
                 'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,
                 'hover' => true,
-            ]);
+                'showHoverStyles' => $this->isBgHoverItemMenu()
+            ];
+
+            $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', $options);
         }
 
         return [
@@ -430,7 +437,13 @@ abstract class HeadElement extends AbstractElement
 
     abstract public function getThemeSubMenuItemBGSelector(): array;
 
-    abstract public function getThemeMenuItemBgSelector(): array;
-
     abstract public function getThemeMenuItemPaddingSelector(): array;
+
+    abstract public function getThemeMenuItemActiveSelector(): array;
+
+    abstract public function getNotSelectedMenuItemBgSelector(): array;
+
+    abstract public function getMenuItemBgSelector(): array;
+
+    abstract public function getMenuHoverItemBgSelector(): array;
 }

@@ -24,7 +24,7 @@ class PathSlugExtractor
         return $urlBuilder->setPath($pathPages)->build();
     }
 
-    public static function getFullUrlById($slug, bool $getPath = false): string
+    public static function getFullUrlById($id, bool $getPath = false): string
     {
         $cache = VariableCache::getInstance();
         $treePages = $cache->get('ParentPages');
@@ -33,7 +33,7 @@ class PathSlugExtractor
 
         $urlBuilder = new UrlBuilder($domain);
 
-        $pathPages = self::getOrderedPathString($treePages, $slug, 'id');
+        $pathPages = self::getOrderedPathString($treePages, $id, 'id');
 
         if ($getPath){
             return $pathPages;

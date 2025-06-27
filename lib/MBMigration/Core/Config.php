@@ -142,6 +142,7 @@ class Config
             'menus/create' => '/menus/create',
             'workspaces' => '/workspaces',
             'projects' => '/projects',
+            'customicons' => '/customicons',
             'domain' => '/domain',
             'users' => '/users',
             'pages' => '/pages',

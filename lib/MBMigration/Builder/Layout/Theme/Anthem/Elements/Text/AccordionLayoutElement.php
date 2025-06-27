@@ -150,6 +150,13 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
         $brizyAccordionComponent->set_items($brizyAccordionItems);
 
+        $brizySection->getItemWithDepth(0,1,0)
+            ->getValue()
+            ->set_mobilePaddingRight(10)
+            ->set_mobilePaddingRightSuffix('px')
+            ->set_mobilePaddingLeft(10)
+            ->set_mobilePaddingLeftSuffix('px');
+
         return $brizySection;
     }
 
