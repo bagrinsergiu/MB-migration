@@ -114,6 +114,9 @@ trait SectionStylesAble
             ->set_marginTop((int)$sectionStyles['margin-top'])
             ->set_marginBottom((int)$sectionStyles['margin-bottom'])
 
+            ->set_fullHeight('custom')
+            ->set_sectionHeight((int)$sectionStyles['height'])
+
             ->set_mobilePaddingType('ungrouped')
             ->set_mobilePadding((int)$sectionStyles['margin-bottom'])
             ->set_mobilePaddingSuffix('px')
