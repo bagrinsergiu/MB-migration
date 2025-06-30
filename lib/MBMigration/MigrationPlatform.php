@@ -100,7 +100,7 @@ class MigrationPlatform
     public function start(string $projectID_MB, int $projectID_Brizy = 0)
     {
         try {
-            //$this->cache->loadDump($projectID_MB, $projectID_Brizy);
+            $this->cache->loadDump($projectID_MB, $projectID_Brizy);
             $this->run($projectID_MB, $projectID_Brizy);
             $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
         } catch (GuzzleException $e) {

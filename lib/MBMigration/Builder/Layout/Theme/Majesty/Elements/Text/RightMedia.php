@@ -15,6 +15,7 @@ class RightMedia extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
+        $brizySection->getItemWithDepth(0,0,1,0)->addMobileHorizontalContentAlign();
         return $brizySection->getItemWithDepth(0, 0, 1, 0,0);
     }
 
