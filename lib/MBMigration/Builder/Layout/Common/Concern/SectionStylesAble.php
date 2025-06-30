@@ -117,6 +117,10 @@ trait SectionStylesAble
             ->set_fullHeight('custom')
             ->set_sectionHeight((int)$sectionStyles['height'])
 
+            ->set_mobileBgSize('cover')
+            ->set_mobileBgSizeType('original')
+            ->set_mobileBgRepeat('off')
+
             ->set_mobilePaddingType('ungrouped')
             ->set_mobilePadding((int)$sectionStyles['margin-bottom'])
             ->set_mobilePaddingSuffix('px')
