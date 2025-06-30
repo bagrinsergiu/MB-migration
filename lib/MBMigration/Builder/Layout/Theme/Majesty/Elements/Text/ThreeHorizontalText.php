@@ -60,9 +60,6 @@ class ThreeHorizontalText extends ThreeHorizontalTextElement
 
         }
 
-        $elementContext = $data->instanceWithBrizyComponent($brizySection->getItemWithDepth(0));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
-
         return $brizySection;
     }
 
@@ -106,6 +103,23 @@ class ThreeHorizontalText extends ThreeHorizontalTextElement
         ksort($sortedItems);
 
         return $sortedItems;
+    }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 25,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
     }
 
 }
