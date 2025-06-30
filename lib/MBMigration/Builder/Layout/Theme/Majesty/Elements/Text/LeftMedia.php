@@ -15,7 +15,8 @@ class LeftMedia extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
+        $brizySection->getItemWithDepth(0,0,0,0)->addMobileHorizontalContentAlign();
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     /**
