@@ -3,6 +3,7 @@
 namespace MBMigration;
 
 use GuzzleHttp\Exception\RequestException;
+use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\Cms\SiteSEO;
 use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Menu\MenuHandler;
@@ -69,12 +70,12 @@ class MigrationPlatform
     use DebugBackTrace;
 
     public function __construct(
-        Config $config,
+        Config          $config,
         LoggerInterface $logger,
-        $buildPage = '',
-        $workspacesId = 0,
-        bool $mMgrIgnore = true,
-        $mgr_manual = false
+                        $buildPage = '',
+                        $workspacesId = 0,
+        bool            $mMgrIgnore = true,
+                        $mgr_manual = false
     )
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
@@ -101,7 +102,7 @@ class MigrationPlatform
         try {
             //$this->cache->loadDump($projectID_MB, $projectID_Brizy);
             $this->run($projectID_MB, $projectID_Brizy);
-            //$this->cache->dumpCache($projectID_MB, $projectID_Brizy);
+            $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
         } catch (GuzzleException $e) {
             Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
@@ -120,14 +121,14 @@ class MigrationPlatform
      */
     private function init(string $projectID_MB, int $projectID_Brizy): void
     {
-        Logger::instance()->info('Starting the migration for '.$projectID_MB.' to '.$projectID_Brizy);
+        Logger::instance()->info('Starting the migration for ' . $projectID_MB . ' to ' . $projectID_Brizy);
 
         Utils::init($this->cache);
 
         $this->startTime = microtime(true);
 
         $this->cache->set('migrationID', $this->migrationID);
-        Logger::instance()->info('Migration ID: '.$this->migrationID);
+        Logger::instance()->info('Migration ID: ' . $this->migrationID);
 
         $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
 
@@ -158,7 +159,7 @@ class MigrationPlatform
         }
 
         if ($projectID_Brizy == 0 && $this->workspacesId !== 0) {
-            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:'.$projectID_MB, $this->workspacesId, 'id');
+            $this->projectID_Brizy = $this->brizyApi->createProject($this->mb_projectDomain ?? 'Project_id:' . $projectID_MB, $this->workspacesId, 'id');
 //            $this->projectID_Brizy = $this->brizyApi->createProject('Project_id:'.$projectID_MB, 4423676, 'id');
 
             \MBMigration\Core\Logger::initialize("brizy-$this->projectID_Brizy");
@@ -168,7 +169,7 @@ class MigrationPlatform
 
         $this->brizyProjectDomain = $this->brizyApi->getDomain($this->projectID_Brizy);
         $this->projectUUID_MB = $projectUUID_MB;
-        $this->projectId = $projectUUID_MB.'_'.$this->projectID_Brizy.'_';
+        $this->projectId = $projectUUID_MB . '_' . $this->projectID_Brizy . '_';
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
 
@@ -214,7 +215,7 @@ class MigrationPlatform
             $designName
         );
 
-        if(!$this->mMgrIgnore) {
+        if (!$this->mMgrIgnore) {
             $this->manualMigrate = $this->brizyApi->checkProjectManualMigration($this->projectID_Brizy);
             if ($this->manualMigrate) {
                 $this->projectPagesList = $this->parser->getPages();
@@ -230,7 +231,7 @@ class MigrationPlatform
         }
 
         if (!$this->cache->get('settings')) {
-            $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0).' Message: Site not found');
+            $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0) . ' Message: Site not found');
             $this->cache->set('settings', $settings);
         } else {
             $settings = $this->cache->get('settings');
@@ -275,9 +276,9 @@ class MigrationPlatform
             Logger::instance()->info('Start create blank pages');
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
 //            if (!$this->buildPage) {
-                $existingBrizyPages['listPages'] = $this->pageController->deleteAllPages(
-                    $existingBrizyPages['listPages']
-                );
+            $existingBrizyPages['listPages'] = $this->pageController->deleteAllPages(
+                $existingBrizyPages['listPages']
+            );
 //            }
 
             $this->pageController->createBlankPages(
@@ -307,15 +308,20 @@ class MigrationPlatform
         $this->launch($parentPages, false);
         $this->launch($parentPages, true);
 
+
         $this->brizyApi->clearCompileds($this->projectID_Brizy);
-
-
 
         Logger::instance()->info('Project migration completed successfully!');
 
         $this->logFinalProcess($this->startTime);
+        $this->dumpProjectDataCache(
+            [
+                'mb_project_domain' => $this->mb_projectDomain ?? null,
+                'brizy_project_domain' => $this->brizyProjectDomain ?? null,
+            ]
+        );
 
-        if($this->mgr_manual){
+        if ($this->mgr_manual) {
             $this->brizyApi->setLabelManualMigration(true);
         }
 
@@ -352,7 +358,9 @@ class MigrationPlatform
                 continue;
             }
 
-            if($page['hidden'] !== $hiddenPage) { continue; }
+            if ($page['hidden'] !== $hiddenPage) {
+                continue;
+            }
             $this->collector($page);
         }
     }
@@ -366,14 +374,14 @@ class MigrationPlatform
         $this->cache->set('tookPage', $page);
         ExecutionTimer::start();
 
-        if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_'.$page['id']))) {
+        if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_' . $page['id']))) {
             $preparedSectionOfThePage = $this->pageController->getSectionsFromPage($page);
             if (!$preparedSectionOfThePage) {
                 return;
             }
             $preparedSectionOfThePage = MediaController::uploadPicturesFromSections($preparedSectionOfThePage, $this->projectId, $this->brizyApi);
             $preparedSectionOfThePage = ArrayManipulator::sortArrayByPosition($preparedSectionOfThePage);
-            $this->cache->set('preparedSectionOfThePage_'.$page['id'], $preparedSectionOfThePage);
+            $this->cache->set('preparedSectionOfThePage_' . $page['id'], $preparedSectionOfThePage);
         }
 
         $collectionItem = $page['collection'];
@@ -384,7 +392,7 @@ class MigrationPlatform
             $this->pageController->run($preparedSectionOfThePage, $this->pageMapping);
         } else {
             Logger::instance()->info(
-                'Failed to run collector for page: '.$page['slug'].'. The collection item was not found.'
+                'Failed to run collector for page: ' . $page['slug'] . '. The collection item was not found.'
             );
         }
     }
@@ -451,7 +459,17 @@ class MigrationPlatform
         $this->finalSuccess['progress']['processTime'] = round($executionTime, 1);
         $this->finalSuccess['message']['warning'] = ErrorDump::$warningMessage ?? [];
 
-        Logger::instance()->info('Work time: '.TimeUtility::Time($executionTime).' (seconds: '.round($executionTime, 1).')');
+        Logger::instance()->info('Work time: ' . TimeUtility::Time($executionTime) . ' (seconds: ' . round($executionTime, 1) . ')');
+    }
+
+    private function dumpProjectDataCache(array $projectData)
+    {
+        $projectFolders = $this->cache->get('ProjectFolders');
+        $fileName = $projectFolders['main'] . 'projectData.json';
+        file_put_contents(
+            $fileName,
+            json_encode($projectData)
+        );
     }
 
     public function getProjectPagesList(): array

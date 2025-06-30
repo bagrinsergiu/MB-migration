@@ -5,6 +5,7 @@ namespace MBMigration\Builder;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use HeadlessChromium\Exception\OperationTimedOut;
+use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
 use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
@@ -198,6 +199,7 @@ class PageController
             $pd = FontsController::getProject_Data();
 
             sleep(1);
+            $this->dumpPageDataCache($slug, $brizySections);
 
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
@@ -550,5 +552,15 @@ class PageController
         }
 
         return false;
+    }
+
+    public function dumpPageDataCache($name, BrizyPage $pageData)
+    {
+        $projectFolders = $this->cache->get('ProjectFolders');
+        $fileName = $projectFolders['page']."/".$name.'.json';
+        file_put_contents(
+            $fileName,
+            json_encode($pageData->jsonSerialize())
+        );
     }
 }
