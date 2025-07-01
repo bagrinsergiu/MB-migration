@@ -81,7 +81,7 @@ class Head extends HeadElement
             ->set_mobileBgColorOpacity($headStyle['bg-opacity']);
 
         $imageLogoOptions = [
-            'sizeType' => 'custom',
+            'sizeType' => 'original',
 
             'imageWidth' => $headStyle['image-width'],
             'imageHeight' => $headStyle['image-height'],
@@ -90,6 +90,9 @@ class Head extends HeadElement
             'width' => 300,
             'widthSuffix' => 'px',
             'heightSuffix' => '%',
+
+            'size' => 40,
+            'sizeSuffix' => '%',
 
             'mobileSize' => 52,
             'mobileSizeSuffix' => '%',
@@ -170,6 +173,11 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
+    public function getThemeMenuItemActiveSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
     public function getThemeParentMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
@@ -208,11 +216,6 @@ class Head extends HeadElement
     public function getThemeMobileBtnSelector(): array
     {
         return $this->getThemeMenuItemMobileSelector();
-    }
-
-    public function getThemeMenuItemBgSelector(): array
-    {
-        return $this->getThemeMenuItemSelector();
     }
 
     protected function getPropertiesIconMenuItem(): array
@@ -268,5 +271,30 @@ class Head extends HeadElement
             "mobilePaddingLeft" => 0,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li a", "pseudoEl" => ""];
+    }
+
+    public function getMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getMenuHoverItemBgSelector(): array
+    {
+        return $this->getThemeSubMenuItemBGSelector();
+    }
+
+    public function getNotSelectedMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
     }
 }

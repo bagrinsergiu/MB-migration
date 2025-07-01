@@ -3,7 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Ember\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\Component\Button;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -15,7 +15,7 @@ class FourHorizontalText extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use DonationsAble;
-    use ButtonAble;
+    use Button;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {

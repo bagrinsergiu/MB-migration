@@ -1,5 +1,6 @@
 import {
   EMPTY_SPACES_REGEX,
+  allowedTags,
   buttonSelector,
   embedSelector,
   iconSelector,
@@ -348,6 +349,28 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                     const wrapper = parent.cloneNode(false); // Clone only the element, not its children
                     wrapper.appendChild(child); // Move child into the cloned parent
 
+                    const childTextContent = child.textContent
+                      ?.replace(EMPTY_SPACES_REGEX, "")
+                      .trim();
+
+                    // Inside icons node can be text, so we should extract the text from icon node and append it to stack
+                    const shouldAppendText =
+                      !!childTextContent &&
+                      child.classList.contains("clovercustom");
+
+                    if (shouldAppendText) {
+                      let newWrapper = wrapper;
+
+                      if (!allowedTags.includes(wrapper.nodeName)) {
+                        newWrapper = document.createElement("p");
+                        newWrapper.appendChild(wrapper);
+                      }
+
+                      stack.append(newWrapper, { type: "text" });
+                      appendedIcon = false;
+                      return;
+                    }
+
                     if (appendedIcon) {
                       stack.set(wrapper as Element);
                     } else {
@@ -365,6 +388,12 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                   appendedIcon = false;
                 }
               }
+            } else if (node instanceof SVGElement) {
+              appendNewText = true;
+
+              stack.append(node.cloneNode(true), {
+                type: "icon"
+              });
             } else {
               const text = node.textContent;
 

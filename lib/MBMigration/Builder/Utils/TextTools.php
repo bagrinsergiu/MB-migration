@@ -4,19 +4,25 @@ namespace MBMigration\Builder\Utils;
 
 class TextTools
 {
-    public static function transformText($text, $text_transform) {
+    public static function transformText(
+        $text,
+        $text_transform
+    ) {
         if ($text_transform === "uppercase") {
-            return strtoupper($text);
+            return mb_strtoupper($text, 'UTF-8');
         } elseif ($text_transform === "lowercase") {
-            return strtolower($text);
+            return mb_strtolower($text, 'UTF-8');
         } else {
             return $text;
         }
     }
 
-    public static function transformTextBool($text, $text_transform = false) {
+    public static function transformTextBool(
+        $text,
+        $text_transform = false
+    ) {
         if ($text_transform) {
-            return strtoupper($text);
+            return mb_strtoupper($text, 'UTF-8');
         } else {
             return $text;
         }

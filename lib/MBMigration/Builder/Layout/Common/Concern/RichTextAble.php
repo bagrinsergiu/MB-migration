@@ -12,6 +12,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyEmbedCodeComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 trait RichTextAble
 {
@@ -192,6 +193,8 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
+        $brizyAPI =  $data->getBrizyAPI();
+        $projectID =  $data->getThemeContext()->getProjectId();
 
         switch ($mbSectionItem['category']) {
             case 'text':
@@ -199,6 +202,8 @@ trait RichTextAble
                     $mbSectionItem,
                     $brizyComponent,
                     $browserPage,
+                    $brizyAPI,
+                    $projectID,
                     $families,
                     $default_fonts,
                     $data->getThemeContext()->getUrlMap(),
@@ -239,12 +244,15 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
+        $projectID =  $data->getThemeContext()->getProjectId();
 
         if ($mbSectionItem['category'] == 'text') {
             $brizyComponent = $this->handleTextItem(
                 $mbSectionItem,
                 $brizyComponent,
                 $browserPage,
+                $data->getBrizyAPI(),
+                $projectID,
                 $families,
                 $default_fonts,
                 $data->getThemeContext()->getUrlMap(),
@@ -260,6 +268,8 @@ trait RichTextAble
         $mbSectionItem,
         BrizyComponent $brizySection,
         BrowserPageInterface $browserPage,
+        BrizyAPI $brizyAPI,
+        int $projectID,
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $urlMap = [],
@@ -297,6 +307,32 @@ trait RichTextAble
                     $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
                     break;
                 case 'Cloneable':
+                    foreach ($textItem['value']['items'] as &$clonableItem){
+                        if(!empty($clonableItem['value']['code']) && $clonableItem['type'] === 'Icon' ){
+                           try{
+                                $customIconUploadResult = $brizyAPI->uploadCustomIcon(
+                                    $projectID,
+                                    $clonableItem['value']['filename'],
+                                    $clonableItem['value']['code']
+                                );
+
+                                if(!empty($customIconUploadResult['filename']) && !empty($customIconUploadResult['uid'])){
+                                    $clonableItem['value']['name'] = $customIconUploadResult['uid'];
+                                    $clonableItem['value']['filename'] = $customIconUploadResult['filename'];
+                                }
+
+                                unset($clonableItem['value']['code']);
+
+
+                            } catch (Exception $e){
+
+                               $ddd = $e->getMessage();
+                           }
+
+                        }
+                    }
+                    $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
+                    break;
                 case 'Wrapper':
                     //wrapper--richText
                     if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {

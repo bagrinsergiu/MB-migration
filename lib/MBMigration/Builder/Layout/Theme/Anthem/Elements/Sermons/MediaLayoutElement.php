@@ -58,6 +58,11 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
         return 50;
     }
 
+    protected function getAdditionalTopPaddingOfDetailPage(): int
+    {
+        return 25;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
