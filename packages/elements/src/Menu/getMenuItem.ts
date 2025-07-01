@@ -84,7 +84,7 @@ const getV = (entry: MenuItemData) => {
     "menu-bg-color-opacity": 1,
     "menu-bg-color-palette": "",
     "menu-border-radius": 0,
-    "menu-padding": 0,
+    "menu-padding": 0
   };
 
   const bgV = getModel({
@@ -149,7 +149,7 @@ const getV = (entry: MenuItemData) => {
     ...mMenu,
     ...bgV,
     ...paddingV,
-    ...mobileMenuV,
+    ...mobileMenuV
   };
 };
 
@@ -222,17 +222,17 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
 
   if (!itemElement) {
     return {
-      error: `Element with selector "${itemSelector}" not found`
+      error: `Element with selector "${itemSelector.selector}" not found`
     };
   }
   if (!itemBgElement) {
     return {
-      error: `Element with selector "${itemBgSelector}" not found`
+      error: `Element with selector "${itemBgSelector.selector}" not found`
     };
   }
   if (!itemPaddingElement) {
     return {
-      error: `Element with selector "${itemPaddingSelector}" not found`
+      error: `Element with selector "${itemPaddingSelector.selector}" not found`
     };
   }
 

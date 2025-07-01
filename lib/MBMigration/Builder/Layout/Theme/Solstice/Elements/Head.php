@@ -75,7 +75,7 @@ class Head extends HeadElement
 
     public function getThemeParentMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
