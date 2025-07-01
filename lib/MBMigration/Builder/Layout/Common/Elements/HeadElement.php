@@ -255,6 +255,7 @@ abstract class HeadElement extends AbstractElement
             'families' => $families,
             'defaultFamily' => $defaultFamilies,
             'hover' => false,
+            'isBgHoverItemMenu' => $this->isBgHoverItemMenu()
         ]);
 
         if ($this->browserPage->triggerEvent('hover', $this->getNotSelectedMenuItemBgSelector()['selector'])) {
@@ -266,7 +267,7 @@ abstract class HeadElement extends AbstractElement
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,
                 'hover' => true,
-                'showHoverStyles' => $this->isBgHoverItemMenu()
+                'isBgHoverItemMenu' => $this->isBgHoverItemMenu()
             ];
 
             $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', $options);

@@ -6,6 +6,7 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Core\Logger;
 
 class Head extends HeadElement
 {
@@ -43,32 +44,36 @@ class Head extends HeadElement
         $MbSection = $data->getMbSection();
 
         $menuSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"]';
-        $menuSectionStyles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $menuSectionSelector,
-                'styleProperties' => ['background-color', 'opacity', 'background-image'],
-                'families' => [],
-                'defaultFamily' => '',
-            ]
+
+        $menuSectionStyles = $this->extractStyle(
+            $menuSectionSelector,
+            ['background-color', 'opacity', 'background-image']
         );
 
         $imageSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"] .branding a';
-        $brandingSectionStyles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
+
+        $brandingSectionStyles = $this->extractStyle(
+            $imageSectionSelector,
+            ['width', 'height']
+        );
+
+        $mainNavigationBorderSelector = '[data-id="' . $MbSection['sectionId'] . '"] .main-navigation ul';
+
+        $mainNavigationBorderStyles = $this->extractStyle(
+            $mainNavigationBorderSelector,
             [
-                'selector' => $imageSectionSelector,
-                'styleProperties' => ['width', 'height'],
-                'families' => [],
-                'defaultFamily' => '',
+                'align-items',
+                'border-bottom-style',
+                'border-bottom-color',
+                'border-bottom-width'
             ]
         );
 
         $headStyle = [
-            'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['width']),
-            'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['height']),
-            'bg-color'=> ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
-            'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
+            'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['width']),
+            'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['height']),
+            'bg-color'=> ColorConverter::rgba2hex($menuSectionStyles['background-color']),
+            'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['opacity']),
         ];
 
         $brizySection->getItemWithDepth(0)
@@ -131,6 +136,26 @@ class Head extends HeadElement
             "marginLeftSuffix" => "px",
         ];
 
+        $mainNavigationBorderOptions = [
+            'borderStyle' => $mainNavigationBorderStyles['border-bottom-style'],
+            'borderColorHex' => ColorConverter::convertColorRgbToHex($mainNavigationBorderStyles['border-bottom-color']),
+            'borderColorOpacity' => 1,
+            'borderColorPalette' => '',
+            'borderWidthType' => 'grouped',
+            'borderWidth' => (int) $mainNavigationBorderStyles['border-bottom-width']
+        ];
+
+        foreach ($mainNavigationBorderOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+                ->getValue()
+                ->$nameOption($value);
+
+            $brizySection->getItemWithDepth(0, 0, 0, 3, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
         foreach ($sectionlogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
             $brizySection->getItemWithDepth(0, 0, 0, 0)
@@ -163,6 +188,38 @@ class Head extends HeadElement
         return $brizySection;
     }
 
+    private function extractStyle($selector, array $styleProperties)
+    {
+        try {
+            $styles = $this->browserPage->evaluateScript(
+                'brizy.getStyles',
+                [
+                    'selector' => $selector,
+                    'styleProperties' => $styleProperties,
+                    'families' => [],
+                    'defaultFamily' => '',
+                ]
+            );
+
+            if(!empty( $styles['data'])){
+
+                return $styles['data'];
+            } else {
+                Logger::instance()->info('Error extract style: ' . json_encode($styles));
+
+                return [];
+            }
+        } catch (\Exception $e) {
+            Logger::instance()->info('Error extract style: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function isBgHoverItemMenu(): bool
+    {
+        return true;
+    }
+
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
 
@@ -185,12 +242,12 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation>ul>li>a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
+        return ["selector" => "#main-navigation > ul > li.selected.has-sub > ul > li.selected > a", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
