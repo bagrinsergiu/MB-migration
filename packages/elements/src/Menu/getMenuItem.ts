@@ -230,17 +230,17 @@ const getMenuItem = (entry: MenuItemEntry): Output => {
 
   if (!itemElement) {
     return {
-      error: `Element with selector "${itemSelector}" not found`
+      error: `Element with selector "${itemSelector.selector}" not found`
     };
   }
   if (!itemBgElement) {
     return {
-      error: `Element with selector "${itemBgSelector}" not found`
+      error: `Element with selector "${itemBgSelector.selector}" not found`
     };
   }
   if (!itemPaddingElement) {
     return {
-      error: `Element with selector "${itemPaddingSelector}" not found`
+      error: `Element with selector "${itemPaddingSelector.selector}" not found`
     };
   }
 

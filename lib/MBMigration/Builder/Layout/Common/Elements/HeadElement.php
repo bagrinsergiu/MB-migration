@@ -268,6 +268,7 @@ abstract class HeadElement extends AbstractElement
                 'defaultFamily' => $defaultFamilies,
                 'hover' => true,
                 'isBgHoverItemMenu' => $this->isBgHoverItemMenu()
+
             ];
 
             $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', $options);
