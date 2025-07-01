@@ -237,12 +237,12 @@ class Head extends HeadElement
 
     public function getThemeParentMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.has-sub>a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation ul li", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li > a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li:not(.selected) a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
@@ -252,7 +252,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation", "pseudoEl" => ""];
+        return $this->getThemeSubMenuNotSelectedItemSelector();
     }
 
     public function getThemeMobileNavSelector(): array
@@ -267,7 +267,7 @@ class Head extends HeadElement
 
     public function getThemeMenuItemPaddingSelector(): array
     {
-        return $this->getThemeMenuItemSelector();
+        return ["selector" => '#main-navigation > ul > li.landing.row-0.first > a > span', "pseudoEl" => ""];
     }
 
     public function getThemeMobileBtnSelector(): array
@@ -345,9 +345,10 @@ class Head extends HeadElement
         return $this->getThemeMenuItemSelector();
     }
 
+
     public function getMenuHoverItemBgSelector(): array
     {
-        return $this->getThemeSubMenuItemBGSelector();
+        return $this->getThemeMenuItemSelector();
     }
 
     public function getNotSelectedMenuItemBgSelector(): array
