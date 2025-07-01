@@ -81,7 +81,7 @@ class Head extends HeadElement
             ->set_mobileBgColorOpacity($headStyle['bg-opacity']);
 
         $imageLogoOptions = [
-            'sizeType' => 'custom',
+            'sizeType' => 'original',
 
             'imageWidth' => $headStyle['image-width'],
             'imageHeight' => $headStyle['image-height'],
@@ -90,6 +90,9 @@ class Head extends HeadElement
             'width' => 300,
             'widthSuffix' => 'px',
             'heightSuffix' => '%',
+
+            'size' => 40,
+            'sizeSuffix' => '%',
 
             'mobileSize' => 52,
             'mobileSizeSuffix' => '%',
