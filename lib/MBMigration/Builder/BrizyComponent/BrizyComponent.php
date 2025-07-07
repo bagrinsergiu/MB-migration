@@ -769,6 +769,7 @@ class BrizyComponent implements JsonSerializable
     public function addImage($mbSectionItem, $options = [])
     {
         $image = new BrizyImageComponent();
+        $wrapperImage = new BrizyWrapperComponent('wrapper--image');
 
         $imageConfig = [
             'imageSrc' => $mbSectionItem['content'] ?? '',
@@ -781,7 +782,9 @@ class BrizyComponent implements JsonSerializable
             $image->getValue()->set($key, $value);
         }
 
-        $this->getValue()->add('items', [$image]);
+        $wrapperImage->getValue()->add('items', [$image]);
+
+        $this->getValue()->add('items', [$wrapperImage]);
     }
 
 }
