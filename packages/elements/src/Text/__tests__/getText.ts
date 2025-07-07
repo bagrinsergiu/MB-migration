@@ -3629,6 +3629,241 @@ const ex51: Data = {
   }
 };
 
+// Majesty example 52 (Extra spacing for text)
+const ex52: Data = {
+  html: `<div class="text-content text-2 editable" data-id="22659650" data-category="text"><div><p style="text-align: justify;">If you have a college ID and are a current student, then you are invited to come to the cafe to study and enjoy free cafe drinks.&nbsp; Our drink menu includes fresh grind drip coffee, french press, espresso, teas, lattes, pour overs, smoothies, frappes and many other creations by our experienced barista.&nbsp; You will find that the cafe is a safe and quiet place to study.&nbsp; Cafe hours during Marshall University's spring and fall semesters are as follows:</p><p style="text-align: justify;"><br></p><p style="text-align: center;">Monday 9am - 2pm</p><p style="text-align: center;">Tuesday 1pm - 6pm</p><p style="text-align: center;">Wednesday 11am - 4pm</p><p style="text-align: center;">Thursday 9am - 2pm</p><p style="text-align: center;"><br></p><p style="text-align: center;">When Marshall University is not in session during the Spring &amp; Fall semesters,&nbsp;</p><p style="text-align: center;">the cafe will be closed. &nbsp;Please note the following 2025 dates:</p><p style="text-align: center;"><br></p><p style="text-align: center;">August 18th: &nbsp;OPENING day for Fall Semester<br></p><p style="text-align: center;">September 1st: &nbsp;CLOSED for Labor Day</p><p style="text-align: center;">October 9th: &nbsp;CLOSED for October Break</p><p style="text-align: center;">November 24th - 27th: &nbsp;CLOSED for Thanksgiving Break</p><p style="text-align: center;">December 5th: &nbsp;CLOSES &nbsp;for Christmas Break</p><p style="text-align: center;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em; font-size: 1em;"><br></p><p style="line-height: 0em;"><br></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="22659650"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-justify brz-ls-lg-NaN_0"><span>If you have a college ID and are a current student, then you are invited to come to the cafe to study and enjoy free cafe drinks.&nbsp; Our drink menu includes fresh grind drip coffee, french press, espresso, teas, lattes, pour overs, smoothies, frappes and many other creations by our experienced barista.&nbsp; You will find that the cafe is a safe and quiet place to study.&nbsp; Cafe hours during Marshall University\'s spring and fall semesters are as follows:</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-justify brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>Monday 9am - 2pm</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>Tuesday 1pm - 6pm</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>Wednesday 11am - 4pm</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>Thursday 9am - 2pm</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>When Marshall University is not in session during the Spring &amp; Fall semesters,&nbsp;</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>the cafe will be closed. &nbsp;Please note the following 2025 dates:</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>August 18th: &nbsp;OPENING day for Fall Semester</span><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>September 1st: &nbsp;CLOSED for Labor Day</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>October 9th: &nbsp;CLOSED for October Break</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>November 24th - 27th: &nbsp;CLOSED for Thanksgiving Break</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>December 5th: &nbsp;CLOSES &nbsp;for Christmas Break</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+// Majesty example 53_1 (Text with icons loose styling)
+const ex53_1: Data = {
+  html: `<div class="text-content text-2 editable" data-id="58980" data-category="text"><div><p style="font-family: Asap, sans-serif; font-weight: 400; color: rgb(120, 120, 120);"
+<span style="font-size: 12pt; line-height: 115%; font-weight: 200;" class="clovercustom">Small
+groups are an important part of TLC Church; in fact, you haven’t fully
+experienced the church until you’ve experienced our small groups called
+Hotspots. Hotspots allow you to meet other members and develop relationships
+that will spur your relationship with God.</span>&nbsp;</p><p style="font-family: Asap, sans-serif; font-weight: 400; color: rgb(120, 120, 120); font-size: 0.8889em;"><a href="http://theliving.org/hotspots" data-location="external" data-detail="http://theliving.org/hotspots" data-category="link" target="_blank" class="cloverlinks" style="font-weight: 700; color: rgb(120, 120, 120);"><span class="clovercustom" style="font-family: Asap, sans-serif;"><span data-icon="hand-point-right"><span class="clovericons far" aria-hidden="true"></span></span>  Click here</span></a><span class="clovercustom" style="font-family: Asap, sans-serif; font-weight: 400;"> for our Hotspot information.</span><span class="clovercustom" style="font-family: Asap, sans-serif; font-weight: 400;">&nbsp;&nbsp;&nbsp;</span><br></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="58980"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p <span="" class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(120, 120, 120); font-weight: 400; ">Small groups are an important part of TLC Church; in fact, you haven’t fully experienced the church until you’ve experienced our small groups called Hotspots. Hotspots allow you to meet other members and develop relationships that will spur your relationship with God.&nbsp;</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "hand-point-right",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-detail="http://theliving.org/hotspots" data-category="link" target="_blank" style="font-weight: 700; color: rgb(120, 120, 120); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22http%3A%2F%2Ftheliving.org%2Fhotspots%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="color: rgb(120, 120, 120); font-weight: 700; "> Click here</span></a></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; "> for our Hotspot information.</span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+// Majesty example 53_2 (Text with icons loose styling)
+const ex53_2: Data = {
+  html: `<div class="text-content text-2 editable" data-id="58984" data-category="text"><div><p>
+</p><p style="font-family: Asap, sans-serif; font-weight: 400; color: rgb(120, 120, 120);"><span style="font-size: 12pt; line-height: 115%; font-weight: 200;" class="clovercustom">One of the easiest things to do
+at TLC Church is to participate in a small group. Hotspots meet throughout greater
+Seattle area and provide a place for Bible study, fellowship, and support.
+Wherever you live, there’s a Hotspot <span class="clovercustom" style="font-weight: 200;">&nbsp;</span>near you. <span data-icon="hand-point-right"><span class="clovericons far" aria-hidden="true"></span></span> &nbsp;<a href="http://theliving.org/hotspots" data-location="external" data-detail="http://theliving.org/hotspots" data-category="link" target="_blank" class="cloverlinks" style="font-weight: 700; color: rgb(120, 120, 120);">Click here</a> for&nbsp; our online directory and
+visit a group this week.</span></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="58984"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: ""
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-12 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 200; ">One of the easiest things to do at TLC Church is to participate in a small group. Hotspots meet throughout greater Seattle area and provide a place for Bible study, fellowship, and support. Wherever you live, there’s a Hotspot</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-12 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 200; ">near you.</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "hand-point-right",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 200; "><a data-location="external" data-detail="http://theliving.org/hotspots" data-category="link" target="_blank" style="font-weight: 700; color: rgb(120, 120, 120); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22http%3A%2F%2Ftheliving.org%2Fhotspots%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="color: rgb(120, 120, 120); font-weight: 700; ">Click here</span></a></span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-12 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 200; ">for&nbsp; our online directory and visit a group this week.</span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -3680,7 +3915,10 @@ describe.each([
   ex48,
   ex49,
   ex50,
-  ex51
+  ex51,
+  ex52,
+  ex53_1,
+  ex53_2
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;

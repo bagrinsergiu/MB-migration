@@ -69,9 +69,9 @@ const extractInnerText = (
       if (_node.tagName !== "P") {
         const container = document.createElement("p");
 
-        if (styles.textAlign) {
-          container.style.textAlign = styles.textAlign;
-        }
+        Object.entries(styles).forEach(([key, value]) => {
+          (container.style as unknown as Record<string, string>)[key] = value;
+        });
 
         container.append(_node.cloneNode(true));
         appendedItem = container;
@@ -168,11 +168,11 @@ const flattenNode = (node: Element) => {
   return _node;
 };
 
-const removeWrongTags = (node: HTMLElement) => {
-  const wrongTags = ["style"];
+const removeWrongElements = (node: HTMLElement) => {
+  const wrongSelectors = ["style", ".sr-only"];
 
-  wrongTags.forEach((tag) => {
-    const elements = node.querySelectorAll(tag);
+  wrongSelectors.forEach((selector) => {
+    const elements = node.querySelectorAll(selector);
     elements.forEach((element) => {
       element.remove();
     });
@@ -221,7 +221,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
   let appendNewText = false;
 
   if (parentNode instanceof HTMLElement) {
-    removeWrongTags(parentNode);
+    removeWrongElements(parentNode);
     replaceWrongTags(parentNode);
   }
 
@@ -334,10 +334,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                       stack.append(textNode, { type: "text" });
                       appendedIcon = false;
                     }
-                  } else if (
-                    child instanceof Element &&
-                    !child.classList.contains("sr-only")
-                  ) {
+                  } else if (child instanceof Element) {
                     const parent = child.parentElement;
 
                     if (!parent) return;
@@ -346,31 +343,85 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                     const wrapper = parent.cloneNode(false); // Clone only the element, not its children
                     wrapper.appendChild(child); // Move child into the cloned parent
 
-                    const childTextContent = trimTextContent(child);
+                    if (child.childNodes.length > 1) {
+                      child.childNodes.forEach((element) => {
+                        const isElement = element instanceof Element;
 
-                    // Inside icons node can be text, so we should extract the text from icon node and append it to stack
-                    const shouldAppendText =
-                      !!childTextContent &&
-                      child.classList.contains("clovercustom");
+                        // Check if element itself or its children contain an icon
+                        const hasIcon =
+                          isElement &&
+                          (element.matches(iconSelector) ||
+                            element.querySelector(iconSelector));
 
-                    if (shouldAppendText) {
-                      let newWrapper = wrapper;
+                        if (hasIcon) {
+                          if (appendedIcon) {
+                            stack.set(wrapper as Element);
+                          } else {
+                            stack.append(wrapper, { type: "icon" });
+                            appendedIcon = true;
+                          }
+                          return;
+                        }
 
-                      if (!allowedTags.includes(wrapper.nodeName)) {
-                        newWrapper = document.createElement("p");
-                        newWrapper.appendChild(wrapper);
+                        const childTextContent = trimTextContent(element);
+
+                        const shouldAppendText =
+                          !!childTextContent ||
+                          (isElement &&
+                            element.classList.contains("clovercustom"));
+
+                        if (shouldAppendText) {
+                          const clonedWrapper = wrapper.cloneNode(true);
+
+                          if (clonedWrapper instanceof Element) {
+                            clonedWrapper
+                              .querySelectorAll(iconSelector)
+                              .forEach((node) => node.remove());
+                          }
+
+                          let newWrapper = clonedWrapper;
+
+                          if (!allowedTags.includes(clonedWrapper.nodeName)) {
+                            newWrapper = document.createElement("p");
+                            newWrapper.appendChild(clonedWrapper);
+                          }
+
+                          stack.append(newWrapper, { type: "text" });
+                          appendedIcon = false;
+                        }
+                      });
+                    } else {
+                      const childTextContent = trimTextContent(child);
+
+                      const isLinkWithoutIcon =
+                        child.nodeName === "A" &&
+                        !child.querySelector(iconSelector);
+
+                      const shouldAppendText =
+                        !!childTextContent &&
+                        (child.classList.contains("clovercustom") ||
+                          isLinkWithoutIcon);
+
+                      if (shouldAppendText) {
+                        let newWrapper = wrapper;
+
+                        if (!allowedTags.includes(wrapper.nodeName)) {
+                          newWrapper = document.createElement("p");
+                          newWrapper.appendChild(wrapper);
+                        }
+
+                        stack.append(newWrapper, { type: "text" });
+                        appendedIcon = false;
+                        return;
                       }
 
-                      stack.append(newWrapper, { type: "text" });
-                      appendedIcon = false;
-                      return;
-                    }
-
-                    if (appendedIcon) {
-                      stack.set(wrapper as Element);
-                    } else {
-                      stack.append(wrapper, { type: "icon" });
-                      appendedIcon = true;
+                      // Final stack append if icon was processed and not yet handled
+                      if (appendedIcon) {
+                        stack.set(wrapper as Element);
+                      } else {
+                        stack.append(wrapper, { type: "icon" });
+                        appendedIcon = true;
+                      }
                     }
                   }
                 });
@@ -378,8 +429,11 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                 const text = trimTextContent(node);
 
                 if (text) {
-                  const { textAlign } = getComputedStyle(node);
-                  extractInnerText(node, stack, iconSelector, { textAlign });
+                  const { textAlign, color } = getComputedStyle(node);
+                  extractInnerText(node, stack, iconSelector, {
+                    textAlign,
+                    color
+                  });
                   appendedIcon = false;
                 }
               }
