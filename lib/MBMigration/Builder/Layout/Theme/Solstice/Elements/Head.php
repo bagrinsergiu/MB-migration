@@ -58,6 +58,25 @@ class Head extends HeadElement
         $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
     }
 
+    protected function getHoverSubMenuStyle(): array
+    {
+        if ($this->browserPage->triggerEvent('hover', $this->getThemeParentMenuSelectedItemSelector()['selector'])) {
+            $this->browserPage->getPageScreen(_selectedParent);
+        }
+
+        $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', [
+            'itemSelector'   => $this->getThemeSubMenuSelectedItemSelector(),
+            'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+            'families'       => '',
+            'defaultFamily'  => [],
+            'hover'          => true,
+        ]);
+
+        $this->browserPage->getPageScreen('remove_node_1');
+
+        return $hoverMenuSubItemStyles['data'] ?? [];
+    }
+
 
     public function getThemeMenuItemActiveSelector(): array
     {
@@ -76,6 +95,11 @@ class Head extends HeadElement
     public function getThemeParentMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+    }
+
+    public function getThemeParentMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation > ul > li.selected.has-sub > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
@@ -176,3 +200,4 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation>ul>li:not(.selected)", "pseudoEl" => ""];
     }
 }
+
