@@ -9,6 +9,7 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrizyKitNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Core\Logger;
 
 trait DonationsAble
@@ -292,6 +293,28 @@ trait DonationsAble
             ->set_colorHex(ColorConverter::rgba2hex($buttonStyles['color']))
             ->set_colorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
             ->set_colorPalette("");
+
+
+        $fontList = $data->getFontFamilies();
+
+        if($font =$fontList[FontUtils::transliterateFontFamily($buttonStyles['font-family'])])
+        {
+            $butonFont = [
+                'fontFamily' => $font['name'],
+                'fontFamilyType' => $font['type'],
+            ];
+        }else{
+            $butonFont = [
+                'fontFamily' => "lato",
+                'fontFamilyType' => "google",
+            ];
+        }
+
+        $brizyDonationButton->getItemWithDepth(0)->addFont(
+            (int) $buttonStyles['font-size'],
+            $butonFont['fontFamily'],
+            $butonFont['fontFamilyType'],
+        );
 
         return $brizyDonationButton;
     }

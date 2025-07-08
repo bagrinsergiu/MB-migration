@@ -504,6 +504,29 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addFont($fontSize, $fontFamily, $fontFamilyType): BrizyComponent
+    {
+        $bgColor = [
+            "fontStyle" => "",
+            "fontFamily" => $fontFamily,
+            "fontFamilyType" => $fontFamilyType,
+            "fontSize" => $fontSize,
+            "fontSizeSuffix" => "px",
+            "fontWeight" => 700,
+            "letterSpacing" => 0,
+            "lineHeight" => 1.6,
+            "variableFontWeight" => 400,
+            "fontWidth" => 100,
+            "fontSoftness" => 0
+        ];
+
+        foreach ($bgColor as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
     public function previewTypography($typography = []): BrizyComponent
     {
         $bgColor = [
