@@ -11,6 +11,30 @@ use MBMigration\Builder\Utils\NumberProcessor;
 
 class Head extends HeadElement
 {
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $this->pageTDO = $data->getThemeContext()->getPageDTO();
+        $this->themeContext = $data->getThemeContext();
+
+        return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
+            $this->basicHeadParams = array_merge($this->basicHeadParams, $this->headParams);
+            $this->beforeTransformToItem($data);
+
+            $this->fontHandle($data);
+
+            $component = $this->internalTransformToItem($data);
+            $this->generalSectionBehavior($data, $component);
+            $this->afterTransformToItem($component);
+
+            // save it as a global block
+            $position = '{"align":"top","top":0,"bottom":0}';
+            $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
+            $this->brizyAPIClient->deleteAllGlobalBlocks();
+            $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
+
+            return $component;
+        });
+    }
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null

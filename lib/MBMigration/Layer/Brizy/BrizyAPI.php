@@ -317,28 +317,27 @@ class BrizyAPI extends Utils
         return false;
     }
 
-    /**
-     * @throws Exception
-     * @throws GuzzleException
-     */
-    public function createGlobalBlock($data, $position, $rules)
+    public function createGlobalBlock($data, $position, $rules): bool
     {
-        Logger::instance()->debug('Create Global Block', [$position, $rules]);
+        try{
+            $requestData['project'] = Utils::$cache->get('projectId_Brizy');
+            $requestData['status'] = 'publish';
+            $requestData['position'] = $position;
+            $requestData['rules'] = $rules;
+            $requestData['dataVersion'] = 0;
+            $requestData['data'] = $data;
+            $requestData['meta'] = '{"type":"normal","extraFontStyles":[],"_thumbnailSrc":17339266,"_thumbnailWidth":600,"_thumbnailHeight":138,"_thumbnailTime":1710341890936}';
+            $requestData['is_autosave'] = 0;
+            $requestData['uid'] = self::generateCharID(12);
 
-        $requestData['project'] = Utils::$cache->get('projectId_Brizy');
-        $requestData['status'] = 'publish';
-        $requestData['position'] = $position;
-        $requestData['rules'] = $rules;
-        $requestData['dataVersion'] = 0;
-        $requestData['data'] = $data;
-        $requestData['meta'] = '{"type":"normal","extraFontStyles":[],"_thumbnailSrc":17339266,"_thumbnailWidth":600,"_thumbnailHeight":138,"_thumbnailTime":1710341890936}';
-        $requestData['is_autosave'] = 0;
-        $requestData['uid'] = self::generateCharID(12);
+            $url = $this->createPrivateUrlAPI('globalBlocks');
 
-        $url = $this->createPrivateUrlAPI('globalBlocks');
+            $result = $this->httpClient('POST', $url, $requestData);
 
-        $result = $this->httpClient('POST', $url, $requestData);
-
+            return true;
+        } catch (Exception $e) {
+            Logger::instance()->warning('Failed create global block!!! ' . $e->getMessage());
+        }
 
         return false;
     }
@@ -350,16 +349,20 @@ class BrizyAPI extends Utils
 
     public function deleteAllGlobalBlocks()
     {
-        $url = $this->createPrivateUrlAPI('globalBlocks');
-        $requestData['project'] = Utils::$cache->get('projectId_Brizy');
-        $requestData['fields'] = ['id', 'uid'];
-        $response = $this->httpClient('GET', $url, $requestData);
-        if ($response['status'] == 200) {
-            $globalBlocks = json_decode($response['body'], true);
-            foreach ($globalBlocks as $block) {
-                Logger::instance()->debug("Delete global block {$block['id']}");
-                $response = $this->httpClient('DELETE', $url . "/" . $block['id']);
+        try {
+            $url = $this->createPrivateUrlAPI('globalBlocks');
+            $requestData['project'] = Utils::$cache->get('projectId_Brizy');
+            $requestData['fields'] = ['id', 'uid'];
+            $response = $this->httpClient('GET', $url, $requestData);
+            if ($response['status'] == 200) {
+                $globalBlocks = json_decode($response['body'], true);
+                foreach ($globalBlocks as $block) {
+                    Logger::instance()->debug("Delete global block {$block['id']}");
+                    $response = $this->httpClient('DELETE', $url . "/" . $block['id']);
+                }
             }
+        } catch (Exception $e) {
+            Logger::instance()->warning('Failed delete all global blocks!!! ' . $e->getMessage());
         }
     }
 
