@@ -211,7 +211,8 @@ trait SectionStylesAble
                 ->set_media('video')
                 ->set_bgVideoType('url')
                 ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
-                ->set_bgVideo($background['video']);
+                ->set_bgVideo($background['video'])
+                ->set_bgVideoLoop('on');
         }
 
         if ($this->hasImageBackground($mbSectionItem) || $this->hasVideoBackground($mbSectionItem)) {
