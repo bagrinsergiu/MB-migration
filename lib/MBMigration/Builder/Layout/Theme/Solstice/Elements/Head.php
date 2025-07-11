@@ -170,8 +170,11 @@ class Head extends HeadElement
 
         $section->getItemWithDepth(0,0,1)
             ->getValue()
-            ->set_mobileMarginRight('25')
-            ->set_tempMobileMarginRight('25');
+            ->set_mobileMarginRight('25');
+
+        $section->getItemWithDepth(0,0,0)
+            ->getValue()
+            ->set_mobileMarginLeft('10');
 
         $section->getItemWithDepth(0,0,1,0,0)
             ->getValue()

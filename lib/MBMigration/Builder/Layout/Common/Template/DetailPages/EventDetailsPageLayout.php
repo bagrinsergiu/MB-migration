@@ -7,7 +7,6 @@ use MBMigration\Builder\Utils\ColorConverter;
 
 class EventDetailsPageLayout extends DetailsPage
 {
-
     public function setStyleDetailPage(array $sectionPalette): BrizyComponent
     {
         if(!empty(self::$cacheEvent))
