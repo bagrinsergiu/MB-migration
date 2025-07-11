@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Bloom\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\GridLayoutElement
 {
@@ -18,10 +19,25 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0, 0)->addRadius(150);
+        return $brizyComponent->getItemWithDepth(0)->addRadius(150);
     }
 
-    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent {
+    protected function handleItemPhotoAfter(ElementContextInterface $component)
+    {
+    }
+
+    protected function getPropertiesItemPhoto(): array
+    {
+        return [
+            'sizeType' => 'original',
+            'borderRadius' => 100,
+            'borderRadiusSuffix' => "%",
+            "borderRadiusType" => "grouped"
+        ];
+    }
+
+    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
+    {
         return $brizyComponent->getItemWithDepth(0);
     }
 
@@ -45,7 +61,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,

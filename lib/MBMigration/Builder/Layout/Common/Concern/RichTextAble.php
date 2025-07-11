@@ -12,6 +12,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyEmbedCodeComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 trait RichTextAble
 {
@@ -192,6 +193,8 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
+        $brizyAPI =  $data->getBrizyAPI();
+        $projectID =  $data->getThemeContext()->getProjectId();
 
         switch ($mbSectionItem['category']) {
             case 'text':
@@ -199,6 +202,8 @@ trait RichTextAble
                     $mbSectionItem,
                     $brizyComponent,
                     $browserPage,
+                    $brizyAPI,
+                    $projectID,
                     $families,
                     $default_fonts,
                     $data->getThemeContext()->getUrlMap(),
@@ -239,12 +244,15 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
+        $projectID =  $data->getThemeContext()->getProjectId();
 
         if ($mbSectionItem['category'] == 'text') {
             $brizyComponent = $this->handleTextItem(
                 $mbSectionItem,
                 $brizyComponent,
                 $browserPage,
+                $data->getBrizyAPI(),
+                $projectID,
                 $families,
                 $default_fonts,
                 $data->getThemeContext()->getUrlMap(),
@@ -260,12 +268,14 @@ trait RichTextAble
         $mbSectionItem,
         BrizyComponent $brizySection,
         BrowserPageInterface $browserPage,
+        BrizyAPI $brizyAPI,
+        int $projectID,
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $urlMap = [],
         $selector = null,
         $settings = []
-    )
+    ): BrizyComponent
     {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
         $richTextBrowserData = $this->extractTexts($selector ?? '[data-id="' . $sectionId . '"]', $browserPage, $families, $defaultFont, $urlMap);
@@ -278,36 +288,75 @@ trait RichTextAble
         );
         $embeddedElements = $this->findEmbeddedElements($mbSectionItem['content']);
         $embeddIndex = 0;
-        foreach ($richTextBrowserData as $i => $textItem) {
-            switch ($textItem['type']) {
-                case 'EmbedCode':
-                    //wrapper
-                    if (!isset($embeddedElements[$embeddIndex])) break;
 
-                    $embedCode = $embeddedElements[$embeddIndex++];
-                    $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embedCode['embed']);
-                    $cssClass = 'custom-align-' . random_int(0, 10000);
-                    $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
-                    $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_overflow('on');
-                    $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
-                        ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
+        try {
+            foreach ($richTextBrowserData as $i => $textItem) {
+                switch ($textItem['type']) {
+                    case 'EmbedCode':
+                        //wrapper
+                        if (!isset($embeddedElements[$embeddIndex])) break;
+
+                        $embedCode = $embeddedElements[$embeddIndex++];
+                        $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embedCode['embed']);
+                        $cssClass = 'custom-align-' . random_int(0, 10000);
+                        $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
+                        $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_overflow('on');
+                        $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
+                            ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
 .{$cssClass} .embedded-paste:has(iframe) {display: grid;}
 .{$cssClass} .embedded-paste iframe {justify-self: {$embedCode['text-align']};}"
-                    );
-                    $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
-                    break;
-                case 'Cloneable':
-                case 'Wrapper':
-                    //wrapper--richText
-                    if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
-                        $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
-                    } elseif ($settings['setEmptyText'] === true) {
-                        if ($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])) {
-                            $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
+                        );
+                        $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
+                        break;
+                    case 'Cloneable':
+                        foreach ($textItem['value']['items'] as &$clonableItem) {
+                            if (!empty($clonableItem['value']['code']) && $clonableItem['type'] === 'Icon') {
+                                try {
+                                    $customIconUploadResult = $brizyAPI->uploadCustomIcon(
+                                        $projectID,
+                                        $clonableItem['value']['filename'],
+                                        $clonableItem['value']['code']
+                                    );
+
+                                    if (!empty($customIconUploadResult['filename']) && !empty($customIconUploadResult['uid'])) {
+                                        $clonableItem['value']['name'] = $customIconUploadResult['uid'];
+                                        $clonableItem['value']['filename'] = $customIconUploadResult['filename'];
+                                    }
+
+                                    unset($clonableItem['value']['code']);
+
+
+                                } catch (Exception $e) {
+
+                                    $ddd = $e->getMessage();
+                                }
+
+                            }
                         }
-                    }
-                    break;
+
+                        $brzCloneableComponent = new BrizyComponent($textItem);
+
+                        $brzCloneableComponent->addMargin(0, 0, 0, 0);
+                        $brizySection->getValue()->add_items([$brzCloneableComponent]);
+                        break;
+                    case 'Wrapper':
+                        //wrapper--richText
+                        $brzTextComponent = new BrizyComponent($textItem);
+
+//                        $brzTextComponent->addMargin(0, 0, 0, 0);
+
+                        if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
+                            $brizySection->getValue()->add_items([$brzTextComponent]);
+                        } elseif ($settings['setEmptyText'] === true) {
+                            if ($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])) {
+                                $brizySection->getValue()->add_items([$brzTextComponent]);
+                            }
+                        }
+                        break;
+                }
             }
+        } catch (Exception $e) {
+            Logger::instance()->info($e->getMessage());
         }
 
         return $brizySection;

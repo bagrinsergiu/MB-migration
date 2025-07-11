@@ -411,9 +411,9 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addVerticalContentAlign($verticalAlign = 'center'): BrizyComponent
+    public function addVerticalContentAlign($verticalAlign = 'top'): BrizyComponent
     {
-        if (!in_array($verticalAlign, ['center', 'left', 'right'])) {
+        if (!in_array($verticalAlign, ['center', 'bottom', 'top'])) {
             $verticalAlign = 'center';
         }
 
@@ -495,6 +495,29 @@ class BrizyComponent implements JsonSerializable
             "titleTypographyStrike" => false,
             "titleTypographyUppercase" => false,
             "titleTypographyLowercase" => false
+        ];
+
+        foreach ($bgColor as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function addFont($fontSize, $fontFamily, $fontFamilyType): BrizyComponent
+    {
+        $bgColor = [
+            "fontStyle" => "",
+            "fontFamily" => $fontFamily,
+            "fontFamilyType" => $fontFamilyType,
+            "fontSize" => $fontSize,
+            "fontSizeSuffix" => "px",
+            "fontWeight" => 700,
+            "letterSpacing" => 0,
+            "lineHeight" => 1.6,
+            "variableFontWeight" => 400,
+            "fontWidth" => 100,
+            "fontSoftness" => 0
         ];
 
         foreach ($bgColor as $key => $value) {
@@ -766,5 +789,25 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addImage($mbSectionItem, $options = [])
+    {
+        $image = new BrizyImageComponent();
+        $wrapperImage = new BrizyWrapperComponent('wrapper--image');
+
+        $imageConfig = [
+            'imageSrc' => $mbSectionItem['content'] ?? '',
+            'imageFileName' => $mbSectionItem['imageFileName']
+        ];
+
+        $imageConfig = array_merge($imageConfig, $options);
+
+        foreach ($imageConfig as $key => $value) {
+            $image->getValue()->set($key, $value);
+        }
+
+        $wrapperImage->getValue()->add('items', [$image]);
+
+        $this->getValue()->add('items', [$wrapperImage]);
+    }
 
 }

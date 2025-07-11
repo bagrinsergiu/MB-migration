@@ -1,11 +1,12 @@
 import {
-  EMPTY_SPACES_REGEX,
+  allowedTags,
   buttonSelector,
   embedSelector,
   iconSelector,
   imageSelector
 } from "../common";
 import { appendNodeStyles } from "./appendNodeStyles";
+import { trimTextContent } from "./trimTextContent";
 
 export class Stack {
   collection: Array<Element> = [];
@@ -61,9 +62,9 @@ const extractInnerText = (
       });
     }
     // Extract the other html without Artifacts like Button, Icons
-    const text = _node.textContent;
+    const text = trimTextContent(_node);
 
-    if (text && text.trim()) {
+    if (text) {
       let appendedItem = _node;
       if (_node.tagName !== "P") {
         const container = document.createElement("p");
@@ -104,7 +105,7 @@ function removeNestedDivs(node: HTMLElement) {
             appendNodeStyles(grandchild);
 
             node.insertBefore(grandchild, child);
-          } else if (grandchild.textContent?.trim()) {
+          } else if (trimTextContent(grandchild)) {
             const containerOfNode = document.createElement("div");
             appendNodeStyles(child, containerOfNode);
             containerOfNode.append(grandchild);
@@ -266,8 +267,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           const innerButtons = container.querySelectorAll(buttonSelector);
           innerButtons.forEach((btn) => btn.remove());
 
-          const onlyButtons =
-            (container.textContent?.trim() ?? "").length === 0;
+          const onlyButtons = (trimTextContent(container) ?? "").length === 0;
 
           if (onlyButtons) {
             appendNewText = true;
@@ -310,9 +310,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
 
                 Array.from(node.childNodes).forEach((child) => {
                   if (child.nodeType === Node.TEXT_NODE) {
-                    const text = child.textContent
-                      ?.replace(EMPTY_SPACES_REGEX, "")
-                      .trim();
+                    const text = trimTextContent(child);
 
                     if (text) {
                       const textNode = document.createElement("p");
@@ -348,6 +346,26 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                     const wrapper = parent.cloneNode(false); // Clone only the element, not its children
                     wrapper.appendChild(child); // Move child into the cloned parent
 
+                    const childTextContent = trimTextContent(child);
+
+                    // Inside icons node can be text, so we should extract the text from icon node and append it to stack
+                    const shouldAppendText =
+                      !!childTextContent &&
+                      child.classList.contains("clovercustom");
+
+                    if (shouldAppendText) {
+                      let newWrapper = wrapper;
+
+                      if (!allowedTags.includes(wrapper.nodeName)) {
+                        newWrapper = document.createElement("p");
+                        newWrapper.appendChild(wrapper);
+                      }
+
+                      stack.append(newWrapper, { type: "text" });
+                      appendedIcon = false;
+                      return;
+                    }
+
                     if (appendedIcon) {
                       stack.set(wrapper as Element);
                     } else {
@@ -357,18 +375,24 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                   }
                 });
               } else {
-                const text = node.textContent;
+                const text = trimTextContent(node);
 
-                if (text?.trim()) {
+                if (text) {
                   const { textAlign } = getComputedStyle(node);
                   extractInnerText(node, stack, iconSelector, { textAlign });
                   appendedIcon = false;
                 }
               }
-            } else {
-              const text = node.textContent;
+            } else if (node instanceof SVGElement) {
+              appendNewText = true;
 
-              if (text?.trim()) {
+              stack.append(node.cloneNode(true), {
+                type: "icon"
+              });
+            } else {
+              const text = trimTextContent(node);
+
+              if (text) {
                 extractInnerText(_node, stack, iconSelector);
               }
             }
@@ -391,7 +415,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
         stack.set(_node, { type: "text" });
       }
     } else {
-      if (_node.textContent?.trim()) {
+      if (trimTextContent(_node)) {
         stack.append(_node, { type: "text" });
       }
     }

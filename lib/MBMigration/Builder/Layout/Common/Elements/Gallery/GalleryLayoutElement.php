@@ -25,9 +25,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 
         $mbSection = $data->getMbSection();
 
-        $aa =  json_encode($mbSection);
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-        $itemImage = new BrizyComponent(json_decode($this->brizyKit['itemImage'], true));
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
@@ -88,8 +86,8 @@ abstract class GalleryLayoutElement extends AbstractElement
             ->set_hoverSliderDotsColorOpacity(1)
             ->set_hoverSliderDotsColorPalette('')
 
-            ->set_fullHeight('custom')
-            ->set_sectionHeight(650)
+//            ->set_fullHeight('custom')
+//            ->set_sectionHeight(650)
 
             ->set_mobileFullHeight('custom')
             ->set_mobileSectionHeight(300)
