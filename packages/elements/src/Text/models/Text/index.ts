@@ -18,7 +18,7 @@ interface Data {
   defaultFamily: string;
 }
 
-export const getTextModel = (data: Data): ElementModel => {
+export const getTextModel = (data: Data): ElementModel | null => {
   const { node: _node, families, defaultFamily, urlMap } = data;
   let node = _node;
 
@@ -58,6 +58,11 @@ export const getTextModel = (data: Data): ElementModel => {
   node = removeEmptyNodes(node);
 
   const text = node.innerHTML;
+
+  // Sometimes we can have that text is empty string
+  if (!text) {
+    return null;
+  }
 
   return createWrapperModel({
     _styles: ["wrapper", "wrapper--richText"],

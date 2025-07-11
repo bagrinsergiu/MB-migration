@@ -1,5 +1,7 @@
 import { allowedTags } from "../common";
 import { cleanClassNames } from "./cleanClassNames";
+import { getNodeStyle } from "utils/src/dom/getNodeStyle";
+import { readInt } from "utils/src/reader/number";
 
 export function removeStylesExceptFontWeightAndColor(
   htmlString: string
@@ -48,6 +50,15 @@ export function removeStylesExceptFontWeightAndColor(
   return tempElement.innerHTML;
 }
 
+const removeElementWithoutHeight = (element: Element) => {
+  const height = getNodeStyle(element)["height"];
+  const heightValue = readInt(height);
+
+  if (heightValue === 0) {
+    element.remove();
+  }
+};
+
 export function removeAllStylesFromHTML(node: Element) {
   // Define the list of allowed tags
   const tagsToRemoveStyles = allowedTags.filter((item) => item !== "LI");
@@ -59,6 +70,7 @@ export function removeAllStylesFromHTML(node: Element) {
 
   // Remove the "style" attribute from each element
   elementsWithStyles.forEach(function (element) {
+    removeElementWithoutHeight(element);
     element.removeAttribute("style");
   });
 

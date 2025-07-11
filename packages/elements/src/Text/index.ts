@@ -40,7 +40,9 @@ export const getText = (_entry: Entry): Output => {
       switch (node.dataset.type) {
         case "text": {
           const model = getTextModel({ ...entry, node });
-          data.push(model);
+          if (model) {
+            data.push(model);
+          }
           break;
         }
         case "button": {
