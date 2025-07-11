@@ -37,6 +37,14 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return 'image';
     }
 
+    protected function getPropertiesItemPhoto(): array
+    {
+        return [
+            'sizeType' => 'original',
+            'size' => 100,
+        ];
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 0;

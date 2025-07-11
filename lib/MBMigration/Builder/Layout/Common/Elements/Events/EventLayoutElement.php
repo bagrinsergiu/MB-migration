@@ -226,17 +226,17 @@ abstract class EventLayoutElement extends AbstractElement
             'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'detailButtonBorderStyle' => 'solid',
-            'detailButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'detailButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
-            'detailButtonBorderColorPalette' => '',
-
-            "detailButtonBorderWidthType" => "grouped",
-            "detailButtonBorderWidth" => 1,
-            "detailButtonBorderTopWidth" => 1,
-            "detailButtonBorderRightWidth" => 1,
-            "detailButtonBorderBottomWidth" => 1,
-            "detailButtonBorderLeftWidth" => 1,
+//            'detailButtonBorderStyle' => 'solid',
+//            'detailButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+//            'detailButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
+//            'detailButtonBorderColorPalette' => '',
+//
+//            "detailButtonBorderWidthType" => "grouped",
+//            "detailButtonBorderWidth" => 1,
+//            "detailButtonBorderTopWidth" => 1,
+//            "detailButtonBorderRightWidth" => 1,
+//            "detailButtonBorderBottomWidth" => 1,
+//            "detailButtonBorderLeftWidth" => 1,
 
             'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,

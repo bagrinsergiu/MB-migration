@@ -5,6 +5,7 @@ namespace MBMigration;
 use GuzzleHttp\Exception\RequestException;
 use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\Cms\SiteSEO;
+use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Menu\MenuHandler;
 use MBMigration\Builder\Utils\ArrayManipulator;
@@ -361,13 +362,22 @@ class MigrationPlatform
             if ($page['hidden'] !== $hiddenPage) {
                 continue;
             }
-            $this->collector($page);
+
+            try {
+                $this->collector($page);
+            } catch (Exception $e) {
+                Logger::instance()->critical($e->getMessage(), $e->getTrace());
+            } catch (GuzzleException $e) {
+                Logger::instance()->critical('HTTP request: ' . $e->getMessage(), $e->getTrace());
+            }
+
         }
     }
 
     /**
-     * @throws Exception
      * @throws GuzzleException
+     * @throws ElementNotFound
+     * @throws Exception
      */
     private function collector($page): void
     {
