@@ -26,9 +26,9 @@ class MenuHandler
     public function __construct(BrowserPagePHP $browserPage)
     {
         $this->cache = VariableCache::getInstance();
-        
+
         $this->browserPage = $browserPage;
-        
+
         $this->brizyApi = $this->cache->getClass('brizyApi');
         $this->projectID_Brizy = $this->cache->get('projectId_Brizy');
     }

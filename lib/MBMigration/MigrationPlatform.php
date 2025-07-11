@@ -306,9 +306,10 @@ class MigrationPlatform
 
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
-        $this->launch($parentPages, false);
-        $this->launch($parentPages, true);
+        $brizyMenuItems = $this->cache->get('brizyMenuItems');
+        $this->launch_bld($brizyMenuItems);
 
+        $this->launch($parentPages, true);
 
         $this->brizyApi->clearCompileds($this->projectID_Brizy);
 
@@ -332,6 +333,47 @@ class MigrationPlatform
     /**
      * @throws Exception
      */
+    private function launch_bld($menuList): void
+    {
+        foreach ($menuList as $i => $page) {
+            if (!empty($page['parentSettings'])) {
+                $settings = json_decode($page['parentSettings'], true);
+//                if (array_key_exists('external_url', $settings)) {
+//                    continue;
+//                }
+
+//                // there a pages that have only one section only and de same slug as home page..
+//                if ( array_key_exists('category', $settings) && $settings['category']=='text' ) {
+//                    continue;
+//                }
+            }
+
+            if (!empty($page['child'])) {
+                $this->launch($page['child'], $hiddenPage);
+            }
+            if (Config::$devMode && $this->buildPage !== '') {
+                if ($page['slug'] !== $this->buildPage) {
+                    continue;
+                }
+            }
+            if ($page['landing'] !== true) {
+                continue;
+            }
+
+            if ($page['hidden'] !== $hiddenPage) {
+                continue;
+            }
+
+            try {
+                $this->collector($page);
+            } catch (Exception $e) {
+                Logger::instance()->critical($e->getMessage(), $e->getTrace());
+            } catch (GuzzleException $e) {
+                Logger::instance()->critical('HTTP request: ' . $e->getMessage(), $e->getTrace());
+            }
+
+        }
+    }
     private function launch($parentPages, $hiddenPage): void
     {
         foreach ($parentPages as $i => $page) {
