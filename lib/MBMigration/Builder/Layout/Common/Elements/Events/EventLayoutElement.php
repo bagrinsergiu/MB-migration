@@ -111,6 +111,10 @@ abstract class EventLayoutElement extends AbstractElement
                 break;
         }
 
+        $featured = [
+            "howManyFeatured" => 6
+        ];
+
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
         $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
 
@@ -267,7 +271,7 @@ abstract class EventLayoutElement extends AbstractElement
             'layoutViewTypographyFontFamilyType' => 'upload',
         ];
 
-        $sectionProperties = array_merge($sectionProperties, $eventTabs);
+        $sectionProperties = array_merge($sectionProperties, $eventTabs, $featured);
 
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_'.$key;
