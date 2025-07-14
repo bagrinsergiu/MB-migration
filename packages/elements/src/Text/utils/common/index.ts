@@ -40,7 +40,8 @@ export const extractedAttributes = [
   "line-height",
   "text-align",
   "letter-spacing",
-  "text-transform"
+  "text-transform",
+  "color"
 ];
 
 export const textAlign: Record<string, string> = {
