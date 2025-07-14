@@ -19,6 +19,17 @@ class LeftMedia extends PhotoTextElement
         return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
+    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height){
+        $imageTarget
+            ->getValue()
+            ->set_width($width)
+            ->set_height($height)
+            ->set_mobileSize(100)
+            ->set_mobileSizeSuffix('%')
+            ->set_heightSuffix((strpos($height,'%')===true)?'%':'px')
+            ->set_widthSuffix((strpos($width,'%')===true)?'%':'px');
+    }
+
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
