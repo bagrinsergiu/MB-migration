@@ -64,6 +64,8 @@ class ErrorDump
             'file' => $file,
             'line' => $line,
         ];
+
+        Logger::instance()->error('message: [' . $message . '] file: [' . $file . '] line: [' . $line.']');
     }
 
     /**

@@ -254,6 +254,7 @@ abstract class HeadElement extends AbstractElement
             'itemMobileNavSelector' => $this->getThemeMobileNavSelector(),
             'families' => $families,
             'defaultFamily' => $defaultFamilies,
+            'isBgHoverItemMenu' => $this->isBgHoverItemMenu(),
             'hover' => false,
         ]);
 
@@ -266,7 +267,7 @@ abstract class HeadElement extends AbstractElement
                 'families' => $families,
                 'defaultFamily' => $defaultFamilies,
                 'hover' => true,
-                'showHoverStyles' => $this->isBgHoverItemMenu()
+                'isBgHoverItemMenu' => $this->isBgHoverItemMenu()
             ];
 
             $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', $options);
