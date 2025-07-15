@@ -117,7 +117,7 @@ class EventDetailsPageLayout extends DetailsPage
             'detailButtonBgColorPalette' => '',
 
             'hoverDetailButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'],
-            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
+            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             'hoverDetailButtonBgColorPalette' => '',
 
             'metaLinksColorHex' => $sectionPalette['link'],
@@ -153,7 +153,7 @@ class EventDetailsPageLayout extends DetailsPage
             'subscribeEventButtonBgColorPalette' => '',
 
             'hoverSubscribeEventButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'],
-            'hoverSubscribeEventButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
+            'hoverSubscribeEventButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             'hoverSubscribeEventButtonBgColorPalette' => '',
         ];
 

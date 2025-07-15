@@ -17,6 +17,7 @@ use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
+use PHPUnit\Exception;
 
 abstract class EventLayoutElement extends AbstractElement
 {
@@ -77,6 +78,14 @@ abstract class EventLayoutElement extends AbstractElement
             $this->handleRichTextHead($elementContext, $this->browserPage);
         } else {
             $this->handleRichTextItems($elementContext, $this->browserPage);
+        }
+
+        try {
+
+
+
+        } catch (Exception $e) {
+
         }
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
@@ -227,7 +236,7 @@ abstract class EventLayoutElement extends AbstractElement
             'detailButtonBgColorPalette' => '',
 
             'hoverDetailButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
+            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             'hoverDetailButtonBgColorPalette' => '',
 
 //            'detailButtonBorderStyle' => 'solid',
@@ -242,12 +251,12 @@ abstract class EventLayoutElement extends AbstractElement
 //            "detailButtonBorderBottomWidth" => 1,
 //            "detailButtonBorderLeftWidth" => 1,
 
-            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 0.75,
+            'hoverDetailButtonColorHex' => $basicButtonStyleHover['color'] ?? $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 1,
             'hoverDetailButtonColorPalette' => '',
 
             'detailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
