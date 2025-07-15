@@ -744,7 +744,7 @@ class MBProjectDataCollector
         $this->cache->set($sectionId['id'], $result, 'Sections');
 
         if ($assembly) {
-            $result = $this->assemblySection($sectionId['id'], $sectionId['category']);
+            $result = $this->assemblySection($sectionId['id'], $sectionId['category'], $sectionId['typeSection']);
         }
 
         return $result;
@@ -793,9 +793,9 @@ class MBProjectDataCollector
         return $randomString;
     }
 
-    private function assemblySection($id, $section): array
+    private function assemblySection($id, $category, $typeSection): array
     {
-        return $this->manipulator->groupItemsListByParentId($this->cache->get($id, 'Sections'), $section);
+        return $this->manipulator->groupItemsListByParentId($this->cache->get($id, 'Sections'), $category, $typeSection);
     }
 
     public function transLiterationFontFamily($family): string

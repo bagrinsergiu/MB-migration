@@ -26,29 +26,48 @@ abstract class PhotoTextElement extends AbstractElement
         $showSecondaryHeader = $mbSection['settings']['sections']['text']['show_secondary_header'] ?? true;
         $showBody = $mbSection['settings']['sections']['text']['show_body'] ?? true;
 
-        foreach ((array)$mbSection['items'] as $mbSectionItem) {
+        foreach ((array) $mbSection['typeSection'] as $typeSection) {
+            $brizySectionElem = (array) $mbSection['items'];
+
+            if ($typeSection == 'left-gallery') {
+                $brizySectionElem = (array) $mbSection['gallery']['items'];
+            }
+
+            foreach ($brizySectionElem as $mbSectionItem) {
+                switch ($mbSectionItem['category']) {
+                    case 'photo':
+                        // add the photo items on the right side of the block
+                        $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                            $mbSectionItem,
+                            $imageTarget = $this->getImageComponent($brizySection)
+                        );
+                        $this->handleRichTextItem(
+                            $elementContext,
+                            $this->browserPage
+                        );
+
+                        $imageStyles = $this->obtainImageStyles($elementContext, $this->browserPage);
+
+                        $this->targetImageSize($imageTarget, (int) $imageStyles['width'], (int) $imageStyles['height']);
+
+                        break;
+                }
+            }
+        }
+
+        foreach ((array) $mbSection['items'] as $mbSectionItem) {
             switch ($mbSectionItem['category']) {
-                case 'photo':
-                    // add the photo items on the right side of the block
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbSectionItem,
-                        $imageTarget = $this->getImageComponent($brizySection)
-                    );
-                    $this->handleRichTextItem(
-                        $elementContext,
-                        $this->browserPage
-                    );
-
-                    $imageStyles = $this->obtainImageStyles($elementContext, $this->browserPage);
-
-                    $this->targetImageSize($imageTarget, (int)$imageStyles['width'], (int)$imageStyles['height']);
-
-                    break;
                 case 'text':
 
-                    if($mbSectionItem['item_type']=='title' && !$showHeader) continue 2;
-                    if($mbSectionItem['item_type']=='secondary_title' && !$showSecondaryHeader) continue 2;
-                    if($mbSectionItem['item_type']=='body' && !$showBody) continue 2;
+                    if ($mbSectionItem['item_type'] == 'title' && !$showHeader) {
+                        continue 2;
+                    }
+                    if ($mbSectionItem['item_type'] == 'secondary_title' && !$showSecondaryHeader) {
+                        continue 2;
+                    }
+                    if ($mbSectionItem['item_type'] == 'body' && !$showBody) {
+                        continue 2;
+                    }
 
                     // add the text on the left side of th bock
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
