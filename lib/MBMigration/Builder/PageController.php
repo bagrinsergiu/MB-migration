@@ -462,6 +462,7 @@ class PageController
                     'settings' => $section['settings'],
                     'head' => [],
                     'slide' => [],
+                    'gallery' => [],
                     'items' => [],
                 ];
 
@@ -478,6 +479,7 @@ class PageController
                                 'settings' => $section['settings'],
                                 'head' => [],
                                 'slide' => [],
+                                'gallery' => [],
                                 'items' => [],
                             ];
 
@@ -503,9 +505,11 @@ class PageController
                                 $items['head'] = array_merge($items['head'], $Item);
                             } elseif ($key === 'slide') {
                                 $items['slide'] = array_merge($items['slide'], $Item);
+                            } elseif ($key === 'gallery') {
+                                $items['gallery'] = array_merge($items['gallery'], $Item);
                             } elseif ($key === 'items') {
                                 $items['items'] = array_merge($items['items'], $Item);
-                            }  elseif (!empty($Item)) {
+                            } elseif (!empty($Item)) {
                                 $items['items'][] = $Item;
                             }
                         }
