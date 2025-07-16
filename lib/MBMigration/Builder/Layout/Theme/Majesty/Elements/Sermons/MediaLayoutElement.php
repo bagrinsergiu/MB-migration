@@ -3,6 +3,13 @@ namespace MBMigration\Builder\Layout\Theme\Majesty\Elements\Sermons;
 
 class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Sermons\MediaLayoutElement
 {
+
+    protected function getHeightTypeHandleSectionStyles(): string
+    {
+        // default option custom
+        // auto/custom/full
+        return 'auto';
+    }
     protected function getPropertiesMainSection(): array
     {
         return [
