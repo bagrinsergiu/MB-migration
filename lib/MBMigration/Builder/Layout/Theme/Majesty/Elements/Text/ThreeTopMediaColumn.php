@@ -56,6 +56,16 @@ class ThreeTopMediaColumn extends ThreeTopMediaColumnElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "paddingTop" => 0,
+            "paddingTopSuffix" => "px",
+            "paddingBottom" => 100,
+            "paddingBottomSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
         ];
     }
 }

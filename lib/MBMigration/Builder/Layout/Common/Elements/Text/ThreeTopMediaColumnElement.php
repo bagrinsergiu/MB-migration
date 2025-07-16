@@ -146,7 +146,7 @@ class ThreeTopMediaColumnElement extends AbstractElement
             "marginRightSuffix" => "px",
             "marginBottom" => -42,
             "marginBottomSuffix" => "px",
-            "marginLeft" => 30,
+            "marginLeft" => 0,
             "marginLeftSuffix" => "px",
 
             "mobileMarginType" => "ungrouped",
