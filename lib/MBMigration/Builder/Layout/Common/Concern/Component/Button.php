@@ -78,11 +78,11 @@ trait Button
         return $brizySection;
     }
 
-    protected function setCustomStyles(array $customStyles, $brizyButton)
+    protected function setCustomStyles(array $customStyles, BrizyComponent $brizyButton)
     {
         foreach ($customStyles as $key => $value) {
             $paramName = 'set_' . $key;
-            $brizyButton->getItemValueWithDepth(0)
+            $brizyButton->getValue()
                 ->$paramName($value);
         }
     }
