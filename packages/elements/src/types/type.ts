@@ -35,6 +35,7 @@ export interface MenuItemEntry {
   itemMobileNavSelector?: MenuItemSelector;
   families: Families;
   defaultFamily: string;
+  isBgHoverItemMenu?: boolean;
 }
 
 export interface MenuEntry {
