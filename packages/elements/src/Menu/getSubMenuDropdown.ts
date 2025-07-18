@@ -20,9 +20,9 @@ const getV = (entry: SubMenuDropDownData) => {
   const { node, families, defaultFamily } = entry;
 
   const bgModel: Record<string, MValue<Literal | boolean>> = {
-    "menu-bg-color-hex": undefined,
-    "menu-bg-color-opacity": 1,
-    "menu-bg-color-palette": ""
+    "bg-color-hex": undefined,
+    "bg-color-opacity": 1,
+    "bg-color-palette": ""
   };
 
   const bgV = getModel({
