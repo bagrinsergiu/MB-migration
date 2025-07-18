@@ -64,12 +64,26 @@ class Head extends HeadElement
             ]
         );
 
+        $selector = "#main-navigation > ul";
+        $properties= ['border-bottom-style', 'border-bottom-color', 'border-bottom-width'];
+
+        $borderStyle = $this->scrapeStyle($selector, $properties);
+
         $headStyle = [
             'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['width']),
             'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['height']),
             'bg-color'=> ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
             'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
         ];
+
+        $borderStyleNormalized = [
+            'borderStyle'=> $borderStyle['border-bottom-style'] ?? 'solid',
+            'borderColorHex' => ColorConverter::rgba2hex($borderStyle['border-bottom-color']),
+            'borderWidth' => (int) $borderStyle['border-bottom-width'] ?? 1,
+            'borderColorOpacity' => 1,
+            'borderColorPalette' => '',
+        ];
+
 
         $brizySection->getItemWithDepth(0)
             ->getValue()
@@ -138,6 +152,16 @@ class Head extends HeadElement
                 ->$nameOption($value);
         }
 
+        foreach ($borderStyleNormalized as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+                ->getValue()
+                ->$nameOption($value);
+            $brizySection->getItemWithDepth(0, 0, 0, 3, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
+
         foreach ($imageLogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
             $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
@@ -163,6 +187,13 @@ class Head extends HeadElement
         return $brizySection;
     }
 
+    protected function menuItemStylesValueConditions(array &$menuItemStyles) :void
+    {
+        if(!empty($menuItemStyles['data'])){
+            $menuItemStyles['data']['itemPadding'] = 0;
+        }
+    }
+
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
 
@@ -185,7 +216,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation>ul>li>a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li:not(.selected) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
@@ -195,7 +226,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation", "pseudoEl" => ""];
+        return $this->getThemeSubMenuNotSelectedItemSelector();
     }
 
     public function getThemeMobileNavSelector(): array
@@ -216,6 +247,11 @@ class Head extends HeadElement
     public function getThemeMobileBtnSelector(): array
     {
         return $this->getThemeMenuItemMobileSelector();
+    }
+
+    public function isBgHoverItemMenu(): bool
+    {
+        return true;
     }
 
     protected function getPropertiesIconMenuItem(): array
@@ -285,16 +321,21 @@ class Head extends HeadElement
 
     public function getMenuItemBgSelector(): array
     {
-        return $this->getThemeMenuItemSelector();
+        return ["selector" => "#main-navigation>ul>li:not(.selected) span", "pseudoEl" => ""];
     }
 
     public function getMenuHoverItemBgSelector(): array
     {
-        return $this->getThemeSubMenuItemBGSelector();
+        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
     public function getNotSelectedMenuItemBgSelector(): array
     {
-        return $this->getThemeMenuItemSelector();
+        return ["selector" => "#main-navigation>ul>li:not(.selected)", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ""];
     }
 }
