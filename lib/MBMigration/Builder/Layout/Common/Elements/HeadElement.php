@@ -11,6 +11,7 @@ use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
+use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
@@ -343,15 +344,9 @@ abstract class HeadElement extends AbstractElement
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
 
-            $entrySubMenu = [
-                'itemSelector' => $this->getThemeSubMenuSelectedItemSelector(),
-                'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
-                'families' => '',
-                'defaultFamily' => [],
-                'hover' => true,
-            ];
+            $this->browserPage->getPageScreen('_1_1');
 
-            $activeMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
+            $activeMenuSubItemStyles = $this->scrapeStyle($this->getThemeSubMenuSelectedItemSelector()['selector'],['color']);
 
             $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
@@ -375,8 +370,8 @@ abstract class HeadElement extends AbstractElement
 
             $this->browserPage->getPageScreen(2);
 
-//            $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = $activeMenuSubItemStyles['data']['activeSubMenuColorHex'];
-//            $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = $activeMenuSubItemStyles['data']['activeSubMenuColorOpacity'];
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
 
         } else {
 
