@@ -226,7 +226,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ""];
+        return $this->getThemeSubMenuNotSelectedItemSelector();
     }
 
     public function getThemeMobileNavSelector(): array
@@ -332,5 +332,10 @@ class Head extends HeadElement
     public function getNotSelectedMenuItemBgSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected)", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ""];
     }
 }

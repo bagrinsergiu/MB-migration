@@ -299,6 +299,14 @@ abstract class HeadElement extends AbstractElement
             'hover' => false,
         ]);
 
+        $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getSubMenuDropdown', [
+            'nodeSelector' => $this->getThemeSubMenuItemDropDownSelector(),
+            'families' => $families,
+            'defaultFamily' => $defaultFamilies,
+        ]);
+
+        $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], $menuSubItemDropdownStyles['data']);
+
         if (isset($menuSubItemStyles['error'])) {
             $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
@@ -328,7 +336,7 @@ abstract class HeadElement extends AbstractElement
     {
         if ($this->browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()['selector'])) {
 
-            $this->browserPage->getPageScreen(1);
+            $this->browserPage->getPageScreen('_1');
 
             $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
@@ -367,8 +375,8 @@ abstract class HeadElement extends AbstractElement
 
             $this->browserPage->getPageScreen(2);
 
-            $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = $activeMenuSubItemStyles['data']['activeSubMenuColorHex'];
-            $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = $activeMenuSubItemStyles['data']['activeSubMenuColorOpacity'];
+//            $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = $activeMenuSubItemStyles['data']['activeSubMenuColorHex'];
+//            $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = $activeMenuSubItemStyles['data']['activeSubMenuColorOpacity'];
 
         } else {
 
@@ -466,6 +474,8 @@ abstract class HeadElement extends AbstractElement
     abstract protected function getThemeSubMenuItemClassSelected(): array;
 
     abstract protected function getThemeSubMenuItemSelector(): array;
+
+    abstract protected function getThemeSubMenuItemDropDownSelector(): array;
 
     abstract protected function getThemeMobileBtnSelector(): array;
 
