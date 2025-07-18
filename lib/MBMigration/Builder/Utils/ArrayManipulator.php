@@ -42,10 +42,11 @@ class ArrayManipulator
         return $this->array;
     }
 
-    public function groupItemsListByParentId($list, $sectionCategory): array
+    public function groupItemsListByParentId($list, $sectionCategory, $typeSection): array
     {
         $parents = [];
         $itemsList = [];
+        $parentItem = [];
 
         foreach ($list as $item) {
             if ($item["parent_id"] == null && $item["content"] == null && $item["item_type"] == null) {
@@ -72,9 +73,20 @@ class ArrayManipulator
             case 'tabs':
                 return ['head' => $itemsList, 'items' => $parents];
             default:
+                return $this->itemSwitcher($itemsList, $parentItem, $typeSection);
+        }
+    }
+
+    public function itemSwitcher($itemsList, $parentItem, $typeSection)
+    {
+        switch ($typeSection) {
+            case 'left-gallery':
+                return ['items' => $itemsList, 'gallery' => $parentItem];
+            default:
                 return $itemsList;
         }
     }
+
 
     public function groupItemsListByParentId__q($list, $sectionCategory): array
     {

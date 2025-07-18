@@ -38,6 +38,11 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    public function getThemeMenuItemActiveSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
     public function getThemeMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected)>a", "pseudoEl" => ""];
@@ -56,11 +61,6 @@ class Head extends HeadElement
     public function getThemeSubMenuItemClassSelected(): array
     {
         return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li", "className" => "selected"];
-    }
-
-    public function getThemeMenuItemBgSelector(): array
-    {
-        return $this->getThemeMenuItemSelector();
     }
 
     public function getThemeSubMenuItemBGSelector(): array
@@ -262,5 +262,20 @@ class Head extends HeadElement
     public function getThemeSubMenuSelectedItemSelector(): array
     {
         return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    public function getMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getMenuHoverItemBgSelector(): array
+    {
+        return $this->getThemeSubMenuItemBGSelector();
+    }
+
+    public function getNotSelectedMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
     }
 }

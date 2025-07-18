@@ -31,9 +31,11 @@ export interface MenuItemEntry {
   itemBgSelector: MenuItemSelector;
   itemPaddingSelector: MenuItemSelector;
   itemMobileBtnSelector?: MenuItemSelector;
+  itemActiveSelector?: MenuItemSelector;
   itemMobileNavSelector?: MenuItemSelector;
   families: Families;
   defaultFamily: string;
+  isBgHoverItemMenu?: boolean;
 }
 
 export interface MenuEntry {
@@ -67,4 +69,10 @@ export interface ElementModel {
 
 export interface EmbedModel {
   type: "EmbedCode";
+}
+
+export interface SubMenuDropDownEntry {
+  nodeSelector: MenuItemSelector;
+  families: Families;
+  defaultFamily: string;
 }

@@ -38,6 +38,11 @@ class BrizyComponentValue implements JsonSerializable
 
     public function add($field, $value, $position=null)
     {
+        // Initialize the field as an empty array if it doesn't exist
+        if (!isset($this->fields[$field])) {
+            $this->fields[$field] = [];
+        }
+
         if($position === null) {
             $this->fields[$field] = array_merge($this->fields[$field], $value);
         } else {

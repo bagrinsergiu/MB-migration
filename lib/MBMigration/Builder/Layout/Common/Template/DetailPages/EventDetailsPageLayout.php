@@ -7,7 +7,6 @@ use MBMigration\Builder\Utils\ColorConverter;
 
 class EventDetailsPageLayout extends DetailsPage
 {
-
     public function setStyleDetailPage(array $sectionPalette): BrizyComponent
     {
         if(!empty(self::$cacheEvent))
@@ -118,7 +117,7 @@ class EventDetailsPageLayout extends DetailsPage
             'detailButtonBgColorPalette' => '',
 
             'hoverDetailButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'],
-            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
+            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             'hoverDetailButtonBgColorPalette' => '',
 
             'metaLinksColorHex' => $sectionPalette['link'],
@@ -137,24 +136,24 @@ class EventDetailsPageLayout extends DetailsPage
             'hoverSubscribeEventButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 1,
             'hoverSubscribeEventButtonColorPalette' => '',
 
-            'subscribeEventButtonBorderStyle' => 'solid',
-            'subscribeEventButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'subscribeEventButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
-            'subscribeEventButtonBorderColorPalette' => '',
-
-            "subscribeEventButtonBorderWidthType" => "grouped",
-            "subscribeEventButtonBorderWidth" => 1,
-            "subscribeEventButtonBorderTopWidth" => 1,
-            "subscribeEventButtonBorderRightWidth" => 1,
-            "subscribeEventButtonBorderBottomWidth" => 1,
-            "subscribeEventButtonBorderLeftWidth" => 1,
+//            'subscribeEventButtonBorderStyle' => 'solid',
+//            'subscribeEventButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+//            'subscribeEventButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
+//            'subscribeEventButtonBorderColorPalette' => '',
+//
+//            "subscribeEventButtonBorderWidthType" => "grouped",
+//            "subscribeEventButtonBorderWidth" => 1,
+//            "subscribeEventButtonBorderTopWidth" => 1,
+//            "subscribeEventButtonBorderRightWidth" => 1,
+//            "subscribeEventButtonBorderBottomWidth" => 1,
+//            "subscribeEventButtonBorderLeftWidth" => 1,
 
             'subscribeEventButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'],
             'subscribeEventButtonBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             'subscribeEventButtonBgColorPalette' => '',
 
             'hoverSubscribeEventButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'],
-            'hoverSubscribeEventButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
+            'hoverSubscribeEventButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             'hoverSubscribeEventButtonBgColorPalette' => '',
         ];
 
@@ -224,17 +223,17 @@ class EventDetailsPageLayout extends DetailsPage
             'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 1,
             'hoverDetailButtonColorPalette' => '',
 
-            'detailButtonBorderStyle' => 'solid',
-            'detailButtonBorderColorHex' => $basicButtonStyleHover['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'detailButtonBorderColorOpacity' => $basicButtonStyleHover['border-top-color-opacity'] ?? 1,
-            'detailButtonBorderColorPalette' => '',
-
-            "detailButtonBorderWidthType" => "grouped",
-            "detailButtonBorderWidth" => 1,
-            "detailButtonBorderTopWidth" => 1,
-            "detailButtonBorderRightWidth" => 1,
-            "detailButtonBorderBottomWidth" => 1,
-            "detailButtonBorderLeftWidth" => 1,
+//            'detailButtonBorderStyle' => 'solid',
+//            'detailButtonBorderColorHex' => $basicButtonStyleHover['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+//            'detailButtonBorderColorOpacity' => $basicButtonStyleHover['border-top-color-opacity'] ?? 1,
+//            'detailButtonBorderColorPalette' => '',
+//
+//            "detailButtonBorderWidthType" => "grouped",
+//            "detailButtonBorderWidth" => 1,
+//            "detailButtonBorderTopWidth" => 1,
+//            "detailButtonBorderRightWidth" => 1,
+//            "detailButtonBorderBottomWidth" => 1,
+//            "detailButtonBorderLeftWidth" => 1,
 
             'subscribeEventButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'],
             'subscribeEventButtonColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
@@ -248,17 +247,17 @@ class EventDetailsPageLayout extends DetailsPage
             'hoverSubscribeEventButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
             'hoverSubscribeEventButtonBgColorPalette' => '',
 
-            'subscribeEventButtonBorderStyle' => 'solid',
-            'subscribeEventButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'subscribeEventButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
-            'subscribeEventButtonBorderColorPalette' => '',
-
-            "subscribeEventButtonBorderWidthType" => "grouped",
-            "subscribeEventButtonBorderWidth" => 1,
-            "subscribeEventButtonBorderTopWidth" => 1,
-            "subscribeEventButtonBorderRightWidth" => 1,
-            "subscribeEventButtonBorderBottomWidth" => 1,
-            "subscribeEventButtonBorderLeftWidth" => 1,
+//            'subscribeEventButtonBorderStyle' => 'solid',
+//            'subscribeEventButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+//            'subscribeEventButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
+//            'subscribeEventButtonBorderColorPalette' => '',
+//
+//            "subscribeEventButtonBorderWidthType" => "grouped",
+//            "subscribeEventButtonBorderWidth" => 1,
+//            "subscribeEventButtonBorderTopWidth" => 1,
+//            "subscribeEventButtonBorderRightWidth" => 1,
+//            "subscribeEventButtonBorderBottomWidth" => 1,
+//            "subscribeEventButtonBorderLeftWidth" => 1,
 
             "typographyBold" => false,
             "typographyItalic" => false,
