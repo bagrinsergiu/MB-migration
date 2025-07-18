@@ -70,3 +70,9 @@ export interface ElementModel {
 export interface EmbedModel {
   type: "EmbedCode";
 }
+
+export interface SubMenuDropDownEntry {
+  nodeSelector: MenuItemSelector;
+  families: Families;
+  defaultFamily: string;
+}
