@@ -3,13 +3,19 @@ export function getLineHeight(value: string, fontSize: string): string {
     return "1_2";
   }
 
-  const lineHeightValue = value.replace("px", "");
-  const _value = Number(value);
+  const numericLineHeight = parseFloat(value); // handles "px" and converts to number
+  const numericFontSize = parseFloat(fontSize);
 
-  const lineHeight =
-    Number(lineHeightValue) / ((_value / Number(fontSize)) * _value);
+  if (
+    isNaN(numericLineHeight) ||
+    isNaN(numericFontSize) ||
+    numericFontSize === 0
+  ) {
+    return "1";
+  }
 
-  const [integerPart, decimalPart = ""] = lineHeight.toString().split(".");
+  const ratio = numericLineHeight / numericFontSize;
+  const [integerPart, decimalPart = ""] = ratio.toFixed(2).split(".");
 
-  return decimalPart ? integerPart + "_" + decimalPart[0] : integerPart;
+  return decimalPart ? `${integerPart}_${decimalPart[0]}` : integerPart;
 }
