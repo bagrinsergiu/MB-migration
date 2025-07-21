@@ -6,6 +6,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\ThreeTopMedia;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Events\EventLayoutElement;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Sermons\MediaLayoutElement;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Footer;
@@ -85,6 +86,9 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new AccordionLayoutElement($this->blockKit['blocks']['accordion-layout'], $browserPage);
             case 'small-groups-list':
                 return new SmallGroupsListElement($this->blockKit['blocks']['small-groups-list'], $browserPage);
+
+            case 'three-top-media':
+                return new ThreeTopMedia($this->blockKit['blocks']['three-top-media'], $browserPage);
 
 
 //            case 'two-right-media-circle':
