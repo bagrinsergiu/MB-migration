@@ -67,7 +67,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 //            $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
 //        }
 
-        $colorArrows = ColorConverter::getContrastColor($properties['background-color'] ?? '#FFFFFF');
+        $colorArrows = ColorConverter::getContrastColor($properties['background-color']);
 
         $brizySection->getValue()
             ->set_sliderArrowsColorHex($colorArrows)
