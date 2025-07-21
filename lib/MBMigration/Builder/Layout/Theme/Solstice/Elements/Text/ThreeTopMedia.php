@@ -3,23 +3,23 @@
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Text\ThreeTopMediaColumnElement;
+use MBMigration\Builder\Layout\Common\Elements\Text\ThreeTopMediaCircleElement;
 
-class ThreeTopMedia extends ThreeTopMediaColumnElement
+class ThreeTopMedia extends ThreeTopMediaCircleElement
 {
     protected function getImage1Component(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0)->addRadius(0);
     }
 
     protected function getImage2Component(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 2, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 2, 0, 0)->addRadius();
     }
 
     protected function getImage3Component(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 3, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 3, 0, 0)->addRadius();
     }
 
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
