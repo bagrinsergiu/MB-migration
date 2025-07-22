@@ -128,6 +128,15 @@ export const getModel = (data: Model) => {
         dic[toCamelCase(key)] = +(borderWidth ?? 1);
         break;
       }
+      case "border-top-width":
+      case "border-bottom-width":
+      case "border-left-width":
+      case "border-right-width": {
+        const borderWidth = `${styles[key]}`.replace(/px/g, "");
+
+        dic[toCamelCase(key)] = +(borderWidth ?? 1);
+        break;
+      }
       default: {
         dic[toCamelCase(key)] = styles[key] ?? modelDefaults[key];
       }
