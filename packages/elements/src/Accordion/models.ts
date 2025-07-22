@@ -6,10 +6,6 @@ export const model = {
   "line-height": undefined,
   "letter-spacing": undefined,
   "font-style": "",
-  "border-color-hex": undefined,
-  "border-color-opacity": 1,
-  "border-color-palette": "",
-  "border-width": 1,
   "color-hex": undefined,
   "color-opacity": 1,
   "color-palette": "",
@@ -17,4 +13,15 @@ export const model = {
   "bg-color-opacity": 1,
   "bg-color-palette": "",
   uppercase: false
+};
+
+export const borderModel = {
+  "border-color-hex": undefined,
+  "border-color-opacity": 1,
+  "border-color-palette": "",
+  "border-width": 1,
+  "border-top-width": 1,
+  "border-bottom-width": 1,
+  "border-left-width": 1,
+  "border-right-width": 1
 };

@@ -1,6 +1,6 @@
 import { getDataByEntry } from "../utils/getDataByEntry";
 import { getModel } from "../utils/getModel";
-import { model } from "./models";
+import { borderModel, model } from "./models";
 import { Entry, Families, Output } from "elements/src/types/type";
 import { createData } from "elements/src/utils/getData";
 import * as Num from "utils/src/reader/number";
@@ -44,8 +44,16 @@ const getAccordionV = (data: NavData) => {
     defaultFamily: data.defaultFamily
   });
 
+  const borderV = getModel({
+    node: li,
+    modelDefaults: borderModel,
+    families: data.families,
+    defaultFamily: data.defaultFamily
+  });
+
   return {
     ...v,
+    ...borderV,
     ...(hasIcon && {
       navIcon: "thin",
       navIconSize: "custom",
