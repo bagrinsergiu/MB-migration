@@ -24,6 +24,11 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
         $this->handleSectionStyles($elementContext, $this->browserPage);
 
+        $accordionElementStyles['borderWidthType'] = 'ungrouped';
+        $accordionElementStyles['borderStyle"'] = 'solid';
+        $accordionElementStyles['borderBottomWidth"'] = $accordionElementStyles['borderTopWidth'] ?? 0;
+        $accordionElementStyles['spacing"'] = -1;
+
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionHeaderComponent($brizySection));
 
         $this->handleRichTextHead($elementContext, $this->browserPage);
