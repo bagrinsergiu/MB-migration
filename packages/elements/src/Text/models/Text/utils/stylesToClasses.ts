@@ -8,10 +8,8 @@ import {
   textAlign
 } from "../../../utils/common";
 import { getLetterSpacing } from "../../../utils/styles/getLetterSpacing";
-import { getLineHeight } from "../../../utils/styles/getLineHeight";
 import { Literal } from "utils";
 import * as Num from "utils/src/reader/number";
-import { read } from "utils/src/reader/string";
 
 export const stylesToClasses = (
   styles: Record<string, Literal>,
@@ -57,12 +55,7 @@ export const stylesToClasses = (
         break;
       }
       case "line-height": {
-        const desktopLineHeight =
-          typeof value === "string"
-            ? getLineHeight(value, read(styles["font-size"]) ?? "")
-            : defaultDesktopLineHeight;
-
-        classes.push(`brz-lh-lg-${desktopLineHeight}`);
+        classes.push(`brz-lh-lg-${defaultDesktopLineHeight}`);
         classes.push(`brz-lh-sm-${defaultTabletLineHeight}`);
         classes.push(`brz-lh-xs-${defaultMobileLineHeight}`);
         break;
