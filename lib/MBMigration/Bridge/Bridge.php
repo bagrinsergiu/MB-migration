@@ -210,7 +210,7 @@ class Bridge
             ->setStatusCode($code);
     }
 
-    public function insertMigrationMapping($brz_project_id, $source_project_id, $mata_data = '{}')
+    public function insertMigrationMapping($brz_project_id, $source_project_id, $mata_data = '{}', $table = 'MG_prepare_mapping.migration_list_w9')
     {
         try {
             return $this->db->insert('migrations_mapping',
@@ -754,7 +754,10 @@ class Bridge
                     continue;
                 }
 
-                $brizyApi->setLabelManualMigration(true, (int)$value['brz_project_id']);
+//                $brizyApi->setLabelManualMigration(true, (int)$value['brz_project_ids']);
+
+                $brizyApi->setCloningLink(true, (int)$value['brz_project_id']);
+
 
 //                $result = $this->insertMigrationMapping($value['brizy_project_id'], $key, json_encode(['data' => '2025-05-13']));
             }

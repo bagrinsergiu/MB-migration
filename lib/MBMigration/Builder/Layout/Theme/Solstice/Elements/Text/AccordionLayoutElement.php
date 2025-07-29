@@ -22,7 +22,10 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
         $accordionElementStyles = $this->getAccordionElementStyles($sectionSelector, $this->browserPage, $families);
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
         $accordionElementStyles['borderWidthType'] = 'ungrouped';
         $accordionElementStyles['borderStyle"'] = 'solid';
