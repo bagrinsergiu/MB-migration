@@ -84,6 +84,7 @@ class Head extends HeadElement
             'borderColorPalette' => '',
         ];
 
+        $brizySection->getItemWithDepth(0, 0, 0, 2, 0)->addMenuBorderRadius(0);
 
         $brizySection->getItemWithDepth(0)
             ->getValue()
