@@ -117,7 +117,7 @@ class Head extends HeadElement
 
         $sectionlogoOptions = [
             'horizontalAlign' => 'center',
-            'mobileHorizontalAlign' => 'left',
+            'mobileHorizontalAlign' => 'center',
 
             'mobileMarginType' => 'grouped',
             'mobileMargin' => 0,

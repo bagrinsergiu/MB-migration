@@ -439,4 +439,9 @@ class Head extends HeadElement
     {
         return $this->getThemeMenuItemSelector();
     }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ""];
+    }
 }

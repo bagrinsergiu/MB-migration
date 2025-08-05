@@ -252,7 +252,7 @@ class PageController
     /**
      * @throws Exception
      */
-    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, $i = 0, $parent = null){
+    public function createPage_(array &$pageList, $existingBrizyPages, bool $hiddenPage, $i = 0, $parent = null){
         foreach ($pageList as $i => &$page) {
 
             if (!empty($page['child'])) {
@@ -314,6 +314,114 @@ class PageController
                 }
             }
 
+        }
+    }
+
+    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, $i = 0, $parent = null)
+    {
+        if ($parent === null && !$this->cache->get('homePageSlug')) {
+//            $homePage = $this->findHomePage($pageList);
+            $homePage = $this->findHomePageRecursive($pageList);
+            if ($homePage) {
+                $this->cache->set('homePageSlug', $homePage['slug']);
+            }
+        }
+
+        foreach ($pageList as $i => &$page) {
+            if (!empty($page['child'])) {
+                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage, $i, $page['parent_id']);
+            }
+
+            if ($page['hidden'] !== $hiddenPage) {
+                continue;
+            }
+
+            if (isset($existingBrizyPages[$page['slug']])) {
+                continue;
+            }
+
+            $title = $page['name'];
+
+            if ($page['landing'] == true) {
+                $isHome = ($page['slug'] === $this->cache->get('homePageSlug'));
+                try {
+                    $newPage = $this->creteNewPage(
+                        $page['slug'],
+                        $page['name'],
+                        $title,
+                        $page['protectedPage'],
+                        false,
+                        $isHome
+                    );
+
+                    if ($newPage === false) {
+                        Logger::instance()->warning('Failed to create page', $page);
+                    } else {
+                        $pageStatus = $hiddenPage ? "hidden" : "public";
+                        Logger::instance()->info('Successfully created ' . $pageStatus . ' page', $page);
+                        $page['collection'] = $newPage;
+                    }
+
+                } catch (\Exception $e) {
+                    Logger::instance()->warning('Failed to create page', $page);
+                }
+            } else {
+                if (!empty($page['child']) && !$page['hidden']) {
+                    foreach ($page['child'] as $child) {
+                        if (!$child['hidden']) {
+                            $page['collection'] = $child['collection'];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function findHomePage(array $pages): ?array {
+        $candidates = array_filter($pages, function ($page) {
+            return $page['parent_id'] === null && $page['landing'] === true;
+        });
+
+        if (empty($candidates)) {
+            return null;
+        }
+
+        usort($candidates, function ($a, $b) {
+            return $a['position'] <=> $b['position'];
+        });
+
+        return $candidates[0];
+    }
+
+    public function findHomePageRecursive(array $pages): ?array {
+        $candidates = [];
+
+        $this->collectLandingPages($pages, $candidates);
+
+        if (empty($candidates)) {
+            return null;
+        }
+
+        usort($candidates, function ($a, $b) {
+            if ($a['level'] !== $b['level']) {
+                return $a['level'] <=> $b['level'];
+            }
+            return $a['position'] <=> $b['position'];
+        });
+
+        return $candidates[0];
+    }
+
+    private function collectLandingPages(array $pages, array &$candidates, int $level = 0): void {
+        foreach ($pages as $page) {
+            if ($page['landing'] === true) {
+                $page['level'] = $level;
+                $candidates[] = $page;
+            }
+            if (!empty($page['child'])) {
+                $this->collectLandingPages($page['child'], $candidates, $level + 1);
+            }
         }
     }
 

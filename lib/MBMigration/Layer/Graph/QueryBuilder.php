@@ -1070,6 +1070,37 @@ class QueryBuilder
         return true;
     }
 
+    public function SaveCollectionItem($codeCss ): bool
+    {
+        $faviconMetafild = $this->getMetafieldByName('favicon');
+
+        $mutation = (new Mutation('SaveCollectionItem'))
+            ->setOperationName('SaveCollectionItem')
+            ->setVariables([new Variable('metafield', 'updateMetafieldInput', true)])
+            ->setArguments(['input' => '$metafield'])
+            ->setSelectionSet(
+                [
+                    (new Query('metafield'))->setSelectionSet(
+                        [
+                            'id',
+                            'value',
+                        ]
+                    ),
+                ]
+            );
+
+        $variables = [
+            'metafield' => [
+                'id' => $faviconMetafild['id'],
+                'value' => $icon,
+            ],
+        ];
+
+        $this->runQuery($mutation, true, $variables);
+
+        return true;
+    }
+
     public function getTypeFieldSelectionSet()
     {
         return [
