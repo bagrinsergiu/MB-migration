@@ -13,6 +13,7 @@ use MBMigration\Layer\HTTP\RequestHandlerGET;
 use MBMigration\Layer\HTTP\RequestHandlerPOST;
 use MBMigration\Layer\MB\MBProjectDataCollector;
 use MBMigration\MigrationRunnerWave;
+use MBMigration\WaveProc;
 use Symfony\Component\HttpFoundation\Request;
 
 class Bridge
@@ -160,6 +161,25 @@ class Bridge
     public function getMessageResponse(): MgResponse
     {
         return $this->mgResponse;
+    }
+
+    public function waveMigration(array $projectUuids, int $batchSize = 3)
+    {
+        try {
+            $muuid = time() + random_int(999, 100000);
+
+            $waveProc = new WaveProc($projectUuids, $this->db, $batchSize, $muuid);
+            $waveProc->runMigrations();
+
+            $this->mgResponse
+                ->setMessage('migrated successfully')
+                ->setStatusCode(200);
+
+        } catch (\Exception $e) {
+            $this->mgResponse
+                ->setMessage($e->getMessage(), 'error')
+                ->setStatusCode(400);
+        }
     }
 
 
@@ -582,10 +602,12 @@ class Bridge
             return $this;
         }
 
-        $migrationRunner = new MigrationRunnerWave($this->app, $this, $inputProperties['list_uuid'], $inputProperties['workspaces'], $inputProperties['batchSize'], $inputProperties['mgrManual']);
-        $migrationRunner->runMigrations();
+        $this->waveMigration($inputProperties['list_uuid']);
 
-        $this->prepareResponseMessage('migrationWave completed');
+//        $migrationRunner = new MigrationRunnerWave($this->app, $this, $inputProperties['list_uuid'], $inputProperties['workspaces'], $inputProperties['batchSize'], $inputProperties['mgrManual']);
+//        $migrationRunner->runMigrations();
+
+//        $this->prepareResponseMessage('migrationWave completed');
 
         return $this;
     }

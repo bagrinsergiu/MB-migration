@@ -56,14 +56,12 @@ abstract class FooterElement extends AbstractElement
             if($items['order_by'] == 0){
                 $this->handleItemMbSection($items, $elementContext);
             }
-
         }
 
         foreach ($mbSection['items'] as $items) {
             if($items['order_by'] == 1){
                 $this->handleItemMbSection($items, $elementContext);
             }
-
         }
 
         $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
@@ -88,38 +86,40 @@ abstract class FooterElement extends AbstractElement
                 $this->handleRichTextItems($elementContext, $this->browserPage);
                 break;
             case 'photo':
-                $arrowSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+                if(!empty($mbSection['content']) && $mbSection['image']['type'] == 'image'){
+                    $arrowSelector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
 
-                $imgStyles = $this->getDomElementStyles(
-                    $arrowSelector,
-                    ['width', 'height'],
-                    $this->browserPage,
-                );
+                    $imgStyles = $this->getDomElementStyles(
+                        $arrowSelector,
+                        ['width', 'height'],
+                        $this->browserPage,
+                    );
 
-                if(!empty($imgStyles)) {
-                    $additionalParams = [
-                        'sizeType' => 'custom',
-                        'width' => (int) $imgStyles['width'],
-                        'height' => (int) $imgStyles['height'],
-                        'imageWidth' => (int) $imgStyles['width'],
-                        'imageHeight' => (int) $imgStyles['height'],
-                        'widthSuffix' => 'px',
-                        'heightSuffix' => 'px',
+                    if (!empty($imgStyles)) {
+                        $additionalParams = [
+                            'sizeType' => 'custom',
+                            'width' => (int)$imgStyles['width'],
+                            'height' => (int)$imgStyles['height'],
+                            'imageWidth' => (int)$imgStyles['width'],
+                            'imageHeight' => (int)$imgStyles['height'],
+                            'widthSuffix' => 'px',
+                            'heightSuffix' => 'px',
 
-                    ];
-                } else {
-                    $additionalParams = [
-                        'sizeType' => 'custom',
-                        'width' =>  360,
-                        'height' => 40,
-                        'widthSuffix' => 'px',
-                        'heightSuffix' => 'px',
-                    ];
+                        ];
+                    } else {
+                        $additionalParams = [
+                            'sizeType' => 'custom',
+                            'width' => 360,
+                            'height' => 40,
+                            'widthSuffix' => 'px',
+                            'heightSuffix' => 'px',
+                        ];
+                    }
+
+                    $brizySectionItemComponent = $elementContext->getBrizySection();
+
+                    $brizySectionItemComponent->addImage($mbSection, $additionalParams);
                 }
-
-                $brizySectionItemComponent = $elementContext->getBrizySection();
-
-                $brizySectionItemComponent->addImage($mbSection, $additionalParams);
                 break;
 
         }

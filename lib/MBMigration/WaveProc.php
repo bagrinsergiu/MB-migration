@@ -3,6 +3,7 @@
 namespace MBMigration;
 
 use MBMigration\Core\Logger;
+use MBMigration\Layer\DataSource\driver\MySQL;
 
 require_once dirname(__DIR__) . '/../vendor/autoload.php';
 
@@ -12,9 +13,14 @@ class WaveProc
     private int $batchSize;
     private string $baseUrl;
     private string $logFile;
-    const ID_WORKSPACE = 22663015;
+    const ID_WORKSPACE = 22700013;
+    private MySQL $DB;
+    /**
+     * @var mixed|null
+     */
+    private $muuid;
 
-    public function __construct(array $projectUuids, int $batchSize = 3)
+    public function __construct(array $projectUuids, int $batchSize = 3, $muuid = null)
     {
         try {
             Logger::initialize(
@@ -22,11 +28,23 @@ class WaveProc
                 'debug',
                 './migration_wave_proc.log'
             );
+
             Logger::instance()->info('--------WaveProc initialization started--------');
             $this->projectUuids = $projectUuids;
             $this->batchSize = $batchSize;
             $this->baseUrl = getenv('BASE_URL') ?: 'http://localhost:8080/';
-            $this->logFile = 'migration_results_'. date("d-m-Y_H") .'.json';
+            $this->logFile = 'migration_results_' . date("d-m-Y_H") . '.json';
+            try {
+                $this->DB = new MySQL(
+
+                );
+                $this->DB->doConnect();
+                Logger::instance()->info('DB connection initialized');
+            } catch (\Exception $e) {
+                Logger::instance()->error('Error initializing DB connection: ' . $e->getMessage(), ['exception' => $e]);
+            }
+            $this->muuid = $muuid;
+
             Logger::instance()->info('WaveProc initialized with ' . count($projectUuids) . ' projects and batch size ' . $batchSize);
             Logger::instance()->debug('Base URL: ' . $this->baseUrl);
             Logger::instance()->debug('Log file: ' . $this->logFile);
@@ -35,17 +53,55 @@ class WaveProc
         }
     }
 
+    /**
+     * Get already migrated project UUIDs from the database
+     *
+     * @return array Array of already migrated project UUIDs
+     */
+    private function getAlreadyMigratedProjects(): array
+    {
+        try {
+            Logger::instance()->info('Checking for already migrated projects');
+
+            // Create placeholders for the IN clause
+            $placeholders = implode(',', array_fill(0, count($this->projectUuids), '?'));
+
+            // Only check for projects that are in our current batch
+            $sql = "SELECT mb_project_uuid FROM migration_result_list WHERE mb_project_uuid IN ($placeholders)";
+
+            $migratedProjects = $this->DB->getAllRows($sql, $this->projectUuids);
+
+            $migratedUuids = [];
+            foreach ($migratedProjects as $project) {
+                $migratedUuids[] = $project['mb_project_uuid'];
+            }
+
+            Logger::instance()->info('Found ' . count($migratedUuids) . ' already migrated projects out of ' . count($this->projectUuids));
+            return $migratedUuids;
+        } catch (\Exception $e) {
+            Logger::instance()->error('Error getting already migrated projects: ' . $e->getMessage(), ['exception' => $e]);
+            return [];
+        }
+    }
+
     public function runMigrations(): void
     {
         Logger::instance()->info('Starting migration process for ' . count($this->projectUuids) . ' projects');
 
-        $pending = $this->projectUuids;
+        // Get already migrated projects
+        $alreadyMigratedUuids = $this->getAlreadyMigratedProjects();
+
+        // Filter out already migrated projects
+        $filteredUuids = array_diff($this->projectUuids, $alreadyMigratedUuids);
+        Logger::instance()->info('After filtering, ' . count($filteredUuids) . ' projects need migration');
+
+        $pending = $filteredUuids;
         $activeHandles = [];
         $multiHandle = curl_multi_init();
 
         try {
-            $results = $this->loadExistingResults();
-            Logger::instance()->info('Loaded ' . count($results) . ' existing results');
+//            $results = $this->loadExistingResults();
+//            Logger::instance()->info('Loaded ' . count($results) . ' existing results');
 
             $totalProcessed = 0;
 
@@ -98,13 +154,19 @@ class WaveProc
 
                             if (json_last_error() !== JSON_ERROR_NONE) {
                                 $errorMessage = "JSON decode error for UUID " . $uuid . ": " . json_last_error_msg();
-                                Logger::instance()->error($errorMessage,['value' => $response]);
+                                Logger::instance()->error($errorMessage, ['value' => $response]);
+
+                                curl_multi_remove_handle($multiHandle, $ch);
+                                curl_close($ch);
+                                unset($activeHandles[$uuid]);
+                                $totalProcessed++;
                                 continue;
                             }
 
+
                             $status = $info['http_code'] === 200 ? 'success' : 'error';
 
-                            $results[$uuid] = [
+                            $p_result = [
                                 'status' => $status,
                                 'brizy_project_domain' => $decode_response["value"]['brizy_project_domain'] ?? 'unknown',
                                 'brizy_project_id' => $decode_response["value"]['brizy_project_id'] ?? 'unknown',
@@ -112,6 +174,8 @@ class WaveProc
                                 'mb_site_id' => $decode_response["value"]['mb_site_id'] ?? 'unknown',
                                 'response' => $response
                             ];
+
+                            $results[$uuid] = $p_result;
 
                             if ($status === 'success') {
                                 Logger::instance()->info('Migration successful for UUID: ' . $uuid);
@@ -125,7 +189,15 @@ class WaveProc
                             $totalProcessed++;
 
                             try {
-                                $this->saveResults($results);
+                                $this->insert('migration_result_list', [
+                                    'migration_uuid' => $this->muuid,
+                                    'brz_project_id' => $p_result['brizy_project_id'],
+                                    'brizy_project_domain' => $p_result['brizy_project_domain'],
+                                    'mb_project_uuid' => $uuid,
+                                    'result_json' => json_encode($p_result)
+                                ]);
+
+//                                $this->saveResults($results);
                                 Logger::instance()->debug('Results saved for UUID: ' . $uuid);
                             } catch (\Exception $e) {
                                 Logger::instance()->error('Error saving results: ' . $e->getMessage(), ['exception' => $e]);
@@ -242,175 +314,109 @@ class WaveProc
             throw $e;
         }
     }
+
+    public function insert(string $table, array $data)
+    {
+        try {
+            return $this->DB->insert($table, $data);
+        } catch (\Exception $e) {
+            Logger::instance()->error('Error inserting into table ' . $table . ': ' . $e->getMessage(), ['exception' => $e]);
+            return null;
+        }
+    }
 }
 
-
 $projectUuids = [
-    "e2080429-e41a-4f27-a634-0ba183aec4da",
-    "5e332201-6805-411f-b562-6228e351b32e",
-    "b934477e-52a7-42e6-8543-a6c8a31b9c14",
-    "78577588-f79c-4fac-b938-71cb3c5753a2",
-    "1f4d90c4-0063-4142-b952-198ec4032cbf",
-    "14e58aa5-64b0-434a-883d-ee6038ff683a",
-    "6cea411a-38e1-4416-9894-8c52ae22923e",
-    "cb1787f0-4fdc-4438-844e-2caa2acf48f6",
-    "5ba0323e-5165-4f21-8166-2e50133d1904",
-    "2e455ebf-cc06-4d74-93b3-e0bdd446413b",
-    "3dc62f97-b0d1-4c35-b3fb-a739b1d27cee",
-    "0b6dea5b-7289-4ad4-b7e7-9f0c99d2ba02",
-    "53d3a6ba-f220-46dd-a5bd-6e1669b4c671",
-    "3035955d-9a4c-4e85-94cb-e5dfabf4760a",
-    "03e9db44-f7bc-4183-9eba-18326327cb36",
-    "f16141c3-828c-424f-b6e8-d433b83d655f",
-    "68d4b556-a811-46aa-a950-a2bfd1ceda83",
-    "e38715da-aba2-4d4d-bef3-a98c7df3c1da",
-    "46a7303c-1335-491a-8e6f-cbe1b1894ff4",
-    "d25008c2-0fe0-4371-ac56-530e166c9ac2",
-    "f3aa226d-e081-45a7-bdf3-5e135f5c0254",
-    "ccbc9215-33dd-4516-b56f-739aadd98191",
-    "5b5f606d-651d-4dde-90bc-4c375d5378a6",
-    "08c90d94-44ee-4368-b85f-957c7743b780",
-    "49405c11-02bd-4ab6-8a3b-717fbda7ab03",
-    "47152161-0b1e-4b02-8da3-2a2f9be0f965",
-    "bbafbff1-b697-4be6-847b-3c604542c2a1",
-    "7db97292-d2cb-446a-aeff-c9ecc2a1f180",
-    "f9fb21a4-1fb2-4f43-a740-4421aa0046b6",
-    "76aeb2c3-fddb-42b4-8e79-08a93891d5f4",
-    "79193196-d18e-4c70-a177-96446e1d1a89",
-    "d91c7e39-1f73-416a-8b79-45f470f560f3",
-    "4fed25c1-63c2-48f6-b4b0-cb072886baf6",
-    "503f359a-205f-41d1-a6df-747349bbdb61",
-    "0f88c09f-8a9f-4d94-b2e6-595ca1aa430b",
-    "09cc110d-2be1-4639-9dc1-ea1f4145f845",
-    "b8ad1c83-2403-41f1-98ee-e7166eac0b16",
-    "bc1c2799-8996-4b1c-a1d0-d16f14ebb533",
-    "6666a5e9-44e2-454e-86f3-d460a04b4a78",
-    "df527843-2cec-4549-870f-75be382b166d",
-    "9734cc92-7b13-4f11-b060-3228707726e0",
-    "60cf8770-dfae-4571-afce-365433395ae0",
-    "4c9f7ae6-0136-4e83-bc47-756b641642e3",
-    "0d8fb8e5-f5fd-480f-a752-3a984ca1c3cc",
-    "38c567c3-f87c-427d-b32b-f8eeb4b06db1",
-    "e5526915-6f0a-414a-b1ae-abb4922ae4ef",
-    "43879b3d-b0e3-42fd-b24a-a455ae92d84e",
-    "03132039-3a18-48da-9c1e-63bd55198f00",
-    "a027927a-62e2-4511-ac1c-7f43c307c312",
-    "cf3e2e34-0b9c-4856-b66d-f3bd6ea08a7c",
-    "492ad8ad-6fb5-4154-8fae-194745665780",
-    "020be7f8-9eea-4c91-86f0-111c9f9bc9bd",
-    "519bd36d-56c9-48fd-a885-7959a86705f6",
-    "45b59e58-b8d4-4c7c-9d5f-b9a46f2579a9",
-    "f9b8caed-701d-4c96-b1b8-fd5fee190fb5",
-    "36c310af-9c35-449e-943c-84c33712dced",
-    "c11a0f31-45b9-4713-b2f2-d3282baa050a",
-    "4b328887-ab7c-4c7e-902a-b7a892d2f2e9",
-    "6178dec3-f3fa-4fd9-8ca0-84f5517179e1",
-    "0171a11e-ba4b-4327-b012-cc4bc7b7bbda",
-    "1cff402b-e15a-4eaf-9c75-59b227ef31b1",
-    "2eca633b-c3a5-416c-b2e1-9c13c5cf3b35",
-    "35657554-5ffe-4026-a074-b3919cc89143",
-    "fd3fbc10-cf79-4721-b5c6-4d8fefd9f725",
-    "cb7553fe-15c2-41ed-a595-dc4c6027763d",
-    "4fbcb8c7-ff5b-44b2-8d6b-ee29690a6bd3",
-    "dca14b90-42d1-4796-ad72-cf241a5edbe6",
-    "816f9bb7-7a78-4ad1-b06f-981808518f42",
-    "8df6d8d3-03f6-405c-bd07-297e9aefde7c",
-    "15fcf1e0-0185-4196-b475-22dfee8e4451",
-    "7b6d9ce3-2f6c-46d4-a2da-1d6950633238",
-    "d881a0f9-9ec2-4188-b21e-a360c8a075c7",
-    "7b68f1a2-95d2-4364-bfac-42cd59add258",
-    "338b148c-e038-41ab-b4d3-69ef615ad1da",
-    "0246468f-bc92-4036-9abf-118408d51e93",
-    "7ecd9657-1770-40e1-99d9-cf79e17785b6",
-    "e8641a39-0893-4496-b77b-01474ff195b4",
-    "3fcb1a5b-4613-41d8-a29a-e6052c359b62",
-    "94902553-f6c9-40dd-9605-51de9dc2577c",
-    "74f52a0b-4d8f-45fd-b1ba-6b652225b6d6",
+    "f2c701b1-c16c-4bf0-b759-aa89d133c84c",
+    "e1b8f452-0881-4322-ad40-60e1389332f9",
+    "f1ddb8bc-3c69-4487-9149-0915e2dfbda0",
+    "cc61b469-bb84-4c53-9731-7e2d3502e004",
+    "dc2136df-5b48-4eef-8975-7be224b7cc08",
+    "394fc857-96d3-439e-96fa-d15168e928b6",
+    "19b7eef3-f0fe-4f3d-bd9e-f7d6b2b9aa20",
+    "679d9f54-5bd2-4413-b0fe-80bb946607a4",
+    "123a7df2-934a-4a57-83d7-8ff6ce71472f",
+    "67571786-7072-47a7-958b-c7a23b6a8e6c",
+    "8eee9a60-89d3-48b2-9936-5685b3cd436c",
+    "fd5ae3f4-bba7-4596-92c7-40777851259c",
+    "ec9c2687-338a-484f-9ac0-6b5bb2bdf91b",
+    "4bd51774-d87b-47dd-9797-a20ca0065a18",
+    "0fee69a7-b77c-4ddf-97ff-7fa02a225b80",
+    "44816950-e46d-4ce8-b82e-2c87549b696d",
+    "95903e8b-be37-4db9-87ca-4a0e497785e9",
+    "49c6283f-c34e-48cf-b8c8-27b68aafdffe",
+    "5d8deb81-b7d4-450e-a43e-ca23dfe8f796",
+    "044775af-75ef-4abf-a4d2-a21f050cc709",
+    "c26e1756-ae87-47a4-9927-b78c58b1c7ff",
+    "7401d571-553e-4404-b61a-6d9dc76b1aab",
+    "19bd49be-824a-4f18-a07c-17247680fed6",
+    "fcdcda31-90dd-4d9e-8256-2b8bc499f91b",
+    "925c4f26-3ced-4b09-b073-7ef45e6e8ebd",
+    "e5aa2136-ed0e-4d4f-9f2a-127b8182c528",
+    "a1c0aad4-7264-4df5-82c8-d44c8ec31914",
+    "85d9447e-42e8-4581-9686-9bb53673267b",
+    "3db38aa7-c7f6-40f3-b67b-60150a68332d",
+    "52a9b5f2-a581-4409-9cf7-9261826b4b7c",
+    "d8ccf226-41a0-46fb-82fb-09f9cf9d6352",
+    "03349a97-9976-427d-94c9-12be4ef6f717",
+    "2c1d2257-c4f0-4b8a-a888-8f988cc7695c",
+    "a87b70aa-7e27-469d-9c3a-441aab491891",
+    "91223030-e2e4-4dfe-956e-8cee0937afba",
+    "f27aca29-3d28-4de0-8372-5285dfc445fc",
+    "c718cc2b-7468-4ac5-b62e-f4ca0f4c96a0",
+    "4b2b974a-a34a-433a-b2ce-4464092f1fc6",
+    "49be5d88-c5dc-4c42-a626-2d888e88a317",
+    "fe702c06-e318-48ad-87ff-bf2236322467",
+    "8c841023-2777-499c-b966-d222a3d406c1",
+    "19b5f5b6-7744-47ff-8a81-bf4b2342476c",
+    "3f19a44f-0aa0-475c-81c1-22ed386517f8",
+    "1675c01b-bf7f-4ae5-8ad1-946b44df8a57",
+    "26c90804-8042-4aef-8152-c92c4f847937",
+    "d0469543-4807-4e3b-b218-f0737e5e0a38",
+    "e39400e6-4ada-4ba2-b39b-235259f655a1",
+    "ef52b52c-6275-4bc2-957d-827effb5c8c6",
+    "39e17572-7246-4b07-9a30-0998c5450941",
+    "4f30761d-95dd-4770-a014-2b8fa7c91800",
+    "64193a11-e048-43a8-8451-ea09f4d65dae",
+    "285e7d0b-73c9-426b-80b0-37a918245bab",
+    "f073e87d-c11b-42ca-8ef7-f62845fb05e1",
+    "37823faa-f989-4696-ba4e-1288988c61cc",
+    "817fb187-0cca-47b2-b28c-39b1a4f8acc7",
+    "9a3ff69f-e924-4116-9472-ad48901495c7",
+    "41caa86b-7e1e-420e-acc3-4b18bbb3e405",
+    "7e3b0475-4dec-42c9-a3b8-06902c149cbd",
+    "91d85c09-121d-4cbc-97b8-e93497ef02aa",
+    "5f1ca0d7-8998-44e7-a128-33ebd0eb2624",
+    "a2fa5e02-031e-49cb-bdc1-36e125be9336",
+    "5b567367-6a32-45ed-8c93-366816281a43",
+    "2e038220-6dbd-4f23-bb55-4be20d6f928b",
+    "b4b9eec3-d6ab-40ab-9d80-7173cc5dd71b",
+    "998231cb-6c09-46e1-b6be-90d48857367d",
+    "337b7ed9-1065-4a03-84b1-c83b2c47ec08",
+    "8bbe1918-30a5-4b8d-802a-02cfa0da47b6",
+    "a124cb8e-fa4c-4a65-9264-f831056e7471",
+    "2738ab00-08fe-41ff-95ea-502533d0528f",
+    "d96d1674-3c75-46b5-8b80-b988fafa0ce4",
+    "a8773eb9-009b-43d2-be83-fc26cfaf8d32",
+    "cc23c6a2-75b2-4c76-98d7-00b3f45e0229",
+    "7924f483-7221-443a-997c-c5cb9044d4f4",
+    "69d0ccdc-435d-4e65-a74c-9adc4102dc59",
+    "4f4ba7ec-5b44-40fd-9a83-e35db8994c2f",
+    "5464be77-875e-4c1a-bdb1-3ddf365d3039",
+    "4b2a8393-3cdc-4fef-9a66-5ed55a87339c",
+    "ea388fdb-8ae3-4f2c-9717-d06552b884b9",
+    "23c7b57c-f53d-4656-9246-ad3827074520",
 ];
 
+$muuid = time() + random_int(999, 100000);
 
-$migrationRunner = new WaveProc($projectUuids);
+$migrationRunner = new WaveProc($projectUuids, 3, 1754581047 ?? $muuid);
+
+//$migrationRunner->insert('migration_result_list', [
+//    'migration_uuid' => 121212121,
+//    'brz_project_id' => 987,
+//    'mb_project_uuid' => 'asdasd111',
+//    'result_json' => '{}'
+//]);
+
 $migrationRunner->runMigrations();
-
-$d = [
-'e2080429-e41a-4f27-a634-0ba183aec4da' => 22665260,
-'5e332201-6805-411f-b562-6228e351b32e' => 22665261,
-'b934477e-52a7-42e6-8543-a6c8a31b9c14' => 22665259,
-'78577588-f79c-4fac-b938-71cb3c5753a2' => 22665458,
-'1f4d90c4-0063-4142-b952-198ec4032cbf' => 22665516,
-'14e58aa5-64b0-434a-883d-ee6038ff683a' => 22665588,
-'6cea411a-38e1-4416-9894-8c52ae22923e' => 22665643,
-'cb1787f0-4fdc-4438-844e-2caa2acf48f6' => 22665710,
-'5ba0323e-5165-4f21-8166-2e50133d1904' => 22665802,
-'2e455ebf-cc06-4d74-93b3-e0bdd446413b' => 22665854,
-'3dc62f97-b0d1-4c35-b3fb-a739b1d27cee' => 22665924,
-'0b6dea5b-7289-4ad4-b7e7-9f0c99d2ba02' => 22678261,
-'53d3a6ba-f220-46dd-a5bd-6e1669b4c671' => 22678264,
-'3035955d-9a4c-4e85-94cb-e5dfabf4760a' => 22678955,
-'03e9db44-f7bc-4183-9eba-18326327cb36' => 22665926,
-'f16141c3-828c-424f-b6e8-d433b83d655f' => 22666037,
-'68d4b556-a811-46aa-a950-a2bfd1ceda83' => 22666096,
-'e38715da-aba2-4d4d-bef3-a98c7df3c1da' => 22666172,
-'46a7303c-1335-491a-8e6f-cbe1b1894ff4' => 22666238,
-'d25008c2-0fe0-4371-ac56-530e166c9ac2' => 22666375,
-'f3aa226d-e081-45a7-bdf3-5e135f5c0254' => 22666451,
-'ccbc9215-33dd-4516-b56f-739aadd98191' => 22666533,
-'5b5f606d-651d-4dde-90bc-4c375d5378a6' => 22679136,
-'08c90d94-44ee-4368-b85f-957c7743b780' => 22666667,
-'49405c11-02bd-4ab6-8a3b-717fbda7ab03' => 22666753,
-'47152161-0b1e-4b02-8da3-2a2f9be0f965' => 22666875,
-'bbafbff1-b697-4be6-847b-3c604542c2a1' => 22666994,
-'7db97292-d2cb-446a-aeff-c9ecc2a1f180' => 22667067,
-'f9fb21a4-1fb2-4f43-a740-4421aa0046b6' => 22668132,
-'76aeb2c3-fddb-42b4-8e79-08a93891d5f4' => 22668134,
-'79193196-d18e-4c70-a177-96446e1d1a89' => 22668266,
-'d91c7e39-1f73-416a-8b79-45f470f560f3' => 22679280,
-'4fed25c1-63c2-48f6-b4b0-cb072886baf6' => 22668383,
-'503f359a-205f-41d1-a6df-747349bbdb61' => 22668515,
-'0f88c09f-8a9f-4d94-b2e6-595ca1aa430b' => 22668585,
-'09cc110d-2be1-4639-9dc1-ea1f4145f845' => 22668708,
-'b8ad1c83-2403-41f1-98ee-e7166eac0b16' => 22668778,
-'bc1c2799-8996-4b1c-a1d0-d16f14ebb533' => 22668883,
-'6666a5e9-44e2-454e-86f3-d460a04b4a78' => 22668967,
-'df527843-2cec-4549-870f-75be382b166d' => 22669065,
-'9734cc92-7b13-4f11-b060-3228707726e0' => 22669096,
-'60cf8770-dfae-4571-afce-365433395ae0' => 22669169,
-'4c9f7ae6-0136-4e83-bc47-756b641642e3' => 22669294,
-'0d8fb8e5-f5fd-480f-a752-3a984ca1c3cc' => 22669296,
-'38c567c3-f87c-427d-b32b-f8eeb4b06db1' => 22669461,
-'e5526915-6f0a-414a-b1ae-abb4922ae4ef' => 22669559,
-'43879b3d-b0e3-42fd-b24a-a455ae92d84e' => 22669622,
-'03132039-3a18-48da-9c1e-63bd55198f00' =>	'crossroadsevart.org',
-'a027927a-62e2-4511-ac1c-7f43c307c312' =>	22669844,
-'cf3e2e34-0b9c-4856-b66d-f3bd6ea08a7c' =>	22669903,
-'492ad8ad-6fb5-4154-8fae-194745665780' =>	22669959,
-'020be7f8-9eea-4c91-86f0-111c9f9bc9bd' =>	22670144,
-'519bd36d-56c9-48fd-a885-7959a86705f6' =>	22670297,
-'45b59e58-b8d4-4c7c-9d5f-b9a46f2579a9' =>	22670381,
-'f9b8caed-701d-4c96-b1b8-fd5fee190fb5' =>	22670453,
-'36c310af-9c35-449e-943c-84c33712dced' =>	22670551,
-'c11a0f31-45b9-4713-b2f2-d3282baa050a' =>	22670610,
-'4b328887-ab7c-4c7e-902a-b7a892d2f2e9' =>	22670721,
-'6178dec3-f3fa-4fd9-8ca0-84f5517179e1' =>	22670828,
-'0171a11e-ba4b-4327-b012-cc4bc7b7bbda' =>	22670928,
-'1cff402b-e15a-4eaf-9c75-59b227ef31b1' =>	22671024,
-'2eca633b-c3a5-416c-b2e1-9c13c5cf3b35' =>	22671081,
-'35657554-5ffe-4026-a074-b3919cc89143' =>	22671175,
-'fd3fbc10-cf79-4721-b5c6-4d8fefd9f725' =>	22671244,
-'cb7553fe-15c2-41ed-a595-dc4c6027763d' =>	22671354,
-'4fbcb8c7-ff5b-44b2-8d6b-ee29690a6bd3' =>	22671421,
-'dca14b90-42d1-4796-ad72-cf241a5edbe6' =>	22671524,
-'816f9bb7-7a78-4ad1-b06f-981808518f42' =>	22671583,
-'8df6d8d3-03f6-405c-bd07-297e9aefde7c' =>	22671759,
-'15fcf1e0-0185-4196-b475-22dfee8e4451' =>	22671834,
-'7b6d9ce3-2f6c-46d4-a2da-1d6950633238' =>	22671895,
-'d881a0f9-9ec2-4188-b21e-a360c8a075c7' =>	22671956,
-'7b68f1a2-95d2-4364-bfac-42cd59add258' =>	22672046,
-'338b148c-e038-41ab-b4d3-69ef615ad1da' =>	22672098,
-'0246468f-bc92-4036-9abf-118408d51e93' =>	22672172,
-'7ecd9657-1770-40e1-99d9-cf79e17785b6' =>   '',
-'e8641a39-0893-4496-b77b-01474ff195b4' =>	22672376,
-'3fcb1a5b-4613-41d8-a29a-e6052c359b62' =>	22672488,
-'94902553-f6c9-40dd-9605-51de9dc2577c' =>	22679638,
-'74f52a0b-4d8f-45fd-b1ba-6b652225b6d6' =>	22679653,
-];
