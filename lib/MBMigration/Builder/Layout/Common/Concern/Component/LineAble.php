@@ -2,16 +2,17 @@
 
 namespace MBMigration\Builder\Layout\Common\Concern\Component;
 
+use _PHPStan_a2c094651\Symfony\Component\Console\Color;
 use Exception;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Core\Logger;
 
-trait Line
+trait LineAble
 {
     protected function handleLine(
-        BrizyComponent          $line,
         ElementContextInterface $data,
         BrowserPageInterface    $browserPage,
         string                  $selector = null,
@@ -24,6 +25,39 @@ trait Line
 
         if (!isset($brizyKit['donation-button'])) {
             Logger::instance()->critical('The BrizyKit does not contain the key: donation-button', [$mbSection['typeSection']]);
+        }
+
+        try{
+
+            $lineStyles = $browserPage->evaluateScript(
+                'brizy.getStyles',
+                [
+                    'selector' =>'[data-id=\'' . $selector . '\']',
+                    'styleProperties' => [
+                        'border-top-color',
+                        'border-top-style',
+                        'border-top-width',
+                        'width',
+                    ],
+                    'families' => $data->getFontFamilies(),
+                    'defaultFamily' => $data->getDefaultFontFamily(),
+                    'pseudoElement' => ':after'
+                ]
+            );
+
+            $lineStyles = [
+                'color' => ColorConverter::rgba2hex($lineStyles['data']['border-top-color']),
+                'width' => (int)$lineStyles['data']['width'],
+                'borderWidth' => (int)$lineStyles['data']['border-top-width'],
+                ];
+
+            $brizySection->addLine(
+                $lineStyles['width'],
+                ['color' => $lineStyles['color'], 'opacity' => 1],
+                $lineStyles['borderWidth']
+            );
+        } catch (Exception $e) {
+            Logger::instance()->critical($e->getMessage(), [$mbSection['typeSection']]);
         }
 
         try {

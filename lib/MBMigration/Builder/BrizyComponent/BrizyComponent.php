@@ -5,6 +5,7 @@ namespace MBMigration\Builder\BrizyComponent;
 use JsonSerializable;
 use Exception;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
+use MBMigration\Core\Logger;
 
 class BrizyComponent implements JsonSerializable
 {
@@ -821,16 +822,27 @@ class BrizyComponent implements JsonSerializable
     }
 
 
-    public function addLine(){
+    public function addLine(int $width, array $color, int $borderWidth, $options = []){
         try {
             $component = new BrizyLineComponent();
             $wrapperLine = new BrizyWrapperComponent('wrapper--line');
 
-            $this->getValue()->add('items', [$component]);
+            $component->getValue()->set("width", $width ?? 70);
+            $component->getValue()->set("borderWidth", $borderWidth ?? 1);
+            $component->getValue()->set("borderColorHex", $color['color'] ?? '#4e3131');
+            $component->getValue()->set("borderColorOpacity", $color['opacity'] ?? 1);
+
+            foreach ($options as $key => $value) {
+                $component->getValue()->set($key, $value);
+            }
+
+            $wrapperLine->getValue()->add('items', [$component]);
+
+            $this->getValue()->add('items', [$wrapperLine]);
 
         } catch (exception $e)
         {
-
+            Logger::instance()->warning('Error on addLine: ' . $e->getMessage() . '');
         }
 
     }

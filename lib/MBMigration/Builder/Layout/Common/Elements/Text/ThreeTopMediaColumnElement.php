@@ -5,7 +5,7 @@ namespace MBMigration\Builder\Layout\Common\Elements\Text;
 use Exception;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\Component\Line;
+use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -19,7 +19,7 @@ class ThreeTopMediaColumnElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
     use DonationsAble;
-    use Line;
+    use LineAble;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -79,12 +79,11 @@ class ThreeTopMediaColumnElement extends AbstractElement
                             );
 
                             try {
-                                $brizyLineItem = new BrizyComponent(json_decode($this->brizyKit['line'], true));
                                 $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                                     $mbItem,
                                     $image
                                 );
-                                $this->handleLine($brizyLineItem, $elementContext, $this->browserPage, $mbItem['id']. ':after');
+                                $this->handleLine($elementContext, $this->browserPage, $mbItem['id']);
 
 
                             } catch (Exception $e) {
