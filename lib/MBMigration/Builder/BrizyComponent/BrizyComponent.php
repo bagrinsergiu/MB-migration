@@ -844,7 +844,5 @@ class BrizyComponent implements JsonSerializable
         {
             Logger::instance()->warning('Error on addLine: ' . $e->getMessage() . '');
         }
-
     }
-
 }
