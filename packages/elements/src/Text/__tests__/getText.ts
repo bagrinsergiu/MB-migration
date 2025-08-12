@@ -2377,7 +2377,7 @@ const ex39: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-detail="https://podcasters.spotify.com/pod/show/hillsideefc" data-category="link" target="_blank" style="" data-button="false" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fpodcasters.spotify.com%2Fpod%2Fshow%2Fhillsideefc%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span> &nbsp;Spotify</span></a></p>'
+                text: '<p class="brz-fs-lg-18_56 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-detail="https://podcasters.spotify.com/pod/show/hillsideefc" data-category="link" target="_blank" style="" data-button="false" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fpodcasters.spotify.com%2Fpod%2Fshow%2Fhillsideefc%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span> &nbsp;Spotify</span></a></p>'
               }
             }
           ]
@@ -3214,7 +3214,7 @@ const ex49: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a style="" data-location="external" data-button="false" data-detail="https://www.instagram.com/newlifehky/" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.instagram.com%2Fnewlifehky%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>click here</span></a></p>'
+                text: '<p class="brz-fs-lg-1_11 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a style="" data-location="external" data-button="false" data-detail="https://www.instagram.com/newlifehky/" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.instagram.com%2Fnewlifehky%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>click here</span></a></p>'
               }
             }
           ]
@@ -3864,6 +3864,198 @@ visit a group this week.</span></p></div></div>`,
   }
 };
 
+// Majesty example 54 (Voyage Text loose styling)
+const ex54: Data = {
+  html: `<div class="text-content text-0 editable" data-id="3633521" data-category="text"><div><p style="color: rgb(40, 77, 153); font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; font-weight: 700; font-size: 2.0408em;">H<span class="clovercustom">EYWORTH CHRISTIAN CHURCH</span><br></p><p style="font-size: 1.6582em; color: rgb(40, 77, 153); font-family: &quot;Clear Sans&quot;, &quot;Clear Sans Regular&quot;, sans-serif; font-weight: 500;"><span class="clovercustom" style="font-size: 0.8461em;">308 North Vine Street</span><span class="clovercustom" style="letter-spacing: -0.1568px;">&nbsp;</span><span data-icon="circle"><span class="clovericons fas" style="letter-spacing: -0.1568px; font-size: 0.4615em;" aria-hidden="true"></span></span><span class="clovercustom" style="letter-spacing: -0.1568px;"> &nbsp;</span><span class="clovercustom" style="font-size: 0.8461em;">Heyworth, IL 61745</span><span class="clovercustom" style="letter-spacing: -0.1568px;">&nbsp;</span><span data-icon="circle"><span class="clovericons fas" style="letter-spacing: -0.1568px; font-size: 0.4615em;" aria-hidden="true"></span></span><span class="clovercustom" style="letter-spacing: -0.1568px;"> </span><span style="font-size: 1em; letter-spacing: -0.01em;">&nbsp;</span><span style="letter-spacing: -0.1568px; font-size: 0.8846em;">309.473.2771</span></p><p style="color: rgb(40, 77, 153); font-family: &quot;Clear Sans&quot;, &quot;Clear Sans Regular&quot;, sans-serif; font-weight: 500; font-size: 1.4031em;">Sunday Worship Service<span class="clovercustom" style="letter-spacing: -0.1568px;">&nbsp;</span><span data-icon="circle"><span class="clovericons fas" style="letter-spacing: -0.1568px; font-size: 0.5454em;" aria-hidden="true"></span></span><span class="clovercustom" style="letter-spacing: -0.1568px;"> </span><span class="clovercustom" style="letter-spacing: -0.01em;">&nbsp;</span><span style="letter-spacing: -0.01em;">9:30 am</span></p><p style="color: rgb(40, 77, 153); font-family: &quot;Clear Sans&quot;, &quot;Clear Sans Regular&quot;, sans-serif; font-weight: 500; font-size: 1.4031em;"><br></p><p style="color: rgb(40, 77, 153); font-family: &quot;Clear Sans&quot;, &quot;Clear Sans Regular&quot;, sans-serif; font-weight: 500; font-size: 1.0842em;">2024 © Heyworth Christian Church. All rights reserved.&nbsp;<br></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="3633521"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-2_04 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(40, 77, 153); font-weight: 700; ">H</span><span style="color: rgb(40, 77, 153); font-weight: 700; ">EYWORTH CHRISTIAN CHURCH</span><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_85 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">308 North Vine Street</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "circle",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_85 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">Heyworth, IL 61745</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "circle",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_88 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="">309.473.2771</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1_4 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_0"><span style="color: rgb(40, 77, 153); font-weight: 500; ">Sunday Worship Service</span><span style="">&nbsp;</span><span style=""> </span><span style="">&nbsp;</span><span style="color: rgb(40, 77, 153); font-weight: 500; ">9:30 am</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "circle",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_0"><span style="">9:30 am</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1_4 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1_08 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(40, 77, 153); font-weight: 500; ">2024 © Heyworth Christian Church. All rights reserved.&nbsp;</span><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -3918,7 +4110,8 @@ describe.each([
   ex51,
   ex52,
   ex53_1,
-  ex53_2
+  ex53_2,
+  ex54
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
