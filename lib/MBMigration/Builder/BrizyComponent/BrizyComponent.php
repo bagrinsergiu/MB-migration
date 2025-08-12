@@ -820,4 +820,19 @@ class BrizyComponent implements JsonSerializable
         $this->getValue()->set('menuBorderTopLeftRadius', $radius);
     }
 
+
+    public function addLine(){
+        try {
+            $component = new BrizyLineComponent();
+            $wrapperLine = new BrizyWrapperComponent('wrapper--line');
+
+            $this->getValue()->add('items', [$component]);
+
+        } catch (exception $e)
+        {
+
+        }
+
+    }
+
 }
