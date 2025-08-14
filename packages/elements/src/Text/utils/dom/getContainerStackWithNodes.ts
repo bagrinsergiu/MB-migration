@@ -205,6 +205,24 @@ const replaceWrongTags = (node: HTMLElement) => {
   });
 };
 
+function containsOnlyIconsAndButtons(node: Node): boolean {
+  const textLikeTags = ["SPAN", "P", "A", "H1", "H2", "H3", "H4", "H5", "H6"];
+
+  return Array.from(node.childNodes).every((child) => {
+    if (!(child instanceof Element)) return false;
+
+    const textLikeChildren = Array.from(child.childNodes).filter(
+      (n) => n instanceof Element && textLikeTags.includes(n.tagName)
+    );
+
+    const iconsAndButtonsCount = child.querySelectorAll(
+      [iconSelector, buttonSelector].join(",")
+    ).length;
+
+    return iconsAndButtonsCount === textLikeChildren.length;
+  });
+}
+
 const getImageSizes = (node: Element) => {
   const images = node.querySelectorAll(imageSelector);
 
@@ -234,10 +252,11 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
     const containerOfNode = document.createElement("div");
     containerOfNode.append(_node);
 
-    // Exclude extracting icons & button for [ UL, OL ]
-    // Removed all icons & button inside [ UL, OL ]
-    const excludeIcons =
+    // For list elements [UL, OL], exclude icons & buttons unless the list contains only them
+    const isList =
       _node instanceof HTMLOListElement || _node instanceof HTMLUListElement;
+
+    const excludeIcons = isList && !containsOnlyIconsAndButtons(_node);
 
     if (_node instanceof HTMLElement) {
       const icons = containerOfNode.querySelectorAll(iconSelector);
