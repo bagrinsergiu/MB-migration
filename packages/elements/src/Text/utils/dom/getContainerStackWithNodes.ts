@@ -205,6 +205,24 @@ const replaceWrongTags = (node: HTMLElement) => {
   });
 };
 
+function containsOnlyIconsAndButtons(node: Node): boolean {
+  const textLikeTags = ["SPAN", "P", "A", "H1", "H2", "H3", "H4", "H5", "H6"];
+
+  return Array.from(node.childNodes).every((child) => {
+    if (!(child instanceof Element)) return false;
+
+    const textLikeChildren = Array.from(child.childNodes).filter(
+      (n) => n instanceof Element && textLikeTags.includes(n.tagName)
+    );
+
+    const iconsAndButtonsCount = child.querySelectorAll(
+      [iconSelector, buttonSelector].join(",")
+    ).length;
+
+    return iconsAndButtonsCount === textLikeChildren.length;
+  });
+}
+
 const getImageSizes = (node: Element) => {
   const images = node.querySelectorAll(imageSelector);
 
@@ -234,10 +252,11 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
     const containerOfNode = document.createElement("div");
     containerOfNode.append(_node);
 
-    // Exclude extracting icons & button for [ UL, OL ]
-    // Removed all icons & button inside [ UL, OL ]
-    const excludeIcons =
+    // For list elements [UL, OL], exclude icons & buttons unless the list contains only them
+    const isList =
       _node instanceof HTMLOListElement || _node instanceof HTMLUListElement;
+
+    const excludeIcons = isList && !containsOnlyIconsAndButtons(_node);
 
     if (_node instanceof HTMLElement) {
       const icons = containerOfNode.querySelectorAll(iconSelector);
@@ -427,14 +446,52 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                 });
               } else {
                 const text = trimTextContent(node);
+                const parentNode = node.parentElement;
+                let clonedParent = null;
+
+                let styles = getComputedStyle(node);
+
+                // If parent isn't in the DOM, temporarily insert a clone to get styles
+                if (parentNode && !document.contains(parentNode)) {
+                  clonedParent = parentNode.cloneNode(true);
+
+                  // Find the cloned version of our target node
+                  const originalIndex = Array.from(parentNode.children).indexOf(
+                    node
+                  );
+
+                  if (clonedParent instanceof Element) {
+                    const clonedNode = clonedParent.children[originalIndex];
+
+                    document.body.appendChild(clonedParent);
+
+                    styles = getComputedStyle(clonedNode);
+                  }
+                }
 
                 if (text) {
-                  const { textAlign, color } = getComputedStyle(node);
-                  extractInnerText(node, stack, iconSelector, {
-                    textAlign,
-                    color
-                  });
+                  // Remove the inline font-size because it’s often set in `em` units, which can produce incorrect values due to inheritance from the parent
+                  const fontSize = styles.fontSize;
+                  node.style.removeProperty("font-size");
+
+                  const inlineStyles: Record<string, string> = {
+                    ...(styles.color ? { color: styles.color } : {}),
+                    ...(fontSize ? { fontSize: fontSize } : {}),
+                    ...(styles.fontWeight
+                      ? { fontWeight: styles.fontWeight }
+                      : {}),
+                    ...(styles.fontFamily
+                      ? { fontFamily: styles.fontFamily }
+                      : {})
+                  };
+
+                  extractInnerText(node, stack, iconSelector, inlineStyles);
+
                   appendedIcon = false;
+                }
+
+                if (clonedParent) {
+                  document.body.removeChild(clonedParent);
                 }
               }
             } else if (node instanceof SVGElement) {

@@ -2377,7 +2377,7 @@ const ex39: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-detail="https://podcasters.spotify.com/pod/show/hillsideefc" data-category="link" target="_blank" style="" data-button="false" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fpodcasters.spotify.com%2Fpod%2Fshow%2Fhillsideefc%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span> &nbsp;Spotify</span></a></p>'
+                text: '<p class="brz-fs-lg-18_56 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="external" data-detail="https://podcasters.spotify.com/pod/show/hillsideefc" data-category="link" target="_blank" style="" data-button="false" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fpodcasters.spotify.com%2Fpod%2Fshow%2Fhillsideefc%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span> &nbsp;Spotify</span></a></p>'
               }
             }
           ]
@@ -3214,7 +3214,7 @@ const ex49: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a style="" data-location="external" data-button="false" data-detail="https://www.instagram.com/newlifehky/" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.instagram.com%2Fnewlifehky%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>click here</span></a></p>'
+                text: '<p class="brz-fs-lg-1_11 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a style="" data-location="external" data-button="false" data-detail="https://www.instagram.com/newlifehky/" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.instagram.com%2Fnewlifehky%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>click here</span></a></p>'
               }
             }
           ]
@@ -3864,6 +3864,356 @@ visit a group this week.</span></p></div></div>`,
   }
 };
 
+// Voyage example 54 (Voyage Text loose styling)
+const ex54: Data = {
+  html: `<div class="text-content text-0 editable" data-id="3633521" data-category="text"><div><p style="color: rgb(40, 77, 153); font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; font-weight: 700; font-size: 2.0408em;">H<span class="clovercustom">EYWORTH CHRISTIAN CHURCH</span><br></p><p style="font-size: 1.6582em; color: rgb(40, 77, 153); font-family: &quot;Clear Sans&quot;, &quot;Clear Sans Regular&quot;, sans-serif; font-weight: 500;"><span class="clovercustom" style="font-size: 0.8461em;">308 North Vine Street</span><span class="clovercustom" style="letter-spacing: -0.1568px;">&nbsp;</span><span data-icon="circle"><span class="clovericons fas" style="letter-spacing: -0.1568px; font-size: 0.4615em;" aria-hidden="true"></span></span><span class="clovercustom" style="letter-spacing: -0.1568px;"> &nbsp;</span><span class="clovercustom" style="font-size: 0.8461em;">Heyworth, IL 61745</span><span class="clovercustom" style="letter-spacing: -0.1568px;">&nbsp;</span><span data-icon="circle"><span class="clovericons fas" style="letter-spacing: -0.1568px; font-size: 0.4615em;" aria-hidden="true"></span></span><span class="clovercustom" style="letter-spacing: -0.1568px;"> </span><span style="font-size: 1em; letter-spacing: -0.01em;">&nbsp;</span><span style="letter-spacing: -0.1568px; font-size: 0.8846em;">309.473.2771</span></p><p style="color: rgb(40, 77, 153); font-family: &quot;Clear Sans&quot;, &quot;Clear Sans Regular&quot;, sans-serif; font-weight: 500; font-size: 1.4031em;">Sunday Worship Service<span class="clovercustom" style="letter-spacing: -0.1568px;">&nbsp;</span><span data-icon="circle"><span class="clovericons fas" style="letter-spacing: -0.1568px; font-size: 0.5454em;" aria-hidden="true"></span></span><span class="clovercustom" style="letter-spacing: -0.1568px;"> </span><span class="clovercustom" style="letter-spacing: -0.01em;">&nbsp;</span><span style="letter-spacing: -0.01em;">9:30 am</span></p><p style="color: rgb(40, 77, 153); font-family: &quot;Clear Sans&quot;, &quot;Clear Sans Regular&quot;, sans-serif; font-weight: 500; font-size: 1.4031em;"><br></p><p style="color: rgb(40, 77, 153); font-family: &quot;Clear Sans&quot;, &quot;Clear Sans Regular&quot;, sans-serif; font-weight: 500; font-size: 1.0842em;">2024 © Heyworth Christian Church. All rights reserved.&nbsp;<br></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="3633521"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-2_04 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(40, 77, 153); font-weight: 700; ">H</span><span style="color: rgb(40, 77, 153); font-weight: 700; ">EYWORTH CHRISTIAN CHURCH</span><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_85 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">308 North Vine Street</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "circle",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_85 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">Heyworth, IL 61745</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "circle",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_88 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_1"><span style="">309.473.2771</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1_4 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_0"><span style="color: rgb(40, 77, 153); font-weight: 500; ">Sunday Worship Service</span><span style="">&nbsp;</span><span style=""> </span><span style="">&nbsp;</span><span style="color: rgb(40, 77, 153); font-weight: 500; ">9:30 am</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                name: "circle",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_0"><span style="">9:30 am</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1_4 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1_08 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(40, 77, 153); font-weight: 500; ">2024 © Heyworth Christian Church. All rights reserved.&nbsp;</span><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+// Majesty example 55 (Voyage Buttons missing in lists)
+const ex55: Data = {
+  html: `<div class="text-content text-1 editable" data-id="11277819" data-category="text"><div><p><br></p><p style="text-align: left;">We take great pride in our wide selection of mouth-watering baked goods. At Achenbach's, you will always get the "Baker's Dozen" - 13 items for the price of twelve! Click the links below to see our prices. Prices shown here are on site bakery retail prices only.
+</p><p style="text-align: left;"><br></p><p style="text-align: left;">
+</p><ul style="color: rgba(26, 21, 26, 0.7); font-family: Lato, &quot;Lato Light&quot;, sans-serif; font-style: normal; font-weight: 600;"><li><a href="https://s3.amazonaws.com/media.cloversites.com/5e/5e332201-6805-411f-b562-6228e351b32e/documents/Price_Sheet.doc" data-location="upload" data-button="true" data-detail="Price_Sheet.doc" data-category="document" target="_blank" class="cloverlinks sites-button" role="button">PRODUCT LIST AND PRICES </a><a href="https://s3.amazonaws.com/media.cloversites.com/5e/5e332201-6805-411f-b562-6228e351b32e/documents/Detailed_RETAIL_Price_List_040125.xls" data-location="upload" data-button="true" data-detail="Detailed_RETAIL_Price_List_040125.xls" data-category="document" target="_blank" class="cloverlinks sites-button" role="button">detailed list in excel format</a></li></ul><p style="text-align: left; color: rgb(1, 60, 52); font-size: 1.25em; font-weight: 300;">Cakes</p><p style="text-align: left; font-weight: 600;">
+</p><p style="text-align: left; font-weight: 300;">Cakes are our specialty. No matter what the occasion is, we take pleasure in creating a master piece that fits your theme. Achenbach's cakes are just as beautiful to look as they are delicious to eat!
+</p><p style="text-align: left;"><br></p><p style="text-align: left;">
+</p><ul style="color: rgba(26, 21, 26, 0.7); font-family: Lato, &quot;Lato Light&quot;, sans-serif; font-style: normal; font-weight: 300;"><li><span class="clovercustom" style="letter-spacing: 0em; font-size: 0.94em; font-weight: 600;"><a href="https://s3.amazonaws.com/media.cloversites.com/5e/5e332201-6805-411f-b562-6228e351b32e/documents/Cake_Price_Listing.doc" data-location="upload" data-button="true" data-detail="Cake_Price_Listing.doc" data-category="document" target="_blank" class="cloverlinks sites-button" role="button">CAKE LIST AND PRICES</a></span><br></li></ul><p style="text-align: left;"><br></p><p style="text-align: left;">
+</p><p style="text-align: left;">
+</p><p style="text-align: left;">
+</p><p style="text-align: left; color: rgb(1, 60, 52); font-size: 1.25em;">Fundraising</p><p style="text-align: left;">Click <a style="font-weight: 600;" href="https://s3.amazonaws.com/media.cloversites.com/5e/5e332201-6805-411f-b562-6228e351b32e/documents/FUNDRAISER_INFORMATION_040125.doc" data-location="upload" data-button="true" data-detail="FUNDRAISER_INFORMATION_040125.doc" data-category="document" target="_blank" class="cloverlinks sites-button" role="button">here</a> for information on Achenbach's special deals for groups involved in fund raising for their church, organization or club!</p></div></div>`,
+  entry: { ...entry, selector: '[data-id="11277819"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>We take great pride in our wide selection of mouth-watering baked goods. At Achenbach\'s, you will always get the "Baker\'s Dozen" - 13 items for the price of twelve! Click the links below to see our prices. Prices shown here are on site bakery retail prices only. </span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontStyle: "",
+                iconName: "",
+                lineHeight: 1.3,
+                linkExternal:
+                  "https://s3.amazonaws.com/media.cloversites.com/5e/5e332201-6805-411f-b562-6228e351b32e/documents/Price_Sheet.doc",
+                linkExternalBlank: "on",
+                linkType: "external",
+                mobileFontStyle: "",
+                mobileLineHeight: 1.2,
+                size: "custom",
+                tabletFontStyle: "",
+                tabletLineHeight: 1.2,
+                text: "PRODUCT LIST AND PRICES "
+              }
+            },
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontStyle: "",
+                iconName: "",
+                lineHeight: 1.3,
+                linkExternal:
+                  "https://s3.amazonaws.com/media.cloversites.com/5e/5e332201-6805-411f-b562-6228e351b32e/documents/Detailed_RETAIL_Price_List_040125.xls",
+                linkExternalBlank: "on",
+                linkType: "external",
+                mobileFontStyle: "",
+                mobileLineHeight: 1.2,
+                size: "custom",
+                tabletFontStyle: "",
+                tabletLineHeight: 1.2,
+                text: "detailed list in excel format"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1_25 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(1, 60, 52); font-weight: 300; ">Cakes</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">Cakes are our specialty. No matter what the occasion is, we take pleasure in creating a master piece that fits your theme. Achenbach\'s cakes are just as beautiful to look as they are delicious to eat! </span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontStyle: "",
+                iconName: "",
+                lineHeight: 1.3,
+                linkExternal:
+                  "https://s3.amazonaws.com/media.cloversites.com/5e/5e332201-6805-411f-b562-6228e351b32e/documents/Cake_Price_Listing.doc",
+                linkExternalBlank: "on",
+                linkType: "external",
+                mobileFontStyle: "",
+                mobileLineHeight: 1.2,
+                size: "custom",
+                tabletFontStyle: "",
+                tabletLineHeight: 1.2,
+                text: "CAKE LIST AND PRICES"
+              }
+            }
+          ],
+          horizontalAlign: undefined
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1_25 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(1, 60, 52); ">Fundraising</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>Click </span><a style="font-weight: 600; " data-location="upload" data-button="true" data-detail="FUNDRAISER_INFORMATION_040125.doc" data-category="document" target="_blank" role="button" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fs3.amazonaws.com%2Fmedia.cloversites.com%2F5e%2F5e332201-6805-411f-b562-6228e351b32e%2Fdocuments%2FFUNDRAISER_INFORMATION_040125.doc%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="font-weight: 600; ">here</span></a><span> for information on Achenbach\'s special deals for groups involved in fund raising for their church, organization or club!</span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -3918,7 +4268,9 @@ describe.each([
   ex51,
   ex52,
   ex53_1,
-  ex53_2
+  ex53_2,
+  ex54,
+  ex55
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
