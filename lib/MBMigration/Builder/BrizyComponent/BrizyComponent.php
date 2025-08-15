@@ -505,7 +505,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addFont($fontSize, $fontFamily, $fontFamilyType): BrizyComponent
+    public function addFont($fontSize, $fontFamily, $fontFamilyType, $fontWeight = 700, $lineHeight = 1.6): BrizyComponent
     {
         $bgColor = [
             "fontStyle" => "",
@@ -513,12 +513,16 @@ class BrizyComponent implements JsonSerializable
             "fontFamilyType" => $fontFamilyType,
             "fontSize" => $fontSize,
             "fontSizeSuffix" => "px",
-            "fontWeight" => 700,
+            "fontWeight" => $fontWeight,
             "letterSpacing" => 0,
-            "lineHeight" => 1.6,
+            "lineHeight" => $lineHeight,
             "variableFontWeight" => 400,
             "fontWidth" => 100,
-            "fontSoftness" => 0
+            "fontSoftness" => 0,
+            "bold" => false,
+            "italic" => false,
+            "underline" => false,
+            "strike" => false
         ];
 
         foreach ($bgColor as $key => $value) {
@@ -689,11 +693,11 @@ class BrizyComponent implements JsonSerializable
 
     public function setMobileBgColorStyle($color, $opacity): BrizyComponent
     {
-        if($color === null || $color === '') {
+        if ($color === null || $color === '') {
             $color = $this->getValue()->get('mobileBgColorHex');
         }
 
-        if($opacity === null || $opacity === '') {
+        if ($opacity === null || $opacity === '') {
             $opacity = $this->getValue()->get('mobileBgColorOpacity');
         }
 
@@ -822,7 +826,8 @@ class BrizyComponent implements JsonSerializable
     }
 
 
-    public function addLine(int $width, array $color, int $borderWidth, $options = []){
+    public function addLine(int $width, array $color, int $borderWidth, $options = [])
+    {
         try {
             $component = new BrizyLineComponent();
             $wrapperLine = new BrizyWrapperComponent('wrapper--line');
@@ -840,8 +845,7 @@ class BrizyComponent implements JsonSerializable
 
             $this->getValue()->add('items', [$wrapperLine]);
 
-        } catch (exception $e)
-        {
+        } catch (exception $e) {
             Logger::instance()->warning('Error on addLine: ' . $e->getMessage() . '');
         }
     }
