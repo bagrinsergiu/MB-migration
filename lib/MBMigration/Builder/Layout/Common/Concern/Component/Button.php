@@ -9,6 +9,7 @@ use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Core\Logger;
 
 trait Button
@@ -103,6 +104,7 @@ trait Button
         ElementContextInterface $data,
         array $mbSection
     ): BrizyComponent {
+        $browserPage->triggerEvent('hover', 'html');
         $buttonStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
@@ -116,10 +118,6 @@ trait Button
                     'text-transform',
                     'border-style',
                     'border-width',
-                    'padding-top',
-                    'padding-bottom',
-                    'padding-right',
-                    'padding-left',
                     'margin-top',
                     'margin-bottom',
                     'margin-left',
@@ -132,6 +130,21 @@ trait Button
                     'border-top-left-radius',
                     'border-top-right-radius',
                     'background-color',
+                ],
+                'families' => $data->getFontFamilies(),
+                'defaultFamily' => $data->getDefaultFontFamily(),
+            ]
+        );
+
+        $buttonPaddingStyles = $browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $selector . ' div',
+                'styleProperties' => [
+                    'padding-top',
+                    'padding-bottom',
+                    'padding-right',
+                    'padding-left',
                 ],
                 'families' => $data->getFontFamilies(),
                 'defaultFamily' => $data->getDefaultFontFamily(),
@@ -159,7 +172,16 @@ trait Button
         if (isset($buttonStyles['error'])) {
             throw new BrowserScriptException($buttonStyles['error']);
         }
-        $buttonStyles = $buttonStyles['data'];
+
+        if (empty($buttonPaddingStyles)) {
+            throw new BrowserScriptException("The element with selector {$selector} was not found in page.");
+        }
+
+        if (isset($buttonPaddingStyles['error'])) {
+            throw new BrowserScriptException($buttonPaddingStyles['error']);
+        }
+
+        $buttonStyles = array_merge($buttonStyles['data'], $buttonPaddingStyles['data']);
 
         if (isset($mbSection['settings']['alignment']) && $mbSection['settings']['alignment'] != '') {
             $brizyButton->getValue()->set_horizontalAlign(
@@ -199,6 +221,11 @@ trait Button
         $buttonItem
             ->set_text($buttonText ?? 'Go here')
             ->set_fillType('filled' ?? 'outline')
+            ->set_size('custom')
+            ->set_paddingTB((int)$buttonStyles['padding-top'])
+            ->set_paddingRL((int)$buttonStyles['padding-right'])
+            ->set_paddingRLSuffix("px")
+            ->set_paddingTBSuffix("px")
             ->set_paddingType('ungrouped')
             ->set_paddingTop((int)$buttonStyles['padding-top'])
             ->set_paddingBottom((int)$buttonStyles['padding-bottom'])
@@ -221,6 +248,25 @@ trait Button
             ->set_colorHex(ColorConverter::rgba2hex($buttonStyles['color']))
             ->set_colorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
             ->set_colorPalette("");
+
+        try{
+            $fonts = $data->getFontFamilies();
+            $convertedFontFamily = FontUtils::transliterateFontFamily($buttonStyles['font-family']);
+            $font = $fonts[$convertedFontFamily] ?? $fonts[$data->getDefaultFontFamily()];
+
+            if( !empty( $font) )
+            {
+                $brizyButton->getItemWithDepth(0)->addFont(
+                    (int) $buttonStyles['font-size'],
+                    $font['name'],
+                    $font['type'],
+                    $buttonStyles['font-weight']
+                );
+            }
+        } catch (\Exception $e)
+        {
+            Logger::instance()->warning('Error on set font: ' . $e->getMessage() . '');
+        }
 
         return $brizyButton;
     }
@@ -290,15 +336,13 @@ trait Button
 
         $brizyButton->getItemValueWithDepth(0)
             ->set_hoverBgColorHex(ColorConverter::rgba2hex($buttonStyles['background-color']))
+            ->set_hoverBgColorOpacity(ColorConverter::rgba2opacity($buttonStyles['background-color']))
             ->set_hoverBgColorPalette("")
-            ->set_hoverBgColorOpacity(0.75)
             ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-color']))
-            ->set_hoverBorderColorPalette("")
             ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['border-color']))
-            ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-color']))
             ->set_hoverBorderColorPalette("")
-            ->set_hoverColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
             ->set_hoverColorHex(ColorConverter::rgba2hex($buttonStyles['color']))
+            ->set_hoverColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
             ->set_hoverColorPalette("");
 
         return $brizyButton;

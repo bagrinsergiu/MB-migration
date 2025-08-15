@@ -776,9 +776,9 @@ class Bridge
                     continue;
                 }
 
-//                $brizyApi->setLabelManualMigration(true, (int)$value['brz_project_ids']);
+                $brizyApi->setLabelManualMigration(true, (int)$value['brz_project_id']);
 
-                $brizyApi->setCloningLink(true, (int)$value['brz_project_id']);
+//                $brizyApi->setCloningLink(true, (int)$value['brz_project_id']);
 
 
 //                $result = $this->insertMigrationMapping($value['brizy_project_id'], $key, json_encode(['data' => '2025-05-13']));
