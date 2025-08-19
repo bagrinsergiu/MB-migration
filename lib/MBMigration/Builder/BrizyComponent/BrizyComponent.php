@@ -826,13 +826,14 @@ class BrizyComponent implements JsonSerializable
     }
 
 
-    public function addLine(int $width, array $color, int $borderWidth, $options = [])
+    public function addLine(int $width, array $color, int $borderWidth, $options = [], $position = null, $align = 'center')
     {
         try {
             $component = new BrizyLineComponent();
             $wrapperLine = new BrizyWrapperComponent('wrapper--line');
 
             $component->getValue()->set("width", $width ?? 70);
+            $component->getValue()->set("widthSuffix", $options['widthSuffix'] ?? 'px');
             $component->getValue()->set("borderWidth", $borderWidth ?? 1);
             $component->getValue()->set("borderColorHex", $color['color'] ?? '#4e3131');
             $component->getValue()->set("borderColorOpacity", $color['opacity'] ?? 1);
@@ -842,8 +843,9 @@ class BrizyComponent implements JsonSerializable
             }
 
             $wrapperLine->getValue()->add('items', [$component]);
+            $wrapperLine->getValue()->set('horizontalAlign', $align);
 
-            $this->getValue()->add('items', [$wrapperLine]);
+            $this->getValue()->add('items', [$wrapperLine], $position);
 
         } catch (exception $e) {
             Logger::instance()->warning('Error on addLine: ' . $e->getMessage() . '');

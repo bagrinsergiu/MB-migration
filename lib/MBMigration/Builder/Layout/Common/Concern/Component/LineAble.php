@@ -17,27 +17,26 @@ trait LineAble
         BrowserPageInterface    $browserPage,
         string                  $selector = null,
                                 $options = null,
-        array                   $customStyles = []
+        array                   $customStyles = [],
+        ?int                    $position = null,
+                                $align = 'center'
     ): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = $data->getBrizySection();
 
-        if (!isset($brizyKit['donation-button'])) {
-            Logger::instance()->critical('The BrizyKit does not contain the key: donation-button', [$mbSection['typeSection']]);
-        }
-
-        try{
+        try {
 
             $lineStyles = $browserPage->evaluateScript(
                 'brizy.getStyles',
                 [
-                    'selector' =>'[data-id=\'' . $selector . '\']',
+                    'selector' => '[data-id=\'' . $selector . '\']',
                     'styleProperties' => [
                         'border-top-color',
                         'border-top-style',
                         'border-top-width',
                         'width',
+                        'text-align',
                     ],
                     'families' => $data->getFontFamilies(),
                     'defaultFamily' => $data->getDefaultFontFamily(),
@@ -49,53 +48,71 @@ trait LineAble
                 'color' => ColorConverter::rgba2hex($lineStyles['data']['border-top-color']),
                 'width' => (int)$lineStyles['data']['width'],
                 'borderWidth' => (int)$lineStyles['data']['border-top-width'],
-                ];
+                'align' => $lineStyles['data']['text-align'],
+            ];
 
             $brizySection->addLine(
-                $lineStyles['width'],
+                $lineStyles['width'] / 2,
                 ['color' => $lineStyles['color'], 'opacity' => 1],
-                $lineStyles['borderWidth']
+                $lineStyles['borderWidth'],
+                $customStyles,
+                $position,
+                $lineStyles['align'] ?? 'center',
             );
         } catch (Exception $e) {
             Logger::instance()->critical($e->getMessage(), [$mbSection['typeSection']]);
         }
 
+        return $brizySection;
+    }
+
+    protected function handleLineMediaSection(
+        ElementContextInterface $data,
+        BrowserPageInterface    $browserPage,
+        string                  $selector = null,
+                                $options = null,
+        array                   $customStyles = [],
+        ?int                    $position = null,
+                                $align = 'center'
+    ): BrizyComponent
+    {
+        $mbSection = $data->getMbSection();
+        $brizySection = $data->getBrizySection();
+
         try {
-            switch ($mbSection['category']) {
-                case "button":
 
-                    if (self::$buttonCache['id'] === $options) {
-                        $brizySection->getValue()->add_items([self::$buttonCache['button']]);
-                        break;
-                    }
+            $lineStyles = $browserPage->evaluateScript(
+                'brizy.getStyles',
+                [
+                    'selector' => '[data-id=\'' . $selector . '\']',
+                    'styleProperties' => [
+                        'border-top-color',
+                        'border-top-style',
+                        'border-top-width',
+                        'width',
+                        'text-align',
+                    ],
+                    'families' => $data->getFontFamilies(),
+                    'defaultFamily' => $data->getDefaultFontFamily(),
+                    'pseudoElement' => ':after'
+                ]
+            );
 
-                    $selector = $selector ?? '[data-id="' . $mbSection['id'] . '"]';
+            $lineStyles = [
+                'color' => ColorConverter::rgba2hex($lineStyles['data']['border-top-color']),
+                'width' => (int)$lineStyles['data']['width'],
+                'borderWidth' => (int)$lineStyles['data']['border-top-width'],
+                'align' => $lineStyles['data']['text-align'],
+            ];
 
-                    $brizyButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
-
-                    $brizyButton = $this->setButtonStyles(
-                        $brizyButton,
-                        $browserPage,
-                        $selector,
-                        $data,
-                        $mbSection
-                    );
-
-                    $brizyButton = $this->setHoverButtonStyles(
-                        $brizyButton,
-                        $browserPage,
-                        $selector,
-                        $data,
-                        $mbSection
-                    );
-
-                    $this->setCustomStyles($customStyles, $brizyButton);
-
-                    self::$buttonCache['id'] = $options;
-                    self::$buttonCache['button'] = $brizyButton;
-                    $brizySection->getValue()->add_items([$brizyButton]);
-                    break;
-            }
+            $brizySection->addLine(
+                $lineStyles['width'] / 2,
+                ['color' => $lineStyles['color'], 'opacity' => 1],
+                $lineStyles['borderWidth'],
+                $customStyles,
+                $position,
+                $lineStyles['align'] ?? 'center',
+            );
         } catch (Exception $e) {
             Logger::instance()->critical($e->getMessage(), [$mbSection['typeSection']]);
         }

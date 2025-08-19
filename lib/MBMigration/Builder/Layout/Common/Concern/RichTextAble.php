@@ -400,6 +400,7 @@ trait RichTextAble
                     ->set_widthSuffix($sizeUnit)
                     ->set_heightSuffix($sizeUnit)
                     ->set_tabletHeightSuffix($sizeUnit)
+                    ->set_mobileSizeType('original')
                     ->set_mobileWidthSuffix($sizeUnit)
                     ->set_mobileHeightSuffix($sizeUnit);
             }
