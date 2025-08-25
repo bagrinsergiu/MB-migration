@@ -522,7 +522,10 @@ class BrizyComponent implements JsonSerializable
             "bold" => false,
             "italic" => false,
             "underline" => false,
-            "strike" => false
+            "strike" => false,
+            "mobileFontStyle" => "",
+            "mobileFontSize" => $fontSize,
+            "mobileFontSizeSuffix" => "px"
         ];
 
         foreach ($bgColor as $key => $value) {

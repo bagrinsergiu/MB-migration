@@ -46,22 +46,21 @@ abstract class EventLayoutElement extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['main'], true));
         $brizyWidget = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['widget'], true));
-//        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
+
+        $mbSection = $data->getMbSection();
+        $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+
+        $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
+        $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
+
         $DetailsPageLayout = new EventDetailsPageLayout(
             $this->brizyKit['EventLayoutElement']['detail'],
             $this->getTopPaddingOfTheFirstElement(),
             $this->getMobileTopPaddingOfTheFirstElement(),
             $this->pageTDO,
             $data,
-            $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
+            $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
         );
-
-        $mbSection = $data->getMbSection();
-
-        $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
-        $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
-
-        $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
 
         $fonts = FontsController::getFontsFamilyFromName('main_text');
 

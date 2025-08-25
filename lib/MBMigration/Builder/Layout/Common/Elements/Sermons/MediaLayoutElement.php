@@ -14,6 +14,7 @@ use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Template\DetailPages\SermonDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\NumberProcessor;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
 use mysql_xdevapi\Exception;
@@ -72,6 +73,26 @@ abstract class MediaLayoutElement extends AbstractElement
         $dataIdSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
 
         $mbSection['mediaGridContainer'] = false;
+
+        if($this->hasNode($dataIdSelector. ' div.subsection.media-player-subsection', $this->browserPage)){
+            $bgSubsectionColorStyles = $this->getDomElementStyles(
+                $dataIdSelector. ' div.subsection.media-player-subsection',
+                ['background-color', 'opacity', 'background-color'],
+                $this->browserPage);
+
+            $bgSubsectionColorStyles = [
+                'background-color' => ColorConverter::convertColorRgbToHex($bgSubsectionColorStyles['background-color']),
+                'opacity' => NumberProcessor::convertToNumeric($sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($bgSubsectionColorStyles['background-color']))
+            ];
+
+            $brizySection->getItemValueWithDepth(0)
+                ->set_bgColorOpacity($bgSubsectionColorStyles['opacity'])
+                ->set_bgColorHex($bgSubsectionColorStyles['background-color'])
+
+                ->set_mobileBgColorType('solid')
+                ->set_mobileBgColorHex($bgSubsectionColorStyles['background-color'])
+                ->set_mobileBgColorOpacity($bgSubsectionColorStyles['opacity']);
+        }
 
         if($this->hasNode($dataIdSelector. ' .media-grid-container', $this->browserPage)){
             $mbSection['mediaGridContainer'] = true;
@@ -185,12 +206,15 @@ abstract class MediaLayoutElement extends AbstractElement
         } else {
             $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
 
+            $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+            $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
+
             $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['GridMediaLayout']['detail'],
                 $this->getTopPaddingOfTheFirstElement() + $this->getAdditionalTopPaddingOfDetailPage(),
                 $this->getMobileTopPaddingOfTheFirstElement(),
                 $this->pageTDO,
                 $data,
-                $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
+                $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
             );
 
             $resultColorStyles['text'] = $this->getDomElementStyles(
