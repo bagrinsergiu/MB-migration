@@ -114,6 +114,30 @@ class BrizyComponent implements JsonSerializable
         return $item;
     }
 
+    public function findFirstByType(string $type): ?BrizyComponent
+    {
+        if ($this->getType() === $type) {
+            return $this;
+        }
+
+        $items = $this->getValue()->get_items();
+        if (!is_array($items) || empty($items)) {
+            return null;
+        }
+
+        foreach ($items as $child) {
+            if ($child instanceof BrizyComponent) {
+                $found = $child->findFirstByType($type);
+                if ($found instanceof BrizyComponent) {
+                    return $found;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
     /**
      * @return mixed|null
      */

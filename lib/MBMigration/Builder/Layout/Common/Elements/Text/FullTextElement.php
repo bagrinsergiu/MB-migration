@@ -16,6 +16,11 @@ abstract class FullTextElement extends AbstractElement
     use SectionStylesAble;
     use DonationsAble;
 
+    protected function getSectionName(): string
+    {
+        return "Full Text";
+    }
+
     /**
      * @throws BadJsonProvided
      * @throws \Exception

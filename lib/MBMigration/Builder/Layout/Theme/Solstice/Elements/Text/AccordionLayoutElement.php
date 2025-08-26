@@ -9,6 +9,7 @@ use MBMigration\Builder\Utils\TextTools;
 
 class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\AccordionLayoutElement
 {
+    protected string $sectionName = 'main';
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));

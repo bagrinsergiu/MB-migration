@@ -193,7 +193,13 @@ abstract class GridLayoutElement extends AbstractElement
             case 'image':
                 $brizyComponent->addImage($mbSectionItem, $propertiesItemPhoto);
 
-                $itemPhoto = $brizyComponent->getItemWithDepth(0);
+                $itemPhoto = $brizyComponent->findFirstByType('Image');
+
+                if($itemPhoto === null)
+                {
+                    $itemPhoto = $brizyComponent->getItemWithDepth(0);
+                }
+
                 break;
             default:
                 $itemPhoto = $brizyComponent;

@@ -38,6 +38,12 @@ abstract class AbstractElement implements ElementInterface
     {
         $this->brizyKit = $brizyKit;
         $this->browserPage = $browserPage;
+        Logger::instance()->info("section in the work: " . $this->getSectionName());
+    }
+
+    protected function getSectionName(): string
+    {
+        return "main";
     }
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent

@@ -16,6 +16,11 @@ abstract class FullMediaElementElement extends AbstractElement
     use SectionStylesAble;
     use DonationsAble;
 
+    protected function getSectionName(): string
+    {
+        return "FullMedia";
+    }
+
     /**
      * @throws BadJsonProvided
      */

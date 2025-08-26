@@ -13,6 +13,11 @@ abstract class AccordionLayoutElement extends AbstractElement
     use RichTextAble;
     use SectionStylesAble;
 
+    protected function getSectionName(): string
+    {
+        return "Accordion";
+    }
+
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
