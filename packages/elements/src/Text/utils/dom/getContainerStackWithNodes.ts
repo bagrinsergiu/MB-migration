@@ -370,7 +370,8 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                         const hasIcon =
                           isElement &&
                           (element.matches(iconSelector) ||
-                            element.querySelector(iconSelector));
+                            element.querySelector(iconSelector) ||
+                            (wrapper as Element).matches(iconSelector));
 
                         if (hasIcon) {
                           if (appendedIcon) {

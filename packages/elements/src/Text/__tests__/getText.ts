@@ -4380,6 +4380,94 @@ const ex56: Data = {
   }
 };
 
+// Voyage example 57 (Icon is missing)
+const ex57: Data = {
+  html: `<div class="text-content text-1 editable" data-id="8735954" data-category="text"><div><p style="text-align: left; font-weight: 700; font-size: 1.0013em; color: rgb(0, 0, 0); font-family: Lato, &quot;Lato Regular&quot;, sans-serif;">Calvary student ministry is for those in 7th-12th grade. We gather together on a weekly basis to study the Bible and to grow in relationship with God and one another.</p><p style="text-align: left; font-weight: 400; font-size: 1.0013em; color: rgb(0, 0, 0); font-family: Lato, &quot;Lato Regular&quot;, sans-serif;"><br></p><p style="text-align: left; font-weight: 400; font-size: 1.0013em; color: rgb(0, 0, 0); font-family: Lato, &quot;Lato Regular&quot;, sans-serif;">Students meets regularly on Sunday mornings at 9:00 a.m. to study God's Word.&nbsp;&nbsp;</p><p style="text-align: left; font-weight: 400; font-size: 1.0013em; color: rgb(0, 0, 0); font-family: Lato, &quot;Lato Regular&quot;, sans-serif;">Wednesday evenings during the school year, we meet from <span class="clovercustom" style="font-size: 16.0008px; font-style: normal; font-weight: 400; letter-spacing: normal; text-align: left;">6:30-8:00 p.m.&nbsp; Evenings </span>include fellowship, worship, a message, and "tribe" time.&nbsp;</p><p style="text-align: left; font-weight: 400; font-size: 1.0013em; color: rgb(0, 0, 0); font-family: Lato, &quot;Lato Regular&quot;, sans-serif;">Many special events take place throughout the year so be sure to watch our Facebook page and pick up a copy of the monthly student calendar in the church lobby <span class="clovercustom" style="font-size: 16.0008px; font-style: normal; letter-spacing: normal; text-align: left;">for details on our upcoming events</span>.&nbsp;&nbsp;</p><p style="text-align: left; font-weight: 600; font-size: 1.0013em;"><br></p><p style="text-align: left; font-weight: 600; color: rgb(49, 76, 92); font-size: 1.0013em;"><br></p><p style="text-align: left; font-weight: 600; color: rgb(49, 76, 92); font-size: 1.6896em;"><span data-socialicon="roundedfacebook"><span class="socialIconSymbol" style="color: rgb(71, 89, 147);" aria-hidden="true"><a href="https://www.facebook.com/groups/PursuitYankton/" data-location="external" data-detail="https://www.facebook.com/groups/PursuitYankton/" data-category="link" target="_blank" class="cloverlinks" style="color: rgb(71, 89, 147);"></a> </span><span class="sr-only">roundedfacebook</span></span><a href="https://www.instagram.com/asm_yankton/" data-location="external" data-detail="https://www.instagram.com/asm_yankton/" data-category="link" target="_blank" class="cloverlinks socialIconLink" style="font-size: 26.999807357788086px; font-style: normal; font-weight: 600; letter-spacing: normal; text-decoration: none; color: rgb(194, 47, 135);" data-button="false"><span data-socialicon="roundedinstagram"><span class="socialIconSymbol" style="font-size: 2em; font-style: normal; font-weight: 300;" aria-hidden="true"></span><span class="sr-only">roundedinstagram</span></span> </a></p><p style="text-align: left; font-weight: 600;"><br></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="8735954"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 0, 0); font-weight: 700; ">Calvary student ministry is for those in 7th-12th grade. We gather together on a weekly basis to study the Bible and to grow in relationship with God and one another.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 0, 0); font-weight: 400; ">Students meets regularly on Sunday mornings at 9:00 a.m. to study God\'s Word.&nbsp;&nbsp;</span></p><p class="brz-fs-lg-16 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><span style="color: rgb(0, 0, 0); font-weight: 400; ">Wednesday evenings during the school year, we meet from </span><span style="font-weight: 400; color: rgb(0, 0, 0); ">6:30-8:00 p.m.&nbsp; Evenings </span><span style="color: rgb(0, 0, 0); font-weight: 400; ">include fellowship, worship, a message, and "tribe" time.&nbsp;</span></p><p class="brz-fs-lg-16 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><span style="color: rgb(0, 0, 0); font-weight: 400; ">Many special events take place throughout the year so be sure to watch our Facebook page and pick up a copy of the monthly student calendar in the church lobby </span><span style="color: rgb(0, 0, 0); font-weight: 400; ">for details on our upcoming events</span><span style="color: rgb(0, 0, 0); font-weight: 400; ">.&nbsp;&nbsp;</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                colorHex: "#475993",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#475993",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                name: "facebook-square",
+                padding: 7,
+                type: "fa",
+                linkExternal: "https://www.facebook.com/groups/PursuitYankton/",
+                linkExternalBlank: "on",
+                linkType: "external"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                linkExternal: "https://www.instagram.com/asm_yankton/",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "instagram",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -4437,7 +4525,8 @@ describe.each([
   ex53_2,
   ex54,
   ex55,
-  ex56
+  ex56,
+  ex57
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
