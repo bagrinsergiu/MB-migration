@@ -3698,7 +3698,10 @@ that will spur your relationship with God.</span>&nbsp;</p><p style="font-family
                 customSize: 26,
                 name: "hand-point-right",
                 padding: 7,
-                type: "fa"
+                type: "fa",
+                linkExternal: "http://theliving.org/hotspots",
+                linkExternalBlank: "on",
+                linkType: "external"
               }
             }
           ],
@@ -4214,6 +4217,169 @@ const ex55: Data = {
   }
 };
 
+// Voyage example 56 (Icon missing link)
+const ex56: Data = {
+  html: `<div class="text-content text-0 editable" data-id="8704564" data-category="text"><div><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;">CONTACT US:&nbsp;&nbsp;</p><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;">Calvary Baptist Church<br></p><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;">2407 Broadway, Yankton, SD 57078</p><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;">(605) 665-5594</p><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;"><a href="mailto:secretary@cbchurch.com" data-location="email" data-detail="secretary@cbchurch.com" data-category="link" target="_self" class="cloverlinks" style="font-weight: 600; color: rgb(167, 130, 171);">secretary@cbchurch.com</a></p><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;">Office Hours: 9:00am<span class="clovercustom">&nbsp;</span><span class="clovercustom">–</span><span class="clovercustom">&nbsp;</span>1:00pm, Monday<span class="clovercustom" style="font-size: 16.043167114257813px; font-style: normal; font-weight: 600; letter-spacing: normal; text-align: center;"><span class="clovercustom">&nbsp;</span><span class="clovercustom"><span style="font-size: 16.043167px;" class="clovercustom">–</span>&nbsp;</span></span>Friday</p><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;"><br></p><p style="font-family: Lato, &quot;Lato Light&quot;, sans-serif; font-weight: 300; font-size: 1.4628em;"><a style="font-weight: 300;" href="https://www.facebook.com/CalvaryBaptistChurchYankton/" data-location="external" data-detail="https://www.facebook.com/CalvaryBaptistChurchYankton/" data-category="link" target="_blank" class="cloverlinks"><span data-socialicon="roundedfacebook"><span class="socialIconSymbol" style="color: rgb(71, 89, 147);" aria-hidden="true"></span></span></a><span class="clovercustom" style="font-size: 22.000511169433594px; font-style: normal; font-weight: 300; letter-spacing: normal; text-align: center;">  &nbsp;</span><a style="font-weight: 300; color: rgb(194, 47, 135);" href="https://www.instagram.com/calvary_yankton/" data-location="external" data-detail="https://www.instagram.com/calvary_yankton/" data-category="link" target="_blank" class="cloverlinks"><span data-socialicon="roundedinstagram"><span class="socialIconSymbol" aria-hidden="true"></span></span></a><span class="clovercustom" style="font-size: 22.000511169433594px; font-style: normal; font-weight: 300; letter-spacing: normal; text-align: center; color: rgb(255, 0, 0);"><a style="font-size: 22.000511169433594px; font-style: normal; font-weight: 300; letter-spacing: normal; text-align: center; color: rgb(0, 166, 227);" href="https://twitter.com/home?lang=en" data-location="external" data-detail="https://twitter.com/home?lang=en" data-category="link" target="_blank" class="cloverlinks"><span class="clovercustom" style="font-size: 22.000511169433594px; font-style: normal; font-weight: 300; letter-spacing: normal; text-align: center;"> &nbsp;</span></a><a href="https://www.youtube.com/channel/UCepa_vIqFOeD45nxFEx1Ykg" data-location="external" data-detail="https://www.youtube.com/channel/UCepa_vIqFOeD45nxFEx1Ykg" data-category="link" target="_blank" class="cloverlinks"> </a><a href="https://www.youtube.com/channel/UCepa_vIqFOeD45nxFEx1Ykg" data-location="external" data-detail="https://www.youtube.com/channel/UCepa_vIqFOeD45nxFEx1Ykg" data-category="link" target="_blank" class="cloverlinks" style="color: rgb(255, 0, 0);"><span class="clovercustom" style="font-size: 22.000511169433594px; font-style: normal; font-weight: 300; letter-spacing: normal; text-align: center;"><span data-socialicon="roundedyoutube"><span class="socialIconSymbol" aria-hidden="true"></span></span> </span> </a></span></p><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;"><br></p><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;"><span class="clovercustom" style="color: rgb(169, 130, 173);">Sunday Services:&nbsp;</span>Worship Service<span class="clovercustom" style="font-size: 16.043167114257813px; font-style: normal; font-weight: 600; letter-spacing: normal; text-align: center;"><span class="clovercustom">&nbsp;</span>–<span class="clovercustom"> 9:00am &amp;&nbsp;</span></span>10:30am</p><p style="font-weight: 600; color: rgb(0, 0, 0); font-size: 1.0667em;"><span class="clovercustom" style="color: rgb(167, 130, 171);">Wednesday Evenings:&nbsp;</span>Awana<span class="clovercustom" style="font-size: 16.043167114257813px; font-style: normal; font-weight: 600; letter-spacing: normal; text-align: center;"><span class="clovercustom">&nbsp;&amp; Rev 56 </span>–<span class="clovercustom">&nbsp;</span></span>6:30pm <span style="letter-spacing: 0em; font-size: 0.9973em;">(Sept-May)&nbsp;</span></p><p><span class="clovercustom" style="font-size: 1.0667em; letter-spacing: 0em; color: rgb(0, 0, 0); font-weight: 600;"><span style="font-style: normal; font-weight: 600; letter-spacing: normal; text-align: start; text-decoration: none; font-size: 0.9973em;" class="clovercustom">Calvary Student Ministry</span><span class="clovercustom" style="font-weight: 600; font-size: 0.9973em;">&nbsp;– 6:30</span></span><span class="clovercustom" style="color: rgb(0, 0, 0); font-weight: 600;"><span class="clovercustom" style="font-size: 0.9973em;"><span class="clovercustom" style="font-size: 1.0667em;">pm</span> <span class="clovercustom" style="font-size: 1.0667em;">(Sept-May /</span> <span class="clovercustom" style="font-size: 1.0667em;">summer varies, see </span></span><a href="/ministries/students" data-location="existing" data-button="false" data-detail="516769" data-category="link" target="_self" class="cloverlinks">Student Ministry</a><span class="clovercustom" style="font-size: 1.0667em;">)</span><br></span><span class="clovercustom" style="font-size: 1.0638em; font-weight: 600; color: rgb(0, 0, 0);">Adult Discipleship Group (Bible Study)<span class="clovercustom" style="font-size: 16.043167114257813px; font-style: normal; font-weight: 600; letter-spacing: normal; text-align: center;"><span class="clovercustom">&nbsp;</span>–<span class="clovercustom">&nbsp;</span></span>6:30pm (Sept-May)</span></p><p><br></p><p style="line-height: 1.5em;"><span class="clovercustom" style="font-weight: 600; color: rgb(0, 0, 0);">Online Giving: &nbsp;</span><a class="socialIconLink cloverlinks" href="https://calvary-baptist-yankton.churchcenter.com/giving" data-location="external" data-button="false" data-detail="https://calvary-baptist-yankton.churchcenter.com/giving" data-category="link" target="_blank"><span data-socialicon="roundeddollar"><span class="socialIconSymbol" aria-hidden="true"></span></span></a> </p><p style="color: rgb(36, 64, 31); line-height: 1.5em;"><br></p><p style="font-family: Lato, &quot;Lato Light&quot;, sans-serif; font-weight: 300;">Calvary Baptist is a part of <a style="" href="https://www.convergeheartland.org/" data-location="external" data-detail="https://www.convergeheartland.org/" data-category="link" target="_blank" class="cloverlinks">Converge Heartland</a> and <a style="color: rgb(181, 145, 184);" href="https://converge.org/" data-location="external" data-detail="https://converge.org/" data-category="link" target="_blank" class="cloverlinks">Converge Worldwide</a>.</p><p><br></p><p></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="8704564"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1_07 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 0, 0); font-weight: 600; ">CONTACT US:&nbsp;&nbsp;</span></p><p class="brz-fs-lg-1_07 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 0, 0); font-weight: 600; ">Calvary Baptist Church</span><br></p><p class="brz-fs-lg-1_07 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 0, 0); font-weight: 600; ">2407 Broadway, Yankton, SD 57078</span></p><p class="brz-fs-lg-1_07 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 0, 0); font-weight: 600; ">(605) 665-5594</span></p><p class="brz-fs-lg-1_07 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="email" data-detail="secretary@cbchurch.com" data-category="link" target="_self" style="font-weight: 600; color: rgb(167, 130, 171); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22mailto%3Asecretary%40cbchurch.com%22%2C%22externalBlank%22%3A%22off%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="color: rgb(167, 130, 171); font-weight: 600; ">secretary@cbchurch.com</span></a></p><p class="brz-fs-lg-16_04 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(0, 0, 0); font-weight: 600; ">Office Hours: 9:00am</span><span>&nbsp;</span><span style="color: rgb(0, 0, 0); font-weight: 600; ">–</span><span>&nbsp;</span><span style="color: rgb(0, 0, 0); font-weight: 600; ">1:00pm, Monday</span><span style="font-weight: 600; "><span>&nbsp;</span><span><span style="">–</span>&nbsp;</span></span><span style="color: rgb(0, 0, 0); font-weight: 600; ">Friday</span></p><p class="brz-fs-lg-1_07 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                colorHex: "#475993",
+                colorOpacity: "1",
+                colorPalette: "",
+                customSize: 26,
+                hoverColorHex: "#475993",
+                hoverColorOpacity: 0.8,
+                hoverColorPalette: "",
+                linkExternal:
+                  "https://www.facebook.com/CalvaryBaptistChurchYankton/",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "facebook-square",
+                padding: 7,
+                type: "fa"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                linkExternal: "https://www.instagram.com/calvary_yankton/",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "instagram",
+                padding: 7,
+                type: "fa"
+              }
+            },
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                linkExternal:
+                  "https://www.youtube.com/channel/UCepa_vIqFOeD45nxFEx1Ykg",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "youtube",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1_07 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-16_04 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-0"><span style="color: rgb(169, 130, 173); font-weight: 600; ">Sunday Services:&nbsp;</span><span style="color: rgb(0, 0, 0); font-weight: 600; ">Worship Service</span><span style="font-weight: 600; color: rgb(0, 0, 0); "><span>&nbsp;</span>–<span style="color: rgb(0, 0, 0); font-weight: 600; "> 9:00am &amp;&nbsp;</span></span><span style="color: rgb(0, 0, 0); font-weight: 600; ">10:30am</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span style="color: rgb(167, 130, 171); font-weight: 600; ">Wednesday Evenings:&nbsp;</span><span style="color: rgb(0, 0, 0); font-weight: 600; ">Awana</span><span style="font-weight: 600; color: rgb(0, 0, 0); "><span style="font-weight: 600; ">&nbsp;&amp; Rev 56 </span>–<span>&nbsp;</span></span><span style="color: rgb(0, 0, 0); font-weight: 600; ">6:30pm </span><span style="color: rgb(0, 0, 0); font-weight: 600; ">(Sept-May)&nbsp;</span></p><p class="brz-fs-lg-1_06 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-0"><span style="color: rgb(0, 0, 0); font-weight: 600; "><span style="font-weight: 600; color: rgb(0, 0, 0); ">Calvary Student Ministry</span><span style="font-weight: 600; color: rgb(0, 0, 0); ">&nbsp;– 6:30</span></span><span style="color: rgb(0, 0, 0); font-weight: 600; "><span style=""><span style="">pm</span> <span style="">(Sept-May /</span> <span style="">summer varies, see </span></span><a data-location="existing" data-button="false" data-detail="516769" data-category="link" target="_self" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22%2Fministries%2Fstudents%22%2C%22externalBlank%22%3A%22off%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>Student Ministry</span></a><span style="color: rgb(0, 0, 0); font-weight: 600; ">)</span><br></span><span style="font-weight: 600; color: rgb(0, 0, 0); ">Adult Discipleship Group (Bible Study)<span style="font-weight: 600; color: rgb(0, 0, 0); "><span>&nbsp;</span>–<span>&nbsp;</span></span>6:30pm (Sept-May)</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 600; color: rgb(0, 0, 0); ">Online Giving: &nbsp;</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                linkExternal:
+                  "https://calvary-baptist-yankton.churchcenter.com/giving",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "dollar-sign",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-300 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 300; ">Calvary Baptist is a part of </span><a style="" data-location="external" data-detail="https://www.convergeheartland.org/" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.convergeheartland.org%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>Converge Heartland</span></a><span style="font-weight: 300; "> and </span><a style="color: rgb(181, 145, 184); " data-location="external" data-detail="https://converge.org/" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fconverge.org%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="color: rgb(181, 145, 184); ">Converge Worldwide</span></a><span style="font-weight: 300; ">.</span></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -4270,7 +4436,8 @@ describe.each([
   ex53_1,
   ex53_2,
   ex54,
-  ex55
+  ex55,
+  ex56
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;

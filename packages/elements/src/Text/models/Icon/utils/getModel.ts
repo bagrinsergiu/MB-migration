@@ -83,9 +83,9 @@ export function getModel(
   const iconCode = iconNode?.textContent?.charCodeAt(0);
   const globalModel = getGlobalIconModel();
 
-  const parentElement = node.parentElement;
-  const isLink = parentElement?.tagName === "A" || node.tagName === "A";
-  const href = getHref(parentElement) ?? getHref(node) ?? "";
+  const linkNode = node.querySelector("a") ?? node.closest("a");
+  const isLink = !!linkNode;
+  const href = getHref(linkNode);
   const mappedHref = href && urlMap[href] !== undefined ? urlMap[href] : href;
 
   const fileName = node.getAttribute("sodipodi:docname");
