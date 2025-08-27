@@ -388,8 +388,13 @@ class BrizyAPI extends Utils
     public function createFonts($fontsName, $projectID, array $KitFonts, $displayName)
     {
         $fonts = [];
+        $__presenceLogged = false;
         foreach ($KitFonts as $fontWeight => $pathToFonts) {
             Logger::instance()->info("Request to Upload font name: $fontsName, font weight: $fontWeight");
+            if (!$__presenceLogged) {
+                $this->logFontPresenceIfExists($fontsName, $displayName);
+                $__presenceLogged = true;
+            }
             foreach ($pathToFonts as $pathToFont) {
                 $fileExtension = $this->getExtensionFromFileString($pathToFont);
 
@@ -417,9 +422,20 @@ class BrizyAPI extends Utils
             ],
         ]);
 
-        $res = $this->request('POST', $this->createPrivateUrlAPI('fonts'), $options);
-        sleep(1);
-        return json_decode($res->getBody()->getContents(), true);
+        try {
+            $res = $this->request('POST', $this->createPrivateUrlAPI('fonts'), $options);
+            sleep(1);
+            $decoded = json_decode($res->getBody()->getContents(), true);
+            if (!is_array($decoded)) {
+                Logger::instance()->warning('createFonts: unexpected response payload', ['fontsName' => $fontsName]);
+            } else {
+                Logger::instance()->info('createFonts: API responded', ['fontsName' => $fontsName, 'uid' => $decoded['uid'] ?? null, 'family' => $decoded['family'] ?? null]);
+            }
+            return $decoded;
+        } catch (Exception $e) {
+            Logger::instance()->error('createFonts API call failed', ['fontsName' => $fontsName, 'error' => $e->getMessage()]);
+            throw $e;
+        }
     }
 
     /**
@@ -428,7 +444,7 @@ class BrizyAPI extends Utils
      */
     public function addFontAndUpdateProject(array $data, string $configFonts = 'upload'): string
     {
-        Logger::instance()->info('Add font ' . $data['family'] . ' in project and update project');
+        Logger::instance()->info('Add font ' . ($data['family'] ?? 'n/a') . ' in project and update project', ['section' => $configFonts]);
         $containerID = Utils::$cache->get('projectId_Brizy');
 
         $projectFullData = $this->getProjectContainer($containerID, true);
@@ -459,14 +475,18 @@ class BrizyAPI extends Utils
                 $projectData['fonts']['config']['data'][] = $data;
                 $fontId = FontUtils::convertFontFamily($data['family']);
                 break;
+            default:
+                Logger::instance()->warning('addFontAndUpdateProject: unknown section', ['section' => $configFonts]);
+                $fontId = '';
         }
 
         $projectFullData['data'] = json_encode($projectData);
 
         $result = $this->updateProject($projectFullData);
+        Logger::instance()->info('Project updated after font add', ['section' => $configFonts, 'brizyId' => $brzFontId, 'fontId' => $fontId]);
 
         sleep(3);
-        $this->checkUpdateFonts($result, $brzFontId, $data['family']);
+        $this->checkUpdateFonts($result, $brzFontId, $data['family'] ?? null);
 
         return $fontId;
     }
@@ -483,6 +503,46 @@ class BrizyAPI extends Utils
             }
         }
         Logger::instance()->warning("The font has not been added to the project: $brzFontId");
+    }
+
+    private function logFontPresenceIfExists(string $fontsName, string $displayName): void
+    {
+        try {
+            $containerID = Utils::$cache->get('projectId_Brizy');
+            if (!$containerID) { return; }
+
+            $projectFullData = $this->getProjectContainer($containerID, true);
+            $projectData = json_decode($projectFullData['data'] ?? '{}', true);
+
+            $targets = [];
+            $name1 = FontUtils::convertFontFamily($fontsName);
+            $name2 = FontUtils::convertFontFamily($displayName);
+            $targets[$name1] = true;
+            $targets[$name2] = true;
+
+            $sections = ['upload', 'google', 'config'];
+            foreach ($sections as $section) {
+                if (!isset($projectData['fonts'][$section]['data']) || !is_array($projectData['fonts'][$section]['data'])) {
+                    continue;
+                }
+                foreach ($projectData['fonts'][$section]['data'] as $font) {
+                    if (!isset($font['family'])) { continue; }
+                    $familyNorm = FontUtils::convertFontFamily($font['family']);
+                    if (!isset($targets[$familyNorm])) { continue; }
+
+                    $id = $font['id'] ?? ($font['uid'] ?? null);
+                    $brizyId = $font['brizyId'] ?? null;
+                    $idStr = $id ? $id : 'n/a';
+                    $brizyIdStr = $brizyId ? $brizyId : 'n/a';
+
+                    Logger::instance()->info("Font already present in project: $familyNorm (type: $section), id: $idStr, brizyId: $brizyIdStr");
+                    return;
+                }
+            }
+        } catch (Exception $e) {
+            // do not interrupt font upload flow; presence check is best-effort
+            Logger::instance()->warning('Font presence check failed', ['font' => $fontsName, 'error' => $e->getMessage()]);
+        }
     }
 
     /**

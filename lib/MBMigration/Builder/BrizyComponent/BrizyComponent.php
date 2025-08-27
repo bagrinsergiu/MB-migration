@@ -821,7 +821,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addImage($mbSectionItem, $options = [])
+    public function addImage($mbSectionItem, $options = [], $position = null)
     {
         $image = new BrizyImageComponent();
         $wrapperImage = new BrizyWrapperComponent('wrapper--image');
@@ -839,7 +839,7 @@ class BrizyComponent implements JsonSerializable
 
         $wrapperImage->getValue()->add('items', [$image]);
 
-        $this->getValue()->add('items', [$wrapperImage]);
+        $this->getValue()->add('items', [$wrapperImage], $position);
     }
 
     public function addMenuBorderRadius($radius)
