@@ -27,6 +27,36 @@ class Footer extends FooterElement
             $this->browserPage
         );
 
+        $imageStyle = $this->getDomElementStyles(
+            $sectionSelector . ' div.photo-container > img',
+            [
+                'height',
+                'width'
+            ],
+            $this->browserPage
+        );
+
+        foreach ($mbSection['items'] as $item)
+        {
+            if($item['category'] === 'photo')
+            {
+                $additionalParams = [
+                    'sizeType' => 'custom',
+                    'imageWidth' => $item['settings']['image']['width'] ?? 720,
+                    'imageHeight' => $item['settings']['image']['height'] ?? 160,
+                    'width' => (int) $imageStyle['width'] ?? 360,
+                    'height' => (int) $imageStyle['height'] ?? 40,
+                    'widthSuffix' => 'px',
+                    'heightSuffix' => 'px',
+                ];
+
+                $brizySection->addImage(
+                    $item,
+                    $additionalParams,
+                    $item['order_by']
+                );
+            }
+        }
 
         $sectionOptionStyle = [
             "borderStyle"=> "solid",
@@ -34,13 +64,11 @@ class Footer extends FooterElement
             "borderColorOpacity"=> 1,
             "borderColorPalette"=> "",
 
-
             "borderWidthType"=> "ungrouped",
             "borderTopWidth"=> (int) $sectionStyle["border-top-width"],
             "borderRightWidth"=> 0,
             "borderBottomWidth"=> 0,
             "borderLeftWidth"=> 0,
-
         ];
 
         $section = $brizySection->getValue();
