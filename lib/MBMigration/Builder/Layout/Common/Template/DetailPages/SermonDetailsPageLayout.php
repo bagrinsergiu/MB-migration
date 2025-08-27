@@ -139,28 +139,28 @@ class SermonDetailsPageLayout extends DetailsPage
             'hoverMetaLinksColorOpacity' => 0.75,
             'hoverMetaLinksColorPalette' => '',
 
-            'detailButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleNormal['color'] ??  $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' =>  $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'hoverDetailButtonColorOpacity' => 1,
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['background-color'] ??  $sectionPalette['text'],
+            'hoverDetailButtonColorOpacity' => 0.75,
             'hoverDetailButtonColorPalette' => '',
 
-            'detailButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleNormal['background-color'] ??  $sectionPalette['item-bg'],
             'detailButtonBgColorOpacity' => 1,
             'detailButtonBgColorPalette' => '',
 
-            'hoverDetailButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
-            'hoverDetailButtonBgColorOpacity' => 1,
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleHover['background-color'] ??  $sectionPalette['item-bg'],
+            'hoverDetailButtonBgColorOpacity' => 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'subscribeButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'subscribeButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleNormal['color'] ??  $sectionPalette['text'],
             'subscribeButtonColorOpacity' => 1,
             'subscribeButtonColorPalette' => '',
 
             'subscribeButtonBorderStyle' => 'solid',
-            'subscribeButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'subscribeButtonBorderColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleNormal['border-top-color'] ??  $sectionPalette['text'],
             'subscribeButtonBorderColorOpacity' => 1,
             'subscribeButtonBorderColorPalette' => '',
 
@@ -171,28 +171,28 @@ class SermonDetailsPageLayout extends DetailsPage
             "subscribeButtonBorderBottomWidth" => 1,
             "subscribeButtonBorderLeftWidth" => 1,
 
-            'subscribeButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
+            'subscribeButtonBgColorHex' =>  $sectionPalette['btn-bg'] ?? $basicButtonStyleNormal['background-color'] ?? $sectionPalette['item-bg'],
             'subscribeButtonBgColorOpacity' =>  1,
             'subscribeButtonBgColorPalette' => '',
 
-            'hoverSubscribeButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
-            'hoverSubscribeButtonBgColorOpacity' => 1,
+            'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleHover['background-color'] ??  $sectionPalette['item-bg'],
+            'hoverSubscribeButtonBgColorOpacity' => 0.75,
             'hoverSubscribeButtonBgColorPalette' => '',
 
-            'subscribeEventButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['text']  ?? $sectionPalette['btn-text'],
+            'subscribeEventButtonColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'] ??  $sectionPalette['btn-text'],
             'subscribeEventButtonColorOpacity' => 1,
             'subscribeEventButtonColorPalette' => '',
 
-            'subscribeEventButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
+            'subscribeEventButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleNormal['background-color'] ??  $sectionPalette['item-bg'],
             'subscribeEventButtonBgColorOpacity' =>  1,
             'subscribeEventButtonBgColorPalette' => '',
 
-            'hoverSubscribeEventButtonBgColorHex' =>  $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
-            'hoverSubscribeEventButtonBgColorOpacity' => 1,
+            'hoverSubscribeEventButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleHover['background-color'] ??  $sectionPalette['item-bg'],
+            'hoverSubscribeEventButtonBgColorOpacity' => 0.75,
             'hoverSubscribeEventButtonBgColorPalette' => '',
 
             'subscribeEventButtonBorderStyle' => 'solid',
-            'subscribeEventButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['text'] ?? $sectionPalette['btn-text'],
+            'subscribeEventButtonBorderColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['border-top-color'] ??  $sectionPalette['btn-text'],
             'subscribeEventButtonBorderColorOpacity' => 1,
             'subscribeEventButtonBorderColorPalette' => '',
 
@@ -253,32 +253,32 @@ class SermonDetailsPageLayout extends DetailsPage
             'hoverMetaLinksColorOpacity' => 0.75,
             'hoverMetaLinksColorPalette' => '',
 
-            'detailButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleNormal['color'] ??  $sectionPalette['text'],
             'detailButtonColorOpacity' =>  1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'hoverDetailButtonColorOpacity' => 1,
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'] ??  $sectionPalette['text'],
+            'hoverDetailButtonColorOpacity' => 0.75,
             'hoverDetailButtonColorPalette' => '',
 
-            'detailButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ??  $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
+            'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleNormal['background-color'] ??  $sectionPalette['item-bg'],
             'detailButtonBgColorOpacity' => 1,
             'detailButtonBgColorPalette' => '',
 
-            'hoverDetailButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
-            'hoverDetailButtonBgColorOpacity' => 1,
+            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleHover['background-color'] ??  $sectionPalette['item-bg'],
+            'hoverDetailButtonBgColorOpacity' => 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'subscribeButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'] ??  $sectionPalette['text'],
+            'subscribeButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleNormal['color'] ?? $sectionPalette['text'],
             'subscribeButtonColorOpacity' => 1,
             'subscribeButtonColorPalette' => '',
 
-            'subscribeButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
+            'subscribeButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleNormal['background-color'] ??  $sectionPalette['item-bg'],
             'subscribeButtonBgColorOpacity' => 1,
             'subscribeButtonBgColorPalette' => '',
 
-            'hoverSubscribeButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
-            'hoverSubscribeButtonBgColorOpacity' => 1,
+            'hoverSubscribeButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleHover['background-color'] ??  $sectionPalette['item-bg'],
+            'hoverSubscribeButtonBgColorOpacity' => 0.75,
             'hoverSubscribeButtonBgColorPalette' => '',
 
             "typographyBold" => false,
