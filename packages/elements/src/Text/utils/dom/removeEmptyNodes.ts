@@ -3,6 +3,11 @@ export function removeEmptyNodes(node: Element): Element {
 
   children.forEach((child) => {
     const text = child.textContent;
+    const hasBr = !!child.querySelector("br");
+
+    if (hasBr) {
+      return;
+    }
 
     // Check if have only `\n` then remove it
     // when have <br> textContent is empty string ['']
