@@ -9,27 +9,29 @@ class BrizyLineComponent extends BrizyComponent
     /**
      * @throws BadJsonProvided
      */
-    public function __construct()
+    public function __construct(array $data = null, ?BrizyComponent $parent = null)
     {
-        $imageJson = [
-            "type" => "Line",
-            "value" => [
-                "_styles" => [
-                    "line",
+        if ($data === null) {
+            $data = [
+                "type" => "Line",
+                "value" => [
+                    "_styles" => [
+                        "line",
+                    ],
+                    "_id" => 'a'.bin2hex(random_bytes(16)),
+                    "tabsState" => "normal",
+                    "width" => 40,
+                    "widthSuffix" => "%",
+                    "style" => "default",
+                    "borderWidth" => 3,
+                    "borderWidthSuffix" => "px",
+                    "borderColorHex" => "#4e3131",
+                    "borderColorOpacity" => 0.75,
+                    "borderColorPalette" => ""
                 ],
-                "_id" => 'a'.bin2hex(random_bytes(16)),
-                "tabsState" => "normal",
-                "width" => 40,
-                "widthSuffix" => "%",
-                "style" => "default",
-                "borderWidth" => 3,
-                "borderWidthSuffix" => "px",
-                "borderColorHex" => "#4e3131",
-                "borderColorOpacity" => 0.75,
-                "borderColorPalette" => ""
-            ],
-        ];
+            ];
+        }
 
-        parent::__construct($imageJson);
+        parent::__construct($data, $parent);
     }
 }

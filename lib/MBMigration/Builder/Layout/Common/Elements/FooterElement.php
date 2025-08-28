@@ -79,7 +79,7 @@ abstract class FooterElement extends AbstractElement
         ];
     }
 
-    private function handleItemMbSection($mbSection, ElementContextInterface $elementContext)
+    protected function handleItemMbSection($mbSection, ElementContextInterface $elementContext)
     {
         switch ($mbSection['category']) {
             case 'text':

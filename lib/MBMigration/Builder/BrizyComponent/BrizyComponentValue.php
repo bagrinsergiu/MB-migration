@@ -14,7 +14,7 @@ class BrizyComponentValue implements JsonSerializable
             $this->set(
                 'items',
                 array_map(function ($component) use ($parent){
-                    return new BrizyComponent($component,$parent);
+                    return BrizyComponent::fromArray($component, $parent);
                 }, $data['items'])
             );
         }

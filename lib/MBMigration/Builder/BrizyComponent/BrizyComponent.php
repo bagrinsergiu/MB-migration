@@ -30,6 +30,37 @@ class BrizyComponent implements JsonSerializable
     }
 
     /**
+     * Factory: build appropriate component subclass from array data.
+     * Falls back to base BrizyComponent when type is unknown.
+     *
+     * @param array $data
+     * @param BrizyComponent|null $parent
+     * @return BrizyComponent
+     * @throws BadJsonProvided
+     */
+    public static function fromArray(array $data, ?BrizyComponent $parent = null): BrizyComponent
+    {
+        $type = strtolower($data['type'] ?? '');
+        try {
+            switch ($type) {
+                case 'row':
+                    return new BrizyRowComponent($data, $parent);
+                case 'column':
+                    return new BrizyColumComponent($data, $parent);
+                case 'line':
+                    return new BrizyLineComponent($data, $parent);
+                default:
+                    return new self($data, $parent);
+            }
+        } catch (BadJsonProvided $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            // In case subclass constructor throws for any reason, be resilient
+            return new self($data, $parent);
+        }
+    }
+
+    /**
      * @return mixed
      */
     public function getType()
@@ -549,7 +580,9 @@ class BrizyComponent implements JsonSerializable
             "strike" => false,
             "mobileFontStyle" => "",
             "mobileFontSize" => $fontSize,
-            "mobileFontSizeSuffix" => "px"
+            "mobileFontSizeSuffix" => "px",
+            "mobileFontWeight" => $fontWeight,
+            "mobileLineHeight" => $lineHeight,
         ];
 
         foreach ($bgColor as $key => $value) {
@@ -877,5 +910,28 @@ class BrizyComponent implements JsonSerializable
         } catch (exception $e) {
             Logger::instance()->warning('Error on addLine: ' . $e->getMessage() . '');
         }
+    }
+
+    public function addRow($items = null, $position = null, $options = []): BrizyComponent
+    {
+       try {
+           $rowComponent = new BrizyRowComponent();
+           if (!empty($items))
+           {
+               if(is_array($items))
+               $rowComponent->getValue()->add('items', [$items], $position);
+           }
+
+           foreach($options as $key => $value) {
+               $rowComponent->getValue()->set($key, $value);
+           }
+
+           $this->getValue()->add('items', [$rowComponent], $position);
+       }
+       catch (Exception $e)
+       {
+           Logger::instance()->warning('Error on addRow: ' . $e->getMessage());
+       }
+        return $this;
     }
 }
