@@ -183,7 +183,7 @@ final class ColorConverter
                     }
                 }
             }
-        } else {
+        } elseif (!empty($color)) {
             $style = self::convertColor(str_replace("px", "", $color));
         }
         return $style;
