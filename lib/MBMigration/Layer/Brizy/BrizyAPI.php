@@ -60,7 +60,7 @@ class BrizyAPI extends Utils
 
     }
 
-    public function getAllProjectFromContainer($containerId)
+    public function getAllProjectFromContainer($containerId, $count = 100)
     {
         $param = [
             'page' => 1,
@@ -69,6 +69,26 @@ class BrizyAPI extends Utils
         ];
 
         $url = $this->createUrlAPI('projects');
+
+        $result = $this->httpClient('GET', $url, $param);
+        if ($result['status'] > 200) {
+            Logger::instance()->warning('Response: ' . json_encode($result));
+            Logger::instance()->info('Response: ' . json_encode($result));
+            throw new Exception('Bad Response from Brizy: ' . json_encode($result));
+        } else {
+            return json_decode($result['body'], true);
+        }
+    }
+
+    public function getAllProjectFromContainerV1($containerId, $count = 100)
+    {
+        $param = [
+            'page' => 1,
+            'count' => 100,
+            'container' => $containerId,
+        ];
+
+        $url = $this->createPrivateUrlAPI('projects');
 
         $result = $this->httpClient('GET', $url, $param);
         if ($result['status'] > 200) {
@@ -973,6 +993,11 @@ class BrizyAPI extends Utils
         return Config::$urlAPI . Config::$endPointApi[$endPoint];
     }
 
+    private function createUrl($endPoint): string
+    {
+        return Config::$cloud_host. Config::$endPointApi[$endPoint];
+    }
+
     public function cloneProject($projectId, $workspaceId)
     {
         try {
@@ -989,6 +1014,23 @@ class BrizyAPI extends Utils
         } catch (exception $e) {
             return false;
         }
+    }
+
+    public function upgradeProject($projectId)
+    {
+        try {
+            $url = $this->createUrl('projects') . '/' . $projectId . '/upgrade';
+
+            $result = $this->httpClient('GET', $url);
+
+            $result = json_decode($result['body'], true);
+
+            return $result;
+
+        } catch (exception $e) {
+            return false;
+        }
+
     }
 
 

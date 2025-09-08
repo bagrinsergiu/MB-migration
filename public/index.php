@@ -73,6 +73,15 @@ return static function (array $context, Request $request): Response {
             } catch (Exception $e) {
                 return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
             }
+            case '/projects/makePro':
+            try {
+                return new JsonResponse(
+                    $bridge->makeAllProjectsPRO()
+                        ->getMessageResponse()
+                );
+            } catch (Exception $e) {
+                return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
+            }
         case '/migration/wave':
 
             $projectUuids = ["f2c701b1-c16c-4bf0-b759-aa89d133c84c"];

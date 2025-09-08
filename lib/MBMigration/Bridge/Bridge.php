@@ -862,4 +862,43 @@ class Bridge
 
         return $this->getMessageResponse();
     }
+
+    public function makeAllProjectsPRO(): MgResponse
+    {
+        switch ($this->request->getMethod()) {
+            case 'GET':
+                $this->prepareResponseMessage(
+                    'Input method handler was not found',
+                    'error',
+                    '404');
+                break;
+            case 'POST':
+                try{
+                    $api = new BrizyAPI();
+
+                    $workspaceId = $this->POST->checkInputProperties(['workspaceId']);
+                    $list = $api->getAllProjectFromContainerV1($workspaceId['workspaceId'], 200);
+
+                    foreach ($list as $value) {
+                        if ($value['is_pro'] === true) continue;
+                        $api->upgradeProject($value['id']);
+                    }
+
+                    $this->prepareResponseMessage(
+                        "Done",
+                        'message'
+                    );
+
+                } catch (\Exception $e) {
+                    $this->prepareResponseMessage(
+                        "Error: " . $e->getMessage(),
+                        'message'
+                    );
+                }
+        }
+
+
+
+        return $this->getMessageResponse();
+    }
 }
