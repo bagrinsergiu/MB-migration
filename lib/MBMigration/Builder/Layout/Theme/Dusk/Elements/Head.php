@@ -112,7 +112,7 @@ class Head extends HeadElement
         ];
 
         $activeItemMenuOptions = [
-            'activeMenuBorderStyle' => 'solid',
+            'activeMenuBorderStyle' => 'none',
             'activeMenuBorderColorHex' => '#000000',
             'activeMenuBorderColorOpacity' => 0.02,
             'activeMenuBorderColorPalette' => '',

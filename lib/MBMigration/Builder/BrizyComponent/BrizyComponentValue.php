@@ -14,7 +14,14 @@ class BrizyComponentValue implements JsonSerializable
             $this->set(
                 'items',
                 array_map(function ($component) use ($parent){
-                    return BrizyComponent::fromArray($component, $parent);
+                    if ($component instanceof BrizyComponent) {
+                        return $component;
+                    }
+                    if (is_array($component)) {
+                        return BrizyComponent::fromArray($component, $parent);
+                    }
+                    // Unexpected item type; keep as-is to avoid fatal, but better to log upstream
+                    return $component;
                 }, $data['items'])
             );
         }
@@ -114,6 +121,7 @@ class BrizyComponentValue implements JsonSerializable
 
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->fields;

@@ -20,6 +20,15 @@ class RightMedia extends PhotoTextElement
             ->addMobileContentAlign();
     }
 
+    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height){
+        $imageTarget
+            ->getValue()
+            ->set_width(100)
+            ->set_height(100)
+            ->set_heightSuffix('%')
+            ->set_widthSuffix('%');
+    }
+
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null

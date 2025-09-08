@@ -102,7 +102,6 @@ abstract class PhotoTextElement extends AbstractElement
         return $brizySection;
     }
 
-
     public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height){
         $imageTarget
             ->getValue()

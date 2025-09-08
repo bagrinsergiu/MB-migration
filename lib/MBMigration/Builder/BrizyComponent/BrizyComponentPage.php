@@ -61,6 +61,7 @@ class BrizyComponentPage extends BrizyComponent implements JsonSerializable
 
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->fields;

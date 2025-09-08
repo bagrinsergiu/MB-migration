@@ -45,6 +45,8 @@ abstract class GalleryLayoutElement extends AbstractElement
         }
 
         $sectionSelector = 'body';
+        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+
         $backgroundColorStyles = $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage);
         $properties['background-color'] = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
 
@@ -67,7 +69,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 //            $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
 //        }
 
-        $colorArrows = ColorConverter::getContrastColor($properties['background-color'] ?? $properties['background-color']['color']);
+        $colorArrows = ColorConverter::getContrastColor($properties['background-color']['color'] ?? $properties['background-color'] );
 
         $brizySection->getValue()
             ->set_sliderArrowsColorHex($colorArrows)

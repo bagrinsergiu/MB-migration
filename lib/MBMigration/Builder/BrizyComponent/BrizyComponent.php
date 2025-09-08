@@ -110,6 +110,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $getObjectVars = get_object_vars($this);
@@ -122,27 +123,57 @@ class BrizyComponent implements JsonSerializable
     {
         $depths = func_get_args();
 
-        if (is_array($depths[0])) {
+        if (isset($depths[0]) && is_array($depths[0])) {
             $depths = $depths[0];
         }
 
         $item = null;
 
         foreach ($depths as $index) {
-            if ($item) {
-                $items = $item->getValue()->get_items();
+            // Normalize current $item if needed
+            if (is_array($item)) {
+                try {
+                    $item = self::fromArray($item, $this);
+                } catch (\Throwable $e) {
+                    Logger::instance()->warning('BrizyComponent::getItemWithDepth failed to normalize array item', [ 'error' => $e->getMessage() ]);
+                }
+            }
+
+            // Determine current items source
+            if ($item instanceof BrizyComponent) {
+                $value = $item->getValue();
+            } elseif ($item === null) {
+                $value = $this->getValue();
             } else {
-                $items = $this->getValue()->get_items();
+                // Unexpected type — cannot continue deeper
+                Logger::instance()->warning('BrizyComponent::getItemWithDepth encountered non-component item; stopping traversal', [ 'type' => gettype($item) ]);
+                return $item instanceof BrizyComponent ? $item : $this;
             }
 
-            if (!isset($items[$index])) {
-                return $item;
+            $items = [];
+            if ($value instanceof BrizyComponentValue) {
+                $items = $value->get_items();
             }
 
-            $item = $items[$index];
+            if (!is_array($items) || !array_key_exists($index, $items)) {
+                return $item instanceof BrizyComponent ? $item : $this;
+            }
+
+            $next = $items[$index];
+            // If next is array, try to normalize immediately so next iteration sees a component
+            if (is_array($next)) {
+                try {
+                    $item = self::fromArray($next, $item instanceof BrizyComponent ? $item : $this);
+                } catch (\Throwable $e) {
+                    Logger::instance()->warning('BrizyComponent::getItemWithDepth failed to normalize next array item', [ 'error' => $e->getMessage() ]);
+                    $item = $next; // leave as-is; will be handled next loop
+                }
+            } else {
+                $item = $next;
+            }
         }
 
-        return $item;
+        return $item instanceof BrizyComponent ? $item : $this;
     }
 
     public function findFirstByType(string $type): ?BrizyComponent
@@ -180,8 +211,11 @@ class BrizyComponent implements JsonSerializable
     public function getItemValueWithDepth(): ?BrizyComponentValue
     {
         $depths = func_get_args();
-
-        return call_user_func_array([$this, 'getItemWithDepth'], $depths)->getValue();
+        $item = call_user_func_array([$this, 'getItemWithDepth'], $depths);
+        if ($item instanceof BrizyComponent) {
+            return $item->getValue();
+        }
+        return null;
     }
 
     public function addRadius($radiusPx = 0): BrizyComponent
@@ -918,8 +952,27 @@ class BrizyComponent implements JsonSerializable
            $rowComponent = new BrizyRowComponent();
            if (!empty($items))
            {
-               if(is_array($items))
-               $rowComponent->getValue()->add('items', [$items], $position);
+               if (is_array($items)) {
+                   // Normalize: allow passing a flat array of column components
+                   $flat = $items;
+                   // If a single BrizyComponent was passed, wrap it
+                   if (array_key_exists(0, $flat) === false && $items instanceof BrizyComponent) {
+                       $flat = [$items];
+                   }
+                   // Ensure each entry is a component instance
+                   $normalized = array_map(function($comp) use ($rowComponent) {
+                       if ($comp instanceof BrizyComponent) {
+                           return $comp;
+                       }
+                       if (is_array($comp)) {
+                           return BrizyComponent::fromArray($comp, $rowComponent);
+                       }
+                       return $comp;
+                   }, $flat);
+                   $rowComponent->getValue()->add('items', $normalized, $position);
+               } elseif ($items instanceof BrizyComponent) {
+                   $rowComponent->getValue()->add('items', [$items], $position);
+               }
            }
 
            foreach($options as $key => $value) {

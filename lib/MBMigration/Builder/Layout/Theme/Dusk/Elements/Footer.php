@@ -15,6 +15,10 @@ class Footer extends FooterElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $mbSection = $data->getMbSection();
+        if (!is_array($mbSection) || empty($mbSection['items']) || !is_array($mbSection['items'])) {
+            // Nothing to map; return base section as-is
+            return $brizySection;
+        }
 
         try {
             $brizySection->addRow([
@@ -23,22 +27,33 @@ class Footer extends FooterElement
                 new BrizyColumComponent()
             ]);
 
-            $aa= $brizySection->getItemWithDepth(0, 0, 0);
+            try{
+                $this->handleMbSectionItemsByOrder($data,
+                    $brizySection->getItemWithDepth(0, 0),
+                    $mbSection['items'],
+                    0);
+            } catch (\Exception $e) {
+                Logger::instance()->error($e->getMessage());
+            }
 
-            $this->handleMbSectionItemsByOrder($data,
-                $brizySection->getItemWithDepth(0, 0, 0),
-                $mbSection['items'],
-                0);
+            try {
+                $this->handleMbSectionItemsByOrder($data,
+                    $brizySection->getItemWithDepth(0, 1),
+                    $mbSection['items'],
+                    1);
+            } catch (\Exception $e) {
+                Logger::instance()->error($e->getMessage());
+            }
 
-            $this->handleMbSectionItemsByOrder($data,
-                $brizySection->getItemWithDepth(0, 0, 1),
-                $mbSection['items'],
-                1);
+            try {
+                $this->handleMbSectionItemsByOrder($data,
+                    $brizySection->getItemWithDepth(0, 2),
+                    $mbSection['items'],
+                    2);
+            } catch(\Exception $e) {
+                Logger::instance()->error($e->getMessage());
+            }
 
-            $this->handleMbSectionItemsByOrder($data,
-                $brizySection->getItemWithDepth(0, 0, 2),
-                $mbSection['items'],
-                2);
 
             $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
             $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
@@ -61,7 +76,9 @@ class Footer extends FooterElement
             $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
 
             foreach ($items as $item) {
-                if ($item['order_by'] == $order_by) {
+                if (!is_array($item)) { continue; }
+                $ob = $item['order_by'] ?? null;
+                if ($ob === $order_by) {
                     $this->handleItemMbSection($item, $elementContext);
                 }
             }

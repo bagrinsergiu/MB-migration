@@ -303,8 +303,7 @@ trait RichTextAble
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_overflow('on');
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
                             ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
-.{$cssClass} .embedded-paste:has(iframe) {display: grid;}
-.{$cssClass} .embedded-paste iframe {justify-self: {$embedCode['text-align']};}"
+.{$cssClass} .embedded-paste:has(iframe) {display: flex; justify-content:{$styles['text-align']}}"
                         );
                         $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
                         break;
