@@ -172,7 +172,6 @@ abstract class GridLayoutElement extends AbstractElement
             $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
         }
 
-
         return $brizySection;
     }
 

@@ -111,18 +111,18 @@ class Head extends HeadElement
             'mobileHeightSuffix' => '%',
         ];
 
-        $activeItemMenuOptions = [
-            'activeMenuBorderStyle' => 'none',
-            'activeMenuBorderColorHex' => '#000000',
-            'activeMenuBorderColorOpacity' => 0.02,
-            'activeMenuBorderColorPalette' => '',
-            'activeMenuBorderWidthType' => 'ungrouped',
-            'activeMenuBorderWidth' => 3,
-            'activeMenuBorderTopWidth' => 0,
-            'activeMenuBorderRightWidth' => 0,
-            'activeMenuBorderBottomWidth' => 3,
-            'activeMenuBorderLeftWidth' => 0,
-        ];
+//        $activeItemMenuOptions = [
+//            'activeMenuBorderStyle' => 'none',
+//            'activeMenuBorderColorHex' => '#000000',
+//            'activeMenuBorderColorOpacity' => 0.02,
+//            'activeMenuBorderColorPalette' => '',
+//            'activeMenuBorderWidthType' => 'ungrouped',
+//            'activeMenuBorderWidth' => 3,
+//            'activeMenuBorderTopWidth' => 0,
+//            'activeMenuBorderRightWidth' => 0,
+//            'activeMenuBorderBottomWidth' => 3,
+//            'activeMenuBorderLeftWidth' => 0,
+//        ];
 
         $sectionlogoOptions = [
             'horizontalAlign' => 'center',
@@ -137,7 +137,7 @@ class Head extends HeadElement
             'mobileMarginRightSuffix' => 'px',
             'mobileMarginBottom' => 0,
             'mobileMarginBottomSuffix' => 'px',
-            'mobileMarginLeft' => 0,
+            'mobileMarginLeft' => 10,
             'mobileMarginLeftSuffix' => 'px',
         ];
 
@@ -149,7 +149,7 @@ class Head extends HeadElement
             "marginTopSuffix" => "px",
             "marginBottom" => 10,
             "marginBottomSuffix" => "px",
-            "marginRight" => 0,
+            "marginRight" => 20,
             "marginRightSuffix" => "px",
             "marginLeft" => 0,
             "marginLeftSuffix" => "px",
@@ -157,7 +157,7 @@ class Head extends HeadElement
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 0)
+            $brizySection->getItemWithDepth(0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -171,7 +171,7 @@ class Head extends HeadElement
 
         foreach ($mobileIconButtonOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 1, 0)
+            $brizySection->getItemWithDepth(0, 0, 1)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -184,12 +184,12 @@ class Head extends HeadElement
                 ->$nameOption($value);
         }
 
-        foreach ($activeItemMenuOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
-                ->getValue()
-                ->$nameOption($value);
-        }
+//        foreach ($activeItemMenuOptions as $logoOption => $value) {
+//            $nameOption = 'set_'.$logoOption;
+//            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
+//                ->getValue()
+//                ->$nameOption($value);
+//        }
 
         $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
         $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);

@@ -31,6 +31,10 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             ->getItemWithDepth(0,0);
     }
 
+    protected function sectionIndentations(BrizyComponent $section)
+    {
+    }
+
     protected function getDonationsButtonOptions(): array
     {
         return [

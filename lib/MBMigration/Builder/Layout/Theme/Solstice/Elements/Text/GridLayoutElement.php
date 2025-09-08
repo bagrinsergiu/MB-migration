@@ -37,6 +37,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     {
         $brizyComponent
             ->addMargin(0,5,0,5)
+            ->addMobilePadding(10)
             ->addHeightStyle();
     }
 

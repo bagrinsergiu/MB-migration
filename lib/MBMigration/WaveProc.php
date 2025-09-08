@@ -36,7 +36,10 @@ class WaveProc
             $this->logFile = 'migration_results_' . date("d-m-Y_H") . '.json';
             try {
                 $this->DB = new MySQL(
-
+                    'admin',
+                    'Vuhodanasos2',
+                    'MG_prepare_mapping',
+                    'mb-migration.cupzc9ey0cip.us-east-1.rds.amazonaws.com',
                 );
                 $this->DB->doConnect();
                 Logger::instance()->info('DB connection initialized');

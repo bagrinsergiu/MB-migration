@@ -278,7 +278,7 @@ abstract class AbstractElement implements ElementInterface
     private function behaviorForAddingIndentsInSection($mbSection, BrizyComponent $section){
         switch ($mbSection['category']){
             case 'list':
-                if(empty($mbSection['items'])) {
+                if(empty($mbSection['items']) && empty($mbSection['head'])) {
                     $this->sectionIndentations($section);
                 }
                 break;
@@ -310,7 +310,7 @@ abstract class AbstractElement implements ElementInterface
         }
     }
 
-    private function sectionIndentations(BrizyComponent $section){
+    protected function sectionIndentations(BrizyComponent $section){
         $section
             ->getItemWithDepth(0)
             ->addPadding($this->pageTDO->getHeadStyle()->getHeight() ?? 50, 0, 50, 0)
