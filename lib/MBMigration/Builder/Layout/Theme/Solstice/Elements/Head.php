@@ -61,7 +61,7 @@ class Head extends HeadElement
     protected function getHoverSubMenuStyle(): array
     {
         if ($this->browserPage->triggerEvent('hover', $this->getThemeParentMenuSelectedItemSelector()['selector'])) {
-            $this->browserPage->getPageScreen(_selectedParent);
+            $this->browserPage->getPageScreen('_selectedParent');
         }
 
         $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', [

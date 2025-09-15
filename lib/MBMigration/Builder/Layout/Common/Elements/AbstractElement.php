@@ -36,9 +36,21 @@ abstract class AbstractElement implements ElementInterface
 
     public function __construct($brizyKit, BrowserPageInterface $browserPage)
     {
+        Logger::instance()->info('AbstractElement constructor called', [
+            'element_class' => static::class,
+            'section_name' => $this->getSectionName(),
+            'brizy_kit_keys' => is_array($brizyKit) ? array_keys($brizyKit) : 'not_array',
+            'browser_page_class' => get_class($browserPage)
+        ]);
+
         $this->brizyKit = $brizyKit;
         $this->browserPage = $browserPage;
-        Logger::instance()->info("section in the work: " . $this->getSectionName());
+
+        Logger::instance()->info('AbstractElement initialized successfully', [
+            'element_class' => static::class,
+            'section_name' => $this->getSectionName(),
+            'brizy_kit_count' => is_array($brizyKit) ? count($brizyKit) : 0
+        ]);
     }
 
     protected function getSectionName(): string
@@ -48,23 +60,76 @@ abstract class AbstractElement implements ElementInterface
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $startTime = microtime(true);
+        Logger::instance()->info('AbstractElement::transformToItem called', [
+            'element_class' => static::class,
+            'section_name' => $this->getSectionName(),
+            'data_class' => get_class($data),
+            'start_time' => $startTime
+        ]);
+
         try {
+            Logger::instance()->info('Setting up transformation context', [
+                'element_class' => static::class
+            ]);
+
             $this->pageTDO = $data->getThemeContext()->getPageDTO();
             $this->themeContext = $data->getThemeContext();
             $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
+            Logger::instance()->info('Context setup completed, starting transformation process', [
+                'element_class' => static::class,
+                'page_id' => $this->pageTDO ? $this->pageTDO->getId() : null,
+                'global_brizy_kit_keys' => array_keys($this->globalBrizyKit)
+            ]);
+
             $this->initialBehavior($data);
+            Logger::instance()->info('Initial behavior completed', ['element_class' => static::class]);
 
             $this->beforeTransformToItem($data);
+            Logger::instance()->info('Before transform hook completed', ['element_class' => static::class]);
+
             $component = $this->internalTransformToItem($data);
+            Logger::instance()->info('Internal transformation completed', [
+                'element_class' => static::class,
+                'component_type' => $component->getType()
+            ]);
+
             $this->globalTransformSection($component);
+            Logger::instance()->info('Global section transformation completed', ['element_class' => static::class]);
+
             $this->afterTransformToItem($component);
+            Logger::instance()->info('After transform hook completed', ['element_class' => static::class]);
 
             $this->generalSectionBehavior($data, $component);
+            Logger::instance()->info('General section behavior completed', ['element_class' => static::class]);
+
+            $endTime = microtime(true);
+            $executionTime = ($endTime - $startTime) * 1000;
+
+            Logger::instance()->info('Transform to item completed successfully', [
+                'element_class' => static::class,
+                'execution_time_ms' => round($executionTime, 2),
+                'component_type' => $component->getType()
+            ]);
 
         } catch (\Exception $e) {
-            Logger::instance()->error($e->getMessage(), ['AbstractElement', 'transformToItem']);
+            $endTime = microtime(true);
+            $executionTime = ($endTime - $startTime) * 1000;
+
+            Logger::instance()->error('Exception during transformation, falling back to internal transform', [
+                'element_class' => static::class,
+                'error_message' => $e->getMessage(),
+                'error_class' => get_class($e),
+                'execution_time_ms' => round($executionTime, 2),
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             $component = $this->internalTransformToItem($data);
+
+            Logger::instance()->info('Fallback transformation completed', [
+                'element_class' => static::class,
+                'component_type' => $component->getType()
+            ]);
         }
 
         return $component;
@@ -94,23 +159,58 @@ abstract class AbstractElement implements ElementInterface
 
     protected function canShowHeader($mbSectionData): bool
     {
+        Logger::instance()->info('AbstractElement::canShowHeader called', [
+            'element_class' => static::class,
+            'section_category' => $mbSectionData['category'] ?? null,
+            'has_settings' => isset($mbSectionData['settings'])
+        ]);
+
         $sectionCategory = $mbSectionData['category'];
+        $result = true;
 
         if (isset($mbSectionData['settings']['sections'][$sectionCategory]['show_header'])) {
-            return $mbSectionData['settings']['sections'][$sectionCategory]['show_header'];
+            $result = $mbSectionData['settings']['sections'][$sectionCategory]['show_header'];
+            Logger::instance()->info('Header visibility determined from settings', [
+                'element_class' => static::class,
+                'section_category' => $sectionCategory,
+                'show_header' => $result
+            ]);
+        } else {
+            Logger::instance()->info('Header visibility defaulted to true (no settings)', [
+                'element_class' => static::class,
+                'section_category' => $sectionCategory
+            ]);
         }
 
-        return true;
+        return $result;
     }
 
     protected function canShowBody($sectionData): bool
     {
+        Logger::instance()->info('AbstractElement::canShowBody called', [
+            'element_class' => static::class,
+            'section_category' => $sectionData['category'] ?? null,
+            'has_settings' => isset($sectionData['settings'])
+        ]);
+
         $sectionCategory = $sectionData['category'];
+        $result = true;
+
         if (isset($sectionData['settings']['sections'][$sectionCategory]['show_body'])) {
-            return $sectionData['settings']['sections'][$sectionCategory]['show_body'];
+            $result = $sectionData['settings']['sections'][$sectionCategory]['show_body'];
+            Logger::instance()->info('Body visibility determined from settings', [
+                'element_class' => static::class,
+                'section_category' => $sectionCategory,
+                'show_body' => $result
+            ]);
+        } else {
+            Logger::instance()->info('Body visibility defaulted to true (no settings)', [
+                'element_class' => static::class,
+                'section_category' => $sectionCategory
+            ]);
         }
 
-        return true;
+        return $result;
     }
 
     protected function emptyBackgroundContentSection(array $sectionItem): bool
@@ -146,12 +246,30 @@ abstract class AbstractElement implements ElementInterface
 
     protected function canShowButton($sectionData): bool
     {
+        Logger::instance()->info('AbstractElement::canShowButton called', [
+            'element_class' => static::class,
+            'section_category' => $sectionData['category'] ?? null,
+            'has_settings' => isset($sectionData['settings'])
+        ]);
+
         $sectionCategory = $sectionData['category'];
+        $result = true;
+
         if (isset($sectionData['settings']['sections'][$sectionCategory]['show_buttons'])) {
-            return $sectionData['settings']['sections'][$sectionCategory]['show_buttons'];
+            $result = $sectionData['settings']['sections'][$sectionCategory]['show_buttons'];
+            Logger::instance()->info('Button visibility determined from settings', [
+                'element_class' => static::class,
+                'section_category' => $sectionCategory,
+                'show_buttons' => $result
+            ]);
+        } else {
+            Logger::instance()->info('Button visibility defaulted to true (no settings)', [
+                'element_class' => static::class,
+                'section_category' => $sectionCategory
+            ]);
         }
 
-        return true;
+        return $result;
     }
 
     protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent

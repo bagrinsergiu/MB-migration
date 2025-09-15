@@ -3,6 +3,7 @@
 namespace MBMigration\Builder;
 
 use stdClass;
+use MBMigration\Core\Logger;
 
 class ItemBuilder
 {
@@ -15,14 +16,41 @@ class ItemBuilder
 
     public function __construct($json = '')
     {
+        Logger::instance()->info('ItemBuilder constructor called', [
+            'has_json' => $json !== '',
+            'json_length' => is_string($json) ? strlen($json) : 'not_string'
+        ]);
+
         if($json !== '') {
             $this->newItem($json);
         }
+
+        Logger::instance()->info('ItemBuilder initialized successfully', [
+            'has_data' => isset($this->data)
+        ]);
     }
 
     public function newItem($json): void
     {
+        Logger::instance()->info('ItemBuilder::newItem called', [
+            'json_length' => is_string($json) ? strlen($json) : 'not_string',
+            'json_type' => gettype($json)
+        ]);
+
         $this->data = json_decode($json);
+
+        if ($this->data === null && json_last_error() !== JSON_ERROR_NONE) {
+            Logger::instance()->error('JSON decode error in newItem', [
+                'json_error' => json_last_error_msg(),
+                'json_preview' => is_string($json) ? substr($json, 0, 100) : 'not_string'
+            ]);
+        } else {
+            Logger::instance()->info('JSON decoded successfully in newItem', [
+                'data_type' => gettype($this->data),
+                'data_properties' => is_object($this->data) ? array_keys(get_object_vars($this->data)) : 'not_object'
+            ]);
+        }
+
         $this->begin();
     }
 

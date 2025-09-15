@@ -6,6 +6,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorUtility;
 use MBMigration\Builder\Utils\FontUtils;
+use MBMigration\Core\Logger;
 
 class RootListFontFamilyExtractor
 {
@@ -22,14 +23,30 @@ class RootListFontFamilyExtractor
 
     private function getListFontFamily(): void
     {
+        Logger::instance()->info('Starting font family extraction', [
+            'url' => $this->browserPage->getCurrentUrl()
+        ]);
+
         $allFontFamilies = $this->browserPage->evaluateScript('brizy.dom.extractAllFontFamilies', []);
 
         if (isset($allFontFamilies['error'])) {
+            Logger::instance()->error('Font family extraction failed', [
+                'error' => $allFontFamilies['error'],
+                'url' => $this->browserPage->getCurrentUrl()
+            ]);
             $allFontFamilies = [];
         }
 
         if (empty($allFontFamilies)) {
+            Logger::instance()->warning('No fonts detected on page', [
+                'url' => $this->browserPage->getCurrentUrl()
+            ]);
             $allFontFamilies = [];
+        } else {
+            Logger::instance()->info('Font families extracted successfully', [
+                'fontCount' => count($allFontFamilies),
+                'url' => $this->browserPage->getCurrentUrl()
+            ]);
         }
 
         $this->allFontFamilies = $allFontFamilies;

@@ -16,7 +16,17 @@ class BrizyComponent implements JsonSerializable
 
     public function __construct($data, ?BrizyComponent $parent = null)
     {
+        Logger::instance()->info('BrizyComponent constructor called', [
+            'data_keys' => is_array($data) ? array_keys($data) : 'not_array',
+            'has_parent' => $parent !== null,
+            'parent_type' => $parent ? $parent->getType() : null
+        ]);
+
         if (!is_array($data)) {
+            Logger::instance()->error('BrizyComponent constructor: Wrong data format provided', [
+                'data_type' => gettype($data),
+                'data' => is_scalar($data) ? $data : 'non_scalar'
+            ]);
             throw new BadJsonProvided('Wrong data format provided for BrizyComponent');
         }
 
@@ -27,6 +37,13 @@ class BrizyComponent implements JsonSerializable
         if (isset($data['blockId'])) {
             $this->blockId = $data['blockId'];
         }
+
+        Logger::instance()->info('BrizyComponent initialized successfully', [
+            'type' => $this->type,
+            'blockId' => $this->blockId,
+            'has_value' => $this->value !== null,
+            'parent_type' => $parent ? $parent->getType() : null
+        ]);
     }
 
     /**
@@ -41,20 +58,41 @@ class BrizyComponent implements JsonSerializable
     public static function fromArray(array $data, ?BrizyComponent $parent = null): BrizyComponent
     {
         $type = strtolower($data['type'] ?? '');
+        Logger::instance()->info('BrizyComponent::fromArray called', [
+            'type' => $type,
+            'original_type' => $data['type'] ?? null,
+            'has_parent' => $parent !== null,
+            'data_keys' => array_keys($data)
+        ]);
+
         try {
             switch ($type) {
                 case 'row':
+                    Logger::instance()->info('Creating BrizyRowComponent', ['type' => $type]);
                     return new BrizyRowComponent($data, $parent);
                 case 'column':
+                    Logger::instance()->info('Creating BrizyColumComponent', ['type' => $type]);
                     return new BrizyColumComponent($data, $parent);
                 case 'line':
+                    Logger::instance()->info('Creating BrizyLineComponent', ['type' => $type]);
                     return new BrizyLineComponent($data, $parent);
                 default:
+                    Logger::instance()->info('Creating base BrizyComponent for unknown type', ['type' => $type]);
                     return new self($data, $parent);
             }
         } catch (BadJsonProvided $e) {
+            Logger::instance()->error('BadJsonProvided exception in fromArray', [
+                'type' => $type,
+                'message' => $e->getMessage(),
+                'data_keys' => array_keys($data)
+            ]);
             throw $e;
         } catch (\Throwable $e) {
+            Logger::instance()->warning('Fallback to base BrizyComponent due to exception', [
+                'type' => $type,
+                'exception_class' => get_class($e),
+                'exception_message' => $e->getMessage()
+            ]);
             // In case subclass constructor throws for any reason, be resilient
             return new self($data, $parent);
         }

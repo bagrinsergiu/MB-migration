@@ -14,6 +14,26 @@ class BrowserPagePHP implements BrowserPageInterface
     private $page;
     private $scriptPath;
 
+    /**
+     * Generic helper for safe callFunction with timeout and one quick retry.
+     */
+    private function callFunctionWithRetry(string $function, array $args, int $timeoutMs, int $retryTimeoutMs = 5000)
+    {
+        try {
+            return $this->page->callFunction($function, $args)
+                ->waitForResponse($timeoutMs)
+                ->getReturnValue($timeoutMs);
+        } catch (Exception $e) {
+            try {
+                return $this->page->callFunction($function, $args)
+                    ->waitForResponse($retryTimeoutMs)
+                    ->getReturnValue($retryTimeoutMs);
+            } catch (Exception $e2) {
+                throw $e2;
+            }
+        }
+    }
+
     public function __construct($page, $scriptPath)
     {
         $this->page = $page;
@@ -25,20 +45,30 @@ class BrowserPagePHP implements BrowserPageInterface
 
     public function evaluateScript($jsScript, $params): array
     {
+        $baseTimeout = 15000;
+        $fastRetryTimeout = 8000;
+
         try {
             $result = $this->page->callFunction($jsScript, [(object)$params])
-                ->waitForResponse(50000)
-                ->getReturnValue(50000);
+                ->waitForResponse($baseTimeout)
+                ->getReturnValue($baseTimeout);
 
-            if (!$result) {
-                $result = [];
-            }
-
-            return $result;
+            return $result ?: [];
         } catch (Exception $e) {
-            Logger::instance()->critical("evaluateScript: ".$e->getMessage(), [$jsScript, $params]);
+            try {
+                $result = $this->page->callFunction($jsScript, [(object)$params])
+                    ->waitForResponse($fastRetryTimeout)
+                    ->getReturnValue($fastRetryTimeout);
 
-            return ['error' => $e->getMessage()]; // element not found
+                return $result ?: [];
+            } catch (Exception $e2) {
+                Logger::instance()->error('evaluateScript failed', [
+                    'function' => is_string($jsScript) ? $jsScript : '<function>',
+                    'error' => $e2->getMessage()
+                ]);
+
+                return ['error' => $e2->getMessage()];
+            }
         }
     }
 
@@ -172,20 +202,17 @@ class BrowserPagePHP implements BrowserPageInterface
     public function hasNode($selector)
     {
         try {
-            $result = $this->page->callFunction("function (selector) {
-           return document.querySelector(selector) !== null;
-        }
-        ",
+            $result = $this->callFunctionWithRetry(
+                "function (selector) {\n           return document.querySelector(selector) !== null;\n        }\n        ",
                 [
                     'selector' => $selector,
-                ]
-            )
-                ->waitForResponse(50000)
-                ->getReturnValue(50000);
+                ],
+                7000,
+                3000
+            );
         } catch (Exception $e) {
-            Logger::instance()->critical("evaluateScript: ".$e->getMessage());
-
-            return ['error' => $e->getMessage()]; // element not found
+            Logger::instance()->warning("hasNode timeout: ".$e->getMessage(), [$selector]);
+            return false;
         }
 
         return $result;
@@ -194,23 +221,17 @@ class BrowserPagePHP implements BrowserPageInterface
     public function getNodeText($selector)
     {
         try {
-            $result = $this->page->callFunction("function (selector) {
-            var element = document.querySelector(selector);
-            if (element) {
-               return element.textContent;
-            }
-            return null;
-        }
-        ",
+            $result = $this->callFunctionWithRetry(
+                "function (selector) {\n            var element = document.querySelector(selector);\n            if (element) {\n               return element.textContent;\n            }\n            return null;\n        }\n        ",
                 [
                     'selector' => $selector,
-                ]
-            )->waitForResponse(50000)
-                ->getReturnValue(50000);
+                ],
+                8000,
+                3000
+            );
         } catch (Exception $e) {
-            Logger::instance()->critical("evaluateScript: ".$e->getMessage());
-
-            return ['error' => $e->getMessage()]; // element not found
+            Logger::instance()->warning("getNodeText timeout: ".$e->getMessage(), [$selector]);
+            return null;
         }
 
         return $result;
@@ -218,39 +239,36 @@ class BrowserPagePHP implements BrowserPageInterface
 
     public function setNodeStyles($selector, array $attributes)
     {
-        $this->page->callFunction(
-            "function (selector, attributes) {
-            var element = document.querySelector(selector);
-            if (element) {
-                for (var key in attributes) {
-                        element.style[key] = attributes[key];
-                }
-            }
+        try {
+            $this->callFunctionWithRetry(
+                "function (selector, attributes) {\n            var element = document.querySelector(selector);\n            if (element) {\n                for (var key in attributes) {\n                        element.style[key] = attributes[key];\n                }\n            }\n        }\n        ",
+                [
+                    $selector,
+                    $attributes,
+                ],
+                7000,
+                3000
+            );
+        } catch (Exception $e) {
+            Logger::instance()->warning("setNodeStyles timeout: ".$e->getMessage(), [$selector, $attributes]);
         }
-        ",
-            [
-                $selector,
-                $attributes,
-            ]
-        )->waitForResponse(50000);
     }
 
     public function setNodeAttribute($selector, array $attributes)
     {
-        $this->page->callFunction(
-            "function (selector, attributes) {
-            var element = document.querySelector(selector);
-            if (element) {
-                for (var key in attributes) {
-                    element.setAttribute(key,attributes[key]);
-                }
-            }
-        }",
+        try {
+            $this->callFunctionWithRetry(
+                "function (selector, attributes) {\n            var element = document.querySelector(selector);\n            if (element) {\n                for (var key in attributes) {\n                    element.setAttribute(key,attributes[key]);\n                }\n            }\n        }",
             [
                 $selector,
                 $attributes,
-            ]
-        )->waitForResponse(50000);
+            ],
+            7000,
+            3000
+        );
+        } catch (Exception $e) {
+            Logger::instance()->warning("setNodeAttribute timeout: ".$e->getMessage(), [$selector, $attributes]);
+        }
     }
 
     public function screenshot($path)
@@ -262,6 +280,11 @@ class BrowserPagePHP implements BrowserPageInterface
         ]);
 
         $screenshot->saveToFile($path);
+    }
+
+    public function getCurrentUrl(): string
+    {
+        return $this->page->getCurrentUrl();
     }
 
 }

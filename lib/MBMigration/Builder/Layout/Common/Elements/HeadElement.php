@@ -36,32 +36,101 @@ abstract class HeadElement extends AbstractElement
         FontsController $fontsController
     )
     {
+        Logger::instance()->info('HeadElement constructor called', [
+            'brizy_kit_keys' => is_array($brizyKit) ? array_keys($brizyKit) : 'not_array',
+            'browser_page_class' => get_class($browserPage),
+            'brizy_api_class' => get_class($brizyAPI),
+            'fonts_controller_class' => get_class($fontsController)
+        ]);
+
         parent::__construct($brizyKit, $browserPage);
 
         $this->brizyAPIClient = $brizyAPI;
         $this->fontsController = $fontsController;
+
+        Logger::instance()->info('HeadElement initialized successfully', [
+            'basic_head_params' => $this->basicHeadParams,
+            'has_brizy_api_client' => isset($this->brizyAPIClient),
+            'has_fonts_controller' => isset($this->fontsController)
+        ]);
     }
 
     public function transformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $startTime = microtime(true);
+        Logger::instance()->info('HeadElement::transformToItem called', [
+            'data_class' => get_class($data),
+            'page_id' => $data->getThemeContext()->getPageDTO() ? $data->getThemeContext()->getPageDTO()->getId() : null,
+            'start_time' => $startTime
+        ]);
+
         $this->pageTDO = $data->getThemeContext()->getPageDTO();
         $this->themeContext = $data->getThemeContext();
 
-        return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
+        Logger::instance()->info('HeadElement context setup completed', [
+            'page_id' => $this->pageTDO ? $this->pageTDO->getId() : null,
+            'theme_context_class' => get_class($this->themeContext)
+        ]);
+
+        return $this->getCache(self::CACHE_KEY, function () use ($data, $startTime): BrizyComponent {
+            Logger::instance()->info('HeadElement cache miss - executing transformation', [
+                'cache_key' => self::CACHE_KEY
+            ]);
+
             $this->basicHeadParams = array_merge($this->basicHeadParams, $this->headParams);
+            Logger::instance()->info('Head parameters merged', [
+                'basic_head_params' => $this->basicHeadParams,
+                'head_params' => $this->headParams
+            ]);
+
             $this->beforeTransformToItem($data);
+            Logger::instance()->info('Before transform hook completed');
 
             $this->fontHandle($data);
+            Logger::instance()->info('Font handling completed');
 
             $component = $this->internalTransformToItem($data);
+            Logger::instance()->info('Internal transformation completed', [
+                'component_type' => $component->getType()
+            ]);
+
             $this->generalSectionBehavior($data, $component);
+            Logger::instance()->info('General section behavior completed');
+
             $this->afterTransformToItem($component);
+            Logger::instance()->info('After transform hook completed');
 
             // save it as a global block
             $position = '{"align":"top","top":0,"bottom":0}';
             $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
-            $this->brizyAPIClient->deleteAllGlobalBlocks();
-            $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
+
+            try {
+                Logger::instance()->info('Deleting existing global blocks');
+                $this->brizyAPIClient->deleteAllGlobalBlocks();
+
+                Logger::instance()->info('Creating new global block', [
+                    'component_json_length' => strlen(json_encode($component)),
+                    'position' => $position,
+                    'rules' => $rules
+                ]);
+                $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
+
+                Logger::instance()->info('Global block created successfully');
+            } catch (\Exception $e) {
+                Logger::instance()->error('Error managing global blocks', [
+                    'error_message' => $e->getMessage(),
+                    'error_class' => get_class($e)
+                ]);
+                throw $e;
+            }
+
+            $endTime = microtime(true);
+            $executionTime = ($endTime - $startTime) * 1000;
+
+            Logger::instance()->info('HeadElement transformation completed successfully', [
+                'execution_time_ms' => round($executionTime, 2),
+                'component_type' => $component->getType()
+            ]);
 
             return $component;
         });
@@ -408,13 +477,25 @@ abstract class HeadElement extends AbstractElement
 
     private function fontHandle(ElementContextInterface $data): void
     {
+        Logger::instance()->info('Starting font handling for page', [
+            'theme' => $data->getThemeContext()->getThemeName(),
+            'url' => $this->browserPage->getCurrentUrl()
+        ]);
+
         $fontController = $data->getThemeContext()->getFontsController();
 
+        Logger::instance()->info('Creating font family extractor');
         $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($this->browserPage);
 
+        Logger::instance()->info('Uploading custom fonts');
         $fontController->upLoadCustomFonts($RootListFontFamilyExtractor);
 
         $families = FontsController::getFontsFamily()['kit'];
+
+        Logger::instance()->info('Font handling completed', [
+            'familiesCount' => count($families),
+            'theme' => $data->getThemeContext()->getThemeName()
+        ]);
 
         $data->getThemeContext()->setFamilies($families);
     }

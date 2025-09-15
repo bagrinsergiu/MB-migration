@@ -254,4 +254,9 @@ final class ThemeContext implements ThemeContextInterface
     {
         return $this->projectID;
     }
+
+    public function getThemeName(): string
+    {
+        return $this->layoutName;
+    }
 }
