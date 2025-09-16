@@ -11,6 +11,8 @@ use DOMDocument;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyEmbedCodeComponent;
+use MBMigration\Builder\BrizyComponent\BrizyImageComponent;
+use MBMigration\Builder\BrizyComponent\BrizyWrapperComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
@@ -367,48 +369,75 @@ trait RichTextAble
         BrizyComponent $brizyComponent,
         BrowserPageInterface $browserPage,
         $families = [],
-        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
+        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+        $index = null
     ): BrizyComponent
     {
 
         if (!empty($mbSectionItem['content'])) {
+            // Create new Image element according to aiRules
+            $image = new BrizyImageComponent();
+            $wrapperImage = new BrizyWrapperComponent('wrapper--image');
 
             $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container img';
-            $sizes = $this->handleSizeToInt($this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts));
+            $sizes = $this->handleSizeToInt($this->getDomElementSizes($selectorImageSizes, $browserPage, $families));
             $sizeUnit = 'px';
 
-            $brizyComponent->getValue()
+            // Set required Image element properties according to aiRules
+            $image->getValue()
                 ->set_imageFileName($mbSectionItem['imageFileName'])
                 ->set_imageSrc($mbSectionItem['content']);
+
+            // Set image extension from filename or default to png
+            if (!empty($mbSectionItem['imageFileName'])) {
+                $extension = pathinfo($mbSectionItem['imageFileName'], PATHINFO_EXTENSION);
+                if ($extension) {
+                    $image->getValue()->set_imageExtension($extension);
+                }
+            }
 
             if (!empty($sizes['width']) && !empty($sizes['height'])) {
                 if (strpos($sizes['width'], '%') !== false) {
                     $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container';
-                    $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+                    $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families);
                 }
 
-                $brizyComponent->getValue()
+                // Set display dimensions
+                $image->getValue()
                     ->set_width((int)$sizes['width'])
                     ->set_tabletWidth((int)$sizes['width'])
                     ->set_mobileWidth((int)$sizes['width'])
                     ->set_height((int)$sizes['height'])
                     ->set_tabletHeight((int)$sizes['height'])
                     ->set_mobileHeight((int)$sizes['height'])
-                    ->set_imageWidth($mbSectionItem['settings']['image']['width'])
-                    ->set_imageHeight($mbSectionItem['settings']['image']['height'])
                     ->set_widthSuffix($sizeUnit)
                     ->set_heightSuffix($sizeUnit)
                     ->set_tabletHeightSuffix($sizeUnit)
                     ->set_mobileSizeType('original')
                     ->set_mobileWidthSuffix($sizeUnit)
                     ->set_mobileHeightSuffix($sizeUnit);
+
+                // Set original image dimensions if available
+                if (!empty($mbSectionItem['settings']['image']['width'])) {
+                    $image->getValue()->set_imageWidth($mbSectionItem['settings']['image']['width']);
+                }
+                if (!empty($mbSectionItem['settings']['image']['height'])) {
+                    $image->getValue()->set_imageHeight($mbSectionItem['settings']['image']['height']);
+                }
             }
 
+            // Handle link properties on the image element
             $this->handleLink(
                 $mbSectionItem,
-                $brizyComponent,
+                $image,
                 '[data-id="' . $mbSectionItemId . '"] div.photo-container a',
                 $browserPage);
+
+            // Wrap the image in wrapper--image according to aiRules pattern
+            $wrapperImage->getValue()->add_items([$image]);
+
+            // Add the wrapped image to the brizy component at the specified index
+            $brizyComponent->getValue()->add_items([$wrapperImage], $index);
         }
 
         return $brizyComponent;

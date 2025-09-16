@@ -1,3 +1,7 @@
+---
+apply: always
+---
+
 # Image Element Implementation Rules
 
 ## Overview

@@ -8,12 +8,12 @@ use MBMigration\Builder\Layout\Common\Elements\Text\FullMediaElementElement;
 class FullMediaElement extends FullMediaElementElement
 {
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 1, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
     protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent

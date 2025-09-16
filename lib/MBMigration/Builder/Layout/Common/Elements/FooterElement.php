@@ -83,10 +83,10 @@ abstract class FooterElement extends AbstractElement
     {
         switch ($mbSection['category']) {
             case 'text':
-                $this->handleRichTextItems($elementContext, $this->browserPage);
+                $this->handleOnlyRichTextItem($elementContext, $this->browserPage);
                 break;
             case 'photo':
-                if(!empty($mbSection['content']) && $mbSection['image']['type'] == 'image'){
+                if(!empty($mbSection['content'])){
                     $arrowSelector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
 
                     $imgStyles = $this->getDomElementStyles(

@@ -993,6 +993,17 @@ class BrizyComponent implements JsonSerializable
                if (is_array($items)) {
                    // Normalize: allow passing a flat array of column components
                    $flat = $items;
+
+                   $countItems = 100 / count($flat);
+
+                   foreach ($items as $item)
+                   {
+                       if ($item->getType() == 'Column')
+                       {
+                           $item->getValue()->set_width($countItems);
+                       }
+                   }
+
                    // If a single BrizyComponent was passed, wrap it
                    if (array_key_exists(0, $flat) === false && $items instanceof BrizyComponent) {
                        $flat = [$items];
@@ -1019,7 +1030,7 @@ class BrizyComponent implements JsonSerializable
 
            $this->getValue()->add('items', [$rowComponent], $position);
        }
-       catch (Exception $e)
+       catch ( Exception $e)
        {
            Logger::instance()->warning('Error on addRow: ' . $e->getMessage());
        }

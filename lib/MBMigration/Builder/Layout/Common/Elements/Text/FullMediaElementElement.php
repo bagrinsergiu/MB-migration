@@ -74,7 +74,8 @@ abstract class FullMediaElementElement extends AbstractElement
             $brizyImageComponent,
             $this->browserPage,
             $data->getFontFamilies(),
-            $data->getDefaultFontFamily()
+            $data->getDefaultFontFamily(),
+            $imageMb['order_by'] ?? null
         );
 
         return $brizySection;
