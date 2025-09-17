@@ -173,7 +173,7 @@ class BrizyComponent implements JsonSerializable
                 try {
                     $item = self::fromArray($item, $this);
                 } catch (\Throwable $e) {
-                    Logger::instance()->warning('BrizyComponent::getItemWithDepth failed to normalize array item', [ 'error' => $e->getMessage() ]);
+                    Logger::instance()->warning('BrizyComponent::getItemWithDepth failed to normalize array item', ['error' => $e->getMessage()]);
                 }
             }
 
@@ -184,7 +184,7 @@ class BrizyComponent implements JsonSerializable
                 $value = $this->getValue();
             } else {
                 // Unexpected type — cannot continue deeper
-                Logger::instance()->warning('BrizyComponent::getItemWithDepth encountered non-component item; stopping traversal', [ 'type' => gettype($item) ]);
+                Logger::instance()->warning('BrizyComponent::getItemWithDepth encountered non-component item; stopping traversal', ['type' => gettype($item)]);
                 return $item instanceof BrizyComponent ? $item : $this;
             }
 
@@ -203,7 +203,7 @@ class BrizyComponent implements JsonSerializable
                 try {
                     $item = self::fromArray($next, $item instanceof BrizyComponent ? $item : $this);
                 } catch (\Throwable $e) {
-                    Logger::instance()->warning('BrizyComponent::getItemWithDepth failed to normalize next array item', [ 'error' => $e->getMessage() ]);
+                    Logger::instance()->warning('BrizyComponent::getItemWithDepth failed to normalize next array item', ['error' => $e->getMessage()]);
                     $item = $next; // leave as-is; will be handled next loop
                 }
             } else {
@@ -986,54 +986,49 @@ class BrizyComponent implements JsonSerializable
 
     public function addRow($items = null, $position = null, $options = []): BrizyComponent
     {
-       try {
-           $rowComponent = new BrizyRowComponent();
-           if (!empty($items))
-           {
-               if (is_array($items)) {
-                   // Normalize: allow passing a flat array of column components
-                   $flat = $items;
+        try {
+            $rowComponent = new BrizyRowComponent();
+            if (!empty($items)) {
+                if (is_array($items)) {
+                    // Normalize: allow passing a flat array of column components
+                    $flat = $items;
 
-                   $countItems = 100 / count($flat);
+                    $countItems = 100 / count($items);
 
-                   foreach ($items as $item)
-                   {
-                       if ($item->getType() == 'Column')
-                       {
-                           $item->getValue()->set_width($countItems);
-                       }
-                   }
+                    foreach ($items as $item) {
+                        if ($item->getType() == 'Column') {
+                            $item->getValue()->set('width', $countItems);
+                        }
+                    }
 
-                   // If a single BrizyComponent was passed, wrap it
-                   if (array_key_exists(0, $flat) === false && $items instanceof BrizyComponent) {
-                       $flat = [$items];
-                   }
-                   // Ensure each entry is a component instance
-                   $normalized = array_map(function($comp) use ($rowComponent) {
-                       if ($comp instanceof BrizyComponent) {
-                           return $comp;
-                       }
-                       if (is_array($comp)) {
-                           return BrizyComponent::fromArray($comp, $rowComponent);
-                       }
-                       return $comp;
-                   }, $flat);
-                   $rowComponent->getValue()->add('items', $normalized, $position);
-               } elseif ($items instanceof BrizyComponent) {
-                   $rowComponent->getValue()->add('items', [$items], $position);
-               }
-           }
+                    // If a single BrizyComponent was passed, wrap it
+                    if (array_key_exists(0, $flat) === false && $items instanceof BrizyComponent) {
+                        $flat = [$items];
+                    }
+                    // Ensure each entry is a component instance
+                    $normalized = array_map(function ($comp) use ($rowComponent) {
+                        if ($comp instanceof BrizyComponent) {
+                            return $comp;
+                        }
+                        if (is_array($comp)) {
+                            return BrizyComponent::fromArray($comp, $rowComponent);
+                        }
+                        return $comp;
+                    }, $flat);
+                    $rowComponent->getValue()->add('items', $normalized, $position);
+                } elseif ($items instanceof BrizyComponent) {
+                    $rowComponent->getValue()->add('items', [$items], $position);
+                }
+            }
 
-           foreach($options as $key => $value) {
-               $rowComponent->getValue()->set($key, $value);
-           }
+            foreach ($options as $key => $value) {
+                $rowComponent->getValue()->set($key, $value);
+            }
 
-           $this->getValue()->add('items', [$rowComponent], $position);
-       }
-       catch ( Exception $e)
-       {
-           Logger::instance()->warning('Error on addRow: ' . $e->getMessage());
-       }
+            $this->getValue()->add('items', [$rowComponent], $position);
+        } catch (Exception|BadJsonProvided $e) {
+            Logger::instance()->warning('Error on addRow: ' . $e->getMessage());
+        }
         return $this;
     }
 }
