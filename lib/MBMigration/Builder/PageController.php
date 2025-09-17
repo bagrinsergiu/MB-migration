@@ -96,8 +96,6 @@ class PageController
             Logger::instance()->info('Project fonts and migration fonts without damage');
         }
 
-        $fontFamily = FontsController::getFontsFamily();
-
         $url = PathSlugExtractor::getFullUrlById($pageId);
 
         $this->cache->set('CurrentPageURL', $url);
