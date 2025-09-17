@@ -8,6 +8,7 @@ use HeadlessChromium\Exception\OperationTimedOut;
 use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettes;
@@ -27,6 +28,7 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class PageController
 {
@@ -208,9 +210,9 @@ class PageController
 
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Exception|Throwable|BadJsonProvided|ElementNotFound $e) {
             Logger::instance()->critical('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
-            throw $e;
+            return false;
         } finally {
             if ($this->browser) {
                 $this->browser->closePage();

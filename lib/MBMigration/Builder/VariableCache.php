@@ -28,6 +28,13 @@ class VariableCache
         return self::$instance[$subclass];
     }
 
+    public function setCachePath($cachePath)
+    {
+        Logger::instance()->debug('VariableCache initialization');
+        $this->cachePath = rtrim($cachePath, '/');
+        $this->cache = ['OBJECTS' => []];
+    }
+
     /**
      * @return array
      */
@@ -206,13 +213,13 @@ class VariableCache
 
     public function dumpCache($projectID_MB, $projectID_Brizy)
     {
-        $fileName = $this->cachePath."/".md5($projectID_MB.$projectID_Brizy).'.json';
+        $fileName = $this->cachePath."/".md5($projectID_MB.$projectID_Brizy)."-$projectID_Brizy.json";
         file_put_contents($fileName, json_encode($this->cache));
     }
 
     public function loadDump($projectID_MB, $projectID_Brizy)
     {
-        $fileName = $this->cachePath."/".md5($projectID_MB.$projectID_Brizy).'.json';
+        $fileName = $this->cachePath."/".md5($projectID_MB.$projectID_Brizy)."-$projectID_Brizy.json";
         if (file_exists($fileName)) {
             $this->cache = json_decode(file_get_contents($fileName), true);
         }

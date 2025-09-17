@@ -80,6 +80,7 @@ class MigrationPlatform
     )
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
+        $this->cache->setCachePath(Config::$cachePath);
         $this->logger = $logger;
         $this->mMgrIgnore = $mMgrIgnore;
         $this->mgr_manual = $mgr_manual;
@@ -101,9 +102,9 @@ class MigrationPlatform
     public function start(string $projectID_MB, int $projectID_Brizy = 0)
     {
         try {
-//            $this->cache->loadDump($projectID_MB, $projectID_Brizy);
+            $this->cache->loadDump($projectID_MB, $projectID_Brizy);
             $this->run($projectID_MB, $projectID_Brizy);
-//            $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
+            $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
         } catch (GuzzleException $e) {
             Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
@@ -185,9 +186,9 @@ class MigrationPlatform
             $this->cache->set('designName', $designName);
         }
 
-        if (Config::$devMode) {
-            $this->brizyApi->clearAllFontsInProject();
-        }
+//        if (Config::$devMode) {
+//            $this->brizyApi->clearAllFontsInProject();
+//        }
 
 //        $this->brizyApi->setLabelManualMigration(false);
 
