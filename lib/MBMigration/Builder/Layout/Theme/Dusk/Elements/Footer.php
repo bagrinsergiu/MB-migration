@@ -73,12 +73,11 @@ class Footer extends FooterElement
     public function handleMbSectionItemsByOrder(ElementContextInterface $data, BrizyComponent $brizySectionItemComponent, array $items, int $order_by): void
     {
         try {
-            $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
-
             foreach ($items as $item) {
                 if (!is_array($item)) { continue; }
                 $ob = $item['order_by'] ?? null;
                 if ($ob === $order_by) {
+                    $elementContext = $data->instanceWithBrizyComponentAndMBSection($item, $brizySectionItemComponent);
                     $this->handleItemMbSection($item, $elementContext);
                 }
             }
