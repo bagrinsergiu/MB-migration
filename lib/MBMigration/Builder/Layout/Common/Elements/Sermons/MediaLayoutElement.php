@@ -17,7 +17,6 @@ use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
-use mysql_xdevapi\Exception;
 
 abstract class MediaLayoutElement extends AbstractElement
 {
@@ -693,8 +692,6 @@ abstract class MediaLayoutElement extends AbstractElement
 
         return false;
     }
-
-
 
     protected function getPropertiesMainSection(): array
     {
