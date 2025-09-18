@@ -57,22 +57,22 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
         $mbSection['media-player'] = false;
         $mbSection['containTitle'] = $mbSection['containTitle'] ?? '';
 
-        if ($this->hasNode($dataIdSelector . ' div.subsection.media-player-subsection', $this->browserPage)) {
-            $bgSubStylesRaw = $this->getDomElementStyles(
-                $dataIdSelector . ' div.subsection.media-player-subsection',
-                ['background-color', 'opacity'],
-                $this->browserPage);
-
-            $bgColor = ColorConverter::convertColorRgbToHex($bgSubStylesRaw['background-color'] ?? null);
-            $opacity = isset($bgSubStylesRaw['opacity']) ? NumberProcessor::convertToNumeric($bgSubStylesRaw['opacity']) : ColorConverter::rgba2opacity($bgSubStylesRaw['background-color'] ?? '');
-
-            $brizySection->getItemValueWithDepth(0)
-                ->set_bgColorOpacity($opacity)
-                ->set_bgColorHex(is_array($bgColor) ? ($bgColor['color'] ?? '#000000') : ($bgColor ?: '#000000'))
-                ->set_mobileBgColorType('solid')
-                ->set_mobileBgColorHex(is_array($bgColor) ? ($bgColor['color'] ?? '#000000') : ($bgColor ?: '#000000'))
-                ->set_mobileBgColorOpacity($opacity);
-        }
+//        if ($this->hasNode($dataIdSelector . ' div.subsection.media-player-subsection', $this->browserPage)) {
+//            $bgSubStylesRaw = $this->getDomElementStyles(
+//                $dataIdSelector . ' div.subsection.media-player-subsection',
+//                ['background-color', 'opacity'],
+//                $this->browserPage);
+//
+//            $bgColor = ColorConverter::convertColorRgbToHex($bgSubStylesRaw['background-color'] ?? null);
+//            $opacity = isset($bgSubStylesRaw['opacity']) ? NumberProcessor::convertToNumeric($bgSubStylesRaw['opacity']) : ColorConverter::rgba2opacity($bgSubStylesRaw['background-color'] ?? '');
+//
+//            $brizySection->getItemValueWithDepth(0)
+//                ->set_bgColorOpacity($opacity)
+//                ->set_bgColorHex(is_array($bgColor) ? ($bgColor['color'] ?? '#000000') : ($bgColor ?: '#000000'))
+//                ->set_mobileBgColorType('solid')
+//                ->set_mobileBgColorHex(is_array($bgColor) ? ($bgColor['color'] ?? '#000000') : ($bgColor ?: '#000000'))
+//                ->set_mobileBgColorOpacity($opacity);
+//        }
 
         if ($this->hasNode($dataIdSelector . ' .media-grid-container', $this->browserPage)) {
             $mbSection['mediaGridContainer'] = true;
