@@ -163,11 +163,11 @@ class EventDetailsPageLayout extends DetailsPage
             "marginSuffix" => "px",
             "marginTop" => 10,
             "marginTopSuffix" => "px",
-            "marginRight" => 0,
+            "marginRight" => 20,
             "marginRightSuffix" => "px",
             "marginBottom" => 0,
             "marginBottomSuffix" => "px",
-            "marginLeft" => 30,
+            "marginLeft" => 20,
             "marginLeftSuffix" => "px",
         ];
 

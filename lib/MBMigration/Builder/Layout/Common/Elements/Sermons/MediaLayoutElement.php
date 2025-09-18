@@ -710,6 +710,18 @@ abstract class MediaLayoutElement extends AbstractElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "padding" => 0,
+            "paddingSuffix" => "px",
+            "paddingTop" => 25,
+            "paddingTopSuffix" => "px",
+            "paddingRight" => 20,
+            "paddingRightSuffix" => "px",
+            "paddingBottom" => 50,
+            "paddingBottomSuffix" => "px",
+            "paddingLeft" => 20,
+            "paddingLeftSuffix" => "px",
         ];
     }
 }

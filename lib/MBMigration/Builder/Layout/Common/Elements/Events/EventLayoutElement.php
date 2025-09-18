@@ -201,8 +201,8 @@ abstract class EventLayoutElement extends AbstractElement
             'listItemMetaColorOpacity' => 1,
             'listItemMetaColorPalette' => '',
 
-            'listItemDateColorHex' => $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'listItemDateColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 1,
+            'listItemDateColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'] ??  $sectionPalette['text'],
+            'listItemDateColorOpacity' => 0.75 ?? $basicButtonStyleHover['color-opacity'] ?? 1,
             'listItemDateColorPalette' => '',
 
             'listTitleColorHex' => $sectionPalette['text'],
@@ -254,8 +254,8 @@ abstract class EventLayoutElement extends AbstractElement
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $basicButtonStyleHover['color'] ?? $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 1,
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'] ?? $sectionPalette['text'],
+            'hoverDetailButtonColorOpacity' => 0.75 ?? $basicButtonStyleHover['color-opacity'] ?? 1,
             'hoverDetailButtonColorPalette' => '',
 
             'detailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
@@ -308,7 +308,7 @@ abstract class EventLayoutElement extends AbstractElement
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 50,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",

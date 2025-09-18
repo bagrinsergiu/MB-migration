@@ -195,8 +195,8 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
-        $brizyAPI =  $data->getBrizyAPI();
-        $projectID =  $data->getThemeContext()->getProjectId();
+        $brizyAPI = $data->getBrizyAPI();
+        $projectID = $data->getThemeContext()->getProjectId();
 
         switch ($mbSectionItem['category']) {
             case 'text':
@@ -246,7 +246,7 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
-        $projectID =  $data->getThemeContext()->getProjectId();
+        $projectID = $data->getThemeContext()->getProjectId();
 
         if ($mbSectionItem['category'] == 'text') {
             $brizyComponent = $this->handleTextItem(
@@ -364,6 +364,73 @@ trait RichTextAble
     }
 
     private function handlePhotoItem(
+        $mbSectionItemId,
+        $mbSectionItem,
+        BrizyComponent $brizyComponent,
+        BrowserPageInterface $browserPage,
+        $families = [],
+        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
+    ): BrizyComponent
+    {
+        if ($brizyComponent->getType() !== 'Image') {
+            return $this->handlePhotoAddNewItem(
+                $mbSectionItemId,
+                $mbSectionItem,
+                $brizyComponent,
+                $browserPage
+            );
+        } else {
+            if (!empty($mbSectionItem['content'])) {
+                $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container img';
+                $sizes = $this->handleSizeToInt(
+                    $this->getDomElementSizes(
+                        $selectorImageSizes,
+                        $browserPage,
+                        $families,
+                        $default_fonts
+                    )
+                );
+                $sizeUnit = 'px';
+
+                $brizyComponent->getValue()
+                    ->set_imageFileName($mbSectionItem['imageFileName'])
+                    ->set_imageSrc($mbSectionItem['content']);
+
+                if (!empty($sizes['width']) && !empty($sizes['height'])) {
+                    if (strpos($sizes['width'], '%') !== false) {
+                        $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container';
+                        $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+                    }
+
+                    $brizyComponent->getValue()
+                        ->set_width((int)$sizes['width'])
+                        ->set_tabletWidth((int)$sizes['width'])
+                        ->set_mobileWidth((int)$sizes['width'])
+                        ->set_height((int)$sizes['height'])
+                        ->set_tabletHeight((int)$sizes['height'])
+                        ->set_mobileHeight((int)$sizes['height'])
+                        ->set_imageWidth($mbSectionItem['settings']['image']['width'])
+                        ->set_imageHeight($mbSectionItem['settings']['image']['height'])
+                        ->set_widthSuffix($sizeUnit)
+                        ->set_heightSuffix($sizeUnit)
+                        ->set_tabletHeightSuffix($sizeUnit)
+                        ->set_mobileSizeType('original')
+                        ->set_mobileWidthSuffix($sizeUnit)
+                        ->set_mobileHeightSuffix($sizeUnit);
+                }
+
+                $this->handleLink(
+                    $mbSectionItem,
+                    $brizyComponent,
+                    '[data-id="' . $mbSectionItemId . '"] div.photo-container a',
+                    $browserPage);
+            }
+
+            return $brizyComponent;
+        }
+    }
+
+    private function handlePhotoAddNewItem(
         $mbSectionItemId,
         $mbSectionItem,
         BrizyComponent $brizyComponent,
