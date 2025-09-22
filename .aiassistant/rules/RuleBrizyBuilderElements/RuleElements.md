@@ -1,3 +1,7 @@
+---
+apply: always
+---
+
 # Rules for Elements - Brizy Builder Components
 
 This document defines the usage rules, constraints, and best practices for individual Brizy Builder elements.

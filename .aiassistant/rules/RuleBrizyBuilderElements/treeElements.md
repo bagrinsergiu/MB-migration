@@ -1,3 +1,7 @@
+---
+apply: always
+---
+
 # Element Nesting Tree - Brizy Builder Structure
 
 This document defines the hierarchical structure and allowed nesting patterns for Brizy Builder elements.

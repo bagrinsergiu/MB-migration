@@ -1,3 +1,7 @@
+---
+apply: always
+---
+
 # Properties Usage Guide - Brizy Builder Elements
 
 This document describes all properties used in Brizy Builder elements, their types, valid values, and usage patterns.

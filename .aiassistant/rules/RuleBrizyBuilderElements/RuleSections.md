@@ -1,3 +1,7 @@
+---
+apply: always
+---
+
 # Rules for Sections - Brizy Builder Elements
 
 This document defines the rules, constraints, and usage guidelines for each type of section in Brizy Builder.

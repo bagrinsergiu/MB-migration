@@ -1,3 +1,7 @@
+---
+apply: always
+---
+
 # Kit List Blocks - Brizy Builder Elements
 
 This document contains a complete list of all elements available in Brizy Builder, extracted from `blocksKit.json` and `globalBlocksKit.json` files.
