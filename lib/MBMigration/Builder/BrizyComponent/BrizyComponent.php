@@ -1031,4 +1031,56 @@ class BrizyComponent implements JsonSerializable
         }
         return $this;
     }
+
+    /**
+     * If this component is a Column and contains a Cloneable as an immediate child,
+     * apply horizontal alignment to all items inside that Cloneable.
+     *
+     * Example structure:
+     * Column -> Cloneable -> [Icon, Icon, ...]
+     *
+     * @param string $align One of: left, center, right
+     * @return $this
+     */
+    public function applyHorizontalAlignToCloneableItemsInColumn(string $align = 'center'): BrizyComponent
+    {
+        try {
+            if (strtolower((string)$this->getType()) !== 'column') {
+                return $this;
+            }
+
+            $items = $this->getValue()->get('items');
+            if (!is_array($items) || empty($items)) {
+                return $this;
+            }
+
+            // Find first immediate child Cloneable
+            $cloneable = null;
+            foreach ($items as $child) {
+                if ($child instanceof BrizyComponent && strtolower((string)$child->getType()) === 'cloneable') {
+                    $child->addHorizontalContentAlign();
+                    break;
+                }
+            }
+
+            if (!$cloneable instanceof BrizyComponent) {
+                return $this; // no Cloneable found, nothing to do
+            }
+
+            $innerItems = $cloneable->getValue()->get('items');
+            if (!is_array($innerItems) || empty($innerItems)) {
+                return $this;
+            }
+
+//            foreach ($innerItems as $inner) {
+//                if ($inner instanceof BrizyComponent) {
+//                    $inner->addHorizontalContentAlign($align);
+//                }
+//            }
+        } catch (\Throwable $e) {
+            Logger::instance()->warning('applyHorizontalAlignToCloneableItemsInColumn failed: ' . $e->getMessage());
+        }
+
+        return $this;
+    }
 }

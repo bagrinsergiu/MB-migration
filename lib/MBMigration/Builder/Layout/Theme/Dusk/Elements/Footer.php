@@ -50,10 +50,10 @@ class Footer extends FooterElement
                     $brizySection->getItemWithDepth(0, 2),
                     $mbSection['items'],
                     2);
+                $brizySection->getItemWithDepth(0, 2)->addVerticalContentAlign('center')->applyHorizontalAlignToCloneableItemsInColumn();
             } catch(\Exception $e) {
                 Logger::instance()->error($e->getMessage());
             }
-
 
             $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
             $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);

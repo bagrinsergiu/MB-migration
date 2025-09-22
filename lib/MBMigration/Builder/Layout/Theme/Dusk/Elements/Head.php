@@ -111,18 +111,18 @@ class Head extends HeadElement
             'mobileHeightSuffix' => '%',
         ];
 
-//        $activeItemMenuOptions = [
-//            'activeMenuBorderStyle' => 'none',
-//            'activeMenuBorderColorHex' => '#000000',
-//            'activeMenuBorderColorOpacity' => 0.02,
-//            'activeMenuBorderColorPalette' => '',
-//            'activeMenuBorderWidthType' => 'ungrouped',
-//            'activeMenuBorderWidth' => 3,
-//            'activeMenuBorderTopWidth' => 0,
-//            'activeMenuBorderRightWidth' => 0,
-//            'activeMenuBorderBottomWidth' => 3,
-//            'activeMenuBorderLeftWidth' => 0,
-//        ];
+        $activeItemMenuOptions = [
+            'activeMenuBorderStyle' => 'none',
+            'activeMenuBorderColorHex' => '#000000',
+            'activeMenuBorderColorOpacity' => 0.02,
+            'activeMenuBorderColorPalette' => '',
+            'activeMenuBorderWidthType' => 'ungrouped',
+            'activeMenuBorderWidth' => 0,
+            'activeMenuBorderTopWidth' => 0,
+            'activeMenuBorderRightWidth' => 0,
+            'activeMenuBorderBottomWidth' => 0,
+            'activeMenuBorderLeftWidth' => 0,
+        ];
 
         $sectionlogoOptions = [
             'horizontalAlign' => 'center',
@@ -184,12 +184,12 @@ class Head extends HeadElement
                 ->$nameOption($value);
         }
 
-//        foreach ($activeItemMenuOptions as $logoOption => $value) {
-//            $nameOption = 'set_'.$logoOption;
-//            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
-//                ->getValue()
-//                ->$nameOption($value);
-//        }
+        foreach ($activeItemMenuOptions as $logoOption => $value) {
+            $nameOption = 'set_'.$logoOption;
+            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
+                ->getValue()
+                ->$nameOption($value);
+        }
 
         $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
         $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
