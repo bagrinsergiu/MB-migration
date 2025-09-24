@@ -129,10 +129,13 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
                     ->$method($value);
             }
 
+            $mbSortedItems = $this->sortItems($mbSectionItem['items']);
+
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                $mbSectionItem['item'][1],
+                $mbSortedItems[1],
                 $brizyAccordionItem
             );
+
             $this->handleRichTextItem($elementContext, $this->browserPage);
 
             $elementWrapper = $brizyAccordionItem->getItemWithDepth(0);

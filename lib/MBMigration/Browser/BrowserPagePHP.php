@@ -180,7 +180,7 @@ class BrowserPagePHP implements BrowserPageInterface
 
     public function getPageScreen($prefix = ''): void
     {
-        $this->page->screenshot()->saveToFile('/project/var/cache/pageScreen'. $prefix .'.jpg');
+        $this->page->screenshot()->saveToFile('/project/var/cache/pageScreen_'. $prefix .'.jpg');
     }
 
     public function extractHover($selector): void

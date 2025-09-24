@@ -116,7 +116,7 @@ class PageController
         try {
             try {
                 $browserPage = $this->browser->openPage($url, $design);
-            } catch (OperationTimedOut $e) {
+            } catch (Exception $e) {
 
                 Logger::instance()->critical($e->getMessage());
 
@@ -198,7 +198,6 @@ class PageController
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $pd = FontsController::getProject_Data();
 
-            sleep(1);
             $this->dumpPageDataCache($slug, $brizySections);
 
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
