@@ -72,7 +72,7 @@ class MediaController
     {
         $parts = explode(".", $item['content']);
         $downloadImageURL = self::getPicturesUrl($parts[0].'@2x.'.$parts[1], $section);
-        Logger::instance()->debug('Found new image', [$downloadImageURL]);
+        Logger::instance()->info('Found new image', [$downloadImageURL]);
         $result = $brizyApi->createMedia($downloadImageURL, $projectId);
         if ($result) {
             if (array_key_exists('status', $result)) {
@@ -82,7 +82,7 @@ class MediaController
                     $item['imageFileName'] = $result['filename'];
                     $item['content'] = $result['name'];
                     $item['settings'] = array_merge(json_decode($result['metadata'], true), $item['settings']);
-                    Logger::instance()->debug('Success upload image fileName', $result);
+                    Logger::instance()->info('Success upload image fileName', $result);
                 } else {
                     Logger::instance()->critical('Unexpected answer: '.json_encode($result));
                 }
@@ -101,6 +101,7 @@ class MediaController
 
         $folder = [
             'gallery-layout' => '/gallery/slides/',
+            'gallery' => '/gallery/slides/',
             'favicons' => '/favicons/',
         ];
 
@@ -185,6 +186,10 @@ class MediaController
             if (!empty($section['slide'])) {
                 self::checkItemForMediaFiles($section['slide'], $section['typeSection'], $projectId, $brizyApi);
             }
+
+            if (!empty($section['gallery'])) {
+                self::checkGalleryForMediaFiles($section['gallery'], 'gallery', $projectId, $brizyApi);
+            }
         }
 
         return $sectionsItems;
@@ -207,6 +212,17 @@ class MediaController
                 }
             }
         }
+    }
+
+
+    public static function checkGalleryForMediaFiles(&$section, $typeSection, $projectId, $brizyApi): void
+    {
+        foreach ($section['items'] as &$piece) {
+            if ($piece['category'] == 'photo' && $piece['content'] != '') {
+                MediaController::media($piece, $typeSection, $projectId, $brizyApi);
+            }
+        }
+
     }
 
     public static function validateBgImag(

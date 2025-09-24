@@ -183,7 +183,7 @@ final class ColorConverter
                     }
                 }
             }
-        } else {
+        } elseif (!empty($color)) {
             $style = self::convertColor(str_replace("px", "", $color));
         }
         return $style;
@@ -222,17 +222,33 @@ final class ColorConverter
         return $inputString;
     }
 
-    public static function getContrastColor($hexColor): string
-    {
-        $hexColor = str_replace('#', '', $hexColor);
+    public static function getContrastColor(
+        string $hexColor
+    ): string {
+        $luminosityThreshold = 0.9;
+        $hexColor            = strtoupper(ltrim($hexColor, '#'));
 
-        $r = hexdec(substr($hexColor, 0, 2));
-        $g = hexdec(substr($hexColor, 2, 2));
-        $b = hexdec(substr($hexColor, 4, 2));
+        if (!preg_match('/^[0-9A-F]{3}$|^[0-9A-F]{6}$/', $hexColor)) {
+            return "#FFFFFF";
+        }
 
-        $brightness = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+        if (strlen($hexColor) === 3) {
+            $red   = hexdec($hexColor[0].$hexColor[0]);
+            $green = hexdec($hexColor[1].$hexColor[1]);
+            $blue  = hexdec($hexColor[2].$hexColor[2]);
+        } else {
+            $red   = hexdec(substr($hexColor, 0, 2));
+            $green = hexdec(substr($hexColor, 2, 2));
+            $blue  = hexdec(substr($hexColor, 4, 2));
+        }
 
-        return $brightness > 125 ? '#000000' : '#FFFFFF';
+        $luminosity = (($red + $green + $blue) / 3) / 255.0;
+
+        if ($luminosity >= $luminosityThreshold) {
+            return "#000000";
+        } else {
+            return "#FFFFFF";
+        }
     }
 
     public static function getHoverOpacity(float $baseOpacity): float {
@@ -280,6 +296,9 @@ final class ColorConverter
         $opacity = (float)$opacity;
 
         if ($opacity < 0) {
+            return 0;
+        }
+        if ($opacity === 0.0){
             return 0;
         }
         if ($opacity > 1) {

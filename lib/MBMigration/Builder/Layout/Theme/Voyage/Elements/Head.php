@@ -97,6 +97,11 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
+    public function getThemeMenuItemActiveSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
     public function getThemeMobileBtnSelector(): array
     {
         return $this->getThemeMenuItemMobileSelector();
@@ -125,11 +130,6 @@ class Head extends HeadElement
     public function getThemeSubMenuItemClassSelected(): array
     {
         return ["selector" => "#selected-sub-navigation ul li", "className" => "selected"];
-    }
-
-    public function getThemeMenuItemBgSelector(): array
-    {
-        return $this->getThemeMenuItemSelector();
     }
 
     public function getThemeSubMenuItemBGSelector(): array
@@ -167,5 +167,25 @@ class Head extends HeadElement
     public function getThemeSubMenuSelectedItemSelector(): array
     {
         return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    public function getMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getMenuHoverItemBgSelector(): array
+    {
+        return $this->getThemeSubMenuItemBGSelector();
+    }
+
+    public function getNotSelectedMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ":before"];
     }
 }

@@ -11,8 +11,11 @@ use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\SlugAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Template\DetailPages\SermonDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Utils\NumberProcessor;
+use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
 
 abstract class MediaLayoutElement extends AbstractElement
@@ -33,11 +36,17 @@ abstract class MediaLayoutElement extends AbstractElement
      */
     public function __construct($brizyKit, BrowserPageInterface $browserPage, QueryBuilder $queryBuilder)
     {
-        parent::__construct($brizyKit, $browserPage);
-        $this->setQueryBuilder($queryBuilder);
+        try {
+            parent::__construct($brizyKit, $browserPage);
+            $this->setQueryBuilder($queryBuilder);
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage(), ['MediaLayoutElement']);
+        }
     }
 
-
+    /**
+     * @throws BadJsonProvided
+     */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['Section']['main'], true));
@@ -60,39 +69,58 @@ abstract class MediaLayoutElement extends AbstractElement
         $this->handleRichTextHead($elementContext, $this->browserPage);
         $this->handleRichTextItems($elementContext, $this->browserPage);
 
-        $dataIdSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $dataIdSelector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
 
         $mbSection['mediaGridContainer'] = false;
+        $mbSection['media-player'] = false;
+        $mbSection['containTitle'] = $mbSection['containTitle'] ?? '';
 
-        if($this->hasNode($dataIdSelector. ' .media-grid-container', $this->browserPage)){
+        if ($this->hasNode($dataIdSelector . ' div.subsection.media-player-subsection', $this->browserPage)) {
+            $bgSubStylesRaw = $this->getDomElementStyles(
+                $dataIdSelector . ' div.subsection.media-player-subsection',
+                ['background-color', 'opacity'],
+                $this->browserPage);
+
+            $bgColor = ColorConverter::convertColorRgbToHex($bgSubStylesRaw['background-color'] ?? null);
+            $opacity = isset($bgSubStylesRaw['opacity']) ? NumberProcessor::convertToNumeric($bgSubStylesRaw['opacity']) : ColorConverter::rgba2opacity($bgSubStylesRaw['background-color'] ?? '');
+
+            $brizySection->getItemValueWithDepth(0)
+                ->set_bgColorOpacity($opacity)
+                ->set_bgColorHex(is_array($bgColor) ? ($bgColor['color'] ?? '#000000') : ($bgColor ?: '#000000'))
+                ->set_mobileBgColorType('solid')
+                ->set_mobileBgColorHex(is_array($bgColor) ? ($bgColor['color'] ?? '#000000') : ($bgColor ?: '#000000'))
+                ->set_mobileBgColorOpacity($opacity);
+        }
+
+        if ($this->hasNode($dataIdSelector . ' .media-grid-container', $this->browserPage)) {
             $mbSection['mediaGridContainer'] = true;
-        } elseif ($this->hasNode($dataIdSelector. ' .media-list-container', $this->browserPage)){
+        } elseif ($this->hasNode($dataIdSelector . ' .media-list-container', $this->browserPage)) {
             $mbSection['mediaGridContainer'] = true;
         }
 
-        if ($this->hasNode($dataIdSelector. ' .media-player', $this->browserPage)){
+        if ($this->hasNode($dataIdSelector . ' .media-player', $this->browserPage)) {
             $mbSection['media-player'] = true;
         }
 
         if ($mbSection['media-player']) {
-            $titleSelector = $dataIdSelector. ' .media-video-title';
+            $titleSelector = $dataIdSelector . ' .media-video-title';
             $mbSection['containTitle'] = $this->getNodeText($titleSelector, $this->browserPage);
         }
 
         $sectionSubPalette = $this->getNodeSubPalette($dataIdSelector, $this->browserPage);
         $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
 
-        if(!$mbSection['mediaGridContainer']) {
+        if (!$mbSection['mediaGridContainer']) {
             $brizySectionFeaturedVideo = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['elementVideo'], true));
             $brizySectionFeaturedDescription = new BrizyComponent(json_decode($this->brizyKit['SermonFeatured']['elementDescription'], true));
 
             $textColorStyles = $this->getDomElementStyles(
-                $dataIdSelector. ' .media-player-container .media-header .text-content',
+                $dataIdSelector . ' .media-player-container .media-header .text-content',
                 ['color'],
                 $this->browserPage);
 
             $backgroundColorStyles = $this->getDomElementStyles(
-                $dataIdSelector. ' .media-player-container .media-player',
+                $dataIdSelector . ' .media-player-container .media-player',
                 ['background-color'],
                 $this->browserPage);
 
@@ -124,7 +152,7 @@ abstract class MediaLayoutElement extends AbstractElement
             ];
 
             $sectionPropertiesSecondLevel = [
-                'sermonSlug'=> $this->createSlug($mbSection['containTitle']),
+                'sermonSlug' => $this->createSlug($mbSection['containTitle']),
 
                 'showMetaHeadings' => 'off',
 
@@ -150,13 +178,13 @@ abstract class MediaLayoutElement extends AbstractElement
             ];
 
             foreach ($sectionProperties as $key => $value) {
-                $properties = 'set_'.$key;
+                $properties = 'set_' . $key;
                 $brizySectionFeaturedVideo->getItemValueWithDepth(0)
                     ->$properties($value);
             }
 
             foreach ($sectionPropertiesSecondLevel as $key => $value) {
-                $properties = 'set_'.$key;
+                $properties = 'set_' . $key;
                 $brizySectionFeaturedDescription->getItemValueWithDepth(0)
                     ->$properties($value);
             }
@@ -168,7 +196,7 @@ abstract class MediaLayoutElement extends AbstractElement
                 ->previewTypography()
                 ->subscribeEventButtonTypography();
 
-            $brizySectionFeaturedDescription->addMobileMargin([0,-5,0,-5]);
+            $brizySectionFeaturedDescription->addMobileMargin([0, -5, 0, -5]);
 
             $brizySection->getItemValueWithDepth(0)
                 ->add('items', [$brizySectionFeaturedVideo])
@@ -176,73 +204,102 @@ abstract class MediaLayoutElement extends AbstractElement
         } else {
             $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
 
+            $selector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
+            $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
+
             $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['GridMediaLayout']['detail'],
-                $this->getTopPaddingOfTheFirstElement(),
+                $this->getTopPaddingOfTheFirstElement() + $this->getAdditionalTopPaddingOfDetailPage(),
                 $this->getMobileTopPaddingOfTheFirstElement(),
                 $this->pageTDO,
                 $data,
-                $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
+                $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
             );
 
             $resultColorStyles['text'] = $this->getDomElementStyles(
-                $dataIdSelector. ' .media-player-container .media-header .text-content',
+                $dataIdSelector . ' .media-player-container .media-header .text-content',
                 ['color'],
                 $this->browserPage);
 
             $resultColorStyles['pagination-normal'] = $this->getDomElementStyles(
-                $dataIdSelector. ' .pagination .previous a',
+                $dataIdSelector . ' .pagination .previous a',
                 ['color'],
                 $this->browserPage);
 
             $resultColorStyles['opacity-pagination-normal'] = $this->getDomElementStyles(
-                $dataIdSelector. ' .pagination .previous a',
+                $dataIdSelector . ' .pagination .previous a',
                 ['opacity'],
                 $this->browserPage);
 
             $resultColorStyles['pagination-active'] = $this->getDomElementStyles(
-                $dataIdSelector. ' .pagination .active a',
+                $dataIdSelector . ' .pagination .active a',
                 ['color'],
                 $this->browserPage);
 
+            $resultColorStyles['pagination-active-bg'] = $this->getDomElementStyles(
+                $dataIdSelector . ' .pagination .active a',
+                ['background-color'],
+                $this->browserPage,
+                [], '',
+                ':before');
+
             $resultColorStyles['opacity-pagination-active'] = $this->getDomElementStyles(
-                $dataIdSelector. ' .pagination .active a',
+                $dataIdSelector . ' .pagination .active a',
                 ['opacity'],
                 $this->browserPage);
+            #media-archive-dcf0cf6c-26ca-4d0a-af8f-e3dc0136f904 > div.media-grid-container > ul.pagination > li.active > a
 
             $resultColorStyles['bg-color'] = $this->getDomElementStyles(
-                $dataIdSelector. ' .media-player-container .media-player',
+                $dataIdSelector . ' .media-player-container .media-player',
                 ['background-color'],
                 $this->browserPage);
 
             $resultColorStyles['bg-opacity'] = $this->getDomElementStyles(
-                $dataIdSelector. ' .media-player-container .media-player',
+                $dataIdSelector . ' .media-player-container .media-player',
                 ['opacity'],
                 $this->browserPage);
 
             $resultColorStyles['color-text-description'] = $this->getDomElementStyles(
-                $dataIdSelector. ' .media-player-container .media-description',
+                $dataIdSelector . ' .media-player-container .media-description',
                 ['color'],
                 $this->browserPage);
 
             $resultColorStyles['color-text-header'] = $this->getDomElementStyles(
-                $dataIdSelector. ' .media-player-container .media-header',
+                $dataIdSelector . ' .media-player-container .media-header',
                 ['color'],
                 $this->browserPage);
 
 
             $colorStyles = [
                 'text-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['text']['color'] ?? $sectionPalette['text']),
-                'bg-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-color']['background-color']  ?? $sectionPalette['bg']),
-                'bg-opacity' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-opacity']['opacity'] ?? 1),
-                'pagination-normal' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-normal']['color']  ?? $sectionPalette['text']),
-                'pagination-active' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-active']['color']  ?? $sectionPalette['text']),
-                'color-text-description' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-description']['color']  ?? $sectionPalette['text']),
-                'color-text-header' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-header']['color']  ?? $sectionPalette['text']),
+                'bg-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-color']['background-color'] ?? $sectionPalette['bg']),
+                'bg-opacity' => ColorConverter::normalizeOpacity($resultColorStyles['bg-opacity']['opacity'] ?? 1),
+                'pagination-normal' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-normal']['color'] ?? $sectionPalette['text']),
+                'pagination-active' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-active']['color'] ?? $sectionPalette['text']),
+                'pagination-active-bg' => ColorConverter::convertColorRgbToHex($resultColorStyles['pagination-active-bg']['background-color'] ?? null),
+                'color-text-description' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-description']['color'] ?? $sectionPalette['text']),
+                'color-text-header' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-header']['color'] ?? $sectionPalette['text']),
                 'opacity-pagination-normal' => $resultColorStyles['opacity-pagination-normal']['opacity'] ?? 0.75,
                 'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'] ?? 1,
             ];
 
-            $sectionPalette['item-bg'] = $colorStyles['bg-color'];
+            $colorKeysToNormalize = [
+                'bg-color',
+                'pagination-normal',
+                'pagination-active',
+                'pagination-active-bg',
+                'color-text-description',
+                'color-text-header',
+                'text-color',
+            ];
+
+            foreach ($colorKeysToNormalize as $key) {
+                if (array_key_exists($key, $colorStyles)) {
+                    $colorStyles[$key] = $this->normalizeColorEntry($colorStyles[$key], '#000000');
+                }
+            }
+
+            // ensure item-bg is hex string
+            $sectionPalette['item-bg'] = $colorStyles['bg-color']['color'] ?? (is_string($colorStyles['bg-color']) ? $colorStyles['bg-color'] : ($sectionPalette['bg'] ?? '#000000'));
 
             $detailsSection = $DetailsPageLayout->setStyleDetailPage($sectionPalette);
 
@@ -254,7 +311,7 @@ abstract class MediaLayoutElement extends AbstractElement
                 self::DETAILS_PAGE_NAME,
             );
 
-            $placeholder = base64_encode('{{ brizy_dc_url_post entityType="'.$detailCollectionItem['type']['id'].'" entityId="' . $detailCollectionItem['id'] . '" }}');
+            $placeholder = base64_encode('{{ brizy_dc_url_post entityType="' . $detailCollectionItem['type']['id'] . '" entityId="' . $detailCollectionItem['id'] . '" }}');
 
             $this->getDetailsLinksComponent($brizySectionGrid)
                 ->getValue()
@@ -263,43 +320,47 @@ abstract class MediaLayoutElement extends AbstractElement
                 ->set_detailPageSource($collectionTypeUri)
                 ->set_detailPage("{{placeholder content='$placeholder'}}");
 
+            $paginationColorActive1 = $colorStyles['pagination-active']['color'] ?? (is_string($colorStyles['pagination-active']) ? $colorStyles['pagination-active'] : null);
+            $paginationColorActive2 = $colorStyles['pagination-active-bg']['color'] ?? (is_string($colorStyles['pagination-active-bg']) ? $colorStyles['pagination-active-bg'] : null);
+            $paginationColorActive = $paginationColorActive2 ?? $paginationColorActive1 ?? ($sectionPalette['link'] ?? '#3d79ff');
+
             $sectionProperties = [
 
                 'showCategoryFilter' => 'off',
 
-                'colorHex' =>  $colorStyles['color-text-header']['color'] ?? $colorStyles['color-text-header'],
+                'colorHex' => $colorStyles['color-text-header']['color'] ?? $colorStyles['color-text-header'],
                 'colorOpacity' => $colorStyles['color-text-header']['opacity'] ?? 1,
                 'colorPalette' => "",
 
-                'titleColorHex' =>  $sectionPalette['link'] ?? "#1e1eb7",
-                'titleColorOpacity' =>  1,
-                'titleColorPalette' =>  "",
+                'titleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
+                'titleColorOpacity' => 1,
+                'titleColorPalette' => "",
 
-                'hoverTitleColorHex' =>  $sectionPalette['link'] ?? "#1e1eb7",
-                'hoverTitleColorOpacity' =>  0.7,
-                'hoverTitleColorPalette' =>  "",
+                'hoverTitleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
+                'hoverTitleColorOpacity' => 0.7,
+                'hoverTitleColorPalette' => "",
 
-                'metaLinksColorHex' =>  $sectionPalette['link'] ?? "#3d79ff",
-                'metaLinksColorOpacity' =>  1,
-                'metaLinksColorPalette' =>  "",
+                'metaLinksColorHex' => $sectionPalette['link'] ?? "#3d79ff",
+                'metaLinksColorOpacity' => 1,
+                'metaLinksColorPalette' => "",
 
-                'hoverMetaLinksColorHex' =>  $sectionPalette['link'] ?? "#3d79ff",
-                'hoverMetaLinksColorOpacity' =>  0.7,
-                'hoverMetaLinksColorPalette' =>  "",
+                'hoverMetaLinksColorHex' => $sectionPalette['link'] ?? "#3d79ff",
+                'hoverMetaLinksColorOpacity' => 0.7,
+                'hoverMetaLinksColorPalette' => "",
 
-                'filterBgColorHex' => $colorStyles['bg-color'],
-                'filterBgColorOpacity' => $colorStyles['bg-opacity'],
+                'filterBgColorHex' => $colorStyles['bg-color']['color'] ?? $colorStyles['bg-color'],
+                'filterBgColorOpacity' => $colorStyles['bg-color']['opacity'] ?? $colorStyles['bg-opacity'],
                 'filterBgColorPalette' => '',
 
-                'itemBgColorHex' => $colorStyles['bg-color'],
-                'itemBgColorOpacity' => 0, // $colorStyles['bg-opacity'],
+                'itemBgColorHex' => $colorStyles['bg-color']['color'] ?? $colorStyles['bg-color'],
+                'itemBgColorOpacity' =>$colorStyles['bg-color']['opacity'] ?? 0, // $colorStyles['bg-opacity'],
                 'itemBgColorPalette' => '',
 
                 'paginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
                 'paginationColorOpacity' => floatval($colorStyles['pagination-normal']['opacity'] ?? $colorStyles['opacity-pagination-normal']),
                 'paginationColorPalette' => '',
 
-                'activePaginationColorHex' => $colorStyles['pagination-active']['color'] ?? $colorStyles['pagination-active'],
+                'activePaginationColorHex' => $paginationColorActive,
                 'activePaginationColorOpacity' => floatval($colorStyles['opacity-pagination-active'] ?? $colorStyles['pagination-active']['opacity']),
                 'activePaginationColorPalette' => '',
 
@@ -307,7 +368,7 @@ abstract class MediaLayoutElement extends AbstractElement
                 'hoverPaginationColorOpacity' => ColorConverter::getHoverOpacity($colorStyles['pagination-normal']['opacity'] ?? $colorStyles['opacity-pagination-normal']),
                 'hoverPaginationColorPalette' => '',
 
-                'resultsHeadingColorHex' => $colorStyles['text-color'],
+                'resultsHeadingColorHex' => ($colorStyles['text-color']['color'] ?? (is_string($colorStyles['text-color']) ? $colorStyles['text-color'] : ($sectionPalette['text'] ?? '#000000'))),
                 'resultsHeadingColorOpacity' => 1,
                 'resultsHeadingColorPalette' => '',
 
@@ -325,7 +386,7 @@ abstract class MediaLayoutElement extends AbstractElement
             ];
 
             foreach ($sectionProperties as $key => $value) {
-                $properties = 'set_'.$key;
+                $properties = 'set_' . $key;
                 $brizySectionGrid->getItemValueWithDepth(0)
                     ->$properties($value);
             }
@@ -342,9 +403,9 @@ abstract class MediaLayoutElement extends AbstractElement
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text'] ?? $sectionPalette['text']);
 
         $richTextTitle = [
-            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-empty brz-ff-lato brz-ft-google brz-fs-lg-20 brz-fss-lg-px brz-fw-lg-400 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: '.$colorTitle.';">Sermon Details</span></h5>',
+            'text' => '<h5 class="brz-text-lg-center brz-tp-lg-empty brz-ff-lato brz-ft-google brz-fs-lg-20 brz-fss-lg-px brz-fw-lg-400 brz-ls-lg-0 brz-lh-lg-1_6 brz-vfw-lg-400 brz-fwdth-lg-100 brz-fsft-lg-0" data-uniq-id="xdAq1" data-generated-css="brz-css-duw4v"><span style="color: ' . $colorTitle . ';">Sermon Details</span></h5>',
             'typographyFontStyle' => 'heading5'
-            ];
+        ];
 
         $wrapperItemTitle = [
             'bgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['item-bg'],
@@ -419,7 +480,7 @@ abstract class MediaLayoutElement extends AbstractElement
             'showPassage' => 'off',
             'showMetaHeadings' => 'off',
             'showPreviousPage' => 'off',
-            'showMediaLinksVideo' =>'off',
+            'showMediaLinksVideo' => 'off',
             'showMediaLinksAudio' => 'off',
             'showMediaLinksDownload' => 'off',
             'showMediaLinksNotes' => 'off',
@@ -465,7 +526,7 @@ abstract class MediaLayoutElement extends AbstractElement
             'showPassage' => 'on',
             'showMetaHeadings' => 'on',
             'showPreviousPage' => 'on',
-            'showMediaLinksVideo' =>'off',
+            'showMediaLinksVideo' => 'off',
             'showMediaLinksAudio' => 'off',
             'showMediaLinksDownload' => 'on',
             'showMediaLinksNotes' => 'on',
@@ -490,7 +551,7 @@ abstract class MediaLayoutElement extends AbstractElement
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $sectionPalette['btn-text']  ?? $sectionPalette['text'],
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'hoverDetailButtonColorOpacity' => 0.75,
             'hoverDetailButtonColorPalette' => '',
 
@@ -502,7 +563,7 @@ abstract class MediaLayoutElement extends AbstractElement
             'hoverDetailButtonBgColorOpacity' => 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'subscribeButtonColorHex' => $sectionPalette['btn-text']  ?? $sectionPalette['text'],
+            'subscribeButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'subscribeButtonColorOpacity' => 1,
             'subscribeButtonColorPalette' => '',
 
@@ -523,30 +584,30 @@ abstract class MediaLayoutElement extends AbstractElement
         ];
 
         foreach ($sectionStyle as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0)
                 ->$properties($value);
         }
 
         foreach ($sectionPlayerStyle as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0, 0)
                 ->$properties($value);
         }
 
         foreach ($sectionDescriptionItemsStyle as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0, 1, 0)
                 ->$properties($value);
         }
         foreach ($sectionDescriptionItemsStyle as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0, 1, 1)
                 ->$properties($value);
         }
 
         foreach ($sectionProperties1 as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
                 ->$properties($value);
         }
@@ -554,31 +615,31 @@ abstract class MediaLayoutElement extends AbstractElement
         $detailsSection->getItemWithDepth(0, 1, 0, 0, 0)->titleTypography();
 
         foreach ($sectionDescriptionStyle as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0, 1)
                 ->$properties($value);
         }
 
         foreach ($sectionProperties2 as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0)
                 ->$properties($value);
         }
 
         foreach ($sectionProperties2Margin as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 1)
                 ->$properties($value);
         }
 
         foreach ($wrapperItemTitle as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0)
                 ->$properties($value);
         }
 
         foreach ($richTextTitle as $key => $value) {
-            $properties = 'set_'.$key;
+            $properties = 'set_' . $key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0, 0, 0)
                 ->$properties($value);
         }
@@ -589,10 +650,53 @@ abstract class MediaLayoutElement extends AbstractElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    private function normalizeColorEntry($value, $fallback = '#000000'): array
+    {
+        $isValidHex = function ($c) {
+            return is_string($c) && preg_match('/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/', $c);
+        };
+
+        if (is_array($value)) {
+            $color = $value['color'] ?? null;
+            $opacity = isset($value['opacity']) ? (float)$value['opacity'] : 1.0;
+
+            if (!$this->isLikelyColor($color)) {
+                $color = $fallback;
+            }
+
+            return [
+                'color' => $isValidHex($color) ? $color : $fallback,
+                'opacity' => $opacity,
+            ];
+        }
+
+        if ($this->isLikelyColor($value)) {
+            return [
+                'color' => $isValidHex($value) ? $value : $fallback,
+                'opacity' => 1.0,
+            ];
+        }
+
+        return ['color' => $fallback, 'opacity' => 1.0];
+    }
+
+    private function isLikelyColor($v): bool
+    {
+        if (!is_string($v)) return false;
+
+        $v = trim($v);
+        if ($v === '#') return true;
+        if (preg_match('/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/', $v)) return true;
+        if (stripos($v, 'rgb(') === 0 || stripos($v, 'rgba(') === 0) return true;
+        if (preg_match_all('/\d+/', $v, $m) && count($m[0]) === 3) return true;
+
+        return false;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,
@@ -603,6 +707,18 @@ abstract class MediaLayoutElement extends AbstractElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "paddingType" => "ungrouped",
+            "padding" => 0,
+            "paddingSuffix" => "px",
+            "paddingTop" => 25,
+            "paddingTopSuffix" => "px",
+            "paddingRight" => 20,
+            "paddingRightSuffix" => "px",
+            "paddingBottom" => 50,
+            "paddingBottomSuffix" => "px",
+            "paddingLeft" => 20,
+            "paddingLeftSuffix" => "px",
         ];
     }
 }

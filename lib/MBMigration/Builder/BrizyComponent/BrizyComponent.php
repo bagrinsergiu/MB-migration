@@ -5,6 +5,7 @@ namespace MBMigration\Builder\BrizyComponent;
 use JsonSerializable;
 use Exception;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
+use MBMigration\Core\Logger;
 
 class BrizyComponent implements JsonSerializable
 {
@@ -15,7 +16,17 @@ class BrizyComponent implements JsonSerializable
 
     public function __construct($data, ?BrizyComponent $parent = null)
     {
+        Logger::instance()->info('BrizyComponent constructor called', [
+            'data_keys' => is_array($data) ? array_keys($data) : 'not_array',
+            'has_parent' => $parent !== null,
+            'parent_type' => $parent ? $parent->getType() : null
+        ]);
+
         if (!is_array($data)) {
+            Logger::instance()->error('BrizyComponent constructor: Wrong data format provided', [
+                'data_type' => gettype($data),
+                'data' => is_scalar($data) ? $data : 'non_scalar'
+            ]);
             throw new BadJsonProvided('Wrong data format provided for BrizyComponent');
         }
 
@@ -25,6 +36,65 @@ class BrizyComponent implements JsonSerializable
 
         if (isset($data['blockId'])) {
             $this->blockId = $data['blockId'];
+        }
+
+        Logger::instance()->info('BrizyComponent initialized successfully', [
+            'type' => $this->type,
+            'blockId' => $this->blockId,
+            'has_value' => $this->value !== null,
+            'parent_type' => $parent ? $parent->getType() : null
+        ]);
+    }
+
+    /**
+     * Factory: build appropriate component subclass from array data.
+     * Falls back to base BrizyComponent when type is unknown.
+     *
+     * @param array $data
+     * @param BrizyComponent|null $parent
+     * @return BrizyComponent
+     * @throws BadJsonProvided
+     */
+    public static function fromArray(array $data, ?BrizyComponent $parent = null): BrizyComponent
+    {
+        $type = strtolower($data['type'] ?? '');
+        Logger::instance()->info('BrizyComponent::fromArray called', [
+            'type' => $type,
+            'original_type' => $data['type'] ?? null,
+            'has_parent' => $parent !== null,
+            'data_keys' => array_keys($data)
+        ]);
+
+        try {
+            switch ($type) {
+                case 'row':
+                    Logger::instance()->info('Creating BrizyRowComponent', ['type' => $type]);
+                    return new BrizyRowComponent($data, $parent);
+                case 'column':
+                    Logger::instance()->info('Creating BrizyColumComponent', ['type' => $type]);
+                    return new BrizyColumComponent($data, $parent);
+                case 'line':
+                    Logger::instance()->info('Creating BrizyLineComponent', ['type' => $type]);
+                    return new BrizyLineComponent($data, $parent);
+                default:
+                    Logger::instance()->info('Creating base BrizyComponent for unknown type', ['type' => $type]);
+                    return new self($data, $parent);
+            }
+        } catch (BadJsonProvided $e) {
+            Logger::instance()->error('BadJsonProvided exception in fromArray', [
+                'type' => $type,
+                'message' => $e->getMessage(),
+                'data_keys' => array_keys($data)
+            ]);
+            throw $e;
+        } catch (\Throwable $e) {
+            Logger::instance()->warning('Fallback to base BrizyComponent due to exception', [
+                'type' => $type,
+                'exception_class' => get_class($e),
+                'exception_message' => $e->getMessage()
+            ]);
+            // In case subclass constructor throws for any reason, be resilient
+            return new self($data, $parent);
         }
     }
 
@@ -78,6 +148,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $getObjectVars = get_object_vars($this);
@@ -90,28 +161,82 @@ class BrizyComponent implements JsonSerializable
     {
         $depths = func_get_args();
 
-        if (is_array($depths[0])) {
+        if (isset($depths[0]) && is_array($depths[0])) {
             $depths = $depths[0];
         }
 
         $item = null;
 
         foreach ($depths as $index) {
-            if ($item) {
-                $items = $item->getValue()->get_items();
+            // Normalize current $item if needed
+            if (is_array($item)) {
+                try {
+                    $item = self::fromArray($item, $this);
+                } catch (\Throwable $e) {
+                    Logger::instance()->warning('BrizyComponent::getItemWithDepth failed to normalize array item', ['error' => $e->getMessage()]);
+                }
+            }
+
+            // Determine current items source
+            if ($item instanceof BrizyComponent) {
+                $value = $item->getValue();
+            } elseif ($item === null) {
+                $value = $this->getValue();
             } else {
-                $items = $this->getValue()->get_items();
+                // Unexpected type — cannot continue deeper
+                Logger::instance()->warning('BrizyComponent::getItemWithDepth encountered non-component item; stopping traversal', ['type' => gettype($item)]);
+                return $item instanceof BrizyComponent ? $item : $this;
             }
 
-            if (!isset($items[$index])) {
-                return $item;
+            $items = [];
+            if ($value instanceof BrizyComponentValue) {
+                $items = $value->get_items();
             }
 
-            $item = $items[$index];
+            if (!is_array($items) || !array_key_exists($index, $items)) {
+                return $item instanceof BrizyComponent ? $item : $this;
+            }
+
+            $next = $items[$index];
+            // If next is array, try to normalize immediately so next iteration sees a component
+            if (is_array($next)) {
+                try {
+                    $item = self::fromArray($next, $item instanceof BrizyComponent ? $item : $this);
+                } catch (\Throwable $e) {
+                    Logger::instance()->warning('BrizyComponent::getItemWithDepth failed to normalize next array item', ['error' => $e->getMessage()]);
+                    $item = $next; // leave as-is; will be handled next loop
+                }
+            } else {
+                $item = $next;
+            }
         }
 
-        return $item;
+        return $item instanceof BrizyComponent ? $item : $this;
     }
+
+    public function findFirstByType(string $type): ?BrizyComponent
+    {
+        if ($this->getType() === $type) {
+            return $this;
+        }
+
+        $items = $this->getValue()->get_items();
+        if (!is_array($items) || empty($items)) {
+            return null;
+        }
+
+        foreach ($items as $child) {
+            if ($child instanceof BrizyComponent) {
+                $found = $child->findFirstByType($type);
+                if ($found instanceof BrizyComponent) {
+                    return $found;
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     /**
      * @return mixed|null
@@ -124,8 +249,11 @@ class BrizyComponent implements JsonSerializable
     public function getItemValueWithDepth(): ?BrizyComponentValue
     {
         $depths = func_get_args();
-
-        return call_user_func_array([$this, 'getItemWithDepth'], $depths)->getValue();
+        $item = call_user_func_array([$this, 'getItemWithDepth'], $depths);
+        if ($item instanceof BrizyComponent) {
+            return $item->getValue();
+        }
+        return null;
     }
 
     public function addRadius($radiusPx = 0): BrizyComponent
@@ -411,9 +539,9 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addVerticalContentAlign($verticalAlign = 'center'): BrizyComponent
+    public function addVerticalContentAlign($verticalAlign = 'top'): BrizyComponent
     {
-        if (!in_array($verticalAlign, ['center', 'left', 'right'])) {
+        if (!in_array($verticalAlign, ['center', 'bottom', 'top'])) {
             $verticalAlign = 'center';
         }
 
@@ -495,6 +623,38 @@ class BrizyComponent implements JsonSerializable
             "titleTypographyStrike" => false,
             "titleTypographyUppercase" => false,
             "titleTypographyLowercase" => false
+        ];
+
+        foreach ($bgColor as $key => $value) {
+            $this->getValue()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    public function addFont($fontSize, $fontFamily, $fontFamilyType, $fontWeight = 700, $lineHeight = 1.6): BrizyComponent
+    {
+        $bgColor = [
+            "fontStyle" => "",
+            "fontFamily" => $fontFamily,
+            "fontFamilyType" => $fontFamilyType,
+            "fontSize" => $fontSize,
+            "fontSizeSuffix" => "px",
+            "fontWeight" => $fontWeight,
+            "letterSpacing" => 0,
+            "lineHeight" => $lineHeight,
+            "variableFontWeight" => 400,
+            "fontWidth" => 100,
+            "fontSoftness" => 0,
+            "bold" => false,
+            "italic" => false,
+            "underline" => false,
+            "strike" => false,
+            "mobileFontStyle" => "",
+            "mobileFontSize" => $fontSize,
+            "mobileFontSizeSuffix" => "px",
+            "mobileFontWeight" => $fontWeight,
+            "mobileLineHeight" => $lineHeight,
         ];
 
         foreach ($bgColor as $key => $value) {
@@ -665,11 +825,11 @@ class BrizyComponent implements JsonSerializable
 
     public function setMobileBgColorStyle($color, $opacity): BrizyComponent
     {
-        if($color === null || $color === '') {
+        if ($color === null || $color === '') {
             $color = $this->getValue()->get('mobileBgColorHex');
         }
 
-        if($opacity === null || $opacity === '') {
+        if ($opacity === null || $opacity === '') {
             $opacity = $this->getValue()->get('mobileBgColorOpacity');
         }
 
@@ -766,5 +926,161 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
+    public function addImage($mbSectionItem, $options = [], $position = null)
+    {
+        $image = new BrizyImageComponent();
+        $wrapperImage = new BrizyWrapperComponent('wrapper--image');
 
+        $imageConfig = [
+            'imageSrc' => $mbSectionItem['content'] ?? '',
+            'imageFileName' => $mbSectionItem['imageFileName']
+        ];
+
+        $imageConfig = array_merge($imageConfig, $options);
+
+        foreach ($imageConfig as $key => $value) {
+            $image->getValue()->set($key, $value);
+        }
+
+        $wrapperImage->getValue()->add('items', [$image]);
+
+        $this->getValue()->add('items', [$wrapperImage], $position);
+    }
+
+    public function addMenuBorderRadius($radius)
+    {
+        $this->getValue()->set('menuBorderRadiusType', 'ungrouped');
+        $this->getValue()->set('menuBorderRadius', $radius);
+        $this->getValue()->set('menuBorderBottomRightRadius', $radius);
+        $this->getValue()->set('menuBorderBottomLeftRadius', $radius);
+        $this->getValue()->set('menuBorderTopRightRadius', $radius);
+        $this->getValue()->set('menuBorderTopLeftRadius', $radius);
+    }
+
+
+    public function addLine(int $width, array $color, int $borderWidth, $options = [], $position = null, $align = 'center')
+    {
+        try {
+            $component = new BrizyLineComponent();
+            $wrapperLine = new BrizyWrapperComponent('wrapper--line');
+
+            $component->getValue()->set("width", $width ?? 70);
+            $component->getValue()->set("widthSuffix", $options['widthSuffix'] ?? 'px');
+            $component->getValue()->set("borderWidth", $borderWidth ?? 1);
+            $component->getValue()->set("borderColorHex", $color['color'] ?? '#4e3131');
+            $component->getValue()->set("borderColorOpacity", $color['opacity'] ?? 1);
+
+            foreach ($options as $key => $value) {
+                $component->getValue()->set($key, $value);
+            }
+
+            $wrapperLine->getValue()->add('items', [$component]);
+            $wrapperLine->getValue()->set('horizontalAlign', $align);
+
+            $this->getValue()->add('items', [$wrapperLine], $position);
+
+        } catch (exception $e) {
+            Logger::instance()->warning('Error on addLine: ' . $e->getMessage() . '');
+        }
+    }
+
+    public function addRow($items = null, $position = null, $options = []): BrizyComponent
+    {
+        try {
+            $rowComponent = new BrizyRowComponent();
+            if (!empty($items)) {
+                if (is_array($items)) {
+                    // Normalize: allow passing a flat array of column components
+                    $flat = $items;
+
+                    $countItems = 100 / count($items);
+
+                    foreach ($items as $item) {
+                        if ($item->getType() == 'Column') {
+                            $item->getValue()->set('width', $countItems);
+                        }
+                    }
+
+                    // If a single BrizyComponent was passed, wrap it
+                    if (array_key_exists(0, $flat) === false && $items instanceof BrizyComponent) {
+                        $flat = [$items];
+                    }
+                    // Ensure each entry is a component instance
+                    $normalized = array_map(function ($comp) use ($rowComponent) {
+                        if ($comp instanceof BrizyComponent) {
+                            return $comp;
+                        }
+                        if (is_array($comp)) {
+                            return BrizyComponent::fromArray($comp, $rowComponent);
+                        }
+                        return $comp;
+                    }, $flat);
+                    $rowComponent->getValue()->add('items', $normalized, $position);
+                } elseif ($items instanceof BrizyComponent) {
+                    $rowComponent->getValue()->add('items', [$items], $position);
+                }
+            }
+
+            foreach ($options as $key => $value) {
+                $rowComponent->getValue()->set($key, $value);
+            }
+
+            $this->getValue()->add('items', [$rowComponent], $position);
+        } catch (Exception|BadJsonProvided $e) {
+            Logger::instance()->warning('Error on addRow: ' . $e->getMessage());
+        }
+        return $this;
+    }
+
+    /**
+     * If this component is a Column and contains a Cloneable as an immediate child,
+     * apply horizontal alignment to all items inside that Cloneable.
+     *
+     * Example structure:
+     * Column -> Cloneable -> [Icon, Icon, ...]
+     *
+     * @param string $align One of: left, center, right
+     * @return $this
+     */
+    public function applyHorizontalAlignToCloneableItemsInColumn(string $align = 'center'): BrizyComponent
+    {
+        try {
+            if (strtolower((string)$this->getType()) !== 'column') {
+                return $this;
+            }
+
+            $items = $this->getValue()->get('items');
+            if (!is_array($items) || empty($items)) {
+                return $this;
+            }
+
+            // Find first immediate child Cloneable
+            $cloneable = null;
+            foreach ($items as $child) {
+                if ($child instanceof BrizyComponent && strtolower((string)$child->getType()) === 'cloneable') {
+                    $child->addHorizontalContentAlign();
+                    break;
+                }
+            }
+
+            if (!$cloneable instanceof BrizyComponent) {
+                return $this; // no Cloneable found, nothing to do
+            }
+
+            $innerItems = $cloneable->getValue()->get('items');
+            if (!is_array($innerItems) || empty($innerItems)) {
+                return $this;
+            }
+
+//            foreach ($innerItems as $inner) {
+//                if ($inner instanceof BrizyComponent) {
+//                    $inner->addHorizontalContentAlign($align);
+//                }
+//            }
+        } catch (\Throwable $e) {
+            Logger::instance()->warning('applyHorizontalAlignToCloneableItemsInColumn failed: ' . $e->getMessage());
+        }
+
+        return $this;
+    }
 }

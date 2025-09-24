@@ -41,18 +41,29 @@ class MBProjectDataCollector
     /**
      * @throws Exception
      */
-    public function __construct()
+    public function __construct($projectId = null)
     {
         Logger::instance()->debug('MBProjectDataCollector Initialization');
         $this->cache = VariableCache::getInstance();
 
-        $this->siteId = $this->cache->get('projectId_MB');
+        // If a specific project ID is provided, use it
+        if ($projectId !== null) {
+            $this->siteId = $projectId;
+        } else {
+            // Otherwise, try to get it from the cache (for migration process)
+            $this->siteId = $this->cache->get('projectId_MB');
+        }
+
         $this->projectId = $this->cache->get('projectId_Brizy');
         $this->container = $this->cache->get('container');
 
         $this->db = new DBConnector();
         $this->manipulator = new ArrayManipulator();
-        $this->fontsController = new FontsController($this->container);
+
+        // Initialize FontsController only if container is available
+        if ($this->container) {
+            $this->fontsController = new FontsController($this->container);
+        }
 
         $this->additionalMappingFonts = [
             'helvetica' => [
@@ -60,6 +71,19 @@ class MBProjectDataCollector
                 "\"Helvetica Neue\", HelveticaNeue, Helvetica, Arial, sans-serif",
                 ]
         ];
+    }
+
+    /**
+     * Set the project ID manually
+     * This is useful when using the class independently outside the migration process
+     *
+     * @param int $projectId The project ID to set
+     * @return $this
+     */
+    public function setProjectId($projectId)
+    {
+        $this->siteId = $projectId;
+        return $this;
     }
 
     /**
@@ -720,7 +744,7 @@ class MBProjectDataCollector
         $this->cache->set($sectionId['id'], $result, 'Sections');
 
         if ($assembly) {
-            $result = $this->assemblySection($sectionId['id'], $sectionId['category']);
+            $result = $this->assemblySection($sectionId['id'], $sectionId['category'], $sectionId['typeSection']);
         }
 
         return $result;
@@ -769,9 +793,9 @@ class MBProjectDataCollector
         return $randomString;
     }
 
-    private function assemblySection($id, $section): array
+    private function assemblySection($id, $category, $typeSection): array
     {
-        return $this->manipulator->groupItemsListByParentId($this->cache->get($id, 'Sections'), $section);
+        return $this->manipulator->groupItemsListByParentId($this->cache->get($id, 'Sections'), $category, $typeSection);
     }
 
     public function transLiterationFontFamily($family): string

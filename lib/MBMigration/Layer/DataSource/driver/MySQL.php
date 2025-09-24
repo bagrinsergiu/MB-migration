@@ -49,16 +49,48 @@ class MySQL
 
     public function getSingleValue($sql, $params = [])
     {
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchColumn();
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            // Check if it's a "server has gone away" error
+            if ($e->errorInfo[1] == 2006 || $e->errorInfo[1] == 2013 || strpos($e->getMessage(), 'server has gone away') !== false) {
+                // Try to reconnect
+                $this->doConnect();
+
+                // Retry the operation
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute($params);
+                return $stmt->fetchColumn();
+            } else {
+                // For other errors, rethrow the exception
+                throw $e;
+            }
+        }
     }
 
     public function getAllRows($sql, $params = [])
     {
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll();
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            // Check if it's a "server has gone away" error
+            if ($e->errorInfo[1] == 2006 || $e->errorInfo[1] == 2013 || strpos($e->getMessage(), 'server has gone away') !== false) {
+                // Try to reconnect
+                $this->doConnect();
+
+                // Retry the operation
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute($params);
+                return $stmt->fetchAll();
+            } else {
+                // For other errors, rethrow the exception
+                throw $e;
+            }
+        }
     }
 
     public function getColumns($table, $columns = ['*'], $where = '', $params = [])
@@ -70,24 +102,71 @@ class MySQL
             $sql .= " WHERE $where";
         }
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            // Check if it's a "server has gone away" error
+            if ($e->errorInfo[1] == 2006 || $e->errorInfo[1] == 2013 || strpos($e->getMessage(), 'server has gone away') !== false) {
+                // Try to reconnect
+                $this->doConnect();
 
-        return $stmt->fetchAll();
+                // Retry the operation
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute($params);
+                return $stmt->fetchAll();
+            } else {
+                // For other errors, rethrow the exception
+                throw $e;
+            }
+        }
     }
 
     public function find($sql, $params = [])
     {
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetch();
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            // Check if it's a "server has gone away" error
+            if ($e->errorInfo[1] == 2006 || $e->errorInfo[1] == 2013 || strpos($e->getMessage(), 'server has gone away') !== false) {
+                // Try to reconnect
+                $this->doConnect();
+
+                // Retry the operation
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute($params);
+                return $stmt->fetch();
+            } else {
+                // For other errors, rethrow the exception
+                throw $e;
+            }
+        }
     }
 
     public function delete($table, $where, $params = []): bool
     {
         $sql = "DELETE FROM {$table} WHERE {$where}";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute($params);
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute($params);
+        } catch (PDOException $e) {
+            // Check if it's a "server has gone away" error
+            if ($e->errorInfo[1] == 2006 || $e->errorInfo[1] == 2013 || strpos($e->getMessage(), 'server has gone away') !== false) {
+                // Try to reconnect
+                $this->doConnect();
+
+                // Retry the operation
+                $stmt = $this->pdo->prepare($sql);
+                return $stmt->execute($params);
+            } else {
+                // For other errors, rethrow the exception
+                throw $e;
+            }
+        }
     }
 
     public function insert($table, $data)
@@ -96,14 +175,36 @@ class MySQL
         $placeholders = ":" . implode(", :", array_keys($data));
 
         $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
-        $stmt = $this->pdo->prepare($sql);
 
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(":$key", $value);
+        try {
+            $stmt = $this->pdo->prepare($sql);
+
+            foreach ($data as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            $stmt->execute();
+            return $this->pdo->lastInsertId();
+        } catch (PDOException $e) {
+            // Check if it's a "server has gone away" error
+            if ($e->errorInfo[1] == 2006 || $e->errorInfo[1] == 2013 || strpos($e->getMessage(), 'server has gone away') !== false) {
+                // Try to reconnect
+                $this->doConnect();
+
+                // Retry the operation
+                $stmt = $this->pdo->prepare($sql);
+
+                foreach ($data as $key => $value) {
+                    $stmt->bindValue(":$key", $value);
+                }
+
+                $stmt->execute();
+                return $this->pdo->lastInsertId();
+            } else {
+                // For other errors, rethrow the exception
+                throw $e;
+            }
         }
-
-        $stmt->execute();
-        return $this->pdo->lastInsertId();
     }
 
     private function setUserName($username)

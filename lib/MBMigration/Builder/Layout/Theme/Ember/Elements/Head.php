@@ -80,6 +80,11 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation>ul>li:not(.selected)>a", "pseudoEl" => ""];
     }
 
+    public function getThemeMenuItemActiveSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
     public function getThemeParentMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation ul li.has-sub", "pseudoEl" => ""];
@@ -98,11 +103,6 @@ class Head extends HeadElement
     public function getThemeSubMenuItemClassSelected(): array
     {
         return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li", "className" => "selected"];
-    }
-
-    public function getThemeMenuItemBgSelector(): array
-    {
-        return $this->getThemeMenuItemSelector();
     }
 
     public function getThemeSubMenuItemBGSelector(): array
@@ -150,5 +150,20 @@ class Head extends HeadElement
     protected function getThemeSubMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li a", "pseudoEl" => ""];
+    }
+
+    public function getMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getMenuHoverItemBgSelector(): array
+    {
+        return $this->getThemeSubMenuNotSelectedItemSelector();
+    }
+
+    public function getNotSelectedMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
     }
 }

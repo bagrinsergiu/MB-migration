@@ -114,6 +114,13 @@ trait SectionStylesAble
             ->set_marginTop((int)$sectionStyles['margin-top'])
             ->set_marginBottom((int)$sectionStyles['margin-bottom'])
 
+            ->set_fullHeight('custom')
+            ->set_sectionHeight((int)$sectionStyles['height'])
+
+            ->set_mobileBgSize('cover')
+            ->set_mobileBgSizeType('original')
+            ->set_mobileBgRepeat('off')
+
             ->set_mobilePaddingType('ungrouped')
             ->set_mobilePadding((int)$sectionStyles['margin-bottom'])
             ->set_mobilePaddingSuffix('px')
@@ -155,7 +162,7 @@ trait SectionStylesAble
         }
 
         $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
-            ColorConverter::rgba2opacity($sectionStyles['background-color'])
+            $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'])
         );
         $sectionStyles['background-color'] = ColorConverter::rgba2hex($sectionStyles['background-color']);
 
@@ -204,7 +211,8 @@ trait SectionStylesAble
                 ->set_media('video')
                 ->set_bgVideoType('url')
                 ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
-                ->set_bgVideo($background['video']);
+                ->set_bgVideo($background['video'])
+                ->set_bgVideoLoop('on');
         }
 
         if ($this->hasImageBackground($mbSectionItem) || $this->hasVideoBackground($mbSectionItem)) {
@@ -307,8 +315,11 @@ trait SectionStylesAble
                 $families,
                 $defaultFont
             );
+            $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity']);
 
-            $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
+            if($sectionBgStyles['opacity'] !== 0){
+                $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
+            }
         }
         catch (\Exception $e) {
         }

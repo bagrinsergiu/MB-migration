@@ -36,7 +36,10 @@
     }
   },
   "scripts": {
-    "post-install-cmd": "npm install && npm run build:prod"
+    "post-install-cmd": "npm install && npm run build:prod",
+    "test": "vendor/bin/phpunit -c phpunit.xml.dist",
+    "test:all": "vendor/bin/phpunit -c phpunit.xml.dist",
+    "test:coverage": "vendor/bin/phpunit -c phpunit.xml.dist --coverage-html coverage"
   },
   "require-dev": {
     "phpunit/phpunit": "^8.5",

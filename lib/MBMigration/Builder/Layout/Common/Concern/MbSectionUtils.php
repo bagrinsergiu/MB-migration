@@ -50,6 +50,18 @@ trait MbSectionUtils
         return $this->sortItems($items);
     }
 
+    protected function getItemsByGroup($section, int $group): array
+    {
+        $items = [];
+        foreach ($section['items'] as $item) {
+            if ($item['group'] == $group) {
+                $items[] = $item;
+            }
+        }
+
+        return $this->sortItems($items);
+    }
+
     protected function sortItems($items)
     {
         $groupColum = array_column($items, 'group');

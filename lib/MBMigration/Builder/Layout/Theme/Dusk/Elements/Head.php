@@ -112,15 +112,15 @@ class Head extends HeadElement
         ];
 
         $activeItemMenuOptions = [
-            'activeMenuBorderStyle' => 'solid',
+            'activeMenuBorderStyle' => 'none',
             'activeMenuBorderColorHex' => '#000000',
             'activeMenuBorderColorOpacity' => 0.02,
             'activeMenuBorderColorPalette' => '',
             'activeMenuBorderWidthType' => 'ungrouped',
-            'activeMenuBorderWidth' => 3,
+            'activeMenuBorderWidth' => 0,
             'activeMenuBorderTopWidth' => 0,
             'activeMenuBorderRightWidth' => 0,
-            'activeMenuBorderBottomWidth' => 3,
+            'activeMenuBorderBottomWidth' => 0,
             'activeMenuBorderLeftWidth' => 0,
         ];
 
@@ -137,7 +137,7 @@ class Head extends HeadElement
             'mobileMarginRightSuffix' => 'px',
             'mobileMarginBottom' => 0,
             'mobileMarginBottomSuffix' => 'px',
-            'mobileMarginLeft' => 0,
+            'mobileMarginLeft' => 10,
             'mobileMarginLeftSuffix' => 'px',
         ];
 
@@ -149,7 +149,7 @@ class Head extends HeadElement
             "marginTopSuffix" => "px",
             "marginBottom" => 10,
             "marginBottomSuffix" => "px",
-            "marginRight" => 0,
+            "marginRight" => 20,
             "marginRightSuffix" => "px",
             "marginLeft" => 0,
             "marginLeftSuffix" => "px",
@@ -157,7 +157,7 @@ class Head extends HeadElement
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 0)
+            $brizySection->getItemWithDepth(0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -171,7 +171,7 @@ class Head extends HeadElement
 
         foreach ($mobileIconButtonOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 1, 0)
+            $brizySection->getItemWithDepth(0, 0, 1)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -206,6 +206,11 @@ class Head extends HeadElement
 
     }
 
+    public function getThemeMenuItemActiveSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
     public function getThemeMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
@@ -218,17 +223,17 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li:not(.selected) > a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li:not(.selected) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "className" => "selected"];
     }
 
     public function getThemeMobileNavSelector(): array
@@ -249,11 +254,6 @@ class Head extends HeadElement
     public function getThemeMobileBtnSelector(): array
     {
         return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
-    }
-
-    public function getThemeMenuItemBgSelector(): array
-    {
-        return $this->getThemeMenuItemSelector();
     }
 
     protected function getPropertiesIconMenuItem(): array
@@ -320,5 +320,56 @@ class Head extends HeadElement
             "activeMenuBorderBottomWidth" => 2,
             "activeMenuBorderLeftWidth" => 0,
         ];
+    }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "marginLeft" => 0,
+            "marginRight" => 0,
+
+            "mobilePaddingType" => "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 10,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
+
+    public function getMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getMenuHoverItemBgSelector(): array
+    {
+        return $this->getThemeSubMenuItemBGSelector();
+    }
+
+    public function getNotSelectedMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ""];
+        //#main-navigation > ul:nth-child(1) > li.has-sub > ul
     }
 }

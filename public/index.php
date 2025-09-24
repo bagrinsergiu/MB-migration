@@ -1,6 +1,7 @@
 <?php
 
 use MBMigration\ApplicationBootstrapper;
+use MBMigration\WaveProc;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,6 +51,13 @@ return static function (array $context, Request $request): Response {
                 $response->getMessage(),
                 $response->getStatusCode()
             );
+        case '/changes/checkAll':
+            $response = $bridge->checkAllProjectchanges();
+
+            return new JsonResponse(
+                $response->getMessage(),
+                $response->getStatusCode()
+            );
         case '/migration_log':
             try {
                 return new JsonResponse($app->getMigrationLogs());
@@ -65,7 +73,21 @@ return static function (array $context, Request $request): Response {
             } catch (Exception $e) {
                 return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
             }
+            case '/projects/makePro':
+            try {
+                return new JsonResponse(
+                    $bridge->makeAllProjectsPRO()
+                        ->getMessageResponse()
+                );
+            } catch (Exception $e) {
+                return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
+            }
         case '/migration/wave':
+
+            $projectUuids = ["f2c701b1-c16c-4bf0-b759-aa89d133c84c"];
+            $migrationRunner = new WaveProc($projectUuids);
+            $migrationRunner->runMigrations();
+
             $response = $bridge->migrationWave();
 
             return new JsonResponse(
@@ -105,17 +127,13 @@ return static function (array $context, Request $request): Response {
             );
         default:
             try {
-
-//                $response = $bridge->runMigration()
-//                    ->getMessageResponse();
-//
-//                return new JsonResponse(
-//                    $response->getMessage(),
-//                    $response->getStatusCode()
-//                );
+                $response = $bridge->runMigration()
+                    ->getMessageResponse();
 
                 return new JsonResponse(
-                    ['status' => 'success'], 200);
+                    $response->getMessage(),
+                    $response->getStatusCode()
+                );
             } catch (Exception $e) {
                 if ($e->getCode() < 100) {
                     return new JsonResponse(['error' => $e->getMessage()], 404);

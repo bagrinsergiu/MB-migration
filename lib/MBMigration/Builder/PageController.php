@@ -5,8 +5,10 @@ namespace MBMigration\Builder;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use HeadlessChromium\Exception\OperationTimedOut;
+use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\Layout\Common\Concern\GlobalStylePalette;
 use MBMigration\Builder\Layout\Common\DTO\PageDto;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettes;
@@ -26,6 +28,7 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class PageController
 {
@@ -93,8 +96,6 @@ class PageController
             Logger::instance()->info('Project fonts and migration fonts without damage');
         }
 
-        $fontFamily = FontsController::getFontsFamily();
-
         $url = PathSlugExtractor::getFullUrlById($pageId);
 
         $this->cache->set('CurrentPageURL', $url);
@@ -115,7 +116,7 @@ class PageController
         try {
             try {
                 $browserPage = $this->browser->openPage($url, $design);
-            } catch (OperationTimedOut $e) {
+            } catch (Exception $e) {
 
                 Logger::instance()->critical($e->getMessage());
 
@@ -146,6 +147,7 @@ class PageController
             $headItem = $this->cache->get('header', 'mainSection');
             $footerItem = $this->cache->get('footer', 'mainSection');
             $listSeries = $this->cache->get('series');
+            $projectID = $this->cache->get('projectId_Brizy');
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
             $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
 
@@ -177,7 +179,9 @@ class PageController
                 $listSeries,
                 $this->pageDTO,
                 $this->cache->get('title','settings') ?? '',
-                 $fontController
+                $fontController,
+                $this->brizyAPI,
+                $projectID
             );
 
             /**
@@ -194,7 +198,7 @@ class PageController
             $queryBuilder = $this->cache->getClass('QueryBuilder');
             $pd = FontsController::getProject_Data();
 
-            sleep(5);
+            $this->dumpPageDataCache($slug, $brizySections);
 
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
@@ -203,9 +207,9 @@ class PageController
 
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Exception|Throwable|BadJsonProvided|ElementNotFound $e) {
             Logger::instance()->critical('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
-            throw $e;
+            return false;
         } finally {
             if ($this->browser) {
                 $this->browser->closePage();
@@ -230,7 +234,7 @@ class PageController
             if (!empty($page['child'])){
                 $this->pageMapping($page['child'],$mapping, $domain);
             }
-            $mapping['/'.PathSlugExtractor::getFullUrl($page['slug'], true)] = $domain.'/'.$page['slug'];
+            $mapping['/'.PathSlugExtractor::getFullUrlById($page['id'], true)] = '/'.$page['slug'];
         }
     }
 
@@ -247,7 +251,7 @@ class PageController
     /**
      * @throws Exception
      */
-    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, $i = 0, $parent = null){
+    public function createPage_(array &$pageList, $existingBrizyPages, bool $hiddenPage, $i = 0, $parent = null){
         foreach ($pageList as $i => &$page) {
 
             if (!empty($page['child'])) {
@@ -309,6 +313,114 @@ class PageController
                 }
             }
 
+        }
+    }
+
+    public function createPage(array &$pageList, $existingBrizyPages, bool $hiddenPage, $i = 0, $parent = null)
+    {
+        if ($parent === null && !$this->cache->get('homePageSlug')) {
+//            $homePage = $this->findHomePage($pageList);
+            $homePage = $this->findHomePageRecursive($pageList);
+            if ($homePage) {
+                $this->cache->set('homePageSlug', $homePage['slug']);
+            }
+        }
+
+        foreach ($pageList as $i => &$page) {
+            if (!empty($page['child'])) {
+                $this->createPage($page['child'], $existingBrizyPages, $hiddenPage, $i, $page['parent_id']);
+            }
+
+            if ($page['hidden'] !== $hiddenPage) {
+                continue;
+            }
+
+            if (isset($existingBrizyPages[$page['slug']])) {
+                continue;
+            }
+
+            $title = $page['name'];
+
+            if ($page['landing'] == true) {
+                $isHome = ($page['slug'] === $this->cache->get('homePageSlug'));
+                try {
+                    $newPage = $this->creteNewPage(
+                        $page['slug'],
+                        $page['name'],
+                        $title,
+                        $page['protectedPage'],
+                        false,
+                        $isHome
+                    );
+
+                    if ($newPage === false) {
+                        Logger::instance()->warning('Failed to create page', $page);
+                    } else {
+                        $pageStatus = $hiddenPage ? "hidden" : "public";
+                        Logger::instance()->info('Successfully created ' . $pageStatus . ' page', $page);
+                        $page['collection'] = $newPage;
+                    }
+
+                } catch (\Exception $e) {
+                    Logger::instance()->warning('Failed to create page', $page);
+                }
+            } else {
+                if (!empty($page['child']) && !$page['hidden']) {
+                    foreach ($page['child'] as $child) {
+                        if (!$child['hidden']) {
+                            $page['collection'] = $child['collection'];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function findHomePage(array $pages): ?array {
+        $candidates = array_filter($pages, function ($page) {
+            return $page['parent_id'] === null && $page['landing'] === true;
+        });
+
+        if (empty($candidates)) {
+            return null;
+        }
+
+        usort($candidates, function ($a, $b) {
+            return $a['position'] <=> $b['position'];
+        });
+
+        return $candidates[0];
+    }
+
+    public function findHomePageRecursive(array $pages): ?array {
+        $candidates = [];
+
+        $this->collectLandingPages($pages, $candidates);
+
+        if (empty($candidates)) {
+            return null;
+        }
+
+        usort($candidates, function ($a, $b) {
+            if ($a['level'] !== $b['level']) {
+                return $a['level'] <=> $b['level'];
+            }
+            return $a['position'] <=> $b['position'];
+        });
+
+        return $candidates[0];
+    }
+
+    private function collectLandingPages(array $pages, array &$candidates, int $level = 0): void {
+        foreach ($pages as $page) {
+            if ($page['landing'] === true) {
+                $page['level'] = $level;
+                $candidates[] = $page;
+            }
+            if (!empty($page['child'])) {
+                $this->collectLandingPages($page['child'], $candidates, $level + 1);
+            }
         }
     }
 
@@ -457,6 +569,7 @@ class PageController
                     'settings' => $section['settings'],
                     'head' => [],
                     'slide' => [],
+                    'gallery' => [],
                     'items' => [],
                 ];
 
@@ -464,7 +577,7 @@ class PageController
 
                 switch ($section['category']) {
                     case 'gallery':
-                        if (!empty($sectionItems['list'])) {
+                        if (!empty($sectionItems['list']) && $this->checkSubGalleryLayout($sectionItems['list'])) {
                             $itemsSubGallery = [
                                 'sectionId' => $section['id'],
                                 'typeSection' => 'sub-gallery-layout',
@@ -473,6 +586,7 @@ class PageController
                                 'settings' => $section['settings'],
                                 'head' => [],
                                 'slide' => [],
+                                'gallery' => [],
                                 'items' => [],
                             ];
 
@@ -498,9 +612,11 @@ class PageController
                                 $items['head'] = array_merge($items['head'], $Item);
                             } elseif ($key === 'slide') {
                                 $items['slide'] = array_merge($items['slide'], $Item);
+                            } elseif ($key === 'gallery') {
+                                $items['gallery'] = array_merge($items['gallery'], $Item);
                             } elseif ($key === 'items') {
                                 $items['items'] = array_merge($items['items'], $Item);
-                            }  elseif (!empty($Item)) {
+                            } elseif (!empty($Item)) {
                                 $items['items'][] = $Item;
                             }
                         }
@@ -518,5 +634,44 @@ class PageController
         }
 
         return $result;
+    }
+
+    private function checkSubGalleryLayout(array $list): bool
+    {
+        if (empty($list)) {
+            return false;
+        }
+
+        foreach ($list as $listObject) {
+            if (empty($listObject['items'])) {
+                continue;
+            }
+
+            foreach ($listObject['items'] as $item) {
+                if ($item['category'] === 'photo' && !empty($item['content'])) {
+                    return true;
+                }
+
+//                if ($item['category'] === 'text' && !empty($item['content'])) {
+//                    $textContent = strip_tags($item['content']);
+//                    $textContent = trim($textContent);
+//                    if (!empty($textContent)) {
+//                        return true;
+//                    }
+//                }
+            }
+        }
+
+        return false;
+    }
+
+    public function dumpPageDataCache($name, BrizyPage $pageData)
+    {
+        $projectFolders = $this->cache->get('ProjectFolders');
+        $fileName = $projectFolders['page']."/".$name.'.json';
+        file_put_contents(
+            $fileName,
+            json_encode($pageData->jsonSerialize())
+        );
     }
 }

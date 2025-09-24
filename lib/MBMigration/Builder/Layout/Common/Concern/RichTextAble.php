@@ -11,7 +11,10 @@ use DOMDocument;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizyEmbedCodeComponent;
+use MBMigration\Builder\BrizyComponent\BrizyImageComponent;
+use MBMigration\Builder\BrizyComponent\BrizyWrapperComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Layer\Brizy\BrizyAPI;
 
 trait RichTextAble
 {
@@ -192,6 +195,8 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
+        $brizyAPI = $data->getBrizyAPI();
+        $projectID = $data->getThemeContext()->getProjectId();
 
         switch ($mbSectionItem['category']) {
             case 'text':
@@ -199,6 +204,8 @@ trait RichTextAble
                     $mbSectionItem,
                     $brizyComponent,
                     $browserPage,
+                    $brizyAPI,
+                    $projectID,
                     $families,
                     $default_fonts,
                     $data->getThemeContext()->getUrlMap(),
@@ -239,12 +246,15 @@ trait RichTextAble
         $families = $data->getFontFamilies();
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
+        $projectID = $data->getThemeContext()->getProjectId();
 
         if ($mbSectionItem['category'] == 'text') {
             $brizyComponent = $this->handleTextItem(
                 $mbSectionItem,
                 $brizyComponent,
                 $browserPage,
+                $data->getBrizyAPI(),
+                $projectID,
                 $families,
                 $default_fonts,
                 $data->getThemeContext()->getUrlMap(),
@@ -260,12 +270,14 @@ trait RichTextAble
         $mbSectionItem,
         BrizyComponent $brizySection,
         BrowserPageInterface $browserPage,
+        BrizyAPI $brizyAPI,
+        int $projectID,
         $families = [],
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $urlMap = [],
         $selector = null,
         $settings = []
-    )
+    ): BrizyComponent
     {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
         $richTextBrowserData = $this->extractTexts($selector ?? '[data-id="' . $sectionId . '"]', $browserPage, $families, $defaultFont, $urlMap);
@@ -278,36 +290,74 @@ trait RichTextAble
         );
         $embeddedElements = $this->findEmbeddedElements($mbSectionItem['content']);
         $embeddIndex = 0;
-        foreach ($richTextBrowserData as $i => $textItem) {
-            switch ($textItem['type']) {
-                case 'EmbedCode':
-                    //wrapper
-                    if (!isset($embeddedElements[$embeddIndex])) break;
 
-                    $embedCode = $embeddedElements[$embeddIndex++];
-                    $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embedCode['embed']);
-                    $cssClass = 'custom-align-' . random_int(0, 10000);
-                    $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
-                    $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_overflow('on');
-                    $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
-                        ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
-.{$cssClass} .embedded-paste:has(iframe) {display: grid;}
-.{$cssClass} .embedded-paste iframe {justify-self: {$embedCode['text-align']};}"
-                    );
-                    $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
-                    break;
-                case 'Cloneable':
-                case 'Wrapper':
-                    //wrapper--richText
-                    if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
-                        $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
-                    } elseif ($settings['setEmptyText'] === true) {
-                        if ($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])) {
-                            $brizySection->getValue()->add_items([new BrizyComponent($textItem)]);
+        try {
+            foreach ($richTextBrowserData as $i => $textItem) {
+                switch ($textItem['type']) {
+                    case 'EmbedCode':
+                        //wrapper
+                        if (!isset($embeddedElements[$embeddIndex])) break;
+
+                        $embedCode = $embeddedElements[$embeddIndex++];
+                        $brizyEmbedCodeComponent = new BrizyEmbedCodeComponent($embedCode['embed']);
+                        $cssClass = 'custom-align-' . random_int(0, 10000);
+                        $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
+                        $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_overflow('on');
+                        $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
+                            ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
+.{$cssClass} .embedded-paste:has(iframe) {display: flex; justify-content:{$styles['text-align']}}"
+                        );
+                        $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
+                        break;
+                    case 'Cloneable':
+                        foreach ($textItem['value']['items'] as &$clonableItem) {
+                            if (!empty($clonableItem['value']['code']) && $clonableItem['type'] === 'Icon') {
+                                try {
+                                    $customIconUploadResult = $brizyAPI->uploadCustomIcon(
+                                        $projectID,
+                                        $clonableItem['value']['filename'],
+                                        $clonableItem['value']['code']
+                                    );
+
+                                    if (!empty($customIconUploadResult['filename']) && !empty($customIconUploadResult['uid'])) {
+                                        $clonableItem['value']['name'] = $customIconUploadResult['uid'];
+                                        $clonableItem['value']['filename'] = $customIconUploadResult['filename'];
+                                    }
+
+                                    unset($clonableItem['value']['code']);
+
+
+                                } catch (Exception $e) {
+
+                                    $ddd = $e->getMessage();
+                                }
+
+                            }
                         }
-                    }
-                    break;
+
+                        $brzCloneableComponent = new BrizyComponent($textItem);
+
+                        $brzCloneableComponent->addMargin(0, 0, 0, 0);
+                        $brizySection->getValue()->add_items([$brzCloneableComponent]);
+                        break;
+                    case 'Wrapper':
+                        //wrapper--richText
+                        $brzTextComponent = new BrizyComponent($textItem);
+
+//                        $brzTextComponent->addMargin(0, 0, 0, 0);
+
+                        if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
+                            $brizySection->getValue()->add_items([$brzTextComponent]);
+                        } elseif ($settings['setEmptyText'] === true) {
+                            if ($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])) {
+                                $brizySection->getValue()->add_items([$brzTextComponent]);
+                            }
+                        }
+                        break;
+                }
             }
+        } catch (Exception $e) {
+            Logger::instance()->info($e->getMessage());
         }
 
         return $brizySection;
@@ -322,44 +372,139 @@ trait RichTextAble
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
     ): BrizyComponent
     {
+        if ($brizyComponent->getType() !== 'Image') {
+            return $this->handlePhotoAddNewItem(
+                $mbSectionItemId,
+                $mbSectionItem,
+                $brizyComponent,
+                $browserPage
+            );
+        } else {
+            if (!empty($mbSectionItem['content'])) {
+                $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container img';
+                $sizes = $this->handleSizeToInt(
+                    $this->getDomElementSizes(
+                        $selectorImageSizes,
+                        $browserPage,
+                        $families,
+                        $default_fonts
+                    )
+                );
+                $sizeUnit = 'px';
+
+                $brizyComponent->getValue()
+                    ->set_imageFileName($mbSectionItem['imageFileName'])
+                    ->set_imageSrc($mbSectionItem['content']);
+
+                if (!empty($sizes['width']) && !empty($sizes['height'])) {
+                    if (strpos($sizes['width'], '%') !== false) {
+                        $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container';
+                        $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+                    }
+
+                    $brizyComponent->getValue()
+                        ->set_width((int)$sizes['width'])
+                        ->set_tabletWidth((int)$sizes['width'])
+                        ->set_mobileWidth((int)$sizes['width'])
+                        ->set_height((int)$sizes['height'])
+                        ->set_tabletHeight((int)$sizes['height'])
+                        ->set_mobileHeight((int)$sizes['height'])
+                        ->set_imageWidth($mbSectionItem['settings']['image']['width'])
+                        ->set_imageHeight($mbSectionItem['settings']['image']['height'])
+                        ->set_widthSuffix($sizeUnit)
+                        ->set_heightSuffix($sizeUnit)
+                        ->set_tabletHeightSuffix($sizeUnit)
+                        ->set_mobileSizeType('original')
+                        ->set_mobileWidthSuffix($sizeUnit)
+                        ->set_mobileHeightSuffix($sizeUnit);
+                }
+
+                $this->handleLink(
+                    $mbSectionItem,
+                    $brizyComponent,
+                    '[data-id="' . $mbSectionItemId . '"] div.photo-container a',
+                    $browserPage);
+            }
+
+            return $brizyComponent;
+        }
+    }
+
+    private function handlePhotoAddNewItem(
+        $mbSectionItemId,
+        $mbSectionItem,
+        BrizyComponent $brizyComponent,
+        BrowserPageInterface $browserPage,
+        $families = [],
+        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+        $index = null
+    ): BrizyComponent
+    {
 
         if (!empty($mbSectionItem['content'])) {
+            // Create new Image element according to aiRules
+            $image = new BrizyImageComponent();
+            $wrapperImage = new BrizyWrapperComponent('wrapper--image');
 
             $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container img';
-            $sizes = $this->handleSizeToInt($this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts));
+            $sizes = $this->handleSizeToInt($this->getDomElementSizes($selectorImageSizes, $browserPage, $families));
             $sizeUnit = 'px';
 
-            $brizyComponent->getValue()
+            // Set required Image element properties according to aiRules
+            $image->getValue()
                 ->set_imageFileName($mbSectionItem['imageFileName'])
                 ->set_imageSrc($mbSectionItem['content']);
+
+            // Set image extension from filename or default to png
+            if (!empty($mbSectionItem['imageFileName'])) {
+                $extension = pathinfo($mbSectionItem['imageFileName'], PATHINFO_EXTENSION);
+                if ($extension) {
+                    $image->getValue()->set_imageExtension($extension);
+                }
+            }
 
             if (!empty($sizes['width']) && !empty($sizes['height'])) {
                 if (strpos($sizes['width'], '%') !== false) {
                     $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container';
-                    $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+                    $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families);
                 }
 
-                $brizyComponent->getValue()
+                // Set display dimensions
+                $image->getValue()
                     ->set_width((int)$sizes['width'])
                     ->set_tabletWidth((int)$sizes['width'])
                     ->set_mobileWidth((int)$sizes['width'])
                     ->set_height((int)$sizes['height'])
                     ->set_tabletHeight((int)$sizes['height'])
                     ->set_mobileHeight((int)$sizes['height'])
-                    ->set_imageWidth($mbSectionItem['settings']['image']['width'])
-                    ->set_imageHeight($mbSectionItem['settings']['image']['height'])
                     ->set_widthSuffix($sizeUnit)
                     ->set_heightSuffix($sizeUnit)
                     ->set_tabletHeightSuffix($sizeUnit)
+                    ->set_mobileSizeType('original')
                     ->set_mobileWidthSuffix($sizeUnit)
                     ->set_mobileHeightSuffix($sizeUnit);
+
+                // Set original image dimensions if available
+                if (!empty($mbSectionItem['settings']['image']['width'])) {
+                    $image->getValue()->set_imageWidth($mbSectionItem['settings']['image']['width']);
+                }
+                if (!empty($mbSectionItem['settings']['image']['height'])) {
+                    $image->getValue()->set_imageHeight($mbSectionItem['settings']['image']['height']);
+                }
             }
 
+            // Handle link properties on the image element
             $this->handleLink(
                 $mbSectionItem,
-                $brizyComponent,
+                $image,
                 '[data-id="' . $mbSectionItemId . '"] div.photo-container a',
                 $browserPage);
+
+            // Wrap the image in wrapper--image according to aiRules pattern
+            $wrapperImage->getValue()->add_items([$image]);
+
+            // Add the wrapped image to the brizy component at the specified index
+            $brizyComponent->getValue()->add_items([$wrapperImage], $index);
         }
 
         return $brizyComponent;
@@ -531,7 +676,7 @@ trait RichTextAble
             $height = $iframe->getAttribute('height');
 
             if (!empty($width) && !empty($height)) {
-                $iframe->setAttribute('style', "max-width: {$width}px; max-height: {$height}px; width: 100%;");
+                $iframe->setAttribute('style', "max-width: {$width}px; min-width: {$width}px; max-height: {$height}px; width: 100%;");
             }
         }
         $result = [];

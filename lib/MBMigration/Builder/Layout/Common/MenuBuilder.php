@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Common;
 
 use MBMigration\Builder\Utils\TextTools;
 use MBMigration\Core\Utils;
+use MBMigration\Core\Logger;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
 class MenuBuilder implements MenuBuilderInterface
@@ -15,6 +16,12 @@ class MenuBuilder implements MenuBuilderInterface
 
     public function __construct(int $brizyProject, BrizyAPI $brizyApi, array $fonts)
     {
+        Logger::instance()->info('MenuBuilder constructor called', [
+            'brizy_project' => $brizyProject,
+            'fonts_count' => count($fonts),
+            'brizy_api_class' => get_class($brizyApi)
+        ]);
+
         $this->brizyProject = $brizyProject;
         $this->brizyApi = $brizyApi;
         $this->fonts = $fonts;
@@ -22,32 +29,84 @@ class MenuBuilder implements MenuBuilderInterface
         foreach ($fonts as $itemTextTransform) {
             if (isset($itemTextTransform['name']) && $itemTextTransform['name'] === 'main_nav') {
                 $this->textTransform['mainMenu'] = $itemTextTransform['text_transform'] ?? 'none';
+                Logger::instance()->info('Main menu text transform configured', [
+                    'transform' => $this->textTransform['mainMenu']
+                ]);
             }
             if (isset($itemTextTransform['name']) && $itemTextTransform['name'] === 'sub_nav') {
                 $this->textTransform['subMenu'] = $itemTextTransform['text_transform'] ?? 'none';
+                Logger::instance()->info('Sub menu text transform configured', [
+                    'transform' => $this->textTransform['subMenu']
+                ]);
             }
         }
+
+        Logger::instance()->info('MenuBuilder initialized successfully', [
+            'brizy_project' => $this->brizyProject,
+            'text_transforms' => $this->textTransform ?? []
+        ]);
     }
 
     public function createBrizyMenu($name, $menuItems): array
     {
+        Logger::instance()->info('MenuBuilder::createBrizyMenu called', [
+            'name' => $name,
+            'menu_items_count' => count($menuItems),
+            'project' => $this->brizyProject
+        ]);
+
         $data = [
             'project' => $this->brizyProject,
             'name' => $name,
             'data' => json_encode($menuItems),
         ];
 
-        $result = $this->brizyApi->createMenu($data);
+        Logger::instance()->info('Calling Brizy API createMenu', [
+            'data_keys' => array_keys($data),
+            'data_json_length' => strlen($data['data'])
+        ]);
 
-        return $result;
+        try {
+            $result = $this->brizyApi->createMenu($data);
+
+            Logger::instance()->info('Brizy menu created successfully', [
+                'name' => $name,
+                'result_keys' => is_array($result) ? array_keys($result) : 'not_array',
+                'result_type' => gettype($result)
+            ]);
+
+            return $result;
+        } catch (\Exception $e) {
+            Logger::instance()->error('Error creating Brizy menu', [
+                'name' => $name,
+                'error_message' => $e->getMessage(),
+                'error_class' => get_class($e)
+            ]);
+            throw $e;
+        }
     }
 
     public function transformToBrizyMenu(array $menuItems): array
     {
+        Logger::instance()->info('MenuBuilder::transformToBrizyMenu called', [
+            'input_menu_items_count' => count($menuItems),
+            'text_transforms' => $this->textTransform ?? []
+        ]);
+
         // filter hidden menu items
         $menuItems = array_values(array_filter($menuItems, fn($item) => isset($item['hidden']) && !$item['hidden']));
 
+        Logger::instance()->info('Menu items filtered for visibility', [
+            'filtered_count' => count($menuItems),
+            'items_removed' => count($menuItems) - count(array_filter($menuItems, fn($item) => isset($item['hidden']) && !$item['hidden']))
+        ]);
+
         $mainMenu = $this->getMainMenu($menuItems, $this->textTransform);
+
+        Logger::instance()->info('Menu transformation completed', [
+            'output_menu_items_count' => count($mainMenu),
+            'transformation_successful' => is_array($mainMenu)
+        ]);
 
         return $mainMenu;
     }

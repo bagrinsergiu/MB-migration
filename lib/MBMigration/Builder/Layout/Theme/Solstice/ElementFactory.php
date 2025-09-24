@@ -6,6 +6,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\ThreeTopMedia;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Events\EventLayoutElement;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Sermons\MediaLayoutElement;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Footer;
@@ -17,7 +18,6 @@ use MBMigration\Builder\Layout\Theme\Solstice\Elements\Groups\SmallGroupsListEle
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Head;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Prayer\PrayerFormElement;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Prayer\PrayerListElement;
-use MBMigration\Builder\Layout\Theme\Solstice\Elements\Sermons\LivestreamLayout;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\AccordionLayoutElement;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\FourHorizontalText;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Text\FullText;
@@ -53,8 +53,8 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new FourHorizontalText($this->blockKit['blocks']['four-horizontal-text'], $browserPage);
             case 'gallery-layout':
                 return new GalleryLayoutElement($this->blockKit['blocks']['gallery-layout'], $browserPage);
-            case 'livestream-layout':
-                return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $browserPage);
+//            case 'livestream-layout':
+//                return new LivestreamLayout($this->blockKit['blocks']['livestream-layout'], $browserPage);
 
             case 'event-list-layout':
             case 'event-tile-layout':
@@ -85,6 +85,9 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new AccordionLayoutElement($this->blockKit['blocks']['accordion-layout'], $browserPage);
             case 'small-groups-list':
                 return new SmallGroupsListElement($this->blockKit['blocks']['small-groups-list'], $browserPage);
+
+            case 'three-top-media':
+                return new ThreeTopMedia($this->blockKit['blocks']['three-top-media'], $browserPage);
 
 
 //            case 'two-right-media-circle':

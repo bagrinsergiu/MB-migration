@@ -6,7 +6,7 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Concern\BrizyQueryBuilderAware;
-use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\Component\Button;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -17,6 +17,7 @@ use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
+use PHPUnit\Exception;
 
 abstract class EventLayoutElement extends AbstractElement
 {
@@ -24,7 +25,7 @@ abstract class EventLayoutElement extends AbstractElement
     use SectionStylesAble;
     use BrizyQueryBuilderAware;
     use CssPropertyExtractorAware;
-    use ButtonAble;
+    use Button;
 
     /**
      * @param $brizyKit
@@ -45,22 +46,21 @@ abstract class EventLayoutElement extends AbstractElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['main'], true));
         $brizyWidget = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['widget'], true));
-//        $detailsSection = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['detail'], true));
+
+        $mbSection = $data->getMbSection();
+        $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+
+        $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
+        $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
+
         $DetailsPageLayout = new EventDetailsPageLayout(
             $this->brizyKit['EventLayoutElement']['detail'],
             $this->getTopPaddingOfTheFirstElement(),
             $this->getMobileTopPaddingOfTheFirstElement(),
             $this->pageTDO,
             $data,
-            $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
+            $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
         );
-
-        $mbSection = $data->getMbSection();
-
-        $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
-        $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
-
-        $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
 
         $fonts = FontsController::getFontsFamilyFromName('main_text');
 
@@ -77,6 +77,14 @@ abstract class EventLayoutElement extends AbstractElement
             $this->handleRichTextHead($elementContext, $this->browserPage);
         } else {
             $this->handleRichTextItems($elementContext, $this->browserPage);
+        }
+
+        try {
+
+
+
+        } catch (Exception $e) {
+
         }
 
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
@@ -110,6 +118,10 @@ abstract class EventLayoutElement extends AbstractElement
                 ];
                 break;
         }
+
+        $featured = [
+            "howManyFeatured" => 6
+        ];
 
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
         $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
@@ -189,8 +201,8 @@ abstract class EventLayoutElement extends AbstractElement
             'listItemMetaColorOpacity' => 1,
             'listItemMetaColorPalette' => '',
 
-            'listItemDateColorHex' => $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'listItemDateColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 1,
+            'listItemDateColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'] ??  $sectionPalette['text'],
+            'listItemDateColorOpacity' => 0.75 ?? $basicButtonStyleHover['color-opacity'] ?? 1,
             'listItemDateColorPalette' => '',
 
             'listTitleColorHex' => $sectionPalette['text'],
@@ -223,27 +235,27 @@ abstract class EventLayoutElement extends AbstractElement
             'detailButtonBgColorPalette' => '',
 
             'hoverDetailButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
+            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             'hoverDetailButtonBgColorPalette' => '',
 
-            'detailButtonBorderStyle' => 'solid',
-            'detailButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'detailButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
-            'detailButtonBorderColorPalette' => '',
+//            'detailButtonBorderStyle' => 'solid',
+//            'detailButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+//            'detailButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
+//            'detailButtonBorderColorPalette' => '',
+//
+//            "detailButtonBorderWidthType" => "grouped",
+//            "detailButtonBorderWidth" => 1,
+//            "detailButtonBorderTopWidth" => 1,
+//            "detailButtonBorderRightWidth" => 1,
+//            "detailButtonBorderBottomWidth" => 1,
+//            "detailButtonBorderLeftWidth" => 1,
 
-            "detailButtonBorderWidthType" => "grouped",
-            "detailButtonBorderWidth" => 1,
-            "detailButtonBorderTopWidth" => 1,
-            "detailButtonBorderRightWidth" => 1,
-            "detailButtonBorderBottomWidth" => 1,
-            "detailButtonBorderLeftWidth" => 1,
-
-            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 0.75,
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'] ?? $sectionPalette['text'],
+            'hoverDetailButtonColorOpacity' => 0.75 ?? $basicButtonStyleHover['color-opacity'] ?? 1,
             'hoverDetailButtonColorPalette' => '',
 
             'detailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
@@ -251,19 +263,23 @@ abstract class EventLayoutElement extends AbstractElement
             'detailButtonGradientColorPalette' => '',
 
             'hoverViewColorHex' => $sectionPalette['text'],
-            'hoverViewColorOpacity' => 0.7,
+            'hoverViewColorOpacity' => 1,
             'hoverViewColorPalette' => '',
 
             'viewColorHex' => $sectionPalette['text'],
-            'viewColorOpacity' => 1,
+            'viewColorOpacity' => 0.7,
             'viewColorPalette' => '',
+
+            'activeViewColorHex' => $sectionPalette['text'],
+            'activeViewColorOpacity' => 1,
+            'activeViewColorPalette' => '',
 
             'layoutViewTypographyFontFamily' => $fonts,
             'layoutViewTypographyFontStyle' => '',
             'layoutViewTypographyFontFamilyType' => 'upload',
         ];
 
-        $sectionProperties = array_merge($sectionProperties, $eventTabs);
+        $sectionProperties = array_merge($sectionProperties, $eventTabs, $featured);
 
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_'.$key;
@@ -292,7 +308,7 @@ abstract class EventLayoutElement extends AbstractElement
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 50,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",

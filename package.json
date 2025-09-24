@@ -28,7 +28,8 @@
     "prettier-check": "turbo run prettier-check",
     "check-all": "npm run prettier-check && npm run lint && npm run tsc && npm run test",
     "build": "turbo build",
-    "build:prod": "turbo build -- --production"
+    "build:prod": "turbo build -- --production",
+    "build:force": "turbo build -- --force"
   },
   "dependencies": {
     "lodash": "^4.17.21"

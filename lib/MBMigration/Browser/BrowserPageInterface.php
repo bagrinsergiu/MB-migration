@@ -13,4 +13,6 @@ interface BrowserPageInterface
     public function setNodeStyles($selector, array $attributes);
 
     public function getPageScreen($prefix = ''): void;
+
+    public function getCurrentUrl(): string;
 }

@@ -1,0 +1,557 @@
+{
+  "list": [
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22704560,
+      "source_project_ids": "e1b8f452-0881-4322-ad40-60e1389332f9"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22704559,
+      "source_project_ids": "f1ddb8bc-3c69-4487-9149-0915e2dfbda0"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22704680,
+      "source_project_ids": "f2c701b1-c16c-4bf0-b759-aa89d133c84c"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22704729,
+      "source_project_ids": "cc61b469-bb84-4c53-9731-7e2d3502e004"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22704935,
+      "source_project_ids": "19b7eef3-f0fe-4f3d-bd9e-f7d6b2b9aa20"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22704937,
+      "source_project_ids": "dc2136df-5b48-4eef-8975-7be224b7cc08"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22705369,
+      "source_project_ids": "123a7df2-934a-4a57-83d7-8ff6ce71472f"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22705157,
+      "source_project_ids": "394fc857-96d3-439e-96fa-d15168e928b6"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22705347,
+      "source_project_ids": "679d9f54-5bd2-4413-b0fe-80bb946607a4"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22705759,
+      "source_project_ids": "8eee9a60-89d3-48b2-9936-5685b3cd436c"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22705693,
+      "source_project_ids": "67571786-7072-47a7-958b-c7a23b6a8e6c"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22705923,
+      "source_project_ids": "fd5ae3f4-bba7-4596-92c7-40777851259c"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706082,
+      "source_project_ids": "0fee69a7-b77c-4ddf-97ff-7fa02a225b80"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22705973,
+      "source_project_ids": "ec9c2687-338a-484f-9ac0-6b5bb2bdf91b"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706024,
+      "source_project_ids": "4bd51774-d87b-47dd-9797-a20ca0065a18"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706207,
+      "source_project_ids": "95903e8b-be37-4db9-87ca-4a0e497785e9"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706156,
+      "source_project_ids": "44816950-e46d-4ce8-b82e-2c87549b696d"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706366,
+      "source_project_ids": "5d8deb81-b7d4-450e-a43e-ca23dfe8f796"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706582,
+      "source_project_ids": "044775af-75ef-4abf-a4d2-a21f050cc709"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706244,
+      "source_project_ids": "49c6283f-c34e-48cf-b8c8-27b68aafdffe"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706628,
+      "source_project_ids": "c26e1756-ae87-47a4-9927-b78c58b1c7ff"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706716,
+      "source_project_ids": "7401d571-553e-4404-b61a-6d9dc76b1aab"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706782,
+      "source_project_ids": "19bd49be-824a-4f18-a07c-17247680fed6"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706822,
+      "source_project_ids": "fcdcda31-90dd-4d9e-8256-2b8bc499f91b"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706941,
+      "source_project_ids": "e5aa2136-ed0e-4d4f-9f2a-127b8182c528"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22706939,
+      "source_project_ids": "925c4f26-3ced-4b09-b073-7ef45e6e8ebd"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707092,
+      "source_project_ids": "a1c0aad4-7264-4df5-82c8-d44c8ec31914"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707322,
+      "source_project_ids": "3db38aa7-c7f6-40f3-b67b-60150a68332d"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707375,
+      "source_project_ids": "52a9b5f2-a581-4409-9cf7-9261826b4b7c"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707550,
+      "source_project_ids": "03349a97-9976-427d-94c9-12be4ef6f717"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707225,
+      "source_project_ids": "85d9447e-42e8-4581-9686-9bb53673267b"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707679,
+      "source_project_ids": "2c1d2257-c4f0-4b8a-a888-8f988cc7695c"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707819,
+      "source_project_ids": "a87b70aa-7e27-469d-9c3a-441aab491891"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707871,
+      "source_project_ids": "91223030-e2e4-4dfe-956e-8cee0937afba"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707924,
+      "source_project_ids": "f27aca29-3d28-4de0-8372-5285dfc445fc"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708064,
+      "source_project_ids": "c718cc2b-7468-4ac5-b62e-f4ca0f4c96a0"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708227,
+      "source_project_ids": "49be5d88-c5dc-4c42-a626-2d888e88a317"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708183,
+      "source_project_ids": "4b2b974a-a34a-433a-b2ce-4464092f1fc6"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708451,
+      "source_project_ids": "8c841023-2777-499c-b966-d222a3d406c1"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708395,
+      "source_project_ids": "fe702c06-e318-48ad-87ff-bf2236322467"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708544,
+      "source_project_ids": "19b5f5b6-7744-47ff-8a81-bf4b2342476c"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708693,
+      "source_project_ids": "3f19a44f-0aa0-475c-81c1-22ed386517f8"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708710,
+      "source_project_ids": "1675c01b-bf7f-4ae5-8ad1-946b44df8a57"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708859,
+      "source_project_ids": "26c90804-8042-4aef-8152-c92c4f847937"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22709042,
+      "source_project_ids": "e39400e6-4ada-4ba2-b39b-235259f655a1"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22708927,
+      "source_project_ids": "d0469543-4807-4e3b-b218-f0737e5e0a38"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22709144,
+      "source_project_ids": "ef52b52c-6275-4bc2-957d-827effb5c8c6"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22707454,
+      "source_project_ids": "d8ccf226-41a0-46fb-82fb-09f9cf9d6352"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22709469,
+      "source_project_ids": "4f30761d-95dd-4770-a014-2b8fa7c91800"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714159,
+      "source_project_ids": "285e7d0b-73c9-426b-80b0-37a918245bab"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714157,
+      "source_project_ids": "64193a11-e048-43a8-8451-ea09f4d65dae"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714445,
+      "source_project_ids": "37823faa-f989-4696-ba4e-1288988c61cc"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714374,
+      "source_project_ids": "f073e87d-c11b-42ca-8ef7-f62845fb05e1"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714158,
+      "source_project_ids": "39e17572-7246-4b07-9a30-0998c5450941"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714524,
+      "source_project_ids": "817fb187-0cca-47b2-b28c-39b1a4f8acc7"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714681,
+      "source_project_ids": "41caa86b-7e1e-420e-acc3-4b18bbb3e405"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714737,
+      "source_project_ids": "7e3b0475-4dec-42c9-a3b8-06902c149cbd"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714822,
+      "source_project_ids": "91d85c09-121d-4cbc-97b8-e93497ef02aa"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714891,
+      "source_project_ids": "5f1ca0d7-8998-44e7-a128-33ebd0eb2624"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714620,
+      "source_project_ids": "9a3ff69f-e924-4116-9472-ad48901495c7"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715036,
+      "source_project_ids": "5b567367-6a32-45ed-8c93-366816281a43"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715116,
+      "source_project_ids": "2e038220-6dbd-4f23-bb55-4be20d6f928b"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22714943,
+      "source_project_ids": "a2fa5e02-031e-49cb-bdc1-36e125be9336"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715237,
+      "source_project_ids": "998231cb-6c09-46e1-b6be-90d48857367d"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715181,
+      "source_project_ids": "b4b9eec3-d6ab-40ab-9d80-7173cc5dd71b"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715314,
+      "source_project_ids": "337b7ed9-1065-4a03-84b1-c83b2c47ec08"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715435,
+      "source_project_ids": "8bbe1918-30a5-4b8d-802a-02cfa0da47b6"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715505,
+      "source_project_ids": "a124cb8e-fa4c-4a65-9264-f831056e7471"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715573,
+      "source_project_ids": "2738ab00-08fe-41ff-95ea-502533d0528f"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715633,
+      "source_project_ids": "d96d1674-3c75-46b5-8b80-b988fafa0ce4"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715778,
+      "source_project_ids": "cc23c6a2-75b2-4c76-98d7-00b3f45e0229"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715862,
+      "source_project_ids": "7924f483-7221-443a-997c-c5cb9044d4f4"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715981,
+      "source_project_ids": "69d0ccdc-435d-4e65-a74c-9adc4102dc59"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22715715,
+      "source_project_ids": "a8773eb9-009b-43d2-be83-fc26cfaf8d32"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22716129,
+      "source_project_ids": "5464be77-875e-4c1a-bdb1-3ddf365d3039"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22716059,
+      "source_project_ids": "4f4ba7ec-5b44-40fd-9a83-e35db8994c2f"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22716252,
+      "source_project_ids": "ea388fdb-8ae3-4f2c-9717-d06552b884b9"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22716205,
+      "source_project_ids": "4b2a8393-3cdc-4fef-9a66-5ed55a87339c"
+    },
+    {
+      "changes_json": {
+        "data": "2025-08-12"
+      },
+      "brz_project_id": 22716394,
+      "source_project_ids": "23c7b57c-f53d-4656-9246-ad3827074520"
+    }
+  ]
+}

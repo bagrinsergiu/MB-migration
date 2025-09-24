@@ -14,7 +14,14 @@ class BrizyComponentValue implements JsonSerializable
             $this->set(
                 'items',
                 array_map(function ($component) use ($parent){
-                    return new BrizyComponent($component,$parent);
+                    if ($component instanceof BrizyComponent) {
+                        return $component;
+                    }
+                    if (is_array($component)) {
+                        return BrizyComponent::fromArray($component, $parent);
+                    }
+                    // Unexpected item type; keep as-is to avoid fatal, but better to log upstream
+                    return $component;
                 }, $data['items'])
             );
         }
@@ -36,20 +43,46 @@ class BrizyComponentValue implements JsonSerializable
         return $this;
     }
 
-    public function add($field, $value, $position=null)
+    public function add($field, $value, $position = null)
     {
-        if($position === null) {
-            $this->fields[$field] = array_merge($this->fields[$field], $value);
+        if (!isset($this->fields[$field])) {
+            $this->fields[$field] = [];
+        } elseif (!is_array($this->fields[$field])) {
+            $this->fields[$field] = [$this->fields[$field]];
+        }
+
+        if (!is_array($value)) {
+            $itemsToInsert = [$value];
         } else {
-            if($position === 0){
-                array_unshift($this->fields[$field], ...$value);
-            } else{
-                array_splice($this->fields[$field], $position,0, $value);
+            $isList = array_keys($value) === range(0, count($value) - 1);
+            $itemsToInsert = $isList ? $value : [$value];
+        }
+
+        if ($position === null) {
+            array_push($this->fields[$field], ...$itemsToInsert);
+        } else {
+            $len = count($this->fields[$field]);
+            if (!is_int($position)) {
+                $position = (int)$position;
+            }
+            if ($position < 0) {
+                $position = max(0, $len + $position);
+            } else {
+                $position = min($position, $len);
+            }
+
+            if ($position === 0) {
+                array_unshift($this->fields[$field], ...$itemsToInsert);
+            } elseif ($position >= $len) {
+                array_push($this->fields[$field], ...$itemsToInsert);
+            } else {
+                array_splice($this->fields[$field], $position, 0, $itemsToInsert);
             }
         }
 
         return $this;
     }
+
 
     public function get($field)
     {
@@ -88,6 +121,7 @@ class BrizyComponentValue implements JsonSerializable
 
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->fields;

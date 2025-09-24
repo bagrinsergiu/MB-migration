@@ -1,5 +1,6 @@
 import { Families } from "../types/type";
 import { getFontFamily } from "./getFontFamily";
+import { roundToPrecision } from "./number";
 import {
   defaultDesktopNumberLineHeight,
   defaultMobileNumberLineHeight,
@@ -52,7 +53,10 @@ export const getModel = (data: Model) => {
           defaultMobileNumberLineHeight;
         break;
       }
-      case "font-size":
+      case "font-size": {
+        dic[toCamelCase(key)] = roundToPrecision(styles[key], 2);
+        break;
+      }
       case "font-weight": {
         dic[toCamelCase(key)] = parseInt(`${styles[key]}`);
         break;
@@ -120,6 +124,15 @@ export const getModel = (data: Model) => {
           /px/g,
           ""
         );
+
+        dic[toCamelCase(key)] = +(borderWidth ?? 1);
+        break;
+      }
+      case "border-top-width":
+      case "border-bottom-width":
+      case "border-left-width":
+      case "border-right-width": {
+        const borderWidth = `${styles[key]}`.replace(/px/g, "");
 
         dic[toCamelCase(key)] = +(borderWidth ?? 1);
         break;

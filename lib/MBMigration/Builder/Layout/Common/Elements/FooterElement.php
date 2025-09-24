@@ -48,10 +48,21 @@ abstract class FooterElement extends AbstractElement
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $mbSection = $data->getMbSection();
         $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
 
-        $this->handleRichTextItems($elementContext, $this->browserPage);
+        foreach ($mbSection['items'] as $items) {
+            if($items['order_by'] == 0){
+                $this->handleItemMbSection($items, $elementContext);
+            }
+        }
+
+        foreach ($mbSection['items'] as $items) {
+            if($items['order_by'] == 1){
+                $this->handleItemMbSection($items, $elementContext);
+            }
+        }
 
         $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
 
@@ -68,4 +79,52 @@ abstract class FooterElement extends AbstractElement
         ];
     }
 
+    protected function handleItemMbSection($mbSection, ElementContextInterface $elementContext)
+    {
+        switch ($mbSection['category']) {
+            case 'text':
+                $this->handleOnlyRichTextItem($elementContext, $this->browserPage);
+                break;
+            case 'photo':
+                if(!empty($mbSection['content'])){
+                    $arrowSelector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
+
+                    $imgStyles = $this->getDomElementStyles(
+                        $arrowSelector,
+                        ['width', 'height'],
+                        $this->browserPage,
+                    );
+
+                    if (!empty($imgStyles)) {
+                        $additionalParams = [
+                            'sizeType' => 'custom',
+                            'width' => (int)$imgStyles['width'],
+                            'height' => (int)$imgStyles['height'],
+                            'imageWidth' => (int)$imgStyles['width'],
+                            'imageHeight' => (int)$imgStyles['height'],
+                            'widthSuffix' => 'px',
+                            'heightSuffix' => 'px',
+
+                        ];
+                    } else {
+                        $additionalParams = [
+                            'sizeType' => 'custom',
+                            'width' => 360,
+                            'height' => 40,
+                            'widthSuffix' => 'px',
+                            'heightSuffix' => 'px',
+                        ];
+                    }
+
+                    $brizySectionItemComponent = $elementContext->getBrizySection();
+
+                    $brizySectionItemComponent->addImage($mbSection, $additionalParams);
+                }
+                break;
+
+        }
+
+    }
+
 }
+

@@ -16,6 +16,11 @@ abstract class FullTextElement extends AbstractElement
     use SectionStylesAble;
     use DonationsAble;
 
+    protected function getSectionName(): string
+    {
+        return "Full Text";
+    }
+
     /**
      * @throws BadJsonProvided
      * @throws \Exception
@@ -69,7 +74,7 @@ abstract class FullTextElement extends AbstractElement
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 25,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",

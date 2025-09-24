@@ -25,9 +25,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 
         $mbSection = $data->getMbSection();
 
-        $aa =  json_encode($mbSection);
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-        $itemImage = new BrizyComponent(json_decode($this->brizyKit['itemImage'], true));
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
@@ -47,6 +45,8 @@ abstract class GalleryLayoutElement extends AbstractElement
         }
 
         $sectionSelector = 'body';
+        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+
         $backgroundColorStyles = $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage);
         $properties['background-color'] = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
 
@@ -69,7 +69,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 //            $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
 //        }
 
-        $colorArrows = ColorConverter::getContrastColor($properties['background-color'] ?? '#FFFFFF');
+        $colorArrows = ColorConverter::getContrastColor($properties['background-color']['color'] ?? $properties['background-color'] );
 
         $brizySection->getValue()
             ->set_sliderArrowsColorHex($colorArrows)
@@ -88,8 +88,8 @@ abstract class GalleryLayoutElement extends AbstractElement
             ->set_hoverSliderDotsColorOpacity(1)
             ->set_hoverSliderDotsColorPalette('')
 
-            ->set_fullHeight('custom')
-            ->set_sectionHeight(650)
+//            ->set_fullHeight('custom')
+//            ->set_sectionHeight(650)
 
             ->set_mobileFullHeight('custom')
             ->set_mobileSectionHeight(300)

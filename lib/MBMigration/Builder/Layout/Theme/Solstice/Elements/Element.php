@@ -501,7 +501,7 @@ abstract class Element extends LayoutUtils
             $height = $iframe->getAttribute('height');
 
             if (!empty($width) && !empty($height)) {
-                $iframe->setAttribute('style', "max-width: {$width}px; max-height: {$height}px; width: 100%;");
+                $iframe->setAttribute('style', "max-width: {$width}px; min-width: {$width}px; max-height: {$height}px; width: 100%;");
             }
         }
 

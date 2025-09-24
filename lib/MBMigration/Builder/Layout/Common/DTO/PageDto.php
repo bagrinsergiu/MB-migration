@@ -8,6 +8,7 @@ use MBMigration\Builder\Layout\Common\DTOObjects\Head\HeadStyle;
 
 class PageDto implements DTO
 {
+    private ?string $id = null;
     private array $pageStyleDetails = [];
     private ButtonStyle $buttonStyle;
     private HeadStyle $headStyle;
@@ -18,6 +19,16 @@ class PageDto implements DTO
         $this->buttonStyle = new ButtonStyle();
         $this->headStyle = new HeadStyle();
         $this->pageStyle = new PageStyle();
+    }
+
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function setId(?string $id): void
+    {
+        $this->id = $id;
     }
 
     public function setPageStyleDetails(array $pageStyleDetails) {

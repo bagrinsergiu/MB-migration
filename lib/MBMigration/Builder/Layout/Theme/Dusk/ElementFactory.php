@@ -27,6 +27,7 @@ use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\TabsLayoutElement;
 use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\ThreeTopMediaCircle;
 use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\TwoHorizontalText;
 use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\TwoRightMediaCircle;
+use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\MiddleMedia;
 
 class ElementFactory extends AbstractThemeElementFactory
 {
@@ -38,13 +39,10 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'head':
                 return new Head($this->blockKit['blocks']['menu'], $browserPage,$this->brizyApiClient, $this->fontsController);
 
-            case 'full-text':
-                return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
-
-            case 'left-media-circle':
-                return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
-            case 'right-media-circle':
-                return new RightMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
+//            case 'left-media-circle':
+//                return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
+//            case 'right-media-circle':
+//                return new RightMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
 
             case 'two-right-media-circle':
                 return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
@@ -59,6 +57,9 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new LeftMedia($this->blockKit['blocks']['left-media'], $browserPage);
             case 'right-media':
                 return new RightMedia($this->blockKit['blocks']['right-media'], $browserPage);
+            case 'middle-media':
+                return new MiddleMedia($this->blockKit['blocks']['middle-media'], $browserPage);
+
 
             case 'gallery-layout':
                 return new GalleryLayoutElement($this->blockKit['blocks']['gallery-layout'], $browserPage);

@@ -211,6 +211,11 @@ class Head extends HeadElement
         return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
+    public function getThemeMenuItemActiveSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
     public function getThemeParentMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation", "pseudoEl" => ""];
@@ -249,11 +254,6 @@ class Head extends HeadElement
     public function getThemeMobileBtnSelector(): array
     {
         return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
-    }
-
-    public function getThemeMenuItemBgSelector(): array
-    {
-        return $this->getThemeMenuItemSelector();
     }
 
     protected function getPropertiesIconMenuItem(): array
@@ -320,5 +320,20 @@ class Head extends HeadElement
             "activeMenuBorderBottomWidth" => 2,
             "activeMenuBorderLeftWidth" => 0,
         ];
+    }
+
+    public function getMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
+    }
+
+    public function getMenuHoverItemBgSelector(): array
+    {
+        return $this->getThemeSubMenuItemBGSelector();
+    }
+
+    public function getNotSelectedMenuItemBgSelector(): array
+    {
+        return $this->getThemeMenuItemSelector();
     }
 }

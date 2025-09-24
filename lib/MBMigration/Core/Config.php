@@ -32,7 +32,7 @@ class Config
 
     public static string $nameMigration; // this is the name with which Workspaces is created, the same will be written by the same name for migration and work with projects
 
-    private static $cloud_host;
+    public static $cloud_host;
 
     /**
      * @var array
@@ -142,6 +142,7 @@ class Config
             'menus/create' => '/menus/create',
             'workspaces' => '/workspaces',
             'projects' => '/projects',
+            'customicons' => '/customicons',
             'domain' => '/domain',
             'users' => '/users',
             'pages' => '/pages',

@@ -16,6 +16,11 @@ abstract class FullMediaElementElement extends AbstractElement
     use SectionStylesAble;
     use DonationsAble;
 
+    protected function getSectionName(): string
+    {
+        return "FullMedia";
+    }
+
     /**
      * @throws BadJsonProvided
      */
@@ -69,7 +74,8 @@ abstract class FullMediaElementElement extends AbstractElement
             $brizyImageComponent,
             $this->browserPage,
             $data->getFontFamilies(),
-            $data->getDefaultFontFamily()
+            $data->getDefaultFontFamily(),
+            $imageMb['order_by'] ?? null
         );
 
         return $brizySection;

@@ -1,11 +1,12 @@
 import {
-  EMPTY_SPACES_REGEX,
+  allowedTags,
   buttonSelector,
   embedSelector,
   iconSelector,
   imageSelector
 } from "../common";
 import { appendNodeStyles } from "./appendNodeStyles";
+import { trimTextContent } from "./trimTextContent";
 
 export class Stack {
   collection: Array<Element> = [];
@@ -61,16 +62,16 @@ const extractInnerText = (
       });
     }
     // Extract the other html without Artifacts like Button, Icons
-    const text = _node.textContent;
+    const text = trimTextContent(_node);
 
-    if (text && text.trim()) {
+    if (text) {
       let appendedItem = _node;
       if (_node.tagName !== "P") {
         const container = document.createElement("p");
 
-        if (styles.textAlign) {
-          container.style.textAlign = styles.textAlign;
-        }
+        Object.entries(styles).forEach(([key, value]) => {
+          (container.style as unknown as Record<string, string>)[key] = value;
+        });
 
         container.append(_node.cloneNode(true));
         appendedItem = container;
@@ -104,7 +105,7 @@ function removeNestedDivs(node: HTMLElement) {
             appendNodeStyles(grandchild);
 
             node.insertBefore(grandchild, child);
-          } else if (grandchild.textContent?.trim()) {
+          } else if (trimTextContent(grandchild)) {
             const containerOfNode = document.createElement("div");
             appendNodeStyles(child, containerOfNode);
             containerOfNode.append(grandchild);
@@ -167,11 +168,11 @@ const flattenNode = (node: Element) => {
   return _node;
 };
 
-const removeWrongTags = (node: HTMLElement) => {
-  const wrongTags = ["style"];
+const removeWrongElements = (node: HTMLElement) => {
+  const wrongSelectors = ["style", ".sr-only"];
 
-  wrongTags.forEach((tag) => {
-    const elements = node.querySelectorAll(tag);
+  wrongSelectors.forEach((selector) => {
+    const elements = node.querySelectorAll(selector);
     elements.forEach((element) => {
       element.remove();
     });
@@ -204,6 +205,24 @@ const replaceWrongTags = (node: HTMLElement) => {
   });
 };
 
+function containsOnlyIconsAndButtons(node: Node): boolean {
+  const textLikeTags = ["SPAN", "P", "A", "H1", "H2", "H3", "H4", "H5", "H6"];
+
+  return Array.from(node.childNodes).every((child) => {
+    if (!(child instanceof Element)) return false;
+
+    const textLikeChildren = Array.from(child.childNodes).filter(
+      (n) => n instanceof Element && textLikeTags.includes(n.tagName)
+    );
+
+    const iconsAndButtonsCount = child.querySelectorAll(
+      [iconSelector, buttonSelector].join(",")
+    ).length;
+
+    return iconsAndButtonsCount === textLikeChildren.length;
+  });
+}
+
 const getImageSizes = (node: Element) => {
   const images = node.querySelectorAll(imageSelector);
 
@@ -220,7 +239,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
   let appendNewText = false;
 
   if (parentNode instanceof HTMLElement) {
-    removeWrongTags(parentNode);
+    removeWrongElements(parentNode);
     replaceWrongTags(parentNode);
   }
 
@@ -233,10 +252,11 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
     const containerOfNode = document.createElement("div");
     containerOfNode.append(_node);
 
-    // Exclude extracting icons & button for [ UL, OL ]
-    // Removed all icons & button inside [ UL, OL ]
-    const excludeIcons =
+    // For list elements [UL, OL], exclude icons & buttons unless the list contains only them
+    const isList =
       _node instanceof HTMLOListElement || _node instanceof HTMLUListElement;
+
+    const excludeIcons = isList && !containsOnlyIconsAndButtons(_node);
 
     if (_node instanceof HTMLElement) {
       const icons = containerOfNode.querySelectorAll(iconSelector);
@@ -266,8 +286,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           const innerButtons = container.querySelectorAll(buttonSelector);
           innerButtons.forEach((btn) => btn.remove());
 
-          const onlyButtons =
-            (container.textContent?.trim() ?? "").length === 0;
+          const onlyButtons = (trimTextContent(container) ?? "").length === 0;
 
           if (onlyButtons) {
             appendNewText = true;
@@ -310,9 +329,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
 
                 Array.from(node.childNodes).forEach((child) => {
                   if (child.nodeType === Node.TEXT_NODE) {
-                    const text = child.textContent
-                      ?.replace(EMPTY_SPACES_REGEX, "")
-                      .trim();
+                    const text = trimTextContent(child);
 
                     if (text) {
                       const textNode = document.createElement("p");
@@ -336,10 +353,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                       stack.append(textNode, { type: "text" });
                       appendedIcon = false;
                     }
-                  } else if (
-                    child instanceof Element &&
-                    !child.classList.contains("sr-only")
-                  ) {
+                  } else if (child instanceof Element) {
                     const parent = child.parentElement;
 
                     if (!parent) return;
@@ -348,27 +362,149 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
                     const wrapper = parent.cloneNode(false); // Clone only the element, not its children
                     wrapper.appendChild(child); // Move child into the cloned parent
 
-                    if (appendedIcon) {
-                      stack.set(wrapper as Element);
+                    if (child.childNodes.length > 1) {
+                      child.childNodes.forEach((element) => {
+                        const isElement = element instanceof Element;
+
+                        // Check if element itself or its children contain an icon
+                        const hasIcon =
+                          isElement &&
+                          (element.matches(iconSelector) ||
+                            element.querySelector(iconSelector) ||
+                            (wrapper as Element).matches(iconSelector));
+
+                        if (hasIcon) {
+                          if (appendedIcon) {
+                            stack.set(wrapper as Element);
+                          } else {
+                            stack.append(wrapper, { type: "icon" });
+                            appendedIcon = true;
+                          }
+                          return;
+                        }
+
+                        const childTextContent = trimTextContent(element);
+
+                        const shouldAppendText =
+                          !!childTextContent ||
+                          (isElement &&
+                            element.classList.contains("clovercustom"));
+
+                        if (shouldAppendText) {
+                          const clonedWrapper = wrapper.cloneNode(true);
+
+                          if (clonedWrapper instanceof Element) {
+                            clonedWrapper
+                              .querySelectorAll(iconSelector)
+                              .forEach((node) => node.remove());
+                          }
+
+                          let newWrapper = clonedWrapper;
+
+                          if (!allowedTags.includes(clonedWrapper.nodeName)) {
+                            newWrapper = document.createElement("p");
+                            newWrapper.appendChild(clonedWrapper);
+                          }
+
+                          stack.append(newWrapper, { type: "text" });
+                          appendedIcon = false;
+                        }
+                      });
                     } else {
-                      stack.append(wrapper, { type: "icon" });
-                      appendedIcon = true;
+                      const childTextContent = trimTextContent(child);
+
+                      const isLinkWithoutIcon =
+                        child.nodeName === "A" &&
+                        !child.querySelector(iconSelector);
+
+                      const shouldAppendText =
+                        !!childTextContent &&
+                        (child.classList.contains("clovercustom") ||
+                          isLinkWithoutIcon);
+
+                      if (shouldAppendText) {
+                        let newWrapper = wrapper;
+
+                        if (!allowedTags.includes(wrapper.nodeName)) {
+                          newWrapper = document.createElement("p");
+                          newWrapper.appendChild(wrapper);
+                        }
+
+                        stack.append(newWrapper, { type: "text" });
+                        appendedIcon = false;
+                        return;
+                      }
+
+                      // Final stack append if icon was processed and not yet handled
+                      if (appendedIcon) {
+                        stack.set(wrapper as Element);
+                      } else {
+                        stack.append(wrapper, { type: "icon" });
+                        appendedIcon = true;
+                      }
                     }
                   }
                 });
               } else {
-                const text = node.textContent;
+                const text = trimTextContent(node);
+                const parentNode = node.parentElement;
+                let clonedParent = null;
 
-                if (text?.trim()) {
-                  const { textAlign } = getComputedStyle(node);
-                  extractInnerText(node, stack, iconSelector, { textAlign });
+                let styles = getComputedStyle(node);
+
+                // If parent isn't in the DOM, temporarily insert a clone to get styles
+                if (parentNode && !document.contains(parentNode)) {
+                  clonedParent = parentNode.cloneNode(true);
+
+                  // Find the cloned version of our target node
+                  const originalIndex = Array.from(parentNode.children).indexOf(
+                    node
+                  );
+
+                  if (clonedParent instanceof Element) {
+                    const clonedNode = clonedParent.children[originalIndex];
+
+                    document.body.appendChild(clonedParent);
+
+                    styles = getComputedStyle(clonedNode);
+                  }
+                }
+
+                if (text) {
+                  // Remove the inline font-size because it’s often set in `em` units, which can produce incorrect values due to inheritance from the parent
+                  const fontSize = styles.fontSize;
+                  node.style.removeProperty("font-size");
+
+                  const inlineStyles: Record<string, string> = {
+                    ...(styles.color ? { color: styles.color } : {}),
+                    ...(fontSize ? { fontSize: fontSize } : {}),
+                    ...(styles.fontWeight
+                      ? { fontWeight: styles.fontWeight }
+                      : {}),
+                    ...(styles.fontFamily
+                      ? { fontFamily: styles.fontFamily }
+                      : {})
+                  };
+
+                  extractInnerText(node, stack, iconSelector, inlineStyles);
+
                   appendedIcon = false;
                 }
-              }
-            } else {
-              const text = node.textContent;
 
-              if (text?.trim()) {
+                if (clonedParent) {
+                  document.body.removeChild(clonedParent);
+                }
+              }
+            } else if (node instanceof SVGElement) {
+              appendNewText = true;
+
+              stack.append(node.cloneNode(true), {
+                type: "icon"
+              });
+            } else {
+              const text = trimTextContent(node);
+
+              if (text) {
                 extractInnerText(_node, stack, iconSelector);
               }
             }
@@ -391,7 +527,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
         stack.set(_node, { type: "text" });
       }
     } else {
-      if (_node.textContent?.trim()) {
+      if (trimTextContent(_node)) {
         stack.append(_node, { type: "text" });
       }
     }

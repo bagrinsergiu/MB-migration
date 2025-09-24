@@ -3,13 +3,13 @@
 namespace MBMigration\Builder\Layout\Common\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Concern\ButtonAble;
+use MBMigration\Builder\Layout\Common\Concern\Component\Button;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Utils\ColorConverter;
 
 abstract class GridLayoutElement extends AbstractElement
@@ -18,7 +18,7 @@ abstract class GridLayoutElement extends AbstractElement
     use SectionStylesAble;
     use ImageStylesAble;
     use DonationsAble;
-    use ButtonAble;
+    use Button;
 
     public array $globalBrizyKit;
 
@@ -77,18 +77,18 @@ abstract class GridLayoutElement extends AbstractElement
                 $elementContext = $data->instanceWithMBSection($item);
                 $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
 
-                $brizySectionItem->getValue()
-                    ->set_borderColorHex($resultColorStyles['border-bottom-color'])
-                    ->set_borderColorPalette('')
-                    ->set_borderColorOpacity(1)
-                    ->set_borderWidth(2)
-
+                $brizySectionItem
+                    ->addVerticalContentAlign()
+                    ->getValue()
+//                    ->set_borderColorHex($resultColorStyles['border-bottom-color'])
+//                    ->set_borderColorPalette('')
+//                    ->set_borderColorOpacity(1)
+                    ->set_borderWidth(0)
                     ->set_width($itemWidth)
 //                    ->set_paddingTop((int)$styles['margin-top'])
 //                    ->set_paddingBottom((int)$styles['margin-bottom'])
 //                    ->set_paddingRight((int)$styles['margin-right'])
 //                    ->set_paddingLeft((int)$styles['margin-left'])
-
                     ->set_mobileWidth(100);
 
                 foreach ($item['items'] as $mbItem) {
@@ -115,13 +115,14 @@ abstract class GridLayoutElement extends AbstractElement
                                 $this->getItemImageComponent($brizySectionItem)
                             );
 
-                            $this->handleBgPhotoItems($elementContext, $additionalOptions, $this->getTypeItemImageComponent());
+                            $this->handleBgPhotoItems($elementContext, $additionalOptions, $this->getTypeItemImageComponent(), $this->getPropertiesItemPhoto());
 //                            $this->getItemImageComponent($brizySectionItem)
 //                                ->getValue()
 //                                ->set_widthSuffix('%')
 //                                ->set_heightSuffix('%')
 //                                ->set_width(100)
 //                                ->set_height(100);
+                            $this->handleItemPhotoAfter($elementContext);
                             break;
                         default:
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
@@ -171,11 +172,10 @@ abstract class GridLayoutElement extends AbstractElement
             $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
         }
 
-
         return $brizySection;
     }
 
-    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [], $elementImageType = 'bg')
+    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [], $elementImageType = 'bg', array $propertiesItemPhoto = [])
     {
         $mbSectionItem = $data->getMbSection();
         $brizyComponent = $data->getBrizySection();
@@ -186,12 +186,22 @@ abstract class GridLayoutElement extends AbstractElement
                     ->set_verticalAlign('bottom')
                     ->set_bgImageFileName($mbSectionItem['imageFileName'])
                     ->set_bgImageSrc($mbSectionItem['content']);
+
+                $itemPhoto = $brizyComponent;
                 break;
             case 'image':
-                $brizyComponent->getValue()
-                    ->set_imageFileName($mbSectionItem['imageFileName'])
-                    ->set_imageSrc($mbSectionItem['content']);
+                $brizyComponent->addImage($mbSectionItem, $propertiesItemPhoto);
+
+                $itemPhoto = $brizyComponent->findFirstByType('Image');
+
+                if($itemPhoto === null)
+                {
+                    $itemPhoto = $brizyComponent->getItemWithDepth(0);
+                }
+
                 break;
+            default:
+                $itemPhoto = $brizyComponent;
         }
 
         foreach ($options as $key => $value) {
@@ -202,7 +212,7 @@ abstract class GridLayoutElement extends AbstractElement
 
         $this->handleLink(
             $mbSectionItem,
-            $brizyComponent,
+            $itemPhoto,
             '[data-id="'.$mbSectionItem['id'].'"] .photo-container a',
             $this->browserPage
         );
