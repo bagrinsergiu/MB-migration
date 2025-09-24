@@ -26,21 +26,22 @@ abstract class MiddleMediaElement extends AbstractElement
      * @throws BadJsonProvided
      * @throws \Exception
      */
-    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data)
     {
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-        $brizySection->getValue()->set_marginTop(0);
+        $brizySectionTop = new BrizyComponent(json_decode($this->brizyKit['sectionTop'], true));
+        $brizySectionBottom = new BrizyComponent(json_decode($this->brizyKit['sectionBottom'], true));
+//        $brizySectionTop->getValue()->set_marginTop(0);
         $mbSectionItem = $data->getMbSection();
 
-        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $sectionItemComponent = $this->getSectionItemComponent($brizySectionTop);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
         $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
 
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
-        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+//        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
-        $sectionForItemsGroup0 = $brizySection->getItemWithDepth(0,0,0);
+        $sectionForItemsGroup0 = $brizySectionBottom->getItemWithDepth(0,0,0);
         $itemsGroup0 = $this->getItemsByGroup($mbSectionItem, 0);
 
         foreach ($itemsGroup0 as $item) {
@@ -51,7 +52,7 @@ abstract class MiddleMediaElement extends AbstractElement
             $this->handleRichTextItem($elementContextGroup0, $this->browserPage);
         }
 
-        $sectionForItemsGroup1 = $brizySection->getItemWithDepth(0,0,1);
+        $sectionForItemsGroup1 = $brizySectionBottom->getItemWithDepth(0,0,1);
         $itemsGroup1 = $this->getItemsByGroup($mbSectionItem, 1);
         $this->handleGroupStyle($mbSectionItem, $sectionForItemsGroup1, 1);
 
@@ -63,7 +64,7 @@ abstract class MiddleMediaElement extends AbstractElement
             $this->handleRichTextItem($elementContextGroup1, $this->browserPage);
         }
 
-        return $brizySection;
+        return [$brizySectionTop, $brizySectionBottom];
     }
 
     abstract protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent;

@@ -406,14 +406,14 @@ abstract class HeadElement extends AbstractElement
     {
         if ($this->browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()['selector'])) {
 
-            $this->browserPage->getPageScreen('_1');
+            $this->browserPage->getPageScreen('1');
 
             $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
 
-            $this->browserPage->getPageScreen('_1_1');
+            $this->browserPage->getPageScreen('1_1');
 
             $activeMenuSubItemStyles = $this->scrapeStyle($this->getThemeSubMenuSelectedItemSelector()['selector'],['color']);
 
@@ -424,8 +424,9 @@ abstract class HeadElement extends AbstractElement
 
             $this->browserPage->getPageScreen('remove_node_1');
 
-            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])) {
-
+            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuSelectedItemSelector()['selector'])
+             && $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])) {
+                $this->browserPage->getPageScreen('subMenu_Selected');
                 $entrySubMenu = [
                     'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
                     'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
