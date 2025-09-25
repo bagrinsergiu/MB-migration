@@ -144,8 +144,8 @@ class FontsController extends builderUtils
 
     public function upLoadMBFonts($fontName): bool
     {
-        foreach ($this->fontsMap as $font){
-            if($font === $fontName){
+        foreach ($this->fontsMap as $key => $font){
+            if($key === $fontName){
                 try{
                    Logger::instance()->info("Uploading MB-packaged font", ['font' => $fontName]);
                    $this->upLoadFont($fontName, null, 'upLoadMBFonts');
@@ -275,10 +275,6 @@ class FontsController extends builderUtils
 
         return $result;
     }
-
-
-
-
 
     /**
      * Tracks font operation metrics
