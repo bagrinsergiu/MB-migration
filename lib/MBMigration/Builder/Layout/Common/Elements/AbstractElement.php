@@ -286,7 +286,7 @@ abstract class AbstractElement implements ElementInterface
     {
     }
 
-    protected function afterTransformToItem(?BrizyComponent $brizySection): void
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
 
     }
@@ -295,7 +295,7 @@ abstract class AbstractElement implements ElementInterface
     {
     }
 
-    private function globalTransformSection(?BrizyComponent $component)
+    private function globalTransformSection(BrizyComponent $component)
     {
     }
 
@@ -377,7 +377,7 @@ abstract class AbstractElement implements ElementInterface
         $this->buttonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
     }
 
-    private function generalSectionBehavior(ElementContextInterface $data, ?BrizyComponent $section): void
+    protected function generalSectionBehavior(ElementContextInterface $data, ?BrizyComponent $section): void
     {
         $mbSection = $data->getMbSection();
 

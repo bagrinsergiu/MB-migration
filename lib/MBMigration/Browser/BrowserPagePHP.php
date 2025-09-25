@@ -3,6 +3,9 @@
 namespace MBMigration\Browser;
 
 use Exception;
+use HeadlessChromium\Exception\CommunicationException;
+use HeadlessChromium\Exception\FilesystemException;
+use HeadlessChromium\Exception\ScreenshotFailed;
 use HeadlessChromium\Page;
 use MBMigration\Core\Logger;
 
@@ -180,7 +183,11 @@ class BrowserPagePHP implements BrowserPageInterface
 
     public function getPageScreen($prefix = ''): void
     {
-        $this->page->screenshot()->saveToFile('/project/var/cache/pageScreen_'. $prefix .'.jpg');
+        try{
+            $this->page->screenshot()->saveToFile('/project/var/cache/pageScreen_'. $prefix .'.jpg');
+        }catch(Exception $e){
+           Logger::instance()->info("getPageScreen: ".$e->getMessage());
+        }
     }
 
     public function extractHover($selector): void
