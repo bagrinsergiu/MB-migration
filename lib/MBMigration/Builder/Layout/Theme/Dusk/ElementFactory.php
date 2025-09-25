@@ -28,6 +28,7 @@ use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\ThreeTopMediaCircle;
 use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\TwoHorizontalText;
 use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\TwoRightMediaCircle;
 use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\MiddleMedia;
+use MBMigration\Builder\Layout\Theme\Dusk\Elements\Text\MiddleMediaTop;
 
 class ElementFactory extends AbstractThemeElementFactory
 {
@@ -57,9 +58,13 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new LeftMedia($this->blockKit['blocks']['left-media'], $browserPage);
             case 'right-media':
                 return new RightMedia($this->blockKit['blocks']['right-media'], $browserPage);
+
+            //-one section with media-//
+            case 'middle-media-top':
+                return new MiddleMediaTop($this->blockKit['blocks']['middle-media'], $browserPage);
             case 'middle-media':
                 return new MiddleMedia($this->blockKit['blocks']['middle-media'], $browserPage);
-
+            //---------------------
 
             case 'gallery-layout':
                 return new GalleryLayoutElement($this->blockKit['blocks']['gallery-layout'], $browserPage);

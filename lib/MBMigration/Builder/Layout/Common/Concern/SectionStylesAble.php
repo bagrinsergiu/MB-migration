@@ -174,7 +174,7 @@ trait SectionStylesAble
                 $validatedUrl = MediaController::validateBgImag($sectionStyles['background-image']);
                 $bgImg = $validatedUrl ? $validatedUrl : $background['photo'];
 
-                //                if($background['opacity']>=0.9)
+//                if($background['opacity']>=0.9)
 //                {
 //                    $background['opacity'] = 0.8;
 //                }
@@ -309,16 +309,30 @@ trait SectionStylesAble
         );
 
         try {
-            $sectionBgStyles = $this->getBgHelperStyles(
+            $sectionBgEclipseStyles = $this->getBgEclipseStyles(
                 $mbSectionItem['sectionId'],
                 $browserPage,
                 $families,
                 $defaultFont
             );
-            $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity']);
+            if(empty($sectionBgEclipseStyles)){
+                $sectionBgStyles = $this->getBgHelperStyles(
+                    $mbSectionItem['sectionId'],
+                    $browserPage,
+                    $families,
+                    $defaultFont
+                );
+                $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity']);
 
-            if($sectionBgStyles['opacity'] !== 0){
-                $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
+                if($sectionBgStyles['opacity'] !== 0){
+                    $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
+                }
+            }else{
+                $sectionBgEclipseStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgEclipseStyles['opacity']);
+
+                if($sectionBgEclipseStyles['opacity'] !== 0){
+                    $sectionStyles = array_merge($sectionStyles, $sectionBgEclipseStyles);
+                }
             }
         }
         catch (\Exception $e) {
@@ -398,6 +412,27 @@ trait SectionStylesAble
         string $defaultFont
     ) {
         $selectorSectionWrapperStyles = '[data-id="'.$sectionId.'"] .bg-helper>.bg-opacity';
+        $properties = [
+            'background-color',
+            'opacity',
+        ];
+
+        return $this->getDomElementStyles(
+            $selectorSectionWrapperStyles,
+            $properties,
+            $browserPage,
+            $families,
+            $defaultFont
+        );
+    }
+
+    protected function getBgEclipseStyles(
+        $sectionId,
+        BrowserPageInterface $browserPage,
+        array $families,
+        string $defaultFont
+    ) {
+        $selectorSectionWrapperStyles = '[data-id="'.$sectionId.'"]  div.bg-eclipse';
         $properties = [
             'background-color',
             'opacity',

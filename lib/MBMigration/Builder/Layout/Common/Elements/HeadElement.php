@@ -406,14 +406,14 @@ abstract class HeadElement extends AbstractElement
     {
         if ($this->browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()['selector'])) {
 
-            $this->browserPage->getPageScreen('_1');
+            $this->browserPage->getPageScreen('1');
 
             $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
 
-            $this->browserPage->getPageScreen('_1_1');
+            $this->browserPage->getPageScreen('1_1');
 
             $activeMenuSubItemStyles = $this->scrapeStyle($this->getThemeSubMenuSelectedItemSelector()['selector'],['color']);
 
@@ -424,8 +424,9 @@ abstract class HeadElement extends AbstractElement
 
             $this->browserPage->getPageScreen('remove_node_1');
 
-            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])) {
-
+            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuSelectedItemSelector()['selector'])
+             && $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])) {
+                $this->browserPage->getPageScreen('subMenu_Selected');
                 $entrySubMenu = [
                     'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
                     'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
@@ -468,7 +469,7 @@ abstract class HeadElement extends AbstractElement
         return $hoverMenuSubItemStyles['data'] ?? [];
     }
 
-    private function generalSectionBehavior(ElementContextInterface $data, BrizyComponent $section): void
+    protected function generalSectionBehavior(ElementContextInterface $data, BrizyComponent $section): void
     {
         $section->getItemWithDepth(0)->addCustomCSS('blockquote{margin:0;}'); //fix for table in richtext
         $section->getItemWithDepth(0)->addCustomCSS("@font-face {\n    font-family: 'Mono Social Icons Font';\n    src: url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.eot\");\n    src: url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.woff\") format(\"woff\"), url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.ttf\") format(\"truetype\"), url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.svg#MonoSocialIconsFont\") format(\"svg\");\n    src: url(\"https://assets.cloversites.com/fonts/icon-fonts/social/2/CloverMonoSocialIcons.ttf\") format(\"truetype\");\n    font-weight: normal;\n    font-style: normal\n}\n\n.socialIconSymbol {\n    font-family: 'Mono Social Icons Font';\n    font-size: 2em;\n    font-style: normal !important;\n}\n\n.text-content span.socialIconSymbol, .text-content a.socialIconSymbol {\n    line-height: .5em;\n    font-weight: 300\n}"); //fix for icons in embed code

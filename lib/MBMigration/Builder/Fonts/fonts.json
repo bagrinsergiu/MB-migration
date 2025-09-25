@@ -1489,6 +1489,56 @@
       }
     }
   },
+  "source_sans_pro": {
+    "settings": {
+      "id": 85,
+      "name": "source_sans_pro",
+      "display_name": "Source Sans Regular",
+      "family": "Source Sans Pro, Source Sans Regular, sans-serif"
+    },
+    "fonts": {
+      "300": {
+        "italic": [
+          "fontsKit/source_sans_pro/300-italic/SourceSansPro-LightItalic.ttf"
+        ],
+        "normal": [
+          "fontsKit/source_sans_pro/300-normal/SourceSansPro-Light.ttf"
+        ]
+      },
+      "400": {
+        "italic": [
+          "fontsKit/source_sans_pro/400-italic/SourceSansPro-Italic.ttf"
+        ],
+        "normal": [
+          "fontsKit/source_sans_pro/400-normal/SourceSansPro-Regular.ttf"
+        ]
+      },
+      "600": {
+        "italic": [
+          "fontsKit/source_sans_pro/600-italic/SourceSansPro-SemiBoldItalic.ttf"
+        ],
+        "normal": [
+          "fontsKit/source_sans_pro/600-normal/SourceSansPro-SemiBold.ttf"
+        ]
+      },
+      "700": {
+        "italic": [
+          "fontsKit/source_sans_pro/700-italic/SourceSansPro-BoldItalic.ttf"
+        ],
+        "normal": [
+          "fontsKit/source_sans_pro/700-normal/SourceSansPro-Bold.ttf"
+        ]
+      },
+      "900": {
+        "italic": [
+          "fontsKit/source_sans_pro/900-italic/SourceSansPro-Black.ttf"
+        ],
+        "normal": [
+          "fontsKit/source_sans_pro/900-normal/SourceSansPro-BlackItalic.ttf"
+        ]
+      }
+    }
+  },
   "special_elite": {
     "settings": {
       "id": 70,

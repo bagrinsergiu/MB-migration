@@ -19,7 +19,7 @@ abstract class MiddleMediaElement extends AbstractElement
 
     protected function getSectionName(): string
     {
-        return "Full Text";
+        return "Middle Media";
     }
 
     /**
@@ -28,8 +28,7 @@ abstract class MiddleMediaElement extends AbstractElement
      */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-        $brizySection->getValue()->set_marginTop(0);
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['sectionBottom'], true));
         $mbSectionItem = $data->getMbSection();
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);

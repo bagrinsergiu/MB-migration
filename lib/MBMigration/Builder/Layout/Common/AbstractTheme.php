@@ -51,6 +51,8 @@ abstract class AbstractTheme implements ThemeInterface
             $this->themeContext->getDefaultFamily()
         );
 
+        $this->addSectionIfNeeded($mbPageSections);
+
         Logger::instance()->debug("Handling [head] page section.");
         $elementFactory->getElement('head', $browserPage)->transformToItem($elementContext);
 
@@ -132,6 +134,14 @@ abstract class AbstractTheme implements ThemeInterface
     public function afterTransformBlocks(BrizyPage $page, array $mbPageSections): BrizyPage
     {
         return $page;
+    }
+
+    /**
+     * Adds an extra section before the target section in the array
+     * if the specified conditions are met.
+     */
+    public function addSectionIfNeeded(array &$mbPageSections)
+    {
     }
 
     public function beforeBuildPage(): array
