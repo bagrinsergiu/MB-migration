@@ -221,7 +221,7 @@ class PageController
     public function getPageMapping($parentPages, $projectID_Brizy, BrizyAPI $brizyApi): array
     {
         $mapping = [];
-        $domain = $brizyApi->getDomain($projectID_Brizy);
+        $domain = $this->cache->get('brizyProjectDomain');
         $this->pageMapping($parentPages, $mapping, $domain);
 
         return $mapping;
