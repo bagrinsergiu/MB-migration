@@ -43,22 +43,6 @@ class MenuBuilder extends \MBMigration\Builder\Layout\Common\MenuBuilder
         return parent::transformToBrizyMenu(array_values($menuItems));
     }
 
-    private function removeHiddenElements(array $items): array {
-        $filteredItems = [];
 
-        foreach ($items as $item) {
-            // Проверяем, если элемент не скрыт
-            if (!$item['hidden']) {
-                // Если у элемента есть дочерние элементы, запускаем рекурсию
-                if (!empty($item['child'])) {
-                    $item['child'] = $this->removeHiddenElements($item['child']);
-                }
-                // Добавляем элемент в итоговый массив
-                $filteredItems[] = $item;
-            }
-        }
-
-        return $filteredItems;
-    }
 
 }

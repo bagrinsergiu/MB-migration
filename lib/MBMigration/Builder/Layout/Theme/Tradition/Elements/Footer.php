@@ -18,7 +18,7 @@ class Footer extends FooterElement
             "marginLeft" => 0,
             "marginRight" => 0,
 
-            "mobilePaddingType"=> "grouped",
+            "mobilePaddingType" => "grouped",
             "mobilePadding" => 20,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 20,
@@ -30,6 +30,11 @@ class Footer extends FooterElement
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function getFooterColumnElement(BrizyComponent $brizySection, $index): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, $index);
     }
 
 }
