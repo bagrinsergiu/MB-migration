@@ -47,7 +47,7 @@ class Head extends HeadElement
         $layoutName = $data->getThemeContext()->getLayoutName();
         $browser = $data->getThemeContext()->getBrowser();
 
-       $this->browserPage = $browser->openPage($menuUrl, $layoutName);
+        $this->browserPage = $browser->openPage($menuUrl, $layoutName);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -81,7 +81,7 @@ class Head extends HeadElement
         $headStyle = [
             'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['width']),
             'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['height']),
-            'bg-color'=> ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
+            'bg-color' => ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
             'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
         ];
 
@@ -156,21 +156,21 @@ class Head extends HeadElement
         ];
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($imageLogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($mobileIconButtonOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 1)
                 ->getValue()
                 ->$nameOption($value);
@@ -178,14 +178,14 @@ class Head extends HeadElement
 
 
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($activeItemMenuOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
@@ -199,6 +199,79 @@ class Head extends HeadElement
         $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
 
         return $brizySection;
+    }
+
+    protected function getHoverSubMenuStyle(): array
+    {
+        if ($this->browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()['selector'])) {
+
+            $this->browserPage->getPageScreen('1');
+
+            $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuItemClassSelected()['selector']);
+
+            $this->browserPage->getPageScreen('1_a');
+
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+
+            $this->browserPage->getPageScreen('1_1');
+
+            $activeMenuSubItemStyles = $this->scrapeStyle($this->getThemeSubMenuSelectedItemSelector()['selector'], ['color']);
+
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+
+            $this->browserPage->getPageScreen('remove_node_1');
+
+            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuItemClassSelected()['selector'])
+            && $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])
+            ) {
+
+                $this->browserPage->getPageScreen('subMenu_Selected');
+                $entrySubMenu = [
+                    'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
+                    'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                    'families' => '',
+                    'defaultFamily' => [],
+                    'hover' => true,
+                ];
+
+                $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
+            }
+
+            $this->browserPage->getPageScreen(2);
+
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
+
+        } else {
+
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+
+            $entrySubMenu = [
+                'itemSelector' => $this->getThemeSubMenuItemSelector(),
+                'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                'families' => '',
+                'defaultFamily' => [],
+                'hover' => true,
+            ];
+
+            $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
+
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+        }
+
+        return $hoverMenuSubItemStyles['data'] ?? [];
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
@@ -223,12 +296,12 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li:not(.selected) > a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li:not(.selected).has-sub > ul > li:not(.selected) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li", "className" => "selected"];
+        return ["selector" => "#main-navigation > ul > li:not(.selected).has-sub > ul > li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
