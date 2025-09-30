@@ -25,7 +25,7 @@ class Head extends HeadElement
      */
     protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 1, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
     /**
@@ -47,7 +47,7 @@ class Head extends HeadElement
         $layoutName = $data->getThemeContext()->getLayoutName();
         $browser = $data->getThemeContext()->getBrowser();
 
-       $this->browserPage = $browser->openPage($menuUrl, $layoutName);
+        $this->browserPage = $browser->openPage($menuUrl, $layoutName);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -81,7 +81,7 @@ class Head extends HeadElement
         $headStyle = [
             'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['width']),
             'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['height']),
-            'bg-color'=> ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
+            'bg-color' => ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
             'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
         ];
 
@@ -112,15 +112,15 @@ class Head extends HeadElement
         ];
 
         $activeItemMenuOptions = [
-            'activeMenuBorderStyle' => 'solid',
+            'activeMenuBorderStyle' => 'none',
             'activeMenuBorderColorHex' => '#000000',
             'activeMenuBorderColorOpacity' => 0.02,
             'activeMenuBorderColorPalette' => '',
             'activeMenuBorderWidthType' => 'ungrouped',
-            'activeMenuBorderWidth' => 3,
+            'activeMenuBorderWidth' => 0,
             'activeMenuBorderTopWidth' => 0,
             'activeMenuBorderRightWidth' => 0,
-            'activeMenuBorderBottomWidth' => 3,
+            'activeMenuBorderBottomWidth' => 0,
             'activeMenuBorderLeftWidth' => 0,
         ];
 
@@ -137,7 +137,7 @@ class Head extends HeadElement
             'mobileMarginRightSuffix' => 'px',
             'mobileMarginBottom' => 0,
             'mobileMarginBottomSuffix' => 'px',
-            'mobileMarginLeft' => 0,
+            'mobileMarginLeft' => 10,
             'mobileMarginLeftSuffix' => 'px',
         ];
 
@@ -149,44 +149,44 @@ class Head extends HeadElement
             "marginTopSuffix" => "px",
             "marginBottom" => 10,
             "marginBottomSuffix" => "px",
-            "marginRight" => 0,
+            "marginRight" => 20,
             "marginRightSuffix" => "px",
             "marginLeft" => 0,
             "marginLeftSuffix" => "px",
         ];
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 0)
+            $nameOption = 'set_' . $logoOption;
+            $brizySection->getItemWithDepth(0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($imageLogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($mobileIconButtonOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 1)
+            $nameOption = 'set_' . $logoOption;
+            $brizySection->getItemWithDepth(0, 0, 1)
                 ->getValue()
                 ->$nameOption($value);
         }
 
 
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+            $nameOption = 'set_' . $logoOption;
+            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($activeItemMenuOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+            $nameOption = 'set_' . $logoOption;
+            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -201,19 +201,92 @@ class Head extends HeadElement
         return $brizySection;
     }
 
+    protected function getHoverSubMenuStyle(): array
+    {
+        if ($this->browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()['selector'])) {
+
+            $this->browserPage->getPageScreen('1');
+
+            $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuItemClassSelected()['selector']);
+
+            $this->browserPage->getPageScreen('1_a');
+
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+
+            $this->browserPage->getPageScreen('1_1');
+
+            $activeMenuSubItemStyles = $this->scrapeStyle($this->getThemeSubMenuSelectedItemSelector()['selector'], ['color']);
+
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+
+            $this->browserPage->getPageScreen('remove_node_1');
+
+            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuItemClassSelected()['selector'])
+                && $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])
+            ) {
+
+                $this->browserPage->getPageScreen('subMenu_Selected');
+                $entrySubMenu = [
+                    'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
+                    'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                    'families' => '',
+                    'defaultFamily' => [],
+                    'hover' => true,
+                ];
+
+                $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
+            }
+
+            $this->browserPage->getPageScreen(2);
+
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
+
+        } else {
+
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+
+            $entrySubMenu = [
+                'itemSelector' => $this->getThemeSubMenuItemSelector(),
+                'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                'families' => '',
+                'defaultFamily' => [],
+                'hover' => true,
+            ];
+
+            $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
+
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+        }
+
+        return $hoverMenuSubItemStyles['data'] ?? [];
+    }
+
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
 
     }
 
-    public function getThemeMenuItemSelector(): array
-    {
-        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
-    }
-
     public function getThemeMenuItemActiveSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+    }
+
+    public function getThemeMenuItemSelector(): array
+    {
+        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
     public function getThemeParentMenuItemSelector(): array
@@ -223,17 +296,17 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li:not(.selected) > a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li:not(.selected).has-sub > ul > li:not(.selected) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
+        return ["selector" => "#main-navigation > ul > li:not(.selected).has-sub > ul > li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "className" => "selected"];
     }
 
     public function getThemeMobileNavSelector(): array
@@ -322,6 +395,26 @@ class Head extends HeadElement
         ];
     }
 
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "marginLeft" => 0,
+            "marginRight" => 0,
+
+            "mobilePaddingType" => "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 10,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
+
     public function getMenuItemBgSelector(): array
     {
         return $this->getThemeMenuItemSelector();
@@ -335,5 +428,21 @@ class Head extends HeadElement
     public function getNotSelectedMenuItemBgSelector(): array
     {
         return $this->getThemeMenuItemSelector();
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ""];
+        //#main-navigation > ul:nth-child(1) > li.has-sub > ul
     }
 }
