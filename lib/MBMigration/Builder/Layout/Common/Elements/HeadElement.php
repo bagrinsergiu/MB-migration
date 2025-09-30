@@ -424,8 +424,8 @@ abstract class HeadElement extends AbstractElement
 
             $this->browserPage->getPageScreen('remove_node_1');
 
-            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuSelectedItemSelector()['selector'])
-             && $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])) {
+            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])) {
+
                 $this->browserPage->getPageScreen('subMenu_Selected');
                 $entrySubMenu = [
                     'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),

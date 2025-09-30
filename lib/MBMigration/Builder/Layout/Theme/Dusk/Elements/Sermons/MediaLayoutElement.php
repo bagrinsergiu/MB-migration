@@ -697,7 +697,7 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
             "paddingTopSuffix" => "px",
             "paddingRight" => 20,
             "paddingRightSuffix" => "px",
-            "paddingBottom" => 50,
+            "paddingBottom" => 90,
             "paddingBottomSuffix" => "px",
             "paddingLeft" => 20,
             "paddingLeftSuffix" => "px",
