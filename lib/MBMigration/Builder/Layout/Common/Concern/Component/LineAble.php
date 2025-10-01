@@ -19,7 +19,7 @@ trait LineAble
                                 $options = null,
         array                   $customStyles = [],
         ?int                    $position = null,
-                                $align = 'center'
+                                $pseudoElement = ':after'
     ): BrizyComponent
     {
         $mbSection = $data->getMbSection();
@@ -35,19 +35,25 @@ trait LineAble
                         'border-top-color',
                         'border-top-style',
                         'border-top-width',
+                        'border-bottom-color',
+                        'border-bottom-style',
+                        'border-bottom-width',
                         'width',
                         'text-align',
                     ],
                     'families' => $data->getFontFamilies(),
                     'defaultFamily' => $data->getDefaultFontFamily(),
-                    'pseudoElement' => ':after'
+                    'pseudoElement' => $pseudoElement
                 ]
             );
+
+            $topBorderWidth = (int)$lineStyles['data']['border-top-width'];
+            $bottomBorderWidth = (int)$lineStyles['data']['border-bottom-width'];
 
             $lineStyles = [
                 'color' => ColorConverter::rgba2hex($lineStyles['data']['border-top-color']),
                 'width' => (int)$lineStyles['data']['width'],
-                'borderWidth' => (int)$lineStyles['data']['border-top-width'],
+                'borderWidth' => max($topBorderWidth, $bottomBorderWidth),
                 'align' => $lineStyles['data']['text-align'],
             ];
 
@@ -89,6 +95,9 @@ trait LineAble
                         'border-top-color',
                         'border-top-style',
                         'border-top-width',
+                        'border-bottom-color',
+                        'border-bottom-style',
+                        'border-bottom-width',
                         'width',
                         'text-align',
                     ],
@@ -98,10 +107,13 @@ trait LineAble
                 ]
             );
 
+            $topBorderWidth = (int)$lineStyles['data']['border-top-width'];
+            $bottomBorderWidth = (int)$lineStyles['data']['border-bottom-width'];
+
             $lineStyles = [
                 'color' => ColorConverter::rgba2hex($lineStyles['data']['border-top-color']),
                 'width' => (int)$lineStyles['data']['width'],
-                'borderWidth' => (int)$lineStyles['data']['border-top-width'],
+                'borderWidth' => max($topBorderWidth, $bottomBorderWidth),
                 'align' => $lineStyles['data']['text-align'],
             ];
 

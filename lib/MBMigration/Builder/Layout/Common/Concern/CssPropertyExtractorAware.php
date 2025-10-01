@@ -57,6 +57,11 @@ trait CssPropertyExtractorAware
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $pseudoElement = null
     ) {
+        if(!$this->hasNode($selectorSectionStyles, $browserPage))
+        {
+            Logger::instance()->error("The element with selector {$selectorSectionStyles} was not found in page.");
+            return [];
+        }
 
         return $this->evaluate(
             'brizy.getStyles',
