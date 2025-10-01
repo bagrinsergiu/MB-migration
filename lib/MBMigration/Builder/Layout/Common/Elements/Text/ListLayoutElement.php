@@ -136,8 +136,6 @@ abstract class ListLayoutElement extends AbstractElement
         string $photoPosition
     ): BrizyComponent;
 
-    abstract protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent;
-
     protected function handleItemTextContainerComponent(BrizyComponent $brizySection): void
     {
 
