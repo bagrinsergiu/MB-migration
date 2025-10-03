@@ -101,6 +101,8 @@ trait SectionStylesAble
 
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles, $options);
 
+        $this->handleSectionTexture($brizySection, $mbSectionItem, $sectionStyles, $options);
+
         // set the background color paddings and margins
         $brizySection->getValue()
             ->set_paddingType('ungrouped')
@@ -235,6 +237,23 @@ trait SectionStylesAble
         }
     }
 
+    private function handleSectionTexture(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom']): bool
+    {
+        if(!empty($sectionStyles['background-image']) && $sectionStyles['background-image'] !== 'none'){
+            $brizySection->getValue()
+                ->set_bgColorHex('#fff')
+                ->set_bgColorPalette('')
+                ->set_bgColorType('solid')
+                ->set_bgColorOpacity(0)
+                ->set_customCSS('.brz-section{
+  background-image: '. $sectionStyles['background-image'] .';
+  background-color: '. ColorConverter::rgba2hex($sectionStyles['background-color']) .';
+}');
+            return true;
+        }
+        return false;
+    }
+
     protected function handleItemBackground(BrizyComponent $brizySection, array $sectionStyles)
     {
         $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
@@ -295,13 +314,6 @@ trait SectionStylesAble
         $defaultFont = $data->getDefaultFontFamily();
 
         $sectionStyles = $this->getSectionStyles(
-            $mbSectionItem['sectionId'],
-            $browserPage,
-            $families,
-            $defaultFont
-        );
-
-        $sectionWrapperStyles = $this->getSectionWrapperStyles(
             $mbSectionItem['sectionId'],
             $browserPage,
             $families,
