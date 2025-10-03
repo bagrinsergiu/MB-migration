@@ -188,7 +188,8 @@ trait RichTextAble
         ElementContextInterface $data,
         BrowserPageInterface    $browserPage,
                                 $selector = null,
-                                $settings = []
+                                $settings = [],
+                                $imageOptions = []
     ): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
@@ -214,21 +215,13 @@ trait RichTextAble
                 );
                 break;
             case 'photo':
-//                $imageTarget = $brizyComponent;
-//                if ($brizyComponent->getType() != 'Wrapper') {
-//                    $imageTarget = new BrizyWrapperComponent('wrapper-image');
-//                    $brizyComponent->getValue()->add_items([$imageTarget]);
-//                }
-
                 $this->handlePhotoItem(
                     $mbSectionItem['sectionId'] ?? $mbSectionItem['id'],
                     $mbSectionItem,
                     $brizyComponent,
                     $browserPage,
-                    $families,
-                    $default_fonts
+                    $imageOptions
                 );
-
                 break;
         }
 
@@ -368,8 +361,7 @@ trait RichTextAble
         $mbSectionItem,
         BrizyComponent $brizyComponent,
         BrowserPageInterface $browserPage,
-        $families = [],
-        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans'
+        $imageOptions = []
     ): BrizyComponent
     {
         if ($brizyComponent->getType() !== 'Image') {
@@ -377,7 +369,8 @@ trait RichTextAble
                 $mbSectionItemId,
                 $mbSectionItem,
                 $brizyComponent,
-                $browserPage
+                $browserPage,
+                $imageOptions
             );
         } else {
             if (!empty($mbSectionItem['content'])) {
@@ -385,9 +378,7 @@ trait RichTextAble
                 $sizes = $this->handleSizeToInt(
                     $this->getDomElementSizes(
                         $selectorImageSizes,
-                        $browserPage,
-                        $families,
-                        $default_fonts
+                        $browserPage
                     )
                 );
                 $sizeUnit = 'px';
@@ -399,7 +390,7 @@ trait RichTextAble
                 if (!empty($sizes['width']) && !empty($sizes['height'])) {
                     if (strpos($sizes['width'], '%') !== false) {
                         $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container';
-                        $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families, $default_fonts);
+                        $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage);
                     }
 
                     $brizyComponent->getValue()
@@ -419,6 +410,11 @@ trait RichTextAble
                         ->set_mobileHeightSuffix($sizeUnit);
                 }
 
+                foreach ($imageOptions as $key => $value) {
+                    $method = 'set_' . $key;
+                    $brizyComponent->getValue()->$method($value);
+                }
+
                 $this->handleLink(
                     $mbSectionItem,
                     $brizyComponent,
@@ -435,19 +431,17 @@ trait RichTextAble
         $mbSectionItem,
         BrizyComponent $brizyComponent,
         BrowserPageInterface $browserPage,
-        $families = [],
-        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+        $options = [],
         $index = null
     ): BrizyComponent
     {
-
         if (!empty($mbSectionItem['content'])) {
             // Create new Image element according to aiRules
             $image = new BrizyImageComponent();
             $wrapperImage = new BrizyWrapperComponent('wrapper--image');
 
             $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container img';
-            $sizes = $this->handleSizeToInt($this->getDomElementSizes($selectorImageSizes, $browserPage, $families));
+            $sizes = $this->handleSizeToInt($this->getDomElementSizes($selectorImageSizes, $browserPage));
             $sizeUnit = 'px';
 
             // Set required Image element properties according to aiRules
@@ -466,7 +460,7 @@ trait RichTextAble
             if (!empty($sizes['width']) && !empty($sizes['height'])) {
                 if (strpos($sizes['width'], '%') !== false) {
                     $selectorImageSizes = '[data-id="' . $mbSectionItemId . '"] .photo-container';
-                    $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage, $families);
+                    $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage);
                 }
 
                 // Set display dimensions
@@ -491,6 +485,11 @@ trait RichTextAble
                 if (!empty($mbSectionItem['settings']['image']['height'])) {
                     $image->getValue()->set_imageHeight($mbSectionItem['settings']['image']['height']);
                 }
+            }
+
+            foreach ($options as $key => $value) {
+                $method = 'set_' . $key;
+                $image->getValue()->$method($value);
             }
 
             // Handle link properties on the image element
