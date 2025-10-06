@@ -233,19 +233,34 @@ const getImageSizes = (node: Element) => {
   });
 };
 
-export const getContainerStackWithNodes = (parentNode: Element): Container => {
+export const getContainerStackWithNodes = (element: Element): Container => {
   const container = document.createElement("div");
   const stack = new Stack();
   let appendNewText = false;
 
-  if (parentNode instanceof HTMLElement) {
-    removeWrongElements(parentNode);
-    replaceWrongTags(parentNode);
+  const parentNode = element.parentElement;
+
+  if (element.tagName === "BUTTON" && parentNode) {
+    if (parentNode.tagName === "A") {
+      element = parentNode;
+    } else {
+      const wrapper = document.createElement("div");
+      parentNode.replaceChild(wrapper, element);
+      wrapper.appendChild(element);
+      element = wrapper;
+    }
+  } else {
+    element = element.children[0];
   }
 
-  getImageSizes(parentNode); // We should get sizes before flattening, because after flattening we can't get sizes of images
+  if (element instanceof HTMLElement) {
+    removeWrongElements(element);
+    replaceWrongTags(element);
+  }
 
-  const flatNode = flattenNode(parentNode);
+  getImageSizes(element); // We should get sizes before flattening, because after flattening we can't get sizes of images
+
+  const flatNode = flattenNode(element);
 
   flatNode.childNodes.forEach((node) => {
     const _node = node.cloneNode(true);
@@ -279,6 +294,10 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
         // Check the button first because
         // inside button can be icons
         if (buttons.length > 0) {
+          if (_node.tagName === "BUTTON") {
+            appendNewText = true;
+            return stack.append(_node, { type: "button" });
+          }
           // check for non empty nodes which are not inside buttons
           const container = document.createElement("div");
           container.innerHTML = _node.innerHTML;
@@ -291,7 +310,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
           if (onlyButtons) {
             appendNewText = true;
             let appendedButton = false;
-            parentNode.parentElement?.append(_node);
+            element.parentElement?.append(_node);
 
             _node.childNodes.forEach((node) => {
               if (node instanceof HTMLElement) {
@@ -324,7 +343,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
               container.append(node.cloneNode(true));
 
               if (container.querySelector(iconSelector)) {
-                parentNode.parentElement?.append(_node);
+                element.parentElement?.append(_node);
                 appendNodeStyles(node);
 
                 Array.from(node.childNodes).forEach((child) => {
@@ -539,7 +558,7 @@ export const getContainerStackWithNodes = (parentNode: Element): Container => {
     container.append(node);
   });
 
-  parentNode.parentElement?.append(container);
+  element.parentElement?.append(container);
 
   const destroy = () => {
     container.remove();

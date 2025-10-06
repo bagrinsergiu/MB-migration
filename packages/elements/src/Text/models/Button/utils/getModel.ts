@@ -45,7 +45,7 @@ const getBorderRadius = mPipe(
   parseInt
 );
 const getTransform = mPipe(Obj.readKey("text-transform"), Str.read);
-const getText = pipe(Obj.readKey("text"), Str.read, onNullish("BUTTON"));
+const getText = pipe(Obj.readKey("textContent"), Str.read, onNullish("BUTTON"));
 const getPaddingTB = mPipe(Obj.readKey("padding-top"), Str.read, parseInt);
 const getPaddingRL = mPipe(Obj.readKey("padding-left"), Str.read, parseInt);
 
@@ -184,7 +184,7 @@ export const getModel = ({
     value: {
       _id: uuid(),
       _styles: ["button"],
-      text,
+      text: text.trim(),
       iconName: "",
       ...globalModel,
       ...modelStyle,
