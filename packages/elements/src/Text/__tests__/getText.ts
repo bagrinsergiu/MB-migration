@@ -54,7 +54,7 @@ const ex1: Data = {
               value: {
                 _id: "1",
                 _styles: ["button"],
-                text: "I'm New ",
+                text: "I'm New",
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
@@ -818,7 +818,7 @@ const ex10: Data = {
               value: {
                 _id: "1",
                 _styles: ["button"],
-                text: "I'm New ",
+                text: "I'm New",
                 borderStyle: "none",
                 fontFamily: "lato",
                 fontFamilyType: "upload",
@@ -4117,7 +4117,7 @@ const ex55: Data = {
                 size: "custom",
                 tabletFontStyle: "",
                 tabletLineHeight: 1.2,
-                text: "PRODUCT LIST AND PRICES "
+                text: "PRODUCT LIST AND PRICES"
               }
             },
             {
@@ -4522,6 +4522,91 @@ const ex58: Data = {
   }
 };
 
+// Voyage example 59 (Button as wrapper with link)
+const ex59: Data = {
+  html: `<a href="/events" data-category="link" data-location="existing" data-detail="1446435" data-url="/events">
+<button class="sites-button editable" data-id="27022666" data-category="button" tabindex="-1">
+    <div class="sites-button-text">More</div>
+</button></a>`,
+  entry: { ...entry, selector: '[data-id="27022666"]' },
+  output: {
+    data: [
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontStyle: "",
+                iconName: "",
+                lineHeight: 1.3,
+                linkExternal: "/events",
+                linkExternalBlank: "on",
+                linkType: "external",
+                mobileFontStyle: "",
+                mobileLineHeight: 1.2,
+                size: "custom",
+                tabletFontStyle: "",
+                tabletLineHeight: 1.2,
+                text: "More"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+// Voyage example 60 (Button as wrapper without link)
+const ex60: Data = {
+  html: `<button class="sites-button editable" data-id="27022666" data-category="button" tabindex="-1">
+    <div class="sites-button-text">More</div></a>`,
+  entry: { ...entry, selector: '[data-id="27022666"]' },
+  output: {
+    data: [
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: "center",
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontStyle: "",
+                iconName: "",
+                lineHeight: 1.3,
+                mobileFontStyle: "",
+                mobileLineHeight: 1.2,
+                size: "custom",
+                tabletFontStyle: "",
+                tabletLineHeight: 1.2,
+                text: "More"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -4581,7 +4666,9 @@ describe.each([
   ex55,
   ex56,
   ex57,
-  ex58
+  ex58,
+  ex59,
+  ex60
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;

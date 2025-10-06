@@ -14,19 +14,11 @@ export const getText = (_entry: Entry): Output => {
 
   const { selector, defaultFamily, families, urlMap } = entry;
 
-  let node = selector ? document.querySelector(selector) : undefined;
+  const node = selector ? document.querySelector(selector) : undefined;
 
   if (!node) {
     return {
       error: `Element with selector ${selector} not found`
-    };
-  }
-
-  node = node.tagName !== "BUTTON" ? node.children[0] : node?.parentElement;
-
-  if (!node) {
-    return {
-      error: `Element with selector ${selector} has no wrapper`
     };
   }
 
