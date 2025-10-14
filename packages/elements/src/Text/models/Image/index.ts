@@ -1,6 +1,7 @@
 import { createWrapperModel } from "../../../Models/Wrapper";
 import { ElementModel } from "../../../types/type";
 import { imageSelector } from "../../utils/common";
+import { readInt } from "utils/src/reader/number";
 
 export function getImageModel(node: HTMLElement): Array<ElementModel> {
   const images = node.querySelectorAll(imageSelector);
@@ -9,8 +10,8 @@ export function getImageModel(node: HTMLElement): Array<ElementModel> {
     const parent = image.parentElement;
     const isAnchor = parent?.tagName === "A";
 
-    const imageWidth = +(image.getAttribute("width") ?? "0");
-    const imageHeight = +(image.getAttribute("height") ?? "0");
+    const width = readInt(image.width) ?? 0;
+    const height = readInt(image.height) ?? 0;
 
     const imageSrc = image.getAttribute("src") ?? "";
     const alt = image.getAttribute("alt") ?? "";
@@ -18,6 +19,7 @@ export function getImageModel(node: HTMLElement): Array<ElementModel> {
     const linkExternal = isAnchor ? parent?.getAttribute("href") ?? "" : "";
     const linkExternalBlank =
       isAnchor && parent?.getAttribute("target") === "_blank" ? "on" : "off";
+    const align = getComputedStyle(parent ?? image).textAlign;
 
     return createWrapperModel({
       _styles: ["wrapper", "wrapper--image"],
@@ -27,14 +29,18 @@ export function getImageModel(node: HTMLElement): Array<ElementModel> {
           value: {
             imageSrc,
             alt,
-            imageWidth,
-            imageHeight,
+            width,
+            height,
+            widthSuffix: "px",
+            heightSuffix: "px",
+            sizeType: "custom",
             linkExternal,
             linkExternalBlank,
             linkType: "external"
           }
         }
-      ]
+      ],
+      horizontalAlign: align
     });
   });
 }

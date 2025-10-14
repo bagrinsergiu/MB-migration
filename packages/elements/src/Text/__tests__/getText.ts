@@ -1075,7 +1075,7 @@ const ex14: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: '<p class="brz-fs-lg-1_06 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>Follow us on:&nbsp;&nbsp;</span><a style="color: rgb(94, 111, 224); " data-location="external" data-button="false" data-detail="https://www.facebook.com/ConnectionMillen" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.facebook.com%2FConnectionMillen%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"></a><a data-location="external" data-button="false" data-detail="https://www.facebook.com/ConnectionMillen" data-category="link" target="_blank" style="background-color: rgb(80, 80, 80); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.facebook.com%2FConnectionMillen%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"> </a>&nbsp;&nbsp;<a data-location="external" data-button="false" data-detail="https://www.instagram.com/connectionchurchmillen/" data-category="link" target="_blank" style="background-color: rgb(80, 80, 80); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.instagram.com%2Fconnectionchurchmillen%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"> </a> <a style="color: rgb(250, 3, 3); " data-location="external" data-button="false" data-detail="https://www.youtube.com/@ConnectionChurchMillen" data-category="link" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fwww.youtube.com%2F%40ConnectionChurchMillen%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"></a></p>'
+                text: '<p class="brz-fs-lg-1_06 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-NaN_0"><span>Follow us on:&nbsp;&nbsp;</span>&nbsp;&nbsp; </p>'
               }
             }
           ]
@@ -2726,18 +2726,22 @@ const ex42: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper", "wrapper--image"],
+          horizontalAlign: "",
           items: [
             {
               type: "Image",
               value: {
                 alt: "Givelify",
-                imageHeight: 0,
-                imageWidth: 0,
+                height: 0,
+                heightSuffix: "px",
                 imageSrc: "https://images.givelify.com/PrimaryGiveButton2x.png",
                 linkExternal:
                   "https://www.givelify.com/givenow/1.0/Mzg3MTM=/selection",
                 linkExternalBlank: "on",
-                linkType: "external"
+                linkType: "external",
+                sizeType: "custom",
+                width: 0,
+                widthSuffix: "px"
               }
             }
           ]
@@ -2754,7 +2758,7 @@ const ex42: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1_3 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; ">“For where your treasure is, there your heart will be also,” (</span><b style=""><span style="font-weight: bold; ">Matthew 6:21</span></b><span style="font-weight: 400; ">)</span></p><p class="brz-fs-lg-1_3 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1_3 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><span style="font-weight: 400; ">At Walnut Grove Christian Church, we deeply appreciate and value your contributions. Your act of giving has a profound impact, not only on the church, but also on the lives of countless individuals. We want to express our sincere gratitude for your support.</span></p><p class="brz-fs-lg-1_3 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><br></p>'
+                text: '<p class="brz-fs-lg-0_85 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1_3 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 400; ">“For where your treasure is, there your heart will be also,” (</span><b style=""><span style="font-weight: bold; ">Matthew 6:21</span></b><span style="font-weight: 400; ">)</span></p><p class="brz-fs-lg-1_3 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1_3 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><span style="font-weight: 400; ">At Walnut Grove Christian Church, we deeply appreciate and value your contributions. Your act of giving has a profound impact, not only on the church, but also on the lives of countless individuals. We want to express our sincere gratitude for your support.</span></p><p class="brz-fs-lg-1_3 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0"><br></p>'
               }
             }
           ]
@@ -2765,18 +2769,22 @@ const ex42: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper", "wrapper--image"],
+          horizontalAlign: "",
           items: [
             {
               type: "Image",
               value: {
                 alt: "Givelify",
-                imageHeight: 0,
-                imageWidth: 0,
+                height: 0,
+                heightSuffix: "px",
                 imageSrc: "https://images.givelify.com/DarkGiveButton2x.png",
                 linkExternal:
                   "https://www.givelify.com/givenow/1.0/Mzg3MTM=/selection",
                 linkExternalBlank: "on",
-                linkType: "external"
+                linkType: "external",
+                sizeType: "custom",
+                width: 0,
+                widthSuffix: "px"
               }
             }
           ]
@@ -2793,7 +2801,7 @@ const ex42: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: '<p class="brz-fs-lg-1_37 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+                text: '<p class="brz-fs-lg-1_3 brz-ff-lato brz-ft-upload brz-fw-lg-400 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-1_37 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
               }
             }
           ]
@@ -3994,7 +4002,7 @@ const ex54: Data = {
               value: {
                 _id: "1",
                 _styles: ["richText"],
-                text: '<p class="brz-fs-lg-1_4 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-m_0_0"><span style="color: rgb(40, 77, 153); font-weight: 500; ">Sunday Worship Service</span><span style="">&nbsp;</span><span style=""> </span><span style="">&nbsp;</span><span style="color: rgb(40, 77, 153); font-weight: 500; ">9:30 am</span></p>'
+                text: '<p class="brz-fs-lg-1_4 brz-ff-lato brz-ft-upload brz-fw-lg-500 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="color: rgb(40, 77, 153); font-weight: 500; ">Sunday Worship Service</span></p>'
               }
             }
           ]
@@ -4607,6 +4615,271 @@ const ex60: Data = {
   }
 };
 
+// Zion example 61 (Duplicated text)
+const ex61: Data = {
+  html: `<div class="text-content text-2 editable" data-id="26918095" data-category="text"><div><p><span style="font-size: 1.092em; letter-spacing: 0em;">This fall we took three weeks to remember who we are and who God is calling us to be. Our </span><em data-start="242" data-end="257" style="font-size: 1.092em; letter-spacing: 0em;">Re-Membership</em><span style="font-size: 1.092em; letter-spacing: 0em;"> series walked us through the call to </span><strong data-start="295" data-end="345" style="font-size: 1.092em; letter-spacing: 0em;">Do No Harm, Do Good, and Stay in Love with God</strong><span style="font-size: 1.092em; letter-spacing: 0em;">—an invitation to live deeply into the grace and life of this community.</span></p><p data-start="421" data-end="670">If you missed a week, or if you’d like to revisit the series, you can watch all three messages on our YouTube playlist here:<br data-start="545" data-end="548">
+👉 <a data-start="551" data-end="668" rel="noopener" target="_new" href="https://youtube.com/playlist?list=PLeQuql1Woh7UNKlLIlM2c3bv2YTaK1LC4&amp;feature=shared">Watch the Re-Membership Series<span aria-hidden="true" class="clovercustom"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" data-rtl-flip=""><path d="M14.3349 13.3301V6.60645L5.47065 15.4707C5.21095 15.7304 4.78895 15.7304 4.52925 15.4707C4.26955 15.211 4.26955 14.789 4.52925 14.5293L13.3935 5.66504H6.66011C6.29284 5.66504 5.99507 5.36727 5.99507 5C5.99507 4.63273 6.29284 4.33496 6.66011 4.33496H14.9999L15.1337 4.34863C15.4369 4.41057 15.665 4.67857 15.665 5V13.3301C15.6649 13.6973 15.3672 13.9951 14.9999 13.9951C14.6327 13.9951 14.335 13.6973 14.3349 13.3301Z"></path></svg></span></a></p><p>
+
+
+</p><p data-start="672" data-end="794">This content will also serve as a foundation for our Re-membership journey at OKC First, so we’d love for you to take part.</p></div></div>`,
+  entry: { ...entry, selector: '[data-id="26918095"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1_09 brz-ff-lato brz-ft-upload brz-fw-lg-bold brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">This fall we took three weeks to remember who we are and who God is calling us to be. Our </span><em data-start="242" data-end="257" style="">Re-Membership</em><span style=""> series walked us through the call to </span><strong data-start="295" data-end="345" style="font-weight: bold; ">Do No Harm, Do Good, and Stay in Love with God</strong><span style="">—an invitation to live deeply into the grace and life of this community.</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p data-start="421" data-end="670" class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>If you missed a week, or if you’d like to revisit the series, you can watch all three messages on our YouTube playlist here:</span><br data-start="545" data-end="548"><span> 👉 </span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-start="551" data-end="668" rel="noopener" target="_new" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fyoutube.com%2Fplaylist%3Flist%3DPLeQuql1Woh7UNKlLIlM2c3bv2YTaK1LC4%26feature%3Dshared%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>Watch the Re-Membership Series</span></a></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                code: '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" data-rtl-flip=""><path d="M14.3349 13.3301V6.60645L5.47065 15.4707C5.21095 15.7304 4.78895 15.7304 4.52925 15.4707C4.26955 15.211 4.26955 14.789 4.52925 14.5293L13.3935 5.66504H6.66011C6.29284 5.66504 5.99507 5.36727 5.99507 5C5.99507 4.63273 6.29284 4.33496 6.66011 4.33496H14.9999L15.1337 4.34863C15.4369 4.41057 15.665 4.67857 15.665 5V13.3301C15.6649 13.6973 15.3672 13.9951 14.9999 13.9951C14.6327 13.9951 14.335 13.6973 14.3349 13.3301Z"></path></svg>',
+                customSize: 26,
+                filename: "icon.svg",
+                linkExternal:
+                  "https://youtube.com/playlist?list=PLeQuql1Woh7UNKlLIlM2c3bv2YTaK1LC4&feature=shared",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "favourite-31",
+                padding: 7,
+                type: "custom"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p data-start="672" data-end="794" class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span>This content will also serve as a foundation for our Re-membership journey at OKC First, so we’d love for you to take part.</span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
+// Zion example 62 (Large images inside text)
+const ex62: Data = {
+  html: `<div class="text-content text-2 editable" data-id="25987866" data-category="text"><div><p><a href="https://s3.amazonaws.com/media.cloversites.com/c9/c9abfbb4-cae8-470e-9903-47d102d29e9f/documents/Micah_Needs_List_summer.pdf" data-location="upload" data-button="false" data-detail="Micah_Needs_List_summer.pdf" data-category="document" target="_blank" class="cloverlinks">Micah_Needs_List_summer.pdf</a></p><p style="font-family: &quot;Proxima Nova&quot;, &quot;Proxima Nova Regular&quot;, sans-serif; font-weight: 200; font-size: 0.9158em;"><span style="letter-spacing: 0em;">Micah is a non-profit that ministers to those experiencing homelessness in the underserved northwest part of our city. They were hosted here at OKC First until June when they opened a drop-in day shelter around the corner on Meridian!&nbsp;&nbsp;</span></p><p style="font-family: &quot;Proxima Nova&quot;, &quot;Proxima Nova Regular&quot;, sans-serif; font-weight: 200; font-size: 0.9158em;"><span style="letter-spacing: 0em;">&nbsp;</span><span class="clovercustom" style="letter-spacing: 0em; text-align: inherit;"><img height="16" width="16" alt="📌" referrerpolicy="origin-when-cross-origin" src="https://static.xx.fbcdn.net/images/emoji.php/v9/tac/1/16/1f4cc.png"><u>Every</u> Sunday after church, since December, a team of OKC First volunteers goes across the street to a tent encampment.&nbsp;</span><span style="letter-spacing: 0em;">They take vital supplies and </span><span style="letter-spacing: 0em;">extend friendship and dignity to our neighbors experiencing homelessness.&nbsp;</span></p><p style="font-family: &quot;Proxima Nova&quot;, &quot;Proxima Nova Regular&quot;, sans-serif; font-weight: 200; font-size: 0.9158em;"><img height="16" width="16" alt="📌" referrerpolicy="origin-when-cross-origin" src="https://static.xx.fbcdn.net/images/emoji.php/v9/tac/1/16/1f4cc.png" style="font-size: 16.0009px; font-style: normal; font-weight: 200; letter-spacing: normal; text-align: left;">The Micah Community Center opened in June and is open three part time days a week. This is the only homelessness services facility west of I-44!! They provide respite from the weather, a hot meal, device charging, TV lounge, and personal care items. Showers and laundry service are coming soon. They need volunteers, resource donations, and financial support!&nbsp;<br></p><p style="font-family: &quot;Proxima Nova&quot;, &quot;Proxima Nova Regular&quot;, sans-serif; font-weight: 200; font-size: 0.9158em;"><br></p><p style="font-family: &quot;Proxima Nova&quot;, &quot;Proxima Nova Regular&quot;, sans-serif; font-weight: 200; font-size: 0.9158em;">You can join the Micah Movement! To participate in our outreach team or volunteer at the Micah Center: contact <a style="font-weight: 600;" href="mailto:micahcommunitymovement@gmail.com" data-location="email" data-button="false" data-detail="micahcommunitymovement@gmail.com" data-category="link" target="_self" class="cloverlinks"><u style="">Alissa Gilmore</u></a>. Donate funds on the <a href="http://giving.okcfirst.com" data-location="external" data-button="false" data-detail="http://giving.okcfirst.com" data-category="link" target="_blank" class="cloverlinks" style="font-weight: 600;"><u style="">church's giving site</u></a> and select Micah, or at <a href="http://mcmokc.org/donate" data-location="external" data-button="false" data-detail="http://mcmokc.org/donate" data-category="link" target="_blank" class="cloverlinks" style="font-weight: 600;"><u>www.mcmokc.org/donate</u></a>. And contribute <u style=""><a href="https://s3.amazonaws.com/media.cloversites.com/c9/c9abfbb4-cae8-470e-9903-47d102d29e9f/documents/Micah_Needs_List_summer.pdf" data-location="existing" data-button="false" data-detail="Micah_Needs_List_summer.pdf" data-category="document" target="_blank" class="cloverlinks" style="font-weight: 600;">most needed items.</a></u>&nbsp;</p><p style="font-family: &quot;Proxima Nova&quot;, &quot;Proxima Nova Regular&quot;, sans-serif; font-weight: 200; font-size: 0.9158em;"><br></p><p style="font-family: &quot;Proxima Nova&quot;, &quot;Proxima Nova Regular&quot;, sans-serif; font-weight: 200; font-size: 0.9158em;"><img height="16" width="16" alt="📌" referrerpolicy="origin-when-cross-origin" src="https://static.xx.fbcdn.net/images/emoji.php/v9/tac/1/16/1f4cc.png" style="font-size: 16.0009px; font-style: normal; font-weight: 200; letter-spacing: normal; text-align: left;">Store this number in your phone: <span class="clovercustom" style="font-weight: 600;">405-498-2009</span>. If you encounter a person experiencing homelessness in the area near the church, give them the number to call/text our Micah team. It is NOT an emergency number; they may need to leave a message. They have Center invite cards if you would like to keep some handy in your car to give out.&nbsp;</p></div></div>`,
+  entry: { ...entry, selector: '[data-id="25987866"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-1 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><a data-location="upload" data-button="false" data-detail="Micah_Needs_List_summer.pdf" data-category="document" target="_blank" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fs3.amazonaws.com%2Fmedia.cloversites.com%2Fc9%2Fc9abfbb4-cae8-470e-9903-47d102d29e9f%2Fdocuments%2FMicah_Needs_List_summer.pdf%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span>Micah_Needs_List_summer.pdf</span></a></p><p class="brz-fs-lg-0_92 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 200; ">Micah is a non-profit that ministers to those experiencing homelessness in the underserved northwest part of our city. They were hosted here at OKC First until June when they opened a drop-in day shelter around the corner on Meridian!&nbsp;&nbsp;</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--image"],
+          horizontalAlign: "",
+          items: [
+            {
+              type: "Image",
+              value: {
+                alt: "📌",
+                height: 0,
+                heightSuffix: "px",
+                imageSrc:
+                  "https://static.xx.fbcdn.net/images/emoji.php/v9/tac/1/16/1f4cc.png",
+                linkExternal: "",
+                linkExternalBlank: "off",
+                linkType: "external",
+                sizeType: "custom",
+                width: 0,
+                widthSuffix: "px"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_92 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="">&nbsp;</span><span style="font-weight: 200; "><u><span>Every</span></u> Sunday after church, since December, a team of OKC First volunteers goes across the street to a tent encampment.&nbsp;</span><span style="font-weight: 200; ">They take vital supplies and </span><span style="font-weight: 200; ">extend friendship and dignity to our neighbors experiencing homelessness.&nbsp;</span></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--image"],
+          horizontalAlign: "",
+          items: [
+            {
+              type: "Image",
+              value: {
+                alt: "📌",
+                height: 0,
+                heightSuffix: "px",
+                imageSrc:
+                  "https://static.xx.fbcdn.net/images/emoji.php/v9/tac/1/16/1f4cc.png",
+                linkExternal: "",
+                linkExternalBlank: "off",
+                linkType: "external",
+                sizeType: "custom",
+                width: 0,
+                widthSuffix: "px"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_92 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 200; ">The Micah Community Center opened in June and is open three part time days a week. This is the only homelessness services facility west of I-44!! They provide respite from the weather, a hot meal, device charging, TV lounge, and personal care items. Showers and laundry service are coming soon. They need volunteers, resource donations, and financial support!&nbsp;</span><br></p><p class="brz-fs-lg-0_92 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p><p class="brz-fs-lg-0_92 brz-ff-lato brz-ft-upload brz-fw-lg-600 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 200; ">You can join the Micah Movement! To participate in our outreach team or volunteer at the Micah Center: contact </span><a style="font-weight: 600; " data-location="email" data-button="false" data-detail="micahcommunitymovement@gmail.com" data-category="link" target="_self" data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22mailto%3Amicahcommunitymovement%40gmail.com%22%2C%22externalBlank%22%3A%22off%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><u style=""><span>Alissa Gilmore</span></u></a><span style="font-weight: 200; ">. Donate funds on the </span><a data-location="external" data-button="false" data-detail="http://giving.okcfirst.com" data-category="link" target="_blank" style="font-weight: 600; " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22http%3A%2F%2Fgiving.okcfirst.com%2F%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><u style=""><span>church\'s giving site</span></u></a><span style="font-weight: 200; "> and select Micah, or at </span><a data-location="external" data-button="false" data-detail="http://mcmokc.org/donate" data-category="link" target="_blank" style="font-weight: 600; " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22http%3A%2F%2Fmcmokc.org%2Fdonate%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><u><span>www.mcmokc.org/donate</span></u></a><span style="font-weight: 200; ">. And contribute </span><u style=""><a data-location="existing" data-button="false" data-detail="Micah_Needs_List_summer.pdf" data-category="document" target="_blank" style="font-weight: 600; " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22https%3A%2F%2Fs3.amazonaws.com%2Fmedia.cloversites.com%2Fc9%2Fc9abfbb4-cae8-470e-9903-47d102d29e9f%2Fdocuments%2FMicah_Needs_List_summer.pdf%22%2C%22externalBlank%22%3A%22on%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><span style="font-weight: 600; ">most needed items.</span></a></u>&nbsp;</p><p class="brz-fs-lg-0_92 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><br></p>'
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--image"],
+          horizontalAlign: "",
+          items: [
+            {
+              type: "Image",
+              value: {
+                alt: "📌",
+                height: 0,
+                heightSuffix: "px",
+                imageSrc:
+                  "https://static.xx.fbcdn.net/images/emoji.php/v9/tac/1/16/1f4cc.png",
+                linkExternal: "",
+                linkExternalBlank: "off",
+                linkType: "external",
+                sizeType: "custom",
+                width: 0,
+                widthSuffix: "px"
+              }
+            }
+          ]
+        }
+      },
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_92 brz-ff-lato brz-ft-upload brz-fw-lg-200 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-NaN_0"><span style="font-weight: 200; ">Store this number in your phone: </span><span style="font-weight: 600; ">405-498-2009</span><span style="font-weight: 200; ">. If you encounter a person experiencing homelessness in the area near the church, give them the number to call/text our Micah team. It is NOT an emergency number; they may need to leave a message. They have Center invite cards if you would like to keep some handy in your car to give out.&nbsp;</span></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -4668,7 +4941,9 @@ describe.each([
   ex57,
   ex58,
   ex59,
-  ex60
+  ex60,
+  ex61,
+  ex62
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
