@@ -203,22 +203,22 @@ class Head extends HeadElement
 
     public function getThemeParentMenuItemSelector(): array
     {
-        return ["selector" => "#main-content  #main-navigation", "pseudoEl" => ""];
+        return ["selector" => "#mobile-nav-button-container button", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#main-content #main-navigation > ul > li.has-sub > ul > li:not(.selected) > a", "pseudoEl" => ""];
+        return ["selector" => "#main-content #main-navigation  li:not(.selected) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#main-content #main-navigation > ul > li.has-sub > ul > li", "className" => "selected"];
+        return ["selector" => "#mobile-navigation #main-navigation ul:nth-of-type(2) li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#main-content  #main-navigation > ul > li.has-sub > ul", "className" => "selected"];
+        return ["selector" => "#main-content  #main-navigation  ul", "className" => "selected"];
     }
 
     public function getThemeMobileNavSelector(): array
@@ -228,7 +228,7 @@ class Head extends HeadElement
 
     public function getThemeMenuItemMobileSelector(): array
     {
-        return ["selector" => "#mobile-navigation > nav > ul > li.first.landing > a", "pseudoEl" => ""];
+        return ["selector" => "#mobile-navigation  li.first.landing > a", "pseudoEl" => ""];
     }
 
     public function getThemeMenuItemPaddingSelector(): array
@@ -354,7 +354,7 @@ class Head extends HeadElement
 
     protected function getThemeSubMenuItemDropDownSelector(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ""];
+        return ["selector" => "#mobile-navigation .main-navigation > ul:nth-of-type(2)", "pseudoEl" => ""];
         //#main-navigation > ul:nth-child(1) > li.has-sub > ul
     }
 }
