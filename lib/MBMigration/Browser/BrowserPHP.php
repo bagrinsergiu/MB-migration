@@ -62,6 +62,52 @@ class BrowserPHP implements BrowserInterface
             ],
         ]);
 
+
+        /*
+          $this->browser = $browserFactory->createBrowser([
+            'headless' => false,
+            'windowSize' => [1920, 6000],
+            //'enableImages' => true,
+            //'debugLogger' => $logger,
+            //'keepAlive' => false,
+            //'noSandbox' => true,
+            //'connectionDelay' => 0.5,
+            //'disableNotifications' => true,
+            'customFlags' => [
+                //'--single-process',
+                '--remote-debugging-port=9022',
+                '--no-zygote',
+                '--disable-setuid-sandbox',
+                '--disable-canvas-aa',
+                '--disable-3d-apis',
+                '--stub-cros-settings',
+                '--disable-dev-shm-usage',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-web-security',
+
+                '--remote-debugging-port=9222',
+                '--disable-dev-shm-usage',       // avoids /dev/shm size limits in Docker
+                '--no-sandbox',                  // required in many container setups
+                '--disable-gpu',                 // skip GPU emulation (faster in Docker unless you pass GPU)
+                '--disable-software-rasterizer', // don’t emulate GPU
+                '--disable-extensions',
+                '--disable-background-networking',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-breakpad',
+                '--disable-client-side-phishing-detection',
+                '--disable-default-apps',
+                '--disable-sync',
+                '--disable-translate',
+                '--metrics-recording-only',
+                '--no-first-run',
+                '--safebrowsing-disable-auto-update',
+                '--mute-audio',
+            ],
+        ]);
+         * */
+
         $this->scriptPath = $scriptPath;
     }
 
@@ -75,7 +121,7 @@ class BrowserPHP implements BrowserInterface
         }
 
         \MBMigration\Core\Logger::instance()->debug('Navigate to: '.$url);
-        $this->page->navigate($url)->waitForNavigation(Page::NETWORK_IDLE, 120000);
+        $this->page->navigate($url)->waitForNavigation(Page::DOM_CONTENT_LOADED, 120000);
 
 
         return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
