@@ -7,8 +7,9 @@ use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
+use MBMigration\Builder\Utils\ColorConverter;
 
 abstract class PhotoTextElement extends AbstractElement
 {
@@ -26,11 +27,11 @@ abstract class PhotoTextElement extends AbstractElement
         $showSecondaryHeader = $mbSection['settings']['sections']['text']['show_secondary_header'] ?? true;
         $showBody = $mbSection['settings']['sections']['text']['show_body'] ?? true;
 
-        foreach ((array) $mbSection['typeSection'] as $typeSection) {
-            $brizySectionElem = (array) $mbSection['items'];
+        foreach ((array)$mbSection['typeSection'] as $typeSection) {
+            $brizySectionElem = (array)$mbSection['items'];
 
             if ($typeSection == 'left-gallery') {
-                $brizySectionElem = (array) $mbSection['gallery']['items'];
+                $brizySectionElem = (array)$mbSection['gallery']['items'];
             }
 
             foreach ($brizySectionElem as $mbSectionItem) {
@@ -48,14 +49,21 @@ abstract class PhotoTextElement extends AbstractElement
 
                         $imageStyles = $this->obtainImageStyles($elementContext, $this->browserPage);
 
-                        $this->targetImageSize($imageTarget, (int) $imageStyles['width'], (int) $imageStyles['height']);
+                        $this->targetImageSize($imageTarget, (int)$imageStyles['width'], (int)$imageStyles['height']);
 
+                        if ($imageParentTarget = $this->getItemImageParentComponent($brizySection)) {
+                            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                $mbSectionItem,
+                                $imageParentTarget
+                            );
+                            $this->handleImageParentStyles($elementContext);
+                        }
                         break;
                 }
             }
         }
 
-        foreach ((array) $mbSection['items'] as $mbSectionItem) {
+        foreach ((array)$mbSection['items'] as $mbSectionItem) {
             switch ($mbSectionItem['category']) {
                 case 'text':
 
@@ -102,13 +110,14 @@ abstract class PhotoTextElement extends AbstractElement
         return $brizySection;
     }
 
-    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height){
+    public function targetImageSize(BrizyComponent $imageTarget, int $width, int $height)
+    {
         $imageTarget
             ->getValue()
             ->set_width($width)
             ->set_height($height)
-            ->set_heightSuffix((strpos($height,'%')===true)?'%':'px')
-            ->set_widthSuffix((strpos($width,'%')===true)?'%':'px');
+            ->set_heightSuffix((strpos($height, '%') === true) ? '%' : 'px')
+            ->set_widthSuffix((strpos($width, '%') === true) ? '%' : 'px');
     }
 
     /**
@@ -116,6 +125,11 @@ abstract class PhotoTextElement extends AbstractElement
      * @return mixed|null
      */
     abstract protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent;
+
+    protected function getItemImageParentComponent(BrizyComponent $brizySection, $photoPosition = null)
+    {
+        return null;
+    }
 
     /**
      * @param BrizyComponent $brizySection
@@ -127,7 +141,7 @@ abstract class PhotoTextElement extends AbstractElement
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,
@@ -150,5 +164,70 @@ abstract class PhotoTextElement extends AbstractElement
             "paddingLeftSuffix" => "px",
         ];
     }
+
+    protected function handleImageParentStyles(ElementContextInterface $context): void
+    {
+        static $sectionStyles = null;
+
+
+        $mbSectionItem = $context->getMbSection();
+        $families = $context->getFontFamilies();
+        $defaultFont = $context->getDefaultFontFamily();
+        $selector = '.photo-content-container:has([data-id="' . ($mbSectionItem['sectionId'] ?? $mbSectionItem['id']) . '"])';
+        $properties = [
+            'background-color',
+            'opacity',
+            'border-color',
+            'border-width',
+            'padding-top',
+            'padding-bottom',
+            'padding-right',
+            'padding-left',
+            'margin-top',
+            'margin-bottom',
+            'margin-left',
+            'margin-right',
+        ];
+
+        if (!$sectionStyles)
+            $sectionStyles = $this->getDomElementStyles($selector, $properties, $this->browserPage, $families, $defaultFont);
+
+        $context->getBrizySection()->getValue()
+            ->set_paddingType('ungrouped')
+            ->set_marginType('ungrouped')
+            ->set_borderWidthType('ungrouped')
+            ->set_borderStyle('solid')
+            ->set_borderColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['border-color']))
+            ->set_borderColorOpacity(1)
+            ->set_borderColorPalette(null)
+            ->set_borderWidth((int)$sectionStyles['border-width'])
+            ->set_borderTopWidth((int)$sectionStyles['border-width'])
+            ->set_borderRightWidth((int)$sectionStyles['border-width'])
+            ->set_borderLeftWidth((int)$sectionStyles['border-width'])
+            ->set_borderBottomWidth((int)$sectionStyles['border-width'])
+            ->set_bgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']))
+            ->set_mobileBgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']))
+            ->set_paddingTop((int)$sectionStyles['padding-top'])
+            ->set_paddingBottom((int)$sectionStyles['padding-bottom'])
+            ->set_paddingRight((int)$sectionStyles['padding-right'])
+            ->set_paddingLeft((int)$sectionStyles['padding-left'])
+            ->set_marginLeft((int)$sectionStyles['margin-left'])
+            ->set_marginRight((int)$sectionStyles['margin-right'])
+            ->set_marginTop((int)$sectionStyles['margin-top'])
+            ->set_marginBottom((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingType('ungrouped')
+            ->set_mobilePadding((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingSuffix('px')
+            ->set_mobilePaddingTop((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingTopSuffix('px')
+            ->set_mobilePaddingRight((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingRightSuffix('px')
+            ->set_mobilePaddingBottom((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingBottomSuffix('px')
+            ->set_mobilePaddingLeft((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingLeftSuffix('px');
+
+    }
+
 
 }

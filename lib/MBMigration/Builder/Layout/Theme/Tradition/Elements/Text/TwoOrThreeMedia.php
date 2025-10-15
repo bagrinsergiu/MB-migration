@@ -22,4 +22,9 @@ class TwoOrThreeMedia extends PhotoTextElement
     {
         return $brizySection->getItemWithDepth(0, 0, 0);
     }
+
+    protected function getItemImageParentComponent(BrizyComponent $brizySection, $photoPosition = null)
+    {
+        return $brizySection->getItemWithDepth(0, 1, $this->imageCount - 1, 0, 0);
+    }
 }

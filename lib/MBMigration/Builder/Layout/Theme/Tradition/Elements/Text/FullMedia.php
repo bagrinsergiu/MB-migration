@@ -12,6 +12,10 @@ class FullMedia extends PhotoTextElement
         return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
 
+    protected function getItemImageParentComponent(BrizyComponent $brizySection, $photoPosition=null): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 1, 0);
+    }
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
