@@ -3,19 +3,23 @@
 namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 
-class LeftMedia extends PhotoTextElement
+class SideMedia extends PhotoTextElement
 {
+    private $imagePosition = 'left';
+
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
+        if ($this->imagePosition == 'right') {
+            return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        }
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     /**
@@ -24,6 +28,9 @@ class LeftMedia extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
+        if ($this->imagePosition == 'right') {
+            return $brizySection->getItemWithDepth(0, 0, 0);
+        }
         return $brizySection->getItemWithDepth(0, 0, 1);
     }
 
@@ -34,37 +41,22 @@ class LeftMedia extends PhotoTextElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $mbSection = $data->getMbSection();
+
+        $text = new BrizyComponent(json_decode($this->brizyKit['textCol'], true));
+        $image = new BrizyComponent(json_decode($this->brizyKit['imageCol'], true));
+        $main = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+
+        $main->getItemWithDepth(0, 0)->getValue()->set_items([$image, $text]);
+
+        if (isset($mbSection['settings']['sections']['text']['photo_position'])) {
+            $this->imagePosition = 'right';
+            $main->getItemWithDepth(0, 0)->getValue()->set_items([$text, $image]);
+        }
+
+        $this->brizyKit['main'] = json_encode($main);
+
         $brizySection = parent::internalTransformToItem($data);
-        $mbSectionItem = $data->getMbSection();
-        $itemsKit = $data->getThemeContext()->getBrizyKit();
-
-        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
-
-        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
-        $titleMb = $this->getItemByType($mbSectionItem, 'title');
-
-        $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
-        $wrapperLineStyles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $menuSectionSelector,
-                'styleProperties' => ['border-bottom-color',],
-                'families' => [],
-                'defaultFamily' => '',
-            ]
-        );
-
-        $headStyle = [
-            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
-        ];
-
-        $wrapperLine->getItemWithDepth(0)
-            ->getValue()
-            ->set_borderColorHex($headStyle['line-color']);
-
-        $brizySection->getItemWithDepth(0, 0, 1)
-            ->getValue()
-            ->add_items([$wrapperLine], 1);
 
         return $brizySection;
     }
@@ -72,7 +64,7 @@ class LeftMedia extends PhotoTextElement
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,

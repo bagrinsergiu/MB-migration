@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Solstice\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\GridLayoutElement
 {
@@ -33,8 +34,10 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             ->addHeightStyle();
     }
 
-    protected function handleColumItemComponent(BrizyComponent $brizyComponent): void
+    protected function handleColumItemComponent(ElementContextInterface $context): void
     {
+        $brizyComponent = $context->getBrizySection();
+
         $brizyComponent
             ->addMargin(0,5,0,5)
             ->addMobilePadding(10)

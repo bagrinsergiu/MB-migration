@@ -212,6 +212,33 @@ abstract class AbstractElement implements ElementInterface
 
         return $result;
     }
+    protected function canShowButtons($sectionData): bool
+    {
+        Logger::instance()->info('AbstractElement::canShowBody called', [
+            'element_class' => static::class,
+            'section_category' => $sectionData['category'] ?? null,
+            'has_settings' => isset($sectionData['settings'])
+        ]);
+
+        $sectionCategory = $sectionData['category'];
+        $result = false;
+
+        if (isset($sectionData['settings']['sections'][$sectionCategory]['show_buttons'])) {
+            $result = $sectionData['settings']['sections'][$sectionCategory]['show_buttons'];
+            Logger::instance()->info('Buttons visibility determined from settings', [
+                'element_class' => static::class,
+                'section_category' => $sectionCategory,
+                'show_body' => $result
+            ]);
+        } else {
+            Logger::instance()->info('Buttons visibility defaulted to true (no settings)', [
+                'element_class' => static::class,
+                'section_category' => $sectionCategory
+            ]);
+        }
+
+        return $result;
+    }
 
     protected function emptyBackgroundContentSection(array $sectionItem): bool
     {

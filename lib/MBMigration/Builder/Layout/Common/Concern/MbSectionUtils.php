@@ -81,6 +81,14 @@ trait MbSectionUtils
 
         return $items;
     }
+    protected function groupItems($items)
+    {
+        $groups = [];
+        foreach ($items as $item) {
+            $groups[$item['group']][] = $item;
+        }
+        return $groups;
+    }
 
     protected function transliterateFontFamily($fontName): string
     {

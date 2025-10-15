@@ -35,16 +35,16 @@ abstract class AccordionLayoutElement extends AbstractElement
 
         $itemJson = json_decode($this->brizyKit['item'], true);
         $brizyAccordionItems = [];
-        foreach ($mbSection['items'] as $mbSectionItem) {
+        foreach ($mbSection['items'] as $i=>$mbSectionItem) {
             $brizyAccordionItem = new BrizyComponent($itemJson);
             $brizyAccordionItem->getValue()->set_labelText(strip_tags($mbSectionItem['items'][0]['content']));
-//            $brizyAccordionItem->getItemWithDepth(0)->getValue()
 //                ->set_bgColorHex('#ffffff');
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                 $mbSectionItem['items'][1],
                 $brizyAccordionItem
             );
             $this->handleRichTextItem($elementContext, $this->browserPage);
+            $this->handleAccordeonItem($elementContext, $mbSectionItem, $i, count($mbSection['items']));
             $brizyAccordionItems[] = $brizyAccordionItem;
         }
 
@@ -55,9 +55,18 @@ abstract class AccordionLayoutElement extends AbstractElement
             $brizyAccordionComponent->set_bgColorOpacity(0);
         }
 
+        $elementContext = $data->instanceWithBrizyComponent($this->getAccordionParentComponent($brizySection));
+        $this->handleAccordeonSyles($elementContext);
         return $brizySection;
     }
 
+
+    protected function handleAccordeonItem(ElementContextInterface $data, $mbSectionItem, $index, $total): void
+    {
+    }
+    protected function handleAccordeonSyles(ElementContextInterface $data): void
+    {
+    }
 
     /*
      * Introduce a method to apply custom CSS styling for accordion sections. This ensures proper width handling for rich text inside the accordion layout.

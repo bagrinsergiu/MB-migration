@@ -39,15 +39,7 @@ class Head extends HeadElement
 
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {
-        $menuEnt = $data->getThemeContext()->getBrizyMenuEntity();
-        $deepSlug = PathSlugExtractor::findDeepestSlug($menuEnt['list']);
-        $menuUrl = PathSlugExtractor::getFullUrl($deepSlug['slug']);
-        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
-        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
-        $layoutName = $data->getThemeContext()->getLayoutName();
-        $browser = $data->getThemeContext()->getBrowser();
 
-       $this->browserPage = $browser->openPage($menuUrl, $layoutName);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -191,13 +183,6 @@ class Head extends HeadElement
                 ->$nameOption($value);
         }
 
-        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
-        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
-        $layoutName = $data->getThemeContext()->getLayoutName();
-        $browser = $data->getThemeContext()->getBrowser();
-
-        $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
-
         return $brizySection;
     }
 
@@ -208,32 +193,32 @@ class Head extends HeadElement
 
     public function getThemeMenuItemActiveSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+        return ["selector" => "li.selected a", "pseudoEl" => ""];
     }
 
     public function getThemeMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+        return ["selector" => "#main-content #main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
     public function getThemeParentMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation", "pseudoEl" => ""];
+        return ["selector" => "#main-content  #main-navigation", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li:not(.selected) > a", "pseudoEl" => ""];
+        return ["selector" => "#main-content #main-navigation > ul > li.has-sub > ul > li:not(.selected) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li", "className" => "selected"];
+        return ["selector" => "#main-content #main-navigation > ul > li.has-sub > ul > li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "className" => "selected"];
+        return ["selector" => "#main-content  #main-navigation > ul > li.has-sub > ul", "className" => "selected"];
     }
 
     public function getThemeMobileNavSelector(): array
@@ -349,7 +334,7 @@ class Head extends HeadElement
 
     public function getMenuHoverItemBgSelector(): array
     {
-        return $this->getThemeSubMenuItemBGSelector();
+        return $this->getThemeMenuItemSelector();
     }
 
     public function getNotSelectedMenuItemBgSelector(): array

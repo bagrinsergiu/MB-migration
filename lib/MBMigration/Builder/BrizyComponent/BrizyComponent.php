@@ -839,6 +839,22 @@ class BrizyComponent implements JsonSerializable
 
         return $this;
     }
+    public function setBgColorStyle($color, $opacity): BrizyComponent
+    {
+        if ($color === null || $color === '') {
+            $color = $this->getValue()->get('bgColorHex');
+        }
+
+        if ($opacity === null || $opacity === '') {
+            $opacity = $this->getValue()->get('bgColorOpacity');
+        }
+
+        $this->getValue()->set('bgColorHex', $color);
+        $this->getValue()->set('bgColorOpacity', $opacity);
+        $this->getValue()->set('bgColorPalette', '');
+
+        return $this;
+    }
 
     private function addConstructPadding($padding, $position, $prefix = '', $measureType = 'px'): void
     {

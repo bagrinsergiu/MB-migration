@@ -13,6 +13,7 @@ use MBMigration\Builder\Menu\MenuHandler;
 use MBMigration\Builder\PageController;
 use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\Utils\ExecutionTimer;
+use MBMigration\Builder\Utils\FoldersUtility;
 use MBMigration\Builder\Utils\TimeUtility;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
@@ -169,7 +170,7 @@ class MigrationPlatform
         if (!($this->brizyProjectDomain = $this->cache->get('brizyProjectDomain'))) {
             $this->brizyProjectDomain = $this->brizyApi->getDomain($this->projectID_Brizy);
             $this->cache->set('brizyProjectDomain', $this->brizyProjectDomain);
-            $this->cache->dumpCache($projectUUID_MB, $this->projectID_Brizy);
+            $this->cache->dumpCache($projectUUID_MB, $projectID_Brizy);
         }
 
 

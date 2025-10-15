@@ -17,8 +17,11 @@ services:
     environment:
       APP_ENV: prod
       APP_DEBUG: 1
+      DISPLAY: $DISPLAY
     volumes:
       - ./:/project
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /dev/shm:/dev/shm
 
 #  mg_mysql:
 #    platform: linux/amd64
