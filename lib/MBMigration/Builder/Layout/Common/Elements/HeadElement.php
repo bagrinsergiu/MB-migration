@@ -361,9 +361,13 @@ abstract class HeadElement extends AbstractElement
 
     protected function getNormalSubMenuStyle($families, $defaultFamilies): array
     {
+        $this->browserPage->triggerEvent('hover', 'body');
+
+        $themeSubMenuNotSelectedItemSelector = $this->getThemeSubMenuNotSelectedItemSelector();
+        $themeSubMenuItemBGSelector = $this->getThemeSubMenuItemBGSelector();
         $getSubMenuItemParams = [
-            'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
-            'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+            'itemSelector' => $themeSubMenuNotSelectedItemSelector,
+            'itemBgSelector' => $themeSubMenuItemBGSelector,
             'families' => $families,
             'defaultFamily' => $defaultFamilies,
             'hover' => false,
@@ -442,7 +446,6 @@ abstract class HeadElement extends AbstractElement
             $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
 
         } else {
-
             $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
@@ -463,6 +466,9 @@ abstract class HeadElement extends AbstractElement
                 'className' => $this->getThemeSubMenuItemClassSelected()['className'],
             ]);
         }
+
+        // close all thing that where open untiln now... just in case
+        $this->browserPage->triggerEvent('click', 'body');
 
         return $hoverMenuSubItemStyles['data'] ?? [];
     }

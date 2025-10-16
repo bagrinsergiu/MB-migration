@@ -208,7 +208,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#main-content #main-navigation  li:not(.selected) > a", "pseudoEl" => ""];
+        return ["selector" => "#main-content #main-navigation  li:not(.selected):nth-of-type(1) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
