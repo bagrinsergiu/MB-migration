@@ -38,7 +38,7 @@ abstract class FullMediaElementElement extends AbstractElement
 
         $brizyTextContainerComponent = $this->getTextContainerComponent($brizySection);
         $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyTextContainerComponent);
-        $this->handleRichTextItems($elementTextContainerComponentContext, $this->browserPage);
+        $this->handleOnlyRichTextItems($elementTextContainerComponentContext, $this->browserPage);
         $this->handleDonationsButton($elementTextContainerComponentContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
         $brizyImageWrapperComponent = $this->getImageWrapperComponent($brizySection);
@@ -73,9 +73,7 @@ abstract class FullMediaElementElement extends AbstractElement
             $imageMb,
             $brizyImageComponent,
             $this->browserPage,
-            $data->getFontFamilies(),
-            $data->getDefaultFontFamily(),
-            $imageMb['order_by'] ?? null
+            $data->getFontFamilies()
         );
 
         return $brizySection;

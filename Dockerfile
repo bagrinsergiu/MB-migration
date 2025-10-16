@@ -83,3 +83,4 @@ ARG PHP_FPM_INI_DIR="/usr/local/etc/php"
 
 RUN pecl install xdebug-3.1.5 && docker-php-ext-enable xdebug
 COPY .docker/conf.d/xdebug.ini "${PHP_FPM_INI_DIR}/conf.d/xdebug.ini"
+RUN chown -R www-data:www-data /var/www

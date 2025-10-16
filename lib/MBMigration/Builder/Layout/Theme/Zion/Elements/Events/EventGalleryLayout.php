@@ -7,9 +7,8 @@ class EventGalleryLayout extends \MBMigration\Builder\Layout\Common\Elements\Eve
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 50;
+        return 75;
     }
-
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
        return 25;

@@ -5,4 +5,9 @@ namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Prayer;
 class PrayerList
 {
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 75;
+    }
+
 }

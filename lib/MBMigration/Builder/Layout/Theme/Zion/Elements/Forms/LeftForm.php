@@ -48,4 +48,9 @@ class LeftForm extends FormWithTextElement
     {
         return $this->brizyKit['left-form'];
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 75;
+    }
 }

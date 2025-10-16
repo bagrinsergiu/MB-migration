@@ -19,4 +19,9 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
             "mobilePaddingLeftSuffix" => "px",
         ];
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 75;
+    }
 }
