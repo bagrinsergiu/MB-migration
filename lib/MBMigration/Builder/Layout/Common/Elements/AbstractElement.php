@@ -445,4 +445,9 @@ abstract class AbstractElement implements ElementInterface
     {
         return $section;
     }
+
+    protected function customSettings(): array
+    {
+        return [];
+    }
 }

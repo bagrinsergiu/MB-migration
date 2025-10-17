@@ -29,6 +29,7 @@ use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\TwoHorizontalText;
 use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\TwoRightMediaCircle;
 use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\LeftMediaDiamond;
 use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\RightMediaDiamond;
+use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\TopMediaDiamond;
 
 class ElementFactory extends AbstractThemeElementFactory
 {
@@ -43,11 +44,12 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'full-text':
                 return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
 
+            case 'top-media-diamond':
+                return new TopMediaDiamond($this->blockKit['blocks']['top-media-diamond'], $browserPage);
             case 'left-media-diamond':
                 return new LeftMediaDiamond($this->blockKit['blocks']['left-media-diamond'], $browserPage);
             case 'right-media-diamond':
                 return new RightMediaDiamond($this->blockKit['blocks']['right-media-diamond'], $browserPage);
-
 
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);

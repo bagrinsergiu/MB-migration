@@ -114,7 +114,7 @@ abstract class ListLayoutElement extends AbstractElement
                         $mbItem,
                         $this->getItemImageComponent($brizySectionItem, $photoPosition)
                     );
-                    $this->handleRichTextItem($elementContext, $this->browserPage, null, $this->customSettings());
+                    $this->handleRichTextItem($elementContext, $this->browserPage, null, [], $this->customSettings());
                 }
             }
 
