@@ -165,14 +165,11 @@ class MigrationPlatform
             $this->projectID_Brizy = $projectID_Brizy;
         }
 
-
-
         if (!($this->brizyProjectDomain = $this->cache->get('brizyProjectDomain'))) {
             $this->brizyProjectDomain = $this->brizyApi->getDomain($this->projectID_Brizy);
             $this->cache->set('brizyProjectDomain', $this->brizyProjectDomain);
             $this->cache->dumpCache($projectUUID_MB, $projectID_Brizy);
         }
-
 
         $this->projectUUID_MB = $projectUUID_MB;
         $this->projectId = $projectUUID_MB . '_' . $this->projectID_Brizy . '_';
@@ -191,16 +188,16 @@ class MigrationPlatform
         }
 
         if (Config::$devMode) {
-            //$this->brizyApi->clearAllFontsInProject();
+            $this->brizyApi->clearAllFontsInProject();
         }
 
 //        $this->brizyApi->setLabelManualMigration(false);
 
-        //$this->checkDesign($designName);
+        $this->checkDesign($designName);
 
-        //FoldersUtility::createProjectFolders($this->projectId);
+        FoldersUtility::createProjectFolders($this->projectId);
 
-        //$this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
+        $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
 
         if (!($graphToken = $this->cache->get('graphToken'))) {
             $graphToken = $this->brizyApi->getGraphToken($this->projectID_Brizy);

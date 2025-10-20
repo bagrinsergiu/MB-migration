@@ -559,7 +559,7 @@ class FontsController extends builderUtils
      */
     private function validateFontData(array $fontData): bool
     {
-        $validFormats = ['woff', 'woff2', 'ttf', 'eot'];
+        $validFormats = ['woff', 'woff2', 'ttf', 'eot', 'svg', 'otf'];
         $maxSize = 5 * 1024 * 1024; // 5MB
 
         if (!isset($fontData['files']) || empty($fontData['files'])) {
