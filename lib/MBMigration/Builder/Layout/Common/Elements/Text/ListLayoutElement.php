@@ -114,7 +114,7 @@ abstract class ListLayoutElement extends AbstractElement
                         $mbItem,
                         $this->getItemImageComponent($brizySectionItem, $photoPosition)
                     );
-                    $this->handleRichTextItem($elementContext, $this->browserPage);
+                    $this->handleRichTextItem($elementContext, $this->browserPage, null, [], $this->customSettings());
                 }
             }
 
@@ -139,6 +139,11 @@ abstract class ListLayoutElement extends AbstractElement
     protected function handleItemTextContainerComponent(BrizyComponent $brizySection): void
     {
 
+    }
+
+    protected function customSettings(): array
+    {
+        return [];
     }
 
     protected function handleRowListItem(BrizyComponent $brizySection, $position = 'left'): void

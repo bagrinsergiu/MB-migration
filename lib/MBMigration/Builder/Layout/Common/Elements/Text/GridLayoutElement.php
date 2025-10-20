@@ -94,11 +94,6 @@ abstract class GridLayoutElement extends AbstractElement
                 foreach ($item['items'] as $mbItem) {
                     switch ($mbItem['category']) {
                         case 'photo':
-                            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                                $mbItem,
-                                $brizySectionItem
-                            );
-
                             $imageSize = $this->obtainItemImageStyles($mbItem['id'], $this->browserPage);
 
                             $additionalOptions = [
@@ -115,7 +110,12 @@ abstract class GridLayoutElement extends AbstractElement
                                 $this->getItemImageComponent($brizySectionItem)
                             );
 
-                            $this->handleBgPhotoItems($elementContext, $additionalOptions, $this->getTypeItemImageComponent(), $this->getPropertiesItemPhoto());
+                            $this->handleBgPhotoItems(
+                                $elementContext,
+                                $additionalOptions,
+                                $this->getTypeItemImageComponent(),
+                                $this->getPropertiesItemPhoto()
+                            );
 //                            $this->getItemImageComponent($brizySectionItem)
 //                                ->getValue()
 //                                ->set_widthSuffix('%')
@@ -175,7 +175,12 @@ abstract class GridLayoutElement extends AbstractElement
         return $brizySection;
     }
 
-    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [], $elementImageType = 'bg', array $propertiesItemPhoto = [])
+    private function handleBgPhotoItems(
+        ElementContextInterface $data,
+        array $options = [],
+        $elementImageType = 'bg',
+        array $propertiesItemPhoto = []
+    )
     {
         $mbSectionItem = $data->getMbSection();
         $brizyComponent = $data->getBrizySection();

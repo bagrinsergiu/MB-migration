@@ -14,7 +14,7 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 25,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
@@ -23,7 +23,7 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 50;
+        return 75;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

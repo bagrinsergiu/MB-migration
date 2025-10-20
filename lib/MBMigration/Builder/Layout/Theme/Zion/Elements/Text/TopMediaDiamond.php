@@ -1,24 +1,23 @@
 <?php
 
-namespace MBMigration\Builder\Layout\Common\Elements\Text;
+namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
-use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\Text\FullMediaElementElement;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 
-abstract class FullMediaElementElement extends AbstractElement
+class TopMediaDiamond extends FullMediaElementElement
 {
     use RichTextAble;
     use SectionStylesAble;
     use DonationsAble;
-
     protected function getSectionName(): string
     {
-        return "FullMedia";
+        return "TopMediaDiamond";
     }
 
     /**
@@ -38,8 +37,6 @@ abstract class FullMediaElementElement extends AbstractElement
 
         $brizyTextContainerComponent = $this->getTextContainerComponent($brizySection);
         $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyTextContainerComponent);
-        $this->handleOnlyRichTextItems($elementTextContainerComponentContext, $this->browserPage);
-        $this->handleDonationsButton($elementTextContainerComponentContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
         $brizyImageWrapperComponent = $this->getImageWrapperComponent($brizySection);
         $brizyImageComponent = $this->getImageComponent($brizySection);
@@ -76,14 +73,60 @@ abstract class FullMediaElementElement extends AbstractElement
             $this->customSettings()
         );
 
+        $this->handleOnlyRichTextItems($elementTextContainerComponentContext, $this->browserPage);
+        $this->handleDonationsButton($elementTextContainerComponentContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
+
         return $brizySection;
     }
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+        return $brizySection->getItemWithDepth(0,0);
+    }
 
-    abstract protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent;
+    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0,0);
+    }
 
-    abstract protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent;
+    protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 1);
+    }
 
-    abstract protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent;
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 75;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 25;
+    }
+
+    protected function customSettings(): array
+    {
+        return  [
+            'customCSS' => $this->getCustomCss(),
+            'maskShape' => 'custom',
+            "sizeSuffix" => "%",
+            'size' => 40
+        ];
+    }
+
+    private function getCustomCss(): string
+    {
+        return "element:has(.brz-ed-image__wrapper) .brz-ed-image__wrapper{
+  mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PHBhdGggZD0ibTEwMCAxMCA5MCA5MC05MCA5MC05MC05MHoiLz48L3N2Zz4=') !important;
+}
+
+element:not(:has(.brz-ed-image__wrapper)) picture{
+  mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PHBhdGggZD0ibTEwMCAxMCA5MCA5MC05MCA5MC05MC05MHoiLz48L3N2Zz4=') !important;
+}";
+    }
 
     protected function getPropertiesMainSection(): array
     {
@@ -95,7 +138,7 @@ abstract class FullMediaElementElement extends AbstractElement
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 25,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
