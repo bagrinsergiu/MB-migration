@@ -3,7 +3,6 @@
 namespace MBMigration\Builder\Layout\Common\Concern;
 
 use MBMigration\Browser\BrowserPageInterface;
-use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Core\Logger;
 
 trait CssPropertyExtractorAware
@@ -12,7 +11,7 @@ trait CssPropertyExtractorAware
         $scriptName,
         $selectorSectionStyles,
         $styles,
-        BrowserPageInterface  $browserPage,
+        BrowserPageInterface $browserPage,
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $pseudoElement = null
@@ -25,7 +24,7 @@ trait CssPropertyExtractorAware
             'defaultFamily' => $default_fonts,
         ];
 
-        if(isset($pseudoElement)){
+        if (isset($pseudoElement)) {
             $params['pseudoElement'] = $pseudoElement;
         }
 
@@ -56,9 +55,10 @@ trait CssPropertyExtractorAware
         $families = [],
         $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $pseudoElement = null
-    ) {
-        if(!$this->hasNode($selectorSectionStyles, $browserPage))
-        {
+    )
+    {
+
+        if (!$this->hasNode($selectorSectionStyles, $browserPage)) {
             Logger::instance()->error("The element with selector {$selectorSectionStyles} was not found in page.");
             return [];
         }

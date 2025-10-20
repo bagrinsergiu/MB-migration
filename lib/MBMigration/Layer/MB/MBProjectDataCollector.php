@@ -57,7 +57,7 @@ class MBProjectDataCollector
         $this->projectId = $this->cache->get('projectId_Brizy');
         $this->container = $this->cache->get('container');
 
-        $this->db = new DBConnector();
+        $this->db = DBConnector::getInstance();
         $this->manipulator = new ArrayManipulator();
 
         // Initialize FontsController only if container is available
@@ -114,7 +114,7 @@ class MBProjectDataCollector
     {
         self::checkUUID($projectUUID_MB);
 
-        $db = new DBConnector();
+        $db = DBConnector::getInstance();
         $settingSite = $db->requestArray("SELECT id from sites WHERE uuid = '".$projectUUID_MB."'");
 
         if (empty($settingSite)) {
@@ -127,7 +127,7 @@ class MBProjectDataCollector
 
     public static function getDomainBySiteId(int $project_ID_MB)
     {
-        $db = new DBConnector();
+        $db = DBConnector::getInstance();
         $settingSite = $db->requestArray("SELECT domain_name from domains WHERE site_id = '".$project_ID_MB."'");
         if (empty($settingSite)) {
             Logger::instance()->info(self::trace(0).'Message: MB project not found');

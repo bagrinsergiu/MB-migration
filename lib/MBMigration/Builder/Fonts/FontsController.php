@@ -72,12 +72,77 @@ class FontsController extends builderUtils
     public function getFontsFromProjectData(): array
     {
         $containerID = $this->cache->get('projectId_Brizy');
-        try{
-            return json_decode(
+        if (!$containerID) {
+            Logger::instance()->warning('getFontsFromProjectData: No container ID found in cache');
+            return [];
+        }
+
+        // Create cache key based on container ID
+        $cacheKey = "project_fonts_data_{$containerID}";
+        $cacheExpiration = 1800; // 30 minutes cache
+
+        // Try to get cached data first
+        $cachedData = $this->cache->get($cacheKey);
+        if ($cachedData !== null && $this->isValidCachedData($cachedData, $cacheKey)) {
+            Logger::instance()->info('getFontsFromProjectData: Using cached fonts data', [
+                'cacheKey' => $cacheKey,
+                'fontTypesCount' => $this->countFontTypes($cachedData)
+            ]);
+            return $cachedData;
+        }
+
+        // Cache miss or invalid - make API call
+        Logger::instance()->info('getFontsFromProjectData: Cache miss, fetching from API', [
+            'cacheKey' => $cacheKey,
+            'containerID' => $containerID
+        ]);
+
+        try {
+            $startTime = microtime(true);
+            $projectData = json_decode(
                 $this->BrizyApi->getProjectContainer($containerID, true)['data'],
-                true)['fonts'] ?? [];
-        } catch (Exception|GuzzleException $e){
-            Logger::instance()->error('getFontsFromProjectData failed: ' . $e->getMessage());
+                true
+            );
+
+            $fontsData = $projectData['fonts'] ?? [];
+            $apiResponseTime = microtime(true) - $startTime;
+
+            // Validate API response before caching
+            if ($this->validateFontsData($fontsData)) {
+                // Cache the result with expiration
+                $this->cache->set($cacheKey, $fontsData);
+                $this->cache->set($cacheKey . '_timestamp', time());
+                $this->cache->set($cacheKey . '_expiration', time() + $cacheExpiration);
+
+                Logger::instance()->info('getFontsFromProjectData: API call successful, data cached', [
+                    'cacheKey' => $cacheKey,
+                    'apiResponseTime' => round($apiResponseTime, 3),
+                    'fontTypesCount' => $this->countFontTypes($fontsData),
+                    'cacheExpiration' => $cacheExpiration
+                ]);
+            } else {
+                Logger::instance()->warning('getFontsFromProjectData: API response validation failed, not caching', [
+                    'cacheKey' => $cacheKey
+                ]);
+            }
+
+            return $fontsData;
+
+        } catch (Exception|GuzzleException $e) {
+            Logger::instance()->error('getFontsFromProjectData API call failed', [
+                'error' => $e->getMessage(),
+                'containerID' => $containerID,
+                'cacheKey' => $cacheKey
+            ]);
+
+            // Try to return stale cached data if available as fallback
+            if ($cachedData !== null) {
+                Logger::instance()->info('getFontsFromProjectData: Returning stale cached data due to API failure', [
+                    'cacheKey' => $cacheKey
+                ]);
+                return $cachedData;
+            }
+
             return [];
         }
     }
@@ -176,6 +241,9 @@ class FontsController extends builderUtils
                         // Persist only after success: uuid should be the id returned by API; fontFamily is the normalized family name
                         self::addFontInMigration($fontNameLower, $fontId, $fontNameLower, 'google');
                         Logger::instance()->info('Google font added to project', ['family' => $fontNameLower, 'fontId' => $fontId]);
+
+                        // Clear fonts cache since project fonts have been modified
+                        $this->clearProjectFontsCache();
                     } else {
                         Logger::instance()->warning('Google font upload returned empty fontId', ['family' => $fontNameLower]);
                     }
@@ -338,6 +406,41 @@ class FontsController extends builderUtils
     }
 
     /**
+     * Clears cached project fonts data for a specific container
+     * @param string|null $containerID Container ID to clear cache for, or current if null
+     * @return bool True if cache was cleared, false otherwise
+     */
+    public function clearProjectFontsCache(?string $containerID = null): bool
+    {
+        $containerID = $containerID ?? $this->cache->get('projectId_Brizy');
+        if (!$containerID) {
+            Logger::instance()->warning('clearProjectFontsCache: No container ID available');
+            return false;
+        }
+
+        $cacheKey = "project_fonts_data_{$containerID}";
+
+        try {
+            // Clear main cache and related timestamp/expiration entries
+            $this->cache->set($cacheKey, null);
+            $this->cache->set($cacheKey . '_timestamp', null);
+            $this->cache->set($cacheKey . '_expiration', null);
+
+            Logger::instance()->info('Project fonts cache cleared', [
+                'cacheKey' => $cacheKey,
+                'containerID' => $containerID
+            ]);
+            return true;
+        } catch (Exception $e) {
+            Logger::instance()->error('Failed to clear project fonts cache', [
+                'cacheKey' => $cacheKey,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    /**
      * Validates and manages font cache entries
      */
     private function validateFontCache(): void
@@ -364,6 +467,89 @@ class FontsController extends builderUtils
                 }
             }
         }
+    }
+
+    /**
+     * Validates cached data and checks expiration
+     * @param mixed $cachedData The cached data to validate
+     * @param string $cacheKey The cache key for retrieving expiration data
+     * @return bool True if cache is valid and not expired, false otherwise
+     */
+    private function isValidCachedData($cachedData, string $cacheKey): bool
+    {
+        if ($cachedData === null || !is_array($cachedData)) {
+            return false;
+        }
+
+        // Check cache expiration
+        $expirationTime = $this->cache->get($cacheKey . '_expiration');
+        if ($expirationTime !== null && time() > $expirationTime) {
+            Logger::instance()->info('Cache expired for fonts data', [
+                'cacheKey' => $cacheKey,
+                'expirationTime' => $expirationTime,
+                'currentTime' => time()
+            ]);
+            return false;
+        }
+
+        // Validate structure of cached fonts data
+        return $this->validateFontsData($cachedData);
+    }
+
+    /**
+     * Validates fonts data structure
+     * @param array $fontsData Fonts data to validate
+     * @return bool True if valid fonts data structure, false otherwise
+     */
+    private function validateFontsData(array $fontsData): bool
+    {
+        // Allow empty fonts data as valid
+        if (empty($fontsData)) {
+            return true;
+        }
+
+        // Check that fonts data has expected structure
+        $validSections = ['config', 'google', 'upload'];
+        foreach ($validSections as $section) {
+            if (isset($fontsData[$section])) {
+                if (!is_array($fontsData[$section])) {
+                    Logger::instance()->warning('Invalid fonts data structure: section not array', [
+                        'section' => $section,
+                        'type' => gettype($fontsData[$section])
+                    ]);
+                    return false;
+                }
+
+                // If data key exists, it should be an array
+                if (isset($fontsData[$section]['data']) && !is_array($fontsData[$section]['data'])) {
+                    Logger::instance()->warning('Invalid fonts data structure: data not array', [
+                        'section' => $section,
+                        'dataType' => gettype($fontsData[$section]['data'])
+                    ]);
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Counts font types in fonts data for logging
+     * @param array $fontsData Fonts data array
+     * @return array Count of each font type
+     */
+    private function countFontTypes(array $fontsData): array
+    {
+        $counts = ['config' => 0, 'google' => 0, 'upload' => 0];
+
+        foreach (['config', 'google', 'upload'] as $type) {
+            if (isset($fontsData[$type]['data']) && is_array($fontsData[$type]['data'])) {
+                $counts[$type] = count($fontsData[$type]['data']);
+            }
+        }
+
+        return $counts;
     }
 
     /**
@@ -479,6 +665,9 @@ class FontsController extends builderUtils
                 self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyConverted);
                 Logger::instance()->info('Upload font added to project', ['family' => $fontFamilyConverted, 'fontId' => $fontFamilyId]);
 
+                // Clear fonts cache since project fonts have been modified
+                $this->clearProjectFontsCache();
+
                 return $fontFamilyId;
             }
 
@@ -556,6 +745,11 @@ class FontsController extends builderUtils
         $projectFullData['data'] = json_encode($projectData);
         $this->BrizyApi->updateProject($projectFullData);
         Logger::instance()->info('Project updated after attaching default fonts', ['attachedCount' => count($fontListToAdd)]);
+
+        // Clear fonts cache since project fonts have been modified
+        if (count($fontListToAdd) > 0) {
+            $this->clearProjectFontsCache();
+        }
 
         return $fontStyles;
     }
@@ -665,25 +859,6 @@ class FontsController extends builderUtils
         return $list;
     }
 
-    private function getPathFontByName($name)
-    {
-        $fontPack = [];
-        foreach ($this->fontsMap as $key => $font) {
-            if ($font['settings']['name'] === $name) {
-                foreach ($font['fonts'] as $fontWeight => $fontStyle) {
-                    $fontPack[$fontWeight] = $fontStyle['normal'];
-                }
-                $this->cache->add('fonsUpload', [$key => $fontPack]);
-
-                return [
-                    'displayName' => $font['settings']['display_name'],
-                    'fontsFile' => $fontPack,
-                ];
-            }
-        }
-
-        return false;
-    }
 
     static public function getFontsFamily(): array
     {
@@ -738,31 +913,4 @@ class FontsController extends builderUtils
         return $fontFamily;
     }
 
-    protected function checkArrayPath($array, $path, $check = ''): bool
-    {
-        $keys = explode('/', $path);
-        $current = $array;
-
-        foreach ($keys as $key) {
-            if (!isset($current[$key])) {
-                return false;
-            }
-            $current = $current[$key];
-        }
-
-        if ($check != '') {
-            if (is_array($check)) {
-                foreach ($check as $look) {
-                    if ($current === $look) {
-                        return true;
-                    }
-                }
-            } else {
-                if ($current === $check) {
-                    return true;
-                }
-            }
-        }
-        return true;
-    }
 }

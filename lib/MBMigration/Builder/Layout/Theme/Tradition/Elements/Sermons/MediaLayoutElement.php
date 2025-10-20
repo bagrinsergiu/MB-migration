@@ -9,6 +9,8 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
+            "paddingTop" => 50,
+            "paddingBottom" => 50,
             "mobilePaddingTop" => 25,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,

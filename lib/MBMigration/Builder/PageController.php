@@ -151,7 +151,7 @@ class PageController
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
             $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
 
-            $fontController->upLoadCustomFonts($RootListFontFamilyExtractor);
+            $this->handleFontUploadWithCache($fontController, $RootListFontFamilyExtractor);
 
             $fontFamilyS = $fontController->getFontsForSnippet();
 
@@ -221,7 +221,7 @@ class PageController
     public function getPageMapping($parentPages, $projectID_Brizy, BrizyAPI $brizyApi): array
     {
         $mapping = [];
-        $domain = $brizyApi->getDomain($projectID_Brizy);
+        $domain = $this->cache->get('brizyProjectDomain');
         $this->pageMapping($parentPages, $mapping, $domain);
 
         return $mapping;
@@ -674,4 +674,25 @@ class PageController
             json_encode($pageData->jsonSerialize())
         );
     }
+
+    /**
+     * Handle font upload with caching to optimize performance
+     *
+     * @param FontsController $fontController
+     * @param RootListFontFamilyExtractor $RootListFontFamilyExtractor
+     * @return void
+     * @throws \Exception
+     */
+    private function handleFontUploadWithCache(FontsController $fontController, RootListFontFamilyExtractor $RootListFontFamilyExtractor): void
+    {
+        $cache = VariableCache::getInstance();
+        if  ( !empty($cache->get('settings')['fonts']) ) {
+            return;
+        }
+
+        // Perform the actual font upload
+        $fontController->upLoadCustomFonts($RootListFontFamilyExtractor);
+    }
+
+
 }

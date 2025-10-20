@@ -2,33 +2,28 @@
 
 namespace MBMigration;
 
-use GuzzleHttp\Exception\RequestException;
-use MBMigration\Builder\BrizyComponent\BrizyPage;
-use MBMigration\Builder\Cms\SiteSEO;
-use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
-use MBMigration\Builder\Media\MediaController;
-use MBMigration\Builder\Menu\MenuHandler;
-use MBMigration\Builder\Utils\ArrayManipulator;
-use MBMigration\Builder\Utils\FoldersUtility;
-use MBMigration\Builder\Utils\TimeUtility;
-use MBMigration\Core\Logger;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\Checking;
+use MBMigration\Builder\Cms\SiteSEO;
 use MBMigration\Builder\DebugBackTrace;
-use MBMigration\Builder\Layout\Common\MenuBuilderFactory;
+use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Media\MediaController;
+use MBMigration\Builder\Menu\MenuHandler;
 use MBMigration\Builder\PageController;
+use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\Utils\ExecutionTimer;
-use MBMigration\Builder\Utils\TextTools;
+use MBMigration\Builder\Utils\FoldersUtility;
+use MBMigration\Builder\Utils\TimeUtility;
 use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Config;
 use MBMigration\Core\ErrorDump;
+use MBMigration\Core\Logger;
 use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
 use MBMigration\Layer\MB\MonkcmsAPI;
-use MBMigration\Parser\JS;
 use Psr\Log\LoggerInterface;
 
 class MigrationPlatform
@@ -103,6 +98,7 @@ class MigrationPlatform
     {
         try {
             $this->cache->loadDump($projectID_MB, $projectID_Brizy);
+
             $this->run($projectID_MB, $projectID_Brizy);
             $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
         } catch (GuzzleException $e) {
@@ -169,7 +165,15 @@ class MigrationPlatform
             $this->projectID_Brizy = $projectID_Brizy;
         }
 
-        $this->brizyProjectDomain = $this->brizyApi->getDomain($this->projectID_Brizy);
+
+
+        if (!($this->brizyProjectDomain = $this->cache->get('brizyProjectDomain'))) {
+            $this->brizyProjectDomain = $this->brizyApi->getDomain($this->projectID_Brizy);
+            $this->cache->set('brizyProjectDomain', $this->brizyProjectDomain);
+            $this->cache->dumpCache($projectUUID_MB, $projectID_Brizy);
+        }
+
+
         $this->projectUUID_MB = $projectUUID_MB;
         $this->projectId = $projectUUID_MB . '_' . $this->projectID_Brizy . '_';
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
@@ -187,16 +191,16 @@ class MigrationPlatform
         }
 
         if (Config::$devMode) {
-            $this->brizyApi->clearAllFontsInProject();
+            //$this->brizyApi->clearAllFontsInProject();
         }
 
 //        $this->brizyApi->setLabelManualMigration(false);
 
-        $this->checkDesign($designName);
+        //$this->checkDesign($designName);
 
-        FoldersUtility::createProjectFolders($this->projectId);
+        //FoldersUtility::createProjectFolders($this->projectId);
 
-        $this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
+        //$this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
 
         if (!($graphToken = $this->cache->get('graphToken'))) {
             $graphToken = $this->brizyApi->getGraphToken($this->projectID_Brizy);
@@ -217,14 +221,14 @@ class MigrationPlatform
             $designName
         );
 
-        if (!$this->mMgrIgnore) {
-            $this->manualMigrate = $this->brizyApi->checkProjectManualMigration($this->projectID_Brizy);
-            if ($this->manualMigrate) {
-                $this->projectPagesList = $this->parser->getPages();
-
-                return true;
-            }
-        }
+//        if (!$this->mMgrIgnore) {
+//            $this->manualMigrate = $this->brizyApi->checkProjectManualMigration($this->projectID_Brizy);
+//            if ($this->manualMigrate) {
+//                $this->projectPagesList = $this->parser->getPages();
+//
+//                return true;
+//            }
+//        }
 
         $this->cache->setClass($this->QueryBuilder, 'QueryBuilder');
 
@@ -232,16 +236,19 @@ class MigrationPlatform
             $this->pageController->getAllPage();
         }
 
-        if (!$this->cache->get('settings')) {
+        if (!($settings = $this->cache->get('settings'))) {
             $settings = $this->emptyCheck($this->parser->getSite(), self::trace(0) . ' Message: Site not found');
             $this->cache->set('settings', $settings);
-        } else {
-            $settings = $this->cache->get('settings');
         }
 
-        $this->brizyApi->setMetaDate();
+        if (!($received = $this->cache->get('brizyApiMetadata'))) {
+            $this->brizyApi->setMetaDate();
 
-        $received = $this->brizyApi->getMetadata();
+            $received = $this->brizyApi->getMetadata();
+            $this->cache->set('brizyApiMetadata', $received);
+            $this->cache->dumpCache($projectUUID_MB, $this->projectID_Brizy);
+        }
+
 
         $configM = [
             'siteId' => $received['site_id'],
@@ -250,7 +257,11 @@ class MigrationPlatform
 
         $mCms = new MonkcmsAPI($configM);
 
-        $this->cache->set('series', $mCms->getSeriesGroupBySlug());
+         if (!($series = $this->cache->get('series'))) {
+            $series = $mCms->getSeriesGroupBySlug();
+            $this->cache->set('series', $series);
+            $this->cache->dumpCache($projectUUID_MB, $this->projectID_Brizy);
+        }
 
         $parentPages = $this->parser->getPages();
 
@@ -272,6 +283,7 @@ class MigrationPlatform
             Logger::instance()->debug('Upload section pictures');
             $mainSection = MediaController::uploadPicturesFromSections($mainSection, $this->projectId, $this->brizyApi);
             $this->cache->set('mainSection', $mainSection);
+            $this->cache->dumpCache($projectUUID_MB, $this->projectID_Brizy);
         }
 
         if (!$this->cache->get('menuList')) {
@@ -298,12 +310,10 @@ class MigrationPlatform
             ]);
 
             MenuHandler::createMenuList();
+
         } else {
             $parentPages = $this->cache->get('menuList')['list'];
         }
-
-        // lets dump the cache there.
-        $this->cache->dumpCache($projectID_MB, $this->projectID_Brizy);
 
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 

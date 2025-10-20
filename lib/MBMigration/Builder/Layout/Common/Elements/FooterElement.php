@@ -50,18 +50,12 @@ abstract class FooterElement extends AbstractElement
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $mbSection = $data->getMbSection();
         $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
-        $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
 
-        foreach ($mbSection['items'] as $items) {
-            if($items['order_by'] == 0){
-                $this->handleItemMbSection($items, $elementContext);
-            }
-        }
-
-        foreach ($mbSection['items'] as $items) {
-            if($items['order_by'] == 1){
-                $this->handleItemMbSection($items, $elementContext);
-            }
+        $sortItems = $this->sortItems($mbSection['items']);
+        foreach ($sortItems as $items) {
+            $column = $this->getFooterColumnElement($brizySectionItemComponent, $items['group']);
+            $elementContext = $data->instanceWithBrizyComponent($column);
+            $this->handleItemMbSection($items, $elementContext);
         }
 
         $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
@@ -69,6 +63,11 @@ abstract class FooterElement extends AbstractElement
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
         return $brizySection;
+    }
+
+    protected function getFooterColumnElement(BrizyComponent $brizySection, $index): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getPropertiesMainSection(): array
@@ -86,7 +85,7 @@ abstract class FooterElement extends AbstractElement
                 $this->handleOnlyRichTextItem($elementContext, $this->browserPage);
                 break;
             case 'photo':
-                if(!empty($mbSection['content'])){
+                if (!empty($mbSection['content'])) {
                     $arrowSelector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
 
                     $imgStyles = $this->getDomElementStyles(

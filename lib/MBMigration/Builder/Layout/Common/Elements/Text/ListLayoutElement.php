@@ -45,7 +45,7 @@ abstract class ListLayoutElement extends AbstractElement
             $this->transformHeadItem($elementContext, $this->getHeaderComponent($brizySection), $styleList);
         }
 
-        $itemJson = json_decode($this->brizyKit['item-'.$photoPosition], true);
+        $itemJson = json_decode($this->brizyKit['item-' . $photoPosition], true);
         $brizyComponentValue = $this->getSectionItemComponent($brizySection)->getValue();
 
         foreach ($mbSection['items'] as $item) {
@@ -110,11 +110,7 @@ abstract class ListLayoutElement extends AbstractElement
 
             foreach ($item['items'] as $mbItem) {
                 if ($mbItem['category'] == 'photo') {
-                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                        $mbItem,
-                        $this->getItemImageComponent($brizySectionItem, $photoPosition)
-                    );
-                    $this->handleRichTextItem($elementContext, $this->browserPage, null, [], $this->customSettings());
+                    $this->handleMbPhotoItem($data, $brizySectionItem, $photoPosition, $mbItem);
                 }
             }
 
@@ -128,12 +124,12 @@ abstract class ListLayoutElement extends AbstractElement
 
     abstract protected function getItemTextContainerComponent(
         BrizyComponent $brizyComponent,
-        string $photoPosition
+        string         $photoPosition
     ): BrizyComponent;
 
     abstract protected function getItemImageComponent(
         BrizyComponent $brizyComponent,
-        string $photoPosition
+        string         $photoPosition
     ): BrizyComponent;
 
     protected function handleItemTextContainerComponent(BrizyComponent $brizySection): void
@@ -150,13 +146,13 @@ abstract class ListLayoutElement extends AbstractElement
     {
         $brizySection
             ->getItemWithDepth(0)
-            ->addPadding(55,0,55,0);
+            ->addPadding(55, 0, 55, 0);
     }
 
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,
@@ -168,5 +164,11 @@ abstract class ListLayoutElement extends AbstractElement
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function handleMbPhotoItem(ElementContextInterface $data, $brizySectionItem, $photoPosition, $mbItem)
+    {
+        $elementContext = $data->instanceWithBrizyComponentAndMBSection($this->getItemImageComponent($brizySectionItem, $photoPosition), $mbItem);
+        $this->handleRichTextItem($elementContext, $this->browserPage);
     }
 }

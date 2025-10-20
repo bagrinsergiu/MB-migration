@@ -74,26 +74,17 @@ abstract class GridLayoutElement extends AbstractElement
                     ->addMobilePadding(10)
                     ->addMobileMargin();
 
-                $elementContext = $data->instanceWithMBSection($item);
-                $styles = $this->obtainSectionStyles($elementContext, $this->browserPage);
-
                 $brizySectionItem
                     ->addVerticalContentAlign()
                     ->getValue()
-//                    ->set_borderColorHex($resultColorStyles['border-bottom-color'])
-//                    ->set_borderColorPalette('')
-//                    ->set_borderColorOpacity(1)
                     ->set_borderWidth(0)
                     ->set_width($itemWidth)
-//                    ->set_paddingTop((int)$styles['margin-top'])
-//                    ->set_paddingBottom((int)$styles['margin-bottom'])
-//                    ->set_paddingRight((int)$styles['margin-right'])
-//                    ->set_paddingLeft((int)$styles['margin-left'])
                     ->set_mobileWidth(100);
 
                 foreach ($item['items'] as $mbItem) {
                     switch ($mbItem['category']) {
                         case 'photo':
+
                             $imageSize = $this->obtainItemImageStyles($mbItem['id'], $this->browserPage);
 
                             $additionalOptions = [
@@ -110,18 +101,8 @@ abstract class GridLayoutElement extends AbstractElement
                                 $this->getItemImageComponent($brizySectionItem)
                             );
 
-                            $this->handleBgPhotoItems(
-                                $elementContext,
-                                $additionalOptions,
-                                $this->getTypeItemImageComponent(),
-                                $this->getPropertiesItemPhoto()
-                            );
-//                            $this->getItemImageComponent($brizySectionItem)
-//                                ->getValue()
-//                                ->set_widthSuffix('%')
-//                                ->set_heightSuffix('%')
-//                                ->set_width(100)
-//                                ->set_height(100);
+                            $this->handleBgPhotoItems($elementContext, $additionalOptions, $this->getTypeItemImageComponent(), $this->getPropertiesItemPhoto());
+
                             $this->handleItemPhotoAfter($elementContext);
                             break;
                         default:
@@ -166,7 +147,10 @@ abstract class GridLayoutElement extends AbstractElement
                             }
                     }
                 }
-                $this->handleColumItemComponent($brizySectionItem);
+
+                $context = $data->instanceWithBrizyComponentAndMBSection($item,$brizySectionItem);
+
+                $this->handleColumItemComponent($context);
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
             }
             $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
@@ -243,7 +227,7 @@ abstract class GridLayoutElement extends AbstractElement
             ->addMobilePadding(10);
     }
 
-    protected function handleColumItemComponent(BrizyComponent $brizyComponent):void
+    protected function handleColumItemComponent(ElementContextInterface $context):void
     {
     }
 

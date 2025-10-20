@@ -113,6 +113,7 @@ trait RichTextAble
         $sectionCategory = $mbSectionItem['category'];
         $showHeader = $this->canShowHeader($mbSectionItem);
         $showBody = $this->canShowBody($mbSectionItem);
+        $showButtons = $this->canShowButtons($mbSectionItem);
 
         // sort items
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
@@ -124,6 +125,9 @@ trait RichTextAble
                     continue;
                 }
                 if ($mbItem['item_type'] == 'body' && !$showBody) {
+                    continue;
+                }
+                if ($mbItem['item_type'] == 'button' && !$showButtons) {
                     continue;
                 }
 
@@ -200,6 +204,9 @@ trait RichTextAble
         $projectID = $data->getThemeContext()->getProjectId();
 
         switch ($mbSectionItem['category']) {
+            case 'button':
+                // Buttons are handled elsewhere
+
             case 'text':
                 $brizyComponent = $this->handleTextItem(
                     $mbSectionItem,

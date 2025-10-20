@@ -8,13 +8,24 @@ use MBMigration\Layer\DataSource\driver\PostgresSQL;
 
 class DBConnector
 {
+    static $instance = null;
+
     private $connection;
 
     /**
      * @throws Exception
      */
-    public function __construct() {
+    private function __construct() {
         $this->connection = new PostgresSQL();
+    }
+
+    public static function getInstance(): DBConnector
+    {
+        if (self::$instance === null) {
+            self::$instance = new DBConnector();
+        }
+
+        return self::$instance;
     }
 
     /**
