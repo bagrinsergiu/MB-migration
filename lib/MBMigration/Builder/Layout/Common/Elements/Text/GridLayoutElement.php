@@ -159,7 +159,12 @@ abstract class GridLayoutElement extends AbstractElement
         return $brizySection;
     }
 
-    private function handleBgPhotoItems(ElementContextInterface $data, array $options = [], $elementImageType = 'bg', array $propertiesItemPhoto = [])
+    private function handleBgPhotoItems(
+        ElementContextInterface $data,
+        array $options = [],
+        $elementImageType = 'bg',
+        array $propertiesItemPhoto = []
+    )
     {
         $mbSectionItem = $data->getMbSection();
         $brizyComponent = $data->getBrizySection();

@@ -43,11 +43,11 @@ class BrowserPHP implements BrowserInterface
         $this->browser = $browserFactory->createBrowser([
             'windowSize' => [1920, 6000],
             //'enableImages' => true,
-            'debugLogger' => $logger,
-            'keepAlive' => false,
-            'noSandbox' => true,
-            'connectionDelay' => 0.5,
-            'disableNotifications' => true,
+            //'debugLogger' => $logger,
+            //'keepAlive' => false,
+            //'noSandbox' => true,
+            //'connectionDelay' => 0.5,
+            //'disableNotifications' => true,
             'customFlags' => [
                 //'--single-process',
                 '--no-zygote',
@@ -57,8 +57,25 @@ class BrowserPHP implements BrowserInterface
                 '--stub-cros-settings',
                 '--disable-dev-shm-usage',
                 '--no-sandbox',
-                '--disable-setuid-sandbox',
                 '--disable-web-security',
+
+                '--remote-debugging-port=9002',
+                '--disable-dev-shm-usage',       // avoids /dev/shm size limits in Docker
+                '--disable-gpu',                 // skip GPU emulation (faster in Docker unless you pass GPU)
+                '--disable-software-rasterizer', // don’t emulate GPU
+                '--disable-extensions',
+                '--disable-background-networking',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-breakpad',
+                '--disable-client-side-phishing-detection',
+                '--disable-default-apps',
+                '--disable-sync',
+                '--disable-translate',
+                '--metrics-recording-only',
+                '--no-first-run',
+                '--safebrowsing-disable-auto-update',
+                '--mute-audio',
             ],
         ]);
 

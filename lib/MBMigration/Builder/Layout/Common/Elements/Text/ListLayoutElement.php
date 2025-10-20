@@ -137,6 +137,11 @@ abstract class ListLayoutElement extends AbstractElement
 
     }
 
+    protected function customSettings(): array
+    {
+        return [];
+    }
+
     protected function handleRowListItem(BrizyComponent $brizySection, $position = 'left'): void
     {
         $brizySection
