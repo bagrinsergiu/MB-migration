@@ -10,17 +10,18 @@ use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
 use Throwable;
-use Wrench\Exception\Exception;
+use \Exception;
 
 trait SectionStylesAble
 {
     protected function setTopPaddingOfTheFirstElement(
         ElementContextInterface $data,
-        BrizyComponent $section,
-        array $additionalOptions = [],
-        int $additionalConstantHeight = 0,
-        bool $mustBeAdded = false
-    ): void {
+        BrizyComponent          $section,
+        array                   $additionalOptions = [],
+        int                     $additionalConstantHeight = 0,
+        bool                    $mustBeAdded = false
+    ): void
+    {
         $mbSectionItem = $data->getMbSection();
         $headHeight = $data->getThemeContext()->getPageDTO()->getHeadStyle()->getHeight() + $additionalConstantHeight;
         $options = $additionalOptions;
@@ -32,7 +33,7 @@ trait SectionStylesAble
         ) {
             $options['paddingTop'] = $headHeight;
         } else {
-            if($this->getTopPaddingOfTheFirstElement() !== 0) {
+            if ($this->getTopPaddingOfTheFirstElement() !== 0) {
                 $options['paddingTop'] = $this->getTopPaddingOfTheFirstElement();
             }
         }
@@ -44,7 +45,7 @@ trait SectionStylesAble
         $options['mobileMarginType'] = 'ungrouped';
         $options['mobileMarginTop'] = $this->getMobileTopMarginOfTheFirstElement();
 
-        if(
+        if (
             $mustBeAdded ||
             (
                 isset($mbSectionItem['position']) &&
@@ -52,7 +53,7 @@ trait SectionStylesAble
             )
         ) {
             foreach ($options as $key => $value) {
-                $method = 'set_'.$key;
+                $method = 'set_' . $key;
                 $section->getValue()
                     ->$method($value);
             }
@@ -64,7 +65,7 @@ trait SectionStylesAble
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
         $defaultFont = $data->getDefaultFontFamily();
-        $selector = '[data-id="'.($mbSectionItem['sectionId'] ?? $mbSectionItem['id']).'"]';
+        $selector = '[data-id="' . ($mbSectionItem['sectionId'] ?? $mbSectionItem['id']) . '"]';
         $properties = [
             'background-color',
             'background-size',
@@ -86,15 +87,16 @@ trait SectionStylesAble
 
     protected function handleSectionStyles(
         ElementContextInterface $data,
-        BrowserPageInterface $browserPage,
-        $additionalOptions = []
-    ): BrizyComponent {
+        BrowserPageInterface    $browserPage,
+                                $additionalOptions = []
+    ): BrizyComponent
+    {
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
 
         $sectionStyles = $this->getSectionListStyle($data, $browserPage);
 
-        if(!empty($additionalOptions['bg-gradient'])){
+        if (!empty($additionalOptions['bg-gradient'])) {
             $sectionStyles['bg-gradient'] = $additionalOptions['bg-gradient'];
         }
 
@@ -116,14 +118,11 @@ trait SectionStylesAble
             ->set_marginRight((int)$sectionStyles['margin-right'])
             ->set_marginTop((int)$sectionStyles['margin-top'])
             ->set_marginBottom((int)$sectionStyles['margin-bottom'])
-
             ->set_fullHeight('custom')
             ->set_sectionHeight((int)$sectionStyles['height'])
-
             ->set_mobileBgSize('cover')
             ->set_mobileBgSizeType('original')
             ->set_mobileBgRepeat('off')
-
             ->set_mobilePaddingType('ungrouped')
             ->set_mobilePadding((int)$sectionStyles['margin-bottom'])
             ->set_mobilePaddingSuffix('px')
@@ -150,7 +149,7 @@ trait SectionStylesAble
             if (is_array($value)) {
                 continue;
             }
-            $method = 'set_'.$key;
+            $method = 'set_' . $key;
             $brizySection->getValue()
                 ->$method($value);
         }
@@ -174,10 +173,23 @@ trait SectionStylesAble
             return;
         }
 
-        $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
-            $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'])
-        );
-        $sectionStyles['background-color'] = ColorConverter::rgba2hex($sectionStyles['background-color']);
+        if (isset($sectionStyles['background-color'])) {
+            $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
+                $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'])
+            );
+        } else {
+            $selectorSectionStyles = 'body';
+
+            $styles = $this->getDomElementStyles(
+                $selectorSectionStyles,
+                ['background-color', 'opacity'],
+                $this->browserPage,
+                [],
+                []
+            );
+            $sectionStyles['background-color'] = ColorConverter::convertColorRgbToHex($styles['background-color']);
+            $sectionStyles['opacity'] = ColorConverter::normalizeOpacity($styles['opacity']);
+        }
 
         $this->handleItemBackground($brizySection, $sectionStyles);
 
@@ -198,12 +210,11 @@ trait SectionStylesAble
                     ->set_bgSize($sectionStyles['background-size'])
                     ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
                     ->set_bgColorHex($sectionStyles['background-color'])
-
                     ->set_mobileBgColorType('solid')
                     ->set_mobileBgColorHex($sectionStyles['background-color'])
                     ->set_mobileBgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']));
 
-                if($options['heightType'] == 'auto'){
+                if ($options['heightType'] == 'auto') {
                     $brizySection
                         ->getParent()
                         ->getValue()
@@ -213,7 +224,7 @@ trait SectionStylesAble
                     $brizySection
                         ->getParent()
                         ->getValue()
-                        ->set_sectionHeight((int) str_replace('px', '', $sectionStyles['height']) ?? 500)
+                        ->set_sectionHeight((int)str_replace('px', '', $sectionStyles['height']) ?? 500)
                         ->set_fullHeight('custom');
                 }
 
@@ -250,15 +261,15 @@ trait SectionStylesAble
 
     private function handleSectionTexture(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom']): bool
     {
-        if(!empty($sectionStyles['background-image']) && $sectionStyles['background-image'] !== 'none'){
+        if (!empty($sectionStyles['background-image']) && $sectionStyles['background-image'] !== 'none') {
             $brizySection->getValue()
                 ->set_bgColorHex('#fff')
                 ->set_bgColorPalette('')
                 ->set_bgColorType('solid')
                 ->set_bgColorOpacity(0)
                 ->set_customCSS('.brz-section{
-  background-image: '. $sectionStyles['background-image'] .';
-  background-color: '. ColorConverter::rgba2hex($sectionStyles['background-color']) .';
+  background-image: ' . $sectionStyles['background-image'] . ';
+  background-color: ' . ColorConverter::rgba2hex($sectionStyles['background-color']) . ';
 }');
             return true;
         }
@@ -276,7 +287,6 @@ trait SectionStylesAble
             ->set_bgColorPalette('')
             ->set_bgColorType('solid')
             ->set_bgColorOpacity($opacity)
-
             ->set_mobileBgColorType('solid')
             ->set_mobileBgColorHex($backgroundColorHex)
             ->set_mobileBgColorOpacity($opacity)
@@ -287,7 +297,7 @@ trait SectionStylesAble
 
     public function handleSectionGradient(BrizyComponent $brizySection, $sectionStyles): void
     {
-        if(!empty($sectionStyles['bg-gradient'])){
+        if (!empty($sectionStyles['bg-gradient'])) {
 
             $gradient = $sectionStyles['bg-gradient'];
 
@@ -303,7 +313,6 @@ trait SectionStylesAble
                 ->set_gradientColorPalette('')
                 ->set_gradientColorOpacity(1)
                 ->set_gradientFinishPointer($gradient['colors'][1]['percentage'])
-
                 ->set_mobileBgColorType('gradient')
                 ->set_mobileGradientType($gradient['type'])
                 ->set_mobileGradientLinearDegree($gradient['angleOrPosition'])
@@ -318,8 +327,9 @@ trait SectionStylesAble
 
     protected function getSectionListStyle(
         ElementContextInterface $data,
-        BrowserPageInterface $browserPage
-    ){
+        BrowserPageInterface    $browserPage
+    )
+    {
         $mbSectionItem = $data->getMbSection();
         $families = $data->getFontFamilies();
         $defaultFont = $data->getDefaultFontFamily();
@@ -346,7 +356,7 @@ trait SectionStylesAble
                 $defaultFont
             );
 
-            if(empty($sectionBgEclipseStyles)){
+            if (empty($sectionBgEclipseStyles)) {
                 $sectionBgStyles = $this->getBgHelperStyles(
                     $mbSectionItem['sectionId'],
                     $browserPage,
@@ -355,18 +365,17 @@ trait SectionStylesAble
                 );
                 $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity']);
 
-                if($sectionBgStyles['opacity'] !== 0){
+                if ($sectionBgStyles['opacity'] !== 0) {
                     $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
                 }
-            }else{
+            } else {
                 $sectionBgEclipseStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgEclipseStyles['opacity']);
 
-                if($sectionBgEclipseStyles['opacity'] !== 0){
+                if ($sectionBgEclipseStyles['opacity'] !== 0) {
                     $sectionStyles = array_merge($sectionStyles, $sectionBgEclipseStyles);
                 }
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
         }
 
         return $sectionStyles;
@@ -385,7 +394,8 @@ trait SectionStylesAble
         BrowserPageInterface $browserPage,
         array $families,
         string $defaultFont
-    ) {
+    )
+    {
 
         $properties = [
             'color',
@@ -405,7 +415,7 @@ trait SectionStylesAble
             'height',
             'position',
         ];
-        $selectorSectionStyles = '[data-id="'.$sectionId.'"]';
+        $selectorSectionStyles = '[data-id="' . $sectionId . '"]';
 
         return $this->getDomElementStyles(
             $selectorSectionStyles,
@@ -422,8 +432,9 @@ trait SectionStylesAble
         BrowserPageInterface $browserPage,
         array $families,
         string $defaultFont
-    ) {
-        $selectorSectionWrapperStyles = '[data-id="'.$sectionId.'"] .content-wrapper';
+    )
+    {
+        $selectorSectionWrapperStyles = '[data-id="' . $sectionId . '"] .content-wrapper';
         $properties = [
         ];
 
@@ -441,8 +452,9 @@ trait SectionStylesAble
         BrowserPageInterface $browserPage,
         array $families,
         string $defaultFont
-    ) {
-        $selectorSectionWrapperStyles = '[data-id="'.$sectionId.'"] .bg-helper>.bg-opacity';
+    )
+    {
+        $selectorSectionWrapperStyles = '[data-id="' . $sectionId . '"] .bg-helper>.bg-opacity';
         $properties = [
             'background-color',
             'opacity',
@@ -462,8 +474,9 @@ trait SectionStylesAble
         BrowserPageInterface $browserPage,
         array $families,
         string $defaultFont
-    ) {
-        $selectorSectionWrapperStyles = '[data-id="'.$sectionId.'"]  div.bg-eclipse';
+    )
+    {
+        $selectorSectionWrapperStyles = '[data-id="' . $sectionId . '"]  div.bg-eclipse';
         $properties = [
             'background-color',
             'opacity',

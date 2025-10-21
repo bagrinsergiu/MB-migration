@@ -26,7 +26,6 @@ abstract class GridLayoutElement extends AbstractElement
     {
         $mbSection = $data->getMbSection();
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-        $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
@@ -36,7 +35,11 @@ abstract class GridLayoutElement extends AbstractElement
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
-        $this->handleRichTextHead($elementContext, $this->browserPage);
+
+
+        $this->handleTextSection($elementContext);
+
+
         $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
 
         $rowJson = json_decode($this->brizyKit['row'], true);
@@ -80,6 +83,7 @@ abstract class GridLayoutElement extends AbstractElement
                     ->set_borderWidth(0)
                     ->set_width($itemWidth)
                     ->set_mobileWidth(100);
+                $itemContext = $data->instanceWithBrizyComponent($brizySectionItem);
 
                 foreach ($item['items'] as $mbItem) {
                     switch ($mbItem['category']) {
@@ -124,7 +128,7 @@ abstract class GridLayoutElement extends AbstractElement
                         default:
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                                 $mbItem,
-                                $brizySectionItem
+                                $this->getItemTextContainerComponent($brizySectionItem)
                             );
 
                             $dataIdSelector = '[data-id="'.$mbItem['id'].'"]';
@@ -139,7 +143,9 @@ abstract class GridLayoutElement extends AbstractElement
                             }
 
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
+                            $this->handleItemTextAfter($elementContext, $itemContext);
                             $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
+
                             break;
                     }
                 }
@@ -205,6 +211,9 @@ abstract class GridLayoutElement extends AbstractElement
 
     abstract protected function getItemsPerRow(): int;
 
+    protected function handleTextSection(ElementContextInterface $context) {
+         $this->handleRichTextHead($context, $this->browserPage);
+    }
     abstract protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent;
 
     abstract protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent;

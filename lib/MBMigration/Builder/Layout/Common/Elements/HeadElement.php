@@ -138,8 +138,9 @@ abstract class HeadElement extends AbstractElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
+        $mbSection = $data->getMbSection();
         $headStyles = $this->extractBlockBrowserData(
-            $data->getMbSection()['sectionId'],
+            $mbSection['sectionId'],
             $data->getFontFamilies(),
             $data->getDefaultFontFamily(),
             $data
@@ -155,7 +156,7 @@ abstract class HeadElement extends AbstractElement
 
         // build menu items and set the menu uid
         $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles);
-        $this->setImageLogo($logoImageComponent, $data->getMbSection());
+        $this->setImageLogo($logoImageComponent, $mbSection);
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItem);
 
@@ -381,7 +382,7 @@ abstract class HeadElement extends AbstractElement
             'defaultFamily' => $defaultFamilies,
         ]);
 
-        $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], $menuSubItemDropdownStyles['data']);
+        $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], (array)$menuSubItemDropdownStyles['data']);
 
         if (isset($menuSubItemStyles['error'])) {
             $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [

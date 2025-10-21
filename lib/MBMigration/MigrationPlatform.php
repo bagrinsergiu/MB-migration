@@ -273,9 +273,9 @@ class MigrationPlatform
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
         }
 
-        MediaController::setFavicon($settings['favicon'] ?? null, $this->projectId, $this->brizyApi, $this->QueryBuilder);
+        //MediaController::setFavicon($settings['favicon'] ?? null, $this->projectId, $this->brizyApi, $this->QueryBuilder);
 
-        SiteSEO::setSiteTitle($this->projectId, $this->QueryBuilder, $this->cache);
+        //SiteSEO::setSiteTitle($this->projectId, $this->QueryBuilder, $this->cache);
 
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
@@ -289,9 +289,9 @@ class MigrationPlatform
             Logger::instance()->info('Start create blank pages');
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
 //            if (!$this->buildPage) {
-            $existingBrizyPages['listPages'] = $this->pageController->deleteAllPages(
-                $existingBrizyPages['listPages']
-            );
+                $existingBrizyPages['listPages'] = $this->pageController->deleteAllPages(
+                    $existingBrizyPages['listPages']
+                );
 //            }
 
             $this->pageController->createBlankPages(
@@ -317,7 +317,7 @@ class MigrationPlatform
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
         $this->launch($parentPages, false);
-        $this->launch($parentPages, true);
+        //$this->launch($parentPages, true);
 
 
         $this->brizyApi->clearCompileds($this->projectID_Brizy);

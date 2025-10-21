@@ -39,7 +39,8 @@ abstract class ListLayoutElement extends AbstractElement
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
-        $this->handleRichTextHead($elementContext, $this->browserPage);
+
+        $this->handleTextHead($elementContext);
 
         if ($showHeader) {
             $this->transformHeadItem($elementContext, $this->getHeaderComponent($brizySection), $styleList);
@@ -69,13 +70,11 @@ abstract class ListLayoutElement extends AbstractElement
                 if ($mbItem['item_type'] == 'title') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
-                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition, $mbItem)
                     );
                     $this->handleRichTextItem($elementContext, $this->browserPage);
 
-                    $this->transformListItem($elementContext,
-                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition),
-                        $styleList);
+                    $this->transformListItem($elementContext, $this->getItemTextContainerComponent($brizySectionItem, $photoPosition, $mbItem), $styleList, $brizySectionItem);
                 }
             }
 
@@ -83,7 +82,7 @@ abstract class ListLayoutElement extends AbstractElement
                 if ($mbItem['item_type'] == 'body') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
-                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition, $mbItem)
                     );
                     $this->handleRichTextItem($elementContext, $this->browserPage);
                 }
@@ -93,7 +92,7 @@ abstract class ListLayoutElement extends AbstractElement
                 if ($mbItem['category'] == 'button') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
-                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition, $mbItem)
                     );
                     $this->handleButton($elementContext, $this->browserPage, $this->brizyKit);
                 }
@@ -103,7 +102,7 @@ abstract class ListLayoutElement extends AbstractElement
                 if ($mbItem['category'] == 'donation') {
                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                         $mbItem,
-                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition)
+                        $this->getItemTextContainerComponent($brizySectionItem, $photoPosition, $mbItem)
                     );
                     $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
                 }
@@ -128,7 +127,8 @@ abstract class ListLayoutElement extends AbstractElement
 
     abstract protected function getItemTextContainerComponent(
         BrizyComponent $brizyComponent,
-        string         $photoPosition
+        string         $photoPosition,
+                       $mbItem = null
     ): BrizyComponent;
 
     abstract protected function getItemImageComponent(
@@ -157,6 +157,11 @@ abstract class ListLayoutElement extends AbstractElement
             ->addPadding(55, 0, 55, 0);
     }
 
+    protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = [], BrizyComponent $brizyParent = null): BrizyComponent
+    {
+        return $brizySection;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
@@ -176,7 +181,13 @@ abstract class ListLayoutElement extends AbstractElement
 
     protected function handleMbPhotoItem(ElementContextInterface $data, $brizySectionItem, $photoPosition, $mbItem)
     {
-        $elementContext = $data->instanceWithBrizyComponentAndMBSection($this->getItemImageComponent($brizySectionItem, $photoPosition), $mbItem);
+        $imageComponent = $this->getItemImageComponent($brizySectionItem, $photoPosition);
+        $elementContext = $data->instanceWithBrizyComponentAndMBSection($mbItem, $imageComponent);
         $this->handleRichTextItem($elementContext, $this->browserPage);
+    }
+
+    protected function handleTextHead(ElementContextInterface $elementContext)
+    {
+        $this->handleRichTextHead($elementContext, $this->browserPage);
     }
 }

@@ -105,7 +105,7 @@ trait RichTextAble
     /**
      * Process and add all items the same brizy section
      */
-    protected function handleRichTextItems(ElementContextInterface $data, BrowserPageInterface $browserPage): BrizyComponent
+    protected function handleRichTextItems(ElementContextInterface $data, BrowserPageInterface $browserPage, array $filterItemType=null, $mbHead='items'): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
@@ -116,9 +116,13 @@ trait RichTextAble
        $showButtons = $this->canShowButtons($mbSectionItem);
 
         // sort items
-        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+        $mbSectionItem[$mbHead] = $this->sortItems($mbSectionItem[$mbHead]);
 
-        foreach ((array)$mbSectionItem['items'] as $mbItem) {
+        foreach ((array)$mbSectionItem[$mbHead] as $mbItem) {
+
+            if(!is_null($filterItemType) &&  !in_array($mbItem['item_type'] ,(array)$filterItemType)){
+                continue;
+            }
 
             if ($mbItem['category'] == $sectionCategory && isset($mbItem['item_type'])) {
                 if ($mbItem['item_type'] == 'title' && !$showHeader) {
@@ -381,7 +385,7 @@ trait RichTextAble
         return $brizySection;
     }
 
-    private function handlePhotoItem(
+    protected function handlePhotoItem(
         $mbSectionItemId,
         $mbSectionItem,
         BrizyComponent $brizyComponent,
@@ -418,21 +422,21 @@ trait RichTextAble
                         $sizes = $this->getDomElementSizes($selectorImageSizes, $browserPage);
                     }
 
-                    $brizyComponent->getValue()
-                        ->set_width((int)$sizes['width'])
-                        ->set_tabletWidth((int)$sizes['width'])
-                        ->set_mobileWidth((int)$sizes['width'])
-                        ->set_height((int)$sizes['height'])
-                        ->set_tabletHeight((int)$sizes['height'])
-                        ->set_mobileHeight((int)$sizes['height'])
-                        ->set_imageWidth($mbSectionItem['settings']['image']['width'])
-                        ->set_imageHeight($mbSectionItem['settings']['image']['height'])
-                        ->set_widthSuffix($sizeUnit)
-                        ->set_heightSuffix($sizeUnit)
-                        ->set_tabletHeightSuffix($sizeUnit)
-                        ->set_mobileSizeType('original')
-                        ->set_mobileWidthSuffix($sizeUnit)
-                        ->set_mobileHeightSuffix($sizeUnit);
+//                    $brizyComponent->getValue()
+//                        ->set_width((int)$sizes['width'])
+//                        ->set_tabletWidth((int)$sizes['width'])
+//                        ->set_mobileWidth((int)$sizes['width'])
+//                        ->set_height((int)$sizes['height'])
+//                        ->set_tabletHeight((int)$sizes['height'])
+//                        ->set_mobileHeight((int)$sizes['height'])
+//                        ->set_imageWidth($mbSectionItem['settings']['image']['width'])
+//                        ->set_imageHeight($mbSectionItem['settings']['image']['height'])
+//                        ->set_widthSuffix($sizeUnit)
+//                        ->set_heightSuffix($sizeUnit)
+//                        ->set_tabletHeightSuffix($sizeUnit)
+//                        ->set_mobileSizeType('original')
+//                        ->set_mobileWidthSuffix($sizeUnit)
+//                        ->set_mobileHeightSuffix($sizeUnit);
                 }
 
                 foreach ($imageOptions as $key => $value) {

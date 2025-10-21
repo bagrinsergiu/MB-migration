@@ -25,7 +25,7 @@ class Head extends HeadElement
      */
     protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 1, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
     /**
@@ -39,15 +39,7 @@ class Head extends HeadElement
 
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {
-        $menuEnt = $data->getThemeContext()->getBrizyMenuEntity();
-        $deepSlug = PathSlugExtractor::findDeepestSlug($menuEnt['list']);
-        $menuUrl = PathSlugExtractor::getFullUrl($deepSlug['slug']);
-        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
-        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
-        $layoutName = $data->getThemeContext()->getLayoutName();
-        $browser = $data->getThemeContext()->getBrowser();
 
-       $this->browserPage = $browser->openPage($menuUrl, $layoutName);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -62,6 +54,18 @@ class Head extends HeadElement
             [
                 'selector' => $menuSectionSelector,
                 'styleProperties' => ['background-color', 'opacity', 'background-image'],
+
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+        $this->browserPage->triggerEvent('click','#mobile-nav-button');
+        sleep(1);
+        $bgSectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => 'body',
+                'styleProperties' => ['background-color', 'opacity'],
                 'families' => [],
                 'defaultFamily' => '',
             ]
@@ -81,8 +85,8 @@ class Head extends HeadElement
         $headStyle = [
             'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['width']),
             'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['height']),
-            'bg-color'=> ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
-            'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
+            'bg-color'=> ColorConverter::rgba2hex($bgSectionStyles['data']['background-color']),
+            'bg-opacity' => ColorConverter::rgba2opacity($bgSectionStyles['data']['opacity']),
         ];
 
         $brizySection->getItemWithDepth(0)
@@ -112,15 +116,15 @@ class Head extends HeadElement
         ];
 
         $activeItemMenuOptions = [
-            'activeMenuBorderStyle' => 'solid',
+            'activeMenuBorderStyle' => 'none',
             'activeMenuBorderColorHex' => '#000000',
             'activeMenuBorderColorOpacity' => 0.02,
             'activeMenuBorderColorPalette' => '',
             'activeMenuBorderWidthType' => 'ungrouped',
-            'activeMenuBorderWidth' => 3,
+            'activeMenuBorderWidth' => 0,
             'activeMenuBorderTopWidth' => 0,
             'activeMenuBorderRightWidth' => 0,
-            'activeMenuBorderBottomWidth' => 3,
+            'activeMenuBorderBottomWidth' => 0,
             'activeMenuBorderLeftWidth' => 0,
         ];
 
@@ -137,7 +141,7 @@ class Head extends HeadElement
             'mobileMarginRightSuffix' => 'px',
             'mobileMarginBottom' => 0,
             'mobileMarginBottomSuffix' => 'px',
-            'mobileMarginLeft' => 0,
+            'mobileMarginLeft' => 10,
             'mobileMarginLeftSuffix' => 'px',
         ];
 
@@ -149,7 +153,7 @@ class Head extends HeadElement
             "marginTopSuffix" => "px",
             "marginBottom" => 10,
             "marginBottomSuffix" => "px",
-            "marginRight" => 0,
+            "marginRight" => 20,
             "marginRightSuffix" => "px",
             "marginLeft" => 0,
             "marginLeftSuffix" => "px",
@@ -157,7 +161,7 @@ class Head extends HeadElement
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 0)
+            $brizySection->getItemWithDepth(0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -171,7 +175,7 @@ class Head extends HeadElement
 
         foreach ($mobileIconButtonOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 1)
+            $brizySection->getItemWithDepth(0, 0, 1)
                 ->getValue()
                 ->$nameOption($value);
         }
@@ -179,24 +183,17 @@ class Head extends HeadElement
 
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($activeItemMenuOptions as $logoOption => $value) {
             $nameOption = 'set_'.$logoOption;
-            $brizySection->getItemWithDepth(0, 0, 0, 1, 0)
+            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
-
-        $currentMigrateSlugPage = $data->getThemeContext()->getSlug();
-        $migrateUrl = PathSlugExtractor::getFullUrl($currentMigrateSlugPage);
-        $layoutName = $data->getThemeContext()->getLayoutName();
-        $browser = $data->getThemeContext()->getBrowser();
-
-        $this->browserPage = $browser->openPage($migrateUrl, $layoutName);
 
         return $brizySection;
     }
@@ -206,34 +203,34 @@ class Head extends HeadElement
 
     }
 
-    public function getThemeMenuItemSelector(): array
-    {
-        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
-    }
-
     public function getThemeMenuItemActiveSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+        return ["selector" => "li.selected a", "pseudoEl" => ""];
+    }
+
+    public function getThemeMenuItemSelector(): array
+    {
+        return ["selector" => "#main-content #main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
     }
 
     public function getThemeParentMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation", "pseudoEl" => ""];
+        return ["selector" => "#mobile-nav-button-container button", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li:not(.selected) > a", "pseudoEl" => ""];
+        return ["selector" => "#main-content #main-navigation  li:not(.selected):nth-of-type(1) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
+        return ["selector" => "#mobile-navigation #main-navigation ul:nth-of-type(2) li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation", "pseudoEl" => ""];
+        return ["selector" => "#main-content  #main-navigation  ul", "className" => "selected"];
     }
 
     public function getThemeMobileNavSelector(): array
@@ -243,7 +240,7 @@ class Head extends HeadElement
 
     public function getThemeMenuItemMobileSelector(): array
     {
-        return ["selector" => "#mobile-navigation > nav > ul > li.first.landing > a", "pseudoEl" => ""];
+        return ["selector" => "#mobile-navigation  li.first.landing > a", "pseudoEl" => ""];
     }
 
     public function getThemeMenuItemPaddingSelector(): array
@@ -322,6 +319,26 @@ class Head extends HeadElement
         ];
     }
 
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "marginLeft" => 0,
+            "marginRight" => 0,
+
+            "mobilePaddingType" => "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 10,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
+
     public function getMenuItemBgSelector(): array
     {
         return $this->getThemeMenuItemSelector();
@@ -329,11 +346,27 @@ class Head extends HeadElement
 
     public function getMenuHoverItemBgSelector(): array
     {
-        return $this->getThemeSubMenuItemBGSelector();
+        return $this->getThemeMenuItemSelector();
     }
 
     public function getNotSelectedMenuItemBgSelector(): array
     {
         return $this->getThemeMenuItemSelector();
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        return ["selector" => "#mobile-navigation .main-navigation > ul:nth-of-type(2)", "pseudoEl" => ""];
+        //#main-navigation > ul:nth-child(1) > li.has-sub > ul
     }
 }

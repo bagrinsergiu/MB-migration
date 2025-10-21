@@ -153,8 +153,7 @@ abstract class GalleryLayoutElement extends AbstractElement
                     $this->setSlideLinks($brizySectionItemImage, $mbSection['settings']['sections']['background']);
                 }
 
-                $brizySection->getValue()
-                    ->set_slider("off");
+                $brizySection->getValue()->set_slider("off");
 
                 $brizySectionItems[] = $brizySectionItem;
             } else {

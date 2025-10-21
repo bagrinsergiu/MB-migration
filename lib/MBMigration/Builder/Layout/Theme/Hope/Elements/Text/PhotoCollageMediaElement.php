@@ -3,46 +3,48 @@
 namespace MBMigration\Builder\Layout\Theme\Hope\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\Elements\Text\FullMediaElementElement;
 use MBMigration\Builder\Layout\Theme\Hope\Hope;
 use MBMigration\Builder\Utils\ColorConverter;
 
-class FullMediaElement extends FullMediaElementElement
+class PhotoCollageMediaElement extends FullMediaElement
 {
-    protected function getHeaderContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    use RichTextAble;
+
+    private $imageCount = 0;
+
+    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        $i = $this->imageCount++;
+
+        switch ($i) {
+            case 0:
+                return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
+            case 1:
+                return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+            case 2:
+                return $brizySection->getItemWithDepth(0, 0, 1, 1, 0, 0, 0);
+            case 3:
+                return $brizySection->getItemWithDepth(0, 0, 1, 1, 1, 0, 0);
+            default:
+                throw new \Exception('PhotoCollageMediaElement supports maximum 4 images.');
+        }
     }
 
-    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getHeaderContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0, 2, 0);
     }
 
-    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 3, 0);
     }
 
     protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0);
-    }
-
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
-    }
-
-    protected function getTopPaddingOfTheFirstElement(): int
-    {
-        return 50;
-    }
-
-    protected function getMobileTopPaddingOfTheFirstElement(): int
-    {
-        return 25;
+        throw new \Exception('PhotoCollageMediaElement supports maximum 4 images.');
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -61,6 +63,8 @@ class FullMediaElement extends FullMediaElementElement
         $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyHeaderContainerComponent);
         $this->handleRichTextItems($elementTextContainerComponentContext, $this->browserPage, ['title']);
 
+        // handle line color
+
         $item = $this->getItemByType($mbSectionItem, 'title');
         $styles = Hope::getStyles(
             '[data-id="' . $item['id'] . '"] div',
@@ -73,49 +77,32 @@ class FullMediaElement extends FullMediaElementElement
             $brizyComponentValue->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
         }
 
+
         $brizyTextContainerComponent = $this->getTextContainerComponent($brizySection);
         $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyTextContainerComponent);
         $this->handleRichTextItems($elementTextContainerComponentContext, $this->browserPage, ['body']);
 
         $this->handleDonationsButton($elementTextContainerComponentContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
-        $brizyImageWrapperComponent = $this->getImageWrapperComponent($brizySection);
-        $brizyImageComponent = $this->getImageComponent($brizySection);
-
-        // configure the image wrapper
-        $brizyImageWrapperComponent->getValue()
-            ->set_marginType("ungrouped")
-            ->set_margin(0)
-            ->set_marginSuffix("px")
-            ->set_marginTop(10)
-            ->set_marginTopSuffix("px")
-            ->set_marginRight(0)
-            ->set_marginRightSuffix("px")
-            ->set_marginBottom(30)
-            ->set_marginBottomSuffix("px")
-            ->set_marginLeft(0)
-            ->set_marginLeftSuffix("px");
-
-        $brizyImageComponent->getValue()
-            ->set_width(100)
-            ->set_mobileSize(100)
-            ->set_widthSuffix('%')
-            ->set_height('')
-            ->set_heightSuffix('');
-
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
-        $images = $this->getItemsByCategory($mbSectionItem, 'photo');
-        $imageMb = array_pop($images);
-        $this->handlePhotoItem(
-            $imageMb['id'],
-            $imageMb,
-            $brizyImageComponent,
-            $this->browserPage,
-            $data->getFontFamilies(),
-            $data->getDefaultFontFamily(),
-            $imageMb['order_by'] ?? null
-        );
+
+        foreach ($this->getItemsByCategory($mbSectionItem, 'photo') as $item) {
+            $brizyImageComponent = $this->getImageComponent($brizySection);
+
+            $brizyImageComponent->getValue()
+                ->set_imageFileName($item['imageFileName'])
+                ->set_imageSrc($item['content']);
+
+            $this->handleLink(
+                $mbSectionItem,
+                $brizyImageComponent,
+                '[data-id="' . $item['id'] . '"] div.photo-container a',
+                $this->browserPage);
+        }
+
 
         return $brizySection;
     }
+
+
 }

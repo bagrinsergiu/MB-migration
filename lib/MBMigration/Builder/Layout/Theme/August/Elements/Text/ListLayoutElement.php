@@ -15,7 +15,8 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getItemTextContainerComponent(
         BrizyComponent $brizyComponent,
-        string $photoPosition
+        string $photoPosition,
+        $mbItem = null
     ): BrizyComponent {
         return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 1 : 0);
     }
@@ -27,7 +28,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0,0);
     }
 
-    protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = [], BrizyComponent $brizyParent = null): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
         $itemsKit = $data->getThemeContext()->getBrizyKit();

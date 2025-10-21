@@ -55,7 +55,6 @@ abstract class AbstractTheme implements ThemeInterface
 
         Logger::instance()->debug("Handling [head] page section.");
         $elementFactory->getElement('head', $browserPage)->transformToItem($elementContext);
-
         $elementsList = ['event'];
         $processedItems = [];
         $processedEventsSectionCount = [];
