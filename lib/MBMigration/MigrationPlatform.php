@@ -165,8 +165,6 @@ class MigrationPlatform
             $this->projectID_Brizy = $projectID_Brizy;
         }
 
-
-
         if (!($this->brizyProjectDomain = $this->cache->get('brizyProjectDomain'))) {
             $this->brizyProjectDomain = $this->brizyApi->getDomain($this->projectID_Brizy);
             $this->cache->set('brizyProjectDomain', $this->brizyProjectDomain);
@@ -191,14 +189,14 @@ class MigrationPlatform
         }
 
         if (Config::$devMode) {
-            //$this->brizyApi->clearAllFontsInProject();
+            $this->brizyApi->clearAllFontsInProject();
         }
 
 //        $this->brizyApi->setLabelManualMigration(false);
 
         //$this->checkDesign($designName);
 
-        //FoldersUtility::createProjectFolders($this->projectId);
+        FoldersUtility::createProjectFolders($this->projectId);
 
         //$this->cache->set('GraphApi_Brizy', $this->graphApiBrizy);
 
@@ -274,9 +272,9 @@ class MigrationPlatform
             throw new Exception('MB project not found, migration did not start, process completed without errors!');
         }
 
-        MediaController::setFavicon($settings['favicon'] ?? null, $this->projectId, $this->brizyApi, $this->QueryBuilder);
+        //MediaController::setFavicon($settings['favicon'] ?? null, $this->projectId, $this->brizyApi, $this->QueryBuilder);
 
-        SiteSEO::setSiteTitle($this->projectId, $this->QueryBuilder, $this->cache);
+        //SiteSEO::setSiteTitle($this->projectId, $this->QueryBuilder, $this->cache);
 
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
@@ -290,9 +288,9 @@ class MigrationPlatform
             Logger::instance()->info('Start create blank pages');
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
 //            if (!$this->buildPage) {
-            $existingBrizyPages['listPages'] = $this->pageController->deleteAllPages(
-                $existingBrizyPages['listPages']
-            );
+                $existingBrizyPages['listPages'] = $this->pageController->deleteAllPages(
+                    $existingBrizyPages['listPages']
+                );
 //            }
 
             $this->pageController->createBlankPages(
@@ -318,7 +316,7 @@ class MigrationPlatform
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
         $this->launch($parentPages, false);
-        $this->launch($parentPages, true);
+        //$this->launch($parentPages, true);
 
 
         $this->brizyApi->clearCompileds($this->projectID_Brizy);

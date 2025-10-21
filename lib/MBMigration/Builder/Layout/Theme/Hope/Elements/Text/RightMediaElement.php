@@ -4,43 +4,28 @@ namespace MBMigration\Builder\Layout\Theme\Hope\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\Elements\Text\FullMediaElementElement;
+use MBMigration\Builder\Utils\ColorConverter;
 
-class FullMediaElement extends FullMediaElementElement
+class RightMediaElement extends FullMediaElement
 {
     protected function getHeaderContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 2, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 1, 0);
     }
 
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
     protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0);
-    }
-
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
-    }
-
-    protected function getTopPaddingOfTheFirstElement(): int
-    {
-        return 50;
-    }
-
-    protected function getMobileTopPaddingOfTheFirstElement(): int
-    {
-        return 25;
+        return $brizySection->getItemWithDepth(0, 0, 1, 0);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -58,6 +43,32 @@ class FullMediaElement extends FullMediaElementElement
         $brizyHeaderContainerComponent = $this->getHeaderContainerComponent($brizySection);
         $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyHeaderContainerComponent);
         $this->handleRichTextItems($elementTextContainerComponentContext, $this->browserPage, ['title']);
+
+        $titleMb = $this->getItemByType($mbSectionItem, 'title');
+        $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"] div';
+        $wrapperLineStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $menuSectionSelector,
+                'pseudoElement' => "::before",
+                'styleProperties' => ['border-top-color'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        $headStyle = [
+            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-top-color']),
+        ];
+
+        $topLine = new BrizyComponent(json_decode($this->brizyKit['line-left-top'], true));
+        $topLine->getItemValueWithDepth(0)->set_borderColorHex($headStyle['line-color']);
+
+        $bottomLine = new BrizyComponent(json_decode($this->brizyKit['line-left-bottom'], true));
+        $bottomLine->getItemValueWithDepth(0)->set_borderColorHex($headStyle['line-color']);
+
+        $brizyHeaderContainerComponent->getValue()->add_items($topLine, 0);
+        $brizyHeaderContainerComponent->getValue()->add_items($bottomLine, 2);
 
         $brizyTextContainerComponent = $this->getTextContainerComponent($brizySection);
         $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyTextContainerComponent);
@@ -104,4 +115,6 @@ class FullMediaElement extends FullMediaElementElement
 
         return $brizySection;
     }
+
+
 }
