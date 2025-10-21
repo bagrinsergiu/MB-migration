@@ -77,6 +77,15 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         ];
     }
 
+    protected function handleMbPhotoItem(ElementContextInterface $data, $brizySectionItem, $photoPosition, $mbItem)
+    {
+        $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+            $mbItem,
+            $this->getItemImageComponent($brizySectionItem, $photoPosition)
+        );
+        $this->handleRichTextItem($elementContext, $this->browserPage, null, [], $this->customSettings());
+    }
+
     private function getCustomCss(): string
     {
         return "element:has(.brz-ed-image__wrapper) .brz-ed-image__wrapper{

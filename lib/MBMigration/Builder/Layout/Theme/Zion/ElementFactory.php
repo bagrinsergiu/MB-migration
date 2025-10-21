@@ -30,6 +30,7 @@ use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\TwoRightMediaCircle;
 use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\LeftMediaDiamond;
 use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\RightMediaDiamond;
 use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\TopMediaDiamond;
+use MBMigration\Builder\Layout\Theme\Zion\Elements\Text\ThreeBottomMedia;
 
 class ElementFactory extends AbstractThemeElementFactory
 {
@@ -60,8 +61,11 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
             case 'two-horizontal-text':
                 return new TwoHorizontalText($this->blockKit['blocks']['two-horizontal-text'], $browserPage);
+
             case 'three-top-media-circle':
                 return new ThreeTopMediaCircle($this->blockKit['blocks']['three-top-media-circle'], $browserPage);
+            case 'three-bottom-media-diamond':
+                return new ThreeBottomMedia($this->blockKit['blocks']['three-bottom-media-diamond'], $browserPage);
 
             case 'full-media':
                 return new FullMediaElement($this->blockKit['blocks']['full-media'], $browserPage);

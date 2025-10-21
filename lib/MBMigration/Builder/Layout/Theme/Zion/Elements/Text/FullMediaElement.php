@@ -3,10 +3,34 @@
 namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\Text\FullMediaElementElement;
+use MBMigration\Builder\Utils\ColorConverter;
 
 class FullMediaElement extends FullMediaElementElement
 {
+use LineAble;
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $brizySection = parent::internalTransformToItem($data);
+        $mbSectionItem = $data->getMbSection();
+        $showHeader = $this->canShowHeader($mbSectionItem);
+        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+
+        if($showHeader) {
+            $titleMb = $this->getItemByType($mbSectionItem, 'title');
+            $image = $brizySection->getItemWithDepth(0, 0, 0);
+            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                $titleMb,
+                $image
+            );
+
+            $this->handleLine($elementContext, $this->browserPage, $titleMb['id'], null, [], 1);
+        }
+
+        return $brizySection;
+    }
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
         return $brizySection->getItemWithDepth(0, 0, 0);
     }
@@ -39,8 +63,8 @@ class FullMediaElement extends FullMediaElementElement
     protected function customSettings(): array
     {
         return  [
-            'customCSS' => $this->getCustomCss(),
-            'maskShape' => 'custom'
+//            'customCSS' => $this->getCustomCss(),
+//            'maskShape' => 'custom'
         ];
     }
 

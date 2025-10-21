@@ -9,6 +9,7 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
+use Throwable;
 use Wrench\Exception\Exception;
 
 trait SectionStylesAble
@@ -134,6 +135,16 @@ trait SectionStylesAble
             ->set_mobilePaddingBottomSuffix('px')
             ->set_mobilePaddingLeft((int)$sectionStyles['margin-bottom'])
             ->set_mobilePaddingLeftSuffix('px');
+
+        try {
+            $brizySection->getParent()->getValue()
+                ->set_fullHeight('custom')
+                ->set_sectionHeightSuffix('px')
+                ->set_sectionHeight((int)$sectionStyles['height']);
+        } catch (\Exception|Throwable $e){
+
+        }
+
 
         foreach ($additionalOptions as $key => $value) {
             if (is_array($value)) {
@@ -327,6 +338,14 @@ trait SectionStylesAble
                 $families,
                 $defaultFont
             );
+
+            $sectionBgVideoStyles = $this->getBgVideoStyles(
+                $mbSectionItem['sectionId'],
+                $browserPage,
+                $families,
+                $defaultFont
+            );
+
             if(empty($sectionBgEclipseStyles)){
                 $sectionBgStyles = $this->getBgHelperStyles(
                     $mbSectionItem['sectionId'],
@@ -458,6 +477,27 @@ trait SectionStylesAble
             $defaultFont
         );
     }
+
+    protected function getBgVideoStyles(
+        $sectionId,
+        BrowserPageInterface $browserPage,
+        array $families,
+        string $defaultFont
+    ) {
+        $selectorSectionWrapperStyles = '[data-id="'.$sectionId.'"]  div.bg-video';
+        $properties = [
+            'height',
+        ];
+
+        return $this->getDomElementStyles(
+            $selectorSectionWrapperStyles,
+            $properties,
+            $browserPage,
+            $families,
+            $defaultFont
+        );
+    }
+
 
 }
 

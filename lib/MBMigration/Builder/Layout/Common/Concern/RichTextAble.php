@@ -303,6 +303,7 @@ trait RichTextAble
                         $cssClass = 'custom-align-' . random_int(0, 10000);
                         $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_overflow('on');
+                        $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_mobileOverflow('off');
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
                             ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
 .{$cssClass} .embedded-paste:has(iframe) {display: flex; justify-content:{$styles['text-align']}}"

@@ -16,7 +16,7 @@ RightMediaDiamond extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
+        return $brizySection->getItemWithDepth(0, 0, 0,);
     }
 
     /**
