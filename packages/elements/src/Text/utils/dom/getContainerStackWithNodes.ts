@@ -58,7 +58,7 @@ const extractInnerText = (
 
     if (innerElements.length > 0) {
       innerElements.forEach((el) => {
-        el.remove();
+        el.tagName !== "BR" && el.remove();
       });
     }
     // Extract the other html without Artifacts like Button, Icons
@@ -336,6 +336,7 @@ export const getContainerStackWithNodes = (element: Element): Container => {
         if (icons.length > 0) {
           appendNewText = true;
           let appendedIcon = false;
+          let parentWasProcessed = false;
 
           Array.from(_node.childNodes).forEach((node) => {
             if (node instanceof HTMLElement) {
@@ -523,8 +524,9 @@ export const getContainerStackWithNodes = (element: Element): Container => {
             } else {
               const text = trimTextContent(node);
 
-              if (text) {
-                extractInnerText(_node, stack, iconSelector);
+              if (text && !parentWasProcessed) {
+                extractInnerText(_node, stack, "*:not(br)");
+                parentWasProcessed = true;
               }
             }
           });
@@ -535,8 +537,13 @@ export const getContainerStackWithNodes = (element: Element): Container => {
 
       if (images.length > 0) {
         appendNewText = true;
-        stack.append(_node, { type: "image" });
-        return;
+        images.forEach((image) => {
+          const element =
+            image.parentElement && image.parentElement.tagName === "A"
+              ? image.parentElement
+              : image;
+          stack.append(element, { type: "image" });
+        });
       }
 
       if (appendNewText) {
