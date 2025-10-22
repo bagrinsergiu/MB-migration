@@ -306,7 +306,7 @@ trait RichTextAble
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_mobileOverflow('off');
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
                             ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
-.{$cssClass} .embedded-paste:has(iframe) {display: flex; justify-content:{$styles['text-align']}}"
+.{$cssClass} .brz-embed-content > div:has(.embedded-paste iframe) {display: flex; justify-content:{$styles['text-align']}}"
                         );
                         $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
                         break;

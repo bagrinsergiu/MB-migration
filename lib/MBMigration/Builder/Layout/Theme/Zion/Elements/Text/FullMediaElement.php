@@ -11,6 +11,7 @@ use MBMigration\Builder\Utils\ColorConverter;
 class FullMediaElement extends FullMediaElementElement
 {
 use LineAble;
+
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = parent::internalTransformToItem($data);
@@ -26,7 +27,7 @@ use LineAble;
                 $image
             );
 
-            $this->handleLine($elementContext, $this->browserPage, $titleMb['id'], null, [], 1);
+            $this->handleLine($elementContext, $this->browserPage, $titleMb['id'], null, [], 1, null);
         }
 
         return $brizySection;
