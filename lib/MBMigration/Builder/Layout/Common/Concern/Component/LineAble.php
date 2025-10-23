@@ -15,22 +15,28 @@ trait LineAble
     protected function handleLine(
         ElementContextInterface $data,
         BrowserPageInterface    $browserPage,
-        string                  $selector = null,
+        string                  $selectorId = null,
                                 $options = null,
         array                   $customStyles = [],
         ?int                    $position = null,
-                                $pseudoElement = ':after'
+                                $pseudoElement = ':after',
+        string                  $selectorPerElement = null
     ): BrizyComponent
     {
         $mbSection = $data->getMbSection();
         $brizySection = $data->getBrizySection();
 
         try {
+            if (isset($selectorPerElement)) {
+                $fullSelector = '[data-id=\'' . $selectorId . '\']' . ' ' . $selectorPerElement;
+            } else {
+                $fullSelector = '[data-id=\'' . $selectorId . '\']';
+            }
 
             $lineStyles = $browserPage->evaluateScript(
                 'brizy.getStyles',
                 [
-                    'selector' => '[data-id=\'' . $selector . '\']',
+                    'selector' => $fullSelector,
                     'styleProperties' => [
                         'border-top-color',
                         'border-top-style',

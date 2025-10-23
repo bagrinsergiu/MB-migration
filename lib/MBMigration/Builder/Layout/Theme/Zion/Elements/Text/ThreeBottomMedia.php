@@ -3,50 +3,40 @@
 namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
+use MBMigration\Builder\BrizyComponent\BrizySection;
+use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
+use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
+use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
+use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
+use MBMigration\Builder\Layout\Common\Elements\Text\ThreeTopMediaCircleElement;
 
-class
-LeftMediaDiamond extends PhotoTextElement
+class ThreeBottomMedia extends PhotoTextElement
 {
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
-    }
-
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0, 1);
-    }
-
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
-    }
+    use RichTextAble;
+    use SectionStylesAble;
+    use DonationsAble;
+    use ImageStylesAble;
+    private $imageCount = 0;
+    protected int $textPosition = 0;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $mbSection = $data->getMbSection();
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+
+        $brizySection = new BrizySection();
+        $componentRow = new BrizyComponent(json_decode($this->brizyKit['row'], true));
 
         $showHeader = $mbSection['settings']['sections']['text']['show_header'] ?? true;
         $showSecondaryHeader = $mbSection['settings']['sections']['text']['show_secondary_header'] ?? true;
         $showBody = $mbSection['settings']['sections']['text']['show_body'] ?? true;
 
-        foreach ((array) $mbSection['typeSection'] as $typeSection) {
-            $brizySectionElem = (array) $mbSection['items'];
+        foreach ((array)$mbSection['typeSection'] as $typeSection) {
+            $brizySectionElem = (array)$mbSection['items'];
 
             if ($typeSection == 'left-gallery') {
-                $brizySectionElem = (array) $mbSection['gallery']['items'];
+                $brizySectionElem = (array)$mbSection['gallery']['items'];
             }
 
             foreach ($brizySectionElem as $mbSectionItem) {
@@ -55,7 +45,7 @@ LeftMediaDiamond extends PhotoTextElement
                         // add the photo items on the right side of the block
                         $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                             $mbSectionItem,
-                            $imageTarget = $this->getImageComponent($brizySection)
+                            $imageTarget = $this->getImageComponent($componentRow)
                         );
                         $this->handleRichTextItem(
                             $elementContext,
@@ -70,14 +60,21 @@ LeftMediaDiamond extends PhotoTextElement
 
                         $imageStyles = $this->obtainImageStyles($elementContext, $this->browserPage);
 
-                        $this->targetImageSize($imageTarget, (int) $imageStyles['width'], (int) $imageStyles['height']);
+                        $this->targetImageSize($imageTarget, (int)$imageStyles['width'], (int)$imageStyles['height']);
 
+                        if ($imageParentTarget = $this->getItemImageParentComponent($brizySection)) {
+                            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                $mbSectionItem,
+                                $imageParentTarget
+                            );
+                            $this->handleImageParentStyles($elementContext);
+                        }
                         break;
                 }
             }
         }
 
-        foreach ((array) $mbSection['items'] as $mbSectionItem) {
+        foreach ((array)$mbSection['items'] as $mbSectionItem) {
             switch ($mbSectionItem['category']) {
                 case 'text':
 
@@ -104,6 +101,8 @@ LeftMediaDiamond extends PhotoTextElement
             }
         }
 
+        $brizySection->getItemWithDepth(0)->getValue()->add_items([$componentRow]);
+
         $elementContext = $data->instanceWithBrizyComponent($this->getTextComponent($brizySection));
         $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
@@ -124,6 +123,37 @@ LeftMediaDiamond extends PhotoTextElement
         return $brizySection;
     }
 
+    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth($this->imageCount++, 0, 0);
+    }
+
+    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 75;
+    }
+
+    private function getCustomCss(): string
+    {
+        return "element:has(.brz-ed-image__wrapper) .brz-ed-image__wrapper{
+  mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PHBhdGggZD0ibTEwMCAxMCA5MCA5MC05MCA5MC05MC05MHoiLz48L3N2Zz4=') !important;
+}
+
+element:not(:has(.brz-ed-image__wrapper)) picture{
+  mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PHBhdGggZD0ibTEwMCAxMCA5MCA5MC05MCA5MC05MC05MHoiLz48L3N2Zz4=') !important;
+}";
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
@@ -138,27 +168,6 @@ LeftMediaDiamond extends PhotoTextElement
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
-
-            "containerSize" => 100,
-            "containerSizeSuffix" => "%",
-            "containerType"=> "boxed"
         ];
     }
-
-    private function getCustomCss(): string
-    {
-        return "element:has(.brz-ed-image__wrapper) .brz-ed-image__wrapper{
-  mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PHBhdGggZD0ibTEwMCAxMCA5MCA5MC05MCA5MC05MC05MHoiLz48L3N2Zz4=') !important;
-}
-
-element:not(:has(.brz-ed-image__wrapper)) picture{
-  mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PHBhdGggZD0ibTEwMCAxMCA5MCA5MC05MCA5MC05MC05MHoiLz48L3N2Zz4=') !important;
-}";
-    }
-
-    protected function getTopPaddingOfTheFirstElement(): int
-    {
-        return 75;
-    }
-
 }

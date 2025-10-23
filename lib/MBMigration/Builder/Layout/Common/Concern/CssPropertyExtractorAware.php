@@ -40,7 +40,7 @@ trait CssPropertyExtractorAware
         }
 
         if (empty($elementStyles)) {
-            Logger::instance()->error("The element with selector {$selectorSectionStyles} was not found in page.");
+            Logger::instance()->critical("The element with selector {$selectorSectionStyles} was not found in page.");
 
             return [];
         }
