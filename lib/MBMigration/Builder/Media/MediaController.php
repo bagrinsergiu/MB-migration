@@ -68,12 +68,12 @@ class MediaController
     /**
      * @throws Exception
      */
-    public static function media(&$item, $section, $projectId, BrizyAPI $brizyApi): void
+    public static function media(&$item, $section, $nameFolder, BrizyAPI $brizyApi): void
     {
         $parts = explode(".", $item['content']);
         $downloadImageURL = self::getPicturesUrl($parts[0].'@2x.'.$parts[1], $section);
         Logger::instance()->info('Found new image', [$downloadImageURL]);
-        $result = $brizyApi->createMedia($downloadImageURL, $projectId);
+        $result = $brizyApi->createMedia($downloadImageURL, $nameFolder);
         if ($result) {
             if (array_key_exists('status', $result)) {
                 if ($result['status'] == 201) {
@@ -140,7 +140,7 @@ class MediaController
     /**
      * @throws Exception
      */
-    public static function uploadPicturesFromSections(array $sectionsItems, $projectId, BrizyAPI $brizyApi): array
+    public static function uploadPicturesFromSections(array $sectionsItems, $nameFolder, BrizyAPI $brizyApi): array
     {
         Logger::instance()->debug('Start uploading section images');
         foreach ($sectionsItems as &$section) {
@@ -149,7 +149,7 @@ class MediaController
 
                     $result = $brizyApi->createMedia(
                         $section['settings']['sections']['background']['photo'],
-                        $projectId
+                        $nameFolder
                     );
                     if ($result) {
                         $result = json_decode($result['body'], true);
@@ -158,7 +158,7 @@ class MediaController
                         Logger::instance()->debug('Success upload image', [$result]);
                     }
                 } else {
-                    self::checkItemForMediaFiles($section['items'], $section['typeSection'], $projectId, $brizyApi);
+                    self::checkItemForMediaFiles($section['items'], $section['typeSection'], $nameFolder, $brizyApi);
 
                 }
             }
@@ -167,7 +167,7 @@ class MediaController
                 if ($section['settings']['background']['photo'] != null) {
                     $result = $brizyApi->createMedia(
                         $section['settings']['background']['photo'],
-                        $projectId
+                        $nameFolder
                     );
                     if ($result) {
                         $result = json_decode($result['body'], true);
@@ -176,19 +176,19 @@ class MediaController
                         Logger::instance()->info('Success upload image fileName', $result);
                     }
                 } else {
-                    self::checkItemForMediaFiles($section['items'], $section['typeSection'], $projectId, $brizyApi);
+                    self::checkItemForMediaFiles($section['items'], $section['typeSection'], $nameFolder, $brizyApi);
                 }
             }
             if (!empty($section['items'])) {
-                self::checkItemForMediaFiles($section['items'], $section['typeSection'], $projectId, $brizyApi);
+                self::checkItemForMediaFiles($section['items'], $section['typeSection'], $nameFolder, $brizyApi);
             }
 
             if (!empty($section['slide'])) {
-                self::checkItemForMediaFiles($section['slide'], $section['typeSection'], $projectId, $brizyApi);
+                self::checkItemForMediaFiles($section['slide'], $section['typeSection'], $nameFolder, $brizyApi);
             }
 
             if (!empty($section['gallery'])) {
-                self::checkGalleryForMediaFiles($section['gallery'], 'gallery', $projectId, $brizyApi);
+                self::checkGalleryForMediaFiles($section['gallery'], 'gallery', $nameFolder, $brizyApi);
             }
         }
 
@@ -198,16 +198,16 @@ class MediaController
     /**
      * @throws Exception
      */
-    public static function checkItemForMediaFiles(&$section, $typeSection, $projectId, BrizyAPI $brizyApi): void
+    public static function checkItemForMediaFiles(&$section, $typeSection, $nameFolder, BrizyAPI $brizyApi): void
     {
         foreach ($section as &$item) {
             if ($item['category'] == 'photo' && $item['content'] != '') {
-                MediaController::media($item, $typeSection, $projectId, $brizyApi);
+                MediaController::media($item, $typeSection, $nameFolder, $brizyApi);
             }
             if ($item['category'] == 'list') {
                 foreach ($item['items'] as &$piece) {
                     if ($piece['category'] == 'photo' && $piece['content'] != '') {
-                        MediaController::media($piece, $typeSection, $projectId, $brizyApi);
+                        MediaController::media($piece, $typeSection, $nameFolder, $brizyApi);
                     }
                 }
             }
@@ -215,11 +215,11 @@ class MediaController
     }
 
 
-    public static function checkGalleryForMediaFiles(&$section, $typeSection, $projectId, $brizyApi): void
+    public static function checkGalleryForMediaFiles(&$section, $typeSection, $nameFolder, $brizyApi): void
     {
         foreach ($section['items'] as &$piece) {
             if ($piece['category'] == 'photo' && $piece['content'] != '') {
-                MediaController::media($piece, $typeSection, $projectId, $brizyApi);
+                MediaController::media($piece, $typeSection, $nameFolder, $brizyApi);
             }
         }
 

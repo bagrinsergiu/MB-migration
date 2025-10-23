@@ -176,6 +176,8 @@ class MigrationPlatform
         $this->migrationID = $this->brizyApi->getNameHash($this->projectId, 10);
         $this->projectId .= $this->migrationID;
 
+        $this->brizyApi->setMediaFolder($this->projectId);
+
         if (!$this->cache->get('container')) {
             $this->cache->set('container', $this->brizyApi->getProjectContainer($this->projectID_Brizy));
         }

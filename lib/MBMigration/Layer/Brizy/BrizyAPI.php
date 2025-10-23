@@ -1033,6 +1033,11 @@ class BrizyAPI extends Utils
 
     }
 
+    public function setMediaFolder(string $nameFolder)
+    {
+        $this->nameFolder = $nameFolder;
+    }
+
 
     private function generateUniqueID(): string
     {

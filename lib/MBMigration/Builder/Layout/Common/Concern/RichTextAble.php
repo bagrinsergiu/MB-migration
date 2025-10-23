@@ -346,6 +346,23 @@ trait RichTextAble
 
 //                        $brzTextComponent->addMargin(0, 0, 0, 0);
 
+                        if ($brzTextComponent->getItemWithDepth(0)->getType() === 'Image') {
+                            $imageSrc = $brzTextComponent->getItemWithDepth(0)->getValue()->get_imageSrc();
+                            if ($this->checkURL($imageSrc)) {
+                                $uploadResult = $brizyAPI->createMedia($imageSrc);
+
+                                if (!$uploadResult['error']) {
+                                    $uploadImage = json_decode($uploadResult['body'], true);
+                                    $size = getimagesize($imageSrc);
+                                    $brzTextComponent->getItemWithDepth(0)->getValue()
+                                        ->set_imageFileName($uploadImage['filename'])
+                                        ->set_imageSrc($uploadImage['name'])
+                                        ->set_imageWidth($size[0])
+                                        ->set_imageHeight($size[1]);
+                                }
+                            }
+                        }
+
                         if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
                             $brizySection->getValue()->add_items([$brzTextComponent]);
                         } elseif ($settings['setEmptyText'] === true) {
@@ -665,6 +682,20 @@ trait RichTextAble
 
             return false;
         }
+    }
+
+    public function checkURL($str): bool
+    {
+        if (filter_var($str, FILTER_VALIDATE_URL) === false) {
+            return false;
+        }
+
+        $parsed = parse_url($str);
+        if (!isset($parsed['scheme']) || !in_array($parsed['scheme'], ['http', 'https'], true)) {
+            return false;
+        }
+
+        return true;
     }
 
     private function findEmbeddedElements($html): array
