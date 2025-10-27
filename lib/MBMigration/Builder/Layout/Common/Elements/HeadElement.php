@@ -426,7 +426,8 @@ abstract class HeadElement extends AbstractElement
 
             //$this->browserPage->getPageScreen('remove_node_1');
 
-            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])) {
+            $selector1 = $this->getThemeSubMenuNotSelectedItemSelector()['selector'];
+            if ($this->browserPage->triggerEvent('hover', $selector1)) {
 
                 //$this->browserPage->getPageScreen('subMenu_Selected');
                 $entrySubMenu = [
@@ -443,7 +444,9 @@ abstract class HeadElement extends AbstractElement
             //$this->browserPage->getPageScreen(2);
 
             $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
+            $hoverMenuSubItemStyles['data']['hoverSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
             $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
+            $hoverMenuSubItemStyles['data']['hoverSubMenuColorOpacity'] = 1;
 
         } else {
             $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [

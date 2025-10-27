@@ -3,10 +3,9 @@
 namespace MBMigration\Builder\Layout\Theme\Tradition\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 use MBMigration\Builder\Utils\ColorConverter;
-use MBMigration\Builder\Utils\PathSlugExtractor;
 
 class Head extends HeadElement
 {
@@ -73,7 +72,7 @@ class Head extends HeadElement
         $headStyle = [
             'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['width']),
             'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['height']),
-            'bg-color'=> ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
+            'bg-color' => ColorConverter::rgba2hex($menuSectionStyles['data']['background-color']),
             'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
         ];
 
@@ -148,21 +147,21 @@ class Head extends HeadElement
         ];
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($imageLogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($mobileIconButtonOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 1)
                 ->getValue()
                 ->$nameOption($value);
@@ -170,14 +169,14 @@ class Head extends HeadElement
 
 
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($activeItemMenuOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
@@ -208,17 +207,17 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#main-content #main-navigation  li:not(.selected):nth-of-type(1) > a", "pseudoEl" => ""];
+        return ["selector" => "#mobile-navigation .main-navigation  li:not(.selected):nth-of-type(1) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#mobile-navigation #main-navigation ul:nth-of-type(2) li", "className" => "selected"];
+        return ["selector" => "#mobile-navigation .main-navigation ul:nth-of-type(2) li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#main-content  #main-navigation  ul", "className" => "selected"];
+        return ["selector" => "#mobile-navigation>nav", "className" => "selected"];
     }
 
     public function getThemeMobileNavSelector(): array
@@ -344,7 +343,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuSelectedItemSelector(): array
     {
-        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+        return ["selector" => "#mobile-navigation li.selected a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemSelector(): array
@@ -354,7 +353,64 @@ class Head extends HeadElement
 
     protected function getThemeSubMenuItemDropDownSelector(): array
     {
-        return ["selector" => "#mobile-navigation .main-navigation > ul:nth-of-type(2)", "pseudoEl" => ""];
+        return ["selector" => "#mobile-navigation .main-navigation", "pseudoEl" => ""];
         //#main-navigation > ul:nth-child(1) > li.has-sub > ul
     }
+
+
+    protected function getNormalSubMenuStyle($families, $defaultFamilies): array
+    {
+        $data = parent::getNormalSubMenuStyle($families, $defaultFamilies);
+
+        $data['subMenuBgColorOpacity'] = ColorConverter::rgba2opacity(1);
+
+
+        $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getStyles', [
+            'selector' => "#mobile-navigation .main-navigation  li:not(.selected):nth-of-type(1)",
+            'styleProperties' => ['font-size'],
+            'families' => [],
+            'defaultFamily' => '',
+        ]);
+        if (isset($menuSubItemDropdownStyles['data']['font-size'])) {
+            $data['subMenuFontSize'] = $menuSubItemDropdownStyles['data']['font-size'];
+            $data['mobileSubMenuFontSize'] = $menuSubItemDropdownStyles['data']['font-size'];
+            $data['tabletSubMenuFontSize'] = $menuSubItemDropdownStyles['data']['font-size'];
+        }
+
+        return $data;
+    }
+
+    protected function getHoverSubMenuStyle(): array
+    {
+        $data = parent::getHoverSubMenuStyle();
+
+        // get the sub menu background
+        $selector = $this->getThemeParentMenuItemSelector()['selector'];
+        sleep(1);
+        if ($this->browserPage->triggerEvent('click', $selector)) {
+
+            $themeSubMenuSelectedItemSelector = $this->getThemeSubMenuSelectedItemSelector();
+            $activeMenuSubItemStyles = $this->scrapeStyle($themeSubMenuSelectedItemSelector['selector'], ['color']);
+
+            if (isset($activeMenuSubItemStyles['color'])) {
+                $data['hoverSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
+                $data['activeSubMenuColorOpacity'] = 1;
+            }
+
+            $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getStyles', [
+                'selector' => '#mobile-navigation .main-navigation',
+                'styleProperties' => ['background-color', 'opacity'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]);
+
+            if (isset($menuSubItemDropdownStyles['data']['background-color'])) {
+                $data['hoverSubMenuBgColorHex'] = ColorConverter::convertColorRgbToHex($menuSubItemDropdownStyles['data']['background-color']);
+                $data['hoverSubMenuBgColorOpacity'] = ColorConverter::rgba2opacity(1);
+            }
+        }
+
+        return $data;
+    }
+
 }
