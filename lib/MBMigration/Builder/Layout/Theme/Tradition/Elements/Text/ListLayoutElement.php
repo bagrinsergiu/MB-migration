@@ -34,7 +34,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         string         $photoPosition
     ): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0, 0);
+        return $brizyComponent->getItemWithDepth($photoPosition == 'left' ? 0 : 1, 0);
     }
 
     protected function handleMbPhotoItem(ElementContextInterface $data, $parentSectionItem, $photoPosition, $mbItem)
@@ -43,7 +43,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         $elementContext = $data->instanceWithBrizyComponentAndMBSection($mbItem, $imageComponent);
         $this->handleRichTextItem($elementContext, $this->browserPage);
 
-        $elementContext->getBrizySection()->getItemWithDepth(0)->addMargin(0,0,0,0);
+        $elementContext->getBrizySection()->getItemWithDepth(0)->addMargin(0, 0, 0, 0);
 
         $elementContext = $data->instanceWithBrizyComponentAndMBSection($mbItem, $this->getItemImageParentComponent($parentSectionItem, $photoPosition));
         $this->handleImageParentStyles($elementContext);
@@ -72,7 +72,8 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
         $sectionStyles = $this->getDomElementStyles($selector, $properties, $this->browserPage, $families, $defaultFont);
 
-        $context->getBrizySection()->getValue()
+        $context->getBrizySection()->getItemWithDepth(0)
+            ->getValue()
             ->set_paddingType('ungrouped')
             ->set_marginType('ungrouped')
             ->set_borderWidthType('ungrouped')
@@ -85,8 +86,6 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             ->set_borderRightWidth((int)$sectionStyles['border-width'])
             ->set_borderLeftWidth((int)$sectionStyles['border-width'])
             ->set_borderBottomWidth((int)$sectionStyles['border-width'])
-            ->set_bgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']))
-            ->set_mobileBgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']))
             ->set_paddingTop((int)$sectionStyles['padding-top'])
             ->set_paddingBottom((int)$sectionStyles['padding-bottom'])
             ->set_paddingRight((int)$sectionStyles['padding-right'])
@@ -106,6 +105,13 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             ->set_mobilePaddingBottomSuffix('px')
             ->set_mobilePaddingLeft((int)$sectionStyles['margin-bottom'])
             ->set_mobilePaddingLeftSuffix('px');
+
+
+        $w = $context->getBrizySection()->getItemWithDepth(0)->getValue();
+        $w
+        ->set_bgColorOpacity('1.0')
+        ->set_bgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']))
+        ->set_mobileBgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']));
 
     }
 
@@ -148,8 +154,8 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     protected function handleRowListItem(BrizyComponent $brizySection, $position = 'left'): void
     {
         //$brizySection
-            //->getItemWithDepth(0)
-            //->addPadding(0, 0, 0, 0)
-            //->addMargin(15, 0, 0, 0);
+        //->getItemWithDepth(0)
+        //->addPadding(0, 0, 0, 0)
+        //->addMargin(15, 0, 0, 0);
     }
 }

@@ -587,7 +587,7 @@ class BrizyComponent implements JsonSerializable
         return $this;
     }
 
-    public function addBgColor($hex, $opacity): BrizyComponent
+    public function addBgColor($hex, $opacity=1): BrizyComponent
     {
         $bgColor = [
             "bgColorType" => "solid",
