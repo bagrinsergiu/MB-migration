@@ -3,12 +3,15 @@
 namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\Elements\Text\TwoHorizontalTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class TwoHorizontalText extends TwoHorizontalTextElement
 {
+
+    use ShadowAble;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -72,6 +75,8 @@ class TwoHorizontalText extends TwoHorizontalTextElement
             $mainBrizySection->getItemWithDepth(0, 0, 1)->getValue()
                 ->$method($value);
         }
+
+        $this->handleShadow($mainBrizySection);
 
         return $mainBrizySection;
     }

@@ -5,6 +5,7 @@ namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\BrizyComponent\BrizySection;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
+use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
@@ -18,6 +19,7 @@ class ThreeBottomMedia extends PhotoTextElement
     use SectionStylesAble;
     use DonationsAble;
     use ImageStylesAble;
+    use ShadowAble;
     private $imageCount = 0;
     protected int $textPosition = 0;
 
@@ -119,6 +121,8 @@ class ThreeBottomMedia extends PhotoTextElement
         $this->transformItem($elementContext, $sectionItemComponent, $styleList);
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
+        $this->handleShadow($brizySection);
 
         return $brizySection;
     }

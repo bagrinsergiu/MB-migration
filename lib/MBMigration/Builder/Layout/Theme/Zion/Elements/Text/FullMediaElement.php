@@ -4,13 +4,15 @@ namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
+use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\Text\FullMediaElementElement;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class FullMediaElement extends FullMediaElementElement
 {
-use LineAble;
+    use LineAble;
+    use ShadowAble;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -19,7 +21,7 @@ use LineAble;
         $showHeader = $this->canShowHeader($mbSectionItem);
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
 
-        if($showHeader) {
+        if ($showHeader) {
             $titleMb = $this->getItemByType($mbSectionItem, 'title');
             $image = $brizySection->getItemWithDepth(0, 0, 0);
             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
@@ -29,10 +31,13 @@ use LineAble;
 
             $this->handleLine($elementContext, $this->browserPage, $titleMb['id'], null, [], 1, null);
         }
+        $this->handleShadow($brizySection);
 
         return $brizySection;
     }
-    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
+
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    {
         return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
@@ -63,7 +68,7 @@ use LineAble;
 
     protected function customSettings(): array
     {
-        return  [
+        return [
 //            'customCSS' => $this->getCustomCss(),
 //            'maskShape' => 'custom'
         ];
@@ -83,7 +88,7 @@ element:not(:has(.brz-ed-image__wrapper)) picture{
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,

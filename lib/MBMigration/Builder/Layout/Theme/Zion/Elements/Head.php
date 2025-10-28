@@ -302,6 +302,7 @@ class Head extends HeadElement
     public function getThemeSubMenuItemClassSelected(): array
     {
         return ["selector" => "#main-navigation > ul > li:not(.selected).has-sub > ul > li", "className" => "selected"];
+        #main-navigation > ul:nth-child(1) > li.selected.landing.first.has-sub.current
     }
 
     public function getThemeSubMenuItemBGSelector(): array
@@ -327,6 +328,22 @@ class Head extends HeadElement
     public function getThemeMobileBtnSelector(): array
     {
         return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    public function getThemeSubMenuItemSelector(): array
+    {
+        return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ""];
+        //#main-navigation > ul:nth-child(1) > li.has-sub > ul
     }
 
     protected function getPropertiesIconMenuItem(): array
@@ -428,21 +445,5 @@ class Head extends HeadElement
     public function getNotSelectedMenuItemBgSelector(): array
     {
         return $this->getThemeMenuItemSelector();
-    }
-
-    public function getThemeSubMenuSelectedItemSelector(): array
-    {
-        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
-    }
-
-    public function getThemeSubMenuItemSelector(): array
-    {
-        return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
-    }
-
-    protected function getThemeSubMenuItemDropDownSelector(): array
-    {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "pseudoEl" => ""];
-        //#main-navigation > ul:nth-child(1) > li.has-sub > ul
     }
 }

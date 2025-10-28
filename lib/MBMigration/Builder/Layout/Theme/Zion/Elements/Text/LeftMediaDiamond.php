@@ -3,13 +3,14 @@
 namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
-class
-LeftMediaDiamond extends PhotoTextElement
+class LeftMediaDiamond extends PhotoTextElement
 {
+    use ShadowAble;
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
@@ -120,6 +121,8 @@ LeftMediaDiamond extends PhotoTextElement
         $this->transformItem($elementContext, $sectionItemComponent, $styleList);
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
+        $this->handleShadow($brizySection);
 
         return $brizySection;
     }

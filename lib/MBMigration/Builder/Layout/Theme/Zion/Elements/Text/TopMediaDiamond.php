@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
+use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
@@ -15,6 +16,7 @@ class TopMediaDiamond extends FullMediaElementElement
     use RichTextAble;
     use SectionStylesAble;
     use DonationsAble;
+    use ShadowAble;
     protected function getSectionName(): string
     {
         return "TopMediaDiamond";
@@ -75,6 +77,8 @@ class TopMediaDiamond extends FullMediaElementElement
 
         $this->handleOnlyRichTextItems($elementTextContainerComponentContext, $this->browserPage);
         $this->handleDonationsButton($elementTextContainerComponentContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
+
+        $this->handleShadow($brizySection);
 
         return $brizySection;
     }

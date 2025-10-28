@@ -3,12 +3,14 @@
 namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class RightMedia extends PhotoTextElement
 {
+    use ShadowAble;
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
@@ -66,6 +68,8 @@ class RightMedia extends PhotoTextElement
         $brizySection->getItemWithDepth(0,0,0)
             ->getValue()
             ->add_items([$wrapperLine], 1);
+
+        $this->handleShadow($brizySection);
 
         return $brizySection;
     }
