@@ -70,6 +70,13 @@ class HorizontalTexts extends FullTextElement
             $this->handleRichTextItems($elementContext, $this->browserPage);
         }
 
+        $sectionItemComponent->getValue()->set_paddingType('grouped');
+        $sectionItemComponent->getValue()->set_padding(0);
+
+        $brizySection->getValue()->set_sectionHeightStyle('auto');
+        $brizySection->getValue()->set_sectionHeight(0);
+        $brizySection->getValue()->set_paddingType('grouped');
+        $brizySection->getValue()->set_padding(0);
         return $brizySection;
     }
 }

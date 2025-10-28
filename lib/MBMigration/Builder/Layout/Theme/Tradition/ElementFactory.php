@@ -46,10 +46,8 @@ class ElementFactory extends AbstractThemeElementFactory
                 return new FullMedia($this->blockKit['blocks']['full-media'], $browserPage);
             case 'three-horizontal-text':
                 return new HorizontalTexts($this->blockKit['blocks']['three-horizontal-text'], $browserPage);
-
             case 'gallery-layout':
                 return new GalleryLayoutElement($this->blockKit['blocks']['gallery-layout'], $browserPage);
-
             case 'grid-media-layout':
             case 'list-media-layout':
                 return new MediaLayoutElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
