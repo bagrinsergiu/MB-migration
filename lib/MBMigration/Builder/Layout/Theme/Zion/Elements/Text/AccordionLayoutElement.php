@@ -3,12 +3,15 @@
 namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\TextTools;
 
 class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\AccordionLayoutElement
 {
+    use ShadowAble;
+
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -149,6 +152,8 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         }
 
         $brizyAccordionComponent->set_items($brizyAccordionItems);
+
+        $this->handleShadow($brizySection);
 
         return $brizySection;
     }
