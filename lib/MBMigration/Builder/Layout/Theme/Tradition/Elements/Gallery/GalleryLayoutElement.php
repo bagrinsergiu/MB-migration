@@ -25,4 +25,9 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
     {
         return 25;
     }
+
+    protected function getArrowColorByBackground($colorArrows, $backGroundColor): string
+    {
+        return $colorArrows;
+    }
 }

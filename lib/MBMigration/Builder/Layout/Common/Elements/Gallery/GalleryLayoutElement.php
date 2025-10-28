@@ -69,7 +69,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 //            $transitionDuration = (float)$mbSection['settings']['sections']['gallery']['transition_duration'] ?? 0.1;
 //        }
 
-        $colorArrows = ColorConverter::getContrastColor($properties['background-color']['color'] ?? $properties['background-color'] );
+        $colorArrows = $this->getArrowColorByBackground($colorArrows, $properties['background-color']['color'] ?? $properties['background-color']);
 
         $brizySection->getValue()
             ->set_sliderArrowsColorHex($colorArrows)
@@ -338,6 +338,15 @@ abstract class GalleryLayoutElement extends AbstractElement
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 250;
+    }
+
+    /**
+     * @param $backGroundColor
+     * @return string
+     */
+    protected function getArrowColorByBackground($colorArrows, $backGroundColor): string
+    {
+        return ColorConverter::getContrastColor($backGroundColor);
     }
 
 
