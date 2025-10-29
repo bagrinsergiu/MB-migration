@@ -15,18 +15,21 @@ use MBMigration\Core\Logger;
 trait Button
 {
     use CssPropertyExtractorAware;
-    private static $buttonCache = ['id' => 0 , 'button' => null];
+
+    private static $buttonCache = ['id' => 0, 'button' => null];
+
     /**
      * Process and add all items the same brizy section
      */
     protected function handleButton(
         ElementContextInterface $data,
-        BrowserPageInterface $browserPage,
-        array $brizyKit,
-        $selector = null,
-        $options = null,
-        array $customStyles = []
-    ): BrizyComponent {
+        BrowserPageInterface    $browserPage,
+        array                   $brizyKit,
+                                $selector = null,
+                                $options = null,
+        array                   $customStyles = []
+    ): BrizyComponent
+    {
 
         $mbSection = $data->getMbSection();
         $brizySection = $data->getBrizySection();
@@ -39,13 +42,12 @@ trait Button
             switch ($mbSection['category']) {
                 case "button":
 
-                    if (self::$buttonCache['id'] === $options)
-                    {
+                    if (self::$buttonCache['id'] === $options) {
                         $brizySection->getValue()->add_items([self::$buttonCache['button']]);
                         break;
                     }
 
-                    $selector = $selector ?? '[data-id="'.$mbSection['id'].'"]';
+                    $selector = $selector ?? '[data-id="' . $mbSection['id'] . '"]';
 
                     $brizyButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
 
@@ -98,12 +100,13 @@ trait Button
      * @throws BrowserScriptException
      */
     protected function setButtonStyles(
-        BrizyComponent $brizyButton,
-        BrowserPageInterface $browserPage,
-        string $selector,
+        BrizyComponent          $brizyButton,
+        BrowserPageInterface    $browserPage,
+        string                  $selector,
         ElementContextInterface $data,
-        array $mbSection
-    ): BrizyComponent {
+        array                   $mbSection
+    ): BrizyComponent
+    {
         $browserPage->triggerEvent('hover', 'html');
         $buttonStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
@@ -130,6 +133,10 @@ trait Button
                     'border-top-left-radius',
                     'border-top-right-radius',
                     'background-color',
+                    'padding-top',
+                    'padding-bottom',
+                    'padding-right',
+                    'padding-left',
                 ],
                 'families' => $data->getFontFamilies(),
                 'defaultFamily' => $data->getDefaultFontFamily(),
@@ -150,6 +157,11 @@ trait Button
                 'defaultFamily' => $data->getDefaultFontFamily(),
             ]
         );
+
+        $buttonStyles['data']['padding-top'] = (int)$buttonStyles['data']['padding-top'] + (int)$buttonPaddingStyles['data']['padding-top'] ?? 0;
+        $buttonStyles['data']['padding-bottom'] = (int)$buttonStyles['data']['padding-bottom'] + (int)$buttonPaddingStyles['data']['padding-bottom'] ?? 0;
+        $buttonStyles['data']['padding-right'] = (int)$buttonStyles['data']['padding-right'] + (int)$buttonPaddingStyles['data']['padding-right'] ?? 0;
+        $buttonStyles['data']['padding-left'] = (int)$buttonStyles['data']['padding-left'] + (int)$buttonPaddingStyles['data']['padding-left'] ?? 0;
 
         $buttonTextTransform = $browserPage->evaluateScript(
             'brizy.getStyles',
@@ -173,15 +185,7 @@ trait Button
             throw new BrowserScriptException($buttonStyles['error']);
         }
 
-        if (empty($buttonPaddingStyles)) {
-            throw new BrowserScriptException("The element with selector {$selector} was not found in page.");
-        }
-
-        if (isset($buttonPaddingStyles['error'])) {
-            throw new BrowserScriptException($buttonPaddingStyles['error']);
-        }
-
-        $buttonStyles = array_merge($buttonStyles['data'], $buttonPaddingStyles['data']);
+        $buttonStyles = $buttonStyles['data'];
 
         if (isset($mbSection['settings']['alignment']) && $mbSection['settings']['alignment'] != '') {
             $brizyButton->getValue()->set_horizontalAlign(
@@ -249,22 +253,20 @@ trait Button
             ->set_colorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
             ->set_colorPalette("");
 
-        try{
+        try {
             $fonts = $data->getFontFamilies();
             $convertedFontFamily = FontUtils::transliterateFontFamily($buttonStyles['font-family']);
             $font = $fonts[$convertedFontFamily] ?? $fonts[$data->getDefaultFontFamily()];
 
-            if( !empty( $font) )
-            {
+            if (!empty($font)) {
                 $brizyButton->getItemWithDepth(0)->addFont(
-                    (int) $buttonStyles['font-size'],
+                    (int)$buttonStyles['font-size'],
                     $font['name'],
                     $font['type'],
                     $buttonStyles['font-weight']
                 );
             }
-        } catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             Logger::instance()->warning('Error on set font: ' . $e->getMessage() . '');
         }
 
@@ -291,12 +293,13 @@ trait Button
      * @throws BrowserScriptException
      */
     protected function setHoverButtonStyles(
-        BrizyComponent $brizyButton,
-        BrowserPageInterface $browserPage,
-        string $selector,
+        BrizyComponent          $brizyButton,
+        BrowserPageInterface    $browserPage,
+        string                  $selector,
         ElementContextInterface $data,
-        array $mbSection
-    ): BrizyComponent {
+        array                   $mbSection
+    ): BrizyComponent
+    {
         $browserPage->triggerEvent('hover', $selector);
         $buttonStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
@@ -360,9 +363,9 @@ trait Button
 
         foreach ($buttonSelector as $selector) {
 
-            $selector = "[data-id='".$mbSectionId."'] ".$selector;
+            $selector = "[data-id='" . $mbSectionId . "'] " . $selector;
 
-            if($this->hasNode($selector, $this->browserPage)){
+            if ($this->hasNode($selector, $this->browserPage)) {
                 return $this->searchButton($selector, $data);
 
             }
@@ -483,10 +486,10 @@ trait Button
 
             switch ($linkType) {
                 case 'mail':
-                    $brizyComponentValue->set_linkExternal('mailto:'.$mbItem['link']);
+                    $brizyComponentValue->set_linkExternal('mailto:' . $mbItem['link']);
                     break;
                 case 'phone':
-                    $brizyComponentValue->set_linkExternal('tel:'.$mbItem['link']);
+                    $brizyComponentValue->set_linkExternal('tel:' . $mbItem['link']);
                     break;
                 case 'string':
                 case 'link':

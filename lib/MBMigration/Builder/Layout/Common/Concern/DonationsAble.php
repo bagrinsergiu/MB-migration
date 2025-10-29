@@ -6,7 +6,6 @@ use Exception;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\Exception\BrizyKitNotFound;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\FontUtils;
@@ -86,7 +85,7 @@ trait DonationsAble
             'mobilePaddingLeft',
         ];
 
-        return (bool) array_intersect($paddingKeys, array_keys($options));
+        return (bool)array_intersect($paddingKeys, array_keys($options));
     }
 
     /**
@@ -139,6 +138,10 @@ trait DonationsAble
                     'border-top-right-radius',
                     'background-color',
                     'opacity',
+                    'padding-top',
+                    'padding-bottom',
+                    'padding-right',
+                    'padding-left',
                 ],
                 'families' => $data->getFontFamilies(),
                 'defaultFamily' => $data->getDefaultFontFamily(),
@@ -148,7 +151,7 @@ trait DonationsAble
         $paddingButtonStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => $selector . ' span',
+                'selector' => $selector . ' >*',
                 'styleProperties' => [
                     'padding-top',
                     'padding-bottom',
@@ -159,6 +162,12 @@ trait DonationsAble
                 'defaultFamily' => $data->getDefaultFontFamily(),
             ]
         );
+
+        $paddingButtonStyles['data']['padding-top'] = (int)$buttonStyles['data']['padding-top'] + (int)$paddingButtonStyles['data']['padding-top'] ?? 0;
+        $paddingButtonStyles['data']['padding-bottom'] = (int)$buttonStyles['data']['padding-bottom'] + (int)$paddingButtonStyles['data']['padding-bottom'] ?? 0;
+        $paddingButtonStyles['data']['padding-right'] = (int)$buttonStyles['data']['padding-right'] + (int)$paddingButtonStyles['data']['padding-right'] ?? 0;
+        $paddingButtonStyles['data']['padding-left'] = (int)$buttonStyles['data']['padding-left'] + (int)$paddingButtonStyles['data']['padding-left'] ?? 0;
+
         $paddingButtonStyles = $paddingButtonStyles['data'];
 
 
@@ -287,7 +296,7 @@ trait DonationsAble
             ->set_borderColorHex(ColorConverter::rgba2hex($buttonStyles['border-top-color']))
             ->set_borderColorPalette('')
             ->set_borderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['border-top-color']))
-            ->set_bgColorOpacity(ColorConverter::normalizeOpacity($buttonStyles['opacity']))
+            ->set_bgColorOpacity(ColorConverter::rgba2opacity($buttonStyles['background-color']))
             ->set_bgColorHex(ColorConverter::rgba2hex($buttonStyles['background-color']))
             ->set_bgColorPalette("")
             ->set_colorHex(ColorConverter::rgba2hex($buttonStyles['color']))
@@ -297,13 +306,12 @@ trait DonationsAble
 
         $fontList = $data->getFontFamilies();
 
-        if($font =$fontList[FontUtils::transliterateFontFamily($buttonStyles['font-family'])])
-        {
+        if ($font = $fontList[FontUtils::transliterateFontFamily($buttonStyles['font-family'])]) {
             $butonFont = [
                 'fontFamily' => $font['name'],
                 'fontFamilyType' => $font['type'],
             ];
-        }else{
+        } else {
             $butonFont = [
                 'fontFamily' => "lato",
                 'fontFamilyType' => "google",
@@ -311,7 +319,7 @@ trait DonationsAble
         }
 
         $brizyDonationButton->getItemWithDepth(0)->addFont(
-            (int) $buttonStyles['font-size'],
+            (int)$buttonStyles['font-size'],
             $butonFont['fontFamily'],
             $butonFont['fontFamilyType'],
         );
@@ -392,12 +400,12 @@ trait DonationsAble
             ->set_hoverBorderStyle($buttonStyles['border-top-style'] ?? 'none')
             ->set_hoverBgColorHex(ColorConverter::rgba2hex($buttonStyles['background-color']))
             ->set_hoverBgColorPalette("")
-            ->set_hoverBgColorOpacity(0.75 ?? ColorConverter::rgba2opacity($buttonStyles['background-color']))
+            ->set_hoverBgColorOpacity( ColorConverter::rgba2opacity($buttonStyles['background-color']) ?? 0.75)
+
             ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-top-color']))
             ->set_hoverBorderColorPalette("")
-            ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
-            ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['color']))
-            ->set_hoverBorderColorPalette("")
+            ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['border-top-color']))
+
             ->set_hoverColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
             ->set_hoverColorHex(ColorConverter::rgba2hex($buttonStyles['color']))
             ->set_hoverColorPalette("");

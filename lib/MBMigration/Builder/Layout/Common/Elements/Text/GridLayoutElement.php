@@ -105,6 +105,22 @@ abstract class GridLayoutElement extends AbstractElement
 
                             $this->handleItemPhotoAfter($elementContext);
                             break;
+                        case 'button':
+                            if($this->canShowButton($mbSection)){
+
+                                $buttonSelector = $item['id'];
+                                $selector = "[data-id='$buttonSelector']";
+
+                                if($this->hasNode($selector, $this->browserPage)){
+                                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                                        $mbItem,
+                                        $brizySectionItem
+                                    );
+
+                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, null, $mbItem['id'] ?? null);
+                                }
+                            }
+                            break;
                         default:
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                                 $mbItem,
@@ -125,26 +141,6 @@ abstract class GridLayoutElement extends AbstractElement
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
                             $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
                             break;
-                    }
-                }
-
-                foreach ($item['items'] as $mbItem) {
-                    switch ($mbItem['category']) {
-                        case 'button':
-                            if($this->canShowButton($mbSection)){
-
-                                $buttonSelector = $item['id'];
-                                $selector = "[data-id='$buttonSelector'] a > button";
-
-                                if($this->hasNode($selector, $this->browserPage)){
-                                    $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                                        $mbItem,
-                                        $brizySectionItem
-                                    );
-
-                                    $this->handleButton($elementContext, $this->browserPage, $this->brizyKit, null, $mbItem['id'] ?? null);
-                                }
-                            }
                     }
                 }
 

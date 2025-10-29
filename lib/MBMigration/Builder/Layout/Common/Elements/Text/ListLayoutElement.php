@@ -62,6 +62,7 @@ abstract class ListLayoutElement extends AbstractElement
 //                ->set_paddingRight((int)$styles['margin-right'])
 //                ->set_paddingLeft((int)$styles['margin-left']);
 
+
             $this->handleItemTextContainerComponent($brizySectionItem);
 
             foreach ($item['items'] as $mbItem) {
@@ -114,6 +115,9 @@ abstract class ListLayoutElement extends AbstractElement
                 }
             }
 
+            $itemContext = $data->instanceWithBrizyComponentAndMBSection($item,$brizySectionItem);
+            $this->handleItemRowComponentAfter($itemContext);
+
             $brizyComponentValue->add_items([$brizySectionItem]);
         }
 
@@ -133,6 +137,10 @@ abstract class ListLayoutElement extends AbstractElement
     ): BrizyComponent;
 
     protected function handleItemTextContainerComponent(BrizyComponent $brizySection): void
+    {
+
+    }
+    protected function handleItemRowComponentAfter(ElementContextInterface $data): void
     {
 
     }

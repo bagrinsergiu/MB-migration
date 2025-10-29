@@ -108,54 +108,39 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
 
         $w = $context->getBrizySection()->getItemWithDepth(0)->getValue();
-        $w
-        ->set_bgColorOpacity('1.0')
-        ->set_bgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']))
-        ->set_mobileBgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']));
+        $w->set_bgColorOpacity('1.0')
+            ->set_bgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']))
+            ->set_mobileBgColorHex(ColorConverter::convertColorRgbToHex($sectionStyles['background-color']));
 
     }
 
     protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {
-        $mbSectionItem = $data->getMbSection();
-        $itemsKit = $data->getThemeContext()->getBrizyKit();
-
-        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
-        if (!isset($mbSectionItem['item_type']) || $mbSectionItem['item_type'] !== 'title') {
-            $titleMb = $this->getByType($mbSectionItem['head'], 'title');
-        } else {
-            $titleMb['id'] = $mbSectionItem['id'];
-        }
-
-        $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
-        $wrapperLineStyles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $menuSectionSelector,
-                'styleProperties' => ['border-bottom-color',],
-                'families' => [],
-                'defaultFamily' => '',
-            ]
-        );
-
-        $headStyle = [
-            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
-        ];
-
-        $wrapperLine->getItemWithDepth(0)
-            ->getValue()
-            ->set_borderColorHex($headStyle['line-color']);
-
-        $brizySection->getValue()->add_items([$wrapperLine]);
-
         return $brizySection;
     }
 
     protected function handleRowListItem(BrizyComponent $brizySection, $position = 'left'): void
     {
-        //$brizySection
-        //->getItemWithDepth(0)
-        //->addPadding(0, 0, 0, 0)
-        //->addMargin(15, 0, 0, 0);
+    }
+
+    protected function handleItemRowComponentAfter(ElementContextInterface $data): void
+    {
+        $mbSection = $data->getMbSection();
+        $data->getBrizySection();
+        $styles = $this->getDomElementStyles('[data-id="' . $mbSection['id'] . '"]', ['background-color'], $this->browserPage, [], '', "::before");
+        $data->getBrizySection()->getValue()
+            ->set_borderWidthType('ungrouped')
+            ->set_borderStyle('solid')
+            ->set_borderTopWidth(2)
+            ->set_borderBottomWidth(0)
+            ->set_borderLeftWidth(0)
+            ->set_borderRightomWidth(0)
+            ->set_paddingType('ungrouped')
+            ->set_paddingTop(25)
+            ->set_paddingRight(0)
+            ->set_paddingLeft(0)
+            ->set_paddingBottom(0)
+            ->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['background-color']))
+            ->set_borderColorOpacity(1);
     }
 }
