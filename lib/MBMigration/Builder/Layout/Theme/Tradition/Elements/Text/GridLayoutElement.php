@@ -78,31 +78,12 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             ->set_mobilePaddingType('grouped')
             ->set_mobilePadding(5);
 
-//            ->set_mobilePadding((int)$sectionStyles['margin-bottom'])
-//            ->set_paddingTop((int)$sectionStyles['padding-top'])
-//            ->set_paddingBottom((int)$sectionStyles['padding-bottom'])
-//            ->set_paddingRight((int)$sectionStyles['padding-right'])
-//            ->set_paddingLeft((int)$sectionStyles['padding-left'])
-//            ->set_marginLeft((int)$sectionStyles['margin-left'])
-//            ->set_marginRight((int)$sectionStyles['margin-right'])
-//            ->set_marginTop((int)$sectionStyles['margin-top'])
-//            ->set_marginBottom((int)$sectionStyles['margin-bottom'])
-//
-//            ->set_mobilePaddingType('ungrouped')
-//            ->set_mobilePadding((int)$sectionStyles['margin-bottom'])
-//            ->set_mobilePaddingSuffix('px')
-//            ->set_mobilePaddingTop((int)$sectionStyles['margin-bottom'])
-//            ->set_mobilePaddingTopSuffix('px')
-//            ->set_mobilePaddingRight((int)$sectionStyles['margin-bottom'])
-//            ->set_mobilePaddingRightSuffix('px')
-//            ->set_mobilePaddingBottom((int)$sectionStyles['margin-bottom'])
-//            ->set_mobilePaddingBottomSuffix('px')
-//            ->set_mobilePaddingLeft((int)$sectionStyles['margin-bottom'])
-//            ->set_mobilePaddingLeftSuffix('px');
-
         $imageWrapper = $context->getBrizySection()->getItemWithDepth(0);
         $imageWrapper->getValue()->set_marginTop(0);
         $imageWrapper->getValue()->set_mobileMarginTop(0);
-    }
+
+        // make buttons to not open in new window
+        // https://github.com/bagrinsergiu/MB-Support/issues/826
+        $context->getBrizySection()->getItemWithDepth(2,0)->getValue()->set_linkExternalBlank("off");    }
 
 }
