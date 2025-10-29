@@ -56,9 +56,7 @@ class SideMedia extends PhotoTextElement
         }
 
         $this->brizyKit['main'] = json_encode($main);
-
         $brizySection = parent::internalTransformToItem($data);
-
         return $brizySection;
     }
 
