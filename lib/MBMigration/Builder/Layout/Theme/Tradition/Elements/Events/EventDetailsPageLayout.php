@@ -3,7 +3,6 @@
 namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Events;
 
 
-use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class EventDetailsPageLayout extends \MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout
@@ -19,7 +18,7 @@ class EventDetailsPageLayout extends \MBMigration\Builder\Layout\Common\Template
         $customSectionProperties = [
             'detailButtonBorderStyle' => 'solid',
             'detailButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'detailButtonBorderColorOpacity' =>  1,
+            'detailButtonBorderColorOpacity' => 1,
             'detailButtonBorderColorPalette' => '',
 
             "detailButtonBorderWidthType" => "grouped",
@@ -28,6 +27,16 @@ class EventDetailsPageLayout extends \MBMigration\Builder\Layout\Common\Template
             "detailButtonBorderRightWidth" => 1,
             "detailButtonBorderBottomWidth" => 1,
             "detailButtonBorderLeftWidth" => 1,
+            'subscribeEventButtonBorderStyle' => 'solid',
+            'subscribeEventButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'subscribeEventButtonBorderColorOpacity' => 1,
+            'subscribeEventButtonBorderColorPalette' => '',
+            "subscribeEventButtonBorderWidthType" => "grouped",
+            "subscribeEventButtonBorderWidth" => 1,
+            "subscribeEventButtonBorderTopWidth" => 1,
+            "subscribeEventButtonBorderRightWidth" => 1,
+            "subscribeEventButtonBorderBottomWidth" => 1,
+            "subscribeEventButtonBorderLeftWidth" => 1,
         ];
         return array_merge($sectionProperties, $customSectionProperties);
     }
@@ -43,7 +52,7 @@ class EventDetailsPageLayout extends \MBMigration\Builder\Layout\Common\Template
         $customSectionProperties = [
             'detailButtonBorderStyle' => 'solid',
             'detailButtonBorderColorHex' => $basicButtonStyleHover['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'detailButtonBorderColorOpacity' =>  1,
+            'detailButtonBorderColorOpacity' => 1,
             'detailButtonBorderColorPalette' => '',
 
             "detailButtonBorderWidthType" => "grouped",
@@ -55,7 +64,7 @@ class EventDetailsPageLayout extends \MBMigration\Builder\Layout\Common\Template
 
             'subscribeEventButtonBorderStyle' => 'solid',
             'subscribeEventButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'subscribeEventButtonBorderColorOpacity' =>  1,
+            'subscribeEventButtonBorderColorOpacity' => 1,
             'subscribeEventButtonBorderColorPalette' => '',
             "subscribeEventButtonBorderWidthType" => "grouped",
             "subscribeEventButtonBorderWidth" => 1,
@@ -63,6 +72,8 @@ class EventDetailsPageLayout extends \MBMigration\Builder\Layout\Common\Template
             "subscribeEventButtonBorderRightWidth" => 1,
             "subscribeEventButtonBorderBottomWidth" => 1,
             "subscribeEventButtonBorderLeftWidth" => 1,
+
+
         ];
         return array_merge($sectionProperties, $customSectionProperties);
     }

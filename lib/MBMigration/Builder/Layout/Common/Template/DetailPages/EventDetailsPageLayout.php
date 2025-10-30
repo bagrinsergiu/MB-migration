@@ -275,9 +275,6 @@ class EventDetailsPageLayout extends DetailsPage
             "typographyLowercase" => false
         ];
 
-
-
-
         foreach ($sectionStyle as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0)
@@ -290,9 +287,10 @@ class EventDetailsPageLayout extends DetailsPage
                 ->$properties($value);
         }
         $sectionProperties1 = $this->filterDetailPageStyles($sectionProperties1,$sectionPalette);
+        $brizyComponentValue = $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0);
         foreach ($sectionProperties1 as $key => $value) {
             $properties = 'set_'.$key;
-            $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
+            $brizyComponentValue
                 ->$properties($value);
         }
 
@@ -314,9 +312,10 @@ class EventDetailsPageLayout extends DetailsPage
         }
 
         $sectionProperties2 = $this->filterDetailPageStyles2($sectionProperties2,$sectionPalette);
+        $brizyComponentValue1 = $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0);
         foreach ($sectionProperties2 as $key => $value) {
             $properties = 'set_'.$key;
-            $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0)
+            $brizyComponentValue1
                 ->$properties($value);
         }
 
@@ -328,9 +327,10 @@ class EventDetailsPageLayout extends DetailsPage
 
         $detailsSection->getItemWithDepth(0, 1, 1)->addPadding(10,15,5,15);
 
+        $value1 = $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0);
         foreach ($wrapperItemTitle as $key => $value) {
             $properties = 'set_'.$key;
-            $detailsSection->getItemValueWithDepth(0, 1, 1, 0, 0)
+            $value1
                 ->$properties($value);
         }
 
