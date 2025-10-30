@@ -2,12 +2,15 @@
 
 namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Events;
 
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\ColorConverter;
+
 class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Events\EventLayoutElement
 {
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,
@@ -29,5 +32,31 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;
+    }
+
+    protected function filterEventLayoutElementStyles($sectionProperties,ElementContextInterface $data): array
+    {
+        $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
+
+        $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
+        $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
+
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
+
+        $customSectionProperties = [
+            'detailButtonBorderStyle' => 'solid',
+            'detailButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
+            'detailButtonBorderColorPalette' => '',
+
+            "detailButtonBorderWidthType" => "grouped",
+            "detailButtonBorderWidth" => 1,
+            "detailButtonBorderTopWidth" => 1,
+            "detailButtonBorderRightWidth" => 1,
+            "detailButtonBorderBottomWidth" => 1,
+            "detailButtonBorderLeftWidth" => 1,
+        ];
+        return array_merge($sectionProperties,$customSectionProperties);
     }
 }

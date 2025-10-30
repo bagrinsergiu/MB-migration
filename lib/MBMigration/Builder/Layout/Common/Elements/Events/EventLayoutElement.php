@@ -17,7 +17,6 @@ use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
-use PHPUnit\Exception;
 
 abstract class EventLayoutElement extends AbstractElement
 {
@@ -79,13 +78,6 @@ abstract class EventLayoutElement extends AbstractElement
             $this->handleRichTextItems($elementContext, $this->browserPage);
         }
 
-        try {
-
-
-        } catch (Exception $e) {
-
-        }
-
         $collectionTypeUri = $data->getThemeContext()->getBrizyCollectionTypeURI();
 
         $detailsSection = $DetailsPageLayout->setStyleDetailPage($sectionPalette);
@@ -128,30 +120,7 @@ abstract class EventLayoutElement extends AbstractElement
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
-        $sectionProperties = $this->getStyleOptions($sectionPalette, $basicButtonStyleNormal, $basicButtonStyleHover, $fonts);
-
-        $sectionProperties = array_merge($sectionProperties, $eventTabs, $featured);
-
-        foreach ($sectionProperties as $key => $value) {
-            $properties = 'set_' . $key;
-            $brizyWidget->getItemValueWithDepth(0)
-                ->$properties($value);
-        }
-
-        $brizySection->getItemValueWithDepth(0)->add_items([$brizyWidget]);
-
-
-        return $brizySection;
-    }
-
-    protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
-    }
-
-    protected function getStyleOptions($sectionPalette, $basicButtonStyleNormal, $basicButtonStyleHover, $fonts): array
-    {
-        return [
+        $sectionProperties = [
             'eventDetailPageButtonText' => 'Learn More',
 
             'titleTypographyLineHeight' => 1.8,
@@ -300,6 +269,26 @@ abstract class EventLayoutElement extends AbstractElement
             'layoutViewTypographyFontStyle' => '',
             'layoutViewTypographyFontFamilyType' => 'upload',
         ];
+
+        $sectionProperties = array_merge($sectionProperties, $eventTabs, $featured);
+
+        $sectionProperties = $this->filterEventLayoutElementStyles($sectionProperties, $data);
+
+        foreach ($sectionProperties as $key => $value) {
+            $properties = 'set_' . $key;
+            $brizyWidget->getItemValueWithDepth(0)
+                ->$properties($value);
+        }
+
+        $brizySection->getItemValueWithDepth(0)->add_items([$brizyWidget]);
+
+
+        return $brizySection;
+    }
+
+    protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getPropertiesMainSection(): array
@@ -317,6 +306,11 @@ abstract class EventLayoutElement extends AbstractElement
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function filterEventLayoutElementStyles($sectionProperties, ElementContextInterface $data): array
+    {
+        return $sectionProperties;
     }
 
 }
