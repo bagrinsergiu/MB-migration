@@ -113,7 +113,7 @@ trait RichTextAble
         $sectionCategory = $mbSectionItem['category'];
         $showHeader = $this->canShowHeader($mbSectionItem);
         $showBody = $this->canShowBody($mbSectionItem);
-        $showButtons = $this->canShowButtons($mbSectionItem);
+       $showButtons = $this->canShowButtons($mbSectionItem);
 
         // sort items
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);

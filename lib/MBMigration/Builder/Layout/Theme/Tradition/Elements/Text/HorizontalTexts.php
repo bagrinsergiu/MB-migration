@@ -39,7 +39,7 @@ class HorizontalTexts extends FullTextElement
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         $mbSection = $data->getMbSection();
-        $showButton = isset($mbSection['settings']['sections']['text']['show_buttons']) && $mbSection['settings']['sections']['text']['show_buttons'] == true;
+        $showButton = $mbSection['settings']['sections']['text']['show_buttons'] ?? true;
 
         $filteredItems = [];
         foreach ($mbSection['items'] as $item) {
