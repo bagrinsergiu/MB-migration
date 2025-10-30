@@ -48,7 +48,7 @@ abstract class EventLayoutElement extends AbstractElement
         $brizyWidget = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['widget'], true));
 
         $mbSection = $data->getMbSection();
-        $selector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $selector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
 
         $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
         $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
@@ -73,14 +73,13 @@ abstract class EventLayoutElement extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent, [], $this->getAdditionalTopPaddingOfTheFirstElement());
 
-        if (!empty($mbSection['head'])){
+        if (!empty($mbSection['head'])) {
             $this->handleRichTextHead($elementContext, $this->browserPage);
         } else {
             $this->handleRichTextItems($elementContext, $this->browserPage);
         }
 
         try {
-
 
 
         } catch (Exception $e) {
@@ -96,24 +95,24 @@ abstract class EventLayoutElement extends AbstractElement
             $detailsSection
         );
 
-        $placeholder = base64_encode('{{ brizy_dc_url_post entityType="'.$detailCollectionItem['type']['id'].'" entityId="' . $detailCollectionItem['id'] . '" }}');
+        $placeholder = base64_encode('{{ brizy_dc_url_post entityType="' . $detailCollectionItem['type']['id'] . '" entityId="' . $detailCollectionItem['id'] . '" }}');
         $this->getDetailsLinksComponent($brizyWidget)
             ->getValue()
             ->set_eventDetailPageSource($collectionTypeUri)
             ->set_eventDetailPage("{{placeholder content='$placeholder'}}");
 
-        switch ($mbSection['typeSection']){
+        switch ($mbSection['typeSection']) {
             case 'event-tile-layout':
                 $eventTabs = [
                     'featuredViewOrder' => 1,
-                    "listViewOrder"=> 2,
+                    "listViewOrder" => 2,
                     'calendarViewOrder' => 3,
                 ];
                 break;
             default:
                 $eventTabs = [
                     'featuredViewOrder' => 3,
-                    "listViewOrder"=> 2,
+                    "listViewOrder" => 2,
                     'calendarViewOrder' => 1,
                 ];
                 break;
@@ -129,7 +128,30 @@ abstract class EventLayoutElement extends AbstractElement
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
-        $sectionProperties = [
+        $sectionProperties = $this->getStyleOptions($sectionPalette, $basicButtonStyleNormal, $basicButtonStyleHover, $fonts);
+
+        $sectionProperties = array_merge($sectionProperties, $eventTabs, $featured);
+
+        foreach ($sectionProperties as $key => $value) {
+            $properties = 'set_' . $key;
+            $brizyWidget->getItemValueWithDepth(0)
+                ->$properties($value);
+        }
+
+        $brizySection->getItemValueWithDepth(0)->add_items([$brizyWidget]);
+
+
+        return $brizySection;
+    }
+
+    protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getStyleOptions($sectionPalette, $basicButtonStyleNormal, $basicButtonStyleHover, $fonts): array
+    {
+        return [
             'eventDetailPageButtonText' => 'Learn More',
 
             'titleTypographyLineHeight' => 1.8,
@@ -174,7 +196,7 @@ abstract class EventLayoutElement extends AbstractElement
             'calendarDaysBgColorPalette' => '',
 
             'calendarHeadingColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'],
-            'calendarHeadingColorOpacity' =>  $basicButtonStyleNormal['color-opacity'] ?? 1,
+            'calendarHeadingColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
             'calendarHeadingColorPalette' => '',
 
             'calendarDaysColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'],
@@ -201,7 +223,7 @@ abstract class EventLayoutElement extends AbstractElement
             'listItemMetaColorOpacity' => 1,
             'listItemMetaColorPalette' => '',
 
-            'listItemDateColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'] ??  $sectionPalette['text'],
+            'listItemDateColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'] ?? $sectionPalette['text'],
             'listItemDateColorOpacity' => 0.75 ?? $basicButtonStyleHover['color-opacity'] ?? 1,
             'listItemDateColorPalette' => '',
 
@@ -278,30 +300,12 @@ abstract class EventLayoutElement extends AbstractElement
             'layoutViewTypographyFontStyle' => '',
             'layoutViewTypographyFontFamilyType' => 'upload',
         ];
-
-        $sectionProperties = array_merge($sectionProperties, $eventTabs, $featured);
-
-        foreach ($sectionProperties as $key => $value) {
-            $properties = 'set_'.$key;
-            $brizyWidget->getItemValueWithDepth(0)
-                ->$properties($value);
-        }
-
-        $brizySection->getItemValueWithDepth(0)->add_items([$brizyWidget]);
-
-
-        return $brizySection;
-    }
-
-    protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
     }
 
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,

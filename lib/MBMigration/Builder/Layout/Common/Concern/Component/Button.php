@@ -356,9 +356,9 @@ trait Button
         $mbSectionId = $data->getMbSection()['sectionId'];
 
         $buttonSelector = [
-            'div.event-calendar-footer .sites-button',
-            'button.sites-button',
             'a.sites-button',
+            'button.sites-button',
+            'div.event-calendar-footer .sites-button',
         ];
 
         foreach ($buttonSelector as $selector) {
@@ -367,9 +367,7 @@ trait Button
 
             if ($this->hasNode($selector, $this->browserPage)) {
                 return $this->searchButton($selector, $data);
-
             }
-
         }
 
         return [
