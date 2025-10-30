@@ -3,10 +3,18 @@
 namespace MBMigration\Builder\Layout\Common\Template\DetailPages;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class EventDetailsPageLayout extends DetailsPage
 {
+    protected function filterDetailPageStyles($sectionProperties,$sectionPalette): array {
+        return $sectionProperties;
+    }
+    protected function filterDetailPageStyles2($sectionProperties,$sectionPalette): array {
+        return $sectionProperties;
+    }
+
     public function setStyleDetailPage(array $sectionPalette): BrizyComponent
     {
         if(!empty(self::$cacheEvent))
@@ -267,6 +275,9 @@ class EventDetailsPageLayout extends DetailsPage
             "typographyLowercase" => false
         ];
 
+
+
+
         foreach ($sectionStyle as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0)
@@ -278,7 +289,7 @@ class EventDetailsPageLayout extends DetailsPage
             $detailsSection->getItemValueWithDepth(0, 0)
                 ->$properties($value);
         }
-
+        $sectionProperties1 = $this->filterDetailPageStyles($sectionProperties1,$sectionPalette);
         foreach ($sectionProperties1 as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 0, 0, 0)
@@ -302,6 +313,7 @@ class EventDetailsPageLayout extends DetailsPage
                 ->$properties($value);
         }
 
+        $sectionProperties2 = $this->filterDetailPageStyles2($sectionProperties2,$sectionPalette);
         foreach ($sectionProperties2 as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0, 1, 1, 1, 0)

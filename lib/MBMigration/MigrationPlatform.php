@@ -195,7 +195,7 @@ class MigrationPlatform
 
 //        $this->brizyApi->setLabelManualMigration(false);
 
-       // $this->checkDesign($designName);
+        $this->checkDesign($designName);
 
         FoldersUtility::createProjectFolders($this->projectId);
 

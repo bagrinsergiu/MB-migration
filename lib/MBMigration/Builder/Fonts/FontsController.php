@@ -645,7 +645,6 @@ class FontsController extends builderUtils
                     $KitFonts['displayName']
                 );
 
-
                 // Validate font data before proceeding
                 if (!$this->validateFontData($responseDataAddedNewFont)) {
                     Logger::instance()->error('Font validation failed, falling back to default', ['font' => $fontName]);

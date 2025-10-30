@@ -37,6 +37,19 @@ abstract class EventLayoutElement extends AbstractElement
         $this->setQueryBuilder($queryBuilder);
     }
 
+    protected function getDetailsPageLayoutInstance(ElementContextInterface $data)
+    {
+        $mbSection = $data->getMbSection();
+        return new EventDetailsPageLayout(
+            $this->brizyKit['EventLayoutElement']['detail'],
+            $this->getTopPaddingOfTheFirstElement(),
+            $this->getMobileTopPaddingOfTheFirstElement(),
+            $this->pageTDO,
+            $data,
+            $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
+        );
+    }
+
     /**
      * @throws BadJsonProvided
      * @throws BrowserScriptException
@@ -52,14 +65,7 @@ abstract class EventLayoutElement extends AbstractElement
         $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
         $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
 
-        $DetailsPageLayout = new EventDetailsPageLayout(
-            $this->brizyKit['EventLayoutElement']['detail'],
-            $this->getTopPaddingOfTheFirstElement(),
-            $this->getMobileTopPaddingOfTheFirstElement(),
-            $this->pageTDO,
-            $data,
-            $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
-        );
+        $DetailsPageLayout = $this->getDetailsPageLayoutInstance($data);
 
         $fonts = FontsController::getFontsFamilyFromName('main_text');
 
