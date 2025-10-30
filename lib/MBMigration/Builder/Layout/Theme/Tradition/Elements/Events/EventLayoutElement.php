@@ -34,8 +34,13 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
         return 25;
     }
 
-    protected function filterEventLayoutElementStyles($sectionProperties,ElementContextInterface $data): array
+    protected function filterEventLayoutElementStyles($sectionProperties, ElementContextInterface $data): array
     {
+        $mbSection = $data->getMbSection();
+        $selector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
+        $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
+        $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
+
         $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
 
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
@@ -57,6 +62,6 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             "detailButtonBorderBottomWidth" => 1,
             "detailButtonBorderLeftWidth" => 1,
         ];
-        return array_merge($sectionProperties,$customSectionProperties);
+        return array_merge($sectionProperties, $customSectionProperties);
     }
 }
