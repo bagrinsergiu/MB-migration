@@ -75,6 +75,7 @@ class PhotoCollageMediaElement extends FullMediaElement
         if (isset($styles['border-top-color'])) {
             $brizyComponentValue = $brizySection->getItemValueWithDepth(0, 2, 1, 0, 0);
             $brizyComponentValue->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
+            $brizyComponentValue->set_bgColorPalette('');
         }
 
 

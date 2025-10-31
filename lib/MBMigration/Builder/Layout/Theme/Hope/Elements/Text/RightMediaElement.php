@@ -100,9 +100,7 @@ class RightMediaElement extends FullMediaElement
             $imageMb,
             $brizyImageComponent,
             $this->browserPage,
-            $data->getFontFamilies(),
-            $data->getDefaultFontFamily(),
-            $imageMb['order_by'] ?? null
+            []
         );
 
         return $brizySection;

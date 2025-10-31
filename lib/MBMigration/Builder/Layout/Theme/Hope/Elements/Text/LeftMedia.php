@@ -50,7 +50,6 @@ class LeftMedia extends PhotoTextElement
             '::before'
         );
 
-
         $wrapperLine->getItemWithDepth(0)
             ->getValue()
             ->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));

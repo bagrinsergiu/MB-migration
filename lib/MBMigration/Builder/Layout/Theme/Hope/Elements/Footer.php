@@ -23,7 +23,6 @@ class Footer extends FooterElement
         $sortItems = $this->sortItems($mbSection['items']);
         foreach ($sortItems as $i => $item) {
             $column = $this->getFooterColumnElement($brizySectionItemComponent, 0);
-
             $elementContext = $data->instanceWithBrizyComponentAndMBSection($item, $column);
             $this->handleItemMbSection($item, $elementContext);
         }
@@ -33,22 +32,22 @@ class Footer extends FooterElement
         $elementContext = $data->instanceWithBrizyComponentAndMBSection($mbSection, $brizySectionItemComponent);
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
-//        $bgSectionStyles = $this->browserPage->evaluateScript(
-//            'brizy.getStyles',
-//            [
-//                'selector' => 'body',
-//                'styleProperties' => ['background-color', 'opacity'],
-//                'families' => [],
-//                'defaultFamily' => '',
-//            ]
-//        );
-//
-//        $convertColorRgbToHex = ColorConverter::convertColorRgbToHex($bgSectionStyles['data']['background-color']);
-//        $rgba2opacity = ColorConverter::rgba2opacity($bgSectionStyles['data']['opacity']);
-//        $brizySection->getItemWithDepth(0)
-//            ->getValue()
-//            ->set_bgColorHex($convertColorRgbToHex)
-//            ->set_bgColorOpacity($rgba2opacity);
+        $bgSectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => 'body',
+                'styleProperties' => ['background-color', 'opacity'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        $convertColorRgbToHex = ColorConverter::convertColorRgbToHex($bgSectionStyles['data']['background-color']);
+        $rgba2opacity = ColorConverter::rgba2opacity($bgSectionStyles['data']['opacity']);
+        $brizySection->getItemWithDepth(0)
+            ->getValue()
+            ->set_bgColorHex($convertColorRgbToHex)
+            ->set_bgColorOpacity($rgba2opacity);
 
         return $brizySection;
     }
