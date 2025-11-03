@@ -8,8 +8,7 @@ use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
-class
-RightMediaDiamond extends PhotoTextElement
+class RightMediaDiamond extends PhotoTextElement
 {
     use ShadowAble;
     /**
@@ -18,7 +17,7 @@ RightMediaDiamond extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0,);
+        return $brizySection->getItemWithDepth(0, 0, 1);
     }
 
     /**
@@ -27,7 +26,7 @@ RightMediaDiamond extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1);
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
