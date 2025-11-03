@@ -3,10 +3,9 @@
 namespace MBMigration\Builder\Layout\Theme\Hope\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\HeadElement;
 use MBMigration\Builder\Utils\ColorConverter;
-use MBMigration\Builder\Utils\PathSlugExtractor;
 
 class Head extends HeadElement
 {
@@ -47,20 +46,45 @@ class Head extends HeadElement
         $brizySection = parent::internalTransformToItem($data);
 
         $MbSection = $data->getMbSection();
+        $this->browserPage->triggerEvent('click', '#mobile-nav-button');
 
-        $menuSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"]';
-        $menuSectionStyles = $this->browserPage->evaluateScript(
+        $itemStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
-                'selector' => $menuSectionSelector,
-                'styleProperties' => ['background-color', 'opacity', 'background-image'],
+                'selector' => '#mobile-navigation li.landing:not(.selected) a span',
+                'styleProperties' => ['color', 'opacity'],
 
                 'families' => [],
                 'defaultFamily' => '',
             ]
         );
-        $this->browserPage->triggerEvent('click','#mobile-nav-button');
-        sleep(1);
+        $itemCurrentStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => '#mobile-navigation li.selected a span',
+                'styleProperties' => ['color', 'opacity'],
+
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        $itemHoveStyles = ['data' => []];
+
+        if ($this->browserPage->triggerEvent('hover', '#mobile-navigation li.landing:not(.selected) a span')) {
+            $itemHoveStyles = $this->browserPage->evaluateScript(
+                'brizy.getStyles',
+                [
+                    'selector' => '#mobile-navigation li.landing:not(.selected) a span',
+                    'styleProperties' => ['color', 'opacity'],
+
+                    'families' => [],
+                    'defaultFamily' => '',
+                ]
+            );
+        }
+
+
         $bgSectionStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
@@ -70,6 +94,34 @@ class Head extends HeadElement
                 'defaultFamily' => '',
             ]
         );
+
+        $menu = $this->getTargetMenuComponent($brizySection);
+        $convertColorRgbToHex = ColorConverter::convertColorRgbToHex($itemStyles['data']['color']);
+        $convertColorRgbToHexHover = ColorConverter::convertColorRgbToHex($itemHoveStyles['data']['color']);
+        $menu->getValue()
+            ->set_mMenuBgColorHex(ColorConverter::convertColorRgbToHex($bgSectionStyles['data']['background-color']))
+            ->set_mobileMMenuBgColorHex(ColorConverter::convertColorRgbToHex($bgSectionStyles['data']['background-color']))
+            ->set_tabletMMenuBgColorHex(ColorConverter::convertColorRgbToHex($bgSectionStyles['data']['background-color']))
+            ->set_mMenuBgColorOpacity(ColorConverter::rgba2opacity($bgSectionStyles['data']['background-color']))
+            ->set_mobileMMenuBgColorOpacity(ColorConverter::rgba2opacity($bgSectionStyles['data']['background-color']))
+            ->set_tabletMMenuBgColorOpacity(ColorConverter::rgba2opacity($bgSectionStyles['data']['background-color']))
+
+            ->set_mMenuColorHex($convertColorRgbToHex['color'])
+            ->set_mobileMMenuColorHex($convertColorRgbToHex['color'])
+            ->set_tabletMMenuColorHex($convertColorRgbToHex['color'])
+
+            ->set_hoverMMenuColorHex($convertColorRgbToHexHover['color'])
+            ->set_hoverMMenuColorOpacity(1)
+
+            ->set_mMenuColorOpacity($convertColorRgbToHex['opacity'])
+            ->set_mobileMMenuColorOpacity($convertColorRgbToHex['opacity'])
+            ->set_tabletMMenuColorOpacity($convertColorRgbToHex['opacity'])
+
+            ->set_activeColorHex(ColorConverter::convertColorRgbToHex($itemCurrentStyles['data']['color']))
+            ->set_activeMMenuColorHex(ColorConverter::convertColorRgbToHex($itemCurrentStyles['data']['color']))
+            ->set_activeMMenuColorOpacity(1)
+            ->set_activeColorPalette('')
+            ->set_subMenuHoverColorPalette('');
 
         $imageSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"] .branding .photo-container img';
         $brandingSectionStyles = $this->browserPage->evaluateScript(
@@ -85,7 +137,7 @@ class Head extends HeadElement
         $headStyle = [
             'image-width' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['width']),
             'image-height' => ColorConverter::convertColorRgbToHex($brandingSectionStyles['data']['height']),
-            'bg-color'=> ColorConverter::rgba2hex($bgSectionStyles['data']['background-color']),
+            'bg-color' => ColorConverter::rgba2hex($bgSectionStyles['data']['background-color']),
             'bg-opacity' => ColorConverter::rgba2opacity($bgSectionStyles['data']['opacity']),
         ];
 
@@ -117,8 +169,8 @@ class Head extends HeadElement
 
         $activeItemMenuOptions = [
             'activeMenuBorderStyle' => 'none',
-            'activeMenuBorderColorHex' => '#000000',
-            'activeMenuBorderColorOpacity' => 0.02,
+            'activeMenuBorderColorHex' => $headStyle['bg-color'],
+            'activeMenuBorderColorOpacity' => $headStyle['bg-opacity'],
             'activeMenuBorderColorPalette' => '',
             'activeMenuBorderWidthType' => 'ungrouped',
             'activeMenuBorderWidth' => 0,
@@ -160,21 +212,21 @@ class Head extends HeadElement
         ];
 
         foreach ($sectionlogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($imageLogoOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 0, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($mobileIconButtonOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 1)
                 ->getValue()
                 ->$nameOption($value);
@@ -182,14 +234,14 @@ class Head extends HeadElement
 
 
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
         }
 
         foreach ($activeItemMenuOptions as $logoOption => $value) {
-            $nameOption = 'set_'.$logoOption;
+            $nameOption = 'set_' . $logoOption;
             $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
                 ->getValue()
                 ->$nameOption($value);
