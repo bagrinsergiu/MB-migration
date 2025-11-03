@@ -105,16 +105,22 @@ class FullMediaElement extends FullMediaElementElement
 
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
         $images = $this->getItemsByCategory($mbSectionItem, 'photo');
-        $imageMb = array_pop($images);
-        $this->handlePhotoItem(
-            $imageMb['id'],
-            $imageMb,
-            $brizyImageComponent,
-            $this->browserPage,
-            $data->getFontFamilies(),
-            $data->getDefaultFontFamily(),
-            $imageMb['order_by'] ?? null
-        );
+
+        if (count($images)==0) {
+            $brizyImageComponent->getParent()->getValue()->set_items([]);
+        } else {
+            $imageMb = array_pop($images);
+            $this->handlePhotoItem(
+                $imageMb['id'],
+                $imageMb,
+                $brizyImageComponent,
+                $this->browserPage,
+                $data->getFontFamilies(),
+                $data->getDefaultFontFamily(),
+                $imageMb['order_by'] ?? null
+            );
+        }
+
 
         return $brizySection;
     }

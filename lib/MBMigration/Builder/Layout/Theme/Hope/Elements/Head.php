@@ -144,11 +144,11 @@ class Head extends HeadElement
         $brizySection->getItemWithDepth(0)
             ->getValue()
             ->set_bgColorHex($headStyle['bg-color'])
-            ->set_bgColorOpacity($headStyle['bg-opacity'])
+            ->set_bgColorOpacity(0)
             ->set_mobileBgColorType('solid')
             ->set_mobileBgColorHex($headStyle['bg-color'])
             ->set_mobileBgColorPalette('')
-            ->set_mobileBgColorOpacity($headStyle['bg-opacity']);
+            ->set_mobileBgColorOpacity(0);
 
         $imageLogoOptions = [
             'sizeType' => 'custom',
