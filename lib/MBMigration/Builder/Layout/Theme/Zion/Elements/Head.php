@@ -111,7 +111,18 @@ class Head extends HeadElement
             'mobileHeightSuffix' => '%',
         ];
 
-        $submenuBoxShadowOptions = [
+        $activeItemMenuOptions = [
+            'activeMenuBorderStyle' => 'none',
+            'activeMenuBorderColorHex' => '#000000',
+            'activeMenuBorderColorOpacity' => 0.02,
+            'activeMenuBorderColorPalette' => '',
+            'activeMenuBorderWidthType' => 'ungrouped',
+            'activeMenuBorderWidth' => 0,
+            'activeMenuBorderTopWidth' => 0,
+            'activeMenuBorderRightWidth' => 0,
+            'activeMenuBorderBottomWidth' => 0,
+            'activeMenuBorderLeftWidth' => 0,
+
             "boxShadow" => "on",
             "tempBoxShadow" => "on",
             "boxShadowColorHex" => "#1a1919",
@@ -127,19 +138,6 @@ class Head extends HeadElement
             "tempBoxShadowVertical" => 2,
             "boxShadowHorizontal" => 1,
             "tempBoxShadowHorizontal" => 1
-        ];
-
-        $activeItemMenuOptions = [
-            'activeMenuBorderStyle' => 'none',
-            'activeMenuBorderColorHex' => '#000000',
-            'activeMenuBorderColorOpacity' => 0.02,
-            'activeMenuBorderColorPalette' => '',
-            'activeMenuBorderWidthType' => 'ungrouped',
-            'activeMenuBorderWidth' => 0,
-            'activeMenuBorderTopWidth' => 0,
-            'activeMenuBorderRightWidth' => 0,
-            'activeMenuBorderBottomWidth' => 0,
-            'activeMenuBorderLeftWidth' => 0,
         ];
 
         $sectionlogoOptions = [
