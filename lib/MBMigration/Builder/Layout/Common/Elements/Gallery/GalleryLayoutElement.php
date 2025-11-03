@@ -108,9 +108,6 @@ abstract class GalleryLayoutElement extends AbstractElement
         if($mbSection['settings']['sections']['gallery']['transition'] === 'Fade'){
             $brizySection->getValue()
                 ->set_sliderAnimation('fade');
-        } else {
-            $brizySection->getValue()
-                ->set_sliderAnimation($rotatorSpeed);
         }
 
         if(isset($mbSection['settings']['sections']['gallery']['transition']) &&

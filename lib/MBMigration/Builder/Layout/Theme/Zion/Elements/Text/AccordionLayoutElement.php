@@ -18,7 +18,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         $mbSection = $data->getMbSection();
         $families = $data->getFontFamilies();
 
-        $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
+        $sectionSelector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
         $backgroundColorStyles = ColorConverter::convertColorRgbToHex(
             $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage));
 
@@ -38,17 +38,21 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         $brizyAccordionComponent = $this->getAccordionParentComponent($brizySection)->getValue();
 
         foreach ($accordionElementStyles as $key => $value) {
-            $propertiesName = 'set_'.$key;
+            $propertiesName = 'set_' . $key;
             $brizyAccordionComponent->$propertiesName($value);
         }
 
         foreach ($mbSection['items'] as $mbSectionItem) {
             $brizyAccordionItemComponent = new BrizyComponent($itemJson);
 
-            $lableText = TextTools::transformTextBool(strip_tags($mbSectionItem['items'][0]['content']),
-                    $accordionElementStyles['uppercase']);
+            $labelText = TextTools::transformTextBool(
+                strip_tags($mbSectionItem['items'][0]['content']),
+                $accordionElementStyles['uppercase']
+            );
 
-            $brizyAccordionItemComponent->getValue()->set_labelText($lableText);
+            $labelText = $this->deletePlaceholderText($labelText);
+
+            $brizyAccordionItemComponent->getValue()->set_labelText($labelText);
 
             $brizyAccordionItem = $this->getAccordionSectionComponent($brizyAccordionItemComponent);
 
@@ -127,7 +131,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             ];
 
             foreach ($accordionRowElementStyle as $key => $value) {
-                $method = "set_".$key;
+                $method = "set_" . $key;
                 $brizyAccordionItem->getValue()
                     ->$method($value);
             }
@@ -140,9 +144,9 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
             $elementWrapper = $brizyAccordionItem->getItemWithDepth(0);
 
-            if(!empty($elementWrapper)){
+            if (!empty($elementWrapper)) {
                 foreach ($accordionWrapperElementStyle as $key => $value) {
-                    $method = "set_".$key;
+                    $method = "set_" . $key;
                     $elementWrapper->getValue()
                         ->$method($value);
                 }
@@ -175,7 +179,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-       return 75;
+        return 75;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -186,7 +190,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,

@@ -111,6 +111,24 @@ class Head extends HeadElement
             'mobileHeightSuffix' => '%',
         ];
 
+        $submenuBoxShadowOptions = [
+            "boxShadow" => "on",
+            "tempBoxShadow" => "on",
+            "boxShadowColorHex" => "#1a1919",
+            "boxShadowColorPalette" => "",
+            "tempBoxShadowColorPalette" => "",
+            "boxShadowColorOpacity" => 0.5,
+            "tempBoxShadowColorOpacity" => 0.76,
+            "boxShadowBlur" => 4,
+            "tempBoxShadowBlur" => 4,
+            "boxShadowSpread" => 0,
+            "tempBoxShadowSpread" => 0,
+            "boxShadowVertical" => 2,
+            "tempBoxShadowVertical" => 2,
+            "boxShadowHorizontal" => 1,
+            "tempBoxShadowHorizontal" => 1
+        ];
+
         $activeItemMenuOptions = [
             'activeMenuBorderStyle' => 'none',
             'activeMenuBorderColorHex' => '#000000',

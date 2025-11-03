@@ -404,6 +404,21 @@ abstract class AbstractElement implements ElementInterface
         $this->buttonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
     }
 
+    protected function deletePlaceholderText($inputText): string
+    {
+        $placeholders = [
+            "Accordion Title (Click to Set)",
+        ];
+
+        foreach ($placeholders as $p) {
+            if (trim($inputText) === $p) {
+                return "";
+            }
+        }
+
+        return $inputText;
+    }
+
     protected function generalSectionBehavior(ElementContextInterface $data, ?BrizyComponent $section): void
     {
         $mbSection = $data->getMbSection();
