@@ -44,6 +44,7 @@ abstract class FullTextElement extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
+        $fff = json_encode( $data->getThemeContext()->getFamilies());
         $elementContext = $data->instanceWithBrizyComponent($textContainerComponent);
         $this->handleRichTextItems($elementContext, $this->browserPage);
         $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
