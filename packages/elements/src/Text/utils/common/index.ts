@@ -97,9 +97,18 @@ export const getTarget = mPipe(Obj.readKey("target"), Str.read);
 export const normalizeOpacity = (color: Color): Color => {
   const { hex, opacity } = color;
 
+  let opacityValue = opacity;
+  if (hex === "#ffffff" && opacity === 1) {
+    opacityValue = 0.99;
+  }
+
+  if (Number.isNaN(opacityValue)) {
+    opacityValue = 1;
+  }
+
   return {
     hex,
-    opacity: hex === "#ffffff" && opacity === "1" ? "0.99" : opacity
+    opacity: opacityValue
   };
 };
 

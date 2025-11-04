@@ -1,6 +1,7 @@
 export type MValue<A> = A | undefined;
 export type Nullish = undefined | null;
 export type Literal = string | number;
+export type Primitive = string | number | boolean;
 export type Choice = {
   title: string;
   value: Literal;

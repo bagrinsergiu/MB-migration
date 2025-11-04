@@ -1,5 +1,5 @@
 import { Families } from "elements/src/types/type";
-import { Literal } from "utils";
+import { Literal, Primitive } from "utils";
 
 export {};
 
@@ -14,7 +14,7 @@ declare global {
     isDev?: boolean;
     elementId?: string;
     iconModel?: Record<string, Literal>;
-    buttonModel?: Record<string, Literal>;
+    buttonModel?: Record<string, Primitive>;
     menuModel?: Record<string, Literal>;
     brizy?: Record<string, unknown>;
   }
