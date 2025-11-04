@@ -137,10 +137,10 @@ trait SectionStylesAble
             ->set_mobilePaddingLeftSuffix('px');
 
         try {
-            $brizySection->getParent()->getValue()
-                ->set_fullHeight('custom')
-                ->set_sectionHeightSuffix('px')
-                ->set_sectionHeight((int)$sectionStyles['height']);
+//            $brizySection->getParent()->getValue()
+//                ->set_fullHeight('custom')
+//                ->set_sectionHeightSuffix('px')
+//                ->set_sectionHeight((int)$sectionStyles['height']);
         } catch (\Exception|Throwable $e){
 
         }
