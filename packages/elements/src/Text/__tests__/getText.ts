@@ -4913,6 +4913,40 @@ const ex63: Data = {
   }
 };
 
+// Tradition example 64 (Icons without the border)
+const ex64: Data = {
+  html: `<div class="text-content text-2 editable" data-id="16696170" data-category="text"><div><p><a class="socialIconLink cloverlinks" href="https://www.facebook.com/groups/874738999665384" data-location="external" data-detail="https://www.facebook.com/groups/874738999665384" data-category="link" target="_blank"><span data-socialicon="facebook"><span class="socialIconSymbol" aria-hidden="true"></span></span></a> <br></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="16696170"]' },
+  output: {
+    data: [
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--icon"],
+          horizontalAlign: undefined,
+          items: [
+            {
+              type: "Icon",
+              value: {
+                _id: "1",
+                _styles: ["icon"],
+                customSize: 26,
+                linkExternal: "https://www.facebook.com/groups/874738999665384",
+                linkExternalBlank: "on",
+                linkType: "external",
+                name: "facebook-f",
+                padding: 7,
+                type: "fa"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -4977,7 +5011,8 @@ describe.each([
   ex60,
   ex61,
   ex62,
-  ex63
+  ex63,
+  ex64
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
