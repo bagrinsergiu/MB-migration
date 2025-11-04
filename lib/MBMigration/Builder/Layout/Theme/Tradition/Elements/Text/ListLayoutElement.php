@@ -126,21 +126,31 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     protected function handleItemRowComponentAfter(ElementContextInterface $data): void
     {
         $mbSection = $data->getMbSection();
-        $data->getBrizySection();
         $styles = $this->getDomElementStyles('[data-id="' . $mbSection['id'] . '"]', ['background-color'], $this->browserPage, [], '', "::before");
+        $convertColorRgbToHex = ColorConverter::convertColorRgbToHex($styles['background-color']);
         $data->getBrizySection()->getValue()
             ->set_borderWidthType('ungrouped')
+            ->set_mobileBorderWidthType('ungrouped')
+            ->set_mobileBorderStyle('ungrouped')
             ->set_borderStyle('solid')
             ->set_borderTopWidth(2)
             ->set_borderBottomWidth(0)
             ->set_borderLeftWidth(0)
-            ->set_borderRightomWidth(0)
+            ->set_borderRightWidth(0)
+            ->set_mobileBorderStyle('solid')
+            ->set_mobileBorderTopWidth(2)
+            ->set_mobileBorderBottomWidth(0)
+            ->set_mobileBorderLeftWidth(0)
+            ->set_mobileBorderRightWidth(0)
             ->set_paddingType('ungrouped')
             ->set_paddingTop(25)
             ->set_paddingRight(0)
             ->set_paddingLeft(0)
             ->set_paddingBottom(0)
-            ->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['background-color']))
-            ->set_borderColorOpacity(1);
+            ->set_borderColorHex($convertColorRgbToHex)
+            ->set_mobileBorderColorHex($convertColorRgbToHex)
+            ->set_borderColorOpacity(1)
+            ->set_mobileBorderColorOpacity(1)
+            ->set_mobileBorderColorPalette('');
     }
 }
