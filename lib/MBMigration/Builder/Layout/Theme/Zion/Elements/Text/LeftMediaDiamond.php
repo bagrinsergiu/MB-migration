@@ -71,7 +71,7 @@ class LeftMediaDiamond extends PhotoTextElement
 
                         $imageStyles = $this->obtainImageStyles($elementContext, $this->browserPage);
 
-                        $this->targetImageSize($imageTarget, (int) $imageStyles['width'], (int) $imageStyles['height']);
+//                        $this->targetImageSize($imageTarget, (int) $imageStyles['width'], (int) $imageStyles['height']);
 
                         break;
                 }
@@ -133,11 +133,11 @@ class LeftMediaDiamond extends PhotoTextElement
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 25,
+            "mobilePaddingTop" => 70,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 25,
+            "mobilePaddingBottom" => 70,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
