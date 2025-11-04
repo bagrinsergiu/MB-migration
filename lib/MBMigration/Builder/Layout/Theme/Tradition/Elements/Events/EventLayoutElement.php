@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Events;
 
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
@@ -45,6 +46,11 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             $data,
             $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
         );
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set('fullHeight', 'auto');
     }
 
     protected function filterEventLayoutElementStyles($sectionProperties, ElementContextInterface $data): array
