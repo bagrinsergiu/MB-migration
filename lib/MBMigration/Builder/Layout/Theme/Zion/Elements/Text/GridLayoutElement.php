@@ -3,9 +3,47 @@
 namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
+use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\GridLayoutElement
 {
+
+    use LineAble;
+    use ShadowAble;
+
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $brizySection = parent::internalTransformToItem($data);
+        $mbSectionItem = $data->getMbSection();
+
+        $showHeader = $this->canShowHeader($mbSectionItem);
+
+        $mbSectionItem['head'] = $this->sortItems($mbSectionItem['head']);
+
+        if($showHeader) {
+            $titleMb = $this->getItemByTypeFromArray($mbSectionItem['head'], 'title');
+            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                $mbSectionItem,
+                $brizySection->getItemWithDepth(0)
+            );
+
+            $this->handleLine(
+                $elementContext,
+                $this->browserPage,
+                $titleMb['id'],
+                null, [],
+                1,
+                null
+            );
+        }
+
+        $this->handleShadow($brizySection);
+
+        return $brizySection;
+    }
+
     protected function getItemsPerRow(): int
     {
         return 3;

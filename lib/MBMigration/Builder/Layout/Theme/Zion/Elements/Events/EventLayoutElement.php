@@ -2,11 +2,41 @@
 
 namespace MBMigration\Builder\Layout\Theme\Zion\Elements\Events;
 
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
+use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Events\EventLayoutElement
 {
+    use LineAble;
+    use ShadowAble;
+
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $brizySection = parent::internalTransformToItem($data);
+        $mbSectionItem = $data->getMbSection();
+
+        $showHeader = $this->canShowHeader($mbSectionItem);
+
+        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+
+        if($showHeader) {
+            $titleMb = $this->getItemByType($mbSectionItem, 'title');
+            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
+                $mbSectionItem,
+                $brizySection->getItemWithDepth(0)
+            );
+
+            $this->handleLine($elementContext, $this->browserPage, $titleMb['id'], null, [], 1, null);
+        }
+
+        $this->handleShadow($brizySection);
+
+        return $brizySection;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
