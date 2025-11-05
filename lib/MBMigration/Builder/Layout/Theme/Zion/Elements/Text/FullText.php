@@ -44,8 +44,6 @@ class FullText extends FullTextElement
 
         $this->handleShadow($brizySection);
 
-
-
         return $brizySection;
     }
 
