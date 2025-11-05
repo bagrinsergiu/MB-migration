@@ -4880,6 +4880,33 @@ const ex62: Data = {
   }
 };
 
+// Tradition example 63 (Header tag inside text)
+const ex63: Data = {
+  html: `<header class="text-content text-0 title-text editable" data-id="19074833" data-category="text"><div><div style="font-size: 11.9988px; font-family: &quot;Linden Hill&quot;, serif; font-weight: 700; font-style: normal; line-height: 20.398px; text-align: center; letter-spacing: normal; text-transform: none; color: rgb(148, 79, 0);"><br></div><div style="font-size: 36px; font-family: &quot;Linden Hill&quot;, serif; font-weight: 700; font-style: normal; line-height: 61.2px; text-align: center; letter-spacing: normal; text-transform: none; color: rgb(148, 79, 0);"><a href="/home/worship-sacraments" data-location="existing" data-button="false" data-detail="1046868" data-category="link" target="_self" class="cloverlinks" style="color: rgb(148, 79, 0);"><u>Worship &amp; Sacraments</u></a></div></div></header>`,
+  entry: { ...entry, selector: '[data-id="19074833"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-12 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-0"><br></p><p class="brz-fs-lg-36 brz-ff-lato brz-ft-upload brz-fw-lg-700 brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-center brz-ls-lg-0"><a data-location="existing" data-button="false" data-detail="1046868" data-category="link" target="_self" style="color: rgb(148, 79, 0); " data-href="%7B%22type%22%3A%22external%22%2C%22anchor%22%3A%22%22%2C%22external%22%3A%22%2Fhome%2Fworship-sacraments%22%2C%22externalBlank%22%3A%22off%22%2C%22externalRel%22%3A%22off%22%2C%22externalType%22%3A%22external%22%2C%22population%22%3A%22%22%2C%22populationEntityId%22%3A%22%22%2C%22populationEntityType%22%3A%22%22%2C%22popup%22%3A%22%22%2C%22upload%22%3A%22%22%2C%22linkToSlide%22%3A1%2C%22internal%22%3A%22%22%2C%22internalBlank%22%3A%22off%22%2C%22pageTitle%22%3A%22%22%2C%22pageSource%22%3Anull%7D"><u><span>Worship &amp; Sacraments</span></u></a></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -4943,7 +4970,8 @@ describe.each([
   ex59,
   ex60,
   ex61,
-  ex62
+  ex62,
+  ex63
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
