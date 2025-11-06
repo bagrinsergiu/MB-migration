@@ -1,7 +1,11 @@
 import { ElementModel } from "../../../../types/type";
 import { getGlobalIconModel } from "../../../../utils/getGlobalIconModel";
 import { roundToPrecision } from "../../../../utils/number";
-import { getHref, normalizeOpacity } from "../../../utils/common";
+import {
+  getHref,
+  iconNodeSelector,
+  normalizeOpacity
+} from "../../../utils/common";
 import { codeToBuilderMap, defaultIcon } from "./iconMapping";
 import { mPipe } from "fp-utilities";
 import { parseColorString } from "utils/src/color/parseColorString";
@@ -18,6 +22,24 @@ const getBgColor = mPipe(
   parseColorString
 );
 
+const getBorderWidth = mPipe(
+  Obj.readKey("border-top-width"),
+  Str.read,
+  parseInt
+);
+
+const getBorderColor = mPipe(
+  Obj.readKey("border-top-color"),
+  Str.read,
+  parseColorString
+);
+
+const getBorderRadius = mPipe(
+  Obj.readKey("border-top-left-radius"),
+  Str.read,
+  parseInt
+);
+
 export const getStyles = (node: Element) => {
   const parentNode = getParentElementOfTextNode(node);
   const isIconText = parentNode?.nodeName === "#text";
@@ -32,9 +54,14 @@ export const getParentStyles = (node: Element) => {
 
 export const getStyleModel = (node: Element, isCustom?: boolean) => {
   const style = getStyles(node);
+  const iconNode = node.querySelector(iconNodeSelector);
+  const iconNodeStyle = iconNode ? getNodeStyle(iconNode) : style;
   const parentStyle = getParentStyles(node);
   const opacity = +style.opacity;
   const color = getColor(style);
+  const borderWidth = getBorderWidth(iconNodeStyle);
+  const borderColor = getBorderColor(iconNodeStyle);
+  const borderRadius = getBorderRadius(iconNodeStyle);
   const bgColor = getBgColor(parentStyle);
 
   const customSize = roundToPrecision(style.width, 2) || 26;
@@ -67,7 +94,15 @@ export const getStyleModel = (node: Element, isCustom?: boolean) => {
     }),
     ...(isCustom && {
       customSize
-    })
+    }),
+    ...(borderWidth &&
+      borderColor && {
+        borderWidth,
+        borderColorHex: borderColor.hex,
+        borderColorOpacity: borderColor.opacity ?? 1,
+        borderColorPalette: "",
+        borderRadius: borderRadius ?? 0
+      })
   };
 };
 
