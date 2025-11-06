@@ -70,6 +70,7 @@ export function shouldExtractElement(
 
 export const iconSelector =
   "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon],svg";
+export const iconNodeSelector = ".socialIconSymbol";
 export const buttonSelector = ".sites-button:not(.nav-menu-button), button";
 export const embedSelector = ".embedded-paste";
 export const imageSelector = "img";
@@ -97,9 +98,18 @@ export const getTarget = mPipe(Obj.readKey("target"), Str.read);
 export const normalizeOpacity = (color: Color): Color => {
   const { hex, opacity } = color;
 
+  let opacityValue = opacity;
+  if (hex === "#ffffff" && opacity === 1) {
+    opacityValue = 0.99;
+  }
+
+  if (Number.isNaN(opacityValue)) {
+    opacityValue = 1;
+  }
+
   return {
     hex,
-    opacity: hex === "#ffffff" && opacity === "1" ? "0.99" : opacity
+    opacity: opacityValue
   };
 };
 

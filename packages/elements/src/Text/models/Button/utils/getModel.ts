@@ -6,12 +6,14 @@ import {
   iconSelector,
   normalizeOpacity
 } from "../../../utils/common";
-import { getModel as getIconModel } from "../../Icon/utils/getModel";
+import {
+  getModel as getIconModel,
+  getPseudoIconModel
+} from "../../Icon/utils/getModel";
 import { codeToBuilderMap, defaultIcon } from "../../Icon/utils/iconMapping";
 import { Data } from "../types";
 import { getFontModel } from "./getFontModel";
 import { mPipe } from "fp-utilities";
-import { Literal } from "utils";
 import { Color, parseColorString } from "utils/src/color/parseColorString";
 import { dicKeyForDevices } from "utils/src/dicKeyForDevices";
 import { getNodeStyle } from "utils/src/dom/getNodeStyle";
@@ -20,6 +22,7 @@ import { prefixed } from "utils/src/models/prefixed";
 import { onNullish } from "utils/src/onNullish";
 import * as Obj from "utils/src/reader/object";
 import * as Str from "utils/src/reader/string";
+import { Literal, Primitive } from "utils/src/types";
 import { uuid } from "utils/src/uuid";
 
 const getColor = mPipe(Obj.readKey("color"), Str.read, parseColorString);
@@ -61,9 +64,11 @@ export const getStyleModel = (
   node: Element,
   defaultFamily?: Data["defaultFamily"],
   families?: Data["families"]
-): Record<string, Literal> => {
+): Record<string, Primitive> => {
   const style = getNodeStyle(node);
-  const color = getColor(style);
+  const nodeTextItem = node.querySelector(".clovercustom");
+  const nodeTextItemStyle = nodeTextItem ? getNodeStyle(nodeTextItem) : style;
+  const color = getColor(nodeTextItemStyle);
   const bgColor = getBgColor(style);
   const opacity = +style.opacity;
   const borderWidth = getBorderWidth(style);
@@ -72,6 +77,7 @@ export const getStyleModel = (
   const paddingTB = getPaddingTB(style);
   const paddingRL = getPaddingRL(style);
   const fontModel = getFontModel(node, defaultFamily, families);
+  const hasUnderline = node.querySelector("u") !== null;
 
   let borderColorV = {};
 
@@ -79,11 +85,11 @@ export const getStyleModel = (
     const borderV = {
       borderColorHex: normalizeOpacity({
         hex: borderColor.hex,
-        opacity: borderColor.opacity ?? "1"
+        opacity: borderColor.opacity ?? 1
       }).hex,
       borderColorOpacity: normalizeOpacity({
         hex: borderColor.hex,
-        opacity: borderColor.opacity ?? "1"
+        opacity: borderColor.opacity ?? 1
       }).opacity,
       borderColorPalette: ""
     };
@@ -99,11 +105,11 @@ export const getStyleModel = (
     ...(color && {
       colorHex: normalizeOpacity({
         hex: color.hex,
-        opacity: color.opacity ?? String(opacity)
+        opacity: color.opacity ?? opacity
       }).hex,
       colorOpacity: normalizeOpacity({
         hex: color.hex,
-        opacity: color.opacity ?? String(opacity)
+        opacity: color.opacity ?? opacity
       }).opacity,
       colorPalette: ""
     }),
@@ -124,7 +130,8 @@ export const getStyleModel = (
     size: "custom",
     ...(paddingTB && dicKeyForDevices("paddingTB", paddingTB)),
     ...(paddingRL && dicKeyForDevices("paddingRL", paddingRL)),
-    ...fontModel
+    ...fontModel,
+    ...(hasUnderline && { underline: true })
   };
 };
 
@@ -141,6 +148,11 @@ export const getModel = ({
   const globalModel = getGlobalButtonModel();
   const textTransform = getTransform(getNodeStyle(node));
   const icon = node.querySelector(iconSelector);
+  const pseudoIconStyles = getNodeStyle(node, "::after");
+  const pseudoIconContent = Str.read(pseudoIconStyles.content) ?? "";
+  const isPseudoIcon =
+    pseudoIconContent &&
+    !["none", "none"].includes(pseudoIconContent as string);
 
   if (icon) {
     const model = getIconModel(icon, urlMap);
@@ -158,6 +170,17 @@ export const getModel = ({
         iconType: iconCode ? "fa" : "glyph"
       };
     }
+  } else if (isPseudoIcon) {
+    const iconCode = pseudoIconContent
+      .replace(/['"]/g, "")
+      .trim()
+      .charCodeAt(0);
+
+    const pseudoIconModel = getPseudoIconModel(pseudoIconStyles, iconCode);
+    iconModel = {
+      iconName: Str.read(pseudoIconModel.value.name) ?? "",
+      iconType: Str.read(pseudoIconModel.value.type) ?? ""
+    };
   }
 
   let text = getText(node);
