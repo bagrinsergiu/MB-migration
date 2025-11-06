@@ -24,11 +24,11 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 50;
+        return 0;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
-        return 25;
+        return 0;
     }
 }

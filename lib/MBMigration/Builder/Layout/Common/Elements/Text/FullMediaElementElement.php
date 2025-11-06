@@ -73,7 +73,8 @@ abstract class FullMediaElementElement extends AbstractElement
             $imageMb,
             $brizyImageComponent,
             $this->browserPage,
-            $this->customSettings()
+            $this->customSettings(),
+            $this->imageIndexPosition()
         );
 
         return $brizySection;

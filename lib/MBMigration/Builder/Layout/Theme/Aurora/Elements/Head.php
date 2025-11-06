@@ -371,4 +371,16 @@ class Head extends HeadElement
     {
         return $this->getThemeMenuItemSelector();
     }
+
+    public function getThemeSubMenuSelectedItemSelector(): array
+    {
+        return ["selector" => "#mobile-navigation li.selected a", "pseudoEl" => ""];
+    }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        return ["selector" => "#mobile-navigation .main-navigation", "pseudoEl" => ""];
+        //#main-navigation > ul:nth-child(1) > li.has-sub > ul
+    }
+
 }

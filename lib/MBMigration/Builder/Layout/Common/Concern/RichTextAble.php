@@ -386,7 +386,8 @@ trait RichTextAble
         $mbSectionItem,
         BrizyComponent $brizyComponent,
         BrowserPageInterface $browserPage,
-        $imageOptions = []
+        $imageOptions = [],
+        $position = null
     ): BrizyComponent
     {
         if ($brizyComponent->getType() !== 'Image') {
@@ -395,7 +396,8 @@ trait RichTextAble
                 $mbSectionItem,
                 $brizyComponent,
                 $browserPage,
-                $imageOptions
+                $imageOptions,
+                $position
             );
         } else {
             if (!empty($mbSectionItem['content'])) {
