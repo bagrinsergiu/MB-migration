@@ -13,6 +13,19 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
     use LineAble;
     use ShadowAble;
 
+    protected function getDetailsPageLayoutInstance(ElementContextInterface $data)
+    {
+        $mbSection = $data->getMbSection();
+        return new EventDetailsPageLayout(
+            $this->brizyKit['EventLayoutElement']['detail'],
+            $this->getTopPaddingOfTheFirstElement(),
+            $this->getMobileTopPaddingOfTheFirstElement(),
+            $this->pageTDO,
+            $data,
+            $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
+        );
+    }
+
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = parent::internalTransformToItem($data);

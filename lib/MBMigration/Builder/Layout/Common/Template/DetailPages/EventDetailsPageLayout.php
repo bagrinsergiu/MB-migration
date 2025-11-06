@@ -8,10 +8,10 @@ use MBMigration\Builder\Utils\ColorConverter;
 
 class EventDetailsPageLayout extends DetailsPage
 {
-    protected function filterDetailPageStyles($sectionProperties,$sectionPalette): array {
+    protected function filterDetailPageStyles($sectionProperties, $sectionPalette): array {
         return $sectionProperties;
     }
-    protected function filterDetailPageStyles2($sectionProperties,$sectionPalette): array {
+    protected function filterDetailPageStyles2($sectionProperties, $sectionPalette): array {
         return $sectionProperties;
     }
 
