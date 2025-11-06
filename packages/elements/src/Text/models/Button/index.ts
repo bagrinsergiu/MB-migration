@@ -18,13 +18,14 @@ export function getButtonModel({
   buttons.forEach((button) => {
     const parentElement = findNearestBlockParent(button);
     const style = getNodeStyle(button);
+    const parentStyle = parentElement ? getNodeStyle(parentElement) : style;
     const model = getModel({ node: button, defaultFamily, families, urlMap });
     const group = groups.get(parentElement) ?? { value: { items: [] } };
 
     const wrapperModel = createCloneableModel({
       _styles: ["wrapper-clone", "wrapper-clone--button"],
       items: [...group.value.items, model],
-      horizontalAlign: textAlign[style["text-align"]]
+      horizontalAlign: textAlign[parentStyle["text-align"]] ?? "center"
     });
 
     groups.set(parentElement, wrapperModel);

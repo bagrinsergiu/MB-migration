@@ -47,7 +47,7 @@ const ex1: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper-clone", "wrapper-clone--button"],
-          horizontalAlign: undefined,
+          horizontalAlign: "center",
           items: [
             {
               type: "Button",
@@ -348,7 +348,7 @@ const ex5: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       }
     ]
@@ -448,7 +448,7 @@ const ex6: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       }
     ]
@@ -745,7 +745,7 @@ const ex9: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       },
       {
@@ -777,7 +777,7 @@ const ex9: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       }
     ]
@@ -849,7 +849,7 @@ const ex10: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       },
       {
@@ -988,7 +988,7 @@ const ex13: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       },
       {
@@ -1038,7 +1038,7 @@ const ex13: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       },
       {
@@ -1195,7 +1195,7 @@ const ex14: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       },
       {
@@ -1562,7 +1562,7 @@ const ex23: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       }
     ]
@@ -1599,7 +1599,7 @@ const ex24: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper-clone", "wrapper-clone--button"],
-          horizontalAlign: undefined,
+          horizontalAlign: "center",
           items: [
             {
               type: "Button",
@@ -1644,7 +1644,7 @@ const ex25: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper-clone", "wrapper-clone--button"],
-          horizontalAlign: undefined,
+          horizontalAlign: "center",
           items: [
             {
               type: "Button",
@@ -1705,7 +1705,7 @@ const ex26: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper-clone", "wrapper-clone--button"],
-          horizontalAlign: undefined,
+          horizontalAlign: "center",
           items: [
             {
               type: "Button",
@@ -1783,7 +1783,7 @@ const ex27: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper-clone", "wrapper-clone--button"],
-          horizontalAlign: undefined,
+          horizontalAlign: "center",
           items: [
             {
               type: "Button",
@@ -2117,7 +2117,7 @@ const ex35: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper-clone", "wrapper-clone--button"],
-          horizontalAlign: undefined,
+          horizontalAlign: "center",
           items: [
             {
               type: "Button",
@@ -4109,7 +4109,7 @@ const ex55: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper-clone", "wrapper-clone--button"],
-          horizontalAlign: undefined,
+          horizontalAlign: "center",
           items: [
             {
               type: "Button",
@@ -4207,7 +4207,7 @@ const ex55: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       },
       {
@@ -4550,7 +4550,7 @@ const ex59: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper-clone", "wrapper-clone--button"],
-          horizontalAlign: undefined,
+          horizontalAlign: "center",
           items: [
             {
               type: "Button",

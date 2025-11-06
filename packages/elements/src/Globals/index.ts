@@ -1,6 +1,10 @@
 import { getStyleModel as getButtonModel } from "../Text/models/Button/utils/getModel";
-import { getStyleModel as getIconModel } from "../Text/models/Icon/utils/getModel";
+import {
+  getStyleModel as getIconModel,
+  getParentStyles
+} from "../Text/models/Icon/utils/getModel";
 import { buttonSelector, iconSelector } from "../Text/utils/common";
+import { getNodeStyle } from "utils/src/dom/getNodeStyle";
 import { prefixed } from "utils/src/models/prefixed";
 
 export const globalExtractor = (): void => {
@@ -12,7 +16,9 @@ export const globalExtractor = (): void => {
   }
 
   if (icon) {
-    const model = getIconModel(icon);
+    const style = getNodeStyle(icon);
+    const parentStyle = getParentStyles(icon);
+    const model = getIconModel(style, parentStyle);
     window.iconModel = prefixed(model, "hover");
   }
 
