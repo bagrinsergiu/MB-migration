@@ -180,7 +180,15 @@ const removeWrongElements = (node: HTMLElement) => {
 };
 
 const replaceWrongTags = (node: HTMLElement) => {
-  const wrongTags = ["font", "blockquote", "table", "tbody", "tr", "td"];
+  const wrongTags = [
+    "font",
+    "blockquote",
+    "table",
+    "tbody",
+    "tr",
+    "td",
+    "header"
+  ];
   const replaceElements = node.querySelectorAll<HTMLElement>(
     wrongTags.join(", ")
   );
