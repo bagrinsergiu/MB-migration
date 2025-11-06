@@ -43,17 +43,17 @@ export const getStyleModel = (node: Element, isCustom?: boolean) => {
     ...(color && {
       colorHex: normalizeOpacity({
         hex: color.hex,
-        opacity: color.opacity ?? String(opacity)
+        opacity: color.opacity ?? opacity
       }).hex,
       colorOpacity: normalizeOpacity({
         hex: color.hex,
-        opacity: isNaN(opacity) ? color.opacity ?? "1" : String(opacity)
+        opacity: isNaN(opacity) ? color.opacity ?? 1 : opacity
       }).opacity,
       colorPalette: "",
 
       hoverColorHex: normalizeOpacity({
         hex: color.hex,
-        opacity: color.opacity ?? String(opacity)
+        opacity: color.opacity ?? opacity
       }).hex,
       hoverColorOpacity: 0.8,
       hoverColorPalette: ""

@@ -1,5 +1,5 @@
 import { Families } from "./type";
-import { Literal } from "utils";
+import { Literal, Primitive } from "utils/src/types";
 
 export {};
 
@@ -11,7 +11,7 @@ declare global {
 
   interface Window {
     iconModel?: Record<string, Literal>;
-    buttonModel?: Record<string, Literal>;
+    buttonModel?: Record<string, Primitive>;
 
     // only for development
     isDev?: boolean;
