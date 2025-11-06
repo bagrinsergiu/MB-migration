@@ -492,4 +492,9 @@ abstract class AbstractElement implements ElementInterface
     {
         return [];
     }
+
+    protected function imageIndexPosition(): ?int
+    {
+        return null;
+    }
 }
