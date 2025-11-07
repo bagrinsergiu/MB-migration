@@ -149,3 +149,15 @@ export function getModel(
     }
   };
 }
+
+export function getPseudoIconModel(iconCode: number): ElementModel {
+  return {
+    type: "Icon",
+    value: {
+      _id: uuid(),
+      _styles: ["icon"],
+      name: iconCode ? codeToBuilderMap[iconCode] ?? defaultIcon : defaultIcon,
+      type: iconCode ? "fa" : "glyph"
+    }
+  };
+}

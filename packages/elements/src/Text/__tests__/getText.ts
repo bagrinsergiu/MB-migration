@@ -47,7 +47,7 @@ const ex1: Data = {
         value: {
           _id: "1",
           _styles: ["wrapper-clone", "wrapper-clone--button"],
-          horizontalAlign: undefined,
+          horizontalAlign: "center",
           items: [
             {
               type: "Button",
@@ -849,7 +849,7 @@ const ex10: Data = {
               }
             }
           ],
-          horizontalAlign: undefined
+          horizontalAlign: "center"
         }
       },
       {
@@ -4947,6 +4947,44 @@ const ex64: Data = {
   }
 };
 
+const ex65: Data = {
+  html: `<div class="list-group group group-2" data-group="2"><button class="sites-button editable" data-id="18166065" data-category="button"><div class="sites-button-text">More</div></button></div>`,
+  entry: { ...entry, selector: '[data-id="18166065"]' },
+  output: {
+    data: [
+      {
+        type: "Cloneable",
+        value: {
+          _id: "1",
+          _styles: ["wrapper-clone", "wrapper-clone--button"],
+          horizontalAlign: "center",
+          items: [
+            {
+              type: "Button",
+              value: {
+                _id: "1",
+                _styles: ["button"],
+                borderStyle: "none",
+                fontFamily: "lato",
+                fontFamilyType: "upload",
+                fontStyle: "",
+                iconName: "",
+                lineHeight: 1.3,
+                mobileFontStyle: "",
+                mobileLineHeight: 1.2,
+                size: "custom",
+                tabletFontStyle: "",
+                tabletLineHeight: 1.2,
+                text: "More"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -5012,7 +5050,8 @@ describe.each([
   ex61,
   ex62,
   ex63,
-  ex64
+  ex64,
+  ex65
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
