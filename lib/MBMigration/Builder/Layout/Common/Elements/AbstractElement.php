@@ -299,6 +299,10 @@ abstract class AbstractElement implements ElementInterface
         return $result;
     }
 
+    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): void
+    {
+    }
+
     protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {
         return $brizySection;

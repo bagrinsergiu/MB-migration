@@ -17,13 +17,53 @@ class FullText extends FullTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getInsideItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0,0,0);
+    }
+
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
-        return $brizySection->getItemWithDepth(0);
+        return $brizySection->getItemWithDepth(0,0,0);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $brizySection = parent::internalTransformToItem($data);
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizySection->getValue()->set_marginTop(0);
+        $brizySection->getValue()->set_marginBottum(0);
+
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $insideItemComponent = $this->getInsideItemComponent($brizySection);
+        $textContainerComponent = $this->getTextContainerComponent($brizySection);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+        $insideElementContext = $data->instanceWithBrizyComponent($insideItemComponent);
+
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
+
+        $this->transformItem($insideElementContext, $textContainerComponent, $styleList);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
+        $fff = json_encode( $data->getThemeContext()->getFamilies());
+        $elementContext = $data->instanceWithBrizyComponent($textContainerComponent);
+        $this->handleRichTextItems($insideElementContext, $this->browserPage);
+        $this->handleDonationsButton($insideElementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
+
+        // not sure if this must be there or in a concrete theme
+        // the image in the bg is not always correctly fitted
+        // $mbSectionItem = $data->getMbSection();
+        // if ($this->hasImageBackground($mbSectionItem)) {
+        //    $background = $mbSectionItem['settings']['sections']['background'];
+        //    if (isset($background['filename']) && isset($background['photo'])) {
+        //        $this->getSectionItemComponent($brizySection)->getValue()
+        //            ->set_bgSize('auto');
+        //    }
+        // }
 
         return $brizySection;
     }
@@ -34,7 +74,7 @@ class FullText extends FullTextElement
         return $brizySection;
     }
 
-    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): BrizyComponent
+    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): void
     {
         $mbSectionItem = $data->getMbSection();
         $selectId = $mbSectionItem['id'] ?? $mbSectionItem['sectionId'];
@@ -51,7 +91,6 @@ class FullText extends FullTextElement
         );
 
         $this->handleItemBackground($brizySection, $styles['data']);
-        return $brizySection;
     }
 
     protected function getPropertiesMainSection(): array
