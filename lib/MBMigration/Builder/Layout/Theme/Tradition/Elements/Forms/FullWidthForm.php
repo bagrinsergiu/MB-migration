@@ -4,8 +4,8 @@ namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Forms;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Forms\FormElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\Forms\FormElement;
 
 class FullWidthForm extends FormElement
 {
@@ -14,11 +14,13 @@ class FullWidthForm extends FormElement
         return $this->brizyKit['full-width'];
     }
 
-    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent {
+    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent
+    {
         return $brizyComponent->getItemWithDepth(0);
     }
 
-    protected function handleForm(ElementContextInterface $elementContext, BrowserPageInterface $browserPage): BrizyComponent {
+    protected function handleForm(ElementContextInterface $elementContext, BrowserPageInterface $browserPage): BrizyComponent
+    {
 
         // add the form here.
         return $elementContext->getBrizySection();
@@ -32,5 +34,10 @@ class FullWidthForm extends FormElement
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
     }
 }

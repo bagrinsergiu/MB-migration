@@ -79,4 +79,9 @@ class HorizontalTexts extends FullTextElement
         $brizySection->getValue()->set_padding(0);
         return $brizySection;
     }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
+    }
 }

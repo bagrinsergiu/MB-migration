@@ -84,6 +84,12 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
         // make buttons to not open in new window
         // https://github.com/bagrinsergiu/MB-Support/issues/826
-        $context->getBrizySection()->getItemWithDepth(2,0)->getValue()->set_linkExternalBlank("off");    }
+        $context->getBrizySection()->getItemWithDepth(2, 0)->getValue()->set_linkExternalBlank("off");
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
+    }
 
 }

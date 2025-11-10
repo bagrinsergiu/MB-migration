@@ -4,8 +4,8 @@ namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Forms;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Forms\FormWithTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\Forms\FormWithTextElement;
 
 class LeftForm extends FormWithTextElement
 {
@@ -17,8 +17,9 @@ class LeftForm extends FormWithTextElement
 
     protected function handleForm(
         ElementContextInterface $elementContext,
-        BrowserPageInterface $browserPage
-    ): BrizyComponent {
+        BrowserPageInterface    $browserPage
+    ): BrizyComponent
+    {
 
         $mbSection = $elementContext->getMbSection();
         $formId = $mbSection['settings']['sections']['form']['form_id'];
@@ -39,13 +40,19 @@ class LeftForm extends FormWithTextElement
 
     protected function handleText(
         ElementContextInterface $elementContext,
-        BrowserPageInterface $browserPage
-    ): BrizyComponent {
+        BrowserPageInterface    $browserPage
+    ): BrizyComponent
+    {
         return $this->handleRichTextItems($elementContext, $this->browserPage);
     }
 
     protected function getJsonFromBrizyKit()
     {
         return $this->brizyKit['left-form'];
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
     }
 }

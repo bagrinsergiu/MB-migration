@@ -17,15 +17,4 @@ class Tradition extends AbstractTheme
         return ".sites-button:not(.nav-menu-button)";
     }
 
-    public function afterTransformBlocks(BrizyPage $page, array $mbPageSections): BrizyPage
-    {
-        foreach ($page->getItems() as $item) {
-            $item->getValue()
-                ->set_fullHeight('auto');
-        }
-
-        return $page;
-    }
-
-
 }

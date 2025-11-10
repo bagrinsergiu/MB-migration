@@ -153,4 +153,9 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             ->set_mobileBorderColorOpacity(1)
             ->set_mobileBorderColorPalette('');
     }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
+    }
 }

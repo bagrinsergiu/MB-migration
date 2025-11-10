@@ -181,14 +181,19 @@ class SideMedia extends PhotoTextElement
         ];
     }
 
-     protected function setTopPaddingOfTheFirstElement(
+    protected function setTopPaddingOfTheFirstElement(
         ElementContextInterface $data,
-        BrizyComponent $section,
-        array $additionalOptions = [],
-        int $additionalConstantHeight = 0,
-        bool $mustBeAdded = false
+        BrizyComponent          $section,
+        array                   $additionalOptions = [],
+        int                     $additionalConstantHeight = 0,
+        bool                    $mustBeAdded = false
     ): void
-     {
+    {
 
-     }
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
+    }
 }

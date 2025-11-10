@@ -44,5 +44,4 @@ class MenuBuilder extends \MBMigration\Builder\Layout\Common\MenuBuilder
     }
 
 
-
 }

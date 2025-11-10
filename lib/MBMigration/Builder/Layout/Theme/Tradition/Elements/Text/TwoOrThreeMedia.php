@@ -5,7 +5,6 @@ namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Text;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
-use MBMigration\Builder\Utils\ColorConverter;
 
 class TwoOrThreeMedia extends PhotoTextElement
 {
@@ -100,5 +99,10 @@ class TwoOrThreeMedia extends PhotoTextElement
         $context->getBrizySection()->getValue()
             ->set_borderColorHex('')
             ->set_borderColorOpacity(0);
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
     }
 }

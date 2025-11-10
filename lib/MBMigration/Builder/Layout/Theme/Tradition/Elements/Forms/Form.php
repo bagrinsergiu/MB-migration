@@ -12,7 +12,8 @@ class Form extends FormElement
         return $this->brizyKit['full-width'];
     }
 
-    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent {
+    protected function getFormContainerElement(BrizyComponent $brizyComponent): BrizyComponent
+    {
         return $brizyComponent->getItemWithDepth(0);
     }
 
@@ -24,5 +25,10 @@ class Form extends FormElement
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
     }
 }
