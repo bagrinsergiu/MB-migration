@@ -32,12 +32,14 @@ abstract class FullMediaElementElement extends AbstractElement
 
         $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
+
+        $brizyTextContainerComponent = $this->getTextContainerComponent($brizySection);
+        $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyTextContainerComponent);
+
         $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
 
         $this->setTopPaddingOfTheFirstElement($data, $brizySectionItemComponent);
 
-        $brizyTextContainerComponent = $this->getTextContainerComponent($brizySection);
-        $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyTextContainerComponent);
         $this->handleOnlyRichTextItems($elementTextContainerComponentContext, $this->browserPage);
         $this->handleDonationsButton($elementTextContainerComponentContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
