@@ -2263,5 +2263,7 @@ export const codeToBuilderMap: Record<string, string> = {
   57955: "image",
 
   roundedpicasa: "image",
-  58467: "image"
+  58467: "image",
+
+  59659: "chevron-right"
 };
