@@ -53,7 +53,7 @@ const getPaddingTB = mPipe(Obj.readKey("padding-top"), Str.read, parseInt);
 const getPaddingRL = mPipe(Obj.readKey("padding-left"), Str.read, parseInt);
 
 const getBgColorOpacity = (color: Color, opacity: number): number => {
-  if (color.opacity && +color.opacity === 0) {
+  if (color.opacity === 0) {
     return 0;
   }
 
