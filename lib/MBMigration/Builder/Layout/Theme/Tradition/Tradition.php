@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Tradition;
 
+use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\Layout\Common\AbstractTheme;
 
 class Tradition extends AbstractTheme
@@ -15,5 +16,16 @@ class Tradition extends AbstractTheme
     {
         return ".sites-button:not(.nav-menu-button)";
     }
+
+    public function afterTransformBlocks(BrizyPage $page, array $mbPageSections): BrizyPage
+    {
+        foreach ($page->getItems() as $item) {
+            $item->getValue()
+                ->set_fullHeight('auto');
+        }
+
+        return $page;
+    }
+
 
 }
