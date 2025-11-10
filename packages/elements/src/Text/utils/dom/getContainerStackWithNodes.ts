@@ -7,6 +7,8 @@ import {
 } from "../common";
 import { appendNodeStyles } from "./appendNodeStyles";
 import { trimTextContent } from "./trimTextContent";
+import { getNodeStyle } from "utils/src/dom/getNodeStyle";
+import * as Str from "utils/src/reader/string";
 
 export class Stack {
   collection: Array<Element> = [];
@@ -248,7 +250,18 @@ export const getContainerStackWithNodes = (element: Element): Container => {
 
   const parentNode = element.parentElement;
 
-  if (element.tagName === "BUTTON" && parentNode) {
+  if (
+    element instanceof HTMLElement &&
+    element.tagName === "BUTTON" &&
+    parentNode
+  ) {
+    const parentStyle = getNodeStyle(parentNode);
+    const textAlign = Str.read(parentStyle["text-align"]);
+
+    if (textAlign) {
+      element.style.textAlign = textAlign;
+    }
+
     if (parentNode.tagName === "A") {
       element = parentNode;
     } else {
@@ -325,6 +338,14 @@ export const getContainerStackWithNodes = (element: Element): Container => {
                 const container = document.createElement("div");
                 container.append(node.cloneNode(true));
                 appendNodeStyles(node);
+                const parentNode = node.parentElement;
+                const parentStyle = parentNode ? getNodeStyle(parentNode) : {};
+                const textAlign = Str.read(parentStyle["text-align"]) ?? "";
+
+                if (textAlign) {
+                  // We need to set text-align to the node, because it's not inherited from the parent
+                  node.style.textAlign = textAlign;
+                }
 
                 // if latest appended is icon, icons must be wrapped in same node
                 if (appendedButton) {

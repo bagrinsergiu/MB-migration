@@ -6,7 +6,10 @@ import {
   iconSelector,
   normalizeOpacity
 } from "../../../utils/common";
-import { getModel as getIconModel } from "../../Icon/utils/getModel";
+import {
+  getModel as getIconModel,
+  getPseudoIconModel
+} from "../../Icon/utils/getModel";
 import { codeToBuilderMap, defaultIcon } from "../../Icon/utils/iconMapping";
 import { Data } from "../types";
 import { getFontModel } from "./getFontModel";
@@ -145,6 +148,11 @@ export const getModel = ({
   const globalModel = getGlobalButtonModel();
   const textTransform = getTransform(getNodeStyle(node));
   const icon = node.querySelector(iconSelector);
+  const pseudoIconStyles = getNodeStyle(node, "::after");
+  const pseudoIconContent = Str.read(pseudoIconStyles.content) ?? "";
+  const isPseudoIcon =
+    pseudoIconContent &&
+    !["none", "normal"].includes(pseudoIconContent as string);
 
   if (icon) {
     const model = getIconModel(icon, urlMap);
@@ -162,6 +170,17 @@ export const getModel = ({
         iconType: iconCode ? "fa" : "glyph"
       };
     }
+  } else if (isPseudoIcon) {
+    const iconCode = pseudoIconContent
+      .replace(/['"]/g, "")
+      .trim()
+      .charCodeAt(0);
+
+    const pseudoIconModel = getPseudoIconModel(iconCode);
+    iconModel = {
+      iconName: Str.read(pseudoIconModel.value.name) ?? "",
+      iconType: Str.read(pseudoIconModel.value.type) ?? ""
+    };
   }
 
   let text = getText(node);
