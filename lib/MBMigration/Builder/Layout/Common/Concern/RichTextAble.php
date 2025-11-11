@@ -6,6 +6,7 @@ use DOMElement;
 use DOMException;
 use Exception;
 use MBMigration\Builder\Media\MediaController;
+use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Core\Logger;
 use DOMDocument;
 use MBMigration\Browser\BrowserPageInterface;
@@ -113,7 +114,7 @@ trait RichTextAble
         $sectionCategory = $mbSectionItem['category'];
         $showHeader = $this->canShowHeader($mbSectionItem);
         $showBody = $this->canShowBody($mbSectionItem);
-       $showButtons = $this->canShowButtons($mbSectionItem);
+        $showButtons = $this->canShowButtons($mbSectionItem);
 
         // sort items
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
@@ -203,6 +204,12 @@ trait RichTextAble
         $brizyAPI = $data->getBrizyAPI();
         $projectID = $data->getThemeContext()->getProjectId();
 
+        if ($mbSectionItem['category'] === 'button') {
+            $buttonStyle = $this->handleButtonStyle($mbSectionItem);
+        }
+
+        $buttonStyle = $this->handleClickableIconStyle($mbSectionItem);
+
         switch ($mbSectionItem['category']) {
             case 'button':
                 // Buttons are handled elsewhere
@@ -218,7 +225,8 @@ trait RichTextAble
                     $default_fonts,
                     $data->getThemeContext()->getUrlMap(),
                     $selector,
-                    $settings
+                    $settings,
+                    $buttonStyle ?? []
                 );
                 break;
             case 'photo':
@@ -235,6 +243,98 @@ trait RichTextAble
         return $brizyComponent;
     }
 
+    protected function handleClickableIconStyle($mbSectionItem): array
+    {
+        try {
+            $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
+
+            $iconStyleSelector = '[data-id="' . $sectionId . '"] a > span > span.socialIconSymbol';
+            $stylesNormal = $this->getDomElementStyles(
+                $iconStyleSelector,
+                [
+                    'background-color',
+                    'border-bottom-style',
+                    'border-bottom-color',
+                    'border-bottom-width',
+                ],
+                $this->browserPage
+            );
+
+            $iconHoverSelector = '[data-id="' . $sectionId . '"] a';
+
+            if ($this->browserPage->triggerEvent('hover', $iconHoverSelector)) {
+                $stylesHover = $this->getDomElementStyles(
+                    $iconStyleSelector,
+                    [
+                        'background-color',
+                        'border-bottom-style',
+                        'border-bottom-color',
+                        'border-bottom-width',
+                    ],
+                    $this->browserPage
+                );
+            }
+
+            return [
+                'normal' => $this->convertStyles($stylesNormal),
+                'hover' => $this->convertStyles($stylesHover ?? [])
+            ];
+        } catch (Exception $e) {
+
+            return [];
+        }
+    }
+
+    protected function handleButtonStyle($mbSectionItem): array
+    {
+        try {
+            $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
+
+            $buttonSelector = '[data-id="' . $sectionId . '"]';
+            $stylesNormal = $this->getDomElementStyles(
+                $buttonSelector,
+                [
+                    'background-color',
+                    'border-bottom-style',
+                    'border-bottom-color',
+                    'border-bottom-width',
+                ],
+                $this->browserPage
+            );
+
+            if ($this->browserPage->triggerEvent('hover', $buttonSelector)) {
+                $stylesHover = $this->getDomElementStyles(
+                    $buttonSelector,
+                    [
+                        'background-color',
+                        'border-bottom-style',
+                        'border-bottom-color',
+                        'border-bottom-width',
+                    ],
+                    $this->browserPage
+                );
+            }
+
+            return [
+                'normal' => $this->convertStyles($stylesNormal),
+                'hover' => $this->convertStyles($stylesHover ?? [])
+            ];
+        } catch (Exception $e) {
+
+            return [];
+        }
+    }
+
+    private function convertStyles(array $styles): array
+    {
+        foreach ($styles as $key => $value) {
+            $styles[$key] = ColorConverter::rgba2hex($value);
+            $styles[$key . '-opacity'] = ColorConverter::rgba2opacity($value);
+        }
+
+        return $styles;
+    }
+
     protected function handleOnlyRichTextItem(
         ElementContextInterface $data,
         BrowserPageInterface    $browserPage,
@@ -248,6 +348,12 @@ trait RichTextAble
         $brizyComponent = $data->getBrizySection();
         $projectID = $data->getThemeContext()->getProjectId();
 
+        if ($mbSectionItem['category'] === 'button') {
+            $buttonStyle = $this->handleButtonStyle($mbSectionItem);
+        }
+
+        $iconClikStyle = $this->handleClickableIconStyle($mbSectionItem);
+
         if ($mbSectionItem['category'] == 'text') {
             $brizyComponent = $this->handleTextItem(
                 $mbSectionItem,
@@ -259,7 +365,9 @@ trait RichTextAble
                 $default_fonts,
                 $data->getThemeContext()->getUrlMap(),
                 $selector,
-                $settings
+                $settings,
+                $buttonStyle,
+                $iconClikStyle
             );
         }
 
@@ -276,7 +384,9 @@ trait RichTextAble
         $defaultFont = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
         $urlMap = [],
         $selector = null,
-        $settings = []
+        $settings = [],
+        $buttonStyle = [],
+        $iconClikStyle = []
     ): BrizyComponent
     {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
@@ -312,28 +422,67 @@ trait RichTextAble
                         break;
                     case 'Cloneable':
                         foreach ($textItem['value']['items'] as &$clonableItem) {
-                            if (!empty($clonableItem['value']['code']) && $clonableItem['type'] === 'Icon') {
-                                try {
-                                    $customIconUploadResult = $brizyAPI->uploadCustomIcon(
-                                        $projectID,
-                                        $clonableItem['value']['filename'],
-                                        $clonableItem['value']['code']
-                                    );
+//                            if (empty($clonableItem['value']['code'])) {
+                            switch ($clonableItem['type']) {
+                                case 'Icon':
+                                    try {
+                                        $customIconUploadResult = $brizyAPI->uploadCustomIcon(
+                                            $projectID,
+                                            $clonableItem['value']['filename'],
+                                            $clonableItem['value']['code']
+                                        );
 
-                                    if (!empty($customIconUploadResult['filename']) && !empty($customIconUploadResult['uid'])) {
-                                        $clonableItem['value']['name'] = $customIconUploadResult['uid'];
-                                        $clonableItem['value']['filename'] = $customIconUploadResult['filename'];
+                                        if (!empty($customIconUploadResult['filename']) && !empty($customIconUploadResult['uid'])) {
+                                            $clonableItem['value']['name'] = $customIconUploadResult['uid'];
+                                            $clonableItem['value']['filename'] = $customIconUploadResult['filename'];
+                                        }
+
+                                        $clonableItem['value']['borderStyle'] = $iconClikStyle['normal']['border-bottom-style'];
+
+                                        $clonableItem['value']['borderColorHex'] = $iconClikStyle['normal']['background-color'];
+                                        $clonableItem['value']['borderColorOpacity'] = $iconClikStyle['normal']['background-color-opacity'];
+                                        $clonableItem['value']['borderColorPalette'] = '';
+
+                                        $clonableItem['value']['hoverBgColorHex'] = $iconClikStyle['hover']['background-color'];
+                                        $clonableItem['value']['hoverBgColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
+                                        $clonableItem['value']['hoverBgColorPalette'] = '';
+
+                                        $clonableItem['value']['hoverBorderColorHex'] = $iconClikStyle['hover']['background-color-opacity'];
+                                        $clonableItem['value']['hoverBorderColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
+                                        $clonableItem['value']['hoverBorderColorPalette'] = '';
+
+                                        unset($clonableItem['value']['code']);
+
+
+                                    } catch (Exception $e) {
+
+                                        $ddd = $e->getMessage();
                                     }
+                                    break;
+                                case 'Button':
+                                    if (!empty($buttonStyle['hover']) && !empty($buttonStyle['normal'])) {
+//                                        'background-color',
+//                    'border-bottom-style',
+//                    'border-bottom-color',
+//                    'border-bottom-width',
 
-                                    unset($clonableItem['value']['code']);
+                                        $clonableItem['value']['borderStyle'] = $buttonStyle['normal']['border-bottom-style'];
 
+                                        $clonableItem['value']['borderColorHex'] = $buttonStyle['normal']['background-color'];
+                                        $clonableItem['value']['borderColorOpacity'] = $buttonStyle['normal']['background-color-opacity'];
+                                        $clonableItem['value']['borderColorPalette'] = '';
 
-                                } catch (Exception $e) {
+                                        $clonableItem['value']['hoverBgColorHex'] = $buttonStyle['hover']['background-color'];
+                                        $clonableItem['value']['hoverBgColorOpacity'] = $buttonStyle['hover']['background-color-opacity'];
+                                        $clonableItem['value']['hoverBgColorPalette'] = '';
 
-                                    $ddd = $e->getMessage();
-                                }
-
+                                        $clonableItem['value']['hoverBorderColorHex'] = $buttonStyle['hover']['background-color-opacity'];
+                                        $clonableItem['value']['hoverBorderColorOpacity'] = $buttonStyle['hover']['background-color-opacity'];
+                                        $clonableItem['value']['hoverBorderColorPalette'] = '';
+                                    }
+                                    break;
                             }
+//                        }
                         }
 
                         $brzCloneableComponent = new BrizyComponent($textItem);
