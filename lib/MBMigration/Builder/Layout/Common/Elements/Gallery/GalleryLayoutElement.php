@@ -317,7 +317,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 
     abstract protected function getSlideImageComponent(BrizyComponent $brizySectionItem);
 
-    public function checkPhoneNumber($str)
+    public function checkPhoneNumber($str): bool
     {
         if (!preg_match("/^(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\$/", $str)) {
 

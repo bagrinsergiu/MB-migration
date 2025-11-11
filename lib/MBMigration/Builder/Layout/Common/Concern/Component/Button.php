@@ -6,6 +6,7 @@ use Exception;
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\CssPropertyExtractorAware;
+use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Utils\ColorConverter;
@@ -14,6 +15,7 @@ use MBMigration\Core\Logger;
 
 trait Button
 {
+    use RichTextAble;
     use CssPropertyExtractorAware;
 
     private static $buttonCache = ['id' => 0, 'button' => null];
@@ -49,29 +51,30 @@ trait Button
 
                     $selector = $selector ?? '[data-id="' . $mbSection['id'] . '"]';
 
-                    $brizyButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
-
-                    $brizyButton = $this->setButtonStyles(
-                        $brizyButton,
-                        $browserPage,
-                        $selector,
-                        $data,
-                        $mbSection
-                    );
-
-                    $brizyButton = $this->setHoverButtonStyles(
-                        $brizyButton,
-                        $browserPage,
-                        $selector,
-                        $data,
-                        $mbSection
-                    );
-
-                    $this->setCustomStyles($customStyles, $brizyButton);
-
-                    self::$buttonCache['id'] = $options;
-                    self::$buttonCache['button'] = $brizyButton;
-                    $brizySection->getValue()->add_items([$brizyButton]);
+                    $this->handleRichTextItem($data, $browserPage, $selector);
+//                    $brizyButton = $data->getBrizySection();
+//
+//                    $brizyButton = $this->setButtonStyles(
+//                        $brizyButton,
+//                        $browserPage,
+//                        $selector,
+//                        $data,
+//                        $mbSection
+//                    );
+//
+//                    $brizyButton = $this->setHoverButtonStyles(
+//                        $brizyButton,
+//                        $browserPage,
+//                        $selector,
+//                        $data,
+//                        $mbSection
+//                    );
+//
+//                    $this->setCustomStyles($customStyles, $brizyButton);
+//
+//                    self::$buttonCache['id'] = $options;
+//                    self::$buttonCache['button'] = $brizyButton;
+//                    $brizySection->getValue()->add_items([$brizyButton]);
                     break;
             }
         } catch (Exception $e) {
