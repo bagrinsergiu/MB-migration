@@ -128,8 +128,10 @@ export const getStyleModel = (
     ...(borderWidth === undefined ? { borderStyle: "none" } : { borderWidth }),
     ...borderColorV,
     size: "custom",
-    ...(paddingTB && dicKeyForDevices("paddingTB", paddingTB)),
-    ...(paddingRL && dicKeyForDevices("paddingRL", paddingRL)),
+    ...(typeof paddingTB === "number" &&
+      dicKeyForDevices("paddingTB", paddingTB)),
+    ...(typeof paddingRL === "number" &&
+      dicKeyForDevices("paddingRL", paddingRL)),
     ...fontModel,
     ...(hasUnderline && { underline: true })
   };
