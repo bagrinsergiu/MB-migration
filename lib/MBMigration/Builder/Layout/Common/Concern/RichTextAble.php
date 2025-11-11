@@ -189,7 +189,7 @@ trait RichTextAble
     /**
      * Process single rich text item and place it the brizy section
      */
-    protected function handleRichTextItem(
+    protected function  handleRichTextItem(
         ElementContextInterface $data,
         BrowserPageInterface    $browserPage,
                                 $selector = null,
@@ -208,7 +208,7 @@ trait RichTextAble
             $buttonStyle = $this->handleButtonStyle($mbSectionItem);
         }
 
-        $buttonStyle = $this->handleClickableIconStyle($mbSectionItem);
+        $clickableIconStyle = $this->handleClickableIconStyle($mbSectionItem);
 
         switch ($mbSectionItem['category']) {
             case 'button':
@@ -226,7 +226,8 @@ trait RichTextAble
                     $data->getThemeContext()->getUrlMap(),
                     $selector,
                     $settings,
-                    $buttonStyle ?? []
+                    $buttonStyle ?? [],
+                    $clickableIconStyle
                 );
                 break;
             case 'photo':
