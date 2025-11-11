@@ -4,8 +4,8 @@ namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Forms;
 
 use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Forms\FormWithTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\Forms\FormWithTextElement;
 
 class RightForm extends FormWithTextElement
 {
@@ -21,8 +21,9 @@ class RightForm extends FormWithTextElement
 
     protected function handleForm(
         ElementContextInterface $elementContext,
-        BrowserPageInterface $browserPage
-    ): BrizyComponent {
+        BrowserPageInterface    $browserPage
+    ): BrizyComponent
+    {
 
         // add the form here.
         return $elementContext->getBrizySection();
@@ -35,9 +36,15 @@ class RightForm extends FormWithTextElement
 
     protected function handleText(
         ElementContextInterface $elementContext,
-        BrowserPageInterface $browserPage
-    ): BrizyComponent {
+        BrowserPageInterface    $browserPage
+    ): BrizyComponent
+    {
         return $this->handleRichTextItems($elementContext, $this->browserPage);
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
     }
 
 }

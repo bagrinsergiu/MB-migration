@@ -12,8 +12,9 @@ class FullText extends FullTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
-    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
-        return $brizySection->getItemWithDepth(0,0,0);
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
@@ -24,5 +25,10 @@ class FullText extends FullTextElement
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 0;
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
     }
 }

@@ -27,6 +27,11 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
+    protected function getStickyTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(1, 0, 1, 0, 0);
+    }
+
     /**
      * @param BrizyComponent $brizySection
      * @return BrizyComponent
@@ -102,7 +107,82 @@ class Head extends HeadElement
             'mobileHeightSuffix' => '%',
         ];
 
+
+        $this->browserPage->triggerEvent('click', '#mobile-nav-button button');
+
+        $itemStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => '#mobile-navigation li.landing:not(.selected) a span',
+                'styleProperties' => ['color', 'opacity'],
+
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+        $bgSectionStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => '#mobile-navigation nav',
+                'styleProperties' => ['background-color', 'opacity'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        $itemCurrentStyles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => '#mobile-navigation .main-navigation  ul:not(.pinned-navigation) .current a span',
+                'styleProperties' => ['color', 'opacity'],
+
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        $itemHoveStyles = ['data' => []];
+
+        if ($this->browserPage->triggerEvent('hover', '#mobile-navigation .main-navigation ul:not(.pinned-navigation) li:not(.selected) a span')) {
+            $itemHoveStyles = $this->browserPage->evaluateScript(
+                'brizy.getStyles',
+                [
+                    'selector' => '#mobile-navigation .main-navigation ul:not(.pinned-navigation) li:not(.selected) a span',
+                    'styleProperties' => ['color', 'opacity'],
+
+                    'families' => [],
+                    'defaultFamily' => '',
+                ]
+            );
+        }
+
+        $convertColorRgbToHex = ColorConverter::convertColorRgbToHex($itemStyles['data']['color']);
+        $convertColorRgbToHexHover = ColorConverter::convertColorRgbToHex($itemHoveStyles['data']['color']);
+
         $activeItemMenuOptions = [
+            'mMenuBgColorHex' => (ColorConverter::convertColorRgbToHex($bgSectionStyles['data']['background-color'])),
+            'mobileMMenuBgColorHex' => (ColorConverter::convertColorRgbToHex($bgSectionStyles['data']['background-color'])),
+            'tabletMMenuBgColorHex' => (ColorConverter::convertColorRgbToHex($bgSectionStyles['data']['background-color'])),
+
+            'mMenuBgColorOpacity' => ColorConverter::rgba2opacity($bgSectionStyles['data']['background-color']),
+            'mobileMMenuBgColorOpacity' => ColorConverter::rgba2opacity($bgSectionStyles['data']['background-color']),
+            'tabletMMenuBgColorOpacity' => ColorConverter::rgba2opacity($bgSectionStyles['data']['background-color']),
+
+            'mMenuColorHex' => ($convertColorRgbToHex),
+            'mobileMMenuColorHex' => ($convertColorRgbToHex),
+            'tabletMMenuColorHex' => ($convertColorRgbToHex),
+            'hoverMMenuColorHex' => ($convertColorRgbToHexHover),
+            'hoverMMenuColorOpacity' => (1),
+            'mMenuColorOpacity' => ($itemHoveStyles['data']['opacity']),
+            'mobileMMenuColorOpacity' => ($itemHoveStyles['data']['opacity']),
+            'tabletMMenuColorOpacity' => ($itemHoveStyles['data']['opacity']),
+            'activeColorHex' => (ColorConverter::convertColorRgbToHex($itemCurrentStyles['data']['color'])),
+            'activeMMenuColorHex' => (ColorConverter::convertColorRgbToHex($itemCurrentStyles['data']['color'])),
+            'activeMMenuColorOpacity' => (1),
+            'activeColorPalette' => (''),
+            'subMenuHoverColorPalette' => (''),
+
+
             'activeMenuBorderStyle' => 'none',
             'activeMenuBorderColorHex' => '#000000',
             'activeMenuBorderColorOpacity' => 0.02,
@@ -167,20 +247,28 @@ class Head extends HeadElement
                 ->$nameOption($value);
         }
 
-
+        $menuValue = $this->getTargetMenuComponent($brizySection)->getValue();
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
             $nameOption = 'set_' . $logoOption;
-            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
-                ->getValue()
-                ->$nameOption($value);
+            $menuValue->$nameOption($value);
         }
 
         foreach ($activeItemMenuOptions as $logoOption => $value) {
             $nameOption = 'set_' . $logoOption;
-            $brizySection->getItemWithDepth(0, 0, 1, 0, 0)
-                ->getValue()
-                ->$nameOption($value);
+            $menuValue->$nameOption($value);
         }
+
+        $menuValue = $this->getStickyTargetMenuComponent($brizySection)->getValue();
+        foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
+            $nameOption = 'set_' . $logoOption;
+            $menuValue->$nameOption($value);
+        }
+
+        foreach ($activeItemMenuOptions as $logoOption => $value) {
+            $nameOption = 'set_' . $logoOption;
+            $menuValue->$nameOption($value);
+        }
+
 
         return $brizySection;
     }

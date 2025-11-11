@@ -2,6 +2,7 @@
 
 namespace MBMigration\Builder\Layout\Theme\Tradition;
 
+use MBMigration\Builder\BrizyComponent\BrizyPage;
 use MBMigration\Builder\Layout\Common\AbstractTheme;
 
 class Tradition extends AbstractTheme

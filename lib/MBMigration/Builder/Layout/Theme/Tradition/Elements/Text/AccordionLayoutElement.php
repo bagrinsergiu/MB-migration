@@ -59,7 +59,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
         $sectionStyles = $this->getDomElementStyles($selector, $properties, $this->browserPage, $families, $defaultFont);
 
-         $context->getBrizySection()->getValue()
+        $context->getBrizySection()->getValue()
             ->set_paddingType('ungrouped')
             ->set_marginType('ungrouped')
             ->set_borderWidthType('ungrouped')
@@ -79,7 +79,6 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             ->set_borderRightWidth((int)$sectionStyles['border-right-width'])
             ->set_borderTopWidth((int)$sectionStyles['border-top-width'])
             ->set_borderBottomWidth((int)$sectionStyles['border-bottom-width'])
-
             ->set_mobilePaddingType('ungrouped')
             ->set_mobilePadding((int)$sectionStyles['margin-bottom'])
             ->set_mobilePaddingSuffix('px')
@@ -92,5 +91,10 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             ->set_mobilePaddingLeft((int)$sectionStyles['margin-bottom'])
             ->set_mobilePaddingLeftSuffix('px');
 
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
     }
 }

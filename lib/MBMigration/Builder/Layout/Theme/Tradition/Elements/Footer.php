@@ -40,10 +40,10 @@ class Footer extends FooterElement
         $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
 
         $sortItems = $this->sortItems($mbSection['items']);
-        foreach ($sortItems as $i=>$item) {
+        foreach ($sortItems as $i => $item) {
             $column = $this->getFooterColumnElement($brizySectionItemComponent, $item['category'] == 'photo' ? 0 : $i);
 
-            $elementContext = $data->instanceWithBrizyComponentAndMBSection($item,$column);
+            $elementContext = $data->instanceWithBrizyComponentAndMBSection($item, $column);
             $this->handleItemMbSection($item, $elementContext);
         }
 

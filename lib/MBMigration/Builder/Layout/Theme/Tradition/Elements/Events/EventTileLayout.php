@@ -20,4 +20,9 @@ class EventTileLayout extends \MBMigration\Builder\Layout\Common\Elements\Events
     {
         return 25;
     }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
+    }
 }

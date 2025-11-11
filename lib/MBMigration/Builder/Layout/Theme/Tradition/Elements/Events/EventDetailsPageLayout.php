@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Events;
 
 
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class EventDetailsPageLayout extends \MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout
@@ -76,6 +77,11 @@ class EventDetailsPageLayout extends \MBMigration\Builder\Layout\Common\Template
 
         ];
         return array_merge($sectionProperties, $customSectionProperties);
+    }
+
+    protected function afterTransformToItem(BrizyComponent $brizySection): void
+    {
+        $brizySection->getValue()->set_fullHeight('auto');
     }
 
 }

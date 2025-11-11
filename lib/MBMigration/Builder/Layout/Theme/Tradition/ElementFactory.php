@@ -73,8 +73,8 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'prayer-list':
             case 'prayer-form':
                 return new PrayerFormElement($this->blockKit['blocks']['prayer-form'], $browserPage);
-           case 'tabs-layout':
-               return new TabsLayoutElement($this->blockKit['blocks']['tabs-layout'], $browserPage);
+            case 'tabs-layout':
+                return new TabsLayoutElement($this->blockKit['blocks']['tabs-layout'], $browserPage);
 
             case 'small-groups-list':
                 return new SmallGroupsListElement($this->blockKit['blocks']['small-groups-list'], $browserPage);
@@ -104,7 +104,6 @@ class ElementFactory extends AbstractThemeElementFactory
 //            case 'gallery-layout':
 //                return new GalleryLayoutElement($this->blockKit['blocks']['gallery-layout'], $browserPage);
 //
-
 
 
 //
