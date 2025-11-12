@@ -164,7 +164,7 @@ class SideMedia extends PhotoTextElement
     protected function getPropertiesMainSection(): array
     {
         return [
-            "addingType" => "ungrouped",
+            "paddingType" => "ungrouped",
             "paddingTop" => 90,
             "paddingBottom" => 90,
             "mobilePaddingType" => "ungrouped",

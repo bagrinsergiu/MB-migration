@@ -103,20 +103,29 @@ element:not(:has(.brz-ed-image__wrapper)) picture{
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 100;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 100;
     }
 
     protected function getPropertiesMainSection(): array
     {
         return [
+            "paddingType" => "ungrouped",
+            "paddingTop" => 90,
+            "paddingBottom" => 90,
+
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 70,
+            "mobilePaddingTop" => 100,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 70,
+            "mobilePaddingBottom" => 100,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
