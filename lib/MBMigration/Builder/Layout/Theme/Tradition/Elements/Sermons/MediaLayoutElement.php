@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Tradition\Elements\Sermons;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Sermons\MediaLayoutElement
 {
@@ -11,19 +12,33 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
         $brizySection->getValue()->set('fullHeight', 'auto');
     }
 
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $brizySection = parent::internalTransformToItem($data);
+        $brizySectionValue = $brizySection->getItemValueWithDepth(0);
+
+        $sectionProperties = $this->getPropertiesMainSection();
+        foreach ($sectionProperties as $key => $value) {
+            $properties = 'set_' . $key;
+            $brizySectionValue->$properties($value);
+        }
+
+        return $brizySection;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
             "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "paddingTop" => 50,
-            "paddingBottom" => 50,
-            "mobilePaddingTop" => 25,
+            "paddingTop" => 90,
+            "paddingBottom" => 90,
+            "mobilePaddingTop" => 60,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 25,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
