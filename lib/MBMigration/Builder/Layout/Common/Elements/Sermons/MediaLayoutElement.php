@@ -650,7 +650,7 @@ abstract class MediaLayoutElement extends AbstractElement
         return $brizySection->getItemWithDepth(0);
     }
 
-    private function normalizeColorEntry($value, $fallback = '#000000'): array
+    protected function normalizeColorEntry($value, $fallback = '#000000'): array
     {
         $isValidHex = function ($c) {
             return is_string($c) && preg_match('/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/', $c);
@@ -721,4 +721,5 @@ abstract class MediaLayoutElement extends AbstractElement
             "paddingLeftSuffix" => "px",
         ];
     }
+
 }

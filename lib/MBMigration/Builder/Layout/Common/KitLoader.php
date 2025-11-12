@@ -16,6 +16,13 @@ final class KitLoader
         $globalKit = json_decode(file_get_contents($this->getGlobalLayoutPath()), true);
         $fileGetContents = file_get_contents($this->getThemeLayoutPath($theme));
         $themeKit = json_decode($fileGetContents, true);
+
+        // add the declared dynamic blocks to the global ones
+        if (isset($themeKit['dynamic'])) {
+            $globalKit['dynamic'] = array_merge($globalKit['dynamic'], $themeKit['dynamic']);
+            unset($themeKit['dynamic']);
+        }
+
         return array_merge_recursive($globalKit, $themeKit);
     }
 

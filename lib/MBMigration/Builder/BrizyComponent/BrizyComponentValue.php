@@ -3,17 +3,17 @@
 namespace MBMigration\Builder\BrizyComponent;
 
 use JsonSerializable;
-use Exception;
-class BrizyComponentValue implements JsonSerializable
+
+class BrizyComponentValue implements JsonSerializable, \IteratorAggregate
 {
     private $fields;
+
     public function __construct($data, $parent = null)
     {
-
         if (isset($data['items'])) {
             $this->set(
                 'items',
-                array_map(function ($component) use ($parent){
+                array_map(function ($component) use ($parent) {
                     if ($component instanceof BrizyComponent) {
                         return $component;
                     }
@@ -33,7 +33,12 @@ class BrizyComponentValue implements JsonSerializable
             $this->set($field, $value);
         }
 
-        $this->set('_id', 'a'.bin2hex(random_bytes(16)));
+        $this->set('_id', 'a' . bin2hex(random_bytes(16)));
+    }
+
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->fields);
     }
 
     public function set($field, $value)
@@ -102,13 +107,13 @@ class BrizyComponentValue implements JsonSerializable
         $method = strtolower($matches['action']);
         $field = $matches['field'];
 
-        switch($method) {
+        switch ($method) {
             case 'add':
                 $arg = [
                     $matches['field'],
                     $params[0],
                     $params[1] ?? null
-                    ];
+                ];
                 break;
             default:
                 $arg = [

@@ -142,25 +142,16 @@ class BrowserPagePHP implements BrowserPageInterface
     public function triggerEvent($eventNameMethod, $elementSelector, $params = []): bool
     {
         try {
-            if (!$this->waitForNode($elementSelector, 15000)) {
-                throw new Exception("Element not found by selector: {$elementSelector}");
-            }
-
             $center = $this->scrollIntoViewAndGetCenter($elementSelector);
 
             switch ($eventNameMethod) {
                 case 'hover':
-                    $this->page->screenshot()->saveToFile('/project/var/cache/page.jpg');
-
                     if ($center) {
                         $this->page->mouse()->move($center['x'], $center['y']);
                     } else {
                         $pos = $this->page->mouse()->find($elementSelector, 0)->getPosition();
                         $this->page->mouse()->move($pos['x'], $pos['y']);
                     }
-
-                    usleep(200 * 1000);
-                    $this->page->screenshot()->saveToFile('/project/var/cache/page_af.jpg');
                     break;
 
                 case 'click':
