@@ -131,7 +131,6 @@ trait RichTextAble
                 if ($mbItem['item_type'] == 'button' && !$showButtons) {
                     continue;
                 }
-
             }
 
             $elementContext = $data->instanceWithMBSection($mbItem);

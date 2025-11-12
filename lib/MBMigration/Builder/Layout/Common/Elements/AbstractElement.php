@@ -382,6 +382,13 @@ abstract class AbstractElement implements ElementInterface
         return 'bg';
     }
 
+
+    // return only uppercase, lowercase, none
+    protected function getDonationButtonTextTransform() :string
+    {
+        return 'none';
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
