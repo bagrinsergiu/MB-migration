@@ -47,7 +47,13 @@ abstract class FullTextElement extends AbstractElement
         $fff = json_encode( $data->getThemeContext()->getFamilies());
         $elementContext = $data->instanceWithBrizyComponent($textContainerComponent);
         $this->handleRichTextItems($elementContext, $this->browserPage);
-        $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
+        $this->handleDonationsButton(
+            $elementContext,
+            $this->browserPage,
+            $this->brizyKit,
+            $this->getDonationsButtonOptions(),
+            $this->getDonationButtonTextTransform()
+        );
 
         // not sure if this must be there or in a concrete theme
         // the image in the bg is not always correctly fitted

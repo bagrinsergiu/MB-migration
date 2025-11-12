@@ -21,7 +21,8 @@ trait DonationsAble
         ElementContextInterface $data,
         BrowserPageInterface    $browserPage,
         array                   $brizyKit,
-        array                   $options = null
+        array                   $options = null,
+        string                  $textButtonTransform = 'none'
     ): BrizyComponent
     {
 
@@ -43,7 +44,8 @@ trait DonationsAble
                         $browserPage,
                         $selector . '  button.sites-button',
                         $data,
-                        $mbSection
+                        $mbSection,
+                        $textButtonTransform
                     );
 
                     $brizyDonationButton = $this->setHoveDonationButtonStyles(
@@ -102,7 +104,8 @@ trait DonationsAble
         BrowserPageInterface    $browserPage,
         string                  $selector,
         ElementContextInterface $data,
-        array                   $mbSection
+        array                   $mbSection,
+        string                  $textButtonTransform = 'none'
     ): BrizyComponent
     {
 
@@ -225,6 +228,10 @@ trait DonationsAble
             }
         }
 
+        if($buttonTextTransform['text-transform'] === 'none'){
+            $buttonTextTransform['text-transform'] = $textButtonTransform;
+        }
+
         switch ($buttonTextTransform['text-transform']) {
             case 'uppercase':
                 $brizyDonationButton->getItemValueWithDepth(0)
@@ -244,6 +251,8 @@ trait DonationsAble
                 $brizyDonationButton->getItemValueWithDepth(0)
                     ->set_uppercase(false)
                     ->set_lowercase(false);
+
+                $buttonText = strtolower($mbSection['settings']['sections']['donations']['text']);
                 break;
         }
 

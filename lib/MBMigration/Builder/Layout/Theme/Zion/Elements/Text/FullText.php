@@ -47,6 +47,11 @@ class FullText extends FullTextElement
         return $brizySection;
     }
 
+    protected function getDonationButtonTextTransform() :string
+    {
+        return 'uppercase';
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 75;
@@ -54,12 +59,16 @@ class FullText extends FullTextElement
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
-        return 25;
+        return 100;
     }
 
     protected function getPropertiesMainSection(): array
     {
         return [
+            "paddingType" => "ungrouped",
+            "paddingTop" => 90,
+            "paddingBottom" => 90,
+
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
