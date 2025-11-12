@@ -11,4 +11,23 @@ class ListMediaLayout extends AbstractMediaLayout
     {
         $brizySection->getValue()->set_fullHeight('auto');
     }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType" => "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "paddingTop" => 90,
+            "paddingBottom" => 90,
+            "mobilePaddingTop" => 60,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 25,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
 }
