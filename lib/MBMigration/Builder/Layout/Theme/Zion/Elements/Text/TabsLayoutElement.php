@@ -32,6 +32,10 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     protected function getPropertiesMainSection(): array
     {
         return [
+            "paddingType" => "ungrouped",
+            "paddingTop" => 90,
+            "paddingBottom" => 90,
+
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
@@ -44,6 +48,11 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 100;
     }
 
 }

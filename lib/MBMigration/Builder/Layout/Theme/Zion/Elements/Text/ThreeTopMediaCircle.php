@@ -40,6 +40,10 @@ class ThreeTopMediaCircle extends ThreeTopMediaCircleElement
     protected function getPropertiesMainSection(): array
     {
         return [
+            "paddingType" => "ungrouped",
+            "paddingTop" => 90,
+            "paddingBottom" => 90,
+
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
@@ -52,5 +56,10 @@ class ThreeTopMediaCircle extends ThreeTopMediaCircleElement
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 100;
     }
 }

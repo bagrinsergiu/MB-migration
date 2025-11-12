@@ -77,6 +77,10 @@ class RightMedia extends PhotoTextElement
     protected function getPropertiesMainSection(): array
     {
         return [
+            "paddingType" => "ungrouped",
+            "paddingTop" => 90,
+            "paddingBottom" => 90,
+
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
@@ -94,5 +98,10 @@ class RightMedia extends PhotoTextElement
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 75;
+    }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 100;
     }
 }
