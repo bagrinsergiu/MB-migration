@@ -103,12 +103,12 @@ class TopMediaDiamond extends FullMediaElementElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 90;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
-        return 25;
+        return 90;
     }
 
     protected function customSettings(): array
@@ -135,6 +135,10 @@ element:not(:has(.brz-ed-image__wrapper)) picture{
     protected function getPropertiesMainSection(): array
     {
         return [
+            "paddingType" => "ungrouped",
+            "paddingTop" => 90,
+            "paddingBottom" => 90,
+
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",

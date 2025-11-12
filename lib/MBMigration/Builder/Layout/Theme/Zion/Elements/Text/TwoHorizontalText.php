@@ -96,9 +96,18 @@ class TwoHorizontalText extends TwoHorizontalTextElement
         return 75;
     }
 
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 100;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
+            "paddingType" => "ungrouped",
+            "paddingTop" => 90,
+            "paddingBottom" => 90,
+
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
