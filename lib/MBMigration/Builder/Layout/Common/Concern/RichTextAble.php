@@ -314,10 +314,19 @@ trait RichTextAble
                     $this->browserPage
                 );
             }
+            $stylesNormal['background-color'] = ColorConverter::rgba2hex($stylesNormal['background-color']);
+            $stylesNormal['background-color-opacity'] = ColorConverter::rgba2opacity($stylesNormal['background-color']);
+            $stylesNormal['border-bottom-color'] = ColorConverter::rgba2hex($stylesNormal['border-bottom-color']);
+            $stylesNormal['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesNormal['border-bottom-color']);
+
+            $stylesHover['background-color'] = ColorConverter::rgba2hex($stylesHover['background-color']);
+            $stylesHover['background-color-opacity'] = ColorConverter::rgba2opacity($stylesHover['background-color']);
+            $stylesHover['border-bottom-color'] = ColorConverter::rgba2hex($stylesHover['border-bottom-color']);
+            $stylesHover['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesHover['border-bottom-color']);
 
             return [
-                'normal' => $this->convertStyles($stylesNormal),
-                'hover' => $this->convertStyles($stylesHover ?? [])
+                'normal' => $stylesNormal,
+                'hover' => $stylesHover
             ];
         } catch (Exception $e) {
 
@@ -461,23 +470,18 @@ trait RichTextAble
                                     break;
                                 case 'Button':
                                     if (!empty($buttonStyle['hover']) && !empty($buttonStyle['normal'])) {
-//                                        'background-color',
-//                    'border-bottom-style',
-//                    'border-bottom-color',
-//                    'border-bottom-width',
 
                                         $clonableItem['value']['borderStyle'] = $buttonStyle['normal']['border-bottom-style'];
-
-                                        $clonableItem['value']['borderColorHex'] = $buttonStyle['normal']['background-color'];
-                                        $clonableItem['value']['borderColorOpacity'] = $buttonStyle['normal']['background-color-opacity'];
+                                        $clonableItem['value']['borderColorHex'] = $buttonStyle['normal']['border-bottom-color'];
+                                        $clonableItem['value']['borderColorOpacity'] = $buttonStyle['normal']['border-bottom-color-opacity'];
                                         $clonableItem['value']['borderColorPalette'] = '';
 
                                         $clonableItem['value']['hoverBgColorHex'] = $buttonStyle['hover']['background-color'];
                                         $clonableItem['value']['hoverBgColorOpacity'] = $buttonStyle['hover']['background-color-opacity'];
                                         $clonableItem['value']['hoverBgColorPalette'] = '';
 
-                                        $clonableItem['value']['hoverBorderColorHex'] = $buttonStyle['hover']['background-color-opacity'];
-                                        $clonableItem['value']['hoverBorderColorOpacity'] = $buttonStyle['hover']['background-color-opacity'];
+                                        $clonableItem['value']['hoverBorderColorHex'] = $buttonStyle['hover']['border-bottom-color-opacity'];
+                                        $clonableItem['value']['hoverBorderColorOpacity'] = $buttonStyle['hover']['border-bottom-color-opacity'];
                                         $clonableItem['value']['hoverBorderColorPalette'] = '';
                                     }
                                     break;
