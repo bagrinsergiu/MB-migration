@@ -40,7 +40,7 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
         $mbSection = $data->getMbSection();
         return new EventDetailsPageLayout(
             $this->brizyKit['EventLayoutElement']['detail'],
-            $this->getTopPaddingOfTheFirstElement(),
+            $this->getTopPaddingOfTheFirstElement()-40,
             $this->getMobileTopPaddingOfTheFirstElement(),
             $this->pageTDO,
             $data,
