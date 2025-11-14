@@ -176,7 +176,7 @@ class Head extends HeadElement
             'mMenuColorOpacity' => ($itemHoveStyles['data']['opacity']),
             'mobileMMenuColorOpacity' => ($itemHoveStyles['data']['opacity']),
             'tabletMMenuColorOpacity' => ($itemHoveStyles['data']['opacity']),
-            'activeColorHex' => (ColorConverter::convertColorRgbToHex($itemCurrentStyles['data']['color'])),
+            //'activeColorHex' => (ColorConverter::convertColorRgbToHex($itemCurrentStyles['data']['color'])),
             'activeMMenuColorHex' => (ColorConverter::convertColorRgbToHex($itemCurrentStyles['data']['color'])),
             'activeMMenuColorOpacity' => (1),
             'activeColorPalette' => (''),
