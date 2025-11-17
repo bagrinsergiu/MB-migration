@@ -25,6 +25,11 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizyComponent->getItemWithDepth(0);
     }
 
+    protected function getTypeItemImageComponent(): string
+    {
+        return 'image';
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 50;

@@ -85,6 +85,12 @@ class Head extends HeadElement
             'bg-opacity' => ColorConverter::rgba2opacity($menuSectionStyles['data']['opacity']),
         ];
 
+        $subpalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName('subpalette1');
+
+         $this->paletteIconMenuItem = [
+             'mobileMMenuIconColorHex' =>  $subpalette['text']
+         ];
+
         $brizySection->getItemWithDepth(0)
             ->getValue()
             ->set_bgColorHex($headStyle['bg-color'])
@@ -191,7 +197,6 @@ class Head extends HeadElement
                 ->getValue()
                 ->$nameOption($value);
         }
-
 
         foreach ($this->getPropertiesIconMenuItem() as $logoOption => $value) {
             $nameOption = 'set_' . $logoOption;
@@ -469,6 +474,10 @@ class Head extends HeadElement
             "activeMenuBorderRightWidth" => 0,
             "activeMenuBorderBottomWidth" => 2,
             "activeMenuBorderLeftWidth" => 0,
+
+            "mobileMMenuIconColorHex"=> $this->paletteIconMenuItem["mobileMMenuIconColorHex"] ?? '#000000',
+            "mobileMMenuIconColorOpacity"=> 1,
+            "mobileMMenuIconColorPalette"=> "",
         ];
     }
 
