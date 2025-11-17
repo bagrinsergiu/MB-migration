@@ -85,7 +85,14 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
         $customSectionProperties = [
-           "detailButtonBorderStyle" => $basicButtonStyleNormal['border-style'] ?? "solid",
+
+            "detailButtonBgColorType" => "solid",
+
+            "detailButtonBgColorHex" => "#545050",
+            "detailButtonBgColorOpacity" => 0.77,
+            "detailButtonBgColorPalette" => "",
+
+            "detailButtonBorderStyle" => $basicButtonStyleNormal['border-style'] ?? "solid",
             "detailButtonBorderColorHex" => $basicButtonStyleNormal['border-top-color'],
             "detailButtonBorderColorOpacity" => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
             "detailButtonBorderColorPalette" => "",
@@ -97,9 +104,13 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             "detailButtonBorderBottomWidth" => $basicButtonStyleNormal['border-width'],
             "detailButtonBorderLeftWidth" => $basicButtonStyleNormal['border-width'],
 
+            "hoverDetailButtonBgColorHex" => "#000000",
+            "hoverDetailButtonBgColorOpacity" => 0.76,
+            "hoverDetailButtonBgColorPalette" => "",
+
             "hoverDetailButtonBorderStyle" => $basicButtonStyleHover['border-style'] ?? "solid",
-            "hoverDetailButtonBorderColorHex" => $basicButtonStyleHover['background-color'],
-            "hoverDetailButtonBorderColorOpacity" => 1,
+            "hoverDetailButtonBorderColorHex" => $basicButtonStyleHover['border-top-color'],
+            "hoverDetailButtonBorderColorOpacity" => $basicButtonStyleHover['border-top-color-opacity'] ?? 1,
             "hoverDetailButtonBorderColorPalette" => "",
 
             "hoverDetailButtonBorderWidthType" => "grouped",
