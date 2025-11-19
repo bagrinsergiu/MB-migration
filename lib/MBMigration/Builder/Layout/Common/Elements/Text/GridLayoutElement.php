@@ -149,7 +149,9 @@ abstract class GridLayoutElement extends AbstractElement
                 $this->handleColumItemComponent($context);
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
             }
-            $brizySection->getItemValueWithDepth(0)->add_items([$brizySectionRow]);
+           $this->getInsideItemComponent($brizySection)
+               ->getValue()
+               ->add_items([$brizySectionRow]);
         }
 
         return $brizySection;
@@ -225,6 +227,11 @@ abstract class GridLayoutElement extends AbstractElement
 
     protected function handleColumItemComponent(ElementContextInterface $context):void
     {
+    }
+
+    protected function getInsideItemComponent(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0);
     }
 
     protected function getPropertiesMainSection(): array

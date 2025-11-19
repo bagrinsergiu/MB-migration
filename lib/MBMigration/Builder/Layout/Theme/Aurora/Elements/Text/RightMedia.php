@@ -15,7 +15,7 @@ class RightMedia extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 1, 0, 0);
     }
 
     /**
@@ -24,7 +24,7 @@ class RightMedia extends PhotoTextElement
      */
     protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
@@ -35,39 +35,39 @@ class RightMedia extends PhotoTextElement
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = parent::internalTransformToItem($data);
-        $mbSectionItem = $data->getMbSection();
-        $itemsKit = $data->getThemeContext()->getBrizyKit();
 
-        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $insideItemComponent = $this->getInsideItemComponent($brizySection);
+        $textContainerComponent = $this->getTextContainerComponent($brizySection);
 
-        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
-        $titleMb = $this->getItemByType($mbSectionItem, 'title');
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+        $insideElementContext = $data->instanceWithBrizyComponent($insideItemComponent);
 
-        $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
-        $wrapperLineStyles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $menuSectionSelector,
-                'styleProperties' => ['border-bottom-color',],
-                'families' => [],
-                'defaultFamily' => '',
-            ]
-        );
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
 
-        $headStyle = [
-            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
-        ];
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
-        $wrapperLine->getItemWithDepth(0)
-            ->getValue()
-            ->set_borderColorHex($headStyle['line-color']);
+        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
 
+        $this->transformItem($insideElementContext, $textContainerComponent, $styleList);
 
-        $brizySection->getItemWithDepth(0,0,0)
-            ->getValue()
-            ->add_items([$wrapperLine], 1);
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
 
         return $brizySection;
+    }
+
+    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0,0,0);
+    }
+
+    protected function getInsideItemComponent(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0,0,0);
+    }
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $this->getHeaderComponent($brizySection);
     }
 
     protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
@@ -84,11 +84,11 @@ class RightMedia extends PhotoTextElement
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 0,
             "mobilePaddingTopSuffix" => "px",
-            "mobilePaddingRight" => 0,
+            "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
             "mobilePaddingBottom" => 0,
             "mobilePaddingBottomSuffix" => "px",
-            "mobilePaddingLeft" => 0,
+            "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
 
             "paddingType"=> "ungrouped",

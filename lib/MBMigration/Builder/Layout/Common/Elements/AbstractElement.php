@@ -382,6 +382,11 @@ abstract class AbstractElement implements ElementInterface
         return 'bg';
     }
 
+    //ex:  "maskShape": "circle"
+    protected function getMaskTypeItemImageComponent(): string
+    {
+        return 'none';
+    }
 
     // return only uppercase, lowercase, none
     protected function getDonationButtonTextTransform() :string
