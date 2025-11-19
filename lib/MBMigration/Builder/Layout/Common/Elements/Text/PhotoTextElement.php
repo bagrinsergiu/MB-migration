@@ -91,6 +91,7 @@ abstract class PhotoTextElement extends AbstractElement
         }
 
         $elementContext = $data->instanceWithBrizyComponent($this->getTextComponent($brizySection));
+
         $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);

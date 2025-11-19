@@ -78,6 +78,7 @@ abstract class EventLayoutElement extends AbstractElement
 
         $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent, [], $this->getAdditionalTopPaddingOfTheFirstElement());
 
+        $elementContext = $data->instanceWithBrizyComponent($this->getTextContainerComponent($brizySection));
         if (!empty($mbSection['head'])) {
             $this->handleRichTextHead($elementContext, $this->browserPage);
         } else {
@@ -282,14 +283,31 @@ abstract class EventLayoutElement extends AbstractElement
 
         foreach ($sectionProperties as $key => $value) {
             $properties = 'set_' . $key;
-            $brizyWidget->getItemValueWithDepth(0)
+            $this->getDeepWidgetItem($brizyWidget)
+                ->getValue()
                 ->$properties($value);
         }
 
-        $brizySection->getItemValueWithDepth(0)->add_items([$brizyWidget]);
-
+        $this->getInsideItemComponent($brizySection)
+            ->getValue()
+            ->add_items([$brizyWidget]);
 
         return $brizySection;
+    }
+
+    protected function getDeepWidgetItem(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getInsideItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $this->getSectionItemComponent($brizySection);
     }
 
     protected function getDetailsLinksComponent(BrizyComponent $brizySection): BrizyComponent
