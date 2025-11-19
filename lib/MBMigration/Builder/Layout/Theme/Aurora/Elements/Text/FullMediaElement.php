@@ -56,7 +56,9 @@ class FullMediaElement extends FullMediaElementElement
         $elementContext = $data->instanceWithBrizyComponent($brizySectionItemComponent);
         $elementInsideContext = $data->instanceWithBrizyComponent($brizyInsideSectionItemComponent);
 
-        $this->handleSectionStyles($elementContext, $this->browserPage, $this->getPropertiesMainSection());
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
         $styleList = $this->getSectionListStyle($elementInsideContext, $this->browserPage);
 
@@ -139,5 +141,38 @@ class FullMediaElement extends FullMediaElementElement
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 0;
+    }
+
+    protected function sectionIndentations(BrizyComponent $section)
+    {
+    }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "paddingType"=> "ungrouped",
+            "padding" => 0,
+            "paddingSuffix" => "px",
+            "paddingTop" => 0,
+            "paddingTopSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingBottom" => 0,
+            "paddingBottomSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
+
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
     }
 }

@@ -3,17 +3,67 @@
 namespace MBMigration\Builder\Layout\Theme\Aurora\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 
 class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\GridLayoutElement
 {
     protected function getItemsPerRow(): int
     {
-        return 4;
+        return 3;
+    }
+
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        $brizySection = parent::internalTransformToItem($data);
+
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        $insideItemComponent = $this->getInsideItemComponent($brizySection);
+        $textContainerComponent = $this->getTextContainerComponent($brizySection);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
+        $insideElementContext = $data->instanceWithBrizyComponent($insideItemComponent);
+
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
+
+        $this->transformItem($insideElementContext, $textContainerComponent, $styleList);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
+        return $brizySection;
+    }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        $this->handleItemBackground($brizySection, $params);
+        return $brizySection;
+    }
+
+    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): void
+    {
+        $mbSectionItem = $data->getMbSection();
+        $selectId = $mbSectionItem['id'] ?? $mbSectionItem['sectionId'];
+
+        $sectionSelector = '[data-id="' .$selectId. '"] .bg-helper>.bg-opacity';
+        $styles = $this->browserPage->evaluateScript(
+            'brizy.getStyles',
+            [
+                'selector' => $sectionSelector,
+                'styleProperties' => ['background-color','opacity'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]
+        );
+
+        $this->handleItemBackground($brizySection, $styles['data']);
     }
 
     protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0);
+        return $brizyComponent->getItemWithDepth(0,0,0);
     }
 
     protected function getItemImageComponent(BrizyComponent $brizyComponent): BrizyComponent
@@ -21,13 +71,36 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizyComponent->getItemWithDepth(0);
     }
 
-    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent {
-        return $brizyComponent->getItemWithDepth(0);
+    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0,0,0);
+    }
+
+    protected function getInsideItemComponent(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        return $brizyComponent->getItemWithDepth(0,0,0);
+    }
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $this->getHeaderComponent($brizySection);
     }
 
     protected function getTypeItemImageComponent(): string
     {
         return 'image';
+    }
+
+    protected function getPropertiesItemPhoto(): array
+    {
+        return [
+            "maskShape" => $this->getMaskTypeItemImageComponent()
+        ];
+    }
+
+
+    protected function getMaskTypeItemImageComponent(): string
+    {
+        return 'circle';
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
@@ -38,5 +111,34 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;
+    }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "paddingType"=> "ungrouped",
+            "padding" => 0,
+            "paddingSuffix" => "px",
+            "paddingTop" => 0,
+            "paddingTopSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingBottom" => 0,
+            "paddingBottomSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
+
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
     }
 }

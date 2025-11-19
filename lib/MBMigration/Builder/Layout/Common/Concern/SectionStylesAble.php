@@ -168,7 +168,7 @@ trait SectionStylesAble
         return isset($mbSectionItem['settings']['sections']['background']['video']) && $mbSectionItem['settings']['sections']['background']['video'] != '';
     }
 
-    private function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom'])
+    protected function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom'])
     {
         if ($brizySection->getType() == 'Section') {
             return;
@@ -265,7 +265,9 @@ trait SectionStylesAble
         return false;
     }
 
-    protected function handleItemBackground(BrizyComponent $brizySection, array $sectionStyles)
+    protected function handleItemBackground(
+        BrizyComponent $brizySection,
+        array $sectionStyles)
     {
         $backgroundColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
         $opacity = ColorConverter::rgba2opacity($sectionStyles['background-opacity'] ?? $sectionStyles['background-color']);

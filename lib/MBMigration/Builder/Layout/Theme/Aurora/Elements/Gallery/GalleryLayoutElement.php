@@ -31,4 +31,38 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
     {
         return 0;
     }
+
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "paddingType"=> "ungrouped",
+            "padding" => 0,
+            "paddingSuffix" => "px",
+            "paddingTop" => 0,
+            "paddingTopSuffix" => "px",
+            "paddingRight" => 0,
+            "paddingRightSuffix" => "px",
+            "paddingBottom" => 0,
+            "paddingBottomSuffix" => "px",
+            "paddingLeft" => 0,
+            "paddingLeftSuffix" => "px",
+
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
+
+    protected function sectionIndentations(BrizyComponent $section)
+    {
+    }
+
 }
