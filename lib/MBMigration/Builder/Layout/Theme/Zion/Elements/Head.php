@@ -135,15 +135,10 @@ class Head extends HeadElement
             "boxShadowColorPalette" => "",
             "tempBoxShadowColorPalette" => "",
             "boxShadowColorOpacity" => 0.5,
-            "tempBoxShadowColorOpacity" => 0.76,
             "boxShadowBlur" => 4,
-            "tempBoxShadowBlur" => 4,
             "boxShadowSpread" => 0,
-            "tempBoxShadowSpread" => 0,
-            "boxShadowVertical" => 2,
-            "tempBoxShadowVertical" => 2,
-            "boxShadowHorizontal" => 1,
-            "tempBoxShadowHorizontal" => 1
+            "boxShadowVertical" => 1,
+            "boxShadowHorizontal" => 0,
         ];
 
         $sectionlogoOptions = [
