@@ -222,7 +222,7 @@ class QueryBuilder
                             )
                     ]
                 ),
-                (new Query('settings'))
+                (new Query('paginationInfo'))
                     ->setSelectionSet(
                         [
                             'totalCount',
