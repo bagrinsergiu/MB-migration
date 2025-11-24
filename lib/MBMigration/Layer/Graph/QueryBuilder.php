@@ -233,9 +233,13 @@ class QueryBuilder
             ]);
 
         try {
-            return $this->runQuery($query, true)->getData()['collectionTypes'];
+            $results = $this->runQuery($query, true);
+            $collectionTypesData = $results->getData();
+
+            return $collectionTypesData['collectionTypes']['collection'] ?? [];
         } catch (Exception $e) {
             Logger::instance()->error($e->getMessage());
+
             return [];
         }
     }

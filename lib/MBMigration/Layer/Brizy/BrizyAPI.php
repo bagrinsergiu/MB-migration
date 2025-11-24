@@ -5,6 +5,7 @@ namespace MBMigration\Layer\Brizy;
 use GuzzleHttp\Exception\ConnectException;
 use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Core\Logger;
+use MBMigration\Layer\Graph\QueryBuilder;
 use Psr\Http\Message\ResponseInterface;
 use Exception;
 use GuzzleHttp\Client;
@@ -23,10 +24,8 @@ class BrizyAPI extends Utils
      * @var VariableCache|mixed
      */
     protected $cacheBR;
-    /**
-     * @var mixed|object|null
-     */
-    private $QueryBuilder;
+
+    private QueryBuilder $QueryBuilder;
 
     /**
      * @throws Exception
@@ -928,7 +927,7 @@ class BrizyAPI extends Utils
 
         $this->QueryBuilder = $this->cacheBR->getClass('QueryBuilder');
 
-        $collectionTypes = $this->QueryBuilder->getCollectionTypes();
+        $collectionTypes = $this->QueryBuilder->getCollectionTypes($this->cacheBR->get('projectId_Brizy'));;
 
         $foundCollectionTypes = [];
         $entities = [];
