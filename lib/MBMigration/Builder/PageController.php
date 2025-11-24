@@ -476,8 +476,10 @@ class PageController
      */
     public function getAllPage(): void
     {
-        $collectionTypes = $this->emptyCheck(
-            $this->QueryBuilder->getCollectionTypes(),
+        $collectionTypes = $this->QueryBuilder->getCollectionTypes($this->projectID_Brizy);
+
+        $this->emptyCheck(
+            $collectionTypes,
             self::trace(0).' Message: CollectionTypes not found'
         );
 

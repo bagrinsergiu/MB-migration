@@ -160,7 +160,7 @@ class QueryBuilder
         return $results->getData()['createCollectionType']['collectionType'];
     }
 
-    public function getCollectionTypes($withFieldsSet = true)
+    public function getCollectionTypes($projectId, $withFieldsSet = true)
     {
         if (!$this->client) {
             Logger::instance()->warning('Client was not init.');
@@ -174,56 +174,74 @@ class QueryBuilder
 
         $query = (new Query('collectionTypes'))
             ->setOperationName('collectionTypes')
-            ->setSelectionSet(
-                [
-                    'id',
-                    'title',
-                    'slug',
-                    'priority',
-                    'public',
-                    'showUI',
-                    'createdAt',
-                    'showInMenu',
-                    (new Query('settings'))
-                        ->setSelectionSet(
-                            [
-                                'hidden',
-                                'icon',
-                                'titlePlural',
-                                'titleSingular',
-                            ]
-                        ),
-                    (new Query('editor'))
-                        ->setSelectionSet(
-                            [
-                                'id',
-                                'title',
-                                'url',
-                            ]
-                        ),
-                    (new Query('fields'))
-                        ->setSelectionSet(
-                            array_merge(
+            ->setArguments(['project' => '/data/'.$projectId, 'page' => 1, 'itemsPerPage' => 200])
+            ->setSelectionSet([
+                (new Query('collection'))->setSelectionSet(
+                    [
+                        'id',
+                        'title',
+                        'slug',
+                        'priority',
+                        'public',
+                        'showUI',
+                        //                    'createdAt',
+                        'showInMenu',
+                        (new Query('settings'))
+                            ->setSelectionSet(
                                 [
-                                    '__typename',
-                                    'id',
-                                    'slug',
-                                    'settings',
-                                    'label',
-                                    'type',
-                                    'priority',
-                                    'required',
                                     'hidden',
-                                ],
-                                $withFieldsSet ? $this->getTypeFieldSelectionSet() : []
+                                    'icon',
+                                    'titlePlural',
+                                    'titleSingular',
+                                ]
+                            ),
+                        (new Query('editor'))
+                            ->setSelectionSet(
+                                [
+                                    'id',
+                                    'title',
+                                    'url',
+                                ]
+                            ),
+                        (new Query('fields'))
+                            ->setSelectionSet(
+                                array_merge(
+                                    [
+                                        '__typename',
+                                        'id',
+                                        'slug',
+                                        'settings',
+                                        'label',
+                                        'type',
+                                        'priority',
+                                        'required',
+                                        'hidden',
+                                    ],
+                                    $withFieldsSet ? $this->getTypeFieldSelectionSet() : []
+                                )
                             )
-                        ),
-                ]
-            );
+                    ]
+                ),
+                (new Query('paginationInfo'))
+                    ->setSelectionSet(
+                        [
+                            'totalCount',
+                            'itemsPerPage',
+                            'lastPage',
+                        ]
+                    )
+            ]);
 
-        $results = $this->runQuery($query, true, []);
+        try {
+            $results = $this->runQuery($query, true);
+            $collectionTypesData = $results->getData();
 
-        return $result = $results->getData()['collectionTypes'];
+            return $collectionTypesData['collectionTypes']['collection'] ?? [];
+        } catch (Exception $e) {
+            Logger::instance()->error($e->getMessage());
+
+            return [];
+        }
     }
 
     /**
