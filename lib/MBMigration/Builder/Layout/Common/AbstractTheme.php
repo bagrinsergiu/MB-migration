@@ -149,7 +149,7 @@ abstract class AbstractTheme implements ThemeInterface
         return [];
     }
 
-    private function fontHandle(BrowserPageInterface $browserPage)
+    protected function fontHandle(BrowserPageInterface $browserPage)
     {
         $this->themeContext->getFontsController()->refreshFontInProject($browserPage);
     }

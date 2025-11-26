@@ -11,11 +11,11 @@ class FullText extends FullTextElement
 {
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0);
+        return $brizySection;
     }
 
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
-        return $brizySection->getItemWithDepth(0,0,0);
+        return $brizySection->getItemWithDepth(0);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
