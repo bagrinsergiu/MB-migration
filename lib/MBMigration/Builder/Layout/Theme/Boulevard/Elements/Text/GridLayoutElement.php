@@ -11,6 +11,11 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return 4;
     }
 
+    protected function getTypeItemImageComponent(): string
+    {
+        return 'image';
+    }
+
     protected function getItemTextContainerComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
         return $brizyComponent->getItemWithDepth(0);
