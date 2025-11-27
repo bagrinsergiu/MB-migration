@@ -62,6 +62,11 @@ class FullText extends FullTextElement
         return $brizySection;
     }
 
+    protected function getSelectorSectionCustomCSS(): string
+    {
+        return 'element';
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 50;

@@ -56,6 +56,8 @@ abstract class GridLayoutElement extends AbstractElement
 
             $this->handleItemRowComponent($brizySectionRow);
 
+            $this->handleBeforeMainForeachRow($brizySectionRow, $row);
+
             foreach ($row as $item) {
 
                 $dataIdSelector = '[data-id="'.($item['sectionId'] ?? $item['id']).'"]';
@@ -149,6 +151,8 @@ abstract class GridLayoutElement extends AbstractElement
                 $this->handleColumItemComponent($context);
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
             }
+
+
            $this->getInsideItemComponent($brizySection)
                ->getValue()
                ->add_items([$brizySectionRow]);
@@ -157,7 +161,7 @@ abstract class GridLayoutElement extends AbstractElement
         return $brizySection;
     }
 
-    private function handleBgPhotoItems(
+    protected function handleBgPhotoItems(
         ElementContextInterface $data,
         array $options = [],
         $elementImageType = 'bg',
@@ -216,6 +220,11 @@ abstract class GridLayoutElement extends AbstractElement
     protected function getTypeItemImageComponent(): string
     {
        return 'bg';
+    }
+
+    protected function handleBeforeMainForeachRow(BrizyComponent $brizyComponent, $row): BrizyComponent
+    {
+       return $brizyComponent;
     }
 
     protected function handleItemRowComponent(BrizyComponent $brizyComponent):void
