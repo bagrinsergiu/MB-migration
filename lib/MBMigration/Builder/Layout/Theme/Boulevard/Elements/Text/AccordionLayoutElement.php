@@ -9,6 +9,11 @@ use MBMigration\Builder\Utils\TextTools;
 
 class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\AccordionLayoutElement
 {
+    protected function getSelectorSectionCustomCSS(): string
+    {
+        return 'element';
+    }
+
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -22,9 +27,16 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         $accordionElementStyles = $this->getAccordionElementStyles($sectionSelector, $this->browserPage, $families);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        $brizySection->getItemWithDepth(0)
+            ->addPadding(0,0,0,0)
+            ->addMargin(0, 15, 0, 15,  '', '%');
+        $brizySection
+            ->addPadding(0,0,0,0);
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
@@ -52,21 +64,21 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             $accordionWrapperElementStyle = [
                 "marginType" => "ungrouped",
                 "marginSuffix" => "px",
-                "marginTop" => 10,
+                "marginTop" => 0,
                 "marginTopSuffix" => "px",
-                "marginRight" => 11,
+                "marginRight" => 0,
                 "marginRightSuffix" => "px",
-                "marginBottom" => 10,
+                "marginBottom" => 0,
                 "marginBottomSuffix" => "px",
-                "marginLeft" => 11,
+                "marginLeft" => 0,
                 "marginLeftSuffix" => "px",
 
                 "tabletMarginType" => "ungrouped",
                 "tabletMargin" => 0,
                 "tabletMarginSuffix" => "px",
-                "tabletMarginTop" => 10,
+                "tabletMarginTop" => 0,
                 "tabletMarginTopSuffix" => "px",
-                "tabletMarginRight" => 11,
+                "tabletMarginRight" => 0,
                 "tabletMarginRightSuffix" => "px",
                 "tabletMarginBottom" => 10,
                 "tabletMarginBottomSuffix" => "px",
