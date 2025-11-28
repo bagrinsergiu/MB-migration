@@ -3,10 +3,21 @@
 namespace MBMigration\Builder\Layout\Theme\Boulevard\Elements;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Elements\FooterElement;
 
 class Footer extends FooterElement
 {
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
+    {
+       return $data->getBrizySection();
+    }
+
+    public function transformToItem(ElementContextInterface $data): BrizyComponent
+    {
+        return $data->getBrizySection();
+    }
+
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection;

@@ -9,29 +9,6 @@ use MBMigration\Builder\Utils\ColorConverter;
 
 class RightMedia extends PhotoTextElement
 {
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
-    }
-
-    /**
-     * @param BrizyComponent $brizySection
-     * @return mixed|null
-     */
-    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0, 0, 0);
-    }
-
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
-    }
-
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = parent::internalTransformToItem($data);
@@ -63,11 +40,40 @@ class RightMedia extends PhotoTextElement
             ->set_borderColorHex($headStyle['line-color']);
 
 
-        $brizySection->getItemWithDepth(0,0,0)
+        $brizySection->getItemWithDepth(0)
             ->getValue()
             ->add_items([$wrapperLine], 1);
 
         return $brizySection;
+    }
+
+    protected function getSelectorSectionCustomCSS(): string
+    {
+        return 'element';
+    }
+
+    protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(1, 0, 0);
+    }
+
+    /**
+     * @param BrizyComponent $brizySection
+     * @return mixed|null
+     */
+    protected function getTextComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection;
+    }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 0;
     }
 
     protected function getPropertiesMainSection(): array
@@ -76,14 +82,19 @@ class RightMedia extends PhotoTextElement
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 25,
+            "mobilePaddingTop" => 50,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 50,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
+    }
+
+    protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    {
+        return $brizySection;
     }
 }
