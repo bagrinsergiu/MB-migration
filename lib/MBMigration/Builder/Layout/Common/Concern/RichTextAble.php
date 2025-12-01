@@ -291,6 +291,7 @@ trait RichTextAble
             $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
 
             $buttonSelector = '[data-id="' . $sectionId . '"]';
+
             $stylesNormal = $this->getDomElementStyles(
                 $buttonSelector,
                 [
@@ -310,17 +311,18 @@ trait RichTextAble
                         'border-bottom-style',
                         'border-bottom-color',
                         'border-bottom-width',
+
                     ],
                     $this->browserPage
                 );
             }
-            $stylesNormal['background-color'] = ColorConverter::rgba2hex($stylesNormal['background-color']);
             $stylesNormal['background-color-opacity'] = ColorConverter::rgba2opacity($stylesNormal['background-color']);
+            $stylesNormal['background-color'] = ColorConverter::rgba2hex($stylesNormal['background-color']);
             $stylesNormal['border-bottom-color'] = ColorConverter::rgba2hex($stylesNormal['border-bottom-color']);
             $stylesNormal['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesNormal['border-bottom-color']);
 
-            $stylesHover['background-color'] = ColorConverter::rgba2hex($stylesHover['background-color']);
             $stylesHover['background-color-opacity'] = ColorConverter::rgba2opacity($stylesHover['background-color']);
+            $stylesHover['background-color'] = ColorConverter::rgba2hex($stylesHover['background-color']);
             $stylesHover['border-bottom-color'] = ColorConverter::rgba2hex($stylesHover['border-bottom-color']);
             $stylesHover['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesHover['border-bottom-color']);
 
