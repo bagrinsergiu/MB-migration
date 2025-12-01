@@ -121,7 +121,7 @@ export const getStyleModel = (
         ? { bgColorType: "none", hoverBgColorType: "solid" }
         : { bgColorType: "solid", hoverBgColorType: "solid" }),
       hoverBgColorHex: bgColor.hex,
-      hoverBgColorOpacity: 0.8,
+      hoverBgColorOpacity: bgColor.opacity ?? 1,
       hoverBgColorPalette: ""
     }),
     ...(borderRadius && { borderRadiusType: "custom", borderRadius }),
