@@ -288,9 +288,6 @@ trait RichTextAble
     protected function handleButtonStyle($mbSectionItem): array
     {
         try {
-            $this->browserPage->triggerEvent('hover');
-            $this->browserPage->getPageScreen("before_button");
-
             $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
 
             $buttonSelector = '[data-id="' . $sectionId . '"]';
@@ -325,7 +322,6 @@ trait RichTextAble
                         'border-bottom-style',
                         'border-bottom-color',
                         'border-bottom-width',
-
                     ],
                     $this->browserPage
                 );
