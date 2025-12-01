@@ -307,6 +307,7 @@ trait RichTextAble
                 $stylesHover = $this->getDomElementStyles(
                     $buttonSelector,
                     [
+                        'color',
                         'background-color',
                         'border-bottom-style',
                         'border-bottom-color',
@@ -321,6 +322,8 @@ trait RichTextAble
             $stylesNormal['border-bottom-color'] = ColorConverter::rgba2hex($stylesNormal['border-bottom-color']);
             $stylesNormal['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesNormal['border-bottom-color']);
 
+            $stylesHover['color'] = ColorConverter::rgba2hex($stylesHover['color']);
+            $stylesHover['color-opacity'] = ColorConverter::rgba2opacity($stylesHover['color']);
             $stylesHover['background-color-opacity'] = ColorConverter::rgba2opacity($stylesHover['background-color']);
             $stylesHover['background-color'] = ColorConverter::rgba2hex($stylesHover['background-color']);
             $stylesHover['border-bottom-color'] = ColorConverter::rgba2hex($stylesHover['border-bottom-color']);
@@ -448,22 +451,23 @@ trait RichTextAble
                                             $clonableItem['value']['filename'] = $customIconUploadResult['filename'];
                                         }
 
-                                        $clonableItem['value']['borderStyle'] = $iconClikStyle['normal']['border-bottom-style'];
+                                        if (!empty($iconClikStyle['hover']) && !empty( $iconClikStyle['normal'] )){
+                                            $clonableItem['value']['borderStyle'] = $iconClikStyle['normal']['border-bottom-style'];
 
-                                        $clonableItem['value']['borderColorHex'] = $iconClikStyle['normal']['background-color'];
-                                        $clonableItem['value']['borderColorOpacity'] = $iconClikStyle['normal']['background-color-opacity'];
-                                        $clonableItem['value']['borderColorPalette'] = '';
+                                            $clonableItem['value']['borderColorHex'] = $iconClikStyle['normal']['background-color'];
+                                            $clonableItem['value']['borderColorOpacity'] = $iconClikStyle['normal']['background-color-opacity'];
+                                            $clonableItem['value']['borderColorPalette'] = '';
 
-                                        $clonableItem['value']['hoverBgColorHex'] = $iconClikStyle['hover']['background-color'];
-                                        $clonableItem['value']['hoverBgColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
-                                        $clonableItem['value']['hoverBgColorPalette'] = '';
+                                            $clonableItem['value']['hoverBgColorHex'] = $iconClikStyle['hover']['background-color'];
+                                            $clonableItem['value']['hoverBgColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
+                                            $clonableItem['value']['hoverBgColorPalette'] = '';
 
-                                        $clonableItem['value']['hoverBorderColorHex'] = $iconClikStyle['hover']['background-color-opacity'];
-                                        $clonableItem['value']['hoverBorderColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
-                                        $clonableItem['value']['hoverBorderColorPalette'] = '';
+                                            $clonableItem['value']['hoverBorderColorHex'] = $iconClikStyle['hover']['background-color-opacity'];
+                                            $clonableItem['value']['hoverBorderColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
+                                            $clonableItem['value']['hoverBorderColorPalette'] = '';
+                                        }
 
                                         unset($clonableItem['value']['code']);
-
 
                                     } catch (Exception $e) {
 
@@ -477,6 +481,10 @@ trait RichTextAble
                                         $clonableItem['value']['borderColorHex'] = $buttonStyle['normal']['border-bottom-color'];
                                         $clonableItem['value']['borderColorOpacity'] = $buttonStyle['normal']['border-bottom-color-opacity'];
                                         $clonableItem['value']['borderColorPalette'] = '';
+
+                                        $clonableItem['value']['hoverColorHex'] = $buttonStyle['hover']['color'];
+                                        $clonableItem['value']['hoverColorOpacity'] = $buttonStyle['hover']['color-opacity'];
+                                        $clonableItem['value']['hoverColorPalette'] = '';
 
                                         $clonableItem['value']['hoverBgColorHex'] = $buttonStyle['hover']['background-color'];
                                         $clonableItem['value']['hoverBgColorOpacity'] = $buttonStyle['hover']['background-color-opacity'];
