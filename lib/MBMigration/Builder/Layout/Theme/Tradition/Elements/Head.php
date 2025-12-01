@@ -108,7 +108,7 @@ class Head extends HeadElement
         ];
 
 
-        $this->browserPage->triggerEvent('click', '#mobile-nav-button button');
+        $this->browserPage->triggerEvent('click', '#mobile-nav-button');
 
         $itemStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',

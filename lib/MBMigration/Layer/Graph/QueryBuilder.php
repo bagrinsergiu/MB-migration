@@ -2,15 +2,15 @@
 
 namespace MBMigration\Layer\Graph;
 
-use GraphQL\Results;
-use MBMigration\Core\Logger;
 use Exception;
-use MBMigration\Builder\VariableCache;
 use GraphQL\Client;
 use GraphQL\InlineFragment;
 use GraphQL\Mutation;
 use GraphQL\Query;
+use GraphQL\Results;
 use GraphQL\Variable;
+use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Logger;
 
 class QueryBuilder
 {
@@ -37,7 +37,7 @@ class QueryBuilder
 
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => 'Bearer '.$token,
+            'Authorization' => 'Bearer ' . $token,
         ]);
     }
 
@@ -96,7 +96,8 @@ class QueryBuilder
         $public = true,
         $showUI = true,
         $showInMenu = true
-    ) {
+    )
+    {
         if (!$this->client) {
             throw new Exception('Client was not init.');
         }
@@ -174,7 +175,7 @@ class QueryBuilder
 
         $query = (new Query('collectionTypes'))
             ->setOperationName('collectionTypes')
-            ->setArguments(['project' => '/data/'.$projectId, 'page' => 1, 'itemsPerPage' => 200])
+            ->setArguments(['project' => '/data/' . $projectId, 'page' => 1, 'itemsPerPage' => 200])
             ->setSelectionSet([
                 (new Query('collection'))->setSelectionSet(
                     [
@@ -184,8 +185,7 @@ class QueryBuilder
                         'priority',
                         'public',
                         'showUI',
-                        //                    'createdAt',
-                        'showInMenu',
+                        //                    'showInMenu',
                         (new Query('settings'))
                             ->setSelectionSet(
                                 [
@@ -220,6 +220,7 @@ class QueryBuilder
                                     $withFieldsSet ? $this->getTypeFieldSelectionSet() : []
                                 )
                             )
+
                     ]
                 ),
                 (new Query('paginationInfo'))
@@ -315,11 +316,12 @@ class QueryBuilder
         $title = null,
         $seo = null,
         bool $protectedPage = false,
-        $isHome=false,
+        $isHome = false,
         $status = 'published',
         array $fields = [],
         $pageData = '{"items":[]}'
-    ) {
+    )
+    {
         if (!$this->client) {
             throw new Exception('Client was not init.');
         }
@@ -429,7 +431,7 @@ class QueryBuilder
         $selectionSet = [];
         foreach ($collection_type_ids as $slug => $collection_type_id) {
             // $slug = preg_replace('/[0-9]+/', GeneralUtils::generateRandomString(5), str_replace('-', '_', $slug)); #https://github.com/bagrinsergiu/brizy-api/issues/325
-            $selectionSet[] = (new Query($slug.': collectionItems'))
+            $selectionSet[] = (new Query($slug . ': collectionItems'))
                 ->setArguments(['type' => $collection_type_id, 'page' => $page, 'itemsPerPage' => $limit])
                 ->setSelectionSet(
                     [
@@ -597,7 +599,8 @@ class QueryBuilder
         array $fields = [],
         $title = null,
         $seo = null
-    ) {
+    )
+    {
         if (!$this->client) {
             throw new Exception('Client was not init.');
         }
@@ -883,7 +886,7 @@ class QueryBuilder
     {
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => $token['token_type'].' '.$token['access_token'],
+            'Authorization' => $token['token_type'] . ' ' . $token['access_token'],
         ]);
 
         $mutation = (new Mutation('createCmsPublicApplication'))
@@ -934,7 +937,7 @@ class QueryBuilder
     {
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => $token['token_type'].' '.$token['access_token'],
+            'Authorization' => $token['token_type'] . ' ' . $token['access_token'],
         ]);
 
         $mutation = (new Mutation('createCmsApplicationInstall'))
@@ -960,8 +963,8 @@ class QueryBuilder
 
         $variables = [
             'input' => [
-                'project' => '/data/'.$project_id,
-                'application' => '/cms_public_applications/'.$application_id,
+                'project' => '/data/' . $project_id,
+                'application' => '/cms_public_applications/' . $application_id,
             ],
         ];
 
@@ -979,7 +982,7 @@ class QueryBuilder
     {
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => $token['token_type'].' '.$token['access_token'],
+            'Authorization' => $token['token_type'] . ' ' . $token['access_token'],
         ]);
 
         $query = (new Query('cmsPublicApplication'))
@@ -1088,7 +1091,7 @@ class QueryBuilder
         return true;
     }
 
-    public function SaveCollectionItem($codeCss ): bool
+    public function SaveCollectionItem($codeCss): bool
     {
         $faviconMetafild = $this->getMetafieldByName('favicon');
 
@@ -1697,7 +1700,7 @@ class QueryBuilder
     {
         $this->client = $this->getClient([
             'User-Agent' => 'Brizy Cloud',
-            'Authorization' => $token['token_type'].' '.$token['access_token'],
+            'Authorization' => $token['token_type'] . ' ' . $token['access_token'],
         ]);
 
         $mutation = (new Mutation('cloneData'))
@@ -1716,8 +1719,8 @@ class QueryBuilder
 
         $variables = [
             'input' => [
-                'source' => '/data/'.$source,
-                'target' => '/data/'.$target,
+                'source' => '/data/' . $source,
+                'target' => '/data/' . $target,
             ],
         ];
 
