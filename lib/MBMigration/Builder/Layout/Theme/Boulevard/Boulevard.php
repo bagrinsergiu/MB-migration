@@ -41,6 +41,7 @@ class Boulevard extends AbstractTheme
             $this,
             $this->themeContext,
             $this->themeContext->getMbHeadSection(),
+            $brizyComponent,
             $brizyComponent->getItemWithDepth(0, 0, 0),
             $this->themeContext->getBrizyMenuEntity(),
             $this->themeContext->getBrizyMenuItems(),
@@ -51,7 +52,7 @@ class Boulevard extends AbstractTheme
         $this->addSectionIfNeeded($mbPageSections);
 
         Logger::instance()->debug("Handling [head] page section.");
-//        $elementFactory->getElement('head', $browserPage)->transformToItem($elementContext);
+        $elementFactory->getElement('head', $browserPage)->transformToItem($elementContext);
 
         $elementsList = ['event'];
         $processedItems = [];
@@ -88,6 +89,7 @@ class Boulevard extends AbstractTheme
                     $this,
                     $this->themeContext,
                     $mbPageSection,
+                    $brizyComponent,
                     $brizyComponent->getItemWithDepth(0, 0, 1),
                     $this->themeContext->getBrizyMenuEntity(),
                     $this->themeContext->getBrizyMenuItems(),
@@ -105,19 +107,20 @@ class Boulevard extends AbstractTheme
             }
         }
 
-//        $elementFactory->getElement('footer', $browserPage)
-//            ->transformToItem(
-//                ElementContext::instance(
-//                    $this,
-//                    $this->themeContext,
-//                    $this->themeContext->getMbFooterSection(),
-//                    $brizyComponent,
-//                    $this->themeContext->getBrizyMenuEntity(),
-//                    $this->themeContext->getBrizyMenuItems(),
-//                    $this->themeContext->getFamilies(),
-//                    $this->themeContext->getDefaultFamily()
-//                )
-//            );
+        $elementFactory->getElement('footer', $browserPage)
+            ->transformToItem(
+                ElementContext::instance(
+                    $this,
+                    $this->themeContext,
+                    $this->themeContext->getMbFooterSection(),
+                    $brizyComponent,
+                    $brizyComponent->getItemWithDepth(0, 0, 0),
+                    $this->themeContext->getBrizyMenuEntity(),
+                    $this->themeContext->getBrizyMenuItems(),
+                    $this->themeContext->getFamilies(),
+                    $this->themeContext->getDefaultFamily()
+                )
+            );
 
         $brizyPage->addItem($brizyComponent);
         Logger::instance()->debug("Handling [footer] page section.");

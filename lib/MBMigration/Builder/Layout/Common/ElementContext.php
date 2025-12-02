@@ -7,53 +7,22 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 
 final class ElementContext implements ElementContextInterface
 {
-    /**
-     * @var array
-     */
-    private $mbSection;
-    /**
-     * @var array
-     */
-    private $menu;
-
-    /**
-     * @var array
-     */
-    private $fontFamilies;
-
-    /**
-     * @var array
-     */
-    private $selector;
-
-    /**
-     * @var string
-     */
-    private $defaultFontFamily;
-    /**
-     * @var BrizyComponent
-     */
-    private $brizyComponent;
-
-    /**
-     * @var ThemeContextInterface
-     */
-    private $themeContext;
+    private array $mbSection;
+    private array $fontFamilies;
+    private string $defaultFontFamily;
     private array $brizyMenuEntity;
     private array $brizyMenuItems;
-    private ThemeInterface $themeInstance;
 
-    /**
-     * @param $mbSection
-     * @param $browserData
-     * @param $menu
-     *
-     * @return self
-     */
+    private BrizyComponent $sectionLayout ;
+    private ThemeInterface $themeInstance;
+    private BrizyComponent $brizyComponent;
+    private ThemeContextInterface $themeContext;
+
     static public function instance(
         ThemeInterface $themeInstance,
         ThemeContextInterface $themeContext,
         array $mbSection,
+        BrizyComponent $sectionLayout,
         BrizyComponent $brizyComponent = null,
         array $brizyMenuEntity = [],
         array $brizyMenuItems = [],
@@ -64,6 +33,7 @@ final class ElementContext implements ElementContextInterface
             $themeInstance,
             $themeContext,
             $mbSection,
+            $sectionLayout,
             $brizyComponent,
             $brizyMenuEntity,
             $brizyMenuItems,
@@ -78,6 +48,7 @@ final class ElementContext implements ElementContextInterface
             $this->themeInstance,
             $this->themeContext,
             $this->getMbSection(),
+            $this->sectionLayout,
             $brizyComponent,
             $this->getBrizyMenuEntity(),
             $this->getBrizyMenuItems(),
@@ -92,6 +63,7 @@ final class ElementContext implements ElementContextInterface
             $this->themeInstance,
             $this->themeContext,
             $mbSection,
+            $this->sectionLayout,
             $this->getBrizySection(),
             $this->getBrizyMenuEntity(),
             $this->getBrizyMenuItems(),
@@ -108,6 +80,7 @@ final class ElementContext implements ElementContextInterface
             $this->themeInstance,
             $this->themeContext,
             $mbSection,
+            $this->sectionLayout,
             $brizyComponent,
             $this->getBrizyMenuEntity(),
             $this->getBrizyMenuItems(),
@@ -120,6 +93,7 @@ final class ElementContext implements ElementContextInterface
         ThemeInterface $themeInstance,
         ThemeContextInterface $themeContext,
         array $section,
+        BrizyComponent $sectionLayout,
         BrizyComponent $brizyComponent = null,
         array $brizyMenuEntity = [],
         array $brizyMenuItems = [],
@@ -134,6 +108,17 @@ final class ElementContext implements ElementContextInterface
         $this->brizyMenuEntity = $brizyMenuEntity;
         $this->brizyMenuItems = $brizyMenuItems;
         $this->themeInstance = $themeInstance;
+        $this->sectionLayout = $sectionLayout;
+    }
+
+    public function setPageLayout(BrizyComponent $layout): void
+    {
+        $this->sectionLayout = $layout;
+    }
+
+    public function getPageLayout(): BrizyComponent
+    {
+        return $this->sectionLayout;
     }
 
     public function getMbSection(): array
@@ -151,25 +136,16 @@ final class ElementContext implements ElementContextInterface
         return $this->brizyMenuItems;
     }
 
-    /**
-     * @return array
-     */
     public function getFontFamilies(): array
     {
         return $this->fontFamilies;
     }
 
-    /**
-     * @return array
-     */
     public function getDefaultFontFamily(): string
     {
         return $this->defaultFontFamily;
     }
 
-    /**
-     * @return BrizyComponent
-     */
     public function getBrizySection(): BrizyComponent
     {
         return $this->brizyComponent;

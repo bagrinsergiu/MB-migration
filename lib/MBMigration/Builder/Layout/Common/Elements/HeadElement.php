@@ -27,6 +27,7 @@ abstract class HeadElement extends AbstractElement
     ];
 
     protected BrizyAPI $brizyAPIClient;
+    protected BrizyComponent $pageLayout;
     private FontsController $fontsController;
 
     public function __construct(
@@ -66,6 +67,7 @@ abstract class HeadElement extends AbstractElement
 
         $this->pageTDO = $data->getThemeContext()->getPageDTO();
         $this->themeContext = $data->getThemeContext();
+        $this->pageLayout = $data->getPageLayout();
 
         Logger::instance()->info('HeadElement context setup completed', [
             'page_id' => $this->pageTDO ? $this->pageTDO->getId() : null,
@@ -101,27 +103,8 @@ abstract class HeadElement extends AbstractElement
             Logger::instance()->info('After transform hook completed');
 
             // save it as a global block
-            $position = '{"align":"top","top":0,"bottom":0}';
-            $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
-
-            try {
-                Logger::instance()->info('Deleting existing global blocks');
-                $this->brizyAPIClient->deleteAllGlobalBlocks();
-
-                Logger::instance()->info('Creating new global block', [
-                    'component_json_length' => strlen(json_encode($component)),
-                    'position' => $position,
-                    'rules' => $rules
-                ]);
-                $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
-
-                Logger::instance()->info('Global block created successfully');
-            } catch (\Exception $e) {
-                Logger::instance()->error('Error managing global blocks', [
-                    'error_message' => $e->getMessage(),
-                    'error_class' => get_class($e)
-                ]);
-                throw $e;
+            if ($this->makeGlobalBlock()){
+                $this->saveItAsAGlobalBlock($component);
             }
 
             $endTime = microtime(true);
@@ -212,7 +195,7 @@ abstract class HeadElement extends AbstractElement
      * @param $headItem
      * @return BrizyComponent
      */
-    private function setImageLogo(BrizyComponent $component, $headItem): BrizyComponent
+    protected function setImageLogo(BrizyComponent $component, $headItem): BrizyComponent
     {
         $imageLogo = [];
 
@@ -245,7 +228,7 @@ abstract class HeadElement extends AbstractElement
      * @param $headStyles
      * @return BrizyComponent
      */
-    private function buildMenuItemsAndSetTheMenuUid(
+    protected function buildMenuItemsAndSetTheMenuUid(
         ElementContextInterface $data,
         BrizyComponent          $component,
                                 $headStyles
@@ -529,6 +512,16 @@ abstract class HeadElement extends AbstractElement
         return [];
     }
 
+    protected function getPageLayout(): BrizyComponent
+    {
+        return $this->pageLayout;
+    }
+
+    protected function makeGlobalBlock(): bool
+    {
+        return true;
+    }
+
     protected function menuItemStylesValueConditions(array &$menuItemStyles): void
     {
     }
@@ -546,6 +539,33 @@ abstract class HeadElement extends AbstractElement
     abstract protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent;
 
     abstract protected function getThemeMenuItemSelector(): array;
+
+    function saveItAsAGlobalBlock(BrizyComponent $component): void
+    {
+        $position = '{"align":"top","top":0,"bottom":0}';
+        $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
+
+        try {
+            Logger::instance()->info('Deleting existing global blocks');
+            $this->brizyAPIClient->deleteAllGlobalBlocks();
+
+            Logger::instance()->info('Creating new global block', [
+                'component_json_length' => strlen(json_encode($component)),
+                'position' => $position,
+                'rules' => $rules
+            ]);
+            $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
+
+            Logger::instance()->info('Global block created successfully');
+        } catch (\Exception $e) {
+            Logger::instance()->error('Error managing global blocks', [
+                'error_message' => $e->getMessage(),
+                'error_class' => get_class($e)
+            ]);
+        } catch (GuzzleException $e) {
+            Logger::instance()->error('Error managing global blocks', $e->getMessage());
+        }
+    }
 
     abstract protected function getPropertiesIconMenuItem(): array;
 

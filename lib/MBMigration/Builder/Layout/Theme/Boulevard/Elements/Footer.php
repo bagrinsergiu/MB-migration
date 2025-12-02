@@ -10,17 +10,35 @@ class Footer extends FooterElement
 {
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-       return $data->getBrizySection();
-    }
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
 
-    public function transformToItem(ElementContextInterface $data): BrizyComponent
-    {
-        return $data->getBrizySection();
+        $brizySection = $this->pageLayout;
+
+        $mbSection = $data->getMbSection();
+        $brizySectionItemComponent = $this->getSectionItemComponent($brizySection);
+
+        $sortItems = $this->sortItems($mbSection['items']);
+        foreach ($sortItems as $items) {
+            $column = $this->getFooterColumnElement($brizySectionItemComponent, $items['group']);
+            $elementContext = $data->instanceWithBrizyComponent($column);
+            $this->handleItemMbSection($items, $elementContext);
+        }
+
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        return $brizySection;
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection;
+        return $brizySection->getItemWithDepth(0, 0, 0);
+    }
+
+    protected function makeGlobalBlock(): bool
+    {
+        return false;
     }
 
     protected function getPropertiesMainSection(): array
