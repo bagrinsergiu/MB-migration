@@ -18,6 +18,7 @@ abstract class FooterElement extends AbstractElement
     use SectionStylesAble;
 
     protected BrizyAPI $brizyAPIClient;
+    protected BrizyComponent $pageLayout;
 
     public function __construct($brizyKit, BrowserPageInterface $browserPage, BrizyAPI $brizyAPI)
     {
@@ -31,15 +32,19 @@ abstract class FooterElement extends AbstractElement
         $this->pageTDO = $data->getThemeContext()->getPageDTO();
         $this->themeContext = $data->getThemeContext();
 
+        $this->pageLayout = $data->getPageLayout();
+
         return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
             $this->beforeTransformToItem($data);
             $component = $this->internalTransformToItem($data);
             $this->afterTransformToItem($component);
 
-            $position = '{"align":"bottom","top":1,"bottom":1}';
-            $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
+            if ($this->makeGlobalBlock()) {
+                $position = '{"align":"bottom","top":1,"bottom":1}';
+                $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
 
-            $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
+                $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
+            }
 
             return $component;
         });
@@ -68,6 +73,11 @@ abstract class FooterElement extends AbstractElement
     protected function getFooterColumnElement(BrizyComponent $brizySection, $index): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function makeGlobalBlock(): bool
+    {
+        return true;
     }
 
     protected function getPropertiesMainSection(): array
