@@ -292,7 +292,7 @@ trait RichTextAble
 
             $buttonSelector = '[data-id="' . $sectionId . '"]';
 
-            $stylesNormal = $this->getDomElementStyles(
+            $stylesNormalD = $this->getDomElementStyles(
                 $buttonSelector,
                 [
                     'background-color',
@@ -303,8 +303,13 @@ trait RichTextAble
                 $this->browserPage
             );
 
+            $stylesNormal['background-color-opacity'] = ColorConverter::rgba2opacity($stylesNormalD['background-color']);
+            $stylesNormal['background-color'] = ColorConverter::rgba2hex($stylesNormalD['background-color']);
+            $stylesNormal['border-bottom-color'] = ColorConverter::rgba2hex($stylesNormalD['border-bottom-color']);
+            $stylesNormal['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesNormalD['border-bottom-color']);
+
             if ($this->browserPage->triggerEvent('hover', $buttonSelector)) {
-                $stylesHover = $this->getDomElementStyles(
+                $stylesHoverD = $this->getDomElementStyles(
                     $buttonSelector,
                     [
                         'color',
@@ -316,22 +321,18 @@ trait RichTextAble
                     ],
                     $this->browserPage
                 );
-            }
-            $stylesNormal['background-color-opacity'] = ColorConverter::rgba2opacity($stylesNormal['background-color']);
-            $stylesNormal['background-color'] = ColorConverter::rgba2hex($stylesNormal['background-color']);
-            $stylesNormal['border-bottom-color'] = ColorConverter::rgba2hex($stylesNormal['border-bottom-color']);
-            $stylesNormal['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesNormal['border-bottom-color']);
 
-            $stylesHover['color'] = ColorConverter::rgba2hex($stylesHover['color']);
-            $stylesHover['color-opacity'] = ColorConverter::rgba2opacity($stylesHover['color']);
-            $stylesHover['background-color-opacity'] = ColorConverter::rgba2opacity($stylesHover['background-color']);
-            $stylesHover['background-color'] = ColorConverter::rgba2hex($stylesHover['background-color']);
-            $stylesHover['border-bottom-color'] = ColorConverter::rgba2hex($stylesHover['border-bottom-color']);
-            $stylesHover['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesHover['border-bottom-color']);
+                $stylesHover['color'] = ColorConverter::rgba2hex($stylesHoverD['color']);
+                $stylesHover['color-opacity'] = ColorConverter::rgba2opacity($stylesHoverD['color']);
+                $stylesHover['background-color-opacity'] = ColorConverter::rgba2opacity($stylesHoverD['background-color']);
+                $stylesHover['background-color'] = ColorConverter::rgba2hex($stylesHoverD['background-color']);
+                $stylesHover['border-bottom-color'] = ColorConverter::rgba2hex($stylesHoverD['border-bottom-color']);
+                $stylesHover['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesHoverD['border-bottom-color']);
+            }
 
             return [
                 'normal' => $stylesNormal,
-                'hover' => $stylesHover
+                'hover' => $stylesHover ?? []
             ];
         } catch (Exception $e) {
 
