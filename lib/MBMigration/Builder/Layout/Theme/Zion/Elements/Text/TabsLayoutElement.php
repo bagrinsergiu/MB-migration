@@ -26,7 +26,7 @@ class TabsLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 100;
     }
 
     protected function getPropertiesMainSection(): array

@@ -97,7 +97,7 @@ class RightMedia extends PhotoTextElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 100;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

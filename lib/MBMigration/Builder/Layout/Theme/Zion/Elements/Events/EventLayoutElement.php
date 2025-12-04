@@ -125,7 +125,7 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 100;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
