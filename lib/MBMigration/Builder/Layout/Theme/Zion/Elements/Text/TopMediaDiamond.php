@@ -103,12 +103,12 @@ class TopMediaDiamond extends FullMediaElementElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 90;
+        return 100;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
-        return 90;
+        return 100;
     }
 
     protected function customSettings(): array

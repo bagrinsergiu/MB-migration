@@ -165,7 +165,7 @@ element:not(:has(.brz-ed-image__wrapper)) picture{
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 100;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int

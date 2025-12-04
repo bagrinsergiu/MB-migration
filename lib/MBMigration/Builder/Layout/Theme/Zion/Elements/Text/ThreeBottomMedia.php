@@ -144,7 +144,7 @@ class ThreeBottomMedia extends PhotoTextElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 100;
     }
 
     private function getCustomCss(): string

@@ -93,7 +93,7 @@ class TwoHorizontalText extends TwoHorizontalTextElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 100;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
