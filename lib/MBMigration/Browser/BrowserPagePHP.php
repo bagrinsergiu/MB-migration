@@ -139,13 +139,18 @@ class BrowserPagePHP implements BrowserPageInterface
     /**
      * @return mixed
      */
-    public function triggerEvent($eventNameMethod, $elementSelector, $params = []): bool
+    public function triggerEvent($eventNameMethod, $elementSelector = null, $params = []): bool
     {
         try {
-            $center = $this->scrollIntoViewAndGetCenter($elementSelector);
-
+            if (!empty($elementSelector)) {
+                $center = $this->scrollIntoViewAndGetCenter($elementSelector);
+            }
             switch ($eventNameMethod) {
                 case 'hover':
+                    if (empty($elementSelector)) {
+                        $this->page->mouse()->move(0, 0);
+                        break;
+                    }
                     if ($center) {
                         $this->page->mouse()->move($center['x'], $center['y']);
                     } else {
