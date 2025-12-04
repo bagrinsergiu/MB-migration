@@ -358,11 +358,13 @@ abstract class HeadElement extends AbstractElement
 
         $menuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $getSubMenuItemParams);
 
-        $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getSubMenuDropdown', [
+        $menuSubItemDropdownStylesOptions = [
             'nodeSelector' => $this->getThemeSubMenuItemDropDownSelector(),
             'families' => $families,
             'defaultFamily' => $defaultFamilies,
-        ]);
+        ];
+
+        $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getSubMenuDropdown', $menuSubItemDropdownStylesOptions );
 
         $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], $menuSubItemDropdownStyles['data']);
 
