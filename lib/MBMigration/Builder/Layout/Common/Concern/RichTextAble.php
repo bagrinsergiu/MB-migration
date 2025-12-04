@@ -288,6 +288,9 @@ trait RichTextAble
     protected function handleButtonStyle($mbSectionItem): array
     {
         try {
+            $this->browserPage->triggerEvent('hover');
+            $this->browserPage->getPageScreen("before_button");
+
             $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
 
             $buttonSelector = '[data-id="' . $sectionId . '"]';
@@ -295,6 +298,7 @@ trait RichTextAble
             $stylesNormalD = $this->getDomElementStyles(
                 $buttonSelector,
                 [
+                    'color',
                     'background-color',
                     'border-bottom-style',
                     'border-bottom-color',
@@ -303,12 +307,16 @@ trait RichTextAble
                 $this->browserPage
             );
 
+            $stylesNormal['color'] = ColorConverter::rgba2hex($stylesNormalD['color']);
+            $stylesNormal['color-opacity'] = ColorConverter::rgba2opacity($stylesNormalD['color']);
             $stylesNormal['background-color-opacity'] = ColorConverter::rgba2opacity($stylesNormalD['background-color']);
             $stylesNormal['background-color'] = ColorConverter::rgba2hex($stylesNormalD['background-color']);
             $stylesNormal['border-bottom-color'] = ColorConverter::rgba2hex($stylesNormalD['border-bottom-color']);
             $stylesNormal['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesNormalD['border-bottom-color']);
 
             if ($this->browserPage->triggerEvent('hover', $buttonSelector)) {
+                $this->browserPage->getPageScreen("hover_button");
+
                 $stylesHoverD = $this->getDomElementStyles(
                     $buttonSelector,
                     [
@@ -477,6 +485,14 @@ trait RichTextAble
                                     break;
                                 case 'Button':
                                     if (!empty($buttonStyle['hover']) && !empty($buttonStyle['normal'])) {
+
+                                        $clonableItem['value']['colorHex'] = $buttonStyle['normal']['color'];
+                                        $clonableItem['value']['colorOpacity'] = $buttonStyle['normal']['color-opacity'];
+                                        $clonableItem['value']['colorPalette'] = '';
+
+                                        $clonableItem['value']['bgColorHex'] = $buttonStyle['normal']['background-color'];
+                                        $clonableItem['value']['bgColorOpacity'] = $buttonStyle['normal']['background-color-opacity'];
+                                        $clonableItem['value']['bgColorPalette'] = '';
 
                                         $clonableItem['value']['borderStyle'] = $buttonStyle['normal']['border-bottom-style'];
                                         $clonableItem['value']['borderColorHex'] = $buttonStyle['normal']['border-bottom-color'];
