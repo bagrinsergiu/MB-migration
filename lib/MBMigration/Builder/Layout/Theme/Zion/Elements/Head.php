@@ -87,9 +87,9 @@ class Head extends HeadElement
 
         $subpalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName('subpalette1');
 
-         $this->paletteIconMenuItem = [
-             'mobileMMenuIconColorHex' =>  $subpalette['text']
-         ];
+        $this->paletteIconMenuItem = [
+            'mobileMMenuIconColorHex' => $subpalette['text']
+        ];
 
         $brizySection->getItemWithDepth(0)
             ->getValue()
@@ -134,7 +134,7 @@ class Head extends HeadElement
             "boxShadowColorHex" => "#1a1919",
             "boxShadowColorPalette" => "",
             "tempBoxShadowColorPalette" => "",
-            "boxShadowColorOpacity" => 0.5,
+            "boxShadowColorOpacity" => 0.1,
             "boxShadowBlur" => 4,
             "boxShadowSpread" => 0,
             "boxShadowVertical" => 1,
@@ -217,39 +217,16 @@ class Head extends HeadElement
         return $brizySection;
     }
 
-    protected function getHoverSubMenuStyle_(): array
+    protected function getHoverSubMenuStyle(): array
     {
         if ($this->browserPage->triggerEvent('hover', $this->getThemeParentMenuItemSelector()['selector'])) {
 
-            $this->browserPage->getPageScreen('1');
-
-            $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuItemClassSelected()['selector']);
-
-            $this->browserPage->getPageScreen('1_a');
-
-            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
-                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
-                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
-            ]);
-
-            $this->browserPage->getPageScreen('1_1');
-
             $activeMenuSubItemStyles = $this->scrapeStyle($this->getThemeSubMenuSelectedItemSelector()['selector'], ['color']);
 
-            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
-                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
-                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
-            ]);
+            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuItemClassSelected()['selector'])) {
 
-            $this->browserPage->getPageScreen('remove_node_1');
-
-            if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuItemClassSelected()['selector'])
-                && $this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])
-            ) {
-
-                $this->browserPage->getPageScreen('subMenu_Selected');
                 $entrySubMenu = [
-                    'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
+                    'itemSelector' => $this->getThemeSubMenuItemClassSelected(),
                     'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
                     'families' => '',
                     'defaultFamily' => [],
@@ -263,28 +240,6 @@ class Head extends HeadElement
 
             $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
             $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
-
-        } else {
-
-            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
-                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
-                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
-            ]);
-
-            $entrySubMenu = [
-                'itemSelector' => $this->getThemeSubMenuItemSelector(),
-                'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
-                'families' => '',
-                'defaultFamily' => [],
-                'hover' => true,
-            ];
-
-            $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
-
-            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
-                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
-                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
-            ]);
         }
 
         return $hoverMenuSubItemStyles['data'] ?? [];
@@ -349,7 +304,7 @@ class Head extends HeadElement
 
     public function getThemeParentMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.has-sub", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
@@ -359,14 +314,12 @@ class Head extends HeadElement
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#main-navigation > ul > li:not(.selected).has-sub > ul > li", "className" => "selected"];
-        #main-navigation > ul:nth-child(1) > li.selected.landing.first.has-sub.current
+        return ["selector" => "#main-navigation > ul > li.selected.has-sub > ul > li:not(.selected) > a", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub > ul", "className" => "selected"];
-//        return ["selector" => "#main-navigation > ul:nth-child(1) > li:nth-child(5) > ul", "className" => "selected"];
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li", "className" => "selected"];
     }
 
     public function getThemeMobileNavSelector(): array
@@ -401,9 +354,7 @@ class Head extends HeadElement
 
     protected function getThemeSubMenuItemDropDownSelector(): array
     {
-        return ["selector" => "#main-navigation > ul > li.has-sub", "pseudoEl" => ""];
-        //#main-navigation > ul:nth-child(1) > li.has-sub > ul
-//        #main-navigation > ul:nth-child(1) > li:nth-child(5)
+        return ["selector" => "#main-navigation > ul > li.has-sub > ul > li", "pseudoEl" => ""];
     }
 
     protected function getPropertiesIconMenuItem(): array
@@ -470,9 +421,9 @@ class Head extends HeadElement
             "activeMenuBorderBottomWidth" => 2,
             "activeMenuBorderLeftWidth" => 0,
 
-            "mobileMMenuIconColorHex"=> $this->paletteIconMenuItem["mobileMMenuIconColorHex"] ?? '#000000',
-            "mobileMMenuIconColorOpacity"=> 1,
-            "mobileMMenuIconColorPalette"=> "",
+            "mobileMMenuIconColorHex" => $this->paletteIconMenuItem["mobileMMenuIconColorHex"] ?? '#000000',
+            "mobileMMenuIconColorOpacity" => 1,
+            "mobileMMenuIconColorPalette" => "",
         ];
     }
 

@@ -156,6 +156,8 @@ class Head extends HeadElement
             );
         }
 
+        $this->browserPage->triggerEvent('click', '#mobile-nav-button');
+
         $convertColorRgbToHex = ColorConverter::convertColorRgbToHex($itemStyles['data']['color']);
         $convertColorRgbToHexHover = ColorConverter::convertColorRgbToHex($itemHoveStyles['data']['color']);
 
