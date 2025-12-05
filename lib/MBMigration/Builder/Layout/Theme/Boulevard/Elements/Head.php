@@ -41,20 +41,18 @@ class Head extends HeadElement
     {
         $section = $this->getPageLayout();
 
-//        $headStyles = $this->extractBlockBrowserData(
-//            $data->getMbSection()['sectionId'],
-//            $data->getFontFamilies(),
-//            $data->getDefaultFontFamily(),
-//            $data
-//        );
+        $headStyles = $this->extractBlockBrowserData(
+            $data->getMbSection()['sectionId'],
+            $data->getFontFamilies(),
+            $data->getDefaultFontFamily(),
+            $data
+        );
 
-        // reset color palette
         $sectionItem = $this->getSectionItemComponent($section);
 
         $logoImageComponent = $this->getLogoComponent($section);
         $menuTargetComponent = $this->getTargetMenuComponent($section);
 
-        // build menu items and set the menu uid
         $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles ?? []);
         $this->setImageLogo($logoImageComponent, $data->getMbSection());
 
@@ -64,9 +62,103 @@ class Head extends HeadElement
 
         $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
-        $this->getThemeMenuHeaderStyle($headStyles, $section);
+        $this->getThemeMenuHeaderStyle($headStyles ?? [], $section);
 
         return $section;
+    }
+
+    protected function getNormalSubMenuStyle($families, $defaultFamilies): array
+    {
+        $this->browserPage->triggerEvent('hover', 'body');
+
+        $themeSubMenuNotSelectedItemSelector = $this->getThemeSubMenuNotSelectedItemSelector();
+        $themeSubMenuItemBGSelector = $this->getThemeSubMenuItemBGSelector();
+        $getSubMenuItemParams = [
+            'itemSelector' => $themeSubMenuNotSelectedItemSelector,
+            'itemBgSelector' => $themeSubMenuItemBGSelector,
+            'families' => $families,
+            'defaultFamily' => $defaultFamilies,
+            'hover' => false,
+        ];
+
+        $menuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $getSubMenuItemParams);
+
+        $menuSubItemDropdownStylesOptions = [
+            'nodeSelector' => $this->getThemeSubMenuItemDropDownSelector(),
+            'families' => $families,
+            'defaultFamily' => $defaultFamilies,
+        ];
+
+        $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getSubMenuDropdown', $menuSubItemDropdownStylesOptions );
+
+        $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], $menuSubItemDropdownStyles['data']);
+
+        if (isset($menuSubItemStyles['error'])) {
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+
+            //$this->browserPage->getPageScreen('subNormal_1');
+
+            $menuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $getSubMenuItemParams);
+
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+        }
+
+        return $menuSubItemStyles['data'] ?? [];
+    }
+
+    protected function getHoverSubMenuStyle(): array
+    {
+        $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
+            'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+            'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+        ]);
+
+        sleep(1);
+
+        $activeMenuSubItemStyles = $this->scrapeStyle($this->getThemeSubMenuSelectedItemSelector()['selector'], ['color']);
+
+        $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+            'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+            'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+        ]);
+
+        sleep(1);
+
+        if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuNotSelectedItemSelector()['selector'])) {
+
+            $this->browserPage->getPageScreen('A1');
+
+            $entrySubMenu = [
+                'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
+                'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                'families' => '',
+                'defaultFamily' => [],
+                'hover' => true,
+            ];
+
+            $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
+
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
+        }
+
+        return $hoverMenuSubItemStyles['data'] ?? [];
+    }
+
+    protected function menuItemStylesValueConditions(array &$menuItemStyles) :void
+    {
+        if(!empty($menuItemStyles['data'])){
+            $menuItemStyles['data']['activeColorHex'] = $menuItemStyles['data']['colorHex'];
+            $menuItemStyles['data']['activeMenuBgColor'] = '#fff';
+            $menuItemStyles['data']['activeMenuBgColorOpacity'] = 0.08;
+            $menuItemStyles['data']['activeMenuBgColorPalette'] = '';
+        }
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
@@ -91,12 +183,22 @@ class Head extends HeadElement
 
     public function getNotSelectedMenuItemBgSelector(): array
     {
-        return $this->getThemeMenuItemSelector();
+        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+    }
+
+    protected function getStyleFromPseudo(): bool
+    {
+        return true;
+    }
+
+    protected function getSelectorSectionCustomCSS(): string
+    {
+        return 'element';
     }
 
     public function getThemeSubMenuSelectedItemSelector(): array
     {
-        return ["selector" => "#main-navigation ul li.has-sub ul.sub-navigation li.selected a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.selected > ul > li.selected > a", "pseudoEl" => ""];
     }
 
     protected function getThemeSubMenuItemSelector(): array
@@ -111,12 +213,14 @@ class Head extends HeadElement
 
     public function getThemeMenuItemActiveSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation>ul>li.selected", "pseudoEl" => ""];
     }
 
     public function getThemeMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li > a", "pseudoEl" => ""];
+        //#main-navigation > ul > li.selected.landing.first.has-sub.current > a
+        //#main-navigation > ul > li:nth-child(2) > a
     }
 
     public function getThemeParentMenuItemSelector(): array
@@ -126,17 +230,17 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li:not(.selected) > a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.selected > ul > li:not(.selected) > a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemClassSelected(): array
     {
-        return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
+        return ["selector" => "#main-navigation > ul > li.selected > ul > li", "className" => "selected"];
     }
 
     public function getThemeSubMenuItemBGSelector(): array
     {
-        return ["selector" => "#selected-sub-navigation", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.selected > ul", "pseudoEl" => ""];
     }
 
     public function getThemeMobileNavSelector(): array
