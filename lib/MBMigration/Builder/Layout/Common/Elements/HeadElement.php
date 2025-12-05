@@ -11,6 +11,7 @@ use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Layout\Common\RootPalettesExtractor;
+use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Brizy\BrizyAPI;
@@ -74,7 +75,16 @@ abstract class HeadElement extends AbstractElement
             'theme_context_class' => get_class($this->themeContext)
         ]);
 
-        return $this->getCache(self::CACHE_KEY, function () use ($data, $startTime): BrizyComponent {
+        // Check if theme wants to use cached head element
+        $theme = $data->getThemeInstance();
+        $useCached = $this->shouldUseCache($theme);
+
+        Logger::instance()->info('HeadElement cache control', [
+            'use_cached' => $useCached,
+            'theme_class' => get_class($theme)
+        ]);
+
+        $transformLogic = function () use ($data, $startTime): BrizyComponent {
             Logger::instance()->info('HeadElement cache miss - executing transformation', [
                 'cache_key' => self::CACHE_KEY
             ]);
@@ -116,7 +126,15 @@ abstract class HeadElement extends AbstractElement
             ]);
 
             return $component;
-        });
+        };
+
+        // Use cache only if theme allows it
+        if ($useCached) {
+            return $this->getCache(self::CACHE_KEY, $transformLogic);
+        }
+
+        // Execute transformation without caching
+        return $transformLogic();
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -291,8 +309,6 @@ abstract class HeadElement extends AbstractElement
         if (!isset($families[$fontFamily])) {
             $fontName = $this->firstFontFamily($menuFont['data']['font-family']);
 
-            $pd = $this->fontsController->getProjectData();
-
             $this->fontsController->upLoadFont($fontName, $fontFamily, '[Head] extractBlockBrowserData');
 
             $families = FontsController::getFontsFamily()['kit'];
@@ -300,36 +316,11 @@ abstract class HeadElement extends AbstractElement
         }
 
         // -------------------------------------
-        $menuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
-            'itemSelector' => $menuItemSelector,
-            'itemActiveSelector' => $this->getThemeMenuItemActiveSelector(),
-            'itemBgSelector' => $this->getMenuItemBgSelector(),
-            'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
-            'itemMobileSelector' => $itemMobileSelector,
-            'itemMobileBtnSelector' => $this->getThemeMobileBtnSelector(),
-            'itemMobileNavSelector' => $this->getThemeMobileNavSelector(),
-            'families' => $families,
-            'defaultFamily' => $defaultFamilies,
-            'isBgHoverItemMenu' => $this->isBgHoverItemMenu(),
-            'hover' => false,
-        ]);
+        $menuItemStyles = $this->getNormalStyleMenuItems($menuItemSelector, $itemMobileSelector, $families, $defaultFamilies);
 
         $this->menuItemStylesValueConditions($menuItemStyles);
 
-        if ($this->browserPage->triggerEvent('hover', $this->getNotSelectedMenuItemBgSelector()['selector'])) {
-
-            $options = [
-                'itemSelector' => $menuItemSelector,
-                'itemBgSelector' => $this->getMenuHoverItemBgSelector(),
-                'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
-                'families' => $families,
-                'defaultFamily' => $defaultFamilies,
-                'hover' => true,
-                'isBgHoverItemMenu' => $this->isBgHoverItemMenu()
-            ];
-
-            $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', $options);
-        }
+        $hoverMenuItemStyles = $this->getHoverStyleMenuItems($menuItemSelector, $families, $defaultFamilies, $hoverMenuItemStyles);
 
         return [
             'menu' => array_merge(
@@ -524,6 +515,21 @@ abstract class HeadElement extends AbstractElement
         return true;
     }
 
+    /**
+     * Determines if caching should be used for this element.
+     * Checks the theme's preference via useHeadElementCached() method.
+     *
+     * @param ThemeInterface $theme
+     * @return bool
+     */
+    protected function shouldUseCache(ThemeInterface $theme): bool
+    {
+        if (method_exists($theme, 'useHeadElementCached')) {
+            return $theme->useHeadElementCached();
+        }
+        return true; // Default: use cache
+    }
+
     protected function menuItemStylesValueConditions(array &$menuItemStyles): void
     {
     }
@@ -567,6 +573,43 @@ abstract class HeadElement extends AbstractElement
         } catch (GuzzleException $e) {
             Logger::instance()->error('Error managing global blocks', $e->getMessage());
         }
+    }
+
+    protected function getHoverStyleMenuItems(array $menuItemSelector, $families, $defaultFamilies): array
+    {
+        $hoverMenuItemStyles = [];
+        if ($this->browserPage->triggerEvent('hover', $this->getNotSelectedMenuItemBgSelector()['selector'])) {
+
+            $options = [
+                'itemSelector' => $menuItemSelector,
+                'itemBgSelector' => $this->getMenuHoverItemBgSelector(),
+                'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
+                'families' => $families,
+                'defaultFamily' => $defaultFamilies,
+                'hover' => true,
+                'isBgHoverItemMenu' => $this->isBgHoverItemMenu()
+            ];
+
+            $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', $options);
+        }
+        return $hoverMenuItemStyles;
+    }
+
+    protected function getNormalStyleMenuItems(array $menuItemSelector, array $itemMobileSelector, $families, $defaultFamilies): array
+    {
+        return $this->browserPage->evaluateScript('brizy.getMenuItem', [
+            'itemSelector' => $menuItemSelector,
+            'itemActiveSelector' => $this->getThemeMenuItemActiveSelector(),
+            'itemBgSelector' => $this->getMenuItemBgSelector(),
+            'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
+            'itemMobileSelector' => $itemMobileSelector,
+            'itemMobileBtnSelector' => $this->getThemeMobileBtnSelector(),
+            'itemMobileNavSelector' => $this->getThemeMobileNavSelector(),
+            'families' => $families,
+            'defaultFamily' => $defaultFamilies,
+            'isBgHoverItemMenu' => $this->isBgHoverItemMenu(),
+            'hover' => false,
+        ]);
     }
 
     abstract protected function getPropertiesIconMenuItem(): array;
