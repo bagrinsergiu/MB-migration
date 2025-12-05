@@ -8,6 +8,7 @@ use MBMigration\Builder\Layout\Common\Concern\Cacheable;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\ThemeInterface;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
 abstract class FooterElement extends AbstractElement
@@ -18,6 +19,7 @@ abstract class FooterElement extends AbstractElement
     use SectionStylesAble;
 
     protected BrizyAPI $brizyAPIClient;
+    protected BrizyComponent $pageLayout;
 
     public function __construct($brizyKit, BrowserPageInterface $browserPage, BrizyAPI $brizyAPI)
     {
@@ -31,18 +33,34 @@ abstract class FooterElement extends AbstractElement
         $this->pageTDO = $data->getThemeContext()->getPageDTO();
         $this->themeContext = $data->getThemeContext();
 
-        return $this->getCache(self::CACHE_KEY, function () use ($data): BrizyComponent {
+        $this->pageLayout = $data->getPageLayout();
+
+        // Check if theme wants to use cached footer element
+        $theme = $data->getThemeInstance();
+        $useCached = $this->shouldUseCache($theme);
+
+        $transformLogic = function () use ($data): BrizyComponent {
             $this->beforeTransformToItem($data);
             $component = $this->internalTransformToItem($data);
             $this->afterTransformToItem($component);
 
-            $position = '{"align":"bottom","top":1,"bottom":1}';
-            $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
+            if ($this->makeGlobalBlock()) {
+                $position = '{"align":"bottom","top":1,"bottom":1}';
+                $rules = '[{"type":1,"appliedFor":null,"entityType":"","entityValues":[]}]';
 
-            $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
+                $this->brizyAPIClient->createGlobalBlock(json_encode($component), $position, $rules);
+            }
 
             return $component;
-        });
+        };
+
+        // Use cache only if theme allows it
+        if ($useCached) {
+            return $this->getCache(self::CACHE_KEY, $transformLogic);
+        }
+
+        // Execute transformation without caching
+        return $transformLogic();
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -67,7 +85,27 @@ abstract class FooterElement extends AbstractElement
 
     protected function getFooterColumnElement(BrizyComponent $brizySection, $index): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0);
+        return $brizySection;
+    }
+
+    protected function makeGlobalBlock(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Determines if caching should be used for this element.
+     * Checks the theme's preference via useFooterElementCached() method.
+     *
+     * @param $theme
+     * @return bool
+     */
+    protected function shouldUseCache(ThemeInterface $theme): bool
+    {
+        if (method_exists($theme, 'useFooterElementCached')) {
+            return $theme->useFooterElementCached();
+        }
+        return true; // Default: use cache
     }
 
     protected function getPropertiesMainSection(): array

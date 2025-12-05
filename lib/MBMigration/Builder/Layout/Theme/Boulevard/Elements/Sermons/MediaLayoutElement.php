@@ -1,8 +1,25 @@
 <?php
 namespace MBMigration\Builder\Layout\Theme\Boulevard\Elements\Sermons;
 
+use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\ElementContextInterface;
+
 class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Sermons\MediaLayoutElement
 {
+
+    protected function internalTransformToItem(ElementContextInterface $data ): BrizyComponent
+    {
+        $brizySection = parent::internalTransformToItem($data);
+
+        $brizySection->getItemWithDepth(0)->addMargin(0, 15, 0, 15,  '', '%');
+        return $brizySection;
+    }
+
+    protected function getSelectorSectionCustomCSS(): string
+    {
+        return 'element';
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

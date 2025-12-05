@@ -8,11 +8,6 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 
 interface ElementContextInterface
 {
-    /**
-     * Returns and Brizy fully build section ready to be inserted in page data.
-     *
-     * @return array
-     */
     public function getMbSection(): array;
 
     public function getBrizySection(): BrizyComponent;
@@ -30,6 +25,9 @@ interface ElementContextInterface
 
     public function getBrizyAPI(): BrizyAPI;
 
+    public function getCustomSettingsBrizyElement(): array;
+
+    public function instanceWithBrizyCustomSettings(array $customSettingsBrizyElement): ElementContextInterface;
     public function instanceWithBrizyComponent(BrizyComponent $brizyComponent): ElementContextInterface;
     public function instanceWithMBSection($mbSection): ElementContextInterface;
     public function instanceWithBrizyComponentAndMBSection($mbSection, BrizyComponent $brizyComponent): ElementContextInterface;
