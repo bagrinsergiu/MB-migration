@@ -156,4 +156,26 @@ abstract class AbstractTheme implements ThemeInterface
     {
         $this->themeContext->getFontsController()->refreshFontInProject($browserPage);
     }
+
+    /**
+     * Determines if the head element should be cached.
+     * Override this method in specific themes to disable caching if needed.
+     *
+     * @return bool
+     */
+    protected function useHeadElementCached(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Determines if the footer element should be cached.
+     * Override this method in specific themes to disable caching if needed.
+     *
+     * @return bool
+     */
+    protected function useFooterElementCached(): bool
+    {
+        return true;
+    }
 }

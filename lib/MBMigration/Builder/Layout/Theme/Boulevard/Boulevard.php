@@ -129,6 +129,16 @@ class Boulevard extends AbstractTheme
         return $brizyPage;
     }
 
+    public function useHeadElementCached(): bool
+    {
+        return false;
+    }
+
+    public function useFooterElementCached(): bool
+    {
+        return false;
+    }
+
     public function getThemeIconSelector(): string
     {
         return "[data-socialicon],[style*=\"font-family: 'Mono Social Icons Font'\"],[data-icon]";
