@@ -25,6 +25,9 @@ interface ElementContextInterface
 
     public function getBrizyAPI(): BrizyAPI;
 
+    public function getCustomSettingsBrizyElement(): array;
+
+    public function instanceWithBrizyCustomSettings(array $customSettingsBrizyElement): ElementContextInterface;
     public function instanceWithBrizyComponent(BrizyComponent $brizyComponent): ElementContextInterface;
     public function instanceWithMBSection($mbSection): ElementContextInterface;
     public function instanceWithBrizyComponentAndMBSection($mbSection, BrizyComponent $brizyComponent): ElementContextInterface;
