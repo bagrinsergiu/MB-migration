@@ -82,7 +82,6 @@ trait SectionStylesAble
         ];
 
         return $this->getDomElementStyles($selector, $properties, $browserPage, $families, $defaultFont);
-
     }
 
     protected function handleSectionStyles(
@@ -143,7 +142,6 @@ trait SectionStylesAble
         } catch (\Exception|Throwable $e) {
 
         }
-
 
         foreach ($additionalOptions as $key => $value) {
             if (is_array($value)) {
@@ -250,9 +248,8 @@ trait SectionStylesAble
     {
         if (!empty($sectionStyles['background-image']) && $sectionStyles['background-image'] !== 'none') {
             $brizySection->getValue()
-                ->set_bgColorHex('#fff')
+                ->set_bgColorType('none')
                 ->set_bgColorPalette('')
-                ->set_bgColorType('solid')
                 ->set_bgColorOpacity(0)
                 ->set_customCSS($this->getSelectorSectionCustomCSS() . '{
   background-image: ' . $sectionStyles['background-image'] . ';
@@ -328,12 +325,22 @@ trait SectionStylesAble
         $families = $data->getFontFamilies();
         $defaultFont = $data->getDefaultFontFamily();
 
-        $sectionStyles = $this->getSectionStyles(
-            $mbSectionItem['sectionId'],
-            $browserPage,
-            $families,
-            $defaultFont
-        );
+        if (!$this->getStyleFromPseudo()) {
+            $sectionStyles = $this->getSectionStyles(
+                $mbSectionItem['sectionId'],
+                $browserPage,
+                $families,
+                $defaultFont
+            );
+        } else {
+            $sectionStyles = $this->getSectionStyles(
+                $mbSectionItem['sectionId'],
+                $browserPage,
+                $families,
+                $defaultFont,
+                ':before'
+            );
+        }
 
         try {
             $sectionBgEclipseStyles = $this->getBgEclipseStyles(
@@ -375,6 +382,11 @@ trait SectionStylesAble
         return $sectionStyles;
     }
 
+    protected function getStyleFromPseudo(): bool
+    {
+        return false;
+    }
+
     /**
      * @param $sectionId
      * @param array $properties
@@ -387,7 +399,8 @@ trait SectionStylesAble
         $sectionId,
         BrowserPageInterface $browserPage,
         array $families,
-        string $defaultFont
+        string $defaultFont,
+        $pseudoElement = null
     )
     {
 
@@ -416,7 +429,8 @@ trait SectionStylesAble
             $properties,
             $browserPage,
             $families,
-            $defaultFont
+            $defaultFont,
+            $pseudoElement
         );
     }
 
