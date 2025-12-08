@@ -56,8 +56,10 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'full-media':
                 return new FullMediaElement($this->blockKit['blocks']['full-media'], $browserPage);
             case 'left-media':
+            case 'left-media-large':
                 return new LeftMedia($this->blockKit['blocks']['left-media'], $browserPage);
             case 'right-media':
+            case 'right-media-large':
                 return new RightMedia($this->blockKit['blocks']['right-media'], $browserPage);
 
             case 'gallery-layout':

@@ -209,6 +209,7 @@ class PageController
 
         } catch (\Exception|Throwable|BadJsonProvided|ElementNotFound $e) {
             Logger::instance()->critical('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
+            Logger::instance()->error($e->getMessage());
             return false;
         } finally {
             if ($this->browser) {

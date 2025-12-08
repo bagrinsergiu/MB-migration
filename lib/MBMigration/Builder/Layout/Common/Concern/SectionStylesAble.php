@@ -38,6 +38,11 @@ trait SectionStylesAble
             }
         }
 
+        if ($this->getTopMarginOfTheFirstElement() !== 0
+        ) {
+            $options['marginTop'] = $this->getTopMarginOfTheFirstElement();
+        }
+
         if ($this->getMobileTopPaddingOfTheFirstElement() !== 0) {
             $options['mobilePaddingTop'] = $this->getMobileTopPaddingOfTheFirstElement();
         }
@@ -97,6 +102,14 @@ trait SectionStylesAble
 
         if (!empty($additionalOptions['bg-gradient'])) {
             $sectionStyles['bg-gradient'] = $additionalOptions['bg-gradient'];
+            unset($additionalOptions['bg-gradient']);
+        }
+
+        if (!empty($additionalOptions['bg-color'])) {
+            $sectionStyles['background-color'] = $additionalOptions['bg-color']['bgColor'];
+            $sectionStyles['background-opacity'] = $additionalOptions['bg-color']['bgOpacity'];
+            $sectionStyles['opacity'] = $additionalOptions['bg-color']['bgOpacity'];
+            unset($additionalOptions['bg-color']);
         }
 
         $options = ['heightType' => $this->getHeightTypeHandleSectionStyles()];
@@ -250,11 +263,15 @@ trait SectionStylesAble
             $brizySection->getValue()
                 ->set_bgColorType('none')
                 ->set_bgColorPalette('')
-                ->set_bgColorOpacity(0)
+                ->set_bgColorOpacity($sectionStyles['opacity'])
                 ->set_customCSS($this->getSelectorSectionCustomCSS() . '{
-  background-image: ' . $sectionStyles['background-image'] . ';
   background-color: ' . ColorConverter::rgba2hex($sectionStyles['background-color']) . ';
-}');
+}
+'. $this->getSelectorSectionCustomCSS().' > .brz-bg:not(:has(.brz-bg-image)){
+  background-image: url("https://s3.amazonaws.com/media.cloversites.com/72/7290ecab-484a-4a04-9f79-bf6583b3e296/backgrounds/561e0414-b1f1-4624-9c01-3d5b175eec22.png");
+}
+
+');
             return true;
         }
         return false;
@@ -462,7 +479,7 @@ trait SectionStylesAble
         string $defaultFont
     )
     {
-        $selectorSectionWrapperStyles = '[data-id="' . $sectionId . '"] .bg-helper>.bg-opacity';
+        $selectorSectionWrapperStyles = '[data-id="' . $sectionId . '"] .bg-helper > .bg-opacity';
         $properties = [
             'background-color',
             'opacity',
