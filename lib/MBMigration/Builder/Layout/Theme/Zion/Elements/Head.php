@@ -236,8 +236,6 @@ class Head extends HeadElement
                 $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
             }
 
-            $this->browserPage->getPageScreen(2);
-
             $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
             $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
         }

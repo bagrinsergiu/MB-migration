@@ -524,10 +524,7 @@ abstract class HeadElement extends AbstractElement
      */
     protected function shouldUseCache(ThemeInterface $theme): bool
     {
-        if (method_exists($theme, 'useHeadElementCached')) {
-            return $theme->useHeadElementCached();
-        }
-        return true; // Default: use cache
+        return $theme->useHeadElementCached();
     }
 
     protected function menuItemStylesValueConditions(array &$menuItemStyles): void
