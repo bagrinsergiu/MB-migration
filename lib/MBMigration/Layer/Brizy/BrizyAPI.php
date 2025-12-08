@@ -358,7 +358,6 @@ class BrizyAPI extends Utils
 
         $result = $this->httpClient('POST', $url, $requestData);
 
-
         return false;
     }
 

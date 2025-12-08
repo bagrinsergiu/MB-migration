@@ -176,23 +176,9 @@ abstract class GalleryLayoutElement extends AbstractElement
             }
         }
 
-        $brizySection->getValue()->set_items($brizySectionItems);
+        $this->getSlideLocatiuon($brizySection)->getValue()->set_items($brizySectionItems);
 
         return $brizySection;
-    }
-
-    protected function setImageItem(BrizyComponent $brizySectionItem, $mbItem, $properties = []): BrizyComponent
-    {
-        $brizyComponentValue = $brizySectionItem->getItemWithDepth(0)->getValue();
-        Logger::instance()->debug('ImageSrc (content): '.$mbItem['content']);
-        Logger::instance()->debug('ImageFileName (imageFileName): '.$mbItem['imageFileName']);
-        $brizyComponentValue
-            ->set_marginTop(0)
-            ->set_marginBottom(0)
-            ->set_imageSrc($mbItem['content'])
-            ->set_imageFileName($mbItem['imageFileName']);
-
-        return $brizySectionItem;
     }
 
     protected function setSlideImage(BrizyComponent $brizySectionItem, $mbItem, $properties = []): BrizyComponent
@@ -204,6 +190,7 @@ abstract class GalleryLayoutElement extends AbstractElement
         $brizyComponentValue
             ->set_marginTop(0)
             ->set_marginBottom(0)
+            ->set_heightStyle($this->getHeightSlideStyl())
             ->set_bgImageSrc($mbItem['content'] ?? $mbItem['photo'])
             ->set_bgImageFileName($mbItem['imageFileName'] ?? $mbItem['filename'])
             ->set_customCSS('element{background:' . $colorCSS . '}');
@@ -232,8 +219,6 @@ abstract class GalleryLayoutElement extends AbstractElement
         $brizyComponentValue->set_mobileHeightSuffix('px');
         $brizyComponentValue->set_tabletWidthSuffix('px');
         $brizyComponentValue->set_tabletHeightSuffix('px');
-
-
 
         if (isset($mbItem['settings']['sections']['gallery']['max_width']) &&
             isset($mbItem['settings']['sections']['gallery']['max_height'])) {
@@ -266,11 +251,6 @@ abstract class GalleryLayoutElement extends AbstractElement
         }
 
         return $brizySectionItem;
-    }
-
-    public function setSlideGradient()
-    {
-
     }
 
     protected function setSlideLinks(BrizyComponent $brizySectionItem, $mbItem): BrizyComponent
@@ -345,10 +325,11 @@ abstract class GalleryLayoutElement extends AbstractElement
         return 250;
     }
 
-    /**
-     * @param $backGroundColor
-     * @return string
-     */
+    protected function getHeightSlideStyl(): string
+    {
+        return "auto";
+    }
+
     protected function getArrowColorByBackground($colorArrows, $backGroundColor): string
     {
         return ColorConverter::getContrastColor($backGroundColor);

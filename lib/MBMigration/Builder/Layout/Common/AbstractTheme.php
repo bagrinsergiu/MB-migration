@@ -45,6 +45,7 @@ abstract class AbstractTheme implements ThemeInterface
             $this->themeContext,
             $this->themeContext->getMbHeadSection(),
             $brizyComponent,
+            $brizyComponent,
             $this->themeContext->getBrizyMenuEntity(),
             $this->themeContext->getBrizyMenuItems(),
             $this->themeContext->getFamilies(),
@@ -93,6 +94,7 @@ abstract class AbstractTheme implements ThemeInterface
                     $this->themeContext,
                     $mbPageSection,
                     $brizyComponent,
+                    $brizyComponent,
                     $this->themeContext->getBrizyMenuEntity(),
                     $this->themeContext->getBrizyMenuItems(),
                     $this->themeContext->getFamilies(),
@@ -113,6 +115,7 @@ abstract class AbstractTheme implements ThemeInterface
                     $this,
                     $this->themeContext,
                     $this->themeContext->getMbFooterSection(),
+                    $brizyComponent,
                     $brizyComponent,
                     $this->themeContext->getBrizyMenuEntity(),
                     $this->themeContext->getBrizyMenuItems(),
@@ -149,8 +152,30 @@ abstract class AbstractTheme implements ThemeInterface
         return [];
     }
 
-    private function fontHandle(BrowserPageInterface $browserPage)
+    protected function fontHandle(BrowserPageInterface $browserPage)
     {
         $this->themeContext->getFontsController()->refreshFontInProject($browserPage);
+    }
+
+    /**
+     * Determines if the head element should be cached.
+     * Override this method in specific themes to disable caching if needed.
+     *
+     * @return bool
+     */
+    protected function useHeadElementCached(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Determines if the footer element should be cached.
+     * Override this method in specific themes to disable caching if needed.
+     *
+     * @return bool
+     */
+    protected function useFooterElementCached(): bool
+    {
+        return true;
     }
 }
