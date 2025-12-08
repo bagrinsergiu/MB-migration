@@ -357,6 +357,11 @@ abstract class AbstractElement implements ElementInterface
         return 50;
     }
 
+    protected function getTopMarginOfTheFirstElement(): int
+    {
+        return 0;
+    }
+
     protected function getMobileTopMarginOfTheFirstElement(): int
     {
         return 0;

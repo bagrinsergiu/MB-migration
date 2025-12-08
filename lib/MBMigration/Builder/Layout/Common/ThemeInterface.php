@@ -14,4 +14,7 @@ interface ThemeInterface
 
     public function getThemeIconSelector(): string;
     public function getThemeButtonSelector(): string;
+
+    public function useHeadElementCached(): bool;
+    public function useFooterElementCached(): bool;
 }

@@ -7,12 +7,12 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Gallery\GalleryLayoutElement
 {
 
-    protected function getSlideLocatiuon(BrizyComponent $brizySectionItem)
+    protected function getSlideLocation(BrizyComponent $brizySectionItem): BrizyComponent
     {
         return $brizySectionItem->getItemWithDepth(0,0,0);
     }
 
-    protected function getSlideImageComponent(BrizyComponent $brizySectionItem)
+    protected function getSlideImageComponent(BrizyComponent $brizySectionItem): BrizyComponent
     {
         return $brizySectionItem;
     }

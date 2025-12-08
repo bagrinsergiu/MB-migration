@@ -176,7 +176,7 @@ abstract class GalleryLayoutElement extends AbstractElement
             }
         }
 
-        $this->getSlideLocatiuon($brizySection)->getValue()->set_items($brizySectionItems);
+        $this->getSlideLocation($brizySection)->getValue()->set_items($brizySectionItems);
 
         return $brizySection;
     }
@@ -293,6 +293,11 @@ abstract class GalleryLayoutElement extends AbstractElement
         }
 
         return $brizySectionItem;
+    }
+
+    protected function getSlideLocation(BrizyComponent $brizySectionItem): BrizyComponent
+    {
+        return $brizySectionItem->getItemWithDepth(0,0,0);
     }
 
     abstract protected function getSlideImageComponent(BrizyComponent $brizySectionItem);

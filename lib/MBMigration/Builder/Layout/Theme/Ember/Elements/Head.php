@@ -166,4 +166,9 @@ class Head extends HeadElement
     {
         return $this->getThemeMenuItemSelector();
     }
+
+    protected function getThemeSubMenuItemDropDownSelector(): array
+    {
+        // TODO: Implement getThemeSubMenuItemDropDownSelector() method.
+    }
 }

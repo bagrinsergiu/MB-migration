@@ -163,7 +163,7 @@ abstract class AbstractTheme implements ThemeInterface
      *
      * @return bool
      */
-    protected function useHeadElementCached(): bool
+    public function useHeadElementCached(): bool
     {
         return true;
     }
@@ -174,7 +174,7 @@ abstract class AbstractTheme implements ThemeInterface
      *
      * @return bool
      */
-    protected function useFooterElementCached(): bool
+    public function useFooterElementCached(): bool
     {
         return true;
     }

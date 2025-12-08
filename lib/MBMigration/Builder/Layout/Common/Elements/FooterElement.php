@@ -97,15 +97,12 @@ abstract class FooterElement extends AbstractElement
      * Determines if caching should be used for this element.
      * Checks the theme's preference via useFooterElementCached() method.
      *
-     * @param $theme
+     * @param ThemeInterface $theme
      * @return bool
      */
     protected function shouldUseCache(ThemeInterface $theme): bool
     {
-        if (method_exists($theme, 'useFooterElementCached')) {
-            return $theme->useFooterElementCached();
-        }
-        return true; // Default: use cache
+        return $theme->useFooterElementCached();
     }
 
     protected function getPropertiesMainSection(): array
