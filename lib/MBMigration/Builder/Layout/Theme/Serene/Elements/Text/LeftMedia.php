@@ -15,7 +15,7 @@ class LeftMedia extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     /**
@@ -27,46 +27,9 @@ class LeftMedia extends PhotoTextElement
         return $brizySection->getItemWithDepth(0, 0, 1);
     }
 
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
+    protected function getMobileTopMarginOfTheFirstElement(): int
     {
-        return $brizySection->getItemWithDepth(0);
-    }
-
-    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
-    {
-        $brizySection = parent::internalTransformToItem($data);
-        $mbSectionItem = $data->getMbSection();
-        $itemsKit = $data->getThemeContext()->getBrizyKit();
-
-        $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
-
-        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
-        $titleMb = $this->getItemByType($mbSectionItem, 'title');
-
-        $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
-        $wrapperLineStyles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $menuSectionSelector,
-                'styleProperties' => ['border-bottom-color',],
-                'families' => [],
-                'defaultFamily' => '',
-            ]
-        );
-
-        $headStyle = [
-            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
-        ];
-
-        $wrapperLine->getItemWithDepth(0)
-            ->getValue()
-            ->set_borderColorHex($headStyle['line-color']);
-
-        $brizySection->getItemWithDepth(0, 0, 1)
-            ->getValue()
-            ->add_items([$wrapperLine], 1);
-
-        return $brizySection;
+        return 50;
     }
 
     protected function getPropertiesMainSection(): array
@@ -75,14 +38,15 @@ class LeftMedia extends PhotoTextElement
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 25,
+            "mobilePaddingTop" => 50,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottom" => 50,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
         ];
     }
+
 }
