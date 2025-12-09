@@ -147,6 +147,7 @@ abstract class HeadElement extends AbstractElement
         );
 
         $section = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $data = $data->instanceWithBrizyComponent($section);
 
         // reset color palette
         $sectionItem = $this->getSectionItemComponent($section);
@@ -154,9 +155,10 @@ abstract class HeadElement extends AbstractElement
         $logoImageComponent = $this->getLogoComponent($section);
         $menuTargetComponent = $this->getTargetMenuComponent($section);
 
+        $this->setImageLogo($logoImageComponent, $data->getMbSection());
         // build menu items and set the menu uid
         $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles);
-        $this->setImageLogo($logoImageComponent, $data->getMbSection());
+
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItem);
 

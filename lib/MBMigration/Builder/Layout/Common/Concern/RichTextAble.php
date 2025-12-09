@@ -249,6 +249,7 @@ trait RichTextAble
             $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
 
             $iconStyleSelector = '[data-id="' . $sectionId . '"] a > span > span.socialIconSymbol';
+
             $stylesNormal = $this->getDomElementStyles(
                 $iconStyleSelector,
                 [
@@ -293,7 +294,7 @@ trait RichTextAble
 
             $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
 
-            $buttonSelector = '[data-id="' . $sectionId . '"]';
+            $buttonSelector = $this->selectorPrefix() . '[data-id="' . $sectionId . '"]';
 
             $stylesNormalD = $this->getDomElementStyles(
                 $buttonSelector,
@@ -346,6 +347,11 @@ trait RichTextAble
 
             return [];
         }
+    }
+
+    protected function selectorPrefix(): string
+    {
+        return '';
     }
 
     private function convertStyles(array $styles): array
