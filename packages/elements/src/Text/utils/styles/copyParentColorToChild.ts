@@ -144,6 +144,12 @@ export function copyColorStyleToTextNodes(element: Element): void {
     const computedStyles = window.getComputedStyle(parentElement);
     const parentStyle = getNodeStyle(parentElement);
 
+    if (parentElement.tagName === "A") {
+      // Quill not support span inside <a> tag
+      appenStylesToNode(parentElement, computedStyles);
+      return;
+    }
+
     // Need to replace the span to em for Quill(Brizy Builder)
     if (
       attributes.includes("font-style") &&
