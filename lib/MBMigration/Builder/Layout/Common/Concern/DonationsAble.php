@@ -198,8 +198,6 @@ trait DonationsAble
             ]
         );
 
-        $browserPage->getPageScreen('_normal_btn');
-
         $buttonTextTransform = $buttonTextTransform['data'] ?? [];
         $buttonStyles = $buttonStyles['data'] ?? [];
         $buttonAlignment = $buttonAlignment['data'] ?? [];
@@ -375,7 +373,6 @@ trait DonationsAble
     {
         $browserPage->triggerEvent('hover', $selector);
         usleep(500);
-        $browserPage->getPageScreen('_btn');
         $buttonStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
