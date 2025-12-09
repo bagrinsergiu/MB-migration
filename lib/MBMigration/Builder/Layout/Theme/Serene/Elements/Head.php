@@ -19,13 +19,23 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
+    protected function getLogoFloatComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(1, 0, 0, 0, 0);
+    }
+
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
      */
     protected function getTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 1,0,0);
+    }
+
+    protected function getTargetFloatMenuComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(1, 0, 1, 0, 0);
     }
 
     protected function getStickyTargetMenuComponent(BrizyComponent $brizySection): BrizyComponent
@@ -42,6 +52,11 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0);
     }
 
+    protected function getSectionFloatItemComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(1);
+    }
+
     protected function beforeTransformToItem(ElementContextInterface $data): void
     {
 
@@ -49,9 +64,42 @@ class Head extends HeadElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $brizySection = parent::internalTransformToItem($data);
-
         $MbSection = $data->getMbSection();
+
+        $headStyles = $this->extractBlockBrowserData(
+            $data->getMbSection()['sectionId'],
+            $data->getFontFamilies(),
+            $data->getDefaultFontFamily(),
+            $data
+        );
+
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+
+        // reset color palette
+        $sectionItem = $this->getSectionItemComponent($brizySection);
+        $sectionFloatItem = $this->getSectionFloatItemComponent($brizySection);
+
+        $logoImageComponent = $this->getLogoComponent($brizySection);
+        $logoImageFloatComponent = $this->getLogoFloatComponent($brizySection);
+
+        $menuTargetComponent = $this->getTargetMenuComponent($brizySection);
+        $menuTargetFloatComponent = $this->getTargetFloatMenuComponent($brizySection);
+
+        $this->setImageLogo($logoImageComponent, $data->getMbSection());
+        $this->setImageLogo($logoImageFloatComponent, $data->getMbSection());
+        // build menu items and set the menu uid
+        $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles);
+        $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetFloatComponent, $headStyles);
+
+        $elementContext = $data->instanceWithBrizyComponent($sectionItem);
+        $elementContextF = $data->instanceWithBrizyComponent($sectionFloatItem);
+
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+        $this->handleSectionStyles($elementContextF, $this->browserPage, $additionalOptions);
+
+        $this->getThemeMenuHeaderStyle($headStyles, $brizySection);
 
         $menuSectionSelector = '[data-id="' . $MbSection['sectionId'] . '"]';
         $menuSectionStyles = $this->browserPage->evaluateScript(
