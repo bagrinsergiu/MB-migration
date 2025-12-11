@@ -353,8 +353,14 @@ trait RichTextAble
     private function convertStyles(array $styles): array
     {
         foreach ($styles as $key => $value) {
-            $styles[$key] = ColorConverter::rgba2hex($value);
-            $styles[$key . '-opacity'] = ColorConverter::rgba2opacity($value);
+            // Only convert color-related properties (background-color, border-color, etc.)
+            // Leave other properties unchanged (border-style, border-width, etc.)
+            if (stripos($key, 'color') !== false) {
+                $styles[$key] = ColorConverter::rgba2hex($value);
+                $styles[$key . '-opacity'] = ColorConverter::rgba2opacity($value);
+            }
+            // For non-color properties (like 'border-bottom-style': 'solid', 'border-bottom-width': '2px')
+            // the value remains unchanged
         }
 
         return $styles;
@@ -496,10 +502,6 @@ trait RichTextAble
 
                                         if (!empty($iconClikStyle['hover']) && !empty( $iconClikStyle['normal'] )){
                                             $clonableItem['value']['borderStyle'] = $iconClikStyle['normal']['border-bottom-style'];
-
-                                            $clonableItem['value']['borderColorHex'] = $iconClikStyle['normal']['background-color'];
-                                            $clonableItem['value']['borderColorOpacity'] = $iconClikStyle['normal']['background-color-opacity'];
-                                            $clonableItem['value']['borderColorPalette'] = '';
 
                                             $clonableItem['value']['hoverBgColorHex'] = $iconClikStyle['hover']['background-color'];
                                             $clonableItem['value']['hoverBgColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
