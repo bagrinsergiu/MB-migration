@@ -424,7 +424,7 @@ trait Button
         }
 
         $this->browserPage->triggerEvent('hover', $selector);
-        usleep(500); //need time to get hover styles
+        usleep(500000); //need time to get hover styles
 
         $buttonHoverStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
