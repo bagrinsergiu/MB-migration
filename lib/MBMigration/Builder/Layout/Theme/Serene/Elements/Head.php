@@ -66,6 +66,8 @@ class Head extends HeadElement
     {
         $MbSection = $data->getMbSection();
 
+        $this->browserPage->triggerEvent('click', '#mobile-nav-button');
+
         $headStyles = $this->extractBlockBrowserData(
             $data->getMbSection()['sectionId'],
             $data->getFontFamilies(),
@@ -157,8 +159,6 @@ class Head extends HeadElement
         ];
 
 
-        $this->browserPage->triggerEvent('click', '#mobile-nav-button');
-
         $itemStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
@@ -204,8 +204,6 @@ class Head extends HeadElement
                 ]
             );
         }
-
-        $this->browserPage->triggerEvent('click', '#mobile-nav-button');
 
         $convertColorRgbToHex = ColorConverter::convertColorRgbToHex($itemStyles['data']['color']);
         $convertColorRgbToHexHover = ColorConverter::convertColorRgbToHex($itemHoveStyles['data']['color']);
@@ -346,7 +344,8 @@ class Head extends HeadElement
 
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
-        return ["selector" => "#mobile-navigation .main-navigation  li:not(.selected):nth-of-type(1) > a", "pseudoEl" => ""];
+        return ["selector" => "#mobile-navigation > nav > ul > li:not(.selected) > a", "pseudoEl" => ""];
+
     }
 
     public function getThemeSubMenuItemClassSelected(): array
@@ -482,7 +481,7 @@ class Head extends HeadElement
 
     public function getThemeSubMenuSelectedItemSelector(): array
     {
-        return ["selector" => "#mobile-navigation li.selected a", "pseudoEl" => ""];
+        return ["selector" => "#mobile-navigation > nav > ul > li.selected> a", "pseudoEl" => ""];
     }
 
     public function getThemeSubMenuItemSelector(): array
@@ -499,7 +498,49 @@ class Head extends HeadElement
 
     protected function getNormalSubMenuStyle($families, $defaultFamilies): array
     {
-        $data = parent::getNormalSubMenuStyle($families, $defaultFamilies);
+        $this->browserPage->triggerEvent('hover', 'body');
+
+        $this->browserPage->triggerEvent('click', '#mobile-nav-button');
+
+        $themeSubMenuNotSelectedItemSelector = $this->getThemeSubMenuNotSelectedItemSelector();
+        $themeSubMenuItemBGSelector = $this->getThemeSubMenuItemBGSelector();
+        $getSubMenuItemParams = [
+            'itemSelector' => $themeSubMenuNotSelectedItemSelector,
+            'itemBgSelector' => $themeSubMenuItemBGSelector,
+            'families' => $families,
+            'defaultFamily' => $defaultFamilies,
+            'hover' => false,
+        ];
+
+        $menuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $getSubMenuItemParams);
+
+        $menuSubItemDropdownStylesOptions = [
+            'nodeSelector' => $this->getThemeSubMenuItemDropDownSelector(),
+            'families' => $families,
+            'defaultFamily' => $defaultFamilies,
+        ];
+
+        $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getSubMenuDropdown', $menuSubItemDropdownStylesOptions );
+
+        $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], $menuSubItemDropdownStyles['data']);
+
+        if (isset($menuSubItemStyles['error'])) {
+            $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+
+            //$this->browserPage->getPageScreen('subNormal_1');
+
+            $menuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $getSubMenuItemParams);
+
+            $this->browserPage->evaluateScript('brizy.dom.addNodeClass', [
+                'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
+                'className' => $this->getThemeSubMenuItemClassSelected()['className'],
+            ]);
+        }
+
+        return $menuSubItemStyles['data'] ?? [];
 
         $data['subMenuBgColorOpacity'] = ColorConverter::rgba2opacity(1);
 
@@ -521,19 +562,31 @@ class Head extends HeadElement
 
     protected function getHoverSubMenuStyle(): array
     {
-        $data = parent::getHoverSubMenuStyle();
+        if ($this->browserPage->triggerEvent('click', '#mobile-nav-button')) {
+            $selector1 = $this->getThemeSubMenuNotSelectedItemSelector()['selector'];
+            if ($this->browserPage->triggerEvent('hover', $selector1)) {
 
-        // get the sub menu background
-        $selector = $this->getThemeParentMenuItemSelector()['selector'];
-        sleep(1);
-        if ($this->browserPage->triggerEvent('click', $selector)) {
+                $entrySubMenu = [
+                    'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
+                    'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                    'families' => '',
+                    'defaultFamily' => [],
+                    'hover' => true,
+                ];
+
+                $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
+            }
+
+            sleep(1);
 
             $themeSubMenuSelectedItemSelector = $this->getThemeSubMenuSelectedItemSelector();
             $activeMenuSubItemStyles = $this->scrapeStyle($themeSubMenuSelectedItemSelector['selector'], ['color']);
 
             if (isset($activeMenuSubItemStyles['color'])) {
-                $data['hoverSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
-                $data['activeSubMenuColorOpacity'] = 1;
+                $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
+                $hoverMenuSubItemStyles['data']['hoverSubMenuColorHex'] = ColorConverter::rgba2hex($activeMenuSubItemStyles['color']);
+                $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
+                $hoverMenuSubItemStyles['data']['hoverSubMenuColorOpacity'] = 1;
             }
 
             $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getStyles', [
@@ -544,12 +597,12 @@ class Head extends HeadElement
             ]);
 
             if (isset($menuSubItemDropdownStyles['data']['background-color'])) {
-                $data['hoverSubMenuBgColorHex'] = ColorConverter::convertColorRgbToHex($menuSubItemDropdownStyles['data']['background-color']);
-                $data['hoverSubMenuBgColorOpacity'] = ColorConverter::rgba2opacity(1);
+                $hoverMenuSubItemStyles['data']['hoverSubMenuBgColorHex'] = ColorConverter::convertColorRgbToHex($menuSubItemDropdownStyles['data']['background-color']);
+                $hoverMenuSubItemStyles['data']['hoverSubMenuBgColorOpacity'] = ColorConverter::rgba2opacity(1);
             }
         }
 
-        return $data;
+        return $hoverMenuSubItemStyles['data'] ?? [];
     }
 
 }

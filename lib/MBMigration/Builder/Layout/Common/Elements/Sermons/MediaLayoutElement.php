@@ -215,58 +215,71 @@ abstract class MediaLayoutElement extends AbstractElement
                 $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
             );
 
-            $resultColorStyles['text'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .media-player-container .media-header .text-content',
-                ['color'],
-                $this->browserPage);
+            // Optimize DOM queries by batching property extraction per selector
+            $styleQueries = [
+                'text-content' => [
+                    'selector' => $dataIdSelector . ' .media-player-container .media-header .text-content',
+                    'properties' => ['color'],
+                    'resultKey' => 'text'
+                ],
+                'pagination-previous' => [
+                    'selector' => $dataIdSelector . ' .pagination .previous a',
+                    'properties' => ['color', 'opacity'],
+                    'resultKeys' => ['pagination-normal', 'opacity-pagination-normal']
+                ],
+                'pagination-active' => [
+                    'selector' => $dataIdSelector . ' .pagination .active a',
+                    'properties' => ['color', 'opacity'],
+                    'resultKeys' => ['pagination-active', 'opacity-pagination-active']
+                ],
+                'pagination-active-before' => [
+                    'selector' => $dataIdSelector . ' .pagination .active a',
+                    'properties' => ['background-color'],
+                    'resultKey' => 'pagination-active-bg',
+                    'pseudo' => ':before'
+                ],
+                'media-player' => [
+                    'selector' => $dataIdSelector . ' .media-player-container .media-player',
+                    'properties' => ['background-color', 'opacity'],
+                    'resultKeys' => ['bg-color', 'bg-opacity']
+                ],
+                'media-description' => [
+                    'selector' => $dataIdSelector . ' .media-player-container .media-description',
+                    'properties' => ['color'],
+                    'resultKey' => 'color-text-description'
+                ],
+                'media-header' => [
+                    'selector' => $dataIdSelector . ' .media-player-container .media-header',
+                    'properties' => ['color'],
+                    'resultKey' => 'color-text-header'
+                ],
+                'subsection-archive' => [
+                    'selector' => $dataIdSelector . ' .media-archive-subsection .Select-control',
+                    'properties' => ['background-color', 'opacity'],
+                    'resultKey' => 'bg-filter'
+                ]
+            ];
 
-            $resultColorStyles['pagination-normal'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .pagination .previous a',
-                ['color'],
-                $this->browserPage);
+            $resultColorStyles = [];
+            foreach ($styleQueries as $query) {
+                $styles = $this->getDomElementStyles(
+                    $query['selector'],
+                    $query['properties'],
+                    $this->browserPage,
+                    [],
+                    '',
+                    $query['pseudo'] ?? ''
+                );
 
-            $resultColorStyles['opacity-pagination-normal'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .pagination .previous a',
-                ['opacity'],
-                $this->browserPage);
-
-            $resultColorStyles['pagination-active'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .pagination .active a',
-                ['color'],
-                $this->browserPage);
-
-            $resultColorStyles['pagination-active-bg'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .pagination .active a',
-                ['background-color'],
-                $this->browserPage,
-                [], '',
-                ':before');
-
-            $resultColorStyles['opacity-pagination-active'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .pagination .active a',
-                ['opacity'],
-                $this->browserPage);
-            #media-archive-dcf0cf6c-26ca-4d0a-af8f-e3dc0136f904 > div.media-grid-container > ul.pagination > li.active > a
-
-            $resultColorStyles['bg-color'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .media-player-container .media-player',
-                ['background-color'],
-                $this->browserPage);
-
-            $resultColorStyles['bg-opacity'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .media-player-container .media-player',
-                ['opacity'],
-                $this->browserPage);
-
-            $resultColorStyles['color-text-description'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .media-player-container .media-description',
-                ['color'],
-                $this->browserPage);
-
-            $resultColorStyles['color-text-header'] = $this->getDomElementStyles(
-                $dataIdSelector . ' .media-player-container .media-header',
-                ['color'],
-                $this->browserPage);
+                // Handle both single and multiple result keys
+                if (isset($query['resultKey'])) {
+                    $resultColorStyles[$query['resultKey']] = $styles;
+                } elseif (isset($query['resultKeys'])) {
+                    foreach ($query['resultKeys'] as $resultKey) {
+                        $resultColorStyles[$resultKey] = $styles;
+                    }
+                }
+            }
 
 
             $colorStyles = [
@@ -280,6 +293,8 @@ abstract class MediaLayoutElement extends AbstractElement
                 'color-text-header' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-header']['color'] ?? $sectionPalette['text']),
                 'opacity-pagination-normal' => $resultColorStyles['opacity-pagination-normal']['opacity'] ?? 0.75,
                 'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'] ?? 1,
+                'bg-filter' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-filter']['background-color'] ?? $sectionPalette['bg']),
+                'bg-filter-opacity' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-filter']['opacity'] ?? $sectionPalette['bg']),
             ];
 
             $colorKeysToNormalize = [
@@ -348,8 +363,8 @@ abstract class MediaLayoutElement extends AbstractElement
                 'hoverMetaLinksColorOpacity' => 0.7,
                 'hoverMetaLinksColorPalette' => "",
 
-                'filterBgColorHex' => $colorStyles['bg-color']['color'] ?? $colorStyles['bg-color'],
-                'filterBgColorOpacity' => $colorStyles['bg-color']['opacity'] ?? $colorStyles['bg-opacity'],
+                'filterBgColorHex' => $colorStyles['bg-filter']['color'] ?? $colorStyles['bg-filter'],
+                'filterBgColorOpacity' => $colorStyles['bg-filter']['opacity'] ?? $colorStyles['bg-filter-opacity'],
                 'filterBgColorPalette' => '',
 
                 'itemBgColorHex' => $colorStyles['bg-color']['color'] ?? $colorStyles['bg-color'],
