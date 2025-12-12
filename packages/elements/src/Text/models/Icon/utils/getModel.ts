@@ -64,9 +64,12 @@ export const getStyleModel = (node: Element, isCustom?: boolean) => {
   const borderRadius = getBorderRadius(iconNodeStyle);
   const bgColor = getBgColor(parentStyle);
 
-  const customSize = roundToPrecision(style.width, 2) || 26;
+  const sizeValue = isCustom ? style.width : style["font-size"];
+
+  const customSize = roundToPrecision(sizeValue, 2) || 26;
 
   return {
+    customSize,
     ...(color && {
       colorHex: normalizeOpacity({
         hex: color.hex,
@@ -91,9 +94,6 @@ export const getStyleModel = (node: Element, isCustom?: boolean) => {
       bgColorPalette: "",
 
       padding: 7
-    }),
-    ...(isCustom && {
-      customSize
     }),
     ...(borderWidth &&
       borderColor && {
@@ -130,7 +130,6 @@ export function getModel(
     value: {
       _id: uuid(),
       _styles: ["icon"],
-      customSize: 26,
       ...globalModel,
       ...modelStyle,
       padding: 7,
