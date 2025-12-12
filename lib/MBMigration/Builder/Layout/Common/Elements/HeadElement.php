@@ -578,6 +578,7 @@ abstract class HeadElement extends AbstractElement
     {
         $hoverMenuItemStyles = [];
         if ($this->browserPage->triggerEvent('hover', $this->getNotSelectedMenuItemBgSelector()['selector'])) {
+            usleep(500000);
 
             $options = [
                 'itemSelector' => $menuItemSelector,

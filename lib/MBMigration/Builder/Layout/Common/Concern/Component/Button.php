@@ -358,13 +358,7 @@ trait Button
     {
         $mbSectionId = $data->getMbSection()['sectionId'];
 
-        $buttonSelector = [
-            'a.sites-button',
-            'button.sites-button',
-            'div.event-calendar-footer .sites-button',
-        ];
-
-        foreach ($buttonSelector as $selector) {
+        foreach ($this->getSelectorForButton() as $selector) {
 
             $selector = "[data-id='" . $mbSectionId . "'] " . $selector;
 
@@ -502,5 +496,16 @@ trait Button
         }
     }
 
+    /**
+     * @return string[]
+     */
+    protected function getSelectorForButton(): array
+    {
+        return [
+            'a.sites-button',
+            'button.sites-button',
+            'div.event-calendar-footer .sites-button',
+        ];
+    }
 
 }

@@ -81,6 +81,8 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
         $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
         $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
 
+        $this->browserPage->getPageScreen("AAAA1111");
+
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
@@ -88,8 +90,8 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
 
             "detailButtonBgColorType" => "solid",
 
-            "detailButtonBgColorHex" => "#545050",
-            "detailButtonBgColorOpacity" => 0.77,
+            "detailButtonBgColorHex" => $basicButtonStyleNormal['background-color'],
+            "detailButtonBgColorOpacity" => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             "detailButtonBgColorPalette" => "",
 
             "detailButtonBorderStyle" => $basicButtonStyleNormal['border-style'] ?? "solid",
@@ -104,8 +106,8 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             "detailButtonBorderBottomWidth" => $basicButtonStyleNormal['border-width'],
             "detailButtonBorderLeftWidth" => $basicButtonStyleNormal['border-width'],
 
-            "hoverDetailButtonBgColorHex" => "#000000",
-            "hoverDetailButtonBgColorOpacity" => 0.76,
+            "hoverDetailButtonBgColorHex" => $basicButtonStyleHover['background-color'],
+            "hoverDetailButtonBgColorOpacity" => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             "hoverDetailButtonBgColorPalette" => "",
 
             "hoverDetailButtonBorderStyle" => $basicButtonStyleHover['border-style'] ?? "solid",
@@ -122,6 +124,14 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
         ];
         return array_merge($sectionProperties, $customSectionProperties);
     }
+
+    protected function getSelectorForButton(): array
+    {
+        return [
+            'a > button.sites-button',
+        ];
+    }
+
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
