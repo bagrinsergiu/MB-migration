@@ -224,7 +224,8 @@ class Head extends HeadElement
             $activeMenuSubItemStyles = $this->scrapeStyle($this->getThemeSubMenuSelectedItemSelector()['selector'], ['color']);
 
             if ($this->browserPage->triggerEvent('hover', $this->getThemeSubMenuItemClassSelected()['selector'])) {
-
+                $this->browserPage->getPageScreen('AAA!');
+                usleep(500000);
                 $entrySubMenu = [
                     'itemSelector' => $this->getThemeSubMenuItemClassSelected(),
                     'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
@@ -298,6 +299,7 @@ class Head extends HeadElement
     public function getThemeMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+        #main-navigation > ul:nth-child(1) > li:nth-child(2) > a
     }
 
     public function getThemeParentMenuItemSelector(): array

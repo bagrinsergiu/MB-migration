@@ -87,5 +87,4 @@ class EventDetailsPageLayout extends \MBMigration\Builder\Layout\Common\Template
         ];
         return array_merge($sectionProperties, $customSectionProperties);
     }
-
 }
