@@ -450,10 +450,8 @@ abstract class AbstractElement implements ElementInterface
 
     private function getBasicStyleForButton(ElementContextInterface $data)
     {
-        if(!$this->pageTDO->getButtonStyle()->hasData()){
-            $buttonStyle = $this->getButtonStyle($data);
-            $this->pageTDO->getButtonStyle()->setHover($buttonStyle['hover'])->setNormal($buttonStyle['normal']);
-        }
+        $buttonStyle = $this->getButtonStyle($data);
+        $this->pageTDO->getButtonStyle()->setHover($buttonStyle['hover'])->setNormal($buttonStyle['normal']);
     }
 
     private function behaviorForAddingIndentsInSection($mbSection, BrizyComponent $section){

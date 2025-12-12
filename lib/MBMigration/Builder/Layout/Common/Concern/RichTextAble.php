@@ -202,6 +202,7 @@ trait RichTextAble
         $brizyComponent = $data->getBrizySection();
         $brizyAPI = $data->getBrizyAPI();
         $projectID = $data->getThemeContext()->getProjectId();
+        $customSettings = $data->getCustomSettingsBrizyElement();
 
         if ($mbSectionItem['category'] === 'button') {
             $buttonStyle = $this->handleButtonStyle($mbSectionItem);
@@ -226,7 +227,8 @@ trait RichTextAble
                     $selector,
                     $settings,
                     $buttonStyle ?? [],
-                    $clickableIconStyle
+                    $clickableIconStyle,
+                    $customSettings
                 );
                 break;
             case 'photo':
@@ -357,8 +359,14 @@ trait RichTextAble
     private function convertStyles(array $styles): array
     {
         foreach ($styles as $key => $value) {
-            $styles[$key] = ColorConverter::rgba2hex($value);
-            $styles[$key . '-opacity'] = ColorConverter::rgba2opacity($value);
+            // Only convert color-related properties (background-color, border-color, etc.)
+            // Leave other properties unchanged (border-style, border-width, etc.)
+            if (stripos($key, 'color') !== false) {
+                $styles[$key] = ColorConverter::rgba2hex($value);
+                $styles[$key . '-opacity'] = ColorConverter::rgba2opacity($value);
+            }
+            // For non-color properties (like 'border-bottom-style': 'solid', 'border-bottom-width': '2px')
+            // the value remains unchanged
         }
 
         return $styles;
@@ -376,6 +384,7 @@ trait RichTextAble
         $default_fonts = $data->getDefaultFontFamily();
         $brizyComponent = $data->getBrizySection();
         $projectID = $data->getThemeContext()->getProjectId();
+        $customSettings = $data->getCustomSettingsBrizyElement();
 
         if ($mbSectionItem['category'] === 'button') {
             $buttonStyle = $this->handleButtonStyle($mbSectionItem);
@@ -395,8 +404,9 @@ trait RichTextAble
                 $data->getThemeContext()->getUrlMap(),
                 $selector,
                 $settings,
-                $buttonStyle,
-                $iconClikStyle
+                $buttonStyle ?? [],
+                $iconClikStyle,
+                $customSettings
             );
         }
 
@@ -415,7 +425,8 @@ trait RichTextAble
         $selector = null,
         $settings = [],
         $buttonStyle = [],
-        $iconClikStyle = []
+        $iconClikStyle = [],
+        $customSettings = []
     ): BrizyComponent
     {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
@@ -429,6 +440,12 @@ trait RichTextAble
         );
         $embeddedElements = $this->findEmbeddedElements($mbSectionItem['content']);
         $embeddIndex = 0;
+
+        // Track which component types have been applied once (for 'implement' => 'one')
+        $appliedOnce = [];
+
+        // Track indices for each component type (for 'implement' => integer)
+        $componentIndices = [];
 
         try {
             foreach ($richTextBrowserData as $i => $textItem) {
@@ -447,6 +464,29 @@ trait RichTextAble
                             ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
 .{$cssClass} .brz-embed-content > div:has(.embedded-paste iframe) {display: flex; justify-content:{$styles['text-align']}}"
                         );
+
+                        // Apply custom settings if available
+                        if (!empty($customSettings)) {
+                            $hasAllKey = isset($customSettings['All']);
+
+                            if ($hasAllKey || isset($customSettings['EmbedCode'])) {
+                                if (!isset($componentIndices['EmbedCode'])) {
+                                    $componentIndices['EmbedCode'] = 0;
+                                }
+
+                                $targetKey = $hasAllKey ? 'All' : 'EmbedCode';
+                                $this->applyCustomSettings(
+                                    $brizyEmbedCodeComponent,
+                                    $customSettings,
+                                    $targetKey,
+                                    $appliedOnce,
+                                    $componentIndices['EmbedCode']
+                                );
+
+                                $componentIndices['EmbedCode']++;
+                            }
+                        }
+
                         $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
                         break;
                     case 'Cloneable':
@@ -468,10 +508,6 @@ trait RichTextAble
 
                                         if (!empty($iconClikStyle['hover']) && !empty( $iconClikStyle['normal'] )){
                                             $clonableItem['value']['borderStyle'] = $iconClikStyle['normal']['border-bottom-style'];
-
-                                            $clonableItem['value']['borderColorHex'] = $iconClikStyle['normal']['background-color'];
-                                            $clonableItem['value']['borderColorOpacity'] = $iconClikStyle['normal']['background-color-opacity'];
-                                            $clonableItem['value']['borderColorPalette'] = '';
 
                                             $clonableItem['value']['hoverBgColorHex'] = $iconClikStyle['hover']['background-color'];
                                             $clonableItem['value']['hoverBgColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
@@ -525,6 +561,29 @@ trait RichTextAble
                         $brzCloneableComponent = new BrizyComponent($textItem);
 
                         $brzCloneableComponent->addMargin(0, 0, 0, 0);
+
+                        // Apply custom settings if available
+                        if (!empty($customSettings)) {
+                            $hasAllKey = isset($customSettings['All']);
+
+                            if ($hasAllKey || isset($customSettings['Cloneable'])) {
+                                if (!isset($componentIndices['Cloneable'])) {
+                                    $componentIndices['Cloneable'] = 0;
+                                }
+
+                                $targetKey = $hasAllKey ? 'All' : 'Cloneable';
+                                $this->applyCustomSettings(
+                                    $brzCloneableComponent,
+                                    $customSettings,
+                                    $targetKey,
+                                    $appliedOnce,
+                                    $componentIndices['Cloneable']
+                                );
+
+                                $componentIndices['Cloneable']++;
+                            }
+                        }
+
                         $brizySection->getValue()->add_items([$brzCloneableComponent]);
                         break;
                     case 'Wrapper':
@@ -547,6 +606,48 @@ trait RichTextAble
                                         ->set_imageWidth($size[0])
                                         ->set_imageHeight($size[1]);
                                 }
+                            }
+                        }
+
+                        // Apply custom settings if available
+                        if (!empty($customSettings)) {
+                            // Check if "All" key is used
+                            $hasAllKey = isset($customSettings['All']);
+
+                            // Apply settings to Wrapper itself
+                            if ($hasAllKey || isset($customSettings['Wrapper'])) {
+                                if (!isset($componentIndices['Wrapper'])) {
+                                    $componentIndices['Wrapper'] = 0;
+                                }
+
+                                $targetKey = $hasAllKey ? 'All' : 'Wrapper';
+                                $this->applyCustomSettings(
+                                    $brzTextComponent,
+                                    $customSettings,
+                                    $targetKey,
+                                    $appliedOnce,
+                                    $componentIndices['Wrapper']
+                                );
+
+                                $componentIndices['Wrapper']++;
+                            }
+
+                            // Apply settings to RichText inside Wrapper ONLY if not using "All"
+                            // When "All" is used, we don't apply to nested elements
+                            if (!$hasAllKey && $brzTextComponent->getItemWithDepth(0)->getType() === 'RichText') {
+                                if (!isset($componentIndices['RichText'])) {
+                                    $componentIndices['RichText'] = 0;
+                                }
+
+                                $this->applyCustomSettings(
+                                    $brzTextComponent->getItemWithDepth(0),
+                                    $customSettings,
+                                    'RichText',
+                                    $appliedOnce,
+                                    $componentIndices['RichText']
+                                );
+
+                                $componentIndices['RichText']++;
                             }
                         }
 
@@ -1047,6 +1148,75 @@ trait RichTextAble
                 return 'off';
         }
 
+    }
+
+    /**
+     * Apply custom settings to a BrizyComponent based on its type
+     *
+     * @param BrizyComponent $component The component to apply settings to
+     * @param array $customSettings The custom settings array from ElementContext
+     * @param string $componentType The type of component (e.g., 'RichText', 'Wrapper', 'Image')
+     * @param array &$appliedOnce Reference to track if we should apply (for 'implement' => 'one')
+     * @param int $currentIndex The current index of this component type (for 'implement' => integer)
+     * @return void
+     */
+    private function applyCustomSettings(
+        BrizyComponent $component,
+        array $customSettings,
+        string $componentType,
+        array &$appliedOnce = [],
+        int $currentIndex = 0
+    ): void
+    {
+        // Check if there are custom settings for this component type
+        if (!isset($customSettings[$componentType])) {
+            return;
+        }
+
+        $config = $customSettings[$componentType];
+
+        // Check if we need to apply based on 'implement' rule
+        $implement = $config['implement'] ?? 'all';
+
+        // Determine if settings should be applied based on implement value
+        $shouldApply = false;
+
+        if ($implement === 'all') {
+            // Apply to all instances
+            $shouldApply = true;
+        } elseif ($implement === 'one') {
+            // Apply only to the first instance
+            if (!isset($appliedOnce[$componentType])) {
+                $shouldApply = true;
+                $appliedOnce[$componentType] = true;
+            }
+        } elseif (is_int($implement)) {
+            // Apply only to the specified index
+            $shouldApply = ($currentIndex === $implement);
+        }
+
+        // Apply customSettings if we should and they are present
+        if ($shouldApply && isset($config['customSettings']) && is_array($config['customSettings'])) {
+            foreach ($config['customSettings'] as $key => $value) {
+                $method = 'set_' . $key;
+
+                // Check if the method exists on the component's value object
+                try {
+                    $component->getValue()->$method($value);
+                } catch (Exception $e) {
+                    Logger::instance()->warning("Failed to apply custom setting {$key} to {$componentType}: " . $e->getMessage());
+                }
+
+            }
+        }
+
+        // Process nested items if present
+        if (isset($config['items']) && is_array($config['items'])) {
+            foreach ($config['items'] as $childType => $childConfig) {
+                // This will be applied recursively when processing child components
+                // The child configuration is already part of customSettings
+            }
+        }
     }
 
 }

@@ -372,7 +372,9 @@ trait DonationsAble
     ): BrizyComponent
     {
         $browserPage->triggerEvent('hover', $selector);
-        usleep(500);
+      
+        usleep(500000);
+
         $buttonStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
             [
