@@ -9,6 +9,7 @@ use MBMigration\Builder\Utils\TextTools;
 
 class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\AccordionLayoutElement
 {
+    protected string $sectionName = 'main';
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -17,16 +18,23 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
         $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
         $backgroundColorStyles = ColorConverter::convertColorRgbToHex(
-            $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage));
+            $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage)
+        );
 
         $accordionElementStyles = $this->getAccordionElementStyles($sectionSelector, $this->browserPage, $families);
-
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionItemComponent($brizySection));
-        $this->handleSectionStyles($elementContext, $this->browserPage);
 
-        $this->handleSectionStyles($elementContext, $this->browserPage);
+        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
+
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
+
+        $accordionElementStyles['borderWidthType'] = 'ungrouped';
+        $accordionElementStyles['borderStyle"'] = 'solid';
+        $accordionElementStyles['borderBottomWidth"'] = $accordionElementStyles['borderTopWidth'] ?? 0;
+        $accordionElementStyles['spacing"'] = -1;
 
         $elementContext = $data->instanceWithBrizyComponent($this->getSectionHeaderComponent($brizySection));
+
         $this->handleRichTextHead($elementContext, $this->browserPage);
 
         $itemJson = json_decode($this->brizyKit['item'], true);
@@ -43,7 +51,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
             $brizyAccordionItemComponent = new BrizyComponent($itemJson);
 
             $lableText = TextTools::transformTextBool(strip_tags($mbSectionItem['items'][0]['content']),
-                    $accordionElementStyles['uppercase']);
+                $accordionElementStyles['uppercase']);
 
             $brizyAccordionItemComponent->getValue()->set_labelText($lableText);
 
@@ -76,13 +84,13 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
                 "mobileMarginType" => "ungrouped",
                 "mobileMargin" => 0,
                 "mobileMarginSuffix" => "px",
-                "mobileMarginTop" => 10,
+                "mobileMarginTop" => 15,
                 "mobileMarginTopSuffix" => "px",
-                "mobileMarginRight" => 11,
+                "mobileMarginRight" => 15,
                 "mobileMarginRightSuffix" => "px",
-                "mobileMarginBottom" => 10,
+                "mobileMarginBottom" => 15,
                 "mobileMarginBottomSuffix" => "px",
-                "mobileMarginLeft" => 11,
+                "mobileMarginLeft" => 15,
                 "mobileMarginLeftSuffix" => "px",
             ];
 
@@ -150,17 +158,26 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
         $brizyAccordionComponent->set_items($brizyAccordionItems);
 
+        $brizySection->getItemWithDepth(0,1,0)
+            ->getValue()
+            ->set_mobilePaddingRight(10)
+            ->set_mobilePaddingRightSuffix('px')
+            ->set_mobilePaddingLeft(10)
+            ->set_mobilePaddingLeftSuffix('px');
+
         return $brizySection;
     }
 
     protected function getAccordionSectionComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0);
+        return $brizySection->getItemWithDepth(0)
+            ->addMobilePadding([0, 10, 0, 10]);
     }
 
     protected function getSectionHeaderComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0)
+            ->addMobilePadding([0, 10, 0, 10]);
     }
 
     protected function getAccordionParentComponent(BrizyComponent $brizySection): BrizyComponent
@@ -168,9 +185,26 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
     }
 
+    protected function getPropertiesMainSection(): array
+    {
+        return [
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 50,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 50,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
+        ];
+    }
+
     protected function getTopPaddingOfTheFirstElement(): int
     {
-       return 50;
+        return 0;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
@@ -178,3 +212,4 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         return 25;
     }
 }
+
