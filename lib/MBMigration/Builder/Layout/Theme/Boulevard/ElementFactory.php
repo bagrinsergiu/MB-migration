@@ -13,6 +13,7 @@ use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Forms\RightForm;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Gallery\GalleryLayoutElement;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Groups\SmallGroupsListElement;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Head;
+use MBMigration\Builder\Layout\Theme\Boulevard\Elements\SectionElement;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Prayer\PrayerFormElement;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Sermons\MediaLayoutElement;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Text\AccordionLayoutElement;
@@ -34,6 +35,9 @@ class ElementFactory extends AbstractThemeElementFactory
     public function getElement($name, BrowserPageInterface $browserPage) :ElementInterface
     {
         switch ($name) {
+            case 'section':
+                return new SectionElement($this->blockKit['blocks']['footer'], $browserPage);
+
             case 'footer':
                 return new Footer($this->blockKit['blocks']['footer'], $browserPage,$this->brizyApiClient);
             case 'head':
