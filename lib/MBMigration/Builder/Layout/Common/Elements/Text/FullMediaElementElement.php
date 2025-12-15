@@ -43,8 +43,25 @@ abstract class FullMediaElementElement extends AbstractElement
         $this->handleOnlyRichTextItems($elementTextContainerComponentContext, $this->browserPage);
         $this->handleDonationsButton($elementTextContainerComponentContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 
-        $brizyImageWrapperComponent = $this->getImageWrapperComponent($brizySection);
         $brizyImageComponent = $this->getImageComponent($brizySection);
+
+        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+        $images = $this->getItemsByCategory($mbSectionItem, 'photo');
+        $imageMb = array_pop($images);
+        $brizyImageWrapperComponent = $this->handlePhotoItem(
+            $imageMb['id'],
+            $imageMb,
+            $brizyImageComponent,
+            $this->browserPage,
+            $this->customSettings(),
+            $this->imageIndexPosition()
+        );
+
+        if (!$this->getReturnAddedImageElement()) {
+            $brizyImageWrapperComponent = $this->getImageWrapperComponent($brizySection);
+        } else {
+            $brizyImageComponent = $brizyImageWrapperComponent->getItemWithDepth(0);
+        }
 
         // configure the image wrapper
         $brizyImageWrapperComponent->getValue()
@@ -67,19 +84,14 @@ abstract class FullMediaElementElement extends AbstractElement
             ->set_height('')
             ->set_heightSuffix('');
 
-        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
-        $images = $this->getItemsByCategory($mbSectionItem, 'photo');
-        $imageMb = array_pop($images);
-        $this->handlePhotoItem(
-            $imageMb['id'],
-            $imageMb,
-            $brizyImageComponent,
-            $this->browserPage,
-            $this->customSettings(),
-            $this->imageIndexPosition()
-        );
+
 
         return $brizySection;
+    }
+
+    protected function getReturnAddedImageElement() :bool
+    {
+        return true;
     }
 
     abstract protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent;

@@ -399,6 +399,11 @@ abstract class AbstractElement implements ElementInterface
         return 'none';
     }
 
+    protected function getReturnAddedImageElement() :bool
+    {
+        return false;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [

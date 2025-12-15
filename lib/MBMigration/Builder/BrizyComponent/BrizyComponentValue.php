@@ -88,6 +88,37 @@ class BrizyComponentValue implements JsonSerializable, \IteratorAggregate
         return $this;
     }
 
+    /**
+     * Add a single item to the 'items' field and return the added item.
+     * This is useful when you need to continue working with the added item immediately.
+     *
+     * @param mixed $item The item to add (typically BrizyComponent)
+     * @param int|null $position Optional position to insert at (null = append at end)
+     * @return mixed The added item (returns the same reference, changes will reflect in parent)
+     */
+    public function addItemAndGet($item, $position = null)
+    {
+        // Use existing add() method to handle all the insertion logic
+        $this->add('items', $item, $position);
+
+        // Return the added item based on position
+        if ($position === null) {
+            // Item was added at the end, return last element
+            return $this->fields['items'][count($this->fields['items']) - 1];
+        } else {
+            // Calculate actual position where item was inserted
+            $len = count($this->fields['items']);
+            if (!is_int($position)) {
+                $position = (int)$position;
+            }
+            if ($position < 0) {
+                $actualPos = max(0, $len + $position + 1) - 1;
+            } else {
+                $actualPos = min($position, $len - 1);
+            }
+            return $this->fields['items'][$actualPos];
+        }
+    }
 
     public function get($field)
     {
