@@ -33,7 +33,7 @@ trait LineAble
                 $fullSelector = '[data-id=\'' . $selectorId . '\']';
             }
 
-            $lineStyles = $browserPage->evaluateScript(
+            $lineStylesD = $browserPage->evaluateScript(
                 'brizy.getStyles',
                 [
                     'selector' => $fullSelector,
@@ -53,14 +53,14 @@ trait LineAble
                 ]
             );
 
-            $topBorderWidth = (int)$lineStyles['data']['border-top-width'];
-            $bottomBorderWidth = (int)$lineStyles['data']['border-bottom-width'];
+            $topBorderWidth = (int)$lineStylesD['data']['border-top-width'];
+            $bottomBorderWidth = (int)$lineStylesD['data']['border-bottom-width'];
 
             $lineStyles = [
-                'color' => ColorConverter::rgba2hex($lineStyles['data']['border-top-color']),
-                'width' => (int)$lineStyles['data']['width'],
+                'color' => ColorConverter::rgba2hex($lineStylesD['data']['border-bottom-color']),
+                'width' => (int)$lineStylesD['data']['width'],
                 'borderWidth' => max($topBorderWidth, $bottomBorderWidth),
-                'align' => $lineStyles['data']['text-align'],
+                'align' => $lineStylesD['data']['text-align'],
             ];
 
             $brizySection->addLine(

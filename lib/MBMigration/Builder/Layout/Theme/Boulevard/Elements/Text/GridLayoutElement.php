@@ -4,6 +4,7 @@ namespace MBMigration\Builder\Layout\Theme\Boulevard\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\Component\Button;
+use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
 use MBMigration\Builder\Layout\Common\Concern\DonationsAble;
 use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
@@ -17,6 +18,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     use SectionStylesAble;
     use ImageStylesAble;
     use DonationsAble;
+    use LineAble;
     use Button;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -35,6 +37,21 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         $elementContext = $data->instanceWithBrizyComponent($this->getHeaderComponent($brizySection));
         $this->handleRichTextHead($elementContext, $this->browserPage);
         $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
+
+        $titleMb = $this->getByType($mbSection['head'], 'title');
+        $this->handleLine(
+            $elementContext,
+            $this->browserPage,
+            $titleMb['id'],
+            null,
+            [
+                "borderWidth"=> 1,
+                "width"=> 100,
+                "widthSuffix"=> "%"
+            ],
+            1,
+            ''
+        );
 
         $rowJson = json_decode($this->brizyKit['row'], true);
         $itemJson = json_decode($this->brizyKit['item'], true);

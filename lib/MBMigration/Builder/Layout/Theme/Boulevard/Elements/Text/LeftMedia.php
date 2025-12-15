@@ -3,12 +3,15 @@
 namespace MBMigration\Builder\Layout\Theme\Boulevard\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
+use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class LeftMedia extends PhotoTextElement
 {
+    use LineAble;
+
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = parent::internalTransformToItem($data);
@@ -37,6 +40,7 @@ class LeftMedia extends PhotoTextElement
 
         $wrapperLine->getItemWithDepth(0)
             ->getValue()
+            ->set_borderWidth(1)
             ->set_borderColorHex($headStyle['line-color']);
 
         $brizySection->getItemWithDepth(1)

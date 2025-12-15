@@ -37,6 +37,7 @@ class RightMedia extends PhotoTextElement
 
         $wrapperLine->getItemWithDepth(0)
             ->getValue()
+            ->set_borderWidth(1)
             ->set_borderColorHex($headStyle['line-color']);
 
 
