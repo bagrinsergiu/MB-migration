@@ -166,10 +166,18 @@ export const getModel = ({
     // have conflicts with text of button
     icon.remove();
 
+    const iconCustomSize = parseInt(Str.read(model.value.customSize) ?? "0");
+
     if (name) {
       iconModel = {
         iconName,
-        iconType: iconCode ? "fa" : "glyph"
+        iconType: iconCode ? "fa" : "glyph",
+        ...(iconCustomSize
+          ? {
+              iconCustomSize,
+              iconSize: "custom"
+            }
+          : {})
       };
     }
   } else if (isPseudoIcon) {
