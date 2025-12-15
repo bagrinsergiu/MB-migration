@@ -17,6 +17,7 @@ use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Prayer\PrayerFormElement
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Sermons\MediaLayoutElement;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Text\AccordionLayoutElement;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Text\FullMediaElement;
+use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Text\TopMediaElement;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Text\FullText;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Text\GridLayoutElement;
 use MBMigration\Builder\Layout\Theme\Boulevard\Elements\Text\LeftMedia;
@@ -44,7 +45,7 @@ class ElementFactory extends AbstractThemeElementFactory
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
             case 'right-media-circle':
-                return new RightMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);
+                return new RightMedia($this->blockKit['blocks']['left-media-circle'], $browserPage);
 
             case 'two-right-media-circle':
                 return new TwoRightMediaCircle($this->blockKit['blocks']['two-right-media-circle'], $browserPage);
@@ -55,6 +56,9 @@ class ElementFactory extends AbstractThemeElementFactory
 
             case 'full-media':
                 return new FullMediaElement($this->blockKit['blocks']['full-media'], $browserPage);
+            case 'top-media':
+                return new TopMediaElement($this->blockKit['blocks']['full-media'], $browserPage);
+
             case 'left-media':
             case 'left-media-skinny':
                 return new LeftMedia($this->blockKit['blocks']['left-media'], $browserPage);

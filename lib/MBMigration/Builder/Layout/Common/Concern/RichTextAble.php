@@ -684,7 +684,8 @@ trait RichTextAble
                 $brizyComponent,
                 $browserPage,
                 $imageOptions,
-                $position
+                $position,
+                $this->getReturnAddedImageElement()
             );
         } else {
             if (!empty($mbSectionItem['content'])) {
@@ -746,7 +747,8 @@ trait RichTextAble
         BrizyComponent $brizyComponent,
         BrowserPageInterface $browserPage,
         $options = [],
-        $index = null
+        $index = null,
+        bool $returnAdded = false
     ): BrizyComponent
     {
         if (!empty($mbSectionItem['content'])) {
@@ -817,7 +819,11 @@ trait RichTextAble
             $wrapperImage->getValue()->add_items([$image]);
 
             // Add the wrapped image to the brizy component at the specified index
-            $brizyComponent->getValue()->add_items([$wrapperImage], $index);
+            if(!$returnAdded) {
+                $brizyComponent->getValue()->add_items([$wrapperImage], $index);
+            } else {
+                return $brizyComponent->getValue()->addItemAndGet($wrapperImage, $index);
+            }
         }
 
         return $brizyComponent;
