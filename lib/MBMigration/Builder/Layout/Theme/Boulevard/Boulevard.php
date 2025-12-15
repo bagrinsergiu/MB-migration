@@ -65,6 +65,20 @@ class Boulevard extends AbstractTheme
             }
         }
 
+        $elementContext = ElementContext::instance(
+            $this,
+            $this->themeContext,
+            $mbPageSections,
+            $brizyComponent,
+            $brizyComponent->getItemWithDepth(0, 0),
+            $this->themeContext->getBrizyMenuEntity(),
+            $this->themeContext->getBrizyMenuItems(),
+            $this->themeContext->getFamilies(),
+            $this->themeContext->getDefaultFamily()
+        );
+
+        $elementFactory->getElement('section', $browserPage)->transformToItem($elementContext);
+
         foreach ($mbPageSections as $mbPageSection) {
 
             $elementName = explode("-", $mbPageSection['typeSection']);
