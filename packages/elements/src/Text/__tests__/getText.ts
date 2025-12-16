@@ -5080,6 +5080,32 @@ const ex66: Data = {
   }
 };
 
+const ex67: Data = {
+  html: `<div class="text-content text-1 editable" data-id="22646807" data-category="text"><div><p style="font-size: 0.3906em;"><i style="font-size: 23.000013px; letter-spacing: normal;"><span style="font-style: normal;letter-spacing: 0.02em;" class="clovercustom">BELONGING TO A LIFE GROUP HAS BEEN AN IMPORTANT PART OF CONNECTING TO A COMMUNITY OF BELIEVERS AT LIFE SPRING<span class="clovercustom">&nbsp;</span></span><span style="font-style: normal; letter-spacing: 0.02em;" class="clovercustom">CHURCH. THE LOVE AND SUPPORT THAT I'VE EXPERIENCED HAS BEEN VITAL TO MY PERSONAL AND SPIRITUAL GROWTH AS A CHRIST-FOLLOWER." &nbsp;</span></i><i style="font-size: 23.000013px; letter-spacing: 0em;"><span style="font-style: normal; letter-spacing: 0.02em;" class="clovercustom">~ANN LETELLIER</span></i><br></p></div></div>`,
+  entry: { ...entry, selector: '[data-id="22646807"]' },
+  output: {
+    data: [
+      {
+        type: "Wrapper",
+        value: {
+          _id: "1",
+          _styles: ["wrapper", "wrapper--richText"],
+          items: [
+            {
+              type: "RichText",
+              value: {
+                _id: "1",
+                _styles: ["richText"],
+                text: '<p class="brz-fs-lg-0_39 brz-ff-lato brz-ft-upload brz-fw-lg-undefined brz-lh-lg-1_3 brz-lh-sm-1_2 brz-lh-xs-1_2 brz-text-lg-left brz-ls-lg-0_0"><span style=""><span style="">BELONGING TO A LIFE GROUP HAS BEEN AN IMPORTANT PART OF CONNECTING TO A COMMUNITY OF BELIEVERS AT LIFE SPRING<span>&nbsp;</span></span><span style="">CHURCH. THE LOVE AND SUPPORT THAT I\'VE EXPERIENCED HAS BEEN VITAL TO MY PERSONAL AND SPIRITUAL GROWTH AS A CHRIST-FOLLOWER." &nbsp;</span></span><span style=""><span style="">~ANN LETELLIER</span></span><br></p>'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+};
+
 describe.each([
   ex1,
   ex2,
@@ -5147,7 +5173,8 @@ describe.each([
   ex63,
   ex64,
   ex65,
-  ex66
+  ex66,
+  ex67
 ])("testing 'getText' function nr %#", ({ entry, output, html }) => {
   beforeEach(() => {
     document.body.innerHTML = html;
