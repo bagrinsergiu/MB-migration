@@ -110,7 +110,7 @@ export function copyColorStyleToTextNodes(element: Element): void {
       }
 
       if (
-        parentOfParent.tagName === "EM" &&
+        ["EM", "I"].includes(parentOfParent.tagName) &&
         parentComputedStyle.fontStyle === "normal"
       ) {
         // If an <em> element is present and its child is a <span> with font-style: normal,
