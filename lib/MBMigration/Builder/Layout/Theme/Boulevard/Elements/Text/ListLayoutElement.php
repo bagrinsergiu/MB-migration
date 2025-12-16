@@ -39,7 +39,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection;
+        return $brizySection->getItemWithDepth(0)->addMargin(0, 30, 0, 0,  '', '%');
     }
 
     protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent

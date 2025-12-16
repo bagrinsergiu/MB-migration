@@ -56,7 +56,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         $rowJson = json_decode($this->brizyKit['row'], true);
         $itemJson = json_decode($this->brizyKit['item'], true);
 
-        $brizySection->getItemWithDepth(0)->addMargin(0, 0, 0, 30,  '', '%');
+        $brizySection->getItemWithDepth(0)->addMargin(0, 30, 0, 0,  '', '%');
 
         $accordionItems = $this->getItemsByCategory($mbSection,'list');
         $accordionItems = $this->sortItems($accordionItems);
