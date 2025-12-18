@@ -556,6 +556,9 @@ class PageController
     public function getSectionsFromPage(array $page)
     {
         Logger::instance()->info(
+            "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="
+        );
+        Logger::instance()->info(
             'Getting MB page items for page: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
         );
 

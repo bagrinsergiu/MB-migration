@@ -455,7 +455,24 @@ abstract class AbstractElement implements ElementInterface
 
     private function getBasicStyleForButton(ElementContextInterface $data)
     {
+        $mbSection = $data->getMbSection();
+
+        Logger::instance()->info('Getting button styles for section', [
+            'element_class' => static::class,
+            'section_id' => $mbSection['sectionId'] ?? 'unknown',
+            'section_category' => $mbSection['category'] ?? 'unknown'
+        ]);
+
         $buttonStyle = $this->getButtonStyle($data);
+
+        Logger::instance()->info('Button styles retrieved', [
+            'element_class' => static::class,
+            'section_id' => $mbSection['sectionId'] ?? 'unknown',
+            'has_normal_styles' => !empty($buttonStyle['normal']),
+            'has_hover_styles' => !empty($buttonStyle['hover']),
+            'normal_keys' => !empty($buttonStyle['normal']) ? array_keys($buttonStyle['normal']) : []
+        ]);
+
         $this->pageTDO->getButtonStyle()->setHover($buttonStyle['hover'])->setNormal($buttonStyle['normal']);
     }
 
@@ -505,6 +522,11 @@ abstract class AbstractElement implements ElementInterface
             ->addTabletMargin();
 
         $this->pageTDO->getPageStyle()->setPreviousSectionEmpty(true);
+    }
+
+    protected function getTimeOutToSelectorForButton(): int
+    {
+        return 0;
     }
 
     protected function getThemeMenuHeaderStyle($headStyles, $section): BrizyComponent

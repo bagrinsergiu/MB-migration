@@ -131,7 +131,10 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             'a > button.sites-button',
         ];
     }
-
+    protected function getTimeOutToSelectorForButton(): int
+    {
+        return 3;    //A delay is required for the widget to render.
+    }
 
     protected function getTopPaddingOfTheFirstElement(): int
     {

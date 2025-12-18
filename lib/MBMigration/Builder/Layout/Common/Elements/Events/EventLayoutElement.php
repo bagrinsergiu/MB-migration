@@ -337,4 +337,9 @@ abstract class EventLayoutElement extends AbstractElement
         return $sectionProperties;
     }
 
+    protected function getTimeOutToSelectorForButton(): int
+    {
+        return 3;    // A delay is required for the widget to render.
+    }
+
 }
