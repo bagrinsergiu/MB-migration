@@ -189,9 +189,9 @@ class MigrationPlatform
             $this->cache->set('designName', $designName);
         }
 
-        if (Config::$devMode) {
-            $this->brizyApi->clearAllFontsInProject();
-        }
+//        if (Config::$devMode) {
+//            $this->brizyApi->clearAllFontsInProject();
+//        }
 
 //        $this->brizyApi->setLabelManualMigration(false);
 
