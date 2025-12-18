@@ -34,7 +34,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
         $brizySection->getItemWithDepth(0)
             ->addPadding(0,0,0,0)
-            ->addMargin(0, 15, 0, 15,  '', '%');
+            ->addMargin(0, 30, 0, 0,  '', '%');
         $brizySection
             ->addPadding(0,0,0,0);
 
@@ -104,7 +104,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
                 "marginType" => "ungrouped",
                 "marginSuffix" => "px",
-                "marginTop" => 10,
+                "marginTop" => 0,
                 "marginTopSuffix" => "px",
                 "marginRight" => -11,
                 "marginRightSuffix" => "px",
