@@ -17,6 +17,7 @@ class DetailsPage
     protected array $colorPalettes;
     protected string $subpalette;
     protected PageDto $pageTDO;
+    protected array $additionalOptions;
 
     /**
      * @throws BadJsonProvided
@@ -27,7 +28,8 @@ class DetailsPage
         int $mobileTopPaddingOfTheFirstElement,
         PageDto $pageTDO,
         ElementContextInterface $data,
-        string $subpalette = 'subpalette1'
+        string $subpalette = 'subpalette1',
+        $additionalOptionsForDetailPage = []
     )
     {
         $this->detailsSection = new BrizyComponent(json_decode($detailsSection, true));
@@ -36,6 +38,7 @@ class DetailsPage
         $this->pageTDO = $pageTDO;
         $this->colorPalettes = $data->getThemeContext()->getRootPalettes()->getSubPalettes();
         $this->subpalette = $subpalette;
+        $this->additionalOptions = $additionalOptionsForDetailPage;
     }
 
     protected function rewriteColorIfSetOpacity(array &$colors): void

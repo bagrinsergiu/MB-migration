@@ -36,6 +36,11 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
         return $brizySection;
     }
 
+    protected function getItemColorBgBox($opacity1): int
+    {
+        return 0;
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
