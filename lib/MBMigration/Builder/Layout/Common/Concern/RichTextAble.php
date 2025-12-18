@@ -650,8 +650,12 @@ trait RichTextAble
                                 $componentIndices['RichText']++;
                             }
                         }
-
-                        if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
+//to do
+//                        if (empty($settings['setEmptyText']) || $settings['setEmptyText'] === false) {
+//
+//                        } else
+//
+                            if(empty($settings['setEmptyText']) || $settings['setEmptyText'] === false){
                             $brizySection->getValue()->add_items([$brzTextComponent]);
                         } elseif ($settings['setEmptyText'] === true) {
                             if ($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])) {
@@ -1116,6 +1120,19 @@ trait RichTextAble
         }
 
         return false;
+    }
+
+    /**
+     * Check if HTML tag (especially <p>) is empty
+     * Returns true if tag is empty, false if it contains any content
+     * Note: <br> tags are ignored as they are considered non-content
+     *
+     * @param string $html HTML string to check
+     * @return bool true if empty, false if has content
+     */
+    public function isTagEmpty($html): bool
+    {
+        return !$this->hasAnyTagsInsidePTag($html);
     }
 
     private function setAttribute(DOMElement $fragment, array $attributes)
