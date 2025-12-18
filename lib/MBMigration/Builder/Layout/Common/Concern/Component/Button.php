@@ -358,14 +358,40 @@ trait Button
     {
         $mbSectionId = $data->getMbSection()['sectionId'];
 
+        Logger::instance()->info('Searching for button styles', [
+            'section_id' => $mbSectionId,
+            'selectors_to_try' => $this->getSelectorForButton()
+        ]);
+
         foreach ($this->getSelectorForButton() as $selector) {
 
-            $selector = "[data-id='" . $mbSectionId . "'] " . $selector;
+            $fullSelector = "[data-id='" . $mbSectionId . "'] " . $selector;
 
-            if ($this->hasNode($selector, $this->browserPage)) {
-                return $this->searchButton($selector, $data);
+            Logger::instance()->info('Checking button selector', [
+                'section_id' => $mbSectionId,
+                'base_selector' => $selector,
+                'full_selector' => $fullSelector
+            ]);
+
+            sleep($this->getTimeOutToSelectorForButton());
+
+            if ($this->hasNode($fullSelector, $this->browserPage)) {
+                Logger::instance()->info('Button found, extracting styles', [
+                    'section_id' => $mbSectionId,
+                    'selector' => $fullSelector
+                ]);
+                return $this->searchButton($fullSelector, $data);
+            } else {
+                Logger::instance()->warning('Button not found with selector', [
+                    'section_id' => $mbSectionId,
+                    'selector' => $fullSelector
+                ]);
             }
         }
+
+        Logger::instance()->info('No button found in section, returning empty styles', [
+            'section_id' => $mbSectionId
+        ]);
 
         return [
             'normal' => [],
@@ -375,6 +401,10 @@ trait Button
 
     protected function searchButton($selector, ElementContextInterface $data): array
     {
+        Logger::instance()->info('Extracting button styles from DOM', [
+            'selector' => $selector
+        ]);
+
         $buttonStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
             [
@@ -415,10 +445,23 @@ trait Button
             foreach ($buttonStyles as $key => $value) {
                 $buttonStylesConvert[$key] = ColorConverter::convertColorRgbToHex($value);
             }
+            Logger::instance()->info('Normal button styles extracted', [
+                'selector' => $selector,
+                'style_keys' => array_keys($buttonStylesConvert ?? [])
+            ]);
+        } else {
+            Logger::instance()->warning('No normal button styles data returned', [
+                'selector' => $selector,
+                'response' => $buttonStyles
+            ]);
         }
 
         $this->browserPage->triggerEvent('hover', $selector);
         sleep(2); //need time to get hover styles
+
+        Logger::instance()->info('Extracting hover button styles from DOM', [
+            'selector' => $selector
+        ]);
 
         $buttonHoverStyles = $this->browserPage->evaluateScript(
             'brizy.getStyles',
@@ -448,10 +491,25 @@ trait Button
             foreach ($buttonStylesHover as $key => $value) {
                 $buttonHoverStylesConvert[$key] = ColorConverter::convertColorRgbToHex($value);
             }
+            Logger::instance()->info('Hover button styles extracted', [
+                'selector' => $selector,
+                'style_keys' => array_keys($buttonHoverStylesConvert ?? [])
+            ]);
+        } else {
+            Logger::instance()->warning('No hover button styles data returned', [
+                'selector' => $selector,
+                'response' => $buttonHoverStyles
+            ]);
         }
 
         $styles['normal'] = $buttonStylesConvert ?? [];
         $styles['hover'] = $buttonHoverStylesConvert ?? [];
+
+        Logger::instance()->info('Button styles extraction completed', [
+            'selector' => $selector,
+            'has_normal_styles' => !empty($styles['normal']),
+            'has_hover_styles' => !empty($styles['hover'])
+        ]);
 
         return $styles;
     }
@@ -506,6 +564,11 @@ trait Button
             'button.sites-button',
             'div.event-calendar-footer .sites-button',
         ];
+    }
+
+    protected function getTimeOutToSelectorForButton(): int
+    {
+        return 0;
     }
 
 }
