@@ -7,7 +7,7 @@ class SmallGroupsListElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 130;
     }
     protected function getPropertiesMainSection(): array
     {

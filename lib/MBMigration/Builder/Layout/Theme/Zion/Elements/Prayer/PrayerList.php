@@ -7,7 +7,7 @@ class PrayerList
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 130;
     }
 
     protected function getPropertiesMainSection(): array
