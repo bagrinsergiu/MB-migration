@@ -205,14 +205,29 @@ abstract class MediaLayoutElement extends AbstractElement
             $brizySectionGrid = new BrizyComponent(json_decode($this->brizyKit['GridMediaLayout']['main'], true));
 
             $selector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
+            $additionalOptionsForDetailPage = [];
+
             $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
+
+            if ($this->hasNode($selector . ' div.media-player', $this->browserPage)) {
+                $mediaPlayerBodyStyles = $this->getDomElementStyles(
+                    $selector . ' div.media-player',
+                    ['background-color', 'opacity'],
+                    $this->browserPage);
+
+                $additionalOptionsForDetailPage = [
+                    "bg-color" => ColorConverter::convertColorRgbToHex($mediaPlayerBodyStyles['background-color'] ?? null),
+                    "opacity" => ColorConverter::normalizeOpacity($mediaPlayerBodyStyles['opacity'] ?? 1)
+                ];
+            }
 
             $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['GridMediaLayout']['detail'],
                 $this->getTopPaddingOfTheFirstElement() + $this->getAdditionalTopPaddingOfDetailPage(),
                 $this->getMobileTopPaddingOfTheFirstElement(),
                 $this->pageTDO,
                 $data,
-                $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
+                $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1',
+                $additionalOptionsForDetailPage
             );
 
             // Optimize DOM queries by batching property extraction per selector
@@ -228,7 +243,7 @@ abstract class MediaLayoutElement extends AbstractElement
                     'resultKeys' => ['pagination-normal', 'opacity-pagination-normal']
                 ],
                 'pagination-active' => [
-                    'selector' => $dataIdSelector . ' .pagination .active a',
+                    'selector' => $dataIdSelector . ' .pagination li.active a',
                     'properties' => ['color', 'opacity'],
                     'resultKeys' => ['pagination-active', 'opacity-pagination-active']
                 ],
@@ -280,7 +295,6 @@ abstract class MediaLayoutElement extends AbstractElement
                     }
                 }
             }
-
 
             $colorStyles = [
                 'text-color' => ColorConverter::convertColorRgbToHex($resultColorStyles['text']['color'] ?? $sectionPalette['text']),
@@ -337,7 +351,7 @@ abstract class MediaLayoutElement extends AbstractElement
 
             $paginationColorActive1 = $colorStyles['pagination-active']['color'] ?? (is_string($colorStyles['pagination-active']) ? $colorStyles['pagination-active'] : null);
             $paginationColorActive2 = $colorStyles['pagination-active-bg']['color'] ?? (is_string($colorStyles['pagination-active-bg']) ? $colorStyles['pagination-active-bg'] : null);
-            $paginationColorActive = $paginationColorActive2 ?? $paginationColorActive1 ?? ($sectionPalette['link'] ?? '#3d79ff');
+            $paginationColorActive = $paginationColorActive1 ?? $paginationColorActive2 ?? ($sectionPalette['link'] ?? '#3d79ff');
 
             $sectionProperties = [
 
@@ -368,15 +382,15 @@ abstract class MediaLayoutElement extends AbstractElement
                 'filterBgColorPalette' => '',
 
                 'itemBgColorHex' => $colorStyles['bg-color']['color'] ?? $colorStyles['bg-color'],
-                'itemBgColorOpacity' =>$colorStyles['bg-color']['opacity'] ?? 0, // $colorStyles['bg-opacity'],
+                'itemBgColorOpacity' => $this->getItemColorBgBox($colorStyles['bg-color']['opacity']), // $colorStyles['bg-opacity'],
                 'itemBgColorPalette' => '',
 
                 'paginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
-                'paginationColorOpacity' => floatval($colorStyles['pagination-normal']['opacity'] ?? $colorStyles['opacity-pagination-normal']),
+                'paginationColorOpacity' => 0.8 ?? floatval($colorStyles['pagination-normal']['opacity'] ?? $colorStyles['opacity-pagination-normal']),
                 'paginationColorPalette' => '',
 
                 'activePaginationColorHex' => $paginationColorActive,
-                'activePaginationColorOpacity' => floatval($colorStyles['opacity-pagination-active'] ?? $colorStyles['pagination-active']['opacity']),
+                'activePaginationColorOpacity' => 1,
                 'activePaginationColorPalette' => '',
 
                 'hoverPaginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
@@ -735,6 +749,15 @@ abstract class MediaLayoutElement extends AbstractElement
             "paddingLeft" => 20,
             "paddingLeftSuffix" => "px",
         ];
+    }
+
+    /**
+     * @param $opacity1
+     * @return int
+     */
+    protected function getItemColorBgBox($opacity1): int
+    {
+        return $opacity1 ?? 0;
     }
 
 }
