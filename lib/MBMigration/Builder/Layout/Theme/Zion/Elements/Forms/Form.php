@@ -18,9 +18,8 @@ class Form extends FormElement
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 75;
+        return 130;
     }
-
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 25;
