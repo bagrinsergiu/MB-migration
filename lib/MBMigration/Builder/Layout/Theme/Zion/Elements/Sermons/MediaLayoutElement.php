@@ -36,6 +36,53 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
         return $brizySection;
     }
 
+    protected function selectorForStylePagination(string $dataIdSelector): array
+    {
+        return [
+            'text-content' => [
+                'selector' => $dataIdSelector . ' .media-player-container .media-header .text-content',
+                'properties' => ['color'],
+                'resultKey' => 'text'
+            ],
+            'pagination-previous' => [
+                'selector' => $dataIdSelector . ' .pagination .previous a',
+                'properties' => ['color', 'opacity'],
+                'resultKeys' => ['pagination-normal', 'opacity-pagination-normal']
+            ],
+            'pagination-active' => [
+                'selector' => $dataIdSelector . ' .pagination li.active a',
+                'properties' => ['color', 'opacity'],
+                'resultKeys' => ['pagination-active', 'opacity-pagination-active']
+            ],
+            'pagination-active-before' => [
+                'selector' => $dataIdSelector . ' .pagination .active a',
+                'properties' => ['background-color'],
+                'resultKey' => 'pagination-active-bg',
+                'pseudo' => ':before'
+            ],
+            'media-player' => [
+                'selector' => $dataIdSelector . ' .media-player-container .media-player',
+                'properties' => ['background-color', 'opacity'],
+                'resultKeys' => ['bg-color', 'bg-opacity']
+            ],
+            'media-description' => [
+                'selector' => $dataIdSelector . ' .media-player-container .media-description',
+                'properties' => ['color'],
+                'resultKey' => 'color-text-description'
+            ],
+            'media-header' => [
+                'selector' => $dataIdSelector . ' .media-player-container .media-header',
+                'properties' => ['color'],
+                'resultKey' => 'color-text-header'
+            ],
+            'subsection-archive' => [
+                'selector' => $dataIdSelector . ' .media-archive-subsection .Select-control',
+                'properties' => ['background-color', 'opacity'],
+                'resultKey' => 'bg-filter'
+            ]
+        ];
+    }
+
     protected function getItemColorBgBox($opacity1): int
     {
         return 0;

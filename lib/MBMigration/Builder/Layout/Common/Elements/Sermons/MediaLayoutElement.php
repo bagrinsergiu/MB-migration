@@ -231,49 +231,7 @@ abstract class MediaLayoutElement extends AbstractElement
             );
 
             // Optimize DOM queries by batching property extraction per selector
-            $styleQueries = [
-                'text-content' => [
-                    'selector' => $dataIdSelector . ' .media-player-container .media-header .text-content',
-                    'properties' => ['color'],
-                    'resultKey' => 'text'
-                ],
-                'pagination-previous' => [
-                    'selector' => $dataIdSelector . ' .pagination .previous a',
-                    'properties' => ['color', 'opacity'],
-                    'resultKeys' => ['pagination-normal', 'opacity-pagination-normal']
-                ],
-                'pagination-active' => [
-                    'selector' => $dataIdSelector . ' .pagination li.active a',
-                    'properties' => ['color', 'opacity'],
-                    'resultKeys' => ['pagination-active', 'opacity-pagination-active']
-                ],
-                'pagination-active-before' => [
-                    'selector' => $dataIdSelector . ' .pagination .active a',
-                    'properties' => ['background-color'],
-                    'resultKey' => 'pagination-active-bg',
-                    'pseudo' => ':before'
-                ],
-                'media-player' => [
-                    'selector' => $dataIdSelector . ' .media-player-container .media-player',
-                    'properties' => ['background-color', 'opacity'],
-                    'resultKeys' => ['bg-color', 'bg-opacity']
-                ],
-                'media-description' => [
-                    'selector' => $dataIdSelector . ' .media-player-container .media-description',
-                    'properties' => ['color'],
-                    'resultKey' => 'color-text-description'
-                ],
-                'media-header' => [
-                    'selector' => $dataIdSelector . ' .media-player-container .media-header',
-                    'properties' => ['color'],
-                    'resultKey' => 'color-text-header'
-                ],
-                'subsection-archive' => [
-                    'selector' => $dataIdSelector . ' .media-archive-subsection .Select-control',
-                    'properties' => ['background-color', 'opacity'],
-                    'resultKey' => 'bg-filter'
-                ]
-            ];
+            $styleQueries = $this->selectorForStylePagination($dataIdSelector);
 
             $resultColorStyles = [];
             foreach ($styleQueries as $query) {
@@ -354,7 +312,6 @@ abstract class MediaLayoutElement extends AbstractElement
             $paginationColorActive = $paginationColorActive1 ?? $paginationColorActive2 ?? ($sectionPalette['link'] ?? '#3d79ff');
 
             $sectionProperties = [
-
                 'showCategoryFilter' => 'off',
 
                 'colorHex' => $colorStyles['color-text-header']['color'] ?? $colorStyles['color-text-header'],
@@ -386,15 +343,15 @@ abstract class MediaLayoutElement extends AbstractElement
                 'itemBgColorPalette' => '',
 
                 'paginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
-                'paginationColorOpacity' => 0.8 ?? floatval($colorStyles['pagination-normal']['opacity'] ?? $colorStyles['opacity-pagination-normal']),
+                'paginationColorOpacity' => $colorStyles['opacity-pagination-normal'] ?? floatval($colorStyles['pagination-normal']['opacity']),
                 'paginationColorPalette' => '',
 
-                'activePaginationColorHex' => $paginationColorActive,
-                'activePaginationColorOpacity' => 1,
+                'activePaginationColorHex' => $colorStyles['pagination-active']['color'],
+                'activePaginationColorOpacity' => $colorStyles['opacity-pagination-active'] ?? 1,
                 'activePaginationColorPalette' => '',
 
                 'hoverPaginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
-                'hoverPaginationColorOpacity' => ColorConverter::getHoverOpacity($colorStyles['pagination-normal']['opacity'] ?? $colorStyles['opacity-pagination-normal']),
+                'hoverPaginationColorOpacity' => $colorStyles['opacity-pagination-active'] ?? 1,
                 'hoverPaginationColorPalette' => '',
 
                 'resultsHeadingColorHex' => ($colorStyles['text-color']['color'] ?? (is_string($colorStyles['text-color']) ? $colorStyles['text-color'] : ($sectionPalette['text'] ?? '#000000'))),
@@ -758,6 +715,57 @@ abstract class MediaLayoutElement extends AbstractElement
     protected function getItemColorBgBox($opacity1): int
     {
         return $opacity1 ?? 0;
+    }
+
+    /**
+     * @param string $dataIdSelector
+     * @return array[]
+     */
+    protected function selectorForStylePagination(string $dataIdSelector): array
+    {
+        return [
+            'text-content' => [
+                'selector' => $dataIdSelector . ' .media-player-container .media-header .text-content',
+                'properties' => ['color'],
+                'resultKey' => 'text'
+            ],
+            'pagination-previous' => [
+                'selector' => $dataIdSelector . ' .pagination .previous a',
+                'properties' => ['color', 'opacity'],
+                'resultKeys' => ['pagination-normal', 'opacity-pagination-normal']
+            ],
+            'pagination-active' => [
+                'selector' => $dataIdSelector . ' .pagination li.active a',
+                'properties' => ['color', 'opacity'],
+                'resultKeys' => ['pagination-active', 'opacity-pagination-active']
+            ],
+            'pagination-active-before' => [
+                'selector' => $dataIdSelector . ' .pagination .active a',
+                'properties' => ['background-color'],
+                'resultKey' => 'pagination-active-bg',
+                'pseudo' => ':before'
+            ],
+            'media-player' => [
+                'selector' => $dataIdSelector . ' .media-player-container .media-player',
+                'properties' => ['background-color', 'opacity'],
+                'resultKeys' => ['bg-color', 'bg-opacity']
+            ],
+            'media-description' => [
+                'selector' => $dataIdSelector . ' .media-player-container .media-description',
+                'properties' => ['color'],
+                'resultKey' => 'color-text-description'
+            ],
+            'media-header' => [
+                'selector' => $dataIdSelector . ' .media-player-container .media-header',
+                'properties' => ['color'],
+                'resultKey' => 'color-text-header'
+            ],
+            'subsection-archive' => [
+                'selector' => $dataIdSelector . ' .media-archive-subsection .Select-control',
+                'properties' => ['background-color', 'opacity'],
+                'resultKey' => 'bg-filter'
+            ]
+        ];
     }
 
 }
