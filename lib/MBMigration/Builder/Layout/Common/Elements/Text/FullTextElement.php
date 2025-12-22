@@ -69,6 +69,13 @@ abstract class FullTextElement extends AbstractElement
         return $brizySection;
     }
 
+    protected function getSelectorForButton(): array
+    {
+        return [
+            'a.sites-button'
+        ];
+    }
+
     abstract protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent;
 
     protected function getPropertiesMainSection(): array
