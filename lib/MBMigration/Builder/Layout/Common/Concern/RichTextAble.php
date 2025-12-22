@@ -204,7 +204,8 @@ trait RichTextAble
         $projectID = $data->getThemeContext()->getProjectId();
         $customSettings = $data->getCustomSettingsBrizyElement();
 
-        if ($mbSectionItem['category'] === 'button') {
+        // Extract button styles if this is a button OR if content contains a button
+        if ($mbSectionItem['category'] === 'button' || $this->contentHasButton($mbSectionItem)) {
             $buttonStyle = $this->handleButtonStyle($mbSectionItem);
         }
 
@@ -296,7 +297,8 @@ trait RichTextAble
 
             $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
 
-            $buttonSelector = $this->selectorPrefix() . '[data-id="' . $sectionId . '"]';
+            // Use getSelectorForButton() if available, otherwise use default selector
+            $buttonSelector = $this->getButtonSelector($sectionId);
 
             $stylesNormalD = $this->getDomElementStyles(
                 $buttonSelector,
@@ -351,6 +353,68 @@ trait RichTextAble
         }
     }
 
+    /**
+     * Check if content has a button element
+     */
+    protected function contentHasButton($mbSectionItem): bool
+    {
+        $content = $mbSectionItem['content'] ?? '';
+
+        if (empty($content)) {
+            return false;
+        }
+
+        // Check for button indicators: data-button="true" or class="sites-button"
+        return (stripos($content, 'data-button="true"') !== false) ||
+               (stripos($content, 'class="sites-button"') !== false) ||
+               (stripos($content, "class='sites-button'") !== false);
+    }
+
+    /**
+     * Get button selector based on getSelectorForButton() if available
+     */
+    protected function getButtonSelector(string $sectionId): string
+    {
+        // Check if getSelectorForButton() is defined in the class
+        if (method_exists($this, 'getSelectorForButton')) {
+            $selectors = $this->getSelectorForButton();
+            $hasNodeMethod = method_exists($this, 'hasNode');
+
+            // First attempt: try each selector without timeout
+            if ($hasNodeMethod) {
+                foreach ($selectors as $selector) {
+                    $fullSelector = '[data-id="' . $sectionId . '"] ' . $selector;
+                    if ($this->hasNode($fullSelector, $this->browserPage)) {
+                        return $fullSelector;
+                    }
+                }
+            }
+
+            // Second attempt: apply timeout and try again (only if timeout is defined and hasNode is available)
+            if ($hasNodeMethod && method_exists($this, 'getTimeOutToSelectorForButton')) {
+                $timeout = $this->getTimeOutToSelectorForButton();
+                if ($timeout > 0) {
+                    sleep($timeout);
+
+                    foreach ($selectors as $selector) {
+                        $fullSelector = '[data-id="' . $sectionId . '"] ' . $selector;
+                        if ($this->hasNode($fullSelector, $this->browserPage)) {
+                            return $fullSelector;
+                        }
+                    }
+                }
+            }
+
+            // Fallback: use first selector if nothing found
+            if (!empty($selectors)) {
+                return '[data-id="' . $sectionId . '"] ' . $selectors[0];
+            }
+        }
+
+        // Default selector
+        return $this->selectorPrefix() . '[data-id="' . $sectionId . '"]';
+    }
+
     protected function selectorPrefix(): string
     {
         return '';
@@ -386,7 +450,8 @@ trait RichTextAble
         $projectID = $data->getThemeContext()->getProjectId();
         $customSettings = $data->getCustomSettingsBrizyElement();
 
-        if ($mbSectionItem['category'] === 'button') {
+        // Extract button styles if this is a button OR if content contains a button
+        if ($mbSectionItem['category'] === 'button' || $this->contentHasButton($mbSectionItem)) {
             $buttonStyle = $this->handleButtonStyle($mbSectionItem);
         }
 
