@@ -72,7 +72,9 @@ abstract class FullTextElement extends AbstractElement
     protected function getSelectorForButton(): array
     {
         return [
-            'a.sites-button'
+            'a.sites-button',
+            'button.sites-button',
+            'div.event-calendar-footer .sites-button',
         ];
     }
 
