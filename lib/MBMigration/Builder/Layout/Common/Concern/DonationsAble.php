@@ -311,25 +311,22 @@ trait DonationsAble
             ->set_colorPalette("");
 
 
-        $fontList = $data->getFontFamilies();
+        try {
+            $fonts = $data->getFontFamilies();
+            $convertedFontFamily = FontUtils::transliterateFontFamily($buttonStyles['font-family']);
+            $font = $fonts[$convertedFontFamily] ?? $fonts[$data->getDefaultFontFamily()];
 
-        if ($font = $fontList[FontUtils::transliterateFontFamily($buttonStyles['font-family'])]) {
-            $butonFont = [
-                'fontFamily' => $font['name'],
-                'fontFamilyType' => $font['type'],
-            ];
-        } else {
-            $butonFont = [
-                'fontFamily' => "lato",
-                'fontFamilyType' => "google",
-            ];
+            if (!empty($font)) {
+                $brizyDonationButton->getItemWithDepth(0)->addFont(
+                    (int)$buttonStyles['font-size'],
+                    $font['name'],
+                    $font['type'],
+                    $buttonStyles['font-weight']
+                );
+            }
+        } catch (\Exception $e) {
+            Logger::instance()->warning('Error on set font for donation button: ' . $e->getMessage());
         }
-
-        $brizyDonationButton->getItemWithDepth(0)->addFont(
-            (int)$buttonStyles['font-size'],
-            $butonFont['fontFamily'],
-            $butonFont['fontFamilyType'],
-        );
 
         return $brizyDonationButton;
     }
@@ -372,8 +369,8 @@ trait DonationsAble
     ): BrizyComponent
     {
         $browserPage->triggerEvent('hover', $selector);
-      
-        usleep(500000);
+
+        sleep(2);
 
         $buttonStyles = $browserPage->evaluateScript(
             'brizy.getStyles',
@@ -390,6 +387,7 @@ trait DonationsAble
                     'color',
                     'opacity',
                     'border-top-color',
+                    'border-color',
                     'border-top-style',
                     'background-color',
                 ],
@@ -410,9 +408,9 @@ trait DonationsAble
             ->set_hoverBgColorPalette("")
             ->set_hoverBgColorOpacity( ColorConverter::rgba2opacity($buttonStyles['background-color']) ?? 0.75)
 
-            ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-top-color']))
+            ->set_hoverBorderColorHex(ColorConverter::rgba2hex($buttonStyles['border-color'] ?? $buttonStyles['border-top-color']))
             ->set_hoverBorderColorPalette("")
-            ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['border-top-color']))
+            ->set_hoverBorderColorOpacity(ColorConverter::rgba2opacity($buttonStyles['border-color'] ?? $buttonStyles['border-top-color']))
 
             ->set_hoverColorOpacity(ColorConverter::rgba2opacity($buttonStyles['color']))
             ->set_hoverColorHex(ColorConverter::rgba2hex($buttonStyles['color']))
