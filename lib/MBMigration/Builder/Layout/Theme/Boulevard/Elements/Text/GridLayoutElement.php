@@ -45,9 +45,9 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             $titleMb['id'],
             null,
             [
-                "borderWidth"=> 1,
-                "width"=> 100,
-                "widthSuffix"=> "%"
+                "borderWidth" => 1,
+                "width" => 100,
+                "widthSuffix" => "%"
             ],
             1,
             ''
@@ -56,16 +56,16 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         $rowJson = json_decode($this->brizyKit['row'], true);
         $itemJson = json_decode($this->brizyKit['item'], true);
 
-        $brizySection->getItemWithDepth(0)->addMargin(0, 30, 0, 0,  '', '%');
+        $brizySection->getItemWithDepth(0)->addMargin(0, 30, 0, 0, '', '%');
 
-        $accordionItems = $this->getItemsByCategory($mbSection,'list');
+        $accordionItems = $this->getItemsByCategory($mbSection, 'list');
         $accordionItems = $this->sortItems($accordionItems);
         $itemsChunks = array_chunk($accordionItems, $this->getItemsPerRow());
         foreach ($itemsChunks as $row) {
             $brizySectionRow = new BrizyComponent($rowJson);
             $itemCount = count($row);
-            $itemWidth = (int)(100/$itemCount);
-            $rowWidth = (int)( (100/$this->getItemsPerRow()) * $itemCount );
+            $itemWidth = (int)(100 / $this->getItemsPerRow());
+            $rowWidth = (int)((100 / $this->getItemsPerRow()) * $itemCount);
 
             $this->handleItemRowComponent($brizySectionRow);
 
@@ -73,7 +73,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
             foreach ($row as $item) {
 
-                $dataIdSelector = '[data-id="'.($item['sectionId'] ?? $item['id']).'"]';
+                $dataIdSelector = '[data-id="' . ($item['sectionId'] ?? $item['id']) . '"]';
 
                 $resultColorStyles = $this->getDomElementStyles(
                     $dataIdSelector,
@@ -85,7 +85,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
                 $brizySectionItem = new BrizyComponent($itemJson);
 
                 $brizySectionItem
-                    ->addPadding(15,15,15,15)
+                    ->addPadding(15, 5, 15, 5)
                     ->addMobilePadding(10)
                     ->addMobileMargin();
 
@@ -121,12 +121,12 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
                             $this->handleItemPhotoAfter($elementContext);
                             break;
                         case 'button':
-                            if($this->canShowButton($mbSection)){
+                            if ($this->canShowButton($mbSection)) {
 
                                 $buttonSelector = $item['id'];
                                 $selector = "[data-id='$buttonSelector']";
 
-                                if($this->hasNode($selector, $this->browserPage)){
+                                if ($this->hasNode($selector, $this->browserPage)) {
                                     $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                                         $mbItem,
                                         $brizySectionItem
@@ -142,14 +142,14 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
                                 $brizySectionItem
                             );
 
-                            $dataIdSelector = '[data-id="'.$mbItem['id'].'"]';
+                            $dataIdSelector = '[data-id="' . $mbItem['id'] . '"]';
 
                             $displayItem = $this->getDomElementStyles(
                                 $dataIdSelector,
                                 ['display'],
                                 $this->browserPage);
 
-                            if(trim($displayItem['display']) === 'none'){
+                            if (trim($displayItem['display']) === 'none') {
                                 continue 2;
                             }
 
@@ -159,12 +159,32 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
                     }
                 }
 
-                $context = $data->instanceWithBrizyComponentAndMBSection($item,$brizySectionItem);
+                $context = $data->instanceWithBrizyComponentAndMBSection($item, $brizySectionItem);
 
                 $this->handleColumItemComponent($context);
                 $brizySectionRow->getValue()->add_items([$brizySectionItem]);
             }
 
+            // Добавляем пустые колонки если чанк неполный
+            $emptyItemsCount = $this->getItemsPerRow() - $itemCount;
+            if ($emptyItemsCount > 0) {
+                for ($i = 0; $i < $emptyItemsCount; $i++) {
+                    $emptyBrizySectionItem = new BrizyComponent($itemJson);
+                    $emptyBrizySectionItem
+                        ->addPadding(15, 5, 15, 5)
+                        ->addMobilePadding(10)
+                        ->addMobileMargin();
+
+                    $emptyBrizySectionItem
+                        ->addVerticalContentAlign()
+                        ->getValue()
+                        ->set_borderWidth(0)
+                        ->set_width($itemWidth)
+                        ->set_mobileWidth(100);
+
+                    $brizySectionRow->getValue()->add_items([$emptyBrizySectionItem]);
+                }
+            }
 
             $this->getInsideItemComponent($brizySection)
                 ->getValue()
@@ -172,6 +192,30 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         }
 
         return $brizySection;
+    }
+
+    protected function getSelectorForButton(): array
+    {
+        return [
+            'a.sites-button',
+        ];
+    }
+
+    protected function getPropertiesItemPhoto(): array
+    {
+        return [
+            "borderStyle" => "solid",
+            "borderColorHex" => "#66738d",
+            "borderColorOpacity" => 1,
+            "borderColorPalette" => "",
+            "borderWidthType" => "grouped",
+            "borderWidth" => 1,
+            "borderTopWidth" => 1,
+            "borderRightWidth" => 1,
+            "borderBottomWidth" => 1,
+            "borderLeftWidth" => 1,
+            "tabsState" => "normal"
+        ];
     }
 
     protected function getItemsPerRow(): int
@@ -199,7 +243,8 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizyComponent->getItemWithDepth(0);
     }
 
-    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent {
+    protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
+    {
         return $brizyComponent->getItemWithDepth(0);
     }
 
