@@ -176,7 +176,9 @@ abstract class GalleryLayoutElement extends AbstractElement
             }
         }
 
-        $this->getSlideLocation($brizySection)->getValue()->set_items($brizySectionItems);
+        $this->customizationSlide($this->getSlideLocation($brizySection))->getValue()->set_items($brizySectionItems);
+
+        $this->customizationSection($brizySection);
 
         return $brizySection;
     }
@@ -191,6 +193,7 @@ abstract class GalleryLayoutElement extends AbstractElement
             ->set_marginTop(0)
             ->set_marginBottom(0)
             ->set_heightStyle($this->getHeightSlideStyl())
+            ->set_mobileHeightStyle($this->getHeightSlideStyl())
             ->set_bgImageSrc($mbItem['content'] ?? $mbItem['photo'])
             ->set_bgImageFileName($mbItem['imageFileName'] ?? $mbItem['filename'])
             ->set_customCSS('element{background:' . $colorCSS . '}');
@@ -215,10 +218,14 @@ abstract class GalleryLayoutElement extends AbstractElement
 
         $brizyComponentValue->set_widthSuffix('px');
         $brizyComponentValue->set_heightSuffix('px');
-        $brizyComponentValue->set_mobileWidthSuffix('px');
-        $brizyComponentValue->set_mobileHeightSuffix('px');
         $brizyComponentValue->set_tabletWidthSuffix('px');
         $brizyComponentValue->set_tabletHeightSuffix('px');
+
+        $brizyComponentValue
+            ->set_mobileBgSizeType('custom')
+            ->set_mobileBgSize('contain')
+            ->set_mobileHeightSuffix('px')
+            ->set_mobileHeightSuffix('px');
 
         if (isset($mbItem['settings']['sections']['gallery']['max_width']) &&
             isset($mbItem['settings']['sections']['gallery']['max_height'])) {
@@ -241,12 +248,12 @@ abstract class GalleryLayoutElement extends AbstractElement
                 $brizyComponentValue->set_height($mbItem['settings']['slide']['slide_height']);
                 $brizyComponentValue->set_bgImageHeight($mbItem['settings']['slide']['slide_height']);
                 $brizyComponentValue->set_tabletHeight($mbItem['settings']['slide']['slide_height']);
-                $brizyComponentValue->set_mobileHeight($mbItem['settings']['slide']['slide_height']);
+                $brizyComponentValue->set_mobileHeight($mbItem['settings']['slide']['mobile_height']);
             } elseif (isset($mbItem['settings']['height'])) {
                 $brizyComponentValue->set_height($mbItem['settings']['height']);
                 $brizyComponentValue->set_bgImageHeight($mbItem['settings']['height']);
                 $brizyComponentValue->set_tabletHeight($mbItem['settings']['height']);
-                $brizyComponentValue->set_mobileHeight($mbItem['settings']['height']);
+                $brizyComponentValue->set_mobileHeight($mbItem['settings']['height'] / 2);
             }
         }
 
@@ -335,10 +342,29 @@ abstract class GalleryLayoutElement extends AbstractElement
         return "auto";
     }
 
+    protected function getMobileBgSizeType(): string
+    {
+        return "auto";
+    }
+
+    protected function getMobileBgSize(): string
+    {
+        return "auto";
+    }
+
     protected function getArrowColorByBackground($colorArrows, $backGroundColor): string
     {
         return ColorConverter::getContrastColor($backGroundColor);
     }
 
+    protected function customizationSlide(BrizyComponent $brizySectionItem):BrizyComponent
+    {
+        return $brizySectionItem;
+    }
+
+    protected function customizationSection(BrizyComponent $brizySectionItem):BrizyComponent
+    {
+        return $brizySectionItem;
+    }
 
 }
