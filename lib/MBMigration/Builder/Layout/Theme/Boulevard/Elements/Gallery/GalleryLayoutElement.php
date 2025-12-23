@@ -22,6 +22,34 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
         return $brizySection;
     }
 
+    protected function customizationSlide(BrizyComponent $brizySectionItem): BrizyComponent
+    {
+        $brizySectionItem->getValue()
+            ->set_sliderPaddingType('ungrouped')
+            ->set_sliderPadding(0)
+            ->set_sliderPaddingSuffix("px")
+            ->set_sliderPaddingTop(10)
+            ->set_sliderPaddingTopSuffix("px")
+            ->set_sliderPaddingRight(70)
+            ->set_sliderPaddingRightSuffix("px")
+            ->set_sliderPaddingBottom(30)
+            ->set_sliderPaddingBottomSuffix("px")
+            ->set_sliderPaddingLeft(15)
+            ->set_sliderPaddingLeftSuffix("px");
+
+        return $brizySectionItem;
+    }
+
+    protected function customizationSection(BrizyComponent $brizySectionItem):BrizyComponent
+    {
+        $brizySectionItem->getValue()
+            ->set_paddingType('ungrouped')
+            ->set_paddingTop(0)
+            ->set_paddingBottom(0);
+
+        return $brizySectionItem;
+    }
+
     protected function getSelectorSectionCustomCSS(): string
     {
         return 'element';
@@ -30,6 +58,15 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
     protected function getHeightSlideStyl(): string
     {
         return "custom";
+    }
+
+    protected function getMobileBgSizeType(): string
+    {
+        return "custom";
+    }
+    function getMobileBgSize(): string
+    {
+        return "contain";
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
