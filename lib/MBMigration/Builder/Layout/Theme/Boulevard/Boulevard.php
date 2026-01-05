@@ -29,6 +29,8 @@ class Boulevard extends AbstractTheme
             $brizyComponent = new BrizyComponent($layout);
         }
 
+        $this->handleLayoutStyle($brizyComponent);
+
 
         $elementFactory = $this->themeContext->getElementFactory();
         $browserPage = $this->themeContext->getBrowserPage();
@@ -141,6 +143,17 @@ class Boulevard extends AbstractTheme
         $brizyPage = $this->afterTransformBlocks($brizyPage, $mbPageSections);
 
         return $brizyPage;
+    }
+
+    public function handleLayoutStyle(BrizyComponent $brizyComponent): BrizyComponent
+    {
+        $brizyComponent->getItemWithDepth(0)
+            ->addMobilePadding();
+
+        $brizyComponent->getItemWithDepth(0, 0, 1)
+            ->addMobileMargin()
+            ->addMobilePadding();
+        return $brizyComponent;
     }
 
     public function useHeadElementCached(): bool
