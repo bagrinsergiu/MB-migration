@@ -153,9 +153,11 @@ class BrowserPagePHP implements BrowserPageInterface
                     }
                     if ($center) {
                         $this->page->mouse()->move($center['x'], $center['y']);
+                        Logger::instance()->debug('Hover Selector: ' . $elementSelector);
                     } else {
                         $pos = $this->page->mouse()->find($elementSelector, 0)->getPosition();
                         $this->page->mouse()->move($pos['x'], $pos['y']);
+                        Logger::instance()->debug('Hover Selector: ' . $elementSelector);
                     }
                     break;
 
