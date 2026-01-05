@@ -580,6 +580,7 @@ abstract class HeadElement extends AbstractElement
         if ($this->browserPage->triggerEvent('hover', $this->getNotSelectedMenuItemBgSelector()['selector'])) {
 
             sleep(2);
+            $this->browserPage->getPageScreen('sssss');
 
             $options = [
                 'itemSelector' => $menuItemSelector,

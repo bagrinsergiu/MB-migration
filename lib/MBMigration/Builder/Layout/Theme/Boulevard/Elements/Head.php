@@ -53,7 +53,10 @@ class Head extends HeadElement
         $logoImageComponent = $this->getLogoComponent($section);
         $menuTargetComponent = $this->getTargetMenuComponent($section);
 
+        $headStyles['menu']['itemPadding'] = 0;
+
         $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles ?? []);
+        $this->handleMenuItemStyle($menuTargetComponent);
         $this->setImageLogo($logoImageComponent, $data->getMbSection());
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItem);
@@ -65,6 +68,13 @@ class Head extends HeadElement
         $this->getThemeMenuHeaderStyle($headStyles ?? [], $section);
 
         return $section;
+    }
+
+    protected function handleMenuItemStyle(BrizyComponent $component)
+    {
+        $component->getParent()->getValue()
+            ->set_mobileMarginTop(-80)
+            ->set_mobileMarginBottom(50);
     }
 
     protected function getNormalSubMenuStyle($families, $defaultFamilies): array
@@ -92,6 +102,8 @@ class Head extends HeadElement
         $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getSubMenuDropdown', $menuSubItemDropdownStylesOptions );
 
         $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], $menuSubItemDropdownStyles['data']);
+
+        $menuSubItemStyles['data']['subMenuBorderStyle'] = 'none';
 
         if (isset($menuSubItemStyles['error'])) {
             $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
@@ -153,17 +165,42 @@ class Head extends HeadElement
 
     protected function menuItemStylesValueConditions(array &$menuItemStyles) :void
     {
+
+        $borderMenuItemStyles = $this->scrapeStyle('#main-navigation > ul > li',['border-bottom-color']);
+
         if(!empty($menuItemStyles['data'])){
             $menuItemStyles['data']['activeColorHex'] = $menuItemStyles['data']['colorHex'];
             $menuItemStyles['data']['activeMenuBgColor'] = '#fff';
             $menuItemStyles['data']['activeMenuBgColorOpacity'] = 0.08;
             $menuItemStyles['data']['activeMenuBgColorPalette'] = '';
+
+            $menuItemStyles['data']['mobileMMenuBorderStyle'] = $menuItemStyles['data']['menuPaddingType'];
+            $menuItemStyles['data']['mobileMMenuBorderColorHex'] = ColorConverter::convertColorRgbToHex($borderMenuItemStyles['border-bottom-color']);
+            $menuItemStyles['data']['mobileMMenuBorderColorOpacity'] = ColorConverter::normalizeOpacity($borderMenuItemStyles['border-bottom-opacity'] ?? 1);
+
+            $menuItemStyles['data']['menuBorderStyle'] = ('groove');
+            $menuItemStyles['data']['menuBorderColorHex'] = ColorConverter::convertColorRgbToHex($borderMenuItemStyles['border-bottom-color']);
+            $menuItemStyles['data']['menuBorderColorOpacity'] = ColorConverter::normalizeOpacity($borderMenuItemStyles['border-bottom-opacity'] ?? 1);
         }
+    }
+
+    protected function setImageLogo(BrizyComponent $component, $headItem): BrizyComponent
+    {
+        $component = parent::setImageLogo($component, $headItem);
+
+        $component->getParent()->getValue()->set_horizontalAlign('center');
+
+        return $component;
     }
 
     protected function afterTransformToItem(BrizyComponent $brizySection): void
     {
 
+    }
+
+    public function isBgHoverItemMenu(): bool
+    {
+        return true;
     }
 
     protected function makeGlobalBlock(): bool
@@ -183,7 +220,7 @@ class Head extends HeadElement
 
     public function getNotSelectedMenuItemBgSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li > a", "pseudoEl" => ""];
     }
 
     protected function getStyleFromPseudo(): bool

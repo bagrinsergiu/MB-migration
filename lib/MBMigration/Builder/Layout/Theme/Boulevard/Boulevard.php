@@ -147,6 +147,15 @@ class Boulevard extends AbstractTheme
 
     public function handleLayoutStyle(BrizyComponent $brizyComponent): BrizyComponent
     {
+        $brizyComponent->getItemWithDepth(0, 0, 0)
+            ->getValue()
+            ->set_borderStyle('none')
+            ->set_width(15);
+
+        $brizyComponent->getItemWithDepth(0, 0, 1)
+            ->getValue()
+            ->set_width(85);
+
         $brizyComponent->getItemWithDepth(0)
             ->addMobilePadding();
 
