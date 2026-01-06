@@ -13,6 +13,7 @@ use MBMigration\Builder\Layout\Common\Elements\AbstractElement;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout;
+use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Layer\Graph\QueryBuilder;
 
 class EventFeaturedLayoutElement  extends AbstractElement
@@ -56,6 +57,12 @@ class EventFeaturedLayoutElement  extends AbstractElement
         $sectionSubPalette = $this->getNodeSubPalette($selector, $this->browserPage);
 
         $sectionPalette = $data->getThemeContext()->getRootPalettes()->getSubPaletteByName($sectionSubPalette);
+
+        $basicButtonStyleNormal = $this->pageTDO->getButtonStyle()->getNormal();
+        $basicButtonStyleHover = $this->pageTDO->getButtonStyle()->getHover();
+
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
+        ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
         $fonts = FontsController::getFontsFamilyFromName('main_text');
 
@@ -226,24 +233,24 @@ class EventFeaturedLayoutElement  extends AbstractElement
             'registerButtonGradientColorOpacity' => 1,
             'registerButtonGradientColorPalette' => '',
 
-            'detailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'detailButtonBgColorOpacity' => 1,
+            'detailButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'detailButtonBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             'detailButtonBgColorPalette' => '',
 
-            'detailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonGradientColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
             'detailButtonGradientColorOpacity' => 1,
             'detailButtonGradientColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-            'hoverDetailButtonColorOpacity' => 0.75,
+            'hoverDetailButtonColorHex' => $basicButtonStyleHover['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 1,
             'hoverDetailButtonColorPalette' => '',
 
-            'hoverDetailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'hoverDetailButtonBgColorOpacity' => 0.75,
+            'hoverDetailButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
+            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 0.75,
             'hoverDetailButtonBgColorPalette' => '',
 
             'hoverDetailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],

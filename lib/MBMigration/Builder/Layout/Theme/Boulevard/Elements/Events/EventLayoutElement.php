@@ -17,6 +17,8 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
         $brizySection = parent::internalTransformToItem($data);
         $mbSectionItem = $data->getMbSection();
 
+        $brizySection->getItemWithDepth(0)->addMargin(0, 30, 0, 0, '', '%');
+
         $showHeader = $this->canShowHeader($mbSectionItem);
 
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
