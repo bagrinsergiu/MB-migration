@@ -167,6 +167,10 @@ abstract class EventLayoutElement extends AbstractElement
             'listPaginationColorOpacity' => 1,
             'listPaginationColorPalette' => '',
 
+            'filterBgColorHex' => $sectionPalette['bg'] ?? $basicButtonStyleNormal['background-color'] ?? '#f8f8f8',
+            'filterBgColorOpacity' => 1,
+            'filterBgColorPalette' => '',
+
             'calendarDaysBgColorHex' => $sectionPalette['bg'] ?? $basicButtonStyleNormal['background-color'],
             'calendarDaysBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
             'calendarDaysBgColorPalette' => '',
@@ -179,20 +183,27 @@ abstract class EventLayoutElement extends AbstractElement
             'calendarDaysColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
             'calendarDaysColorPalette' => '',
 
-            'eventsColorHex' => $sectionPalette['link'],
+            'calendarBorderStyle' => 'solid',
+            'calendarBorderColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'] ?? '#e0e0e0',
+            'calendarBorderColorOpacity' => 0.3,
+            'calendarBorderColorPalette' => '',
+            'calendarBorderWidth' => 1,
+            'calendarBorderWidthType' => 'grouped',
+
+            'eventsColorHex' => $sectionPalette['link'] ?? '#0066cc',
             'eventsColorOpacity' => 1,
             'eventsColorPalette' => '',
 
-            'hoverEventsColorHex' => $sectionPalette['link'],
-            'hoverEventsColorOpacity' => 0.75,
+            'hoverEventsColorHex' => $sectionPalette['link'] ?? '#0052a3',
+            'hoverEventsColorOpacity' => 1,
             'hoverEventsColorPalette' => '',
 
-            'listItemTitleColorHex' => $sectionPalette['link'],
+            'listItemTitleColorHex' => $sectionPalette['link'] ?? '#0066cc',
             'listItemTitleColorOpacity' => 1,
             'listItemTitleColorPalette' => '',
 
-            'hoverListItemTitleColorHex' => $sectionPalette['link'],
-            'hoverListItemTitleColorOpacity' => 0.75,
+            'hoverListItemTitleColorHex' => $sectionPalette['link'] ?? '#0052a3',
+            'hoverListItemTitleColorOpacity' => 1,
             'hoverListItemTitleColorPalette' => '',
 
             'listItemMetaColorHex' => $sectionPalette['text'],
@@ -211,11 +222,11 @@ abstract class EventLayoutElement extends AbstractElement
             'groupingDateColorOpacity' => 1,
             'groupingDateColorPalette' => '',
 
-            'hoverTitleColorHex' => $sectionPalette['link'],
-            'hoverTitleColorOpacity' => 0.75,
+            'hoverTitleColorHex' => $sectionPalette['link'] ?? '#0052a3',
+            'hoverTitleColorOpacity' => 1,
             'hoverTitleColorPalette' => '',
 
-            'titleColorHex' => $sectionPalette['link'],
+            'titleColorHex' => $sectionPalette['link'] ?? '#0066cc',
             'titleColorOpacity' => 1,
             'titleColorPalette' => '',
 
