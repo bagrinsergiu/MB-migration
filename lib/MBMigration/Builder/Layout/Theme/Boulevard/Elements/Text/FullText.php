@@ -24,6 +24,8 @@ class FullText extends FullTextElement
         $mbSectionItem = $data->getMbSection();
         $itemsKit = $data->getThemeContext()->getBrizyKit();
 
+        $brizySection->getItemWithDepth(0)->addMargin(0, 30, 0, 0, '', '%');
+
         $showHeader = $this->canShowHeader($mbSectionItem);
         $showBody = $this->canShowBody($mbSectionItem);
 

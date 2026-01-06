@@ -29,12 +29,16 @@
     "check-all": "npm run prettier-check && npm run lint && npm run tsc && npm run test",
     "build": "turbo build",
     "build:prod": "turbo build -- --production",
-    "build:force": "turbo build -- --force"
+    "build:force": "turbo build -- --force",
+    "mcp:playwright": "npx -y @playwright/mcp"
   },
   "dependencies": {
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@executeautomation/playwright-mcp-server": "^1.0.12",
+    "@playwright/mcp": "^0.0.54",
+    "playwright": "^1.57.0",
     "turbo": "^1.12.4"
   }
 }
