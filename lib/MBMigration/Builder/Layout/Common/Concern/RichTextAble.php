@@ -525,9 +525,30 @@ trait RichTextAble
                         $brizyEmbedCodeComponent->getValue()->set_customClassName($cssClass);
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_overflow('on');
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_mobileOverflow('off');
+                        // Set wrapper to full width
+                        $brizyEmbedCodeComponent->getValue()->set('width', 100);
+                        $brizyEmbedCodeComponent->getValue()->set('widthSuffix', '%');
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
                             ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
-.{$cssClass} .brz-embed-content > div:has(.embedded-paste iframe) {display: flex; justify-content:{$styles['text-align']}}"
+.{$cssClass} .brz-embed-content { width: 100% !important; }
+.{$cssClass} .brz-embed-content .embedded-paste { 
+    width: 100% !important; 
+    max-width: 100% !important; 
+    min-width: 0 !important; 
+    box-sizing: border-box; 
+    display: block !important;
+}
+.{$cssClass} .brz-embed-content .embedded-paste iframe { 
+    width: 100% !important; 
+    max-width: 100% !important; 
+    min-width: 0 !important; 
+    display: block;
+}
+.{$cssClass} .brz-embed-content > div:has(.embedded-paste iframe) {
+    display: flex; 
+    justify-content: {$styles['text-align']};
+    width: 100% !important;
+}"
                         );
 
                         // Apply custom settings if available
@@ -1076,10 +1097,19 @@ trait RichTextAble
         foreach ($iframes as $iframe) {
             $width = $iframe->getAttribute('width');
             $height = $iframe->getAttribute('height');
+            $currentStyle = $iframe->getAttribute('style') ?? '';
+
+            // Удаляем существующие ограничения ширины
+            $currentStyle = preg_replace('/(^|;)\s*(width|max-width|min-width)\s*:\s*[^;]+/i', '', $currentStyle);
+            $currentStyle = trim($currentStyle, '; ');
 
             if (!empty($width) && !empty($height)) {
-                $iframe->setAttribute('style', "max-width: {$width}px; min-width: {$width}px; max-height: {$height}px; width: 100%;");
+                $currentStyle .= "; max-width: {$width}px; max-height: {$height}px; width: 100% !important;";
+            } else {
+                $currentStyle .= "; width: 100% !important; max-width: 100% !important;";
             }
+            
+            $iframe->setAttribute('style', $currentStyle);
         }
         $result = [];
         $divs = $dom->getElementsByTagName('div');
@@ -1089,6 +1119,47 @@ trait RichTextAble
                 preg_match('/text-align:\s*([^;]+)/', $div->getAttribute('style'), $matches);
                 $escapedDataSrc = str_replace('"', '\\"', $dataSrc);
                 $div->setAttribute('data-src', $escapedDataSrc);
+
+                // Ensure embedded-paste itself has full width
+                $currentStyle = $div->getAttribute('style');
+                $currentStyle = preg_replace('/(^|;)\s*(width|max-width|min-width)\s*:\s*[^;]+/i', '', $currentStyle);
+                $currentStyle = trim($currentStyle, '; ');
+                if (!empty($currentStyle)) {
+                    $currentStyle .= '; width: 100% !important; max-width: 100% !important; min-width: 0 !important;';
+                } else {
+                    $currentStyle = 'width: 100% !important; max-width: 100% !important; min-width: 0 !important;';
+                }
+                $div->setAttribute('style', $currentStyle);
+
+                // Process all nested divs inside embedded-paste to remove width constraints
+                $nestedDivs = $div->getElementsByTagName('div');
+                foreach ($nestedDivs as $nestedDiv) {
+                    $style = $nestedDiv->getAttribute('style');
+                    // Remove width, max-width, min-width constraints, but keep other styles like position, padding
+                    $style = preg_replace('/(^|;)\s*(width|max-width|min-width)\s*:\s*[^;]+/i', '', $style);
+                    $style = trim($style, '; ');
+                    // Add width: 100% to ensure full width
+                    if (!empty($style)) {
+                        $style .= '; width: 100%; max-width: 100%;';
+                    } else {
+                        $style = 'width: 100%; max-width: 100%;';
+                    }
+                    $nestedDiv->setAttribute('style', $style);
+                }
+
+                // Process iframes to ensure they have full width
+                $iframes = $div->getElementsByTagName('iframe');
+                foreach ($iframes as $iframe) {
+                    $iframeStyle = $iframe->getAttribute('style');
+                    $iframeStyle = preg_replace('/(^|;)\s*(width|max-width|min-width)\s*:\s*[^;]+/i', '', $iframeStyle);
+                    $iframeStyle = trim($iframeStyle, '; ');
+                    if (!empty($iframeStyle)) {
+                        $iframeStyle .= '; width: 100% !important; max-width: 100% !important;';
+                    } else {
+                        $iframeStyle = 'width: 100% !important; max-width: 100% !important;';
+                    }
+                    $iframe->setAttribute('style', $iframeStyle);
+                }
 
                 $result[] = [
                     'embed' => $dom->saveHTML($div),
