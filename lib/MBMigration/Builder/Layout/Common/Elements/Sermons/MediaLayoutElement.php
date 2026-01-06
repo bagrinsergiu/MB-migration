@@ -265,8 +265,10 @@ abstract class MediaLayoutElement extends AbstractElement
                 'color-text-header' => ColorConverter::convertColorRgbToHex($resultColorStyles['color-text-header']['color'] ?? $sectionPalette['text']),
                 'opacity-pagination-normal' => $resultColorStyles['opacity-pagination-normal']['opacity'] ?? 0.75,
                 'opacity-pagination-active' => $resultColorStyles['opacity-pagination-active']['opacity'] ?? 1,
-                'bg-filter' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-filter']['background-color'] ?? $sectionPalette['bg']),
-                'bg-filter-opacity' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-filter']['opacity'] ?? $sectionPalette['bg']),
+                'bg-filter' => [
+                    'color' => ColorConverter::convertColorRgbToHex($resultColorStyles['bg-filter']['background-color'] ?? $resultColorStyles['bg-color']['background-color'] ?? $sectionPalette['bg']),
+                    'opacity' => ColorConverter::normalizeOpacity($resultColorStyles['bg-filter']['opacity'] ?? 1),
+                ],
             ];
 
             $colorKeysToNormalize = [
@@ -318,12 +320,12 @@ abstract class MediaLayoutElement extends AbstractElement
                 'colorOpacity' => $colorStyles['color-text-header']['opacity'] ?? 1,
                 'colorPalette' => "",
 
-                'titleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
-                'titleColorOpacity' => 1,
+                'titleColorHex' => $resultColorStyles['title-color']['color'] ?? ($sectionPalette['header'] ?? $sectionPalette['text']),
+                'titleColorOpacity' => $resultColorStyles['title-color']['opacity'] ?? 1,
                 'titleColorPalette' => "",
 
-                'hoverTitleColorHex' => $sectionPalette['link'] ?? "#1e1eb7",
-                'hoverTitleColorOpacity' => 0.7,
+                'hoverTitleColorHex' => $resultColorStyles['title-hover-color']['color'] ?? ($resultColorStyles['title-color']['color'] ?? $sectionPalette['header']),
+                'hoverTitleColorOpacity' => 0.75,
                 'hoverTitleColorPalette' => "",
 
                 'metaLinksColorHex' => $sectionPalette['link'] ?? "#3d79ff",
@@ -334,11 +336,11 @@ abstract class MediaLayoutElement extends AbstractElement
                 'hoverMetaLinksColorOpacity' => 0.7,
                 'hoverMetaLinksColorPalette' => "",
 
-                'filterBgColorHex' => $colorStyles['bg-filter']['color'] ?? $colorStyles['bg-filter'],
-                'filterBgColorOpacity' => $colorStyles['bg-filter']['opacity'] ?? $colorStyles['bg-filter-opacity'],
+                'filterBgColorHex' => $colorStyles['bg-filter']['color'],
+                'filterBgColorOpacity' => $colorStyles['bg-filter']['opacity'],
                 'filterBgColorPalette' => '',
 
-                'itemBgColorHex' => $colorStyles['bg-color']['color'] ?? $colorStyles['bg-color'],
+                'itemBgColorHex' => $resultColorStyles['item-bg-color']['color'] ?? ($colorStyles['bg-color']['color'] ?? $colorStyles['bg-color']),
                 'itemBgColorOpacity' => $this->getItemColorBgBox($colorStyles['bg-color']['opacity']), // $colorStyles['bg-opacity'],
                 'itemBgColorPalette' => '',
 
@@ -350,8 +352,8 @@ abstract class MediaLayoutElement extends AbstractElement
                 'activePaginationColorOpacity' => $colorStyles['opacity-pagination-active'] ?? 1,
                 'activePaginationColorPalette' => '',
 
-                'hoverPaginationColorHex' => $colorStyles['pagination-normal']['color'] ?? $colorStyles['pagination-normal'],
-                'hoverPaginationColorOpacity' => $colorStyles['opacity-pagination-active'] ?? 1,
+                'hoverPaginationColorHex' => $paginationColorActive,
+                'hoverPaginationColorOpacity' => 0.85,
                 'hoverPaginationColorPalette' => '',
 
                 'resultsHeadingColorHex' => ($colorStyles['text-color']['color'] ?? (is_string($colorStyles['text-color']) ? $colorStyles['text-color'] : ($sectionPalette['text'] ?? '#000000'))),
@@ -714,7 +716,7 @@ abstract class MediaLayoutElement extends AbstractElement
      */
     protected function getItemColorBgBox($opacity1): int
     {
-        return $opacity1 ?? 0;
+        return 0; // Always return 0 to remove background boxes behind sermon items
     }
 
     /**
@@ -764,6 +766,22 @@ abstract class MediaLayoutElement extends AbstractElement
                 'selector' => $dataIdSelector . ' .media-archive-subsection .Select-control',
                 'properties' => ['background-color', 'opacity'],
                 'resultKey' => 'bg-filter'
+            ],
+            'item-background' => [
+                'selector' => $dataIdSelector . ' .media-grid li button',
+                'properties' => ['background-color'],
+                'resultKey' => 'item-bg-color'
+            ],
+            'item-title' => [
+                'selector' => $dataIdSelector . ' .media-grid .title-container > header.item-title',
+                'properties' => ['color'],
+                'resultKey' => 'title-color'
+            ],
+            'item-title-hover' => [
+                'selector' => $dataIdSelector . ' .media-grid li button:hover .item-title',
+                'properties' => ['color'],
+                'resultKey' => 'title-hover-color',
+                'pseudo' => ':hover'
             ]
         ];
     }

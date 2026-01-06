@@ -12,12 +12,12 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
     use LineAble;
     use ShadowAble;
 
-    protected function internalTransformToItem(ElementContextInterface $data ): BrizyComponent
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = parent::internalTransformToItem($data);
         $mbSectionItem = $data->getMbSection();
 
-        $brizySection->getItemWithDepth(0)->addMargin(0, 15, 0, 15,  '', '%');
+        $brizySection->getItemWithDepth(0)->addMargin(0, 30, 0, 0, '', '%');
 
         $showHeader = $this->canShowHeader($mbSectionItem);
 
