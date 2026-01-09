@@ -40,10 +40,31 @@ class Logger extends \Monolog\Logger
 
     static public function instance(): LoggerInterface
     {
-        if (!self::$instance) {
+        if (!isset(self::$instance)) {
             throw new Exception('Please initialize logger first.');
         }
 
         return self::$instance;
+    }
+
+    /**
+     * Проверить, инициализирован ли Logger
+     * Использует Reflection для безопасной проверки типизированного свойства
+     * 
+     * @return bool
+     */
+    static public function isInitialized(): bool
+    {
+        try {
+            $reflection = new \ReflectionClass(self::class);
+            $property = $reflection->getProperty('instance');
+            $property->setAccessible(true);
+            return $property->isInitialized();
+        } catch (\ReflectionException $e) {
+            return false;
+        } catch (\Error $e) {
+            // Typed property не инициализирован
+            return false;
+        }
     }
 }
