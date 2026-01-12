@@ -26,6 +26,8 @@ abstract class ListLayoutElement extends AbstractElement
 
         $photoPosition = $mbSection['settings']['sections']['list']['photo_position'] ?? 'left';
 
+        $this->handleCustomStylesSection($brizySection);
+
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
 
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
@@ -178,5 +180,10 @@ abstract class ListLayoutElement extends AbstractElement
     {
         $elementContext = $data->instanceWithBrizyComponentAndMBSection($this->getItemImageComponent($brizySectionItem, $photoPosition), $mbItem);
         $this->handleRichTextItem($elementContext, $this->browserPage);
+    }
+
+    protected function handleCustomStylesSection(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection;
     }
 }

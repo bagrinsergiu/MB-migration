@@ -64,7 +64,7 @@ trait LineAble
             ];
 
             $brizySection->addLine(
-                $lineStyles['width'] / 2,
+                $this->getCalculateLineWidth($lineStyles['width']),
                 ['color' => $lineStyles['color'], 'opacity' => 1],
                 $lineStyles['borderWidth'],
                 $customStyles,
@@ -124,7 +124,7 @@ trait LineAble
             ];
 
             $brizySection->addLine(
-                $lineStyles['width'] / 2,
+                $this->getCalculateLineWidth($lineStyles['width']),
                 ['color' => $lineStyles['color'], 'opacity' => 1],
                 $lineStyles['borderWidth'],
                 $customStyles,
@@ -136,6 +136,15 @@ trait LineAble
         }
 
         return $brizySection;
+    }
+
+    /**
+     * @param $width
+     * @return float|int
+     */
+    protected function getCalculateLineWidth($width)
+    {
+        return $width / 2;
     }
 
 }
