@@ -1,0 +1,43 @@
+.run-migration {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.migration-form {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.alert-success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.form-help-hint {
+  color: #007bff;
+  font-style: italic;
+}
+
+.form-help-hint a {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.form-default-badge {
+  font-size: 0.75rem;
+  color: #28a745;
+  font-weight: normal;
+  margin-left: 0.5rem;
+  font-style: italic;
+}

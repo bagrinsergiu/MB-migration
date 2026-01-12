@@ -20,6 +20,12 @@ apply: always
 ├── lib/                    # Main application code (614+ PHP files)
 ├── tests/                  # PHPUnit test suite
 ├── public/                 # Web-accessible entry points
+├── dashboard/              # Dashboard API and frontend (NEW)
+│   ├── api/                # REST API endpoints
+│   ├── frontend/           # React application (future)
+│   ├── IMPORTANT.md        # Critical information
+│   ├── CONTEXT.md          # Project context
+│   └── API.md              # API documentation
 ├── vendor/                 # Composer dependencies
 ├── node_modules/           # NPM dependencies
 ├── docs/                   # Documentation
@@ -43,6 +49,15 @@ apply: always
 | `WaveProc.php` | Wave processing | 20KB | - | Process management |
 | `CreateMigrationMapping.php` | Mapping creation | 10KB | - | Mapping utilities |
 | `mappingUtils.php` | Mapping helpers | 9KB | - | Utility functions |
+
+### Dashboard API (`/dashboard/`)
+| File | Purpose | Key Functions |
+|------|---------|---------------|
+| `dashboard/api/index.php` | API entry point | Routing, CORS, autoloading |
+| `dashboard/api/services/DatabaseService.php` | Database operations | `getWriteConnection()`, `validateWriteHost()` |
+| `dashboard/api/services/MigrationService.php` | Migration logic | `getMigrationsList()`, `runMigration()` |
+| `dashboard/api/controllers/MigrationController.php` | Migration endpoints | `list()`, `run()`, `restart()`, `getStatus()` |
+| `dashboard/api/controllers/LogController.php` | Log endpoints | `getLogs()`, `getRecent()` |
 
 ### Component Directory Index
 

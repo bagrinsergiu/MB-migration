@@ -785,11 +785,16 @@ class BrizyAPI extends Utils
 
 
     /**
+     * Создать новый workspace
+     * 
+     * @param string|null $name Имя workspace. Если не указано, используется Config::$nameMigration
+     * @return array
      * @throws Exception
      */
-    public function createdWorkspaces(): array
+    public function createdWorkspaces(?string $name = null): array
     {
-        return $this->httpClient('POST', $this->createUrlAPI('projects'), ['name' => Config::$nameMigration]);
+        $workspaceName = $name ?? Config::$nameMigration;
+        return $this->httpClient('POST', $this->createUrlAPI('workspaces'), ['name' => $workspaceName]);
     }
 
     /**

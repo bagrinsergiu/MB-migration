@@ -27,7 +27,8 @@
   "autoload": {
     "psr-0": {
       "MBMigration": "lib/",
-      "BRector": "rector/"
+      "BRector": "rector/",
+      "Dashboard": "dashboard/"
     }
   },
   "autoload-dev": {

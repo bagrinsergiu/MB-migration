@@ -1,0 +1,147 @@
+.migration-details {
+  width: 100%;
+}
+
+.details-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.info-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.info-value {
+  color: var(--text);
+  font-weight: 500;
+  text-align: right;
+}
+
+.info-value.uuid {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+}
+
+.json-section {
+  margin-top: 1.5rem;
+}
+
+.json-section h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.restart-form {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.restart-form h4 {
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.form-help {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.form-help-hint {
+  color: #007bff;
+  font-style: italic;
+}
+
+.form-help-hint a {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.form-default-badge {
+  font-size: 0.75rem;
+  color: #28a745;
+  font-weight: normal;
+  margin-left: 0.5rem;
+  font-style: italic;
+}
+
+.warnings-list {
+  margin-top: 0.5rem;
+}
+
+.warning-item {
+  padding: 0.75rem;
+  background-color: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #92400e;
+  line-height: 1.5;
+}
+
+.warning-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-value a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.info-value a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .info-value {
+    text-align: left;
+  }
+}

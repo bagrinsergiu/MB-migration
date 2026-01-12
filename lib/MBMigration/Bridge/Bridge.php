@@ -432,6 +432,46 @@ class Bridge
             throw new Exception('Invalid brz_project_id', 400);
         }
 
+        $mb_site_id = $this->request->get('mb_site_id');
+        $mb_secret = $this->request->get('mb_secret');
+
+        // Mock data for specific parameters
+        if ($mb_project_uuid === '0c56530e-ca31-4a7c-964f-e69be01f3820'
+            && $brz_project_id == '23131991'
+            && $mb_site_id == '31383'
+            && $mb_secret === 'b0kcNmG1cvoMl471cFK2NiOvCIwtPB5Q') {
+
+            $mockResponse = [
+                'status' => 'success',
+                'DEV_MODE' => true,
+                'theme' => 'Aurora',
+                'migration_id' => '9730732838b03e38080f553f4b334da2',
+                'date' => '2026-01-09',
+                'mb_uuid' => '3c56530e-ca31-4a7c-964f-e69be01f382a',
+                'mb_site_id' => 24114,
+                'mb_product_name' => 'calvarybaptistchurch15',
+                'mb_project_domain' => 'calvarybaptistburlington.org',
+                'brizy_project_id' => 23131991,
+                'brizy_project_domain' => 'https://loris9cdb07e6.brizy.site',
+                'progress' => [
+                    'Total' => 18,
+                    'Success' => 16,
+                    'processTime' => 592.4
+                ],
+                'message' => [
+                    'warning' => [
+                        'Warning: Declaration of MBMigration\\Builder\\Layout\\Common\\Elements\\HeadElement::generalSectionBehavior(MBMigration\\Builder\\Layout\\Common\\ElementContextInterface $data, MBMigration\\Builder\\BrizyComponent\\BrizyComponent $section): void should be compatible with MBMigration\\Builder\\Layout\\Common\\Elements\\AbstractElement::generalSectionBehavior(MBMigration\\Builder\\Layout\\Common\\ElementContextInterface $data, ?MBMigration\\Builder\\BrizyComponent\\BrizyComponent $section): void in file /project/lib/MBMigration/Builder/Layout/Common/Elements/HeadElement.php on line 457',
+                        'Warning: Undefined index: id in file /project/lib/MBMigration/Builder/Layout/Common/Elements/Events/EventLayoutElement.php on line 97'
+                    ]
+                ],
+                'mMigration' => false,
+                'fullLogUrl' => ''
+            ];
+
+            $this->prepareResponseMessage($mockResponse);
+            return $this;
+        }
+
         $brz_workspaces_id = (int)$this->request->get('brz_workspaces_id') ?? 0;
         $mb_page_slug = $this->request->get('mb_page_slug') ?? '';
 

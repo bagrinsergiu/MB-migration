@@ -9,7 +9,56 @@ use Symfony\Component\HttpFoundation\Response;
 require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
 
 return static function (array $context, Request $request): Response {
-    switch ($request->getPathInfo()) {
+    $pathInfo = $request->getPathInfo();
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    $uriPath = parse_url($requestUri, PHP_URL_PATH);
+    
+    // Handle dashboard static assets first
+    if (preg_match('#^/dashboard/assets/#', $pathInfo) || preg_match('#^/dashboard/assets/#', $uriPath)) {
+        $distPath = dirname(__DIR__) . '/dashboard/frontend/dist';
+        $filePath = preg_replace('#^/dashboard/#', '', $pathInfo ?: $uriPath);
+        $staticFile = $distPath . '/' . $filePath;
+        
+        if (file_exists($staticFile) && is_file($staticFile)) {
+            $mimeTypes = [
+                'js' => 'application/javascript',
+                'mjs' => 'application/javascript',
+                'css' => 'text/css',
+                'json' => 'application/json',
+                'png' => 'image/png',
+                'jpg' => 'image/jpeg',
+                'jpeg' => 'image/jpeg',
+                'svg' => 'image/svg+xml',
+                'ico' => 'image/x-icon',
+                'woff' => 'font/woff',
+                'woff2' => 'font/woff2',
+                'ttf' => 'font/ttf',
+                'eot' => 'application/vnd.ms-fontobject',
+            ];
+            $ext = strtolower(pathinfo($staticFile, PATHINFO_EXTENSION));
+            $mimeType = $mimeTypes[$ext] ?? 'application/octet-stream';
+            
+            $response = new Response();
+            $response->headers->set('Content-Type', $mimeType);
+            $response->headers->set('Cache-Control', 'public, max-age=31536000');
+            $response->setContent(file_get_contents($staticFile));
+            return $response;
+        }
+    }
+    
+    // Handle all other dashboard routes
+    if (strpos($pathInfo, '/dashboard') === 0 || strpos($uriPath, '/dashboard') === 0) {
+        // Для API routes возвращаем результат из dashboard/api/index.php
+        if (strpos($pathInfo, '/dashboard/api') === 0 || strpos($uriPath, '/dashboard/api') === 0) {
+            $dashboardApi = require dirname(__DIR__) . '/dashboard/api/index.php';
+            return $dashboardApi($context, $request);
+        }
+        // Для остальных dashboard routes используем require_once
+        require_once dirname(__DIR__) . '/dashboard/index.php';
+        exit;
+    }
+    
+    switch ($pathInfo) {
         case '/health':
             return new JsonResponse(["status" => "success",], 200);
     }
