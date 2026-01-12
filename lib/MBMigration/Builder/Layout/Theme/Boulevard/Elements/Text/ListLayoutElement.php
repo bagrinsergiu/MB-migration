@@ -39,12 +39,20 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0)->addMargin(0, 30, 0, 0,  '', '%');
+        return $brizySection
+            ->getItemWithDepth(0)
+            ->addMargin(0, 30, 0, 0,  '', '%');
+
     }
 
     protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {
         return $brizySection;
+    }
+
+    protected function getCalculateLineWidth($width)
+    {
+        return 100;
     }
 
     protected function transformHeadItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
@@ -59,7 +67,15 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
                 $brizySection
             );
 
-            $this->handleLine($elementContext, $this->browserPage, $titleMb['id'], null, [], 1, null);
+            $this->handleLine(
+                $elementContext,
+                $this->browserPage,
+                $titleMb['id'],
+                null,
+                ['widthSuffix' => '%'],
+                1,
+                null
+            );
         }
 
         $this->handleShadow($brizySection);
@@ -83,6 +99,11 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         }
     }
 
+    protected function handleCustomStylesSection(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->addPadding(0,0,0,0);
+    }
+
     protected function customSettings(): array
     {
         return  [];
@@ -99,12 +120,12 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function getTopPaddingOfTheFirstElement(): int
     {
-        return 100;
+        return 50;
     }
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
-        return 100;
+        return 50;
     }
 
     protected function getPropertiesMainSection(): array
@@ -117,11 +138,11 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 100,
+            "mobilePaddingTop" => 50,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 100,
+            "mobilePaddingBottom" => 50,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",

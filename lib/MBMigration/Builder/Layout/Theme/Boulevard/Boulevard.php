@@ -31,7 +31,6 @@ class Boulevard extends AbstractTheme
 
         $this->handleLayoutStyle($brizyComponent);
 
-
         $elementFactory = $this->themeContext->getElementFactory();
         $browserPage = $this->themeContext->getBrowserPage();
 
@@ -161,7 +160,9 @@ class Boulevard extends AbstractTheme
 
         $brizyComponent->getItemWithDepth(0, 0, 1)
             ->addMobileMargin()
-            ->addMobilePadding();
+            ->addMobilePadding()
+            ->addPadding(0,0,0,0);
+
         return $brizyComponent;
     }
 
