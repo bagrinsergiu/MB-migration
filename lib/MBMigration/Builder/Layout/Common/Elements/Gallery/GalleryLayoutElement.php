@@ -354,7 +354,29 @@ abstract class GalleryLayoutElement extends AbstractElement
 
     protected function getArrowColorByBackground($colorArrows, $backGroundColor): string
     {
-        return ColorConverter::getContrastColor($backGroundColor);
+        // Extract color string from array or use string directly
+        $colorString = '#FFFFFF'; // default fallback
+        
+        if (is_array($backGroundColor)) {
+            // Try to extract color from array by common keys
+            if (isset($backGroundColor['color'])) {
+                $colorString = $backGroundColor['color'];
+            } elseif (isset($backGroundColor['background-color'])) {
+                $colorString = $backGroundColor['background-color'];
+            } elseif (!empty($backGroundColor)) {
+                // Get first non-opacity value from array
+                foreach ($backGroundColor as $key => $value) {
+                    if ($key !== 'opacity' && is_string($value)) {
+                        $colorString = $value;
+                        break;
+                    }
+                }
+            }
+        } elseif (is_string($backGroundColor) && !empty($backGroundColor)) {
+            $colorString = $backGroundColor;
+        }
+        
+        return ColorConverter::getContrastColor($colorString);
     }
 
     protected function customizationSlide(BrizyComponent $brizySectionItem):BrizyComponent

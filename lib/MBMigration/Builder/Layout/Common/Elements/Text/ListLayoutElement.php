@@ -178,7 +178,7 @@ abstract class ListLayoutElement extends AbstractElement
 
     protected function handleMbPhotoItem(ElementContextInterface $data, $brizySectionItem, $photoPosition, $mbItem)
     {
-        $elementContext = $data->instanceWithBrizyComponentAndMBSection($this->getItemImageComponent($brizySectionItem, $photoPosition), $mbItem);
+        $elementContext = $data->instanceWithBrizyComponentAndMBSection($mbItem, $this->getItemImageComponent($brizySectionItem, $photoPosition));
         $this->handleRichTextItem($elementContext, $this->browserPage);
     }
 
