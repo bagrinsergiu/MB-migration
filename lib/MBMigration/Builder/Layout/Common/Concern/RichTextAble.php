@@ -503,7 +503,7 @@ trait RichTextAble
             $families,
             $defaultFont
         );
-        $embeddedElements = $this->findEmbeddedElements($mbSectionItem['content']);
+        $embeddedElements = $this->findEmbeddedElements($mbSectionItem['content'] ?? '');
         $embeddIndex = 0;
 
         // Track which component types have been applied once (for 'implement' => 'one')
@@ -531,21 +531,21 @@ trait RichTextAble
                         $brizyEmbedCodeComponent->getItemValueWithDepth(0)->set_customCSS(
                             ".{$cssClass} { text-align: {$styles['text-align']}; font-family: {$styles['font-family']}; }
 .{$cssClass} .brz-embed-content { width: 100% !important; }
-.{$cssClass} .brz-embed-content .embedded-paste { 
-    width: 100% !important; 
-    max-width: 100% !important; 
-    min-width: 0 !important; 
-    box-sizing: border-box; 
+.{$cssClass} .brz-embed-content .embedded-paste {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
     display: block !important;
 }
-.{$cssClass} .brz-embed-content .embedded-paste iframe { 
-    width: 100% !important; 
-    max-width: 100% !important; 
-    min-width: 0 !important; 
+.{$cssClass} .brz-embed-content .embedded-paste iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     display: block;
 }
 .{$cssClass} .brz-embed-content > div:has(.embedded-paste iframe) {
-    display: flex; 
+    display: flex;
     justify-content: {$styles['text-align']};
     width: 100% !important;
 }"
@@ -855,6 +855,8 @@ trait RichTextAble
                 ->set_imageFileName($mbSectionItem['imageFileName'])
                 ->set_imageSrc($mbSectionItem['content']);
 
+            $wrapperImage->addMobileHorizontalContentAlign();
+
             // Set image extension from filename or default to png
             if (!empty($mbSectionItem['imageFileName'])) {
                 $extension = pathinfo($mbSectionItem['imageFileName'], PATHINFO_EXTENSION);
@@ -1108,7 +1110,7 @@ trait RichTextAble
             } else {
                 $currentStyle .= "; width: 100% !important; max-width: 100% !important;";
             }
-            
+
             $iframe->setAttribute('style', $currentStyle);
         }
         $result = [];
