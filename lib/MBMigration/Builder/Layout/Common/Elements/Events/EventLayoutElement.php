@@ -16,6 +16,7 @@ use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout;
 use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
 
 abstract class EventLayoutElement extends AbstractElement
@@ -94,7 +95,19 @@ abstract class EventLayoutElement extends AbstractElement
             $detailsSection
         );
 
-        $placeholder = base64_encode('{{ brizy_dc_url_post entityType="' . $detailCollectionItem['type']['id'] . '" entityId="' . $detailCollectionItem['id'] . '" }}');
+        $entityTypeId = $detailCollectionItem['type']['id'] ?? $detailCollectionItem['type']['slug'] ?? '';
+        $entityId = $detailCollectionItem['id'] ?? '';
+        
+        if (empty($entityTypeId) || empty($entityId)) {
+            Logger::instance()->warning('EventLayoutElement: Missing required collection item data', [
+                'entityTypeId' => $entityTypeId,
+                'entityId' => $entityId,
+                'collectionItem' => $detailCollectionItem
+            ]);
+            return $brizyWidget;
+        }
+        
+        $placeholder = base64_encode('{{ brizy_dc_url_post entityType="' . $entityTypeId . '" entityId="' . $entityId . '" }}');
         $this->getDetailsLinksComponent($brizyWidget)
             ->getValue()
             ->set_eventDetailPageSource($collectionTypeUri)
