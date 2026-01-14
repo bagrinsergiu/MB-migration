@@ -42,8 +42,8 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
         foreach ($mbSection['items'] as $mbSectionItem) {
             $brizyAccordionItemComponent = new BrizyComponent($itemJson);
 
-            $lableText = TextTools::transformTextBool($mbSectionItem['items'][0]['content'],
-                    $accordionElementStyles['uppercase']);
+            $lableText = TextTools::transformTextBool($mbSectionItem['items'][0]['content'] ?? '',
+                    $accordionElementStyles['uppercase'] ?? false);
 
             $brizyAccordionItemComponent->getValue()->set_labelText(strip_tags($lableText));
 
@@ -88,7 +88,7 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
 
             $accordionRowElementStyle = [
-                'bgColorHex' => $backgroundColorStyles['background-color'],
+                'bgColorHex' => $backgroundColorStyles['background-color'] ?? '#ffffff',
 
                 "marginType" => "ungrouped",
                 "marginSuffix" => "px",

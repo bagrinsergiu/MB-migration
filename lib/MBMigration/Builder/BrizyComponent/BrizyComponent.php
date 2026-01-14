@@ -949,7 +949,7 @@ class BrizyComponent implements JsonSerializable
 
         $imageConfig = [
             'imageSrc' => $mbSectionItem['content'] ?? '',
-            'imageFileName' => $mbSectionItem['imageFileName']
+            'imageFileName' => $mbSectionItem['imageFileName'] ?? ''
         ];
 
         $imageConfig = array_merge($imageConfig, $options);
