@@ -449,7 +449,9 @@ abstract class AbstractElement implements ElementInterface
     {
         $mbSection = $data->getMbSection();
 
-        $this->behaviorForAddingIndentsInSection($mbSection, $section);
+        if ($section !== null) {
+            $this->behaviorForAddingIndentsInSection($mbSection, $section);
+        }
 
     }
 

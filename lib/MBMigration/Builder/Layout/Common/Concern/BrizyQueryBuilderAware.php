@@ -51,6 +51,10 @@ trait BrizyQueryBuilderAware
                 $slug,
                 json_encode(['items' => [$pageData]])
             );
+            // Use updated collection item if available, otherwise keep the original
+            if (isset($result['updateCollectionItem']['collectionItem'])) {
+                $collectionItem = $result['updateCollectionItem']['collectionItem'];
+            }
         }
 
         return $collectionItem;

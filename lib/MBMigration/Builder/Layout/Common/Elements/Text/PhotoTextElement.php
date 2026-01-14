@@ -49,7 +49,7 @@ abstract class PhotoTextElement extends AbstractElement
 
                         $imageStyles = $this->obtainImageStyles($elementContext, $this->browserPage);
 
-                        $this->targetImageSize($imageTarget, (int)$imageStyles['width'], (int)$imageStyles['height']);
+                        $this->targetImageSize($imageTarget, (int)($imageStyles['width'] ?? 0), (int)($imageStyles['height'] ?? 0));
 
                         if ($imageParentTarget = $this->getItemImageParentComponent($brizySection)) {
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
@@ -119,6 +119,8 @@ abstract class PhotoTextElement extends AbstractElement
             ->set_height($height)
             ->set_heightSuffix((strpos($height, '%') === true) ? '%' : 'px')
             ->set_widthSuffix((strpos($width, '%') === true) ? '%' : 'px');
+
+        $imageTarget->getParent()->addMobileHorizontalContentAlign();
     }
 
     /**

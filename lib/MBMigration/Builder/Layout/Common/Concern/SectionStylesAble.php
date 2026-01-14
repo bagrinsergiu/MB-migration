@@ -122,29 +122,29 @@ trait SectionStylesAble
         $brizySection->getValue()
             ->set_paddingType('ungrouped')
             ->set_marginType('ungrouped')
-            ->set_paddingTop((int)$sectionStyles['padding-top'])
-            ->set_paddingBottom((int)$sectionStyles['padding-bottom'])
-            ->set_paddingRight((int)$sectionStyles['padding-right'])
-            ->set_paddingLeft((int)$sectionStyles['padding-left'])
-            ->set_marginLeft((int)$sectionStyles['margin-left'])
-            ->set_marginRight((int)$sectionStyles['margin-right'])
-            ->set_marginTop((int)$sectionStyles['margin-top'])
-            ->set_marginBottom((int)$sectionStyles['margin-bottom'])
+            ->set_paddingTop((int)($sectionStyles['padding-top'] ?? 0))
+            ->set_paddingBottom((int)($sectionStyles['padding-bottom'] ?? 0))
+            ->set_paddingRight((int)($sectionStyles['padding-right'] ?? 0))
+            ->set_paddingLeft((int)($sectionStyles['padding-left'] ?? 0))
+            ->set_marginLeft((int)($sectionStyles['margin-left'] ?? 0))
+            ->set_marginRight((int)($sectionStyles['margin-right'] ?? 0))
+            ->set_marginTop((int)($sectionStyles['margin-top'] ?? 0))
+            ->set_marginBottom((int)($sectionStyles['margin-bottom'] ?? 0))
             ->set_fullHeight('custom')
-            ->set_sectionHeight((int)$sectionStyles['height'])
+            ->set_sectionHeight((int)($sectionStyles['height'] ?? 0))
             ->set_mobileBgSize('cover')
             ->set_mobileBgSizeType('original')
             ->set_mobileBgRepeat('off')
             ->set_mobilePaddingType('ungrouped')
-            ->set_mobilePadding((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePadding((int)($sectionStyles['margin-bottom'] ?? 0))
             ->set_mobilePaddingSuffix('px')
-            ->set_mobilePaddingTop((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingTop((int)($sectionStyles['margin-bottom'] ?? 0))
             ->set_mobilePaddingTopSuffix('px')
-            ->set_mobilePaddingRight((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingRight((int)($sectionStyles['margin-bottom'] ?? 0))
             ->set_mobilePaddingRightSuffix('px')
-            ->set_mobilePaddingBottom((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingBottom((int)($sectionStyles['margin-bottom'] ?? 0))
             ->set_mobilePaddingBottomSuffix('px')
-            ->set_mobilePaddingLeft((int)$sectionStyles['margin-bottom'])
+            ->set_mobilePaddingLeft((int)($sectionStyles['margin-bottom'] ?? 0))
             ->set_mobilePaddingLeftSuffix('px');
 
         try {
@@ -185,16 +185,16 @@ trait SectionStylesAble
         }
 
         $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
-            $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'])
+            $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'] ?? 'rgba(255,255,255,1)')
         );
-        $sectionStyles['background-color'] = ColorConverter::rgba2hex($sectionStyles['background-color']);
+        $sectionStyles['background-color'] = ColorConverter::rgba2hex($sectionStyles['background-color'] ?? '#ffffff');
 
         $this->handleItemBackground($brizySection, $sectionStyles);
 
         if ($this->hasImageBackground($mbSectionItem)) {
             $background = $mbSectionItem['settings']['sections']['background'];
             if (isset($background['filename']) && isset($background['photo'])) {
-                $validatedUrl = MediaController::validateBgImag($sectionStyles['background-image']);
+                $validatedUrl = MediaController::validateBgImag($sectionStyles['background-image'] ?? '');
                 $bgImg = $validatedUrl ? $validatedUrl : $background['photo'];
 
 //                if($background['opacity']>=0.9)
@@ -205,11 +205,11 @@ trait SectionStylesAble
                 $brizySection->getValue()
                     ->set_bgImageSrc($bgImg)
                     ->set_bgImageFileName($background['filename'])
-                    ->set_bgSize($sectionStyles['background-size'])
+                    ->set_bgSize($sectionStyles['background-size'] ?? 'cover')
                     ->set_bgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']))
-                    ->set_bgColorHex($sectionStyles['background-color'])
+                    ->set_bgColorHex($sectionStyles['background-color'] ?? '#ffffff')
                     ->set_mobileBgColorType('solid')
-                    ->set_mobileBgColorHex($sectionStyles['background-color'])
+                    ->set_mobileBgColorHex($sectionStyles['background-color'] ?? '#ffffff')
                     ->set_mobileBgColorOpacity(1 - NumberProcessor::convertToNumeric($background['opacity']));
 
                 if ($options['heightType'] == 'auto') {
@@ -219,10 +219,11 @@ trait SectionStylesAble
                         ->set_sectionHeight(500)
                         ->set_fullHeight('auto');
                 } else if ($options['heightType'] == 'custom') {
+                    $heightValue = isset($sectionStyles['height']) ? (int)str_replace('px', '', $sectionStyles['height']) : 500;
                     $brizySection
                         ->getParent()
                         ->getValue()
-                        ->set_sectionHeight((int)str_replace('px', '', $sectionStyles['height']) ?? 500)
+                        ->set_sectionHeight($heightValue)
                         ->set_fullHeight('custom');
                 }
 
@@ -381,7 +382,7 @@ trait SectionStylesAble
                     $families,
                     $defaultFont
                 );
-                $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity']);
+                $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity'] ?? 1);
 
                 if ($sectionBgStyles['opacity'] !== 0) {
                     $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
