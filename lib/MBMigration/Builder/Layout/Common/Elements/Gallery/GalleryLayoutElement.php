@@ -48,7 +48,7 @@ abstract class GalleryLayoutElement extends AbstractElement
         $sectionSelector = '[data-id="'.($mbSection['sectionId'] ?? $mbSection['id']).'"]';
 
         $backgroundColorStyles = $this->getDomElementStyles($sectionSelector, ['background-color'], $this->browserPage);
-        $properties['background-color'] = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color']);
+        $properties['background-color'] = ColorConverter::convertColorRgbToHex($backgroundColorStyles['background-color'] ?? '#ffffff');
 
         $slideJson = json_decode($this->brizyKit['slide'], true);
         $videoJson = json_decode($this->brizyKit['video'], true);
@@ -105,7 +105,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 //            ->set_animationDelay($slideDuration * 1000);
 
 
-        if($mbSection['settings']['sections']['gallery']['transition'] === 'Fade'){
+        if(isset($mbSection['settings']['sections']['gallery']['transition']) && $mbSection['settings']['sections']['gallery']['transition'] === 'Fade'){
             $brizySection->getValue()
                 ->set_sliderAnimation('fade');
         }
@@ -189,6 +189,12 @@ abstract class GalleryLayoutElement extends AbstractElement
         Logger::instance()->debug('ImageSrc (content): '.($mbItem['content'] ?? $mbItem['photo']));
         Logger::instance()->debug('ImageFileName (imageFileName): '.($mbItem['imageFileName'] ?? $mbItem['filename']));
         $colorCSS = $properties['background-color'] ?? '#ffffff';
+        // Ensure colorCSS is a string, not an array
+        if (is_array($colorCSS)) {
+            $colorCSS = $colorCSS['color'] ?? $colorCSS['background-color'] ?? '#ffffff';
+        }
+        $brizySectionItem->addMobileMargin(10);
+
         $brizyComponentValue
             ->set_marginTop(0)
             ->set_marginBottom(0)
@@ -248,12 +254,12 @@ abstract class GalleryLayoutElement extends AbstractElement
                 $brizyComponentValue->set_height($mbItem['settings']['slide']['slide_height']);
                 $brizyComponentValue->set_bgImageHeight($mbItem['settings']['slide']['slide_height']);
                 $brizyComponentValue->set_tabletHeight($mbItem['settings']['slide']['slide_height']);
-                $brizyComponentValue->set_mobileHeight($mbItem['settings']['slide']['mobile_height']);
+                $brizyComponentValue->set_mobileHeight(250);
             } elseif (isset($mbItem['settings']['height'])) {
                 $brizyComponentValue->set_height($mbItem['settings']['height']);
                 $brizyComponentValue->set_bgImageHeight($mbItem['settings']['height']);
                 $brizyComponentValue->set_tabletHeight($mbItem['settings']['height']);
-                $brizyComponentValue->set_mobileHeight($mbItem['settings']['height'] / 2);
+                $brizyComponentValue->set_mobileHeight(250);
             }
         }
 
@@ -356,7 +362,7 @@ abstract class GalleryLayoutElement extends AbstractElement
     {
         // Extract color string from array or use string directly
         $colorString = '#FFFFFF'; // default fallback
-        
+
         if (is_array($backGroundColor)) {
             // Try to extract color from array by common keys
             if (isset($backGroundColor['color'])) {
@@ -375,7 +381,7 @@ abstract class GalleryLayoutElement extends AbstractElement
         } elseif (is_string($backGroundColor) && !empty($backGroundColor)) {
             $colorString = $backGroundColor;
         }
-        
+
         return ColorConverter::getContrastColor($colorString);
     }
 

@@ -48,8 +48,13 @@ abstract class FullMediaElementElement extends AbstractElement
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
         $images = $this->getItemsByCategory($mbSectionItem, 'photo');
         $imageMb = array_pop($images);
+        
+        if ($imageMb === null) {
+            return $brizySection;
+        }
+        
         $brizyImageWrapperComponent = $this->handlePhotoItem(
-            $imageMb['id'],
+            $imageMb['id'] ?? $imageMb['sectionId'] ?? '',
             $imageMb,
             $brizyImageComponent,
             $this->browserPage,
