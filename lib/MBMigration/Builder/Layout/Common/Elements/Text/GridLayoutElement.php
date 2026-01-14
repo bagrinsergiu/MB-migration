@@ -67,7 +67,7 @@ abstract class GridLayoutElement extends AbstractElement
                     ['border-bottom-color'],
                     $this->browserPage);
 
-                $resultColorStyles['border-bottom-color'] = ColorConverter::convertColorRgbToHex($resultColorStyles['border-bottom-color']);
+                $resultColorStyles['border-bottom-color'] = ColorConverter::convertColorRgbToHex($resultColorStyles['border-bottom-color'] ?? '#000000');
 
                 $brizySectionItem = new BrizyComponent($itemJson);
 
@@ -92,7 +92,7 @@ abstract class GridLayoutElement extends AbstractElement
                             $additionalOptions = [
                                 'mobileWidth' => 100,
                                 'mobileHeightStyle' => 'custom',
-                                'mobileHeight' => (int)ColorConverter::removePx($imageSize['height']),
+                                'mobileHeight' => (int)ColorConverter::removePx($imageSize['height'] ?? '0px'),
                                 'mobileHeightSuffix' => 'px',
                                 "mobileMarginType" => "grouped",
                                 "mobileMargin" => 20,
@@ -136,7 +136,7 @@ abstract class GridLayoutElement extends AbstractElement
                                 ['display'],
                                 $this->browserPage);
 
-                            if(trim($displayItem['display']) === 'none'){
+                            if(isset($displayItem['display']) && trim($displayItem['display']) === 'none'){
                                 continue 2;
                             }
 
