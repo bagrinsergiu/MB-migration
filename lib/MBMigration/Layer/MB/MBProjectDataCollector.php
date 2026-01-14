@@ -4,6 +4,7 @@ namespace MBMigration\Layer\MB;
 
 use MBMigration\Core\Logger;
 use Exception;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use MBMigration\Builder\DebugBackTrace;
 use MBMigration\Builder\Fonts\FontsController;
@@ -132,9 +133,225 @@ class MBProjectDataCollector
         if (empty($settingSite)) {
             Logger::instance()->info(self::trace(0).'Message: MB project not found');
             Logger::instance()->critical("MB domain project not found with uuid: $project_ID_MB");
+            return null;
         }
 
-        return $settingSite[0]['domain_name'];
+        return $settingSite[0]['domain_name'] ?? null;
+    }
+
+    /**
+     * Normalize domain by adding previewBaseHost if needed
+     * 
+     * @param string|null $domain Domain name to normalize
+     * @return string|null Normalized domain or null if input is null/empty
+     */
+    public static function normalizeDomain(?string $domain): ?string
+    {
+        if (empty($domain)) {
+            return null;
+        }
+
+        $previewBaseHost = Config::$previewBaseHost ?? null;
+        if (empty($previewBaseHost)) {
+            return $domain;
+        }
+
+        // Remove leading dot from previewBaseHost if present
+        $previewBaseHost = ltrim($previewBaseHost, '.');
+
+        // Simple check: if domain already ends with .{previewBaseHost}, return as is
+        $domainLower = strtolower($domain);
+        $previewBaseHostLower = strtolower($previewBaseHost);
+        
+        if (substr($domainLower, -strlen('.' . $previewBaseHostLower)) === '.' . $previewBaseHostLower) {
+            return $domain;
+        }
+
+        // Add previewBaseHost in format: {domain_name}.{previewBaseHost}
+        return $domain . '.' . $previewBaseHost;
+    }
+
+    /**
+     * Get all domains for a site by site_id
+     * 
+     * @param int $siteId Site ID
+     * @return array Array of domain names
+     */
+    public static function getAllDomainsBySiteId(int $siteId): array
+    {
+        $db = DBConnector::getInstance();
+        $domains = $db->requestArray("SELECT domain_name from domains WHERE site_id = '".$siteId."'");
+        
+        if (empty($domains)) {
+            Logger::instance()->info(self::trace(0).'Message: No domains found for site_id: '.$siteId);
+            return [];
+        }
+
+        return array_column($domains, 'domain_name');
+    }
+
+    /**
+     * Check if domain is accessible (not showing error page)
+     * 
+     * @param string $domain Domain to check (should be normalized with protocol)
+     * @return bool True if domain is accessible, false otherwise
+     */
+    public static function isDomainAccessible(string $domain): bool
+    {
+        if (empty($domain)) {
+            return false;
+        }
+
+        // Ensure domain has protocol
+        $url = $domain;
+        if (!preg_match('/^https?:\/\//', $url)) {
+            $url = 'https://' . $url;
+        }
+        
+        // Ensure URL ends with /
+        if (substr($url, -1) !== '/') {
+            $url .= '/';
+        }
+
+        try {
+            $client = new Client([
+                'timeout' => 10,
+                'connect_timeout' => 5,
+                'verify' => false, // Disable SSL verification for development
+                'allow_redirects' => true,
+                'http_errors' => false, // Don't throw exceptions on HTTP errors
+            ]);
+
+            $response = $client->get($url);
+            $statusCode = $response->getStatusCode();
+            $body = (string) $response->getBody();
+            $contentType = $response->getHeaderLine('Content-Type');
+
+            // Check if response is HTML
+            $isHtml = stripos($contentType, 'text/html') !== false || 
+                     stripos($contentType, 'application/xhtml') !== false ||
+                     empty($contentType); // If no Content-Type, assume HTML for web pages
+
+            // Check for error messages in the HTML response
+            $errorMessages = [
+                'Sorry about that!',
+                "The page you're looking for has either moved or doesn't exist.",
+                'doesn\'t exist',
+                'moved or doesn\'t exist',
+                'Page not found',
+                '404',
+                'Not Found'
+            ];
+
+            // If it's HTML, check for error indicators
+            if ($isHtml) {
+                // Normalize HTML for easier searching (remove extra whitespace)
+                $normalizedBody = preg_replace('/\s+/', ' ', $body);
+                
+                // Check for error messages
+                foreach ($errorMessages as $errorMessage) {
+                    if (stripos($normalizedBody, $errorMessage) !== false) {
+                        // Additional check: make sure it's not just a mention in content
+                        // Error pages usually have these messages prominently displayed
+                        $errorPattern = '/<title[^>]*>.*' . preg_quote($errorMessage, '/') . '.*<\/title>/i';
+                        $errorPattern2 = '/<h1[^>]*>.*' . preg_quote($errorMessage, '/') . '.*<\/h1>/i';
+                        $errorPattern3 = '/<body[^>]*>.*' . preg_quote($errorMessage, '/') . '.*<\/body>/i';
+                        
+                        if (preg_match($errorPattern, $normalizedBody) || 
+                            preg_match($errorPattern2, $normalizedBody) ||
+                            (preg_match($errorPattern3, $normalizedBody) && strlen($normalizedBody) < 2000)) {
+                            Logger::instance()->info("Domain $url is not accessible: found error message '$errorMessage' in HTML");
+                            return false;
+                        }
+                    }
+                }
+
+                // Check if HTML is too short (likely an error page)
+                if (strlen($normalizedBody) < 500) {
+                    // Very short HTML might be an error page, but check if it has basic structure
+                    if (stripos($normalizedBody, '<html') === false && stripos($normalizedBody, '<body') === false) {
+                        Logger::instance()->info("Domain $url is not accessible: HTML response too short and lacks structure");
+                        return false;
+                    }
+                }
+
+                // Check for valid HTML structure (should have html, head, or body tags for a real page)
+                $hasValidStructure = stripos($normalizedBody, '<html') !== false || 
+                                    stripos($normalizedBody, '<body') !== false ||
+                                    stripos($normalizedBody, '<!doctype') !== false;
+                
+                if (!$hasValidStructure && strlen($normalizedBody) > 100) {
+                    // If it's a substantial response but lacks HTML structure, might be an error
+                    Logger::instance()->info("Domain $url might not be accessible: HTML lacks valid structure");
+                    // Don't fail here, but log it
+                }
+            }
+
+            // Consider 2xx and 3xx status codes as accessible (if no error messages found)
+            if ($statusCode >= 200 && $statusCode < 400) {
+                Logger::instance()->info("Domain $url is accessible (status: $statusCode, content-type: $contentType)");
+                return true;
+            }
+
+            Logger::instance()->info("Domain $url returned status code: $statusCode");
+            return false;
+
+        } catch (GuzzleException $e) {
+            Logger::instance()->warning("Error checking domain $url: " . $e->getMessage());
+            return false;
+        } catch (Exception $e) {
+            Logger::instance()->warning("Unexpected error checking domain $url: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Find an available domain from all domains for a site
+     * 
+     * @param int $siteId Site ID
+     * @return string|null Available domain name or null if none found
+     */
+    public static function findAvailableDomain(int $siteId): ?string
+    {
+        $domains = self::getAllDomainsBySiteId($siteId);
+        
+        if (empty($domains)) {
+            Logger::instance()->info("No domains found for site_id: $siteId");
+            return null;
+        }
+
+        Logger::instance()->info("Checking " . count($domains) . " domain(s) for site_id: $siteId");
+
+        foreach ($domains as $domain) {
+            if (empty($domain)) {
+                continue;
+            }
+
+            // Normalize domain
+            $normalizedDomain = self::normalizeDomain($domain);
+            
+            if (empty($normalizedDomain)) {
+                Logger::instance()->warning("Failed to normalize domain: $domain");
+                continue;
+            }
+
+            // Check if domain is accessible
+            if (self::isDomainAccessible($normalizedDomain)) {
+                Logger::instance()->info("Found accessible domain: $normalizedDomain for site_id: $siteId");
+                return $normalizedDomain;
+            }
+        }
+
+        // Fallback: return first domain normalized if none are accessible
+        $firstDomain = reset($domains);
+        if (!empty($firstDomain)) {
+            $normalizedFirst = self::normalizeDomain($firstDomain);
+            Logger::instance()->warning("No accessible domain found for site_id: $siteId, using first domain as fallback: $normalizedFirst");
+            return $normalizedFirst;
+        }
+
+        Logger::instance()->critical("No valid domain found for site_id: $siteId");
+        return null;
     }
 
     /**

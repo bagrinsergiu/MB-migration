@@ -3,15 +3,79 @@
 namespace MBMigration\Builder\Utils;
 
 use MBMigration\Builder\VariableCache;
+use MBMigration\Core\Logger;
+use MBMigration\Layer\MB\MBProjectDataCollector;
 
 class PathSlugExtractor
 {
+    /**
+     * Get and verify domain, find alternative if current is not accessible
+     * 
+     * @return string Working domain
+     */
+    private static function getWorkingDomain(): string
+    {
+        $cache = VariableCache::getInstance();
+        
+        // Check cache for already verified working domain
+        $cachedWorkingDomain = $cache->get('workingDomain');
+        if (!empty($cachedWorkingDomain)) {
+            return $cachedWorkingDomain;
+        }
+
+        $settings = $cache->get('settings');
+        $domain = $settings['domain'] ?? null;
+
+        if (empty($domain)) {
+            Logger::instance()->warning("Domain not found in settings");
+            return '';
+        }
+
+        // Normalize domain if needed
+        $normalizedDomain = MBProjectDataCollector::normalizeDomain($domain);
+        
+        if (empty($normalizedDomain)) {
+            Logger::instance()->warning("Failed to normalize domain: $domain");
+            return $domain;
+        }
+
+        // Check if domain is accessible
+        if (MBProjectDataCollector::isDomainAccessible($normalizedDomain)) {
+            // Cache the working domain
+            $cache->set('workingDomain', $normalizedDomain);
+            return $normalizedDomain;
+        }
+
+        // Domain is not accessible, try to find alternative
+        Logger::instance()->info("Domain $normalizedDomain is not accessible, searching for alternative...");
+        
+        $projectID_MB = $cache->get('projectId_MB');
+        if (!empty($projectID_MB)) {
+            $availableDomain = MBProjectDataCollector::findAvailableDomain($projectID_MB);
+            if (!empty($availableDomain)) {
+                Logger::instance()->info("Found alternative domain: $availableDomain");
+                // Update settings with working domain
+                $settings['domain'] = $availableDomain;
+                $cache->set('settings', $settings);
+                // Cache the working domain
+                $cache->set('workingDomain', $availableDomain);
+                return $availableDomain;
+            }
+        }
+
+        // Fallback to normalized domain even if not accessible
+        Logger::instance()->warning("No alternative domain found, using normalized domain: $normalizedDomain");
+        // Cache it anyway to avoid repeated checks
+        $cache->set('workingDomain', $normalizedDomain);
+        return $normalizedDomain;
+    }
+
     public static function getFullUrl($slug, bool $getPath = false): string
     {
         $cache = VariableCache::getInstance();
         $treePages = $cache->get('ParentPages');
 
-        $domain = $cache->get('settings')['domain'];
+        $domain = self::getWorkingDomain();
 
         $urlBuilder = new UrlBuilder($domain);
 
@@ -29,7 +93,7 @@ class PathSlugExtractor
         $cache = VariableCache::getInstance();
         $treePages = $cache->get('ParentPages');
 
-        $domain = $cache->get('settings')['domain'];
+        $domain = self::getWorkingDomain();
 
         $urlBuilder = new UrlBuilder($domain);
 
@@ -150,8 +214,7 @@ class PathSlugExtractor
 
     public static function getProjectDomain(): string
     {
-        $cache = VariableCache::getInstance();
-        $domain = $cache->get('settings')['domain'];
+        $domain = self::getWorkingDomain();
 
         $UrlDomain = new UrlBuilder($domain);
 
