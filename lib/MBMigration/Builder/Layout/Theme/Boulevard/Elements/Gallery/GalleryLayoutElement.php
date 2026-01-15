@@ -30,7 +30,7 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             ->set_sliderPaddingSuffix("px")
             ->set_sliderPaddingTop(10)
             ->set_sliderPaddingTopSuffix("px")
-            ->set_sliderPaddingRight(70)
+            ->set_sliderPaddingRight(15)
             ->set_sliderPaddingRightSuffix("px")
             ->set_sliderPaddingBottom(30)
             ->set_sliderPaddingBottomSuffix("px")
