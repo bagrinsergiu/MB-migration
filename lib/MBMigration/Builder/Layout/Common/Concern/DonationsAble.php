@@ -42,6 +42,23 @@ trait DonationsAble
                     $buttonStyles = $this->handleButtonStyle($mbSection);
 
                     $selector = '[data-id="' . $mbSection['sectionId'] . '"]';
+                    
+                    // Try to find button with fallback selectors
+                    $buttonSelector = $this->findButtonSelector($selector, $browserPage);
+                    
+                    if (!$buttonSelector) {
+                        Logger::instance()->warning('Donation button not found in section', [
+                            'sectionId' => $mbSection['sectionId'] ?? null,
+                            'selector' => $selector
+                        ]);
+                        return $brizySection;
+                    }
+                    
+                    Logger::instance()->info('Donation button found', [
+                        'sectionId' => $mbSection['sectionId'] ?? null,
+                        'buttonSelector' => $buttonSelector
+                    ]);
+                    
                     $brizyDonationButton = new BrizyComponent(json_decode($brizyKit['donation-button'], true));
 
                     // Apply button styles from RichTextAble
@@ -49,7 +66,7 @@ trait DonationsAble
                         $brizyDonationButton,
                         $buttonStyles,
                         $browserPage,
-                        $selector . ' button.sites-button',
+                        $buttonSelector,
                         $data,
                         $mbSection,
                         $textButtonTransform
@@ -87,6 +104,67 @@ trait DonationsAble
         ];
 
         return (bool)array_intersect($paddingKeys, array_keys($options));
+    }
+
+    /**
+     * Map text-align values to only left, center, or right
+     * @param string $textAlign
+     * @return string Returns 'left', 'center', or 'right'
+     */
+    private function mapTextAlign(string $textAlign): string
+    {
+        $textAlign = strtolower(trim($textAlign));
+        
+        $mapping = [
+            'start' => 'left',
+            'end' => 'right',
+            '-webkit-center' => 'center',
+            '-moz-center' => 'center',
+            'left' => 'left',
+            'right' => 'right',
+            'center' => 'center',
+            'justify' => 'left', // justify defaults to left
+        ];
+        
+        return $mapping[$textAlign] ?? 'left';
+    }
+
+    /**
+     * Find button selector with fallback options
+     * @param string $sectionSelector
+     * @param BrowserPageInterface $browserPage
+     * @return string|null
+     */
+    private function findButtonSelector(string $sectionSelector, BrowserPageInterface $browserPage): ?string
+    {
+        // Check if RichTextAble trait has hasNode method
+        $hasNodeMethod = method_exists($this, 'hasNode');
+        
+        // List of selectors to try in order
+        $selectorsToTry = [
+            $sectionSelector . ' button.sites-button', // Primary selector
+            $sectionSelector . ' .sites-button', // Alternative: class only
+            $sectionSelector . ' button.donation', // Alternative: donation class
+            $sectionSelector . ' .donation button', // Alternative: button inside .donation
+            $sectionSelector . ' button', // Fallback: any button in section
+        ];
+        
+        foreach ($selectorsToTry as $selector) {
+            if ($hasNodeMethod) {
+                if ($this->hasNode($selector, $browserPage)) {
+                    return $selector;
+                }
+            } else {
+                // Fallback: use browserPage hasNode if available
+                if (method_exists($browserPage, 'hasNode')) {
+                    if ($browserPage->hasNode($selector)) {
+                        return $selector;
+                    }
+                }
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -153,17 +231,60 @@ trait DonationsAble
             ]
         );
 
-        $buttonAlignment = $browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $selector . ' span',
-                'styleProperties' => [
-                    'text-align'
-                ],
-                'families' => $data->getFontFamilies(),
-                'defaultFamily' => $data->getDefaultFontFamily(),
-            ]
-        );
+        // Find text-align from the button's nearest block parent
+        // Try different selectors to find the block parent's text-align
+        $buttonAlignment = null;
+        
+        // Extract section selector from button selector
+        $sectionSelector = preg_replace('/\s+button[.\s].*$/', '', $selector);
+        
+        // First, try getting text-align from common parent containers
+        $alignmentSelectors = [
+            $sectionSelector . ' .donation', // Parent with .donation class (most common)
+            $sectionSelector . ' .text.donation', // Parent with both .text and .donation classes
+            $sectionSelector . ' .text', // Parent with .text class
+            $selector, // The button itself (fallback)
+            $sectionSelector . ' > a', // Link parent of button
+        ];
+        
+        foreach ($alignmentSelectors as $alignmentSelector) {
+            try {
+                $alignmentResult = $browserPage->evaluateScript(
+                    'brizy.getStyles',
+                    [
+                        'selector' => $alignmentSelector,
+                        'styleProperties' => [
+                            'text-align'
+                        ],
+                        'families' => $data->getFontFamilies(),
+                        'defaultFamily' => $data->getDefaultFontFamily(),
+                    ]
+                );
+                
+                if (!empty($alignmentResult['data']) && !empty($alignmentResult['data']['text-align'])) {
+                    $buttonAlignment = $alignmentResult;
+                    Logger::instance()->info('Button alignment found', [
+                        'selector' => $alignmentSelector,
+                        'text-align' => $alignmentResult['data']['text-align']
+                    ]);
+                    break;
+                }
+            } catch (Exception $e) {
+                // Continue to next selector if this one fails
+                Logger::instance()->debug('Failed to get alignment from selector', [
+                    'selector' => $alignmentSelector,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+        
+        // Fallback: use default alignment structure
+        if (!$buttonAlignment) {
+            $buttonAlignment = ['data' => []];
+            Logger::instance()->info('Button alignment not found, using default', [
+                'buttonSelector' => $selector
+            ]);
+        }
 
         $additionalStyles = $additionalStyles['data'] ?? [];
         $paddingButtonStyles = $paddingButtonStyles['data'] ?? [];
@@ -179,13 +300,15 @@ trait DonationsAble
         $paddingRight = (int)($additionalStyles['padding-right'] ?? 0) + (int)($paddingButtonStyles['padding-right'] ?? 0);
         $paddingLeft = (int)($additionalStyles['padding-left'] ?? 0) + (int)($paddingButtonStyles['padding-left'] ?? 0);
 
-        // Set alignment
+        // Set alignment with mapping
         if (isset($buttonAlignment['text-align'])) {
+            $alignment = $this->mapTextAlign($buttonAlignment['text-align']);
             $brizyDonationButton->getValue()
-                ->set_horizontalAlign($buttonAlignment['text-align'])
-                ->set_mobileHorizontalAlign($buttonAlignment['text-align']);
+                ->set_horizontalAlign($alignment)
+                ->set_mobileHorizontalAlign($alignment);
         } else {
             $alignment = $mbSection['settings']['sections']['donations']['alignment'] ?? 'left';
+            $alignment = $this->mapTextAlign($alignment);
             $brizyDonationButton->getValue()
                 ->set_horizontalAlign($alignment)
                 ->set_mobileHorizontalAlign($alignment);
