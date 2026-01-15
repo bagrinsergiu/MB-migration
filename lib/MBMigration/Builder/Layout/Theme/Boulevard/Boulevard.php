@@ -161,6 +161,7 @@ class Boulevard extends AbstractTheme
         $brizyComponent->getItemWithDepth(0, 0, 1)
             ->addMobileMargin()
             ->addMobilePadding()
+            ->addTabletPadding()
             ->addPadding(0,0,0,0);
 
         return $brizyComponent;
