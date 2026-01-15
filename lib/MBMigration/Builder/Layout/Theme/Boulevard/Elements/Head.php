@@ -103,8 +103,6 @@ class Head extends HeadElement
 
         $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], $menuSubItemDropdownStyles['data']);
 
-        $menuSubItemStyles['data']['subMenuBorderStyle'] = 'none';
-
         if (isset($menuSubItemStyles['error'])) {
             $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
                 'selector' => $this->getThemeSubMenuItemClassSelected()['selector'],
@@ -178,6 +176,11 @@ class Head extends HeadElement
             $menuItemStyles['data']['mobileMMenuBorderColorHex'] = ColorConverter::convertColorRgbToHex($borderMenuItemStyles['border-bottom-color']);
             $menuItemStyles['data']['mobileMMenuBorderColorOpacity'] = ColorConverter::normalizeOpacity($borderMenuItemStyles['border-bottom-opacity'] ?? 1);
 
+            $menuItemStyles['data']['subMenuBorderStyle'] = 'groove';
+            $menuItemStyles['data']['subMenuBorderColorHex'] = ColorConverter::convertColorRgbToHex($borderMenuItemStyles['border-bottom-color']);
+            $menuItemStyles['data']['subMenuBorderColorOpacity'] = ColorConverter::normalizeOpacity($borderMenuItemStyles['border-bottom-opacity'] ?? 1);
+            $menuItemStyles['data']['subMenuBorderColorPalette'] = '';
+
             $menuItemStyles['data']['menuBorderStyle'] = ('groove');
             $menuItemStyles['data']['menuBorderColorHex'] = ColorConverter::convertColorRgbToHex($borderMenuItemStyles['border-bottom-color']);
             $menuItemStyles['data']['menuBorderColorOpacity'] = ColorConverter::normalizeOpacity($borderMenuItemStyles['border-bottom-opacity'] ?? 1);
@@ -189,6 +192,7 @@ class Head extends HeadElement
         $component = parent::setImageLogo($component, $headItem);
 
         $component->getParent()->getValue()->set_horizontalAlign('center');
+        $component->getParent()->addMobileHorizontalContentAlign('left');
 
         return $component;
     }
