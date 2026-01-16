@@ -72,8 +72,7 @@ class PageController
         $this->parser = $MBProjectDataCollector;
     }
 
-    /**
-     * @throws ElementNotFound
+    /**     * @throws ElementNotFound
      * @throws Exception
      * []
      */

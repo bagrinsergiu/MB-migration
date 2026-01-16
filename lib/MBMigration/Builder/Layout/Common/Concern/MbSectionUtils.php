@@ -4,9 +4,9 @@ namespace MBMigration\Builder\Layout\Common\Concern;
 
 trait MbSectionUtils
 {
-    protected function getItemByType($section, $itemType)
+    protected function getItemByType($section, $itemType,$mbHead='items')
     {
-        foreach ($section['items'] as $item) {
+        foreach ($section[$mbHead] as $item) {
             if ($item['item_type'] == $itemType) {
                 return $item;
             }

@@ -385,9 +385,11 @@ class MBProjectDataCollector
                 s.settings as parameter,
                 s.favicon,
                 s.palette_uuid,
-                s.font_theme_uuid
+                s.font_theme_uuid,
+                rs.current_redesign_id as parent_redesign_id
             FROM sites s
                 JOIN designs d ON d.uuid = s.design_uuid
+                LEFT JOIN redesign_sites rs ON rs.future_redesign_id = s.uuid
             WHERE s.id={$this->siteId}
             "
         );

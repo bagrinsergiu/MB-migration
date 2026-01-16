@@ -10,7 +10,7 @@ use MBMigration\Builder\Media\MediaController;
 use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
 use Throwable;
-use Wrench\Exception\Exception;
+use \Exception;
 
 trait SectionStylesAble
 {
@@ -184,10 +184,23 @@ trait SectionStylesAble
             return;
         }
 
-        $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
-            $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'] ?? 'rgba(255,255,255,1)')
-        );
-        $sectionStyles['background-color'] = ColorConverter::rgba2hex($sectionStyles['background-color'] ?? '#ffffff');
+        if (isset($sectionStyles['background-color'])) {
+            $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
+                $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'] ?? 'rgba(255,255,255,1)')
+            );
+        } else {
+            $selectorSectionStyles = 'body';
+
+            $styles = $this->getDomElementStyles(
+                $selectorSectionStyles,
+                ['background-color', 'opacity'],
+                $this->browserPage,
+                [],
+                []
+            );
+            $sectionStyles['background-color'] = ColorConverter::convertColorRgbToHex($styles['background-color'] ?? '#ffffff');
+            $sectionStyles['opacity'] = ColorConverter::normalizeOpacity($styles['opacity']);
+        }
 
         $this->handleItemBackground($brizySection, $sectionStyles);
 

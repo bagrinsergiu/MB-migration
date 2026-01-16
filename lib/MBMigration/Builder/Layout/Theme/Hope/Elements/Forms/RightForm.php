@@ -40,4 +40,9 @@ class RightForm extends FormWithTextElement
         return $this->handleRichTextItems($elementContext, $this->browserPage);
     }
 
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
+    }
+
 }

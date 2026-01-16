@@ -106,7 +106,7 @@ trait RichTextAble
     /**
      * Process and add all items the same brizy section
      */
-    protected function handleRichTextItems(ElementContextInterface $data, BrowserPageInterface $browserPage): BrizyComponent
+    protected function handleRichTextItems(ElementContextInterface $data, BrowserPageInterface $browserPage, array $filterItemType=null, $mbHead='items'): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
@@ -117,9 +117,13 @@ trait RichTextAble
         $showButtons = $this->canShowButtons($mbSectionItem);
 
         // sort items
-        $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
+        $mbSectionItem[$mbHead] = $this->sortItems($mbSectionItem[$mbHead]);
 
-        foreach ((array)$mbSectionItem['items'] as $mbItem) {
+        foreach ((array)$mbSectionItem[$mbHead] as $mbItem) {
+
+            if(!is_null($filterItemType) &&  !in_array($mbItem['item_type'] ,(array)$filterItemType)){
+                continue;
+            }
 
             if ($mbItem['category'] == $sectionCategory && isset($mbItem['item_type'])) {
                 if ($mbItem['item_type'] == 'title' && !$showHeader) {
@@ -758,7 +762,7 @@ trait RichTextAble
         return $brizySection;
     }
 
-    private function handlePhotoItem(
+    protected function handlePhotoItem(
         $mbSectionItemId,
         $mbSectionItem,
         BrizyComponent $brizyComponent,

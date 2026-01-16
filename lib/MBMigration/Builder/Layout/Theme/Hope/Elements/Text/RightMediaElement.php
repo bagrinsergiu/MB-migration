@@ -4,45 +4,29 @@ namespace MBMigration\Builder\Layout\Theme\Hope\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Layout\Common\Elements\Text\FullMediaElementElement;
 use MBMigration\Builder\Layout\Theme\Hope\Hope;
 use MBMigration\Builder\Utils\ColorConverter;
 
-class FullMediaElement extends FullMediaElementElement
+class RightMediaElement extends FullMediaElement
 {
     protected function getHeaderContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 2, 0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 1, 0);
     }
 
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0, 0);
+        return $brizySection->getItemWithDepth(0, 0, 1, 0, 0);
     }
 
     protected function getImageWrapperComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 1, 0, 0);
-    }
-
-    protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        return $brizySection->getItemWithDepth(0);
-    }
-
-    protected function getTopPaddingOfTheFirstElement(): int
-    {
-        return 200;
-    }
-
-    protected function getMobileTopPaddingOfTheFirstElement(): int
-    {
-        return 25;
+        return $brizySection->getItemWithDepth(0, 0, 1, 0);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -68,10 +52,15 @@ class FullMediaElement extends FullMediaElementElement
             $this->browserPage,
             '::before'
         );
-        if (isset($styles['border-top-color'])) {
-            $brizyComponentValue = $brizySection->getItemValueWithDepth(0, 2, 1, 0, 0);
-            $brizyComponentValue->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
-        }
+
+        $topLine = new BrizyComponent(json_decode($this->brizyKit['line-left-top'], true));
+        $topLine->getItemValueWithDepth(0)->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
+
+        $bottomLine = new BrizyComponent(json_decode($this->brizyKit['line-left-bottom'], true));
+        $bottomLine->getItemValueWithDepth(0)->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
+
+        $brizyHeaderContainerComponent->getValue()->add_items($topLine, 0);
+        $brizyHeaderContainerComponent->getValue()->add_items($bottomLine, 2);
 
         $brizyTextContainerComponent = $this->getTextContainerComponent($brizySection);
         $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyTextContainerComponent);
@@ -105,23 +94,22 @@ class FullMediaElement extends FullMediaElementElement
 
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
         $images = $this->getItemsByCategory($mbSectionItem, 'photo');
-
-        if (count($images)==0) {
-            $brizyImageComponent->getParent()->getValue()->set_items([]);
-        } else {
-            $imageMb = array_pop($images);
-            $this->handlePhotoItem(
-                $imageMb['id'],
-                $imageMb,
-                $brizyImageComponent,
-                $this->browserPage,
-                $data->getFontFamilies(),
-                $data->getDefaultFontFamily(),
-                $imageMb['order_by'] ?? null
-            );
-        }
-
+        $imageMb = array_pop($images);
+        $this->handlePhotoItem(
+            $imageMb['id'],
+            $imageMb,
+            $brizyImageComponent,
+            $this->browserPage,
+            []
+        );
 
         return $brizySection;
     }
+
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
+    }
+
 }
