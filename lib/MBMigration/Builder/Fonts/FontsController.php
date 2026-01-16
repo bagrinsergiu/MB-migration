@@ -895,13 +895,84 @@ class FontsController extends builderUtils
                     'type' => $font['uploadType'] ?? 'upload',
                 ];
             } else if (isset($font['fontFamily'])) {
-                $key = $font['fontFamily'];
-                $fontFamily['kit'][$key] = [
+                $fontFamilyString = $font['fontFamily'];
+                
+                // Создаем основной ключ (как было раньше)
+                $key = $fontFamilyString;
+                $fontData = [
                     'name' => $font['uuid'] ?? null,
                     'type' => $font['uploadType'] ?? 'upload',
                 ];
+                
+                $fontFamily['kit'][$key] = $fontData;
+                
+                // Создаем дополнительные ключи для лучшего сопоставления
+                // 1. Полная нормализация (как в JavaScript): "Oswald, 'Oswald Light', sans-serif" -> "oswald_oswald_light_sans_serif"
+                $fullNormalizedKey = FontUtils::normalizeFontFamilyFull($fontFamilyString);
+                if ($fullNormalizedKey !== $key && !isset($fontFamily['kit'][$fullNormalizedKey])) {
+                    $fontFamily['kit'][$fullNormalizedKey] = $fontData;
+                    Logger::instance()->debug('Added full normalized font key', [
+                        'original' => $fontFamilyString,
+                        'fullKey' => $fullNormalizedKey,
+                        'fontUuid' => $font['uuid'] ?? null
+                    ]);
+                }
+                
+                // 2. Извлекаем все части font-family и создаем ключи для каждой части
+                // Это позволяет находить более точные совпадения
+                // "Oswald, 'Oswald Light', sans-serif" -> ["oswald", "oswald_light"]
+                $fontParts = FontUtils::extractFontFamilyParts($fontFamilyString);
+                foreach ($fontParts as $index => $partKey) {
+                    // Для первой части (oswald) - добавляем только если еще не существует
+                    // Для остальных частей (oswald_light) - всегда добавляем, так как они более специфичные
+                    if ($index === 0) {
+                        // Первая часть - добавляем только если еще не существует
+                        if (!isset($fontFamily['kit'][$partKey])) {
+                            $fontFamily['kit'][$partKey] = $fontData;
+                            Logger::instance()->debug('Added first part font key', [
+                                'original' => $fontFamilyString,
+                                'partKey' => $partKey,
+                                'fontUuid' => $font['uuid'] ?? null
+                            ]);
+                        } else {
+                            // Если ключ уже существует, логируем конфликт
+                            Logger::instance()->debug('Font key conflict (first part)', [
+                                'original' => $fontFamilyString,
+                                'partKey' => $partKey,
+                                'existingFontUuid' => $fontFamily['kit'][$partKey]['name'] ?? null,
+                                'newFontUuid' => $font['uuid'] ?? null
+                            ]);
+                        }
+                    } else {
+                        // Для остальных частей - всегда добавляем, так как они более специфичные
+                        // Это позволяет находить точные совпадения типа "oswald_light"
+                        $fontFamily['kit'][$partKey] = $fontData;
+                        Logger::instance()->debug('Added specific font part key', [
+                            'original' => $fontFamilyString,
+                            'partKey' => $partKey,
+                            'fontUuid' => $font['uuid'] ?? null
+                        ]);
+                    }
+                }
+                
+                // 3. Первая часть нормализованная (fallback): "Oswald, 'Oswald Light', sans-serif" -> "oswald"
+                // Добавляем только если еще не добавлена через extractFontFamilyParts
+                $firstPartKey = FontUtils::normalizeFontFamilyFirst($fontFamilyString);
+                if (!isset($fontFamily['kit'][$firstPartKey])) {
+                    $fontFamily['kit'][$firstPartKey] = $fontData;
+                    Logger::instance()->debug('Added first part normalized font key (fallback)', [
+                        'original' => $fontFamilyString,
+                        'firstPartKey' => $firstPartKey,
+                        'fontUuid' => $font['uuid'] ?? null
+                    ]);
+                }
             }
         }
+
+        Logger::instance()->info('Font family map created', [
+            'totalKeys' => count($fontFamily['kit']),
+            'defaultFont' => $fontFamily['Default']['name'] ?? 'none'
+        ]);
 
         return $fontFamily;
     }
