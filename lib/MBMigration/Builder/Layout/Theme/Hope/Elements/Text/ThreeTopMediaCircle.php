@@ -31,4 +31,8 @@ class ThreeTopMediaCircle extends ThreeTopMediaCircleElement
     {
         return $brizySection->getItemWithDepth(0);
     }
+        protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
+    }
 }

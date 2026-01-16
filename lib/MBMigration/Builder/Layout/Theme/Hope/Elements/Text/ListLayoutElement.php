@@ -70,4 +70,9 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
         $headerParent->getItemWithDepth(1, 0)->getValue()->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
+    }
 }

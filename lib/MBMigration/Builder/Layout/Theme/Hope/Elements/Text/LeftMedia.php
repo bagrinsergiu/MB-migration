@@ -77,4 +77,9 @@ class LeftMedia extends PhotoTextElement
             "mobilePaddingLeftSuffix" => "px",
         ];
     }
+
+    protected function getTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
+    }
 }
