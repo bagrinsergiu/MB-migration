@@ -20,7 +20,7 @@ class MediaController
         $uuid = $cache->get('settings')['uuid'];
         $prefix = substr($uuid, 0, 2);
 
-        return Config::$MBMediaStaging."/".$prefix.'/'.$uuid.'/documents/'.$fileName;
+        return Config::$MBMediaStaging . "/" . $prefix . '/' . $uuid . '/documents/' . $fileName;
     }
 
     public static function getMediaURL(string $fileName, string $directory): string
@@ -34,7 +34,7 @@ class MediaController
 
     public static function isDoc($file): bool
     {
-        if(!filter_var($file, FILTER_VALIDATE_URL)){
+        if (!filter_var($file, FILTER_VALIDATE_URL)) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
             if ($extension === 'pdf' || $extension === 'doc' || $extension === 'docx') {
                 return true;
@@ -71,7 +71,7 @@ class MediaController
     public static function media(&$item, $section, $nameFolder, BrizyAPI $brizyApi): void
     {
         $parts = explode(".", $item['content']);
-        $downloadImageURL = self::getPicturesUrl($parts[0].'@2x.'.$parts[1], $section);
+        $downloadImageURL = self::getPicturesUrl($parts[0] . '@2x.' . $parts[1], $section);
         Logger::instance()->info('Found new image', [$downloadImageURL]);
         $result = $brizyApi->createMedia($downloadImageURL, $nameFolder);
         if ($result) {
@@ -84,14 +84,14 @@ class MediaController
                     $item['settings'] = array_merge(json_decode($result['metadata'], true), $item['settings']);
                     Logger::instance()->info('Success upload image fileName', $result);
                 } else {
-                    Logger::instance()->critical('Unexpected answer: '.json_encode($result));
+                    Logger::instance()->critical('Unexpected answer: ' . json_encode($result));
                 }
             } else {
-                Logger::instance()->critical('Bad response: '.json_encode($result));
+                Logger::instance()->critical('Bad response: ' . json_encode($result));
             }
         } else {
             $item['uploadStatus'] = false;
-            Logger::instance()->critical('The structure of the image is damaged');
+            Logger::instance()->critical('Error uploading image: ' . $downloadImageURL);
         }
     }
 
@@ -111,10 +111,14 @@ class MediaController
             $folderLoad = '/site-images/';
         }
 
-        $uuid = $cache->get('settings')['uuid'];
+        $siteData = $cache->get('settings');
+        if (isset($siteData['parent_redesign_id']))
+            $uuid = $siteData['parent_redesign_id'];
+        else
+            $uuid = $siteData['uuid'];
         $prefix = substr($uuid, 0, 2);
 
-        return Config::$MBMediaStaging."/".$prefix.'/'.$uuid.$folderLoad.$nameImage;
+        return Config::$MBMediaStaging . "/" . $prefix . '/' . $uuid . $folderLoad . $nameImage;
     }
 
     /**
@@ -124,7 +128,7 @@ class MediaController
     {
         if ($favicon != null) {
             $parts = explode(".", $favicon);
-            $downloadImageURL = self::getPicturesUrl($parts[0].'.'.$parts[1], 'favicons');
+            $downloadImageURL = self::getPicturesUrl($parts[0] . '.' . $parts[1], 'favicons');
             $resultImageUpload = $brizyApi->createMedia($downloadImageURL, $projectId);
             if ($resultImageUpload) {
                 if (array_key_exists('status', $resultImageUpload)) {
@@ -227,7 +231,8 @@ class MediaController
 
     public static function validateBgImag(
         $background
-    ) {
+    )
+    {
         if (empty($background)) {
             return false;
         }

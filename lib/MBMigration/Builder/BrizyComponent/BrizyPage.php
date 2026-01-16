@@ -2,8 +2,9 @@
 
 namespace MBMigration\Builder\BrizyComponent;
 
-use JsonSerializable;
 use Exception;
+use JsonSerializable;
+
 class BrizyPage implements JsonSerializable
 {
     private $items;
@@ -41,5 +42,13 @@ class BrizyPage implements JsonSerializable
         $this->items[] = $component;
 
         return $this;
+    }
+
+    public function getItem($index): ?BrizyComponent
+    {
+        if (isset($this->items[$index]))
+            return $this->items[$index];
+
+        return null;
     }
 }

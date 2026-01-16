@@ -3,8 +3,9 @@
 namespace MBMigration\Builder\Layout\Theme\Hope\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
+use MBMigration\Builder\Layout\Theme\Hope\Hope;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class LeftMedia extends PhotoTextElement
@@ -15,7 +16,7 @@ class LeftMedia extends PhotoTextElement
      */
     protected function getImageComponent(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySection->getItemWithDepth(0, 0, 0, 0,0);
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
     }
 
     /**
@@ -41,26 +42,17 @@ class LeftMedia extends PhotoTextElement
         $wrapperLine = new BrizyComponent(json_decode($itemsKit['global']['wrapper--line'], true));
 
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
-        $titleMb = $this->getItemByType($mbSectionItem, 'title');
-
-        $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
-        $wrapperLineStyles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $menuSectionSelector,
-                'styleProperties' => ['border-bottom-color',],
-                'families' => [],
-                'defaultFamily' => '',
-            ]
+        $item = $this->getItemByType($mbSectionItem, 'title');
+        $styles = Hope::getStyles(
+            '[data-id="' . $item['id'] . '"] div',
+            ['border-top-color'],
+            $this->browserPage,
+            '::before'
         );
-
-        $headStyle = [
-            'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
-        ];
 
         $wrapperLine->getItemWithDepth(0)
             ->getValue()
-            ->set_borderColorHex($headStyle['line-color']);
+            ->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
 
         $brizySection->getItemWithDepth(0, 0, 1)
             ->getValue()
@@ -72,7 +64,7 @@ class LeftMedia extends PhotoTextElement
     protected function getPropertiesMainSection(): array
     {
         return [
-            "mobilePaddingType"=> "ungrouped",
+            "mobilePaddingType" => "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
             "mobilePaddingTop" => 25,

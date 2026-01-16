@@ -3,8 +3,9 @@
 namespace MBMigration\Builder\Layout\Theme\Hope\Elements\Text;
 
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
-use MBMigration\Builder\Layout\Common\Elements\Text\FullTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Elements\Text\FullTextElement;
+use MBMigration\Builder\Layout\Theme\Hope\Hope;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class FullText extends FullTextElement
@@ -14,8 +15,9 @@ class FullText extends FullTextElement
         return $brizySection->getItemWithDepth(0);
     }
 
-    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
-        return $brizySection->getItemWithDepth(0,0,0);
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -31,27 +33,18 @@ class FullText extends FullTextElement
 
         $mbSectionItem['items'] = $this->sortItems($mbSectionItem['items']);
 
-        if($showHeader) {
-            $titleMb = $this->getItemByType($mbSectionItem, 'title');
-
-            $menuSectionSelector = '[data-id="' . $titleMb['id'] . '"]';
-            $wrapperLineStyles = $this->browserPage->evaluateScript(
-                'brizy.getStyles',
-                [
-                    'selector' => $menuSectionSelector,
-                    'styleProperties' => ['border-bottom-color',],
-                    'families' => [],
-                    'defaultFamily' => '',
-                ]
+        if ($showHeader) {
+            $item = $this->getItemByType($mbSectionItem, 'title');
+            $styles = Hope::getStyles(
+                '[data-id="' . $item['id'] . '"] div',
+                ['border-top-color'],
+                $this->browserPage,
+                '::before'
             );
-
-            $headStyle = [
-                'line-color' => ColorConverter::convertColorRgbToHex($wrapperLineStyles['data']['border-bottom-color']),
-            ];
 
             $wrapperLine->getItemWithDepth(0)
                 ->getValue()
-                ->set_borderColorHex($headStyle['line-color']);
+                ->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
 
 
             $brizySection->getItemWithDepth(0)

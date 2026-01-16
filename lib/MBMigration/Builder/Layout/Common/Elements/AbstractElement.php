@@ -333,6 +333,9 @@ abstract class AbstractElement implements ElementInterface
     protected function handleItemPhotoAfter(ElementContextInterface $component)
     {
     }
+    protected function handleItemTextAfter(ElementContextInterface $context, ElementContextInterface $itemContext)
+    {
+    }
 
     protected function getPropertiesItemPhoto(): array
     {

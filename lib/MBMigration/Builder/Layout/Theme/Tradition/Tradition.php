@@ -16,5 +16,4 @@ class Tradition extends AbstractTheme
     {
         return ".sites-button:not(.nav-menu-button)";
     }
-
 }
