@@ -5,6 +5,8 @@ namespace MBMigration\Builder\Layout\Theme\Aurora\Elements\Text;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Elements\Text\PhotoTextElement;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Builder\Utils\ColorConverter;
 
 class LeftMedia extends PhotoTextElement
 {
@@ -57,12 +59,12 @@ class LeftMedia extends PhotoTextElement
 
     protected function getHeaderComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0,0);
+        return $brizyComponent->getItemWithDepth(0,0,0);
     }
 
     protected function getInsideItemComponent(BrizyComponent $brizyComponent): BrizyComponent
     {
-        return $brizyComponent->getItemWithDepth(0,0);
+        return $brizyComponent->getItemWithDepth(0,0,0);
     }
     protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
     {
@@ -114,5 +116,74 @@ class LeftMedia extends PhotoTextElement
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 0;
+    }
+
+    protected function getSectionListStyle(
+        ElementContextInterface $data,
+        BrowserPageInterface $browserPage
+    )
+    {
+        $mbSectionItem = $data->getMbSection();
+        $families = $data->getFontFamilies();
+        $defaultFont = $data->getDefaultFontFamily();
+
+        // Use id first, then fall back to sectionId (fixes issue with data-id="3422616")
+        $sectionId = $mbSectionItem['id'] ?? $mbSectionItem['sectionId'];
+
+        if (!$this->getStyleFromPseudo()) {
+            $sectionStyles = $this->getSectionStyles(
+                $sectionId,
+                $browserPage,
+                $families,
+                $defaultFont
+            );
+        } else {
+            $sectionStyles = $this->getSectionStyles(
+                $sectionId,
+                $browserPage,
+                $families,
+                $defaultFont,
+                ':before'
+            );
+        }
+
+        try {
+            $sectionBgEclipseStyles = $this->getBgEclipseStyles(
+                $sectionId,
+                $browserPage,
+                $families,
+                $defaultFont
+            );
+
+            $sectionBgVideoStyles = $this->getBgVideoStyles(
+                $sectionId,
+                $browserPage,
+                $families,
+                $defaultFont
+            );
+
+            if (empty($sectionBgEclipseStyles)) {
+                $sectionBgStyles = $this->getBgHelperStyles(
+                    $sectionId,
+                    $browserPage,
+                    $families,
+                    $defaultFont
+                );
+                $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity'] ?? 1);
+
+                if ($sectionBgStyles['opacity'] !== 0) {
+                    $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
+                }
+            } else {
+                $sectionBgEclipseStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgEclipseStyles['opacity']);
+
+                if ($sectionBgEclipseStyles['opacity'] !== 0) {
+                    $sectionStyles = array_merge($sectionStyles, $sectionBgEclipseStyles);
+                }
+            }
+        } catch (\Exception $e) {
+        }
+
+        return $sectionStyles;
     }
 }
