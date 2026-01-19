@@ -206,6 +206,6 @@ class AccordionLayoutElement extends \MBMigration\Builder\Layout\Common\Elements
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
-        return 25;
+        return 200;
     }
 }

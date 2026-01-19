@@ -112,4 +112,9 @@ class RightMediaElement extends FullMediaElement
         return 200;
     }
 
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
+    }
+
 }

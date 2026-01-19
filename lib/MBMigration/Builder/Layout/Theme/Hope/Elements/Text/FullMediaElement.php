@@ -42,7 +42,7 @@ class FullMediaElement extends FullMediaElementElement
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
-        return 25;
+        return 200;
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent

@@ -198,6 +198,8 @@ abstract class GalleryLayoutElement extends AbstractElement
             ->set_marginTop(0)
             ->set_marginBottom(0)
             ->set_heightStyle($this->getHeightSlideStyl())
+
+            ->set_tabletHeightStyle($this->getHeightSlideStyl())
             ->set_mobileHeightStyle($this->getHeightSlideStyl())
             ->set_bgImageSrc($mbItem['content'] ?? $mbItem['photo'])
             ->set_bgImageFileName($mbItem['imageFileName'] ?? $mbItem['filename'])

@@ -35,4 +35,9 @@ class ThreeTopMediaCircle extends ThreeTopMediaCircleElement
     {
         return 200;
     }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
+    }
 }

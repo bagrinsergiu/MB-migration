@@ -24,4 +24,9 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
     {
         return 200;
     }
+
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
+    }
 }

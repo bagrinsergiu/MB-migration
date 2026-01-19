@@ -24,6 +24,10 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
 
     protected function customizationSlide(BrizyComponent $brizySectionItem): BrizyComponent
     {
+        $brizySectionItem
+            ->addMobilePadding([0,10,0,10])
+            ->addTabletPadding([0,10,0,10]);
+
         $brizySectionItem->getValue()
             ->set_sliderPaddingType('ungrouped')
             ->set_sliderPadding(0)

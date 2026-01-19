@@ -105,5 +105,10 @@ class PhotoCollageMediaElement extends FullMediaElement
         return $brizySection;
     }
 
+    protected function getMobileTopPaddingOfTheFirstElement(): int
+    {
+        return 200;
+    }
+
 
 }

@@ -62,6 +62,6 @@ class FullText extends FullTextElement
 
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
-        return 25;
+        return 200;
     }
 }
