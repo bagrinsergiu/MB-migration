@@ -24,7 +24,7 @@ class TopMediaElement extends FullMediaElementElement
             ->set_mobileMarginBottom(-10);
 
         $brizySection->getItemWithDepth(0)
-            ->addMobileMargin(0);
+            ->addMobileMargin();
 
         $showHeader = $this->canShowHeader($mbSection);
         if($showHeader) {

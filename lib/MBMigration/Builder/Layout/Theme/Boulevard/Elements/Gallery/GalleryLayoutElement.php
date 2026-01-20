@@ -29,6 +29,10 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             ->addTabletPadding([0,10,0,10]);
 
         $brizySectionItem->getValue()
+            ->set_slidesToShow(1)
+            ->set_tabletSlidesToShow(1)
+            ->set_mobileSlidesToShow(1)
+
             ->set_sliderPaddingType('ungrouped')
             ->set_sliderPadding(0)
             ->set_sliderPaddingSuffix("px")
