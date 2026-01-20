@@ -15,6 +15,7 @@ use MBMigration\Builder\BrizyComponent\BrizyEmbedCodeComponent;
 use MBMigration\Builder\BrizyComponent\BrizyImageComponent;
 use MBMigration\Builder\BrizyComponent\BrizyWrapperComponent;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Config\MobilePhotoOptionsConfig;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
 trait RichTextAble
@@ -242,7 +243,9 @@ trait RichTextAble
                     $mbSectionItem,
                     $brizyComponent,
                     $browserPage,
-                    $imageOptions
+                    $imageOptions,
+                    null,
+                    $data
                 );
                 break;
         }
@@ -768,18 +771,24 @@ trait RichTextAble
         BrizyComponent $brizyComponent,
         BrowserPageInterface $browserPage,
         $imageOptions = [],
-        $position = null
+        $position = null,
+        ?ElementContextInterface $data = null
     ): BrizyComponent
     {
+        // Get default options from configuration and merge with provided ones (priority to $imageOptions)
+        $defaultOptions = $this->getDefaultMobilePhotoOptions($data);
+        $mergedOptions = array_merge($defaultOptions, $imageOptions);
+
         if ($brizyComponent->getType() !== 'Image') {
             return $this->handlePhotoAddNewItem(
                 $mbSectionItemId,
                 $mbSectionItem,
                 $brizyComponent,
                 $browserPage,
-                $imageOptions,
+                $mergedOptions,
                 $position,
-                $this->getReturnAddedImageElement()
+                $this->getReturnAddedImageElement(),
+                $data
             );
         } else {
             if (!empty($mbSectionItem['content'])) {
@@ -814,12 +823,13 @@ trait RichTextAble
                         ->set_widthSuffix($sizeUnit)
                         ->set_heightSuffix($sizeUnit)
                         ->set_tabletHeightSuffix($sizeUnit)
-                        ->set_mobileSizeType('original')
+                        ->set_mobileSizeType($mergedOptions['mobileSizeType'] ?? 'original')
+                        ->set_mobileSize($mergedOptions['mobileSize'] ?? 100)
                         ->set_mobileWidthSuffix($sizeUnit)
                         ->set_mobileHeightSuffix($sizeUnit);
                 }
 
-                foreach ($imageOptions as $key => $value) {
+                foreach ($mergedOptions as $key => $value) {
                     $method = 'set_' . $key;
                     $brizyComponent->getValue()->$method($value);
                 }
@@ -835,6 +845,25 @@ trait RichTextAble
         }
     }
 
+    /**
+     * Get default options for mobile images
+     * 
+     * Delegates option retrieval to MobilePhotoOptionsConfig configuration class.
+     * Supports three levels of customization (in priority order):
+     * 1. For specific element (via $imageOptions in handlePhotoItem)
+     * 2. For specific theme (via MobilePhotoOptionsConfig::getThemeSpecificOptions)
+     * 3. Global default values for all themes (via MobilePhotoOptionsConfig::getGlobalDefaults)
+     * 
+     * Themes can override methods in MobilePhotoOptionsConfig for customization
+     * 
+     * @param ElementContextInterface|null $data Element context (optional, for theme detection)
+     * @return array Array with default values
+     */
+    protected function getDefaultMobilePhotoOptions(?ElementContextInterface $data = null): array
+    {
+        return MobilePhotoOptionsConfig::getDefaultOptions($data);
+    }
+
     private function handlePhotoAddNewItem(
         $mbSectionItemId,
         $mbSectionItem,
@@ -842,9 +871,14 @@ trait RichTextAble
         BrowserPageInterface $browserPage,
         $options = [],
         $index = null,
-        bool $returnAdded = false
+        bool $returnAdded = false,
+        ?ElementContextInterface $data = null
     ): BrizyComponent
     {
+        // Get default options from configuration and merge with provided ones (priority to $options)
+        $defaultOptions = $this->getDefaultMobilePhotoOptions($data);
+        $mergedOptions = array_merge($defaultOptions, $options);
+
         if (!empty($mbSectionItem['content'])) {
             // Create new Image element according to aiRules
             $image = new BrizyImageComponent();
@@ -886,7 +920,8 @@ trait RichTextAble
                     ->set_widthSuffix($sizeUnit)
                     ->set_heightSuffix($sizeUnit)
                     ->set_tabletHeightSuffix($sizeUnit)
-                    ->set_mobileSizeType('original')
+                    ->set_mobileSizeType($mergedOptions['mobileSizeType'] ?? 'original')
+                    ->set_mobileSize($mergedOptions['mobileSize'] ?? 100)
                     ->set_mobileWidthSuffix($sizeUnit)
                     ->set_mobileHeightSuffix($sizeUnit);
 
@@ -899,7 +934,7 @@ trait RichTextAble
                 }
             }
 
-            foreach ($options as $key => $value) {
+            foreach ($mergedOptions as $key => $value) {
                 $method = 'set_' . $key;
                 $image->getValue()->$method($value);
             }
@@ -1105,7 +1140,7 @@ trait RichTextAble
             $height = $iframe->getAttribute('height');
             $currentStyle = $iframe->getAttribute('style') ?? '';
 
-            // Удаляем существующие ограничения ширины
+            // Remove existing width constraints
             $currentStyle = preg_replace('/(^|;)\s*(width|max-width|min-width)\s*:\s*[^;]+/i', '', $currentStyle);
             $currentStyle = trim($currentStyle, '; ');
 
