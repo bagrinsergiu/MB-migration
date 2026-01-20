@@ -130,6 +130,112 @@ trait DonationsAble
     }
 
     /**
+     * Check if button has border based on styles
+     * @param array $styles
+     * @return bool
+     */
+    private function checkButtonHasBorder(array $styles): bool
+    {
+        // Check border width - if all are 0 or empty, no border
+        $topWidth = (int)preg_replace('/[^0-9]/', '', $styles['border-top-width'] ?? '0');
+        $rightWidth = (int)preg_replace('/[^0-9]/', '', $styles['border-right-width'] ?? '0');
+        $bottomWidth = (int)preg_replace('/[^0-9]/', '', $styles['border-bottom-width'] ?? '0');
+        $leftWidth = (int)preg_replace('/[^0-9]/', '', $styles['border-left-width'] ?? '0');
+        
+        $hasWidth = ($topWidth > 0 || $rightWidth > 0 || $bottomWidth > 0 || $leftWidth > 0);
+        
+        // Check border style - if all are 'none', no border
+        $topStyle = strtolower(trim($styles['border-top-style'] ?? 'none'));
+        $rightStyle = strtolower(trim($styles['border-right-style'] ?? 'none'));
+        $bottomStyle = strtolower(trim($styles['border-bottom-style'] ?? 'none'));
+        $leftStyle = strtolower(trim($styles['border-left-style'] ?? 'none'));
+        
+        $hasStyle = ($topStyle !== 'none' || $rightStyle !== 'none' || $bottomStyle !== 'none' || $leftStyle !== 'none');
+        
+        return $hasWidth && $hasStyle;
+    }
+
+    /**
+     * Get border style from button styles
+     * @param array $styles
+     * @return string Returns 'solid', 'dashed', 'dotted', or 'none'
+     */
+    private function getBorderStyle(array $styles): string
+    {
+        // Check styles in order: top, right, bottom, left
+        $stylesToCheck = [
+            $styles['border-top-style'] ?? 'none',
+            $styles['border-right-style'] ?? 'none',
+            $styles['border-bottom-style'] ?? 'none',
+            $styles['border-left-style'] ?? 'none',
+        ];
+        
+        foreach ($stylesToCheck as $style) {
+            $style = strtolower(trim($style));
+            if ($style !== 'none' && !empty($style)) {
+                // Map common border styles
+                $validStyles = ['solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'];
+                if (in_array($style, $validStyles)) {
+                    // Most common styles that are supported
+                    if (in_array($style, ['solid', 'dashed', 'dotted'])) {
+                        return $style;
+                    }
+                    // For other styles, default to solid
+                    return 'solid';
+                }
+            }
+        }
+        
+        return 'solid'; // Default fallback
+    }
+
+    /**
+     * Get border color from button styles
+     * @param array $styles
+     * @return array Returns ['hex' => string, 'opacity' => float]
+     */
+    private function getBorderColor(array $styles): array
+    {
+        // Try to get color from any side (prefer top)
+        $colorValues = [
+            $styles['border-top-color'] ?? null,
+            $styles['border-right-color'] ?? null,
+            $styles['border-bottom-color'] ?? null,
+            $styles['border-left-color'] ?? null,
+        ];
+        
+        foreach ($colorValues as $color) {
+            if (!empty($color) && $color !== 'rgba(0, 0, 0, 0)' && $color !== 'transparent') {
+                return [
+                    'hex' => ColorConverter::rgba2hex($color),
+                    'opacity' => ColorConverter::rgba2opacity($color)
+                ];
+            }
+        }
+        
+        // Default fallback
+        return [
+            'hex' => '#000000',
+            'opacity' => 1
+        ];
+    }
+
+    /**
+     * Get border width from button styles
+     * @param array $styles
+     * @return int Returns max border width
+     */
+    private function getBorderWidth(array $styles): int
+    {
+        $topWidth = (int)preg_replace('/[^0-9]/', '', $styles['border-top-width'] ?? '0');
+        $rightWidth = (int)preg_replace('/[^0-9]/', '', $styles['border-right-width'] ?? '0');
+        $bottomWidth = (int)preg_replace('/[^0-9]/', '', $styles['border-bottom-width'] ?? '0');
+        $leftWidth = (int)preg_replace('/[^0-9]/', '', $styles['border-left-width'] ?? '0');
+        
+        return max($topWidth, $rightWidth, $bottomWidth, $leftWidth);
+    }
+
+    /**
      * Find button selector with fallback options
      * @param string $sectionSelector
      * @param BrowserPageInterface $browserPage
@@ -210,6 +316,18 @@ trait DonationsAble
                     'margin-right',
                     'border-bottom-left-radius',
                     'text-transform',
+                    'border-top-width',
+                    'border-right-width',
+                    'border-bottom-width',
+                    'border-left-width',
+                    'border-top-style',
+                    'border-right-style',
+                    'border-bottom-style',
+                    'border-left-style',
+                    'border-top-color',
+                    'border-right-color',
+                    'border-bottom-color',
+                    'border-left-color',
                 ],
                 'families' => $data->getFontFamilies(),
                 'defaultFamily' => $data->getDefaultFontFamily(),
@@ -371,13 +489,62 @@ trait DonationsAble
             ->set_borderRadiusType('custom')
             ->set_borderRadius((int)($additionalStyles['border-bottom-left-radius'] ?? 0));
 
-        // Apply colors and borders from handleButtonStyle()
+        // Check if button has border and apply border styles
+        $hasBorder = $this->checkButtonHasBorder($additionalStyles);
+        $borderStyle = 'none';
+        $borderColor = ['hex' => '#000000', 'opacity' => 1];
+        $borderWidth = 0;
+        
+        if ($hasBorder) {
+            // Button has border - use border style from source
+            $borderStyle = $this->getBorderStyle($additionalStyles);
+            $borderColor = $this->getBorderColor($additionalStyles);
+            $borderWidth = $this->getBorderWidth($additionalStyles);
+            
+            $buttonItem
+                ->set_borderStyle($borderStyle)
+                ->set_borderColorHex($borderColor['hex'] ?? '#000000')
+                ->set_borderColorPalette('')
+                ->set_borderColorOpacity($borderColor['opacity'] ?? 1);
+            
+            // Set border width if needed
+            if ($borderWidth > 0) {
+                // Get individual border widths
+                $topWidth = (int)preg_replace('/[^0-9]/', '', $additionalStyles['border-top-width'] ?? '0');
+                $rightWidth = (int)preg_replace('/[^0-9]/', '', $additionalStyles['border-right-width'] ?? '0');
+                $bottomWidth = (int)preg_replace('/[^0-9]/', '', $additionalStyles['border-bottom-width'] ?? '0');
+                $leftWidth = (int)preg_replace('/[^0-9]/', '', $additionalStyles['border-left-width'] ?? '0');
+                
+                if ($topWidth === $rightWidth && $rightWidth === $bottomWidth && $bottomWidth === $leftWidth) {
+                    // All sides same - use grouped mode (only set borderWidth, NOT individual widths)
+                    $buttonItem
+                        ->set_borderWidthType('grouped')
+                        ->set_borderWidth($topWidth);
+                } else {
+                    // Different widths - use ungrouped mode (set individual widths)
+                    $buttonItem
+                        ->set_borderWidthType('ungrouped')
+                        ->set_borderTopWidth($topWidth)
+                        ->set_borderRightWidth($rightWidth)
+                        ->set_borderBottomWidth($bottomWidth)
+                        ->set_borderLeftWidth($leftWidth);
+                }
+            }
+            
+            Logger::instance()->info('Button border applied', [
+                'borderStyle' => $borderStyle,
+                'borderColor' => $borderColor['hex'] ?? null,
+                'borderWidth' => $borderWidth
+            ]);
+        } else {
+            // Button has no border - disable border
+            $buttonItem->set_borderStyle('none');
+            Logger::instance()->info('Button border disabled (no border on source)');
+        }
+        
+        // Apply colors from handleButtonStyle()
         if (!empty($normalStyles)) {
             $buttonItem
-                ->set_borderStyle($normalStyles['border-bottom-style'] ?? 'solid')
-                ->set_borderColorHex($normalStyles['border-bottom-color'] ?? '#000000')
-                ->set_borderColorPalette('')
-                ->set_borderColorOpacity($normalStyles['border-bottom-color-opacity'] ?? 1)
                 ->set_bgColorOpacity($normalStyles['background-color-opacity'] ?? 1)
                 ->set_bgColorHex($normalStyles['background-color'] ?? '#000000')
                 ->set_bgColorPalette("")
@@ -393,12 +560,20 @@ trait DonationsAble
                 ->set_hoverBgColorHex($hoverStyles['background-color'] ?? '#000000')
                 ->set_hoverBgColorPalette("")
                 ->set_hoverBgColorOpacity($hoverStyles['background-color-opacity'] ?? 0.75)
-                ->set_hoverBorderColorHex($hoverStyles['border-bottom-color'] ?? '#000000')
-                ->set_hoverBorderColorPalette("")
-                ->set_hoverBorderColorOpacity($hoverStyles['border-bottom-color-opacity'] ?? 1)
                 ->set_hoverColorOpacity($hoverStyles['color-opacity'] ?? 1)
                 ->set_hoverColorHex($hoverStyles['color'] ?? '#ffffff')
                 ->set_hoverColorPalette("");
+            
+            // Apply hover border only if button has border
+            if ($hasBorder) {
+                $hoverBorderColor = $hoverStyles['border-bottom-color'] ?? $borderColor['hex'] ?? '#000000';
+                $hoverBorderOpacity = $hoverStyles['border-bottom-color-opacity'] ?? $borderColor['opacity'] ?? 1;
+                
+                $buttonItem
+                    ->set_hoverBorderColorHex($hoverBorderColor)
+                    ->set_hoverBorderColorPalette("")
+                    ->set_hoverBorderColorOpacity($hoverBorderOpacity);
+            }
         }
 
         // Apply font
