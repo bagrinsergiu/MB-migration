@@ -11,8 +11,14 @@ use Exception;
  */
 class MigrationService
 {
-    private DatabaseService $dbService;
-    private ApiProxyService $apiProxy;
+    /**
+     * @var DatabaseService
+     */
+    private $dbService;
+    /**
+     * @var ApiProxyService
+     */
+    private $apiProxy;
 
     public function __construct()
     {

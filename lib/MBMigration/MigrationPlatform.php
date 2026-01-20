@@ -58,6 +58,7 @@ class MigrationPlatform
     private $workspacesId;
     private bool $manualMigrate;
     private array $projectPagesList;
+    private bool $qualityAnalysisEnabled;
     private string $projectUUID_MB;
     private bool $mMgrIgnore;
     private bool $mgr_manual;
@@ -71,7 +72,8 @@ class MigrationPlatform
                         $buildPage = '',
                         $workspacesId = 0,
         bool            $mMgrIgnore = true,
-                        $mgr_manual = false
+                        $mgr_manual = false,
+        bool            $qualityAnalysis = false
     )
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
@@ -79,6 +81,7 @@ class MigrationPlatform
         $this->logger = $logger;
         $this->mMgrIgnore = $mMgrIgnore;
         $this->mgr_manual = $mgr_manual;
+        $this->qualityAnalysisEnabled = $qualityAnalysis;
 
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
@@ -217,7 +220,8 @@ class MigrationPlatform
             $this->QueryBuilder,
             $this->logger,
             $this->projectID_Brizy,
-            $designName
+            $designName,
+            $this->qualityAnalysisEnabled
         );
 
 //        if (!$this->mMgrIgnore) {

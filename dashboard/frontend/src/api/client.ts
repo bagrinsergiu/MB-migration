@@ -69,6 +69,7 @@ export interface RunMigrationParams {
   brz_workspaces_id?: number;
   mb_page_slug?: string;
   mgr_manual?: number;
+  quality_analysis?: boolean;
 }
 
 export interface ApiResponse<T> {
@@ -202,6 +203,32 @@ export const api = {
         const response = await apiClient.delete(`/waves/${waveId}/migrations/${mbUuid}/lock`);
         return response.data;
       },
+
+      // Quality Analysis
+      async getQualityAnalysis(migrationId: number): Promise<ApiResponse<QualityAnalysisReport[]>> {
+        const response = await apiClient.get(`/migrations/${migrationId}/quality-analysis`);
+        return response.data;
+      },
+
+      async getArchivedQualityAnalysis(migrationId: number): Promise<ApiResponse<QualityAnalysisReport[]>> {
+        const response = await apiClient.get(`/migrations/${migrationId}/quality-analysis/archived`);
+        return response.data;
+      },
+
+      async getQualityStatistics(migrationId: number): Promise<ApiResponse<QualityStatistics>> {
+        const response = await apiClient.get(`/migrations/${migrationId}/quality-analysis/statistics`);
+        return response.data;
+      },
+
+      async getPageQualityAnalysis(migrationId: number, pageSlug: string, includeArchived: boolean = false): Promise<ApiResponse<QualityAnalysisReport>> {
+        const params = includeArchived ? { include_archived: 'true' } : {};
+        const response = await apiClient.get(`/migrations/${migrationId}/quality-analysis/${encodeURIComponent(pageSlug)}`, { params });
+        return response.data;
+      },
+
+      getScreenshotUrl(filename: string): string {
+        return `${API_BASE_URL}/screenshots/${filename}`;
+      },
     };
 
     export interface Wave {
@@ -282,6 +309,60 @@ export const api = {
       workspace_id: number;
       workspace_name: string;
       status: string;
+    }
+
+    export interface QualityAnalysisReport {
+      id: number;
+      migration_id: number;
+      mb_project_uuid: string;
+      page_slug: string;
+      source_url?: string;
+      migrated_url?: string;
+      analysis_status: 'pending' | 'analyzing' | 'completed' | 'error';
+      quality_score?: number | string; // Может быть строкой из API
+      severity_level: 'critical' | 'high' | 'medium' | 'low' | 'none';
+      token_usage?: {
+        prompt_tokens?: number;
+        completion_tokens?: number;
+        total_tokens?: number;
+        estimated_prompt_tokens?: number;
+        estimation_accuracy_percent?: number;
+        cost_estimate_usd?: number;
+        model?: string;
+      };
+      issues_summary?: {
+        summary?: string;
+        missing_elements?: string[];
+        changed_elements?: string[];
+        recommendations?: string[];
+      };
+      detailed_report?: any;
+      screenshots_path?: {
+        source?: string;
+        migrated?: string;
+      };
+      created_at: string;
+      updated_at: string;
+    }
+
+    export interface QualityStatistics {
+      total_pages: number;
+      avg_quality_score: number;
+      by_severity: {
+        critical: number;
+        high: number;
+        medium: number;
+        low: number;
+        none: number;
+      };
+      token_statistics?: {
+        total_prompt_tokens: number;
+        total_completion_tokens: number;
+        total_tokens: number;
+        avg_tokens_per_page: number;
+        total_cost_usd: number;
+        avg_cost_per_page_usd: number;
+      };
     }
 
     export default api;

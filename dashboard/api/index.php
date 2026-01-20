@@ -46,10 +46,12 @@ $classesToLoad = [
     'Dashboard\\Services\\ApiProxyService' => __DIR__ . '/services/ApiProxyService.php',
     'Dashboard\\Services\\MigrationService' => __DIR__ . '/services/MigrationService.php',
     'Dashboard\\Services\\WaveService' => __DIR__ . '/services/WaveService.php',
+    'Dashboard\\Services\\QualityAnalysisService' => __DIR__ . '/services/QualityAnalysisService.php',
     'Dashboard\\Controllers\\MigrationController' => __DIR__ . '/controllers/MigrationController.php',
     'Dashboard\\Controllers\\LogController' => __DIR__ . '/controllers/LogController.php',
     'Dashboard\\Controllers\\SettingsController' => __DIR__ . '/controllers/SettingsController.php',
     'Dashboard\\Controllers\\WaveController' => __DIR__ . '/controllers/WaveController.php',
+    'Dashboard\\Controllers\\QualityAnalysisController' => __DIR__ . '/controllers/QualityAnalysisController.php',
 ];
 
 foreach ($classesToLoad as $class => $file) {
@@ -61,6 +63,7 @@ foreach ($classesToLoad as $class => $file) {
 use Dashboard\Controllers\MigrationController;
 use Dashboard\Controllers\LogController;
 use Dashboard\Controllers\WaveController;
+use Dashboard\Controllers\QualityAnalysisController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -143,6 +146,140 @@ return static function (array $context, Request $request): Response {
                 $id = (int)$matches[1];
                 $controller = new MigrationController();
                 return $controller->getStatus($id);
+            }
+        }
+
+        // Анализ качества миграций
+        if (preg_match('#^/migrations/(\d+)/quality-analysis$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $migrationId = (int)$matches[1];
+                $controller = new QualityAnalysisController();
+                return $controller->getAnalysisList($request, $migrationId);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/quality-analysis/statistics$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $migrationId = (int)$matches[1];
+                $controller = new QualityAnalysisController();
+                return $controller->getStatistics($request, $migrationId);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/quality-analysis/archived$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $migrationId = (int)$matches[1];
+                $controller = new QualityAnalysisController();
+                return $controller->getArchivedAnalysisList($request, $migrationId);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/quality-analysis/([^/]+)$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $migrationId = (int)$matches[1];
+                $pageSlug = urldecode($matches[2]);
+                $controller = new QualityAnalysisController();
+                return $controller->getPageAnalysis($request, $migrationId, $pageSlug);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/quality-analysis/([^/]+)/screenshots/(source|migrated)$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $migrationId = (int)$matches[1];
+                $pageSlug = urldecode($matches[2]);
+                $type = $matches[3];
+                $controller = new QualityAnalysisController();
+                return $controller->getScreenshot($request, $migrationId, $pageSlug, $type);
+            }
+        }
+
+        // Прямой доступ к скриншотам по имени файла
+        if (preg_match('#^/screenshots/(.+)$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $filename = basename($matches[1]);
+                // Ищем файл в var/tmp/project_*/ директориях
+                // Используем реальный путь к проекту из текущего файла
+                $currentFile = __FILE__; // /home/sg/projects/MB-migration/dashboard/api/index.php
+                $projectRoot = dirname(dirname(dirname($currentFile))); // Поднимаемся на 3 уровня
+                $screenshotsDir = $projectRoot . '/var/tmp/';
+                
+                // Логируем для отладки
+                error_log("Screenshot request: filename=$filename, projectRoot=$projectRoot, screenshotsDir=$screenshotsDir");
+                
+                // Ищем файл во всех поддиректориях project_*
+                $found = false;
+                $filePath = null;
+                $dirs = [];
+                
+                if (is_dir($screenshotsDir)) {
+                    $dirs = glob($screenshotsDir . 'project_*', GLOB_ONLYDIR);
+                    error_log("Found project dirs: " . json_encode($dirs));
+                    
+                    foreach ($dirs as $dir) {
+                        $potentialPath = $dir . '/' . $filename;
+                        error_log("Checking: $potentialPath, exists: " . (file_exists($potentialPath) ? 'YES' : 'NO'));
+                        if (file_exists($potentialPath)) {
+                            $filePath = $potentialPath;
+                            $found = true;
+                            break;
+                        }
+                    }
+                } else {
+                    error_log("Screenshots directory does not exist: $screenshotsDir");
+                }
+                
+                // Если не нашли, пробуем поискать по полному пути (для старых записей)
+                if (!$found) {
+                    // Проверяем, может быть filename содержит путь
+                    if (strpos($filename, '/') !== false) {
+                        // Извлекаем только имя файла
+                        $actualFilename = basename($filename);
+                        foreach ($dirs as $dir) {
+                            $potentialPath = $dir . '/' . $actualFilename;
+                            if (file_exists($potentialPath)) {
+                                $filePath = $potentialPath;
+                                $found = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // Также проверяем корневую директорию var/tmp/ (для старых файлов)
+                if (!$found) {
+                    $rootPath = $screenshotsDir . $filename;
+                    if (file_exists($rootPath)) {
+                        $filePath = $rootPath;
+                        $found = true;
+                    }
+                }
+                
+                if (!$found || !$filePath) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Скриншот не найден: ' . $filename,
+                        'debug' => [
+                            'filename' => $filename,
+                            'screenshots_dir' => $screenshotsDir,
+                            'dirs_found' => $dirs ?? [],
+                            'project_root' => $projectRoot,
+                            'current_file' => __FILE__
+                        ]
+                    ], 404);
+                }
+                
+                // Определяем MIME тип
+                $mimeType = mime_content_type($filePath);
+                if (!$mimeType) {
+                    $mimeType = 'image/png';
+                }
+                
+                // Возвращаем файл
+                $response = new Response(file_get_contents($filePath), 200);
+                $response->headers->set('Content-Type', $mimeType);
+                $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
+                $response->headers->set('Cache-Control', 'public, max-age=3600');
+                return $response;
             }
         }
 

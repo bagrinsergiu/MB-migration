@@ -10,8 +10,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 class MigrationController
 {
-    private MigrationService $migrationService;
-    private ApiProxyService $apiProxy;
+    /**
+     * @var MigrationService
+     */
+    private $migrationService;
+    /**
+     * @var ApiProxyService
+     */
+    private $apiProxy;
 
     public function __construct()
     {
@@ -203,7 +209,19 @@ class MigrationController
                 'brz_workspaces_id' => !empty($data['brz_workspaces_id']) ? (int)$data['brz_workspaces_id'] : null,
                 'mb_page_slug' => !empty($data['mb_page_slug']) ? $data['mb_page_slug'] : null,
                 'mgr_manual' => !empty($data['mgr_manual']) ? (int)$data['mgr_manual'] : 0,
+                'quality_analysis' => isset($data['quality_analysis']) ? (bool)$data['quality_analysis'] : false,
             ];
+            
+            // Если перезапускаем с анализом качества, помечаем старые результаты как устаревшие
+            if (!empty($params['quality_analysis'])) {
+                try {
+                    $qualityReport = new \MBMigration\Analysis\QualityReport();
+                    $qualityReport->archiveOldReports($id);
+                } catch (Exception $e) {
+                    // Логируем, но не прерываем перезапуск миграции
+                    error_log("Failed to archive old quality reports: " . $e->getMessage());
+                }
+            }
 
             // Проверяем, что mb_site_id и mb_secret либо переданы, либо есть в настройках
             if (empty($params['mb_site_id'])) {

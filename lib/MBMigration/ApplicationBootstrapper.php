@@ -128,7 +128,8 @@ class ApplicationBootstrapper
         $brz_workspaces_id,
         $mb_page_slug,
         $mMgrIgnore = false,
-        $mrgManual = false
+        $mrgManual = false,
+        $qualityAnalysis = false
     ): array
     {
         $s3Uploader = new S3Uploader(
@@ -159,7 +160,7 @@ class ApplicationBootstrapper
             file_put_contents($lockFile, $mb_project_uuid . "-" . $brz_project_id);
             Logger::instance()->info('Creating lock file', [$lockFile]);
 
-            $migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore, $mrgManual);
+            $migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore, $mrgManual, $qualityAnalysis);
             $migrationPlatform->start($mb_project_uuid, $brz_project_id);
 
             $this->projectPagesList = $migrationPlatform->getProjectPagesList();

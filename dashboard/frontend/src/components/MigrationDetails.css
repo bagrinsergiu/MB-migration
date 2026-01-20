@@ -37,6 +37,11 @@
   text-align: right;
 }
 
+.highlight-card {
+  background: linear-gradient(135deg, #19875415 0%, #19875405 100%);
+  border: 2px solid #198754;
+}
+
 .info-value.uuid {
   font-family: 'Courier New', monospace;
   font-size: 0.75rem;
@@ -134,6 +139,35 @@
   text-decoration: underline;
 }
 
+.migration-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.migration-tabs button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  margin-bottom: -2px;
+}
+
+.migration-tabs button:hover {
+  color: var(--text);
+}
+
+.migration-tabs button.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+
 @media (max-width: 768px) {
   .info-item {
     flex-direction: column;
@@ -143,5 +177,22 @@
 
   .info-value {
     text-align: left;
+  }
+
+  .migration-tabs {
+    flex-direction: column;
+    border-bottom: none;
+  }
+
+  .migration-tabs button {
+    border-bottom: none;
+    border-left: 3px solid transparent;
+    margin-bottom: 0;
+    text-align: left;
+  }
+
+  .migration-tabs button.active {
+    border-left-color: var(--primary);
+    border-bottom-color: transparent;
   }
 }

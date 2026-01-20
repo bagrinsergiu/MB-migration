@@ -11,7 +11,10 @@ use Exception;
  */
 class ApiProxyService
 {
-    private string $baseUrl;
+    /**
+     * @var string
+     */
+    private $baseUrl;
 
     public function __construct()
     {
@@ -56,6 +59,11 @@ class ApiProxyService
             $queryParams['mb_page_slug'] = $params['mb_page_slug'];
         }
         $queryParams['mgr_manual'] = $params['mgr_manual'] ?? 0;
+        
+        // Добавляем параметр quality_analysis если он передан
+        if (isset($params['quality_analysis'])) {
+            $queryParams['quality_analysis'] = $params['quality_analysis'] ? 'true' : 'false';
+        }
         
         $url = $this->baseUrl . '/?' . http_build_query($queryParams);
 
