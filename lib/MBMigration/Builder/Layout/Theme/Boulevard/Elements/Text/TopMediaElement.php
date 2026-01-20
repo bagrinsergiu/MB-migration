@@ -18,6 +18,14 @@ class TopMediaElement extends FullMediaElementElement
         $brizySection = parent::internalTransformToItem($data);
         $mbSection = $data->getMbSection();
 
+        $brizySection->getValue()
+            ->set_mobileMarginType('ungrouped')
+            ->set_mobileMarginTop(-10)
+            ->set_mobileMarginBottom(-10);
+
+        $brizySection->getItemWithDepth(0)
+            ->addMobileMargin(0);
+
         $showHeader = $this->canShowHeader($mbSection);
         if($showHeader) {
             $titleMb = $this->getByType($mbSection['items'], 'title');

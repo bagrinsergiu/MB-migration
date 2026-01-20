@@ -27,6 +27,11 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $this->globalBrizyKit = $data->getThemeContext()->getBrizyKit()['global'];
 
+        $brizySection->getValue()
+            ->set_mobileMarginType('ungrouped')
+            ->set_mobileMarginTop(-10)
+            ->set_mobileMarginBottom(-10);
+
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
