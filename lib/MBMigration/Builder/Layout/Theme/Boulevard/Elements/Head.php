@@ -101,7 +101,9 @@ class Head extends HeadElement
 
         $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getSubMenuDropdown', $menuSubItemDropdownStylesOptions );
 
-        $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], $menuSubItemDropdownStyles['data']);
+        if (isset($menuSubItemDropdownStyles['data']) && is_array($menuSubItemDropdownStyles['data'])) {
+            $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'] ?? [], $menuSubItemDropdownStyles['data']);
+        }
 
         if (isset($menuSubItemStyles['error'])) {
             $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [

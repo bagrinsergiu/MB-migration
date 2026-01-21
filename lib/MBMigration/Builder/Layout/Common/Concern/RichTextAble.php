@@ -588,10 +588,21 @@ trait RichTextAble
                             switch ($clonableItem['type']) {
                                 case 'Icon':
                                     try {
+                                        $filename = $clonableItem['value']['filename'] ?? null;
+                                        $code = $clonableItem['value']['code'] ?? null;
+                                        
+                                        if ($filename === null || $code === null) {
+                                            Logger::instance()->warning('Missing filename or code for custom icon upload', [
+                                                'has_filename' => $filename !== null,
+                                                'has_code' => $code !== null
+                                            ]);
+                                            continue 2; // Continue outer foreach loop, not switch
+                                        }
+                                        
                                         $customIconUploadResult = $brizyAPI->uploadCustomIcon(
                                             $projectID,
-                                            $clonableItem['value']['filename'],
-                                            $clonableItem['value']['code']
+                                            $filename,
+                                            $code
                                         );
 
                                         if (!empty($customIconUploadResult['filename']) && !empty($customIconUploadResult['uid'])) {
@@ -600,7 +611,7 @@ trait RichTextAble
                                         }
 
                                         if (!empty($iconClikStyle['hover']) && !empty( $iconClikStyle['normal'] )){
-                                            $clonableItem['value']['borderStyle'] = $iconClikStyle['normal']['border-bottom-style'];
+                                            $clonableItem['value']['borderStyle'] = $iconClikStyle['normal']['border-bottom-style'] ?? 'none';
 
                                             $clonableItem['value']['hoverBgColorHex'] = $iconClikStyle['hover']['background-color'];
                                             $clonableItem['value']['hoverBgColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
@@ -629,7 +640,7 @@ trait RichTextAble
                                         $clonableItem['value']['bgColorOpacity'] = $buttonStyle['normal']['background-color-opacity'];
                                         $clonableItem['value']['bgColorPalette'] = '';
 
-                                        $clonableItem['value']['borderStyle'] = $buttonStyle['normal']['border-bottom-style'];
+                                        $clonableItem['value']['borderStyle'] = $buttonStyle['normal']['border-bottom-style'] ?? 'none';
                                         $clonableItem['value']['borderColorHex'] = $buttonStyle['normal']['border-bottom-color'];
                                         $clonableItem['value']['borderColorOpacity'] = $buttonStyle['normal']['border-bottom-color-opacity'];
                                         $clonableItem['value']['borderColorPalette'] = '';

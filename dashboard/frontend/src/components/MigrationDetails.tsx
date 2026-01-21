@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api, MigrationDetails as MigrationDetailsType, QualityStatistics } from '../api/client';
 import { getStatusConfig } from '../utils/status';
@@ -6,6 +6,7 @@ import { formatDate, formatUUID } from '../utils/format';
 import QualityAnalysis from './QualityAnalysis';
 import './MigrationDetails.css';
 import './common.css';
+import './WaveDetails.css';
 
 export default function MigrationDetails() {
   const { id } = useParams<{ id: string }>();
@@ -24,8 +25,54 @@ export default function MigrationDetails() {
     quality_analysis: false,
   });
   const [defaultSettings, setDefaultSettings] = useState<{ mb_site_id?: number; mb_secret?: string }>({});
-  const [activeTab, setActiveTab] = useState<'details' | 'analysis' | 'archive'>('details');
+  const [activeTab, setActiveTab] = useState<'management' | 'details' | 'pages' | 'analysis' | 'archive' | 'warnings' | 'statistics'>('management');
+  const [pagesList, setPagesList] = useState<any[]>([]);
+  const [loadingPages, setLoadingPages] = useState(false);
+  const [rebuildingPages, setRebuildingPages] = useState<{ [key: string]: boolean }>({});
+  const [pageMigrationStatus, setPageMigrationStatus] = useState<{ [key: string]: 'in_progress' | 'completed' | 'error' | null }>({});
   const [qualityStatistics, setQualityStatistics] = useState<QualityStatistics | null>(null);
+  const [processInfo, setProcessInfo] = useState<any | null>(null);
+  const [loadingProcessInfo, setLoadingProcessInfo] = useState(false);
+  const [refreshingProcessInfo, setRefreshingProcessInfo] = useState(false);
+  const [killingProcess, setKillingProcess] = useState(false);
+  const [removingLock, setRemovingLock] = useState(false);
+  const [removingCache, setRemovingCache] = useState(false);
+  const [resettingStatus, setResettingStatus] = useState(false);
+  const [hardResetting, setHardResetting] = useState(false);
+  const [hasRefreshedAfterCompletion, setHasRefreshedAfterCompletion] = useState(false);
+  const [showLogs, setShowLogs] = useState(false);
+  const [logs, setLogs] = useState<string | null>(null);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+  const logsContentRef = useRef<HTMLDivElement>(null);
+
+  // Вспомогательная функция для безопасного парсинга changes_json
+  const safeParseChangesJson = (changesJsonValue: any): any => {
+    if (!changesJsonValue) return null;
+    
+    try {
+      // Если уже объект, возвращаем как есть
+      if (typeof changesJsonValue === 'object' && !Array.isArray(changesJsonValue)) {
+        return changesJsonValue;
+      }
+      
+      // Если строка, проверяем на обрезанность и парсим
+      if (typeof changesJsonValue === 'string') {
+        const trimmed = changesJsonValue.trim();
+        // Проверяем, не обрезан ли JSON (неполная строка)
+        if (trimmed.length > 0 && !trimmed.endsWith('}') && !trimmed.endsWith(']')) {
+          // JSON обрезан - не парсим, возвращаем null
+          return null;
+        }
+        // Пытаемся распарсить
+        return JSON.parse(trimmed);
+      }
+      
+      return null;
+    } catch (e) {
+      // Ошибка парсинга - возвращаем null без логирования
+      return null;
+    }
+  };
 
   useEffect(() => {
     // Загружаем настройки по умолчанию
@@ -41,13 +88,6 @@ export default function MigrationDetails() {
     });
   }, []);
 
-  useEffect(() => {
-    if (id) {
-      loadDetails();
-      loadQualityStatistics();
-    }
-  }, [id]);
-
   const loadQualityStatistics = async () => {
     if (!id) return;
     try {
@@ -61,15 +101,55 @@ export default function MigrationDetails() {
     }
   };
 
-  useEffect(() => {
-    // Обновляем статус каждые 5 секунд если миграция в процессе
-    if (details?.status === 'in_progress') {
-      const interval = setInterval(() => {
-        loadDetails();
-      }, 5000);
-      return () => clearInterval(interval);
+  const loadPagesList = async () => {
+    if (!id) return;
+    try {
+      setLoadingPages(true);
+      const response = await api.getMigrationPages(parseInt(id));
+      if (response.success && response.data) {
+        setPagesList(response.data);
+        // Обновляем статусы миграции на основе processInfo и details
+        if (processInfo?.process?.running) {
+          // Если есть информация о текущей странице в lock-файле
+          const currentChangesJson = safeParseChangesJson(details?.mapping?.changes_json);
+          const currentPageSlug = processInfo.process.current_page_slug || 
+                                 (details?.result as any)?.mb_page_slug ||
+                                 currentChangesJson?.mb_page_slug;
+          
+          if (currentPageSlug) {
+            setPageMigrationStatus(prev => {
+              const newStatus = { ...prev };
+              // Если текущая страница изменилась, сбрасываем статус для предыдущей
+              Object.keys(newStatus).forEach(slug => {
+                if (slug !== currentPageSlug && newStatus[slug] === 'in_progress') {
+                  newStatus[slug] = 'completed';
+                }
+              });
+              // Устанавливаем статус для текущей страницы
+              newStatus[currentPageSlug] = 'in_progress';
+              return newStatus;
+            });
+          }
+        } else {
+          // Если процесс не запущен, сбрасываем все статусы "in_progress" в "completed"
+          setPageMigrationStatus(prev => {
+            const newStatus = { ...prev };
+            Object.keys(newStatus).forEach(slug => {
+              if (newStatus[slug] === 'in_progress') {
+                newStatus[slug] = 'completed';
+              }
+            });
+            return newStatus;
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error loading pages list:', err);
+      setPagesList([]);
+    } finally {
+      setLoadingPages(false);
     }
-  }, [details?.status]);
+  };
 
   const loadDetails = async () => {
     if (!id) return;
@@ -79,6 +159,9 @@ export default function MigrationDetails() {
       const response = await api.getMigrationDetails(parseInt(id));
       if (response.success && response.data) {
         setDetails(response.data);
+        // Сбрасываем флаг обновления после завершения при загрузке новых деталей
+        // Это нужно для случая, когда пользователь переходит на другую миграцию
+        setHasRefreshedAfterCompletion(false);
       } else {
         setError(response.error || 'Миграция не найдена');
       }
@@ -88,6 +171,305 @@ export default function MigrationDetails() {
       setLoading(false);
     }
   };
+
+  const refreshDetails = async () => {
+    // Фоновое обновление без полного спиннера и без показа загрузки
+    if (!id || !details) return;
+    try {
+      // Не показываем индикатор загрузки при автоматическом обновлении
+      const response = await api.getMigrationDetails(parseInt(id));
+      if (response.success && response.data) {
+        // Обновляем данные без показа загрузки
+        setDetails(response.data);
+      } else {
+        // В фоне не ломаем текущий экран, только логируем
+        console.error('Error refreshing migration details:', response.error);
+      }
+    } catch (err: any) {
+      console.error('Error refreshing migration details:', err);
+    }
+    // Не устанавливаем setAutoRefreshing, чтобы не показывать индикатор
+  };
+
+  useEffect(() => {
+    if (id) {
+      loadDetails();
+      loadQualityStatistics();
+      loadProcessInfo(true); // Показываем загрузку только при первой загрузке
+    }
+  }, [id]);
+
+  const loadProcessInfo = async (showLoading: boolean = false) => {
+    if (!id) return;
+    try {
+      if (showLoading) {
+        setLoadingProcessInfo(true);
+      } else {
+        setRefreshingProcessInfo(true);
+      }
+      const response = await api.getMigrationProcessInfo(parseInt(id));
+      if (response.success && response.data) {
+        setProcessInfo(response.data);
+        
+        // Если статус был автоматически обновлен, перезагружаем детали миграции в фоне
+        if (response.data.status_updated) {
+          // Небольшая задержка, чтобы БД успела обновиться
+          setTimeout(() => {
+            refreshDetails(); // Используем refreshDetails вместо loadDetails, чтобы не показывать загрузку
+          }, 500);
+        }
+      }
+    } catch (err) {
+      console.error('Error loading process info:', err);
+    } finally {
+      if (showLoading) {
+        setLoadingProcessInfo(false);
+      } else {
+        setRefreshingProcessInfo(false);
+      }
+    }
+  };
+
+  const handleKillProcess = async (force: boolean = false) => {
+    if (!id) return;
+    if (!confirm(`Вы уверены, что хотите ${force ? 'принудительно ' : ''}завершить процесс миграции?`)) {
+      return;
+    }
+    try {
+      setKillingProcess(true);
+      const response = await api.killMigrationProcess(parseInt(id), force);
+      if (response.success) {
+        alert(response.data?.message || 'Процесс завершен');
+        await loadProcessInfo();
+        await loadDetails();
+      } else {
+        alert(response.error || 'Ошибка при завершении процесса');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Ошибка при завершении процесса');
+    } finally {
+      setKillingProcess(false);
+    }
+  };
+
+  const handleRemoveLock = async () => {
+    if (!id) return;
+    if (!confirm('Вы уверены, что хотите удалить lock-файл? Это позволит перезапустить миграцию.')) {
+      return;
+    }
+    try {
+      setRemovingLock(true);
+      const response = await api.removeMigrationLock(parseInt(id));
+      if (response.success) {
+        alert(response.data?.message || 'Lock-файл удален');
+        await loadProcessInfo();
+        await loadDetails();
+      } else {
+        alert(response.error || 'Ошибка при удалении lock-файла');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Ошибка при удалении lock-файла');
+    } finally {
+      setRemovingLock(false);
+    }
+  };
+
+  const handleRemoveCache = async () => {
+    if (!id) return;
+    if (!confirm('Вы уверены, что хотите удалить кэш-файл миграции? Это удалит все промежуточные данные кэша.')) {
+      return;
+    }
+    try {
+      setRemovingCache(true);
+      const response = await api.removeMigrationCache(parseInt(id));
+      if (response.success) {
+        alert(response.data?.message || 'Кэш-файл удален');
+        await loadDetails();
+        await loadProcessInfo(false);
+      } else {
+        alert(response.error || 'Ошибка при удалении кэш-файла');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Ошибка при удалении кэш-файла');
+    } finally {
+      setRemovingCache(false);
+    }
+  };
+
+  const handleResetStatus = async () => {
+    if (!id) return;
+    if (!confirm('Вы уверены, что хотите сбросить статус миграции? Статус будет установлен на "pending", и миграцию можно будет перезапустить.')) {
+      return;
+    }
+    try {
+      setResettingStatus(true);
+      const response = await api.resetMigrationStatus(parseInt(id));
+      if (response.success) {
+        alert(response.data?.message || 'Статус миграции сброшен');
+        await loadDetails();
+        await loadProcessInfo(false);
+      } else {
+        alert(response.error || 'Ошибка при сбросе статуса');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Ошибка при сбросе статуса');
+    } finally {
+      setResettingStatus(false);
+    }
+  };
+
+  const handleHardReset = async () => {
+    if (!id) return;
+    if (!confirm('Вы уверены, что хотите выполнить HARD RESET?\n\nЭто действие:\n- Удалит lock-файл\n- Удалит cache-файл\n- Завершит процесс миграции (если запущен)\n- Сбросит статус в БД на "pending"\n\nПосле этого миграцию можно будет перезапустить.')) {
+      return;
+    }
+    try {
+      setHardResetting(true);
+      const response = await api.hardResetMigration(parseInt(id));
+      if (response.success) {
+        const results = response.data?.results || {};
+        const messages = results.messages || [];
+        const summary = [
+          'Hard reset выполнен:',
+          ...messages
+        ].join('\n');
+        alert(summary);
+        await loadDetails();
+        await loadProcessInfo(false);
+      } else {
+        alert(response.error || 'Ошибка при выполнении hard reset');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Ошибка при выполнении hard reset');
+    } finally {
+      setHardResetting(false);
+    }
+  };
+
+  useEffect(() => {
+    // Обновляем статус каждые 3 секунды если миграция в процессе
+    // Частое обновление для отслеживания текущего этапа миграции
+    const hasActiveMigration = details?.status === 'in_progress' || 
+                               (processInfo?.lock_file_exists && processInfo?.process?.running) ||
+                               Object.values(pageMigrationStatus).some(status => status === 'in_progress');
+    
+    if (hasActiveMigration) {
+      // Сбрасываем флаг при начале новой миграции
+      setHasRefreshedAfterCompletion(false);
+      const interval = setInterval(() => {
+        refreshDetails(); // Обновляет только данные, без показа загрузки
+        loadProcessInfo(false); // Обновляем в фоне без показа загрузки
+        // Обновляем список страниц, чтобы обновить статусы
+        loadPagesList();
+      }, 3000); // Обновление каждые 3 секунды
+      return () => clearInterval(interval);
+    }
+    
+    // Обновляем данные после завершения миграции (успешной или нет)
+    // Обновляем только один раз после завершения
+    if ((details?.status === 'success' || details?.status === 'error' || details?.status === 'completed') && !hasRefreshedAfterCompletion) {
+      setHasRefreshedAfterCompletion(true);
+      // Обновляем данные после завершения миграции
+      refreshDetails();
+      loadProcessInfo(false);
+    }
+  }, [details?.status, processInfo?.lock_file_exists, processInfo?.process?.running, hasRefreshedAfterCompletion, pageMigrationStatus]);
+
+  // Обновляем статусы страниц при изменении processInfo
+  useEffect(() => {
+    if (processInfo?.process?.running) {
+      // Безопасно получаем changesJson
+      const currentChangesJson = safeParseChangesJson(details?.mapping?.changes_json);
+      
+      const currentPageSlug = processInfo.process.current_page_slug || 
+                             (details?.result as any)?.mb_page_slug ||
+                             currentChangesJson?.mb_page_slug;
+      
+      if (currentPageSlug) {
+        setPageMigrationStatus(prev => {
+          const newStatus = { ...prev };
+          // Если текущая страница изменилась, сбрасываем статус для предыдущей
+          Object.keys(newStatus).forEach(slug => {
+            if (slug !== currentPageSlug && newStatus[slug] === 'in_progress') {
+              newStatus[slug] = 'completed';
+            }
+          });
+          // Устанавливаем статус для текущей страницы
+          newStatus[currentPageSlug] = 'in_progress';
+          return newStatus;
+        });
+      }
+    } else {
+      // Если процесс не запущен, сбрасываем все статусы "in_progress" в "completed"
+      setPageMigrationStatus(prev => {
+        const newStatus = { ...prev };
+        Object.keys(newStatus).forEach(slug => {
+          if (newStatus[slug] === 'in_progress') {
+            newStatus[slug] = 'completed';
+          }
+        });
+        return newStatus;
+      });
+    }
+  }, [processInfo?.process?.running, processInfo?.process?.current_page_slug, details?.result, details?.mapping?.changes_json]);
+
+  const loadMigrationLogs = useCallback(async () => {
+    if (!id) return;
+    
+    try {
+      setLoadingLogs(true);
+      const response = await api.getMigrationLogs(parseInt(id));
+      
+      if (response.success && response.data) {
+        let logText = '';
+        
+        // Обрабатываем разные форматы ответа
+        if (Array.isArray(response.data.logs)) {
+          logText = response.data.logs
+            .filter((line: string) => line && line.trim())
+            .join('\n');
+        } else if (typeof response.data.logs === 'string') {
+          logText = response.data.logs;
+        } else if (typeof response.data === 'string') {
+          logText = response.data;
+        } else {
+          logText = JSON.stringify(response.data, null, 2);
+        }
+        
+        // Нормализуем переносы строк
+        logText = logText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        logText = logText.replace(/\]\[/g, ']\n[');
+        
+        setLogs(logText);
+      } else {
+        setLogs('Не удалось загрузить логи: ' + (response.error || 'Неизвестная ошибка'));
+      }
+    } catch (err: any) {
+      setLogs('Ошибка загрузки логов: ' + (err.message || 'Неизвестная ошибка'));
+    } finally {
+      setLoadingLogs(false);
+    }
+  }, [id]);
+
+  // Автообновление логов для активных миграций
+  useEffect(() => {
+    if (!showLogs || !id) return;
+    
+    if (details?.status === 'in_progress') {
+      const interval = setInterval(() => {
+        loadMigrationLogs();
+      }, 3000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [showLogs, details?.status, id, loadMigrationLogs]);
+
+  // Автопрокрутка логов вверх при обновлении
+  useEffect(() => {
+    if (logsContentRef.current && showLogs && logs) {
+      logsContentRef.current.scrollTop = 0;
+    }
+  }, [logs, showLogs]);
 
   const handleRestart = async () => {
     if (!id) return;
@@ -169,29 +551,7 @@ export default function MigrationDetails() {
   const migrationValue = (details as any).result_data || resultData?.value || resultData;
   
   // Безопасный парсинг changes_json
-  let changesJson = null;
-  if (details.mapping.changes_json) {
-    try {
-      const rawValue = typeof details.mapping.changes_json === 'string' 
-        ? details.mapping.changes_json 
-        : JSON.stringify(details.mapping.changes_json);
-      
-      // Проверяем, не обрезан ли JSON (неполная строка)
-      if (rawValue.length > 0 && !rawValue.trim().endsWith('}') && !rawValue.trim().endsWith(']')) {
-        // JSON обрезан - пытаемся восстановить или используем null
-        console.warn('changes_json appears to be truncated, skipping parse');
-        changesJson = null;
-      } else {
-        changesJson = typeof details.mapping.changes_json === 'string'
-          ? JSON.parse(rawValue)
-          : details.mapping.changes_json;
-      }
-    } catch (e) {
-      // Не логируем ошибку в консоль, чтобы не засорять её
-      // Просто используем null
-      changesJson = null;
-    }
-  }
+  const changesJson = safeParseChangesJson(details.mapping.changes_json);
   
   // Если migrationValue пуст, но есть changes_json с данными, используем их
   if (!migrationValue && changesJson) {
@@ -205,7 +565,7 @@ export default function MigrationDetails() {
           ← Назад
         </button>
         <h2>Детали миграции #{details.mapping.brz_project_id}</h2>
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span
             className="status-badge"
             style={{
@@ -226,10 +586,28 @@ export default function MigrationDetails() {
 
       <div className="migration-tabs">
         <button
+          className={activeTab === 'management' ? 'active' : ''}
+          onClick={() => setActiveTab('management')}
+        >
+          Управление
+        </button>
+        <button
           className={activeTab === 'details' ? 'active' : ''}
           onClick={() => setActiveTab('details')}
         >
           Детали
+        </button>
+        <button
+          className={activeTab === 'pages' ? 'active' : ''}
+          onClick={() => {
+            setActiveTab('pages');
+            loadPagesList();
+          }}
+        >
+          Страницы
+          {pagesList.length > 0 && (
+            <span className="badge-count">{pagesList.length}</span>
+          )}
         </button>
         <button
           className={activeTab === 'analysis' ? 'active' : ''}
@@ -243,55 +621,673 @@ export default function MigrationDetails() {
         >
           Архив
         </button>
+        <button
+          className={activeTab === 'warnings' ? 'active' : ''}
+          onClick={() => setActiveTab('warnings')}
+        >
+          Предупреждения
+          {((migrationValue?.message?.warning && migrationValue.message.warning.length > 0) ||
+            (details.warnings && details.warnings.length > 0) ||
+            details.status === 'error' ||
+            resultData?.error) && (
+            <span className="badge-count">
+              {[
+                migrationValue?.message?.warning?.length || 0,
+                details.warnings?.length || 0,
+                details.status === 'error' ? 1 : 0,
+                resultData?.error ? 1 : 0
+              ].reduce((a, b) => a + b, 0)}
+            </span>
+          )}
+        </button>
+        <button
+          className={activeTab === 'statistics' ? 'active' : ''}
+          onClick={() => setActiveTab('statistics')}
+        >
+          Статистика
+          {qualityStatistics && (
+            <span className="badge-count">{qualityStatistics.total_pages > 0 ? qualityStatistics.total_pages : ''}</span>
+          )}
+        </button>
       </div>
 
-      {activeTab === 'details' && (
-        <div className="details-grid">
-        {qualityStatistics && qualityStatistics.token_statistics && (
-          <div className="card highlight-card">
+      {activeTab === 'management' && (
+        <div className="management-tab">
+          <div className="card">
             <div className="card-header">
-              <h3 className="card-title">💰 Статистика анализа качества</h3>
+              <h3 className="card-title">Действия</h3>
             </div>
-            <div className="info-grid">
-              <div className="info-item">
-                <span className="info-label">Общая стоимость анализа:</span>
-                <span className="info-value" style={{ color: '#198754', fontWeight: 'bold', fontSize: '1.2em' }}>
-                  ${qualityStatistics.token_statistics.total_cost_usd.toFixed(6)}
-                </span>
+            <div className="actions">
+              <button
+                onClick={() => setShowRestartForm(true)}
+                className="btn btn-primary"
+                disabled={details.status === 'in_progress'}
+              >
+                Перезапустить миграцию
+              </button>
+              {details.status === 'in_progress' && (
+                <button onClick={loadDetails} className="btn btn-secondary">
+                  Обновить статус
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  if (showLogs) {
+                    setShowLogs(false);
+                    setLogs(null);
+                  } else {
+                    setShowLogs(true);
+                    loadMigrationLogs();
+                  }
+                }}
+                className="btn btn-secondary"
+                title="Показать логи миграции"
+              >
+                📋 Логи
+              </button>
+            </div>
+
+            {/* Управление кэшем и статусом */}
+            <div className="cache-management" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e0e0e0' }}>
+              <h4 style={{ marginBottom: '1rem' }}>Управление кэшем и статусом</h4>
+              <div className="cache-actions" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button
+                  onClick={handleRemoveCache}
+                  className="btn btn-warning"
+                  disabled={removingCache}
+                  title="Удалить кэш-файл миграции (промежуточные данные)"
+                >
+                  {removingCache ? 'Удаление...' : '🗑️ Удалить кэш'}
+                </button>
+                <button
+                  onClick={handleResetStatus}
+                  className="btn btn-info"
+                  disabled={resettingStatus || details.status === 'pending'}
+                  title="Сбросить статус миграции на 'pending', чтобы можно было перезапустить"
+                >
+                  {resettingStatus ? 'Сброс...' : '🔄 Сбросить статус'}
+                </button>
+                <button
+                  onClick={handleHardReset}
+                  className="btn btn-danger"
+                  disabled={hardResetting}
+                  title="Hard Reset: удалить lock-файл, cache-файл, завершить процесс и сбросить статус"
+                >
+                  {hardResetting ? 'Выполнение...' : '💥 Hard Reset'}
+                </button>
               </div>
-              <div className="info-item">
-                <span className="info-label">Средняя стоимость на страницу:</span>
-                <span className="info-value">
-                  ${qualityStatistics.token_statistics.avg_cost_per_page_usd.toFixed(6)}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Всего токенов использовано:</span>
-                <span className="info-value">
-                  {qualityStatistics.token_statistics.total_tokens.toLocaleString()}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Входные токены:</span>
-                <span className="info-value">
-                  {qualityStatistics.token_statistics.total_prompt_tokens.toLocaleString()}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Выходные токены:</span>
-                <span className="info-value">
-                  {qualityStatistics.token_statistics.total_completion_tokens.toLocaleString()}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Среднее токенов на страницу:</span>
-                <span className="info-value">
-                  {qualityStatistics.token_statistics.avg_tokens_per_page.toLocaleString()}
-                </span>
+              <div className="form-help" style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: '#6c757d' }}>
+                <p>• <strong>Удалить кэш</strong> - удаляет промежуточные данные кэша миграции</p>
+                <p>• <strong>Сбросить статус</strong> - устанавливает статус на "pending", позволяя перезапустить миграцию</p>
+                <p>• <strong>Hard Reset</strong> - полный сброс: удаляет lock-файл, cache-файл, завершает процесс и сбрасывает статус (одна кнопка для полной очистки)</p>
               </div>
             </div>
           </div>
-        )}
+
+          {/* Статус процесса миграции - отдельная карточка, всегда видна */}
+          <div className="card" style={{ marginTop: '1.5rem' }}>
+            <div className="card-header">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 className="card-title">Статус процесса миграции</h3>
+                {refreshingProcessInfo && (
+                  <span className="status-refresh-indicator" title="Обновление информации о процессе...">
+                    <span className="inline-spinner" style={{ width: '12px', height: '12px', borderWidth: '2px' }} />
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="card-body">
+              {/* Блок уведомлений и информации о процессе - сразу под заголовком */}
+              {!loadingProcessInfo && processInfo && (
+                <>
+                  {/* Уведомление о статусе lock-файла - показываем только если нет process.message или оно не содержит эту информацию */}
+                  {!processInfo.lock_file_exists && !processInfo.process?.running && 
+                   (!processInfo.process?.message || !processInfo.process.message.includes('Lock-файл не найден')) && (
+                    <div className="alert alert-info" style={{ marginBottom: '1rem', padding: '0.75rem', fontSize: '0.875rem', borderRadius: '4px', backgroundColor: '#d1ecf1', border: '1px solid #bee5eb', color: '#0c5460' }}>
+                      ℹ️ Lock-файл не найден, процесс не запущен
+                    </div>
+                  )}
+                  
+                  {/* Информация о том, как был обнаружен процесс - показываем только если нет process.message или оно не содержит эту информацию */}
+                  {processInfo.process?.running && processInfo.process?.detected_by && 
+                   (!processInfo.process?.message || !processInfo.process.message.includes('найден') && !processInfo.process.message.includes('определен')) && (
+                    <div className="alert alert-info" style={{ marginBottom: '1rem', padding: '0.75rem', fontSize: '0.875rem', borderRadius: '4px', backgroundColor: '#d1ecf1', border: '1px solid #bee5eb', color: '#0c5460' }}>
+                      ℹ️ {processInfo.process.detected_by === 'lock_file_pid' ? 'Процесс найден по PID из lock-файла' :
+                          processInfo.process.detected_by === 'lock_file_timestamp_and_db_status' ? 'Процесс определен по времени файла и статусу БД' :
+                          processInfo.process.detected_by === 'db_status' ? 'Процесс определен по статусу БД' :
+                          processInfo.process.detected_by === 'lsof' ? 'Процесс найден через lsof' :
+                          processInfo.process.detected_by === 'fuser' ? 'Процесс найден через fuser' :
+                          processInfo.process.detected_by === 'ps_grep' ? 'Процесс найден через ps' :
+                          'Процесс найден'}
+                    </div>
+                  )}
+                  
+                  {/* Уведомление о статусе миграции */}
+                  {processInfo.status_updated && (
+                    <div className="alert alert-info" style={{ marginBottom: '1rem', padding: '0.75rem', fontSize: '0.875rem', borderRadius: '4px', backgroundColor: '#d1ecf1', border: '1px solid #bee5eb', color: '#0c5460' }}>
+                      ✅ Статус миграции был автоматически обновлен, так как процесс не найден. Страница будет обновлена...
+                    </div>
+                  )}
+                  
+                  {/* Уведомление о lock-файле без процесса */}
+                  {processInfo.lock_file_exists && !processInfo.process?.running && !processInfo.status_updated && 
+                   (!processInfo.process?.message || !processInfo.process.message.includes('Lock-файл')) && (
+                    <div className="alert alert-warning" style={{ marginBottom: '1rem', padding: '0.75rem', fontSize: '0.875rem', borderRadius: '4px', backgroundColor: '#fff3cd', border: '1px solid #ffc107', color: '#856404' }}>
+                      ⚠️ Lock-файл существует, но процесс не найден.
+                      {processInfo.process?.lock_file_age !== undefined && processInfo.process.lock_file_age > 600 && (
+                        <span> Lock-файл не обновлялся более {Math.floor(processInfo.process.lock_file_age / 60)} минут.</span>
+                      )}
+                      {' '}Возможно, процесс был прерван. Рекомендуется удалить lock-файл, чтобы разрешить повторный запуск миграции.
+                    </div>
+                  )}
+                  
+                  {/* Уведомление о процессе без PID */}
+                  {processInfo.process?.running && !processInfo.process?.pid && 
+                   (!processInfo.process?.message || !processInfo.process.message.includes('PID') && !processInfo.process.message.includes('синхронно')) && (
+                    <div className="alert alert-info" style={{ marginBottom: '1rem', padding: '0.75rem', fontSize: '0.875rem', borderRadius: '4px', backgroundColor: '#d1ecf1', border: '1px solid #bee5eb', color: '#0c5460' }}>
+                      ℹ️ Процесс миграции активен (определен по статусу в БД и времени модификации lock-файла). PID процесса недоступен, возможно миграция выполняется синхронно через веб-сервер.
+                    </div>
+                  )}
+                  
+                  {/* Сообщение от процесса - показываем всегда, если есть */}
+                  {processInfo.process?.message && (
+                    <div className="alert alert-info" style={{ marginBottom: '1rem', padding: '0.75rem', fontSize: '0.875rem', borderRadius: '4px', backgroundColor: '#d1ecf1', border: '1px solid #bee5eb', color: '#0c5460' }}>
+                      ℹ️ {processInfo.process.message}
+                    </div>
+                  )}
+                </>
+              )}
+              
+              {loadingProcessInfo ? (
+                  <div style={{ padding: '1rem', textAlign: 'center' }}>
+                    <span className="inline-spinner" /> Загрузка информации о процессе...
+                  </div>
+                ) : processInfo ? (
+                  <div className="process-info" style={{ marginBottom: '1rem' }}>
+                    <div className="info-grid">
+                      <div className="info-item">
+                        <span className="info-label">Lock-файл:</span>
+                        <span className="info-value">
+                          {processInfo.lock_file_exists ? (
+                            <span style={{ color: '#dc3545' }}>● Существует</span>
+                          ) : (
+                            <span style={{ color: '#198754' }}>● Не найден</span>
+                          )}
+                        </span>
+                      </div>
+                      {processInfo.process?.running ? (
+                        <>
+                          <div className="info-item">
+                            <span className="info-label">Процесс:</span>
+                            <span className="info-value" style={{ color: '#198754' }}>
+                              ● Запущен
+                              {processInfo.process.pid && ` (PID: ${processInfo.process.pid})`}
+                            </span>
+                          </div>
+                          {processInfo.process.started_at && (
+                            <div className="info-item">
+                              <span className="info-label">Запущен:</span>
+                              <span className="info-value">{processInfo.process.started_at}</span>
+                            </div>
+                          )}
+                          {processInfo.process.current_stage && (
+                            <div className="info-item" style={{ gridColumn: '1 / -1', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid #e0e0e0' }}>
+                              <span className="info-label">Текущий этап:</span>
+                              <span className="info-value" style={{ fontWeight: 600, color: '#2563eb' }}>
+                                {processInfo.process.current_stage}
+                                {processInfo.process.stage_updated_at && (
+                                  <span style={{ fontSize: '0.875rem', color: '#6c757d', marginLeft: '0.5rem', fontWeight: 'normal' }}>
+                                    (обновлено {Math.floor((Date.now() / 1000 - processInfo.process.stage_updated_at) / 60)} мин. назад)
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          )}
+                          {processInfo.process.progress_percent !== null && processInfo.process.progress_percent !== undefined && (
+                            <div className="info-item" style={{ gridColumn: '1 / -1', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e0e0e0' }}>
+                              {/* Заголовок и процент на одной строке */}
+                              <div style={{ marginBottom: '0.75rem' }}>
+                                <span className="info-label" style={{ fontSize: '0.95rem', fontWeight: 600 }}>Прогресс миграции: </span>
+                                <span className="info-value" style={{ fontWeight: 600, color: '#2563eb', fontSize: '0.95rem' }}>
+                                  {processInfo.process.progress_percent}%
+                                  {processInfo.process.total_pages && processInfo.process.processed_pages !== null && (
+                                    <span style={{ fontSize: '0.875rem', color: '#6c757d', marginLeft: '0.5rem', fontWeight: 'normal' }}>
+                                      ({processInfo.process.processed_pages} из {processInfo.process.total_pages} страниц)
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                              {/* Прогресс-бар в отдельной строке */}
+                              <div style={{ 
+                                width: '100%', 
+                                height: '28px', 
+                                backgroundColor: '#e5e7eb', 
+                                borderRadius: '14px', 
+                                overflow: 'hidden',
+                                position: 'relative',
+                                boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.1)',
+                                marginBottom: '0.75rem'
+                              }}>
+                                <div style={{
+                                  width: `${Math.min(processInfo.process.progress_percent, 100)}%`,
+                                  height: '100%',
+                                  backgroundColor: processInfo.process.progress_percent >= 100 ? '#10b981' : '#2563eb',
+                                  transition: 'width 0.5s ease, background-color 0.3s ease',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  color: '#fff',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                  boxShadow: processInfo.process.progress_percent >= 100 ? '0 2px 4px rgba(16, 185, 129, 0.3)' : '0 2px 4px rgba(37, 99, 235, 0.3)'
+                                }}>
+                                  {processInfo.process.progress_percent >= 8 && `${Math.round(processInfo.process.progress_percent)}%`}
+                                </div>
+                              </div>
+                              {/* Информация об оставшихся страницах */}
+                              {processInfo.process.total_pages && processInfo.process.processed_pages !== null && (
+                                <div style={{ fontSize: '0.875rem', color: '#6c757d', textAlign: 'center' }}>
+                                  Осталось страниц: <strong style={{ color: '#374151' }}>{processInfo.process.total_pages - processInfo.process.processed_pages}</strong>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          {processInfo.process.lock_file_age !== undefined && (
+                            <div className="info-item">
+                              <span className="info-label">Возраст lock-файла:</span>
+                              <span className="info-value">
+                                {Math.floor(processInfo.process.lock_file_age / 60)} мин. {processInfo.process.lock_file_age % 60} сек.
+                              </span>
+                            </div>
+                          )}
+                          {processInfo.process_details && (
+                            <>
+                              <div className="info-item">
+                                <span className="info-label">Пользователь:</span>
+                                <span className="info-value">{processInfo.process_details.user}</span>
+                              </div>
+                              <div className="info-item">
+                                <span className="info-label">Время работы:</span>
+                                <span className="info-value">{processInfo.process_details.time}</span>
+                              </div>
+                              <div className="info-item">
+                                <span className="info-label">Запущен:</span>
+                                <span className="info-value">{processInfo.process_details.start}</span>
+                              </div>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <div className="info-item">
+                          <span className="info-label">Процесс:</span>
+                          <span className="info-value" style={{ color: '#6c757d' }}>
+                            ● Не запущен
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+              ) : (
+                <div style={{ padding: '1rem', textAlign: 'center', color: '#6c757d' }}>
+                  Информация о процессе недоступна. Нажмите "Обновить информацию" для загрузки.
+                </div>
+              )}
+
+              <div className="process-actions" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+                  {processInfo?.process?.running && processInfo?.process?.pid && (
+                    <>
+                      <button
+                        onClick={() => handleKillProcess(false)}
+                        className="btn btn-warning"
+                        disabled={killingProcess}
+                        title="Отправить сигнал SIGTERM для корректного завершения процесса"
+                      >
+                        {killingProcess ? 'Завершение...' : 'Завершить процесс'}
+                      </button>
+                      <button
+                        onClick={() => handleKillProcess(true)}
+                        className="btn btn-danger"
+                        disabled={killingProcess}
+                        title="Принудительно завершить процесс (SIGKILL)"
+                      >
+                        {killingProcess ? 'Завершение...' : 'Принудительно завершить'}
+                      </button>
+                    </>
+                  )}
+                  {processInfo?.process?.running && !processInfo?.process?.pid && (
+                    <div className="alert alert-info" style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
+                      ⚠️ PID процесса недоступен. Для завершения процесса используйте кнопку "Сбросить статус" или удалите lock-файл.
+                    </div>
+                  )}
+                  {(processInfo?.lock_file_exists || details.status === 'in_progress') && (
+                    <button
+                      onClick={handleRemoveLock}
+                      className="btn btn-secondary"
+                      disabled={removingLock}
+                      title="Удалить lock-файл, чтобы разрешить повторный запуск миграции"
+                    >
+                      {removingLock ? 'Удаление...' : 'Удалить lock-файл'}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => loadProcessInfo(false)}
+                    className="btn btn-secondary"
+                    disabled={refreshingProcessInfo || loadingProcessInfo}
+                    title="Обновить информацию о процессе"
+                  >
+                    {refreshingProcessInfo ? (
+                      <>
+                        <span className="inline-spinner" style={{ width: '12px', height: '12px', borderWidth: '2px' }} />
+                        Обновление...
+                      </>
+                    ) : (
+                      'Обновить информацию'
+                    )}
+                  </button>
+                </div>
+            </div>
+
+          {/* Модальное окно для формы перезапуска */}
+          {showRestartForm && (
+            <div className="page-analysis-modal" onClick={() => setShowRestartForm(false)}>
+              <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+                <div className="modal-header">
+                  <h2>Параметры перезапуска миграции</h2>
+                  <button onClick={() => setShowRestartForm(false)} className="btn-close">×</button>
+                </div>
+                <div className="modal-body">
+                <div className="form-group">
+                  <label className="form-label">
+                    MB Site ID
+                    {defaultSettings.mb_site_id && (
+                      <span className="form-default-badge">(из настроек: {defaultSettings.mb_site_id})</span>
+                    )}
+                  </label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={restartParams.mb_site_id}
+                    onChange={(e) => setRestartParams({ ...restartParams, mb_site_id: e.target.value })}
+                    placeholder={defaultSettings.mb_site_id ? String(defaultSettings.mb_site_id) : "31383"}
+                  />
+                  <div className="form-help">
+                    ID сайта в Ministry Brands
+                    {!defaultSettings.mb_site_id && (
+                      <span className="form-help-hint"> (можно задать в <a href="/dashboard/settings">настройках</a>)</span>
+                    )}
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">
+                    MB Secret
+                    {defaultSettings.mb_secret && (
+                      <span className="form-default-badge">(из настроек: ••••••••)</span>
+                    )}
+                  </label>
+                  <input
+                    type="password"
+                    className="form-input"
+                    value={restartParams.mb_secret}
+                    onChange={(e) => setRestartParams({ ...restartParams, mb_secret: e.target.value })}
+                    placeholder={defaultSettings.mb_secret ? "••••••••" : "b0kcNmG1cvoMl471cFK2NiOvCIwtPB5Q"}
+                  />
+                  <div className="form-help">
+                    Секретный ключ для доступа к MB API
+                    {!defaultSettings.mb_secret && (
+                      <span className="form-help-hint"> (можно задать в <a href="/dashboard/settings">настройках</a>)</span>
+                    )}
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Brizy Workspaces ID</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={restartParams.brz_workspaces_id}
+                    onChange={(e) => setRestartParams({ ...restartParams, brz_workspaces_id: e.target.value })}
+                    placeholder="22925473"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">MB Page Slug</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={restartParams.mb_page_slug}
+                    onChange={(e) => setRestartParams({ ...restartParams, mb_page_slug: e.target.value })}
+                    placeholder="Оставьте пустым для миграции всех страниц"
+                  />
+                  <div className="form-help">
+                    Если указан, будет мигрирована только эта страница
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">
+                    <input
+                      type="checkbox"
+                      checked={restartParams.mgr_manual === '1'}
+                      onChange={(e) => setRestartParams({ ...restartParams, mgr_manual: e.target.checked ? '1' : '0' })}
+                    />
+                    <span style={{ marginLeft: '0.5rem' }}>Ручной режим</span>
+                  </label>
+                  <div className="form-help">
+                    В ручном режиме миграция выполняется синхронно через веб-сервер
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">
+                    <input
+                      type="checkbox"
+                      checked={restartParams.quality_analysis}
+                      onChange={(e) => setRestartParams({ ...restartParams, quality_analysis: e.target.checked })}
+                    />
+                    <span style={{ marginLeft: '0.5rem' }}>Анализ качества</span>
+                  </label>
+                  <div className="form-help">
+                    Включить анализ качества миграции страниц
+                  </div>
+                </div>
+                  <div className="form-actions" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border)' }}>
+                    <button
+                      onClick={() => setShowRestartForm(false)}
+                      className="btn btn-secondary"
+                    >
+                      Отменить
+                    </button>
+                    <button
+                      onClick={handleRestart}
+                      className="btn btn-primary"
+                      disabled={restarting || details.status === 'in_progress'}
+                    >
+                      {restarting ? 'Перезапуск...' : 'Перезапустить'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'pages' && (
+        <div className="pages-tab">
+          <div style={{ marginBottom: '1rem' }}>
+            <button 
+              onClick={loadPagesList}
+              disabled={loadingPages}
+              className="btn btn-secondary"
+              style={{ marginRight: '0.5rem' }}
+            >
+              {loadingPages ? 'Загрузка...' : 'Обновить список'}
+            </button>
+          </div>
+          
+          {loadingPages ? (
+            <div className="loading">Загрузка списка страниц...</div>
+          ) : pagesList.length === 0 ? (
+            <div className="no-data">Страницы не найдены</div>
+          ) : (
+            <div className="pages-table-container">
+              <table className="pages-table">
+                <thead>
+                  <tr>
+                    <th>Slug страницы</th>
+                    <th>Статус миграции</th>
+                    <th>Статус анализа</th>
+                    <th>Оценка качества</th>
+                    <th>Уровень критичности</th>
+                    <th>Дата создания</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pagesList.map((page) => {
+                    // Определяем статус миграции для страницы
+                    let migrationStatus = pageMigrationStatus[page.page_slug] || null;
+                    
+                    // Если статус не установлен локально, проверяем processInfo
+                    if (!migrationStatus && processInfo?.process?.running) {
+                      // Безопасно получаем changesJson
+                      const currentChangesJson = safeParseChangesJson(details?.mapping?.changes_json);
+                      
+                      const currentPageSlug = processInfo.process.current_page_slug || 
+                                             (details?.result as any)?.mb_page_slug ||
+                                             currentChangesJson?.mb_page_slug ||
+                                             (migrationValue as any)?.mb_page_slug;
+                      if (currentPageSlug === page.page_slug) {
+                        migrationStatus = 'in_progress';
+                      }
+                    }
+                    
+                    return (
+                    <tr key={page.page_slug}>
+                      <td>
+                        <code>{page.page_slug}</code>
+                      </td>
+                      <td>
+                        {migrationStatus === 'in_progress' ? (
+                          <span className="status-badge status-in_progress" style={{ backgroundColor: '#2563eb', color: '#fff' }}>
+                            Миграция в процессе
+                          </span>
+                        ) : migrationStatus === 'completed' ? (
+                          <span className="status-badge status-completed" style={{ backgroundColor: '#10b981', color: '#fff' }}>
+                            Завершено
+                          </span>
+                        ) : migrationStatus === 'error' ? (
+                          <span className="status-badge status-error" style={{ backgroundColor: '#dc3545', color: '#fff' }}>
+                            Ошибка
+                          </span>
+                        ) : (
+                          <span className="status-badge" style={{ backgroundColor: '#e5e7eb', color: '#6b7280' }}>
+                            —
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        <span className={`status-badge status-${page.analysis_status || 'pending'}`}>
+                          {page.analysis_status || 'pending'}
+                        </span>
+                      </td>
+                      <td>
+                        {page.quality_score !== null ? (
+                          <span className="quality-score">{page.quality_score}/100</span>
+                        ) : (
+                          <span className="no-score">—</span>
+                        )}
+                      </td>
+                      <td>
+                        <span className={`severity-badge severity-${page.severity_level || 'none'}`}>
+                          {page.severity_level || 'none'}
+                        </span>
+                      </td>
+                      <td>
+                        {page.created_at ? formatDate(page.created_at) : '—'}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <button
+                            onClick={async () => {
+                              if (!confirm(`Пересобрать страницу "${page.page_slug}" без анализа?`)) {
+                                return;
+                              }
+                              try {
+                                setRebuildingPages(prev => ({ ...prev, [page.page_slug]: true }));
+                                setPageMigrationStatus(prev => ({ ...prev, [page.page_slug]: 'in_progress' }));
+                                const response = await api.rebuildPageNoAnalysis(parseInt(id!), page.page_slug);
+                                if (response.success) {
+                                  // Обновляем информацию о процессе и детали миграции
+                                  await refreshDetails();
+                                  await loadProcessInfo(false);
+                                  // Не показываем alert, так как статус виден в таблице
+                                  setTimeout(() => {
+                                    loadPagesList();
+                                  }, 2000);
+                                } else {
+                                  setPageMigrationStatus(prev => ({ ...prev, [page.page_slug]: 'error' }));
+                                  alert('Ошибка: ' + (response.error || 'Неизвестная ошибка'));
+                                }
+                              } catch (err: any) {
+                                setPageMigrationStatus(prev => ({ ...prev, [page.page_slug]: 'error' }));
+                                alert('Ошибка: ' + (err.message || 'Не удалось запустить пересборку'));
+                              } finally {
+                                setRebuildingPages(prev => ({ ...prev, [page.page_slug]: false }));
+                              }
+                            }}
+                            disabled={rebuildingPages[page.page_slug] || pageMigrationStatus[page.page_slug] === 'in_progress'}
+                            className="btn btn-sm btn-secondary"
+                            title="Пересобрать без анализа"
+                          >
+                            {rebuildingPages[page.page_slug] ? '...' : 'Пересобрать'}
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (!confirm(`Пересобрать страницу "${page.page_slug}" с анализом?`)) {
+                                return;
+                              }
+                              try {
+                                setRebuildingPages(prev => ({ ...prev, [page.page_slug + '_with_analysis']: true }));
+                                setPageMigrationStatus(prev => ({ ...prev, [page.page_slug]: 'in_progress' }));
+                                const response = await api.rebuildPage(parseInt(id!), page.page_slug);
+                                if (response.success) {
+                                  // Обновляем информацию о процессе и детали миграции
+                                  await refreshDetails();
+                                  await loadProcessInfo(false);
+                                  // Не показываем alert, так как статус виден в таблице
+                                  setTimeout(() => {
+                                    loadPagesList();
+                                  }, 2000);
+                                } else {
+                                  setPageMigrationStatus(prev => ({ ...prev, [page.page_slug]: 'error' }));
+                                  alert('Ошибка: ' + (response.error || 'Неизвестная ошибка'));
+                                }
+                              } catch (err: any) {
+                                setPageMigrationStatus(prev => ({ ...prev, [page.page_slug]: 'error' }));
+                                alert('Ошибка: ' + (err.message || 'Не удалось запустить пересборку'));
+                              } finally {
+                                setRebuildingPages(prev => ({ ...prev, [page.page_slug + '_with_analysis']: false }));
+                              }
+                            }}
+                            disabled={rebuildingPages[page.page_slug + '_with_analysis'] || pageMigrationStatus[page.page_slug] === 'in_progress'}
+                            className="btn btn-sm btn-primary"
+                            title="Пересобрать с анализом"
+                          >
+                            {rebuildingPages[page.page_slug + '_with_analysis'] ? '...' : 'С анализом'}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'details' && (
+        <div className="details-grid">
         <div className="card">
           <div className="card-header">
             <h3 className="card-title">Информация о маппинге</h3>
@@ -356,10 +1352,12 @@ export default function MigrationDetails() {
                   </span>
                 </div>
               )}
-              {migrationValue?.mb_project_domain && (
+              {(migrationValue?.mb_project_domain || (details as any).mb_project_domain || changesJson?.mb_project_domain) && (
                 <div className="info-item">
                   <span className="info-label">MB Project Domain:</span>
-                  <span className="info-value">{migrationValue.mb_project_domain}</span>
+                  <span className="info-value">
+                    {migrationValue?.mb_project_domain || (details as any).mb_project_domain || changesJson?.mb_project_domain}
+                  </span>
                 </div>
               )}
               {migrationValue?.migration_id && (
@@ -418,18 +1416,6 @@ export default function MigrationDetails() {
                 </div>
               )}
             </div>
-            {migrationValue?.message?.warning && migrationValue.message.warning.length > 0 && (
-              <div className="json-section">
-                <h4>Предупреждения:</h4>
-                <div className="warnings-list">
-                  {migrationValue.message.warning.map((warning: string, index: number) => (
-                    <div key={index} className="warning-item">
-                      {warning}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
             {resultData && (
               <div className="json-section">
                 <h4>Полный JSON ответа:</h4>
@@ -440,128 +1426,6 @@ export default function MigrationDetails() {
             )}
           </div>
         )}
-
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Действия</h3>
-          </div>
-          <div className="actions">
-            <button
-              onClick={() => setShowRestartForm(!showRestartForm)}
-              className="btn btn-primary"
-              disabled={details.status === 'in_progress'}
-            >
-              {showRestartForm ? 'Отменить' : 'Перезапустить миграцию'}
-            </button>
-            {details.status === 'in_progress' && (
-              <button onClick={loadDetails} className="btn btn-secondary">
-                Обновить статус
-              </button>
-            )}
-          </div>
-
-          {showRestartForm && (
-            <div className="restart-form">
-              <h4>Параметры перезапуска</h4>
-              <div className="form-group">
-                <label className="form-label">
-                  MB Site ID
-                  {defaultSettings.mb_site_id && (
-                    <span className="form-default-badge">(из настроек: {defaultSettings.mb_site_id})</span>
-                  )}
-                </label>
-                <input
-                  type="number"
-                  className="form-input"
-                  value={restartParams.mb_site_id}
-                  onChange={(e) => setRestartParams({ ...restartParams, mb_site_id: e.target.value })}
-                  placeholder={defaultSettings.mb_site_id ? String(defaultSettings.mb_site_id) : "31383"}
-                />
-                <div className="form-help">
-                  ID сайта в Ministry Brands
-                  {!defaultSettings.mb_site_id && (
-                    <span className="form-help-hint"> (можно задать в <a href="/dashboard/settings">настройках</a>)</span>
-                  )}
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="form-label">
-                  MB Secret
-                  {defaultSettings.mb_secret && (
-                    <span className="form-default-badge">(из настроек: ••••••••)</span>
-                  )}
-                </label>
-                <input
-                  type="password"
-                  className="form-input"
-                  value={restartParams.mb_secret}
-                  onChange={(e) => setRestartParams({ ...restartParams, mb_secret: e.target.value })}
-                  placeholder={defaultSettings.mb_secret ? "••••••••" : "b0kcNmG1cvoMl471cFK2NiOvCIwtPB5Q"}
-                />
-                <div className="form-help">
-                  Секретный ключ для доступа к MB API
-                  {!defaultSettings.mb_secret && (
-                    <span className="form-help-hint"> (можно задать в <a href="/dashboard/settings">настройках</a>)</span>
-                  )}
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="form-label">Brizy Workspaces ID</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  value={restartParams.brz_workspaces_id}
-                  onChange={(e) => setRestartParams({ ...restartParams, brz_workspaces_id: e.target.value })}
-                  placeholder="22925473"
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">MB Page Slug</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={restartParams.mb_page_slug}
-                  onChange={(e) => setRestartParams({ ...restartParams, mb_page_slug: e.target.value })}
-                  placeholder="home"
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Manual</label>
-                <select
-                  className="form-input"
-                  value={restartParams.mgr_manual}
-                  onChange={(e) => setRestartParams({ ...restartParams, mgr_manual: e.target.value })}
-                >
-                  <option value="0">Автоматически</option>
-                  <option value="1">Вручную</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={restartParams.quality_analysis || false}
-                    onChange={(e) => setRestartParams({ ...restartParams, quality_analysis: e.target.checked })}
-                    className="form-checkbox"
-                  />
-                  <span>Включить анализ качества миграции</span>
-                </label>
-                <div className="form-help">
-                  При включении старые результаты анализа будут помечены как устаревшие, и будет выполнен новый анализ
-                </div>
-              </div>
-
-              <button
-                onClick={handleRestart}
-                className="btn btn-success"
-                disabled={restarting}
-              >
-                {restarting ? 'Перезапуск...' : 'Перезапустить'}
-              </button>
-            </div>
-          )}
-        </div>
       </div>
       )}
 
@@ -571,6 +1435,339 @@ export default function MigrationDetails() {
 
       {activeTab === 'archive' && (
         <QualityAnalysisArchive migrationId={parseInt(id || '0')} />
+      )}
+
+      {activeTab === 'warnings' && (
+        <div className="warnings-tab">
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">Ошибки и предупреждения</h3>
+            </div>
+            <div className="card-body">
+              {/* Статус ошибки */}
+              {details.status === 'error' && (
+                <div className="error-section">
+                  <h4 className="section-title error-title">
+                    <span className="icon">⚠️</span>
+                    Статус миграции: Ошибка
+                  </h4>
+                  <div className="error-item">
+                    <p>Миграция завершилась с ошибкой. Проверьте детали ниже.</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Предупреждения из message.warning */}
+              {migrationValue?.message?.warning && migrationValue.message.warning.length > 0 && (
+                <div className="warnings-section">
+                  <h4 className="section-title warning-title">
+                    <span className="icon">⚠️</span>
+                    Предупреждения ({migrationValue.message.warning.length})
+                  </h4>
+                  <div className="warnings-list">
+                    {migrationValue.message.warning.map((warning: string, index: number) => (
+                      <div key={index} className="warning-item">
+                        <span className="warning-number">{index + 1}.</span>
+                        <span className="warning-text">{warning}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Предупреждения из details.warnings */}
+              {details.warnings && details.warnings.length > 0 && (
+                <div className="warnings-section">
+                  <h4 className="section-title warning-title">
+                    <span className="icon">⚠️</span>
+                    Предупреждения из API ({details.warnings.length})
+                  </h4>
+                  <div className="warnings-list">
+                    {details.warnings.map((warning: string, index: number) => (
+                      <div key={index} className="warning-item">
+                        <span className="warning-number">{index + 1}.</span>
+                        <span className="warning-text">{warning}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Ошибки из result_json или других источников */}
+              {resultData?.error && (
+                <div className="error-section">
+                  <h4 className="section-title error-title">
+                    <span className="icon">❌</span>
+                    Ошибка выполнения
+                  </h4>
+                  <div className="error-item">
+                    <pre className="error-details">{typeof resultData.error === 'string' ? resultData.error : JSON.stringify(resultData.error, null, 2)}</pre>
+                  </div>
+                </div>
+              )}
+
+              {/* Если нет ошибок и предупреждений */}
+              {details.status !== 'error' &&
+               (!migrationValue?.message?.warning || migrationValue.message.warning.length === 0) &&
+               (!details.warnings || details.warnings.length === 0) &&
+               !resultData?.error && (
+                <div className="no-warnings">
+                  <p className="no-warnings-message">
+                    <span className="icon">✅</span>
+                    Ошибок и предупреждений не обнаружено
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'statistics' && (
+        <div className="statistics-tab">
+          {qualityStatistics ? (
+            <div className="details-grid">
+              {/* Общая статистика */}
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title">📊 Общая статистика анализа</h3>
+                </div>
+                <div className="info-grid">
+                  <div className="info-item">
+                    <span className="info-label">Всего страниц проанализировано:</span>
+                    <span className="info-value" style={{ color: '#2563eb', fontWeight: 'bold', fontSize: '1.2em' }}>
+                      {qualityStatistics.total_pages}
+                    </span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label">Средний рейтинг качества:</span>
+                    <span className="info-value" style={{ 
+                      color: qualityStatistics.avg_quality_score !== null 
+                        ? (qualityStatistics.avg_quality_score >= 90 ? '#198754' 
+                          : qualityStatistics.avg_quality_score >= 70 ? '#ffc107' 
+                          : qualityStatistics.avg_quality_score >= 50 ? '#fd7e14' 
+                          : '#dc3545')
+                        : '#6c757d',
+                      fontWeight: 'bold',
+                      fontSize: '1.2em'
+                    }}>
+                      {qualityStatistics.avg_quality_score !== null 
+                        ? qualityStatistics.avg_quality_score.toFixed(1) 
+                        : 'N/A'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Статистика по уровням серьезности */}
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title">⚠️ Распределение по уровням серьезности</h3>
+                </div>
+                <div className="info-grid">
+                  <div className="info-item">
+                    <span className="info-label" style={{ color: '#dc3545' }}>Критичные:</span>
+                    <span className="info-value" style={{ color: '#dc3545', fontWeight: 'bold' }}>
+                      {qualityStatistics.by_severity.critical}
+                    </span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label" style={{ color: '#fd7e14' }}>Высокие:</span>
+                    <span className="info-value" style={{ color: '#fd7e14', fontWeight: 'bold' }}>
+                      {qualityStatistics.by_severity.high}
+                    </span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label" style={{ color: '#ffc107' }}>Средние:</span>
+                    <span className="info-value" style={{ color: '#ffc107', fontWeight: 'bold' }}>
+                      {qualityStatistics.by_severity.medium}
+                    </span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label" style={{ color: '#0dcaf0' }}>Низкие:</span>
+                    <span className="info-value" style={{ color: '#0dcaf0', fontWeight: 'bold' }}>
+                      {qualityStatistics.by_severity.low}
+                    </span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label" style={{ color: '#198754' }}>Без проблем:</span>
+                    <span className="info-value" style={{ color: '#198754', fontWeight: 'bold' }}>
+                      {qualityStatistics.by_severity.none}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Статистика по токенам и стоимости */}
+              {qualityStatistics.token_statistics && (
+                <div className="card highlight-card">
+                  <div className="card-header">
+                    <h3 className="card-title">💰 Статистика использования токенов</h3>
+                  </div>
+                  <div className="info-grid">
+                    <div className="info-item">
+                      <span className="info-label">Общая стоимость анализа:</span>
+                      <span className="info-value" style={{ color: '#198754', fontWeight: 'bold', fontSize: '1.2em' }}>
+                        ${qualityStatistics.token_statistics.total_cost_usd.toFixed(6)}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">Средняя стоимость на страницу:</span>
+                      <span className="info-value">
+                        ${qualityStatistics.token_statistics.avg_cost_per_page_usd.toFixed(6)}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">Всего токенов использовано:</span>
+                      <span className="info-value" style={{ color: '#2563eb', fontWeight: 'bold' }}>
+                        {qualityStatistics.token_statistics.total_tokens.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">Входные токены (prompt):</span>
+                      <span className="info-value">
+                        {qualityStatistics.token_statistics.total_prompt_tokens.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">Выходные токены (completion):</span>
+                      <span className="info-value">
+                        {qualityStatistics.token_statistics.total_completion_tokens.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">Среднее токенов на страницу:</span>
+                      <span className="info-value">
+                        {qualityStatistics.token_statistics.avg_tokens_per_page.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="card">
+              <div className="card-body">
+                <div className="no-statistics">
+                  <p className="no-statistics-message">
+                    <span className="icon">ℹ️</span>
+                    Статистика анализа качества недоступна
+                  </p>
+                  <p className="no-statistics-hint">
+                    Для получения статистики необходимо запустить миграцию с параметром <code>quality_analysis=true</code>
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Модальное окно для логов миграции */}
+      {showLogs && (
+        <div className="page-analysis-modal" onClick={() => {
+          setShowLogs(false);
+          setLogs(null);
+        }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '90vh' }}>
+            <div className="modal-header">
+              <h2>
+                Логи миграции #{details.mapping.brz_project_id}
+                {details.status === 'in_progress' && (
+                  <span className="auto-refresh-badge" style={{ marginLeft: '1rem', fontSize: '0.875rem', fontWeight: 'normal' }}>🔄 Автообновление</span>
+                )}
+              </h2>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <button
+                  onClick={() => loadMigrationLogs()}
+                  className="btn btn-sm btn-secondary"
+                  title="Обновить логи"
+                  disabled={loadingLogs}
+                >
+                  {loadingLogs ? '...' : '↻'}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowLogs(false);
+                    setLogs(null);
+                  }}
+                  className="btn-close"
+                  title="Закрыть"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div className="modal-body" style={{ padding: 0 }}>
+              {loadingLogs && !logs ? (
+                <div className="loading-container" style={{ padding: '3rem' }}>
+                  <div className="spinner"></div>
+                  <p>Загрузка логов...</p>
+                </div>
+              ) : (
+                <div 
+                  ref={logsContentRef}
+                  className="logs-content" 
+                  style={{ padding: '1.5rem', maxHeight: 'calc(90vh - 100px)', overflowY: 'auto' }}
+                >
+                  {logs ? (
+                    <div className="logs-text">
+                      {logs
+                        .split('\n')
+                        .filter((line: string) => line && line.trim())
+                        .reverse()
+                        .map((line: string, index: number) => {
+                          let lineClass = 'log-line';
+                          const trimmedLine = line.trim();
+                          const lowerLine = trimmedLine.toLowerCase();
+                          
+                          if (/\.[CRITICAL|ERROR|FATAL]:/i.test(trimmedLine) ||
+                              lowerLine.includes('.critical:') ||
+                              lowerLine.includes('.error:') ||
+                              lowerLine.includes('.fatal:')) {
+                            lineClass += ' log-error';
+                          } else if (/\.[WARNING|WARN]:/i.test(trimmedLine) ||
+                                     lowerLine.includes('.warning:') ||
+                                     lowerLine.includes('.warn:')) {
+                            lineClass += ' log-warning';
+                          } else if (/\.[INFO|SUCCESS]:/i.test(trimmedLine) ||
+                                     lowerLine.includes('.info:') ||
+                                     lowerLine.includes('.success:') ||
+                                     lowerLine.includes('completed') ||
+                                     lowerLine.includes('done')) {
+                            lineClass += ' log-info';
+                          } else if (/\.[DEBUG|TRACE]:/i.test(trimmedLine) ||
+                                     lowerLine.includes('.debug:') ||
+                                     lowerLine.includes('.trace:')) {
+                            lineClass += ' log-debug';
+                          } else if (lowerLine.includes('error') || 
+                                     lowerLine.includes('exception') || 
+                                     lowerLine.includes('failed') ||
+                                     lowerLine.includes('critical')) {
+                            lineClass += ' log-error';
+                          } else if (lowerLine.includes('warning') || 
+                                     lowerLine.includes('warn') ||
+                                     lowerLine.includes('deprecated')) {
+                            lineClass += ' log-warning';
+                          }
+                          
+                          return (
+                            <div key={`log-${index}`} className={lineClass}>
+                              <span className="log-line-content">{line || '\u00A0'}</span>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  ) : (
+                    <div className="logs-empty">
+                      <p>Логи не найдены</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

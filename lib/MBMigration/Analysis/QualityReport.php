@@ -249,10 +249,20 @@ class QualityReport
     public function getReportsByMigration(int $migrationId): array
     {
         try {
-            $sql = "SELECT * FROM page_quality_analysis 
-                    WHERE migration_id = :migration_id 
-                    AND analysis_status != 'archived'
-                    ORDER BY created_at DESC";
+            // Получаем только последние записи для каждой страницы (исключая архивные)
+            // Используем подзапрос для получения максимального id для каждой страницы
+            // Это обеспечивает согласованность с getMigrationStatistics
+            $sql = "SELECT pqa.* FROM page_quality_analysis pqa
+                    INNER JOIN (
+                        SELECT page_slug, MAX(id) as max_id
+                        FROM page_quality_analysis
+                        WHERE migration_id = :migration_id
+                        AND (analysis_status IS NULL OR analysis_status != 'archived')
+                        GROUP BY page_slug
+                    ) latest ON pqa.page_slug = latest.page_slug AND pqa.id = latest.max_id
+                    WHERE pqa.migration_id = :migration_id
+                    AND (pqa.analysis_status IS NULL OR pqa.analysis_status != 'archived')
+                    ORDER BY pqa.created_at DESC";
             
             $reports = $this->db->getAllRows($sql, [':migration_id' => $migrationId]);
             
@@ -289,10 +299,15 @@ class QualityReport
             
             return $reports;
         } catch (Exception $e) {
-            Logger::instance()->error("Error getting reports", [
-                'migration_id' => $migrationId,
-                'error' => $e->getMessage()
-            ]);
+            try {
+                Logger::instance()->error("Error getting reports", [
+                    'migration_id' => $migrationId,
+                    'error' => $e->getMessage()
+                ]);
+            } catch (Exception $logError) {
+                // Logger не инициализирован, используем error_log
+                error_log("Quality Analysis Error getting reports for migration $migrationId: " . $e->getMessage());
+            }
             return [];
         }
     }
@@ -356,22 +371,191 @@ class QualityReport
     public function getMigrationStatistics(int $migrationId): array
     {
         try {
+            // Сначала проверяем, есть ли вообще записи для этой миграции
+            // Проверяем все записи, включая архивные, чтобы понять, есть ли данные вообще
+            $checkSqlAll = "SELECT COUNT(*) as cnt FROM page_quality_analysis WHERE migration_id = :migration_id";
+            $checkResultAll = $this->db->find($checkSqlAll, [':migration_id' => $migrationId]);
+            $totalRecords = $checkResultAll !== false && isset($checkResultAll['cnt']) ? (int)$checkResultAll['cnt'] : 0;
+            
+            // Теперь проверяем неархивные записи
+            $checkSql = "SELECT COUNT(*) as cnt FROM page_quality_analysis 
+                        WHERE migration_id = :migration_id 
+                        AND (analysis_status IS NULL OR analysis_status != 'archived')";
+            $checkResult = $this->db->find($checkSql, [':migration_id' => $migrationId]);
+            $hasRecords = $checkResult !== false && isset($checkResult['cnt']) && (int)$checkResult['cnt'] > 0;
+            
+            // Если есть записи, но все заархивированы, все равно возвращаем пустую статистику
+            if ($totalRecords > 0 && !$hasRecords) {
+                try {
+                    Logger::instance()->info("[Quality Analysis] All records are archived for migration", [
+                        'migration_id' => $migrationId,
+                        'total_records' => $totalRecords
+                    ]);
+                } catch (Exception $logError) {
+                    error_log("Quality Analysis: All records are archived for migration $migrationId (total: $totalRecords)");
+                }
+            }
+            
+            if (!$hasRecords) {
+                try {
+                    Logger::instance()->info("[Quality Analysis] No records found for migration", [
+                        'migration_id' => $migrationId
+                    ]);
+                } catch (Exception $logError) {
+                    // Logger не инициализирован, игнорируем
+                }
+                return [
+                    'total_pages' => 0,
+                    'avg_quality_score' => null,
+                    'by_severity' => [
+                        'critical' => 0,
+                        'high' => 0,
+                        'medium' => 0,
+                        'low' => 0,
+                        'none' => 0
+                    ],
+                    'token_statistics' => [
+                        'total_prompt_tokens' => 0,
+                        'total_completion_tokens' => 0,
+                        'total_tokens' => 0,
+                        'avg_tokens_per_page' => 0,
+                        'total_cost_usd' => 0,
+                        'avg_cost_per_page_usd' => 0
+                    ]
+                ];
+            }
+            
+            // Получаем только последние записи для каждой страницы (исключая архивные)
+            // Используем подзапрос для получения максимального id для каждой страницы
             $sql = "SELECT 
-                    COUNT(*) as total_pages,
-                    AVG(quality_score) as avg_quality_score,
-                    SUM(CASE WHEN severity_level = 'critical' THEN 1 ELSE 0 END) as critical_count,
-                    SUM(CASE WHEN severity_level = 'high' THEN 1 ELSE 0 END) as high_count,
-                    SUM(CASE WHEN severity_level = 'medium' THEN 1 ELSE 0 END) as medium_count,
-                    SUM(CASE WHEN severity_level = 'low' THEN 1 ELSE 0 END) as low_count,
-                    SUM(CASE WHEN severity_level = 'none' THEN 1 ELSE 0 END) as none_count,
-                    detailed_report
-                    FROM page_quality_analysis 
-                    WHERE migration_id = :migration_id
-                    AND analysis_status != 'archived'";
+                    COUNT(DISTINCT pqa.page_slug) as total_pages,
+                    AVG(pqa.quality_score) as avg_quality_score,
+                    SUM(CASE WHEN pqa.severity_level = 'critical' THEN 1 ELSE 0 END) as critical_count,
+                    SUM(CASE WHEN pqa.severity_level = 'high' THEN 1 ELSE 0 END) as high_count,
+                    SUM(CASE WHEN pqa.severity_level = 'medium' THEN 1 ELSE 0 END) as medium_count,
+                    SUM(CASE WHEN pqa.severity_level = 'low' THEN 1 ELSE 0 END) as low_count,
+                    SUM(CASE WHEN pqa.severity_level = 'none' THEN 1 ELSE 0 END) as none_count
+                    FROM page_quality_analysis pqa
+                    INNER JOIN (
+                        SELECT page_slug, MAX(id) as max_id
+                        FROM page_quality_analysis
+                        WHERE migration_id = :migration_id
+                        AND (analysis_status IS NULL OR analysis_status != 'archived')
+                        GROUP BY page_slug
+                    ) latest ON pqa.page_slug = latest.page_slug AND pqa.id = latest.max_id
+                    WHERE pqa.migration_id = :migration_id
+                    AND (pqa.analysis_status IS NULL OR pqa.analysis_status != 'archived')";
             
-            $reports = $this->db->getAllRows($sql, [':migration_id' => $migrationId]);
+            try {
+                Logger::instance()->info("[Quality Analysis] Executing statistics query", [
+                    'migration_id' => $migrationId,
+                    'sql' => $sql
+                ]);
+            } catch (Exception $logError) {
+                // Logger не инициализирован, игнорируем
+            }
             
-            $totalPages = count($reports);
+            $statsResult = $this->db->find($sql, [':migration_id' => $migrationId]);
+            
+            try {
+                Logger::instance()->info("[Quality Analysis] Statistics query result", [
+                    'migration_id' => $migrationId,
+                    'result' => $statsResult,
+                    'result_type' => gettype($statsResult),
+                    'is_array' => is_array($statsResult)
+                ]);
+            } catch (Exception $logError) {
+                // Logger не инициализирован, игнорируем
+            }
+            
+            // Метод find может вернуть false если нет результатов
+            if ($statsResult === false || !is_array($statsResult)) {
+                try {
+                    Logger::instance()->warning("[Quality Analysis] No statistics found for migration (query returned false or not array)", [
+                        'migration_id' => $migrationId,
+                        'result_type' => gettype($statsResult),
+                        'result' => $statsResult
+                    ]);
+                } catch (Exception $logError) {
+                    // Logger не инициализирован, игнорируем
+                }
+                return [
+                    'total_pages' => 0,
+                    'avg_quality_score' => null,
+                    'by_severity' => [
+                        'critical' => 0,
+                        'high' => 0,
+                        'medium' => 0,
+                        'low' => 0,
+                        'none' => 0
+                    ],
+                    'token_statistics' => [
+                        'total_prompt_tokens' => 0,
+                        'total_completion_tokens' => 0,
+                        'total_tokens' => 0,
+                        'avg_tokens_per_page' => 0,
+                        'total_cost_usd' => 0,
+                        'avg_cost_per_page_usd' => 0
+                    ]
+                ];
+            }
+            
+            // Получаем общее количество страниц из SQL запроса
+            $totalPages = (int)($statsResult['total_pages'] ?? 0);
+            
+            // Получаем средний рейтинг из SQL запроса
+            $avgQualityScore = null;
+            if (isset($statsResult['avg_quality_score']) && $statsResult['avg_quality_score'] !== null) {
+                $avgQualityScore = round((float)$statsResult['avg_quality_score'], 2);
+            }
+            
+            try {
+                Logger::instance()->info("[Quality Analysis] Statistics retrieved", [
+                    'migration_id' => $migrationId,
+                    'total_pages' => $totalPages,
+                    'avg_quality_score' => $avgQualityScore
+                ]);
+            } catch (Exception $logError) {
+                // Logger не инициализирован, игнорируем
+            }
+            
+            // Если нет страниц, возвращаем пустую статистику
+            if ($totalPages === 0) {
+                return [
+                    'total_pages' => 0,
+                    'avg_quality_score' => null,
+                    'by_severity' => [
+                        'critical' => 0,
+                        'high' => 0,
+                        'medium' => 0,
+                        'low' => 0,
+                        'none' => 0
+                    ],
+                    'token_statistics' => [
+                        'total_prompt_tokens' => 0,
+                        'total_completion_tokens' => 0,
+                        'total_tokens' => 0,
+                        'avg_tokens_per_page' => 0,
+                        'total_cost_usd' => 0,
+                        'avg_cost_per_page_usd' => 0
+                    ]
+                ];
+            }
+            
+            // Получаем только последние отчеты для каждой страницы для подсчета токенов (исключая архивные)
+            $reportsSql = "SELECT pqa.detailed_report 
+                          FROM page_quality_analysis pqa
+                          INNER JOIN (
+                              SELECT page_slug, MAX(id) as max_id
+                              FROM page_quality_analysis
+                              WHERE migration_id = :migration_id
+                              AND (analysis_status IS NULL OR analysis_status != 'archived')
+                              GROUP BY page_slug
+                          ) latest ON pqa.page_slug = latest.page_slug AND pqa.id = latest.max_id
+                          WHERE pqa.migration_id = :migration_id
+                          AND (pqa.analysis_status IS NULL OR pqa.analysis_status != 'archived')";
+            $reports = $this->db->getAllRows($reportsSql, [':migration_id' => $migrationId]);
+            
             $totalPromptTokens = 0;
             $totalCompletionTokens = 0;
             $totalCost = 0.0;
@@ -403,27 +587,15 @@ class QualityReport
             $avgTokensPerPage = $totalPages > 0 ? round($totalTokens / $totalPages, 0) : 0;
             $avgCostPerPage = $pagesWithTokens > 0 ? round($totalCost / $pagesWithTokens, 6) : 0;
             
-            // Вычисляем средний рейтинг
-            $avgQualityScore = 0;
-            $qualityScores = [];
-            foreach ($reports as $report) {
-                if (isset($report['quality_score']) && $report['quality_score'] !== null) {
-                    $qualityScores[] = (float)$report['quality_score'];
-                }
-            }
-            if (count($qualityScores) > 0) {
-                $avgQualityScore = round(array_sum($qualityScores) / count($qualityScores), 2);
-            }
-            
             return [
                 'total_pages' => $totalPages,
-                'avg_quality_score' => $avgQualityScore,
+                'avg_quality_score' => $avgQualityScore > 0 ? $avgQualityScore : null,
                 'by_severity' => [
-                    'critical' => (int)($reports[0]['critical_count'] ?? 0),
-                    'high' => (int)($reports[0]['high_count'] ?? 0),
-                    'medium' => (int)($reports[0]['medium_count'] ?? 0),
-                    'low' => (int)($reports[0]['low_count'] ?? 0),
-                    'none' => (int)($reports[0]['none_count'] ?? 0)
+                    'critical' => (int)($statsResult['critical_count'] ?? 0),
+                    'high' => (int)($statsResult['high_count'] ?? 0),
+                    'medium' => (int)($statsResult['medium_count'] ?? 0),
+                    'low' => (int)($statsResult['low_count'] ?? 0),
+                    'none' => (int)($statsResult['none_count'] ?? 0)
                 ],
                 'token_statistics' => [
                     'total_prompt_tokens' => $totalPromptTokens,
@@ -435,11 +607,36 @@ class QualityReport
                 ]
             ];
         } catch (Exception $e) {
-            Logger::instance()->error("Error getting migration statistics", [
-                'migration_id' => $migrationId,
-                'error' => $e->getMessage()
-            ]);
-            return [];
+            try {
+                Logger::instance()->error("Error getting migration statistics", [
+                    'migration_id' => $migrationId,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+            } catch (Exception $logError) {
+                // Logger не инициализирован, используем error_log
+                error_log("Quality Analysis Error: " . $e->getMessage());
+            }
+            // Возвращаем пустую статистику с правильной структурой вместо пустого массива
+            return [
+                'total_pages' => 0,
+                'avg_quality_score' => null,
+                'by_severity' => [
+                    'critical' => 0,
+                    'high' => 0,
+                    'medium' => 0,
+                    'low' => 0,
+                    'none' => 0
+                ],
+                'token_statistics' => [
+                    'total_prompt_tokens' => 0,
+                    'total_completion_tokens' => 0,
+                    'total_tokens' => 0,
+                    'avg_tokens_per_page' => 0,
+                    'total_cost_usd' => 0,
+                    'avg_cost_per_page_usd' => 0
+                ]
+            ];
         }
     }
 

@@ -51,6 +51,7 @@ class PageQualityAnalyzer
      * @param string $pageSlug Slug страницы
      * @param string $mbProjectUuid UUID проекта MB
      * @param int $brizyProjectId ID проекта Brizy
+     * @param string $themeName Название темы (designName) для использования тематического промпта
      * @return int|null ID созданного отчета или null если анализ отключен
      * @throws Exception
      */
@@ -59,7 +60,8 @@ class PageQualityAnalyzer
         string $migratedUrl,
         string $pageSlug,
         string $mbProjectUuid,
-        int $brizyProjectId
+        int $brizyProjectId,
+        string $themeName = 'default'
     ): ?int {
         if (!$this->enabled) {
             Logger::instance()->info("[Quality Analysis] Analysis is disabled, skipping page", [
@@ -75,7 +77,8 @@ class PageQualityAnalyzer
             'source_url' => $sourceUrl,
             'migrated_url' => $migratedUrl,
             'mb_project_uuid' => $mbProjectUuid,
-            'brizy_project_id' => $brizyProjectId
+            'brizy_project_id' => $brizyProjectId,
+            'theme_name' => $themeName
         ]);
 
         try {
@@ -178,9 +181,11 @@ class PageQualityAnalyzer
                 throw new Exception("Migrated HTML is empty");
             }
             
-            Logger::instance()->info("[Quality Analysis] Data validation passed, proceeding to AI analysis");
+            Logger::instance()->info("[Quality Analysis] Data validation passed, proceeding to AI analysis", [
+                'theme' => $themeName
+            ]);
             
-            $analysisResult = $this->aiService->comparePages($sourceData, $migratedData);
+            $analysisResult = $this->aiService->comparePages($sourceData, $migratedData, $themeName);
             
             // BREAKPOINT 10: Результат AI анализа
             Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 10: AI analysis completed =====", [

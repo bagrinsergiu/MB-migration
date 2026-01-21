@@ -292,8 +292,40 @@ class ArrayManipulator
     private function hasDeletions(array $old, array $new): bool {
         foreach ($old as $key => $value) {
             if (is_array($value)) {
-                if (!isset($new[$key]) || !is_array($new[$key]) || $this->hasDeletions($value, $new[$key])) {
+                if (!isset($new[$key])) {
                     return true;
+                }
+                
+                if (!is_array($new[$key])) {
+                    return true;
+                }
+                
+                // Special handling for 'data' arrays (fonts structure)
+                // This handles structures like config.data, upload.data, etc.
+                if ($key === 'data' && is_array($value) && is_array($new[$key])) {
+                    // For data arrays, check if any font families from old are missing in new
+                    $oldFontFamilies = $this->extractFontFamiliesFromData($value);
+                    $newFontFamilies = $this->extractFontFamiliesFromData($new[$key]);
+                    
+                    foreach ($oldFontFamilies as $family => $identifier) {
+                        if (!isset($newFontFamilies[$family])) {
+                            return true; // Font family was deleted
+                        }
+                    }
+                    // Continue checking nested structures within data arrays
+                    // (in case there are nested arrays beyond just font items)
+                    foreach ($value as $subKey => $subValue) {
+                        if (is_array($subValue) && isset($new[$key][$subKey]) && is_array($new[$key][$subKey])) {
+                            if ($this->hasDeletions($subValue, $new[$key][$subKey])) {
+                                return true;
+                            }
+                        }
+                    }
+                } else {
+                    // Recursive check for other nested arrays
+                    if ($this->hasDeletions($value, $new[$key])) {
+                        return true;
+                    }
                 }
             } elseif (!array_key_exists($key, $new)) {
                 return true;
@@ -301,13 +333,32 @@ class ArrayManipulator
         }
         return false;
     }
+    
+    /**
+     * Extract font families from data array (handles different font structures)
+     */
+    private function extractFontFamiliesFromData(array $data): array {
+        $families = [];
+        foreach ($data as $item) {
+            if (is_array($item) && isset($item['family'])) {
+                // Use id, uuid, or brizyId as identifier
+                $identifier = $item['id'] ?? $item['uuid'] ?? $item['brizyId'] ?? null;
+                if ($identifier !== null) {
+                    $families[$item['family']] = $identifier;
+                }
+            }
+        }
+        return $families;
+    }
 
     private function hasSameUUIDs(array $old, array $new): bool {
         $oldFamilies = $this->extractFamilies($old);
         $newFamilies = $this->extractFamilies($new);
 
-        foreach ($oldFamilies as $family => $uuid) {
-            if (isset($newFamilies[$family]) && $newFamilies[$family] !== $uuid) {
+        // Check if any existing font family has changed its identifier
+        foreach ($oldFamilies as $family => $oldIdentifier) {
+            if (isset($newFamilies[$family]) && $newFamilies[$family] !== $oldIdentifier) {
+                // Identifier changed for existing font family - this is a problem
                 return false;
             }
         }
@@ -319,9 +370,20 @@ class ArrayManipulator
         $families = [];
         foreach ($array as $value) {
             if (is_array($value)) {
+                // Check for uuid first (from settings)
                 if (isset($value['family'], $value['uuid'])) {
                     $families[$value['family']] = $value['uuid'];
-                } else {
+                } 
+                // Check for id (from upload fonts)
+                elseif (isset($value['family'], $value['id'])) {
+                    $families[$value['family']] = $value['id'];
+                }
+                // Check for brizyId (from config/blocks fonts) - use as fallback identifier
+                elseif (isset($value['family'], $value['brizyId'])) {
+                    $families[$value['family']] = $value['brizyId'];
+                }
+                // Recursively search in nested arrays
+                else {
                     $families = array_merge($families, $this->extractFamilies($value));
                 }
             }

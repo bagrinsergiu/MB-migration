@@ -31,7 +31,8 @@ trait DonationsAble
         $brizySection = $data->getBrizySection();
 
         if (!isset($brizyKit['donation-button'])) {
-            Logger::instance()->critical('The BrizyKit does not contain the key: donation-button', [$mbSection['typeSection']]);
+            $typeSection = $mbSection['typeSection'] ?? 'unknown';
+            Logger::instance()->critical('The BrizyKit does not contain the key: donation-button', [$typeSection]);
             return $brizySection;
         }
 

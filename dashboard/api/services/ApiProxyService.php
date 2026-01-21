@@ -99,6 +99,22 @@ class ApiProxyService
         $mbProjectUuid = $params['mb_project_uuid'];
         
         $wrapperContent .= "return static function (array \$context, Request \$request): JsonResponse {\n";
+        $wrapperContent .= "    // Обновляем PID в lock-файле при запуске процесса\n";
+        $wrapperContent .= "    \$pid = getmypid();\n";
+        $wrapperContent .= "    \$cachePath = \$context['CACHE_PATH'] ?? '{$projectRootEscaped}/var/cache';\n";
+        $wrapperContent .= "    \$lockFile = \$cachePath . '/' . '{$mbProjectUuid}' . '-' . {$brzProjectId} . '.lock';\n";
+        $wrapperContent .= "    if (file_exists(\$lockFile)) {\n";
+        $wrapperContent .= "        \$lockContent = @file_get_contents(\$lockFile);\n";
+        $wrapperContent .= "        \$lockData = \$lockContent ? json_decode(\$lockContent, true) : [];\n";
+        $wrapperContent .= "        if (!is_array(\$lockData)) \$lockData = [];\n";
+        $wrapperContent .= "        \$lockData['pid'] = \$pid;\n";
+        $wrapperContent .= "        \$lockData['started_at'] = date('Y-m-d H:i:s');\n";
+        $wrapperContent .= "        \$lockData['started_timestamp'] = time();\n";
+        $wrapperContent .= "        \$lockData['mb_project_uuid'] = '{$mbProjectUuid}';\n";
+        $wrapperContent .= "        \$lockData['brz_project_id'] = {$brzProjectId};\n";
+        $wrapperContent .= "        @file_put_contents(\$lockFile, json_encode(\$lockData, JSON_PRETTY_PRINT));\n";
+        $wrapperContent .= "    }\n";
+        $wrapperContent .= "    \n";
         $wrapperContent .= "    \$app = new MBMigration\ApplicationBootstrapper(\$context, \$request);\n";
         $wrapperContent .= "    try {\n";
         $wrapperContent .= "        \$config = \$app->doInnitConfig();\n";
@@ -177,23 +193,61 @@ class ApiProxyService
         $wrapperContent .= "};\n";
         @file_put_contents($wrapperScript, $wrapperContent);
         
-        // Запускаем PHP скрипт-обертку в фоне через nohup
+        // Создаем lock-файл заранее с PID (будет обновлен процессом)
+        $cachePath = $_ENV['CACHE_PATH'] ?? getenv('CACHE_PATH') ?: $projectRoot . '/var/cache';
+        $lockFile = $cachePath . '/' . $params['mb_project_uuid'] . '-' . $params['brz_project_id'] . '.lock';
+        
+        // Запускаем PHP скрипт-обертку в фоне через nohup и получаем PID
         $command = sprintf(
-            'cd %s && nohup php -f %s >> %s 2>&1 &',
+            'cd %s && nohup php -f %s >> %s 2>&1 & echo $!',
             escapeshellarg($projectRoot),
             escapeshellarg($wrapperScript),
             escapeshellarg($logFile)
         );
         
         $pid = null;
+        $output = [];
         @exec($command, $output, $returnVar);
         
-        // Если exec не сработал, пробуем через shell_exec
-        if ($returnVar !== 0) {
+        // Извлекаем PID из вывода
+        if (!empty($output)) {
+            $pid = (int)trim(end($output));
+        }
+        
+        // Если не получили PID через exec, пробуем другой способ
+        if (!$pid || $pid <= 0) {
             $result = @shell_exec($command);
-            $pid = $result ? trim($result) : 'background';
-        } else {
-            $pid = 'background';
+            if ($result) {
+                $lines = explode("\n", trim($result));
+                $pid = (int)trim(end($lines));
+            }
+        }
+        
+        // Если все еще нет PID, пробуем через ps после небольшой задержки
+        if (!$pid || $pid <= 0) {
+            usleep(500000); // 0.5 секунды
+            $psCommand = sprintf(
+                'ps aux | grep -E "php.*%s" | grep -v grep | awk \'{print $2}\' | head -1',
+                escapeshellarg(basename($wrapperScript))
+            );
+            $psOutput = @shell_exec($psCommand);
+            if ($psOutput) {
+                $pid = (int)trim($psOutput);
+            }
+        }
+        
+        // Сохраняем PID в lock-файл, если получили
+        if ($pid && $pid > 0) {
+            $lockData = [
+                'mb_project_uuid' => $params['mb_project_uuid'],
+                'brz_project_id' => $params['brz_project_id'],
+                'pid' => $pid,
+                'started_at' => date('Y-m-d H:i:s'),
+                'started_timestamp' => time(),
+                'wrapper_script' => $wrapperScript,
+                'log_file' => $logFile
+            ];
+            @file_put_contents($lockFile, json_encode($lockData, JSON_PRETTY_PRINT));
         }
         
         // Логируем PID

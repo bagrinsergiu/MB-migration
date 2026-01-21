@@ -11,6 +11,7 @@ export default function QualityAnalysis() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPage, setSelectedPage] = useState<string | null>(null);
+  const [severityFilter, setSeverityFilter] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -55,16 +56,56 @@ export default function QualityAnalysis() {
       // Обработка статистики
       if (statsResponse.status === 'fulfilled') {
         const response = statsResponse.value;
+        console.log('Statistics response:', response);
         if (response.success && response.data) {
+          console.log('Setting statistics:', response.data);
           setStatistics(response.data);
         } else {
           // Статистика опциональна, не показываем ошибку если её нет
-          setStatistics(null);
+          console.warn('Statistics response missing data:', response);
+          // Устанавливаем пустую статистику вместо null, чтобы плитки отображались
+          setStatistics({
+            total_pages: 0,
+            avg_quality_score: null,
+            by_severity: {
+              critical: 0,
+              high: 0,
+              medium: 0,
+              low: 0,
+              none: 0
+            },
+            token_statistics: {
+              total_prompt_tokens: 0,
+              total_completion_tokens: 0,
+              total_tokens: 0,
+              avg_tokens_per_page: 0,
+              total_cost_usd: 0,
+              avg_cost_per_page_usd: 0
+            }
+          });
         }
       } else {
-        // Ошибка при запросе статистики - игнорируем, статистика опциональна
+        // Ошибка при запросе статистики - устанавливаем пустую статистику
         console.error('Error loading statistics:', statsResponse.reason);
-        setStatistics(null);
+        setStatistics({
+          total_pages: 0,
+          avg_quality_score: null,
+          by_severity: {
+            critical: 0,
+            high: 0,
+            medium: 0,
+            low: 0,
+            none: 0
+          },
+          token_statistics: {
+            total_prompt_tokens: 0,
+            total_completion_tokens: 0,
+            total_tokens: 0,
+            avg_tokens_per_page: 0,
+            total_cost_usd: 0,
+            avg_cost_per_page_usd: 0
+          }
+        });
       }
     } catch (err: any) {
       console.error('Error loading quality analysis:', err);
@@ -87,8 +128,8 @@ export default function QualityAnalysis() {
     }
   };
 
-  const getQualityScoreColor = (score?: number) => {
-    if (!score) return '#6c757d';
+  const getQualityScoreColor = (score?: number | null) => {
+    if (!score || score === null) return '#6c757d';
     if (score >= 90) return '#198754';
     if (score >= 70) return '#ffc107';
     if (score >= 50) return '#fd7e14';
@@ -114,7 +155,7 @@ export default function QualityAnalysis() {
     );
   }
 
-  if (error && reports.length === 0) {
+  if (error && reports.length === 0 && !statistics) {
     return (
       <div className="error-container">
         <p className="error-message">❌ {error}</p>
@@ -125,119 +166,187 @@ export default function QualityAnalysis() {
     );
   }
 
-  if (reports.length === 0) {
-    return (
-      <div className="quality-analysis-empty">
-        <p>Анализ качества для этой миграции еще не выполнен.</p>
-        <p className="text-muted">Запустите миграцию с параметром <code>quality_analysis=true</code> для выполнения анализа.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="quality-analysis">
-      {statistics && (
-        <div className="quality-statistics">
-          <div className="stat-card">
-            <div className="stat-label">Всего страниц</div>
-            <div className="stat-value">{statistics.total_pages}</div>
+      {/* Плитки статистики - показываем всегда */}
+      <div className="quality-statistics">
+        {/* Первая строка: Всего страниц, Средний рейтинг, Токены/Стоимость */}
+        <div className="stat-card">
+          <div className="stat-label">Всего страниц</div>
+          <div className="stat-value">{statistics?.total_pages ?? 0}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Средний рейтинг</div>
+          <div className="stat-value" style={{ color: getQualityScoreColor(statistics?.avg_quality_score) }}>
+            {statistics && typeof statistics.avg_quality_score === 'number' ? statistics.avg_quality_score.toFixed(1) : 'N/A'}
           </div>
-          <div className="stat-card">
-            <div className="stat-label">Средний рейтинг</div>
-            <div className="stat-value" style={{ color: getQualityScoreColor(statistics.avg_quality_score) }}>
-              {typeof statistics.avg_quality_score === 'number' ? statistics.avg_quality_score.toFixed(1) : 'N/A'}
+        </div>
+        <div className="stat-card" style={{ backgroundColor: '#f8f9fa', border: '2px solid #e0e0e0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '0.75rem' }}>
+            <div className="stat-label" style={{ fontSize: '0.875rem', marginBottom: '0.25rem', color: '#6c757d' }}>Токены</div>
+            <div className="stat-value" style={{ color: '#2563eb', fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>
+              {statistics?.token_statistics?.total_tokens ? formatTokens(statistics.token_statistics.total_tokens) : '0'}
             </div>
           </div>
-          <div className="stat-card">
-            <div className="stat-label">Критичные</div>
-            <div className="stat-value" style={{ color: getSeverityColor('critical') }}>
-              {statistics.by_severity.critical}
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">Высокие</div>
-            <div className="stat-value" style={{ color: getSeverityColor('high') }}>
-              {statistics.by_severity.high}
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">Средние</div>
-            <div className="stat-value" style={{ color: getSeverityColor('medium') }}>
-              {statistics.by_severity.medium}
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">Низкие</div>
-            <div className="stat-value" style={{ color: getSeverityColor('low') }}>
-              {statistics.by_severity.low}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div className="stat-label" style={{ fontSize: '0.875rem', marginBottom: '0.25rem', color: '#6c757d' }}>Стоимость</div>
+            <div className="stat-value" style={{ color: '#198754', fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>
+              {statistics?.token_statistics?.total_cost_usd ? formatCost(statistics.token_statistics.total_cost_usd) : '$0.000000'}
             </div>
           </div>
         </div>
-      )}
+      </div>
+      
+      {/* Вторая строка: Критичные, Высокие, Средние, Низкие */}
+      <div className="quality-statistics severity-row">
+        <div 
+          className={`stat-card ${severityFilter === 'critical' ? 'active-filter' : ''}`}
+          onClick={() => setSeverityFilter(severityFilter === 'critical' ? null : 'critical')}
+          style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
+        >
+          <div className="stat-label">Критичные</div>
+          <div className="stat-value" style={{ color: getSeverityColor('critical') }}>
+            {statistics?.by_severity?.critical ?? 0}
+          </div>
+        </div>
+        <div 
+          className={`stat-card ${severityFilter === 'high' ? 'active-filter' : ''}`}
+          onClick={() => setSeverityFilter(severityFilter === 'high' ? null : 'high')}
+          style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
+        >
+          <div className="stat-label">Высокие</div>
+          <div className="stat-value" style={{ color: getSeverityColor('high') }}>
+            {statistics?.by_severity?.high ?? 0}
+          </div>
+        </div>
+        <div 
+          className={`stat-card ${severityFilter === 'medium' ? 'active-filter' : ''}`}
+          onClick={() => setSeverityFilter(severityFilter === 'medium' ? null : 'medium')}
+          style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
+        >
+          <div className="stat-label">Средние</div>
+          <div className="stat-value" style={{ color: getSeverityColor('medium') }}>
+            {statistics?.by_severity?.medium ?? 0}
+          </div>
+        </div>
+        <div 
+          className={`stat-card ${severityFilter === 'low' ? 'active-filter' : ''}`}
+          onClick={() => setSeverityFilter(severityFilter === 'low' ? null : 'low')}
+          style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
+        >
+          <div className="stat-label">Низкие</div>
+          <div className="stat-value" style={{ color: getSeverityColor('low') }}>
+            {statistics?.by_severity?.low ?? 0}
+          </div>
+        </div>
+      </div>
 
-      <div className="quality-pages-list">
-        <h3>Анализ страниц</h3>
-        <div className="pages-grid">
-          {reports.map((report) => (
-            <div
-              key={report.id}
-              className={`page-card ${selectedPage === report.page_slug ? 'selected' : ''}`}
-              onClick={() => setSelectedPage(report.page_slug)}
-            >
-              <div className="page-card-header">
-                <h4>{report.page_slug || 'Без названия'}</h4>
-                <span
-                  className="severity-badge"
-                  style={{
-                    backgroundColor: getSeverityColor(report.severity_level),
-                    color: 'white'
-                  }}
-                >
-                  {report.severity_level}
-                </span>
-              </div>
-              <div className="page-card-body">
-                {report.quality_score !== null && report.quality_score !== undefined && (
-                  <div className="quality-score">
-                    <span className="score-label">Рейтинг:</span>
+      {/* Список страниц - показываем только если есть отчеты */}
+      {reports.length > 0 ? (
+        <div className="quality-pages-list">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3>Анализ страниц</h3>
+            {severityFilter && (
+              <button 
+                onClick={() => setSeverityFilter(null)}
+                className="btn btn-secondary"
+                style={{ fontSize: '0.875rem', padding: '0.25rem 0.75rem' }}
+              >
+                Сбросить фильтр ({severityFilter})
+              </button>
+            )}
+          </div>
+          <div className="pages-grid">
+            {reports
+              .filter(report => !severityFilter || report.severity_level === severityFilter)
+              .map((report) => (
+              <div
+                key={report.id}
+                className={`page-card ${selectedPage === report.page_slug ? 'selected' : ''}`}
+                onClick={() => setSelectedPage(report.page_slug)}
+              >
+              <div className="page-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <h4 style={{ margin: 0, flex: 1 }}>{report.page_slug || 'Без названия'}</h4>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  {report.quality_score !== null && report.quality_score !== undefined && (
                     <span
                       className="score-value"
-                      style={{ color: getQualityScoreColor(typeof report.quality_score === 'string' ? parseInt(report.quality_score) : report.quality_score) }}
+                      style={{ 
+                        color: getQualityScoreColor(typeof report.quality_score === 'string' ? parseInt(report.quality_score) : report.quality_score),
+                        fontWeight: 600,
+                        fontSize: '0.95rem'
+                      }}
                     >
-                      {typeof report.quality_score === 'string' ? parseInt(report.quality_score) : report.quality_score}
+                      Рейтинг: {typeof report.quality_score === 'string' ? parseInt(report.quality_score) : report.quality_score}
                     </span>
-                  </div>
-                )}
+                  )}
+                  <span
+                    className="severity-badge"
+                    style={{
+                      backgroundColor: getSeverityColor(report.severity_level),
+                      color: 'white',
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '4px',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    {report.severity_level}
+                  </span>
+                </div>
+              </div>
+              <div className="page-card-body">
                 {report.token_usage && (
-                  <div className="page-tokens-info">
-                    <div className="tokens-row">
-                      <span className="tokens-label">Токены:</span>
-                      <span className="tokens-value">
-                        {formatTokens(report.token_usage.total_tokens)}
-                        {report.token_usage.prompt_tokens && report.token_usage.completion_tokens && (
-                          <span className="tokens-detail">
-                            {' '}({formatTokens(report.token_usage.prompt_tokens)}/{formatTokens(report.token_usage.completion_tokens)})
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                    {report.token_usage.cost_estimate_usd !== undefined && report.token_usage.cost_estimate_usd !== null && (
-                      <div className="tokens-row">
-                        <span className="tokens-label">Стоимость:</span>
-                        <span className="tokens-value cost-value" style={{ color: '#198754', fontWeight: 'bold' }}>
-                          {formatCost(report.token_usage.cost_estimate_usd)}
+                  <div className="page-tokens-info" style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap', fontSize: '0.875rem' }}>
+                    <span className="tokens-value" style={{ color: '#6c757d' }}>
+                      {formatTokens(report.token_usage.total_tokens)}
+                      {report.token_usage.prompt_tokens && report.token_usage.completion_tokens && (
+                        <span className="tokens-detail" style={{ fontSize: '0.8rem', color: '#9ca3af', marginLeft: '0.25rem' }}>
+                          ({formatTokens(report.token_usage.prompt_tokens)}/{formatTokens(report.token_usage.completion_tokens)})
                         </span>
-                      </div>
+                      )}
+                    </span>
+                    {report.token_usage.cost_estimate_usd !== undefined && report.token_usage.cost_estimate_usd !== null && (
+                      <span className="tokens-value cost-value" style={{ color: '#198754', fontWeight: 'bold' }}>
+                        {formatCost(report.token_usage.cost_estimate_usd)}
+                      </span>
                     )}
                   </div>
                 )}
-                {report.issues_summary?.summary && (
-                  <div className="page-summary">
-                    {report.issues_summary.summary.substring(0, 100)}
-                    {report.issues_summary.summary.length > 100 ? '...' : ''}
+                {(report.screenshots_path?.source || report.screenshots_path?.migrated) && (
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', minHeight: '150px' }}>
+                    {report.screenshots_path?.source && (() => {
+                      const sourceFilename = report.screenshots_path.source.split('/').pop();
+                      return sourceFilename ? (
+                        <div style={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <img 
+                            src={api.getScreenshotUrl(sourceFilename)}
+                            alt="Исходная страница"
+                            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', maxHeight: '150px' }}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      ) : null;
+                    })()}
+                    {report.screenshots_path?.migrated && (() => {
+                      const migratedFilename = report.screenshots_path.migrated.split('/').pop();
+                      return migratedFilename ? (
+                        <div style={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <img 
+                            src={api.getScreenshotUrl(migratedFilename)}
+                            alt="Мигрированная страница"
+                            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', maxHeight: '150px' }}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      ) : null;
+                    })()}
                   </div>
                 )}
-                <div className="page-meta">
+                <div className="page-meta" style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
                   <span className="meta-item">
                     {new Date(report.created_at).toLocaleDateString()}
                   </span>
@@ -248,8 +357,14 @@ export default function QualityAnalysis() {
               </div>
             </div>
           ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="quality-analysis-empty" style={{ marginTop: '2rem' }}>
+          <p>Анализ качества для этой миграции еще не выполнен.</p>
+          <p className="text-muted">Запустите миграцию с параметром <code>quality_analysis=true</code> для выполнения анализа.</p>
+        </div>
+      )}
 
       {selectedPage && (
         <PageAnalysisDetails
@@ -272,7 +387,10 @@ export function PageAnalysisDetails({ migrationId, pageSlug, onClose }: PageAnal
   const [report, setReport] = useState<QualityAnalysisReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'screenshots' | 'issues'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'screenshots' | 'issues' | 'json' | 'management'>('screenshots');
+  const [rebuilding, setRebuilding] = useState(false);
+  const [rebuildingNoAnalysis, setRebuildingNoAnalysis] = useState(false);
+  const [reanalyzing, setReanalyzing] = useState(false);
 
   useEffect(() => {
     loadPageAnalysis();
@@ -306,8 +424,8 @@ export function PageAnalysisDetails({ migrationId, pageSlug, onClose }: PageAnal
     }
   };
 
-  const getQualityScoreColor = (score?: number) => {
-    if (!score) return '#6c757d';
+  const getQualityScoreColor = (score?: number | null) => {
+    if (!score || score === null) return '#6c757d';
     if (score >= 90) return '#198754';
     if (score >= 70) return '#ffc107';
     if (score >= 50) return '#fd7e14';
@@ -357,22 +475,34 @@ export function PageAnalysisDetails({ migrationId, pageSlug, onClose }: PageAnal
 
         <div className="modal-tabs">
           <button
-            className={activeTab === 'overview' ? 'active' : ''}
-            onClick={() => setActiveTab('overview')}
-          >
-            Обзор
-          </button>
-          <button
             className={activeTab === 'screenshots' ? 'active' : ''}
             onClick={() => setActiveTab('screenshots')}
           >
             Скриншоты
           </button>
           <button
+            className={activeTab === 'overview' ? 'active' : ''}
+            onClick={() => setActiveTab('overview')}
+          >
+            Обзор
+          </button>
+          <button
             className={activeTab === 'issues' ? 'active' : ''}
             onClick={() => setActiveTab('issues')}
           >
             Проблемы
+          </button>
+          <button
+            className={activeTab === 'json' ? 'active' : ''}
+            onClick={() => setActiveTab('json')}
+          >
+            JSON
+          </button>
+          <button
+            className={activeTab === 'management' ? 'active' : ''}
+            onClick={() => setActiveTab('management')}
+          >
+            Управление
           </button>
         </div>
 
@@ -525,55 +655,248 @@ export function PageAnalysisDetails({ migrationId, pageSlug, onClose }: PageAnal
 
           {activeTab === 'issues' && (
             <div className="issues-tab">
-              {report.issues_summary?.missing_elements && report.issues_summary.missing_elements.length > 0 && (
+              {/* Отображение issues из detailed_report */}
+              {report.detailed_report?.issues && Array.isArray(report.detailed_report.issues) && report.detailed_report.issues.length > 0 && (
+                <div className="issues-section">
+                  <h3>Проблемы и замечания</h3>
+                  <div className="issues-list">
+                    {report.detailed_report.issues.map((issue: any, index: number) => (
+                      <div key={index} className={`issue-item issue-severity-${issue.severity || 'medium'}`}>
+                        <div className="issue-header">
+                          <span className="issue-type">{issue.type || 'unknown'}</span>
+                          <span className={`issue-severity-badge severity-${issue.severity || 'medium'}`}>
+                            {issue.severity || 'medium'}
+                          </span>
+                        </div>
+                        <div className="issue-description">
+                          <strong>{issue.description || 'Описание отсутствует'}</strong>
+                        </div>
+                        {issue.details && (
+                          <div className="issue-details">
+                            {issue.details}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Отсутствующие элементы из detailed_report или issues_summary */}
+              {(report.detailed_report?.missing_elements || report.issues_summary?.missing_elements) && 
+               ((Array.isArray(report.detailed_report?.missing_elements) && report.detailed_report.missing_elements.length > 0) ||
+                (Array.isArray(report.issues_summary?.missing_elements) && report.issues_summary.missing_elements.length > 0)) && (
                 <div className="issues-section">
                   <h3>Отсутствующие элементы</h3>
-                  <ul>
-                    {report.issues_summary.missing_elements.map((item, index) => (
-                      <li key={index}>{item}</li>
+                  <div className="elements-list">
+                    {(report.detailed_report?.missing_elements || report.issues_summary?.missing_elements || []).map((item: string, index: number) => (
+                      <div key={index} className="element-item element-missing">
+                        <span className="element-icon">⚠️</span>
+                        <span className="element-text">{item}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
 
-              {report.issues_summary?.changed_elements && report.issues_summary.changed_elements.length > 0 && (
+              {/* Измененные элементы из detailed_report или issues_summary */}
+              {(report.detailed_report?.changed_elements || report.issues_summary?.changed_elements) && 
+               ((Array.isArray(report.detailed_report?.changed_elements) && report.detailed_report.changed_elements.length > 0) ||
+                (Array.isArray(report.issues_summary?.changed_elements) && report.issues_summary.changed_elements.length > 0)) && (
                 <div className="issues-section">
                   <h3>Измененные элементы</h3>
-                  <ul>
-                    {report.issues_summary.changed_elements.map((item, index) => (
-                      <li key={index}>{item}</li>
+                  <div className="elements-list">
+                    {(report.detailed_report?.changed_elements || report.issues_summary?.changed_elements || []).map((item: string, index: number) => (
+                      <div key={index} className="element-item element-changed">
+                        <span className="element-icon">🔄</span>
+                        <span className="element-text">{item}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
 
-              {report.issues_summary?.recommendations && report.issues_summary.recommendations.length > 0 && (
+              {/* Рекомендации из detailed_report или issues_summary */}
+              {(report.detailed_report?.recommendations || report.issues_summary?.recommendations) && 
+               ((Array.isArray(report.detailed_report?.recommendations) && report.detailed_report.recommendations.length > 0) ||
+                (Array.isArray(report.issues_summary?.recommendations) && report.issues_summary.recommendations.length > 0)) && (
                 <div className="issues-section">
                   <h3>Рекомендации</h3>
-                  <ul>
-                    {report.issues_summary.recommendations.map((item, index) => (
-                      <li key={index}>{item}</li>
+                  <div className="recommendations-list">
+                    {(report.detailed_report?.recommendations || report.issues_summary?.recommendations || []).map((item: string, index: number) => (
+                      <div key={index} className="recommendation-item">
+                        <span className="recommendation-icon">💡</span>
+                        <span className="recommendation-text">{item}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
 
-              {(!report.issues_summary?.missing_elements?.length &&
+              {/* Summary из detailed_report или issues_summary */}
+              {(report.detailed_report?.summary || report.issues_summary?.summary) && (
+                <div className="issues-section summary-section">
+                  <h3>Краткое описание</h3>
+                  <div className="summary-text">
+                    {report.detailed_report?.summary || report.issues_summary?.summary}
+                  </div>
+                </div>
+              )}
+
+              {/* Если нет данных */}
+              {(!report.detailed_report?.issues?.length &&
+                !report.detailed_report?.missing_elements?.length &&
+                !report.issues_summary?.missing_elements?.length &&
+                !report.detailed_report?.changed_elements?.length &&
                 !report.issues_summary?.changed_elements?.length &&
-                !report.issues_summary?.recommendations?.length) && (
+                !report.detailed_report?.recommendations?.length &&
+                !report.issues_summary?.recommendations?.length &&
+                !report.detailed_report?.summary &&
+                !report.issues_summary?.summary) && (
                 <div className="no-issues">
                   <p>Проблем не обнаружено</p>
                 </div>
               )}
+            </div>
+          )}
 
-              {report.detailed_report && (
-                <div className="issues-section">
-                  <h3>Детальный отчет</h3>
-                  <div className="json-viewer">
-                    <pre>{JSON.stringify(report.detailed_report, null, 2)}</pre>
-                  </div>
+          {activeTab === 'json' && (
+            <div className="json-tab">
+              <div className="json-viewer">
+                <pre>{JSON.stringify(report.detailed_report || report, null, 2)}</pre>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'management' && (
+            <div className="management-tab">
+              <h3>Управление страницей</h3>
+              <p style={{ marginBottom: '1.5rem', color: '#666' }}>
+                Здесь вы можете пересобрать страницу (с анализом или без) или перезапустить только анализ качества.
+                Существующая статистика анализа не будет удалена.
+              </p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="action-card">
+                  <h4>Пересборка страницы</h4>
+                  <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem' }}>
+                    Пересоберет страницу в Brizy и автоматически запустит анализ качества.
+                  </p>
+                  <button
+                    onClick={async () => {
+                      if (!confirm('Вы уверены, что хотите пересобрать страницу? Это запустит процесс миграции для этой страницы.')) {
+                        return;
+                      }
+                      try {
+                        setRebuilding(true);
+                        const response = await api.rebuildPage(migrationId, pageSlug);
+                        if (response.success) {
+                          alert('Пересборка страницы запущена. Процесс выполняется в фоне.');
+                          // Обновляем данные через несколько секунд
+                          setTimeout(() => {
+                            loadPageAnalysis();
+                          }, 3000);
+                        } else {
+                          alert('Ошибка: ' + (response.error || 'Неизвестная ошибка'));
+                        }
+                      } catch (err: any) {
+                        alert('Ошибка: ' + (err.message || 'Не удалось запустить пересборку'));
+                      } finally {
+                        setRebuilding(false);
+                      }
+                    }}
+                    disabled={rebuilding}
+                    className="btn btn-primary"
+                    style={{ width: '100%' }}
+                  >
+                    {rebuilding ? 'Запуск пересборки...' : 'Пересобрать страницу'}
+                  </button>
                 </div>
-              )}
+
+                <div className="action-card">
+                  <h4>Пересборка без анализа</h4>
+                  <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem' }}>
+                    Пересоберет страницу в Brizy без запуска анализа качества. Полезно для быстрой пересборки.
+                  </p>
+                  <button
+                    onClick={async () => {
+                      if (!confirm('Вы уверены, что хотите пересобрать страницу без анализа? Это запустит процесс миграции для этой страницы без анализа качества.')) {
+                        return;
+                      }
+                      try {
+                        setRebuildingNoAnalysis(true);
+                        const response = await api.rebuildPageNoAnalysis(migrationId, pageSlug);
+                        if (response.success) {
+                          alert('Пересборка страницы запущена (без анализа). Процесс выполняется в фоне.');
+                          // Обновляем данные через несколько секунд
+                          setTimeout(() => {
+                            loadPageAnalysis();
+                          }, 3000);
+                        } else {
+                          const errorMsg = response.error || 'Неизвестная ошибка';
+                          const details = response.details ? `\n\nДетали:\n${JSON.stringify(response.details, null, 2)}` : '';
+                          alert('Ошибка: ' + errorMsg + details);
+                          console.error('Rebuild no analysis error:', response);
+                        }
+                      } catch (err: any) {
+                        const errorMsg = err.response?.data?.error || err.message || 'Не удалось запустить пересборку';
+                        const details = err.response?.data?.details ? `\n\nДетали:\n${JSON.stringify(err.response.data.details, null, 2)}` : '';
+                        alert('Ошибка: ' + errorMsg + details);
+                        console.error('Rebuild no analysis exception:', err);
+                      } finally {
+                        setRebuildingNoAnalysis(false);
+                      }
+                    }}
+                    disabled={rebuildingNoAnalysis}
+                    className="btn btn-secondary"
+                    style={{ width: '100%' }}
+                  >
+                    {rebuildingNoAnalysis ? 'Запуск пересборки...' : 'Пересобрать без анализа'}
+                  </button>
+                </div>
+
+                <div className="action-card">
+                  <h4>Перезапуск анализа</h4>
+                  <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem' }}>
+                    Перезапустит анализ качества для этой страницы без пересборки.
+                  </p>
+                  <button
+                    onClick={async () => {
+                      if (!confirm('Вы уверены, что хотите перезапустить анализ? Это создаст новый отчет анализа.')) {
+                        return;
+                      }
+                      try {
+                        setReanalyzing(true);
+                        const response = await api.reanalyzePage(migrationId, pageSlug);
+                        if (response.success) {
+                          alert('Анализ перезапущен. Обновление данных...');
+                          // Обновляем данные через несколько секунд
+                          setTimeout(() => {
+                            loadPageAnalysis();
+                          }, 3000);
+                        } else {
+                          const errorMsg = response.error || 'Неизвестная ошибка';
+                          const details = response.details ? `\n\nДетали:\n${JSON.stringify(response.details, null, 2)}` : '';
+                          alert('Ошибка: ' + errorMsg + details);
+                          console.error('Reanalyze error:', response);
+                        }
+                      } catch (err: any) {
+                        const errorMsg = err.response?.data?.error || err.message || 'Не удалось запустить анализ';
+                        const details = err.response?.data?.details ? `\n\nДетали:\n${JSON.stringify(err.response.data.details, null, 2)}` : '';
+                        alert('Ошибка: ' + errorMsg + details);
+                        console.error('Reanalyze exception:', err);
+                      } finally {
+                        setReanalyzing(false);
+                      }
+                    }}
+                    disabled={reanalyzing}
+                    className="btn btn-secondary"
+                    style={{ width: '100%' }}
+                  >
+                    {reanalyzing ? 'Запуск анализа...' : 'Перезапустить анализ'}
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>

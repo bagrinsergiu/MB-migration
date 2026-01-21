@@ -97,12 +97,21 @@ return static function (array $context, Request $request): Response {
                 '/api/migrations/run' => 'POST - Запуск миграции',
                 '/api/migrations/:id/restart' => 'POST - Перезапуск миграции',
                 '/api/migrations/:id/status' => 'GET - Статус миграции',
-                '/api/logs/:brz_project_id' => 'GET - Логи миграции',
+                '/api/migrations/:id/lock' => 'DELETE - Удалить lock-файл миграции',
+                '/api/migrations/:id/kill' => 'POST - Убить процесс миграции',
+                '/api/migrations/:id/process' => 'GET - Информация о процессе миграции (мониторинг)',
+                '/api/migrations/:id/cache' => 'DELETE - Удалить кэш-файл миграции',
+                '/api/migrations/:id/reset-status' => 'POST - Сбросить статус миграции на pending',
+                '/api/migrations/:id/hard-reset' => 'POST - Hard reset: удалить lock, cache, убить процесс и сбросить статус',
+                '/api/migrations/:id/logs' => 'GET - Логи миграции',
+                '/api/logs/:brz_project_id' => 'GET - Логи миграции (старый endpoint)',
                 '/api/logs/recent' => 'GET - Последние логи',
                 '/api/waves' => 'GET/POST - Список волн / Создать волну',
                 '/api/waves/:id' => 'GET - Детали волны',
                 '/api/waves/:id/status' => 'GET - Статус волны',
+                '/api/waves/:id/restart-all' => 'POST - Массовый перезапуск всех миграций в волне',
                 '/api/waves/:id/migrations/:mb_uuid/restart' => 'POST - Перезапустить миграцию в волне',
+                '/api/waves/:id/logs' => 'GET - Логи волны',
                 '/api/waves/:id/migrations/:mb_uuid/logs' => 'GET - Логи миграции в волне',
                 '/api/waves/:id/migrations/:mb_uuid/lock' => 'DELETE - Удалить lock-файл миграции',
             ]
@@ -149,6 +158,54 @@ return static function (array $context, Request $request): Response {
             }
         }
 
+        if (preg_match('#^/migrations/(\d+)/lock$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'DELETE') {
+                $id = (int)$matches[1];
+                $controller = new MigrationController();
+                return $controller->removeLock($request, $id);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/kill$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                $id = (int)$matches[1];
+                $controller = new MigrationController();
+                return $controller->killProcess($request, $id);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/process$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $id = (int)$matches[1];
+                $controller = new MigrationController();
+                return $controller->getProcessInfo($request, $id);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/cache$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'DELETE') {
+                $id = (int)$matches[1];
+                $controller = new MigrationController();
+                return $controller->removeCache($request, $id);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/reset-status$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                $id = (int)$matches[1];
+                $controller = new MigrationController();
+                return $controller->resetStatus($request, $id);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/hard-reset$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                $id = (int)$matches[1];
+                $controller = new MigrationController();
+                return $controller->hardReset($request, $id);
+            }
+        }
+
         // Анализ качества миграций
         if (preg_match('#^/migrations/(\d+)/quality-analysis$#', $apiPath, $matches)) {
             if ($request->getMethod() === 'GET') {
@@ -163,6 +220,14 @@ return static function (array $context, Request $request): Response {
                 $migrationId = (int)$matches[1];
                 $controller = new QualityAnalysisController();
                 return $controller->getStatistics($request, $migrationId);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/pages$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $migrationId = (int)$matches[1];
+                $controller = new QualityAnalysisController();
+                return $controller->getPagesList($request, $migrationId);
             }
         }
 
@@ -190,6 +255,101 @@ return static function (array $context, Request $request): Response {
                 $type = $matches[3];
                 $controller = new QualityAnalysisController();
                 return $controller->getScreenshot($request, $migrationId, $pageSlug, $type);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/quality-analysis/([^/]+)/reanalyze$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                error_log("[API] Reanalyze route matched: apiPath={$apiPath}");
+                try {
+                    $migrationId = (int)$matches[1];
+                    $pageSlug = urldecode($matches[2]);
+                    error_log("[API] Reanalyze request: migrationId={$migrationId}, pageSlug={$pageSlug}");
+                    
+                    if (!class_exists('Dashboard\\Controllers\\QualityAnalysisController')) {
+                        error_log("[API] QualityAnalysisController class not found!");
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'QualityAnalysisController class not found'
+                        ], 500);
+                    }
+                    
+                    error_log("[API] Creating QualityAnalysisController instance...");
+                    $controller = new QualityAnalysisController();
+                    error_log("[API] Controller created, calling reanalyzePage...");
+                    $result = $controller->reanalyzePage($request, $migrationId, $pageSlug);
+                    error_log("[API] reanalyzePage returned successfully");
+                    return $result;
+                } catch (\Throwable $e) {
+                    error_log("[API] Fatal error in reanalyze route: " . $e->getMessage());
+                    error_log("[API] File: " . $e->getFile() . ", Line: " . $e->getLine());
+                    error_log("[API] Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => $e->getMessage(),
+                        'file' => basename($e->getFile()),
+                        'line' => $e->getLine(),
+                        'type' => get_class($e)
+                    ], 500);
+                } catch (\Exception $e) {
+                    error_log("[API] Exception in reanalyze route: " . $e->getMessage());
+                    error_log("[API] File: " . $e->getFile() . ", Line: " . $e->getLine());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => $e->getMessage(),
+                        'file' => basename($e->getFile()),
+                        'line' => $e->getLine()
+                    ], 500);
+                }
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/logs$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                try {
+                    $id = (int)$matches[1];
+                    error_log("[API] Get migration logs request: migrationId={$id}");
+                    $controller = new MigrationController();
+                    return $controller->getMigrationLogs($request, $id);
+                } catch (\Throwable $e) {
+                    error_log("[API] Fatal error in get migration logs route: " . $e->getMessage());
+                    error_log("[API] Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => $e->getMessage(),
+                        'file' => basename($e->getFile()),
+                        'line' => $e->getLine(),
+                        'type' => get_class($e)
+                    ], 500);
+                }
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/rebuild-page$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                $id = (int)$matches[1];
+                $controller = new MigrationController();
+                return $controller->rebuildPage($request, $id);
+            }
+        }
+
+        if (preg_match('#^/migrations/(\d+)/rebuild-page-no-analysis$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                try {
+                    $id = (int)$matches[1];
+                    error_log("[API] Rebuild page (no analysis) request: migrationId={$id}");
+                    $controller = new MigrationController();
+                    return $controller->rebuildPageNoAnalysis($request, $id);
+                } catch (\Throwable $e) {
+                    error_log("[API] Fatal error in rebuild-page-no-analysis route: " . $e->getMessage());
+                    error_log("[API] Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => $e->getMessage(),
+                        'file' => basename($e->getFile()),
+                        'line' => $e->getLine()
+                    ], 500);
+                }
             }
         }
 
@@ -338,6 +498,14 @@ return static function (array $context, Request $request): Response {
             }
         }
 
+        if (preg_match('#^/waves/([^/]+)/restart-all$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                $waveId = $matches[1];
+                $controller = new WaveController();
+                return $controller->restartAllMigrations($request, $waveId);
+            }
+        }
+
         if (preg_match('#^/waves/([^/]+)/migrations/([^/]+)/restart$#', $apiPath, $matches)) {
             if ($request->getMethod() === 'POST') {
                 $waveId = $matches[1];
@@ -347,12 +515,46 @@ return static function (array $context, Request $request): Response {
             }
         }
 
+        if (preg_match('#^/waves/([^/]+)/logs$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                try {
+                    $waveId = $matches[1];
+                    error_log("[API] Get wave logs request: waveId={$waveId}");
+                    $controller = new WaveController();
+                    return $controller->getWaveLogs($request, $waveId);
+                } catch (\Throwable $e) {
+                    error_log("[API] Fatal error in get wave logs route: " . $e->getMessage());
+                    error_log("[API] Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => $e->getMessage(),
+                        'file' => basename($e->getFile()),
+                        'line' => $e->getLine(),
+                        'type' => get_class($e)
+                    ], 500);
+                }
+            }
+        }
+
         if (preg_match('#^/waves/([^/]+)/migrations/([^/]+)/logs$#', $apiPath, $matches)) {
             if ($request->getMethod() === 'GET') {
-                $waveId = $matches[1];
-                $mbUuid = $matches[2];
-                $controller = new WaveController();
-                return $controller->getMigrationLogs($request, $waveId, $mbUuid);
+                try {
+                    $waveId = $matches[1];
+                    $mbUuid = $matches[2];
+                    error_log("[API] Get wave migration logs request: waveId={$waveId}, mbUuid={$mbUuid}");
+                    $controller = new WaveController();
+                    return $controller->getMigrationLogs($request, $waveId, $mbUuid);
+                } catch (\Throwable $e) {
+                    error_log("[API] Fatal error in get wave migration logs route: " . $e->getMessage());
+                    error_log("[API] Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => $e->getMessage(),
+                        'file' => basename($e->getFile()),
+                        'line' => $e->getLine(),
+                        'type' => get_class($e)
+                    ], 500);
+                }
             }
         }
 

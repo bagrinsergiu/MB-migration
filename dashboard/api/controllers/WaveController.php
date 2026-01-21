@@ -9,7 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class WaveController
 {
-    private WaveService $waveService;
+    /** @var WaveService */
+    private $waveService;
 
     public function __construct()
     {
@@ -338,6 +339,72 @@ class WaveController
                 'success' => true,
                 'data' => $mapping,
                 'count' => count($mapping)
+            ], 200);
+
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/waves/:id/logs
+     * Получить логи волны
+     */
+    public function getWaveLogs(Request $request, string $id): JsonResponse
+    {
+        try {
+            $logs = $this->waveService->getWaveLogs($id);
+            return new JsonResponse([
+                'success' => true,
+                'data' => ['logs' => $logs],
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/waves/:id/restart-all
+     * Массовый перезапуск миграций в волне
+     */
+    public function restartAllMigrations(Request $request, string $id): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            
+            if (!$data) {
+                $data = $request->request->all();
+            }
+
+            // Опционально: список UUID для перезапуска (если пустой - все миграции)
+            $mbUuids = $data['mb_uuids'] ?? [];
+            if (!empty($mbUuids) && !is_array($mbUuids)) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'mb_uuids должен быть массивом'
+                ], 400);
+            }
+
+            $params = [];
+            if (isset($data['mb_site_id'])) {
+                $params['mb_site_id'] = $data['mb_site_id'];
+            }
+            if (isset($data['mb_secret'])) {
+                $params['mb_secret'] = $data['mb_secret'];
+            }
+
+            $result = $this->waveService->restartAllMigrationsInWave($id, $mbUuids, $params);
+
+            return new JsonResponse([
+                'success' => $result['success'],
+                'message' => $result['message'],
+                'data' => $result['results']
             ], 200);
 
         } catch (Exception $e) {

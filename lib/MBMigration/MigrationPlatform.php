@@ -62,6 +62,7 @@ class MigrationPlatform
     private string $projectUUID_MB;
     private bool $mMgrIgnore;
     private bool $mgr_manual;
+    private int $processedPagesCount = 0;
 
     use checking;
     use DebugBackTrace;
@@ -120,9 +121,57 @@ class MigrationPlatform
      * @throws Exception
      * @throws GuzzleException
      */
+    /**
+     * Обновить текущий этап миграции в lock-файле
+     */
+    private function updateMigrationStage(string $projectID_MB, int $projectID_Brizy, string $stage, ?int $totalPages = null, ?int $processedPages = null): void
+    {
+        try {
+            $lockFile = Config::$cachePath . "/" . $projectID_MB . "-" . $projectID_Brizy . ".lock";
+            if (file_exists($lockFile)) {
+                $lockContent = @file_get_contents($lockFile);
+                if ($lockContent) {
+                    $lockData = json_decode($lockContent, true);
+                    if ($lockData) {
+                        $lockData['current_stage'] = $stage;
+                        $lockData['stage_updated_at'] = time();
+                        
+                        // Сохраняем информацию о прогрессе
+                        // total_pages обновляем только если он еще не установлен или если явно передан
+                        // Это предотвращает перезапись общего количества страниц при рекурсивных вызовах
+                        if ($totalPages !== null) {
+                            // Обновляем total_pages только если он еще не установлен или если новое значение больше текущего
+                            if (!isset($lockData['total_pages']) || $totalPages > ($lockData['total_pages'] ?? 0)) {
+                                $lockData['total_pages'] = $totalPages;
+                            }
+                        }
+                        if ($processedPages !== null) {
+                            $lockData['processed_pages'] = $processedPages;
+                        }
+                        
+                        // Вычисляем процент выполнения
+                        if (isset($lockData['total_pages']) && isset($lockData['processed_pages']) && $lockData['total_pages'] > 0) {
+                            // Ограничиваем процент до 100%, чтобы избежать значений больше 100%
+                            $calculatedPercent = round(($lockData['processed_pages'] / $lockData['total_pages']) * 100, 1);
+                            $lockData['progress_percent'] = min($calculatedPercent, 100);
+                        }
+                        
+                        @file_put_contents($lockFile, json_encode($lockData, JSON_PRETTY_PRINT));
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            // Игнорируем ошибки обновления этапа, чтобы не прерывать миграцию
+            Logger::instance()->debug('Failed to update migration stage: ' . $e->getMessage());
+        }
+    }
+
     private function init(string $projectID_MB, int $projectID_Brizy): void
     {
         Logger::instance()->info('Starting the migration for ' . $projectID_MB . ' to ' . $projectID_Brizy);
+        
+        // Обновляем этап миграции
+        $this->updateMigrationStage($projectID_MB, $projectID_Brizy, 'Инициализация миграции');
 
         Utils::init($this->cache);
 
@@ -199,6 +248,9 @@ class MigrationPlatform
 //        $this->brizyApi->setLabelManualMigration(false);
 
         $this->checkDesign($designName);
+        
+        // Обновляем этап миграции
+        $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Загрузка данных проекта');
 
         FoldersUtility::createProjectFolders($this->projectId);
 
@@ -284,6 +336,10 @@ class MigrationPlatform
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
             Logger::instance()->debug('Upload section pictures');
+            
+            // Обновляем этап миграции
+            $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Загрузка медиа главной секции');
+            
             $mainSection = MediaController::uploadPicturesFromSections($mainSection, $this->projectId, $this->brizyApi);
             $this->cache->set('mainSection', $mainSection);
             $this->cache->dumpCache($projectUUID_MB, $this->projectID_Brizy);
@@ -291,6 +347,10 @@ class MigrationPlatform
 
         if (!$this->cache->get('menuList')) {
             Logger::instance()->info('Start create blank pages');
+            
+            // Обновляем этап миграции
+            $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Создание пустых страниц');
+            
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
 //            if (!$this->buildPage) {
                 $existingBrizyPages['listPages'] = $this->pageController->deleteAllPages(
@@ -320,12 +380,40 @@ class MigrationPlatform
 
         $this->pageMapping = $this->pageController->getPageMapping($parentPages, $this->projectID_Brizy, $this->brizyApi);
 
+        // Подсчитываем общее количество страниц перед началом миграции
+        $totalPagesForMigration = 0;
+        $countPagesForMigration = function($pages) use (&$countPagesForMigration, &$totalPagesForMigration) {
+            foreach ($pages as $page) {
+                if (isset($page['child']) && !empty($page['child'])) {
+                    $countPagesForMigration($page['child']);
+                }
+                if (isset($page['landing']) && $page['landing'] === true && 
+                    (!Config::$devMode || $this->buildPage === '' || $page['slug'] === $this->buildPage) &&
+                    ($page['hidden'] ?? false) === false) {
+                    $totalPagesForMigration++;
+                }
+            }
+        };
+        $countPagesForMigration($parentPages);
+
+        // Обновляем этап миграции с информацией о прогрессе
+        $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Миграция страниц', $totalPagesForMigration, 0);
+        
+        // Инициализируем счетчик обработанных страниц
+        $this->processedPagesCount = 0;
+        
         $this->launch($parentPages, false);
         //$this->launch($parentPages, true);
 
 
+        // Обновляем этап миграции
+        $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Очистка скомпилированных данных');
+        
         $this->brizyApi->clearCompileds($this->projectID_Brizy);
 
+        // Обновляем этап миграции
+        $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Завершение миграции');
+        
         Logger::instance()->info('Project migration completed successfully!');
 
         $this->logFinalProcess($this->startTime);
@@ -348,6 +436,22 @@ class MigrationPlatform
      */
     private function launch($parentPages, $hiddenPage): void
     {
+        // Подсчитываем общее количество страниц для миграции
+        $totalPages = 0;
+        $countPages = function($pages) use (&$countPages, &$totalPages, $hiddenPage) {
+            foreach ($pages as $page) {
+                if (isset($page['child']) && !empty($page['child'])) {
+                    $countPages($page['child']);
+                }
+                if (isset($page['landing']) && $page['landing'] === true && 
+                    (!Config::$devMode || $this->buildPage === '' || $page['slug'] === $this->buildPage) &&
+                    ($page['hidden'] ?? false) === $hiddenPage) {
+                    $totalPages++;
+                }
+            }
+        };
+        $countPages($parentPages);
+        
         foreach ($parentPages as $i => $page) {
             if (!empty($page['parentSettings'])) {
                 $settings = json_decode($page['parentSettings'], true);
@@ -378,7 +482,26 @@ class MigrationPlatform
             }
 
             try {
+                $this->processedPagesCount++;
+                $pageName = $page['name'] ?? $page['slug'] ?? 'Неизвестная страница';
+                // Не передаем локальный $totalPages, чтобы не перезаписывать общее количество страниц
+                // Используем null для totalPages, чтобы сохранить уже установленное значение
+                $this->updateMigrationStage(
+                    $this->projectUUID_MB, 
+                    $this->projectID_Brizy, 
+                    "Миграция страницы {$this->processedPagesCount}: {$pageName}",
+                    null, // Не обновляем total_pages при каждой странице
+                    $this->processedPagesCount
+                );
+                
                 $this->collector($page);
+                
+                // Добавляем страницу в список мигрированных страниц
+                $this->projectPagesList[] = [
+                    'slug' => $page['slug'] ?? '',
+                    'name' => $page['name'] ?? $page['slug'] ?? '',
+                    'id' => $page['id'] ?? null,
+                ];
             } catch (Exception $e) {
                 Logger::instance()->critical($e->getMessage(), $e->getTrace());
             } catch (GuzzleException $e) {
@@ -399,10 +522,27 @@ class MigrationPlatform
         ExecutionTimer::start();
 
         if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_' . $page['id']))) {
+            $pageName = $page['name'] ?? $page['slug'] ?? 'Неизвестная страница';
+            
+            // Обновляем этап - обработка секций
+            $this->updateMigrationStage(
+                $this->projectUUID_MB, 
+                $this->projectID_Brizy, 
+                "Обработка секций страницы: {$pageName}"
+            );
+            
             $preparedSectionOfThePage = $this->pageController->getSectionsFromPage($page);
             if (!$preparedSectionOfThePage) {
                 return;
             }
+            
+            // Обновляем этап - загрузка медиа
+            $this->updateMigrationStage(
+                $this->projectUUID_MB, 
+                $this->projectID_Brizy, 
+                "Загрузка медиа страницы: {$pageName}"
+            );
+            
             $preparedSectionOfThePage = MediaController::uploadPicturesFromSections($preparedSectionOfThePage, $this->projectId, $this->brizyApi);
             $preparedSectionOfThePage = ArrayManipulator::sortArrayByPosition($preparedSectionOfThePage);
             $this->cache->set('preparedSectionOfThePage_' . $page['id'], $preparedSectionOfThePage);
@@ -413,6 +553,16 @@ class MigrationPlatform
         if ($collectionItem) {
             $this->pageController->setCurrentPageOnWork($collectionItem);
             Logger::instance()->info('Run Page Builder for page', ['slug' => $page['slug'], 'name' => $page['name']]);
+            
+            $pageName = $page['name'] ?? $page['slug'] ?? 'Неизвестная страница';
+            
+            // Обновляем этап - создание блоков
+            $this->updateMigrationStage(
+                $this->projectUUID_MB, 
+                $this->projectID_Brizy, 
+                "Создание блоков страницы: {$pageName}"
+            );
+            
             $this->pageController->run($preparedSectionOfThePage, $this->pageMapping);
         } else {
             Logger::instance()->info(

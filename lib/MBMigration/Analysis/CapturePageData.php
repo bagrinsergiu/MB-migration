@@ -100,10 +100,39 @@ class CapturePageData
             $browserPage = $this->browser->openPage($url, 'Solstice');
             Logger::instance()->debug("[Quality Analysis] Page opened, waiting for load", ['url' => $url]);
             
-            // Ждем загрузки страницы
+            // Ждем загрузки страницы и появления контента
             sleep(2);
             
-            // Получаем скриншот
+            $html = '';
+            $htmlLength = 0;
+            $textLength = 0;
+            $maxAttempts = 5;
+            
+            for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+                Logger::instance()->debug("[Quality Analysis] Capturing HTML content (source, attempt {$attempt})", ['url' => $url]);
+                $html = $this->captureHTML($browserPage);
+                $htmlLength = strlen($html);
+                $textLength = strlen(trim(strip_tags($html)));
+                
+                Logger::instance()->info("[Quality Analysis] HTML content captured (source)", [
+                    'attempt' => $attempt,
+                    'html_length' => $htmlLength,
+                    'text_length' => $textLength,
+                    'url' => $url
+                ]);
+                
+                // Если видимый текст достаточно большой, считаем что страница отрендерилась
+                if ($textLength > 50) {
+                    break;
+                }
+                
+                // Даем странице ещё немного времени
+                if ($attempt < $maxAttempts) {
+                    sleep(2);
+                }
+            }
+            
+            // Получаем скриншот после того как HTML стал доступен
             $screenshotPath = $this->baseScreenshotsPath . 'source_' . md5($pageSlug) . '.png';
             Logger::instance()->debug("[Quality Analysis] Capturing screenshot", [
                 'screenshot_path' => $screenshotPath,
@@ -114,15 +143,6 @@ class CapturePageData
             Logger::instance()->info("[Quality Analysis] Screenshot captured", [
                 'screenshot_path' => $screenshotPath,
                 'screenshot_size_bytes' => $screenshotSize,
-                'url' => $url
-            ]);
-            
-            // Получаем HTML
-            Logger::instance()->debug("[Quality Analysis] Capturing HTML content", ['url' => $url]);
-            $html = $this->captureHTML($browserPage);
-            $htmlLength = strlen($html);
-            Logger::instance()->info("[Quality Analysis] HTML content captured", [
-                'html_length' => $htmlLength,
                 'url' => $url
             ]);
             
@@ -185,10 +205,38 @@ class CapturePageData
             $browserPage = $this->browser->openPage($url, 'Solstice');
             Logger::instance()->debug("[Quality Analysis] Page opened, waiting for load", ['url' => $url]);
             
-            // Ждем загрузки страницы
+            // Ждем загрузки страницы и генерации HTML Brizy
             sleep(2);
             
-            // Получаем скриншот
+            $html = '';
+            $htmlLength = 0;
+            $textLength = 0;
+            $maxAttempts = 7;
+            
+            for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+                Logger::instance()->debug("[Quality Analysis] Capturing HTML content (migrated, attempt {$attempt})", ['url' => $url]);
+                $html = $this->captureHTML($browserPage);
+                $htmlLength = strlen($html);
+                $textLength = strlen(trim(strip_tags($html)));
+                
+                Logger::instance()->info("[Quality Analysis] HTML content captured (migrated)", [
+                    'attempt' => $attempt,
+                    'html_length' => $htmlLength,
+                    'text_length' => $textLength,
+                    'url' => $url
+                ]);
+                
+                // Для мигрированной страницы даем больше времени: ждем пока появится видимый контент
+                if ($textLength > 50) {
+                    break;
+                }
+                
+                if ($attempt < $maxAttempts) {
+                    sleep(2);
+                }
+            }
+            
+            // Получаем скриншот после того как HTML стал доступен (или после попыток)
             $screenshotPath = $this->baseScreenshotsPath . 'migrated_' . md5($pageSlug) . '.png';
             Logger::instance()->debug("[Quality Analysis] Capturing screenshot", [
                 'screenshot_path' => $screenshotPath,
@@ -199,15 +247,6 @@ class CapturePageData
             Logger::instance()->info("[Quality Analysis] Screenshot captured", [
                 'screenshot_path' => $screenshotPath,
                 'screenshot_size_bytes' => $screenshotSize,
-                'url' => $url
-            ]);
-            
-            // Получаем HTML
-            Logger::instance()->debug("[Quality Analysis] Capturing HTML content", ['url' => $url]);
-            $html = $this->captureHTML($browserPage);
-            $htmlLength = strlen($html);
-            Logger::instance()->info("[Quality Analysis] HTML content captured", [
-                'html_length' => $htmlLength,
                 'url' => $url
             ]);
             

@@ -46,7 +46,7 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     }
 
-    protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
+    protected function transformListItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = [], ?BrizyComponent $brizyParent = null): BrizyComponent
     {
         return $brizySection;
     }

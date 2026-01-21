@@ -193,7 +193,10 @@ abstract class AbstractElement implements ElementInterface
             'has_settings' => isset($sectionData['settings'])
         ]);
 
-        $sectionCategory = $sectionData['category'];
+        $sectionCategory = $sectionData['category'] ?? null;
+        if ($sectionCategory === null) {
+            return true; // Default to showing body if category is not set
+        }
         $result = true;
 
         if (isset($sectionData['settings']['sections'][$sectionCategory]['show_body'])) {
@@ -482,7 +485,11 @@ abstract class AbstractElement implements ElementInterface
     }
 
     private function behaviorForAddingIndentsInSection($mbSection, BrizyComponent $section){
-        switch ($mbSection['category']){
+        $category = $mbSection['category'] ?? null;
+        if ($category === null) {
+            return;
+        }
+        switch ($category){
             case 'list':
                 if(empty($mbSection['items']) && empty($mbSection['head'])) {
                     $this->sectionIndentations($section);

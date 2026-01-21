@@ -31,7 +31,8 @@ class SermonDetailsPageLayout extends DetailsPage
 
         $colorTitle = ColorConverter::hex2Rgb($sectionPalette['btn-text'] ?? $basicButtonStyleNormal['color']);
 
-        if($basicButtonStyleNormal['background-color-opacity'] == 0 ){
+        $bgOpacity = $basicButtonStyleNormal['background-color-opacity'] ?? 1;
+        if($bgOpacity == 0 ){
             $basicButtonStyleNormal['background-color-opacity'] = 0.5;
         }
 

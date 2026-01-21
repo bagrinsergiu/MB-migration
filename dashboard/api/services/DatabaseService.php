@@ -16,7 +16,8 @@ class DatabaseService
     // Разрешенный хост для записи (строгая проверка)
     private const ALLOWED_WRITE_HOST = 'mb-migration.cupzc9ey0cip.us-east-1.rds.amazonaws.com';
 
-    private ?MySQL $writeConnection = null;
+    /** @var MySQL|null */
+    private $writeConnection = null;
 
     /**
      * Получить настройки подключения из переменных окружения
@@ -709,16 +710,43 @@ class DatabaseService
             
             $result = [];
             foreach ($waves as $wave) {
+                $progressTotal = (int)($wave['progress_total'] ?? 0);
+                $progressCompleted = (int)($wave['progress_completed'] ?? 0);
+                $progressFailed = (int)($wave['progress_failed'] ?? 0);
+                $dbStatus = $wave['status'] ?? 'pending';
+                
+                // Пересчитываем статус на основе прогресса, если он не соответствует
+                $calculatedStatus = $dbStatus;
+                if ($progressTotal > 0) {
+                    $totalProcessed = $progressCompleted + $progressFailed;
+                    if ($totalProcessed >= $progressTotal) {
+                        // Все миграции завершены
+                        $calculatedStatus = $progressFailed > 0 ? 'error' : 'completed';
+                    } elseif ($totalProcessed > 0) {
+                        // Есть прогресс, но не все завершено
+                        if ($dbStatus === 'pending') {
+                            $calculatedStatus = 'in_progress';
+                        }
+                    }
+                }
+                
+                // Используем пересчитанный статус, если он отличается от БД и БД статус не завершен
+                // Это позволяет исправить случаи, когда статус в БД не обновился
+                $finalStatus = ($calculatedStatus !== $dbStatus && 
+                               ($dbStatus === 'in_progress' || $dbStatus === 'pending')) 
+                    ? $calculatedStatus 
+                    : $dbStatus;
+                
                 $result[] = [
                     'id' => $wave['wave_id'],
                     'name' => $wave['name'],
                     'workspace_id' => $wave['workspace_id'],
                     'workspace_name' => $wave['workspace_name'] ?? '',
-                    'status' => $wave['status'] ?? 'pending',
+                    'status' => $finalStatus,
                     'progress' => [
-                        'total' => (int)($wave['progress_total'] ?? 0),
-                        'completed' => (int)($wave['progress_completed'] ?? 0),
-                        'failed' => (int)($wave['progress_failed'] ?? 0),
+                        'total' => $progressTotal,
+                        'completed' => $progressCompleted,
+                        'failed' => $progressFailed,
                     ],
                     'created_at' => $wave['created_at'],
                     'updated_at' => $wave['updated_at'],
@@ -740,13 +768,44 @@ class DatabaseService
                 // Извлекаем wave_id из mb_project_uuid (формат: wave_{waveId})
                 $waveId = str_replace('wave_', '', $mapping['mb_project_uuid']);
                 
+                $progress = $changesJson['progress'] ?? ['total' => 0, 'completed' => 0, 'failed' => 0];
+                $progressTotal = (int)($progress['total'] ?? 0);
+                $progressCompleted = (int)($progress['completed'] ?? 0);
+                $progressFailed = (int)($progress['failed'] ?? 0);
+                $dbStatus = $changesJson['status'] ?? 'pending';
+                
+                // Пересчитываем статус на основе прогресса, если он не соответствует
+                $calculatedStatus = $dbStatus;
+                if ($progressTotal > 0) {
+                    $totalProcessed = $progressCompleted + $progressFailed;
+                    if ($totalProcessed >= $progressTotal) {
+                        // Все миграции завершены
+                        $calculatedStatus = $progressFailed > 0 ? 'error' : 'completed';
+                    } elseif ($totalProcessed > 0) {
+                        // Есть прогресс, но не все завершено
+                        if ($dbStatus === 'pending') {
+                            $calculatedStatus = 'in_progress';
+                        }
+                    }
+                }
+                
+                // Используем пересчитанный статус, если он отличается от БД и БД статус не завершен
+                $finalStatus = ($calculatedStatus !== $dbStatus && 
+                               ($dbStatus === 'in_progress' || $dbStatus === 'pending')) 
+                    ? $calculatedStatus 
+                    : $dbStatus;
+                
                 $waves[] = [
                     'id' => $waveId,
                     'name' => $changesJson['wave_name'] ?? '',
                     'workspace_id' => $changesJson['workspace_id'] ?? null,
                     'workspace_name' => $changesJson['workspace_name'] ?? '',
-                    'status' => $changesJson['status'] ?? 'pending',
-                    'progress' => $changesJson['progress'] ?? ['total' => 0, 'completed' => 0, 'failed' => 0],
+                    'status' => $finalStatus,
+                    'progress' => [
+                        'total' => $progressTotal,
+                        'completed' => $progressCompleted,
+                        'failed' => $progressFailed,
+                    ],
                     'created_at' => $mapping['created_at'],
                     'updated_at' => $mapping['updated_at'],
                     'completed_at' => $changesJson['completed_at'] ?? null,
@@ -809,17 +868,36 @@ class DatabaseService
             // Получаем данные из migrations_mapping (из кеша)
             $migrationMapping = $migrationsMapping[$brzProjectId] ?? null;
             
-            // Парсим result_json
-            $resultData = json_decode($migrationResult['result_json'] ?? '{}', true);
-            $resultValue = $resultData['value'] ?? $resultData ?? null;
+            // Парсим result_json (с защитой от больших/поврежденных JSON)
+            $resultJson = $migrationResult['result_json'] ?? '{}';
+            $resultData = null;
+            $resultValue = null;
+            if (!empty($resultJson) && is_string($resultJson)) {
+                // Проверяем, не обрезан ли JSON
+                $trimmed = trim($resultJson);
+                if (!empty($trimmed) && (substr($trimmed, -1) === '}' || substr($trimmed, -1) === ']')) {
+                    try {
+                        $resultData = json_decode($trimmed, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $resultValue = $resultData['value'] ?? $resultData ?? null;
+                        }
+                    } catch (Exception $e) {
+                        // Игнорируем ошибки парсинга JSON
+                    }
+                }
+            }
+            if ($resultData === null) {
+                $resultData = [];
+            }
             
             // Объединяем данные из разных источников
             $migrationChanges = $migrationMapping 
                 ? json_decode($migrationMapping['changes_json'] ?? '{}', true) 
                 : [];
 
-            // Определяем статус: приоритет у данных из result, затем из mapping
-            $status = $resultValue['status'] 
+            // Определяем статус: приоритет у данных из result_json (status напрямую), затем из result value, затем из mapping
+            $status = $resultData['status'] 
+                ?? $resultValue['status'] 
                 ?? $migrationChanges['status'] 
                 ?? 'completed';
 

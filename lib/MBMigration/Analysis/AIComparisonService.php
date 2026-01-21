@@ -38,6 +38,10 @@ class AIComparisonService
      * @var string
      */
     private $apiVersion;
+    /**
+     * @var PromptBuilder
+     */
+    private $promptBuilder;
 
     public function __construct(?string $apiKey = null, ?string $model = null)
     {
@@ -103,6 +107,9 @@ class AIComparisonService
             'timeout' => 120, // Увеличенный таймаут для анализа
             'headers' => $headers
         ]);
+
+        // Инициализируем PromptBuilder для загрузки тематических промптов
+        $this->promptBuilder = new PromptBuilder();
     }
 
     /**
@@ -110,15 +117,17 @@ class AIComparisonService
      *
      * @param array $sourceData Данные исходной страницы (screenshot_path, html, url)
      * @param array $migratedData Данные мигрированной страницы (screenshot_path, html, url)
+     * @param string $themeName Название темы (designName) для использования тематического промпта
      * @return array Результат анализа с оценкой качества и найденными проблемами
      * @throws Exception
      */
-    public function comparePages(array $sourceData, array $migratedData): array
+    public function comparePages(array $sourceData, array $migratedData, string $themeName = 'default'): array
     {
         Logger::instance()->info("[Quality Analysis] Starting AI comparison", [
             'source_url' => $sourceData['url'],
             'migrated_url' => $migratedData['url'],
-            'model' => $this->model
+            'model' => $this->model,
+            'theme' => $themeName
         ]);
 
         // Проверяем использование мока
@@ -149,9 +158,11 @@ class AIComparisonService
                 'base64_size_bytes' => $migratedScreenshotSize
             ]);
 
-            // Подготавливаем промпт для анализа
-            Logger::instance()->debug("[Quality Analysis] Building analysis prompt");
-            $prompt = $this->buildAnalysisPrompt($sourceData, $migratedData);
+            // Подготавливаем промпт для анализа используя PromptBuilder
+            Logger::instance()->debug("[Quality Analysis] Building analysis prompt", [
+                'theme' => $themeName
+            ]);
+            $prompt = $this->promptBuilder->buildPrompt($sourceData, $migratedData, $themeName);
             $promptLength = strlen($prompt);
             Logger::instance()->info("[Quality Analysis] Analysis prompt prepared", [
                 'prompt_length' => $promptLength,
@@ -178,7 +189,7 @@ class AIComparisonService
                 'max_tokens_requested' => 2000
             ]);
 
-            $response = $this->sendAnalysisRequest($sourceScreenshot, $migratedScreenshot, $prompt, $estimatedTotalInputTokens);
+            $response = $this->sendAnalysisRequest($sourceScreenshot, $migratedScreenshot, $prompt);
 
             // Извлекаем информацию о токенах из ответа
             $usage = $response['usage'] ?? null;
@@ -423,7 +434,11 @@ PROMPT;
         }
 
         $dom = new \DOMDocument();
+        // Suppress HTML5 tag warnings (nav, section, header, footer, etc. are valid HTML5 tags)
+        $libxmlPreviousState = libxml_use_internal_errors(true);
         @$dom->loadHTML($html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($libxmlPreviousState);
 
         return [
             'headings_count' => $dom->getElementsByTagName('h1')->length +
