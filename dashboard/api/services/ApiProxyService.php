@@ -271,6 +271,7 @@ class ApiProxyService
 
     /**
      * Получить логи миграции
+     * Сначала пытается получить через HTTP API, если не получается - читает из файлов
      * 
      * @param int $brzProjectId
      * @return array
@@ -278,30 +279,104 @@ class ApiProxyService
      */
     public function getMigrationLogs(int $brzProjectId): array
     {
+        // Сначала пытаемся получить через HTTP API
         $url = $this->baseUrl . '/migration_log?brz_project_id=' . $brzProjectId;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5); // Короткий таймаут
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
         
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
         curl_close($ch);
 
-        if ($error) {
-            throw new Exception("Ошибка при получении логов: {$error}");
+        // Если HTTP запрос успешен, возвращаем результат
+        if (!$error && $httpCode === 200 && $response) {
+            $data = json_decode($response, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return [
+                    'http_code' => $httpCode,
+                    'data' => $data
+                ];
+            }
         }
 
-        $data = json_decode($response, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception("Ошибка декодирования JSON: " . json_last_error_msg());
+        // Если HTTP запрос не удался, читаем логи из файлов напрямую
+        $projectRoot = dirname(__DIR__, 3);
+        $logPath = $_ENV['LOG_PATH'] ?? getenv('LOG_PATH') ?: $projectRoot . '/var/log';
+        
+        // Ищем лог-файлы по паттерну
+        $logFiles = [];
+        
+        // Вариант 1: Ищем файл по паттерну migration_*_$brzProjectId.log
+        $pattern = $logPath . '/migration_*_' . $brzProjectId . '.log';
+        $files = glob($pattern);
+        if ($files) {
+            $logFiles = array_merge($logFiles, $files);
         }
-
-        return [
-            'http_code' => $httpCode,
-            'data' => $data
-        ];
+        
+        // Вариант 2: Ищем файл по паттерну *_$brzProjectId.log (более общий)
+        $pattern2 = $logPath . '/*_' . $brzProjectId . '.log';
+        $files2 = glob($pattern2);
+        if ($files2) {
+            $logFiles = array_merge($logFiles, $files2);
+        }
+        
+        // Вариант 3: Ищем в директориях волн
+        $waveDirs = glob($logPath . '/wave_*', GLOB_ONLYDIR);
+        foreach ($waveDirs as $waveDir) {
+            $projectLogFile = $waveDir . '/project_' . $brzProjectId . '.log';
+            if (file_exists($projectLogFile)) {
+                $logFiles[] = $projectLogFile;
+            }
+        }
+        
+        // Сортируем по времени изменения (новые первыми)
+        usort($logFiles, function($a, $b) {
+            return filemtime($b) - filemtime($a);
+        });
+        
+        $allLogs = [];
+        foreach ($logFiles as $logFile) {
+            if (file_exists($logFile) && is_readable($logFile)) {
+                $content = file_get_contents($logFile);
+                if ($content) {
+                    // Разбиваем логи по строкам
+                    $content = str_replace('][', "]\n[", $content);
+                    $lines = explode("\n", $content);
+                    foreach ($lines as $line) {
+                        $line = trim($line);
+                        if (!empty($line)) {
+                            // Фильтруем только строки, связанные с этой миграцией
+                            if (strpos($line, "brizy-$brzProjectId") !== false || 
+                                strpos($line, (string)$brzProjectId) !== false ||
+                                strpos($logFile, '_' . $brzProjectId . '.log') !== false ||
+                                preg_match('/\[202\d-\d{2}-\d{2}/', $line)) {
+                                $allLogs[] = $line;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Если нашли логи в файлах, возвращаем их
+        if (!empty($allLogs)) {
+            return [
+                'http_code' => 200,
+                'data' => [
+                    'migration_id' => $brzProjectId,
+                    'logs' => array_values(array_unique($allLogs)),
+                    'log_files' => $logFiles,
+                    'source' => 'file'
+                ]
+            ];
+        }
+        
+        // Если ничего не нашли, возвращаем ошибку
+        throw new Exception("Лог-файлы для миграции не найдены. brz_project_id: {$brzProjectId}");
     }
 }

@@ -146,16 +146,20 @@
   border-radius: 6px;
   font-size: 0.875rem;
   transition: border-color 0.2s;
+  background-color: var(--surface);
+  color: var(--text);
 }
 
 .form-input:focus {
   border-color: var(--primary);
   outline: none;
+  background-color: var(--surface);
 }
 
 .form-input:disabled {
   background: var(--bg);
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .form-error {
@@ -168,6 +172,31 @@
   margin-top: 0.25rem;
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+/* Checkbox styles */
+input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: var(--primary);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+input[type="checkbox"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
 }
 
 /* Badge styles */

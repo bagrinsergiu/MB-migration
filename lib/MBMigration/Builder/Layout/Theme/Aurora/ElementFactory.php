@@ -18,6 +18,7 @@ use MBMigration\Builder\Layout\Theme\Aurora\Elements\Sermons\MediaLayoutElement;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Text\AccordionLayoutElement;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Text\FullMediaElement;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Text\FullText;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\Text\FullTextBlurBox;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Text\GridLayoutElement;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Text\LeftMedia;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Text\LeftMediaCircle;
@@ -40,6 +41,9 @@ class ElementFactory extends AbstractThemeElementFactory
 
             case 'full-text':
                 return new FullText($this->blockKit['blocks']['full-text'], $browserPage);
+
+            case 'full-text-blur-box':
+                return new FullTextBlurBox($this->blockKit['blocks']['full-text-blur-box'], $browserPage);
 
             case 'left-media-circle':
                 return new LeftMediaCircle($this->blockKit['blocks']['left-media-circle'], $browserPage);

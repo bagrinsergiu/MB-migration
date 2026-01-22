@@ -233,6 +233,15 @@ class Bridge
             ->setStatusCode($code);
     }
 
+    /**
+     * Создает запись в таблице migrations_mapping
+     * 
+     * @param int $brz_project_id ID проекта бризи (мигрированный проект)
+     * @param string $source_project_id UUID проекта MB (исходный проект)
+     * @param string $mata_data JSON данные с метаинформацией
+     * @param string $table Имя таблицы (не используется, оставлено для обратной совместимости)
+     * @return int|null ID созданной записи или null в случае ошибки
+     */
     public function insertMigrationMapping($brz_project_id, $source_project_id, $mata_data = '{}', $table = 'MG_prepare_mapping.migration_list_w9')
     {
         try {
@@ -586,9 +595,12 @@ class Bridge
                 }
             } else {
                 if ($mgr_manual) {
+                    // Используем исходный mb_project_uuid из запроса, а не из результата
+                    // brz_project_id - это ID проекта бризи (мигрированный проект)
+                    // mb_project_uuid - это UUID проекта MB (исходный проект)
                     $this->insertMigrationMapping(
                         $result['brizy_project_id'],
-                        $result['mb_uuid'],
+                        $mb_project_uuid,
                         json_encode(['data' => $result['date']])
                     );
                 }

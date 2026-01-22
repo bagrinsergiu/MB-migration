@@ -6,6 +6,9 @@ use Exception;
 use MBMigration\Core\Config;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Brizy\BrizyAPI;
+use Dashboard\Services\MigrationExecutionService;
+use Dashboard\Services\MigrationService; // Added for monitoring migrations
+use Dashboard\Services\WaveLogger;
 
 /**
  * WaveService
@@ -38,21 +41,30 @@ class WaveService
         int $batchSize = 3,
         bool $mgrManual = false
     ): array {
+        WaveLogger::startOperation('createWave', [
+            'name' => $name,
+            'projects_count' => count($projectUuids),
+            'batch_size' => $batchSize,
+            'mgr_manual' => $mgrManual
+        ]);
         error_log("[WaveService::createWave] Начало создания волны: name={$name}, projects=" . count($projectUuids) . ", batchSize={$batchSize}, mgrManual=" . ($mgrManual ? 'true' : 'false'));
         
         // Валидация
         if (empty($name)) {
+            WaveLogger::error("Название волны пустое");
             error_log("[WaveService::createWave] ОШИБКА: Название волны пустое");
             throw new Exception('Название волны обязательно');
         }
         
         if (empty($projectUuids)) {
+            WaveLogger::error("Список UUID проектов пустой");
             error_log("[WaveService::createWave] ОШИБКА: Список UUID проектов пустой");
             throw new Exception('Список UUID проектов не может быть пустым');
         }
 
         // Генерируем уникальный ID волны
         $waveId = time() . '_' . random_int(1000, 9999);
+        WaveLogger::info("Сгенерирован waveId", ['wave_id' => $waveId]);
         error_log("[WaveService::createWave] Сгенерирован waveId: {$waveId}");
 
         // Инициализируем Logger перед использованием BrizyAPI
@@ -65,32 +77,41 @@ class WaveService
                 \Monolog\Logger::DEBUG,
                 $logPath
             );
+            WaveLogger::debug("Logger инициализирован", ['log_path' => $logPath]);
             error_log("[WaveService::createWave] Logger инициализирован: {$logPath}");
         } else {
+            WaveLogger::debug("Logger уже инициализирован");
             error_log("[WaveService::createWave] Logger уже инициализирован");
         }
 
         // Инициализируем Config перед использованием BrizyAPI
         // Проверяем, инициализирован ли Config (через mainToken)
         if (empty(Config::$mainToken)) {
+            WaveLogger::debug("Config не инициализирован, инициализируем");
             error_log("[WaveService::createWave] Config не инициализирован, инициализируем...");
             $this->initializeConfig();
+            WaveLogger::info("Config инициализирован");
             error_log("[WaveService::createWave] Config инициализирован");
         } else {
+            WaveLogger::debug("Config уже инициализирован");
             error_log("[WaveService::createWave] Config уже инициализирован");
         }
 
         // Создаем или находим workspace
+        WaveLogger::info("Поиск workspace", ['name' => $name]);
         error_log("[WaveService::createWave] Поиск workspace с именем: {$name}");
         $brizyApi = new BrizyAPI();
         $workspaceId = $brizyApi->getWorkspaces($name);
+        WaveLogger::info("Результат поиска workspace", ['workspace_id' => $workspaceId, 'found' => !empty($workspaceId)]);
         error_log("[WaveService::createWave] Результат поиска workspace: " . ($workspaceId ? "найден ID={$workspaceId}" : "не найден"));
         
         if (!$workspaceId) {
             // Создаем новый workspace
+            WaveLogger::info("Workspace не найден, создаем новый", ['name' => $name]);
             error_log("[WaveService::createWave] Workspace не найден, создаем новый...");
             try {
                 $workspaceResult = $brizyApi->createdWorkspaces($name);
+                WaveLogger::debug("Результат создания workspace", ['result' => $workspaceResult]);
                 error_log("[WaveService::createWave] Результат создания workspace: " . json_encode($workspaceResult));
                 
                 if (empty($workspaceResult)) {
@@ -161,6 +182,7 @@ class WaveService
         }
 
         // Сохраняем волну в БД
+        WaveLogger::info("Сохранение волны в БД", ['wave_id' => $waveId, 'workspace_id' => $workspaceId]);
         error_log("[WaveService::createWave] Сохранение волны в БД: waveId={$waveId}, workspaceId={$workspaceId}");
         try {
             $this->dbService->createWave(
@@ -172,22 +194,37 @@ class WaveService
                 $batchSize,
                 $mgrManual
             );
+            WaveLogger::info("Волна успешно сохранена в БД", ['wave_id' => $waveId]);
             error_log("[WaveService::createWave] Волна успешно сохранена в БД");
         } catch (Exception $e) {
+            WaveLogger::error("ОШИБКА сохранения волны в БД", ['wave_id' => $waveId, 'error' => $e->getMessage()]);
             error_log("[WaveService::createWave] ОШИБКА сохранения волны в БД: " . $e->getMessage());
             throw $e;
         }
 
         // Запускаем выполнение волны в фоне
+        WaveLogger::info("Запуск выполнения волны в фоне", ['wave_id' => $waveId]);
         error_log("[WaveService::createWave] Запуск выполнения волны в фоне: waveId={$waveId}");
         try {
             $this->runWaveInBackground($waveId);
+            WaveLogger::info("Волна успешно запущена в фоне", ['wave_id' => $waveId]);
             error_log("[WaveService::createWave] Волна успешно запущена в фоне");
         } catch (Exception $e) {
+            WaveLogger::error("ОШИБКА запуска волны в фоне", [
+                'wave_id' => $waveId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             error_log("[WaveService::createWave] ОШИБКА запуска волны в фоне: " . $e->getMessage());
             error_log("[WaveService::createWave] Stack trace: " . $e->getTraceAsString());
             throw $e;
         }
+
+        WaveLogger::endOperation('createWave', [
+            'wave_id' => $waveId,
+            'workspace_id' => $workspaceId,
+            'status' => 'in_progress'
+        ]);
 
         return [
             'wave_id' => $waveId,
@@ -199,6 +236,7 @@ class WaveService
 
     /**
      * Запустить выполнение волны в фоне
+     * Использует MigrationExecutionService для запуска миграций через HTTP
      * 
      * @param string $waveId ID волны
      * @return void
@@ -206,430 +244,380 @@ class WaveService
      */
     private function runWaveInBackground(string $waveId): void
     {
+        WaveLogger::startOperation('runWaveInBackground', ['wave_id' => $waveId]);
         error_log("[WaveService::runWaveInBackground] Начало запуска волны в фоне: waveId={$waveId}");
         
-        $projectRoot = dirname(__DIR__, 3);
-        $logFile = $projectRoot . '/var/log/wave_' . $waveId . '_' . time() . '.log';
-        
-        error_log("[WaveService::runWaveInBackground] Лог-файл: {$logFile}");
-        
-        // Создаем файл лога
-        @file_put_contents($logFile, "=== Wave execution started at " . date('Y-m-d H:i:s') . " ===\n");
-        @file_put_contents($logFile, "Wave ID: {$waveId}\n", FILE_APPEND);
-        @file_put_contents($logFile, "Project root: {$projectRoot}\n", FILE_APPEND);
-        
-        // Создаем wrapper script для выполнения волны
-        $wrapperScript = $projectRoot . '/var/tmp/wave_wrapper_' . $waveId . '_' . time() . '.php';
-        error_log("[WaveService::runWaveInBackground] Wrapper script: {$wrapperScript}");
-        
-        $projectRootEscaped = addslashes($projectRoot);
-        $waveIdEscaped = addslashes($waveId);
-        
-        // Получаем данные волны для использования в генерации скрипта
-        error_log("[WaveService::runWaveInBackground] Получение данных волны из БД...");
+        // Получаем данные волны из БД
+        WaveLogger::debug("Получение данных волны из БД", ['wave_id' => $waveId]);
         $dbService = new DatabaseService();
         $wave = $dbService->getWave($waveId);
         if (!$wave) {
             $errorMsg = "ERROR: Wave not found: {$waveId}";
+            WaveLogger::error($errorMsg, ['wave_id' => $waveId]);
             error_log("[WaveService::runWaveInBackground] {$errorMsg}");
-            @file_put_contents($logFile, "{$errorMsg}\n", FILE_APPEND);
             throw new Exception($errorMsg);
         }
+        
+        WaveLogger::info("Данные волны получены", [
+            'wave_id' => $waveId,
+            'workspace_id' => $wave['workspace_id'] ?? null,
+            'projects_count' => count($wave['project_uuids'] ?? [])
+        ]);
         error_log("[WaveService::runWaveInBackground] Данные волны получены: workspaceId=" . ($wave['workspace_id'] ?? 'null') . ", projects=" . count($wave['project_uuids'] ?? []));
         
-        $mgrManualValue = ($wave['mgr_manual'] ?? false) ? 'true' : 'false';
-        error_log("[WaveService::runWaveInBackground] mgrManual: {$mgrManualValue}");
+        // Загружаем настройки по умолчанию
+        WaveLogger::debug("Загрузка настроек");
+        $settings = $dbService->getSettings();
+        $mbSiteId = $settings['mb_site_id'] ?? null;
+        $mbSecret = $settings['mb_secret'] ?? null;
         
-        $wrapperContent = "<?php\n";
-        $wrapperContent .= "chdir('{$projectRootEscaped}');\n";
-        $wrapperContent .= "require_once '{$projectRootEscaped}/vendor/autoload_runtime.php';\n";
-        $wrapperContent .= "use Dashboard\Services\WaveService;\n";
-        $wrapperContent .= "use Dashboard\Services\DatabaseService;\n";
-        $wrapperContent .= "use MBMigration\ApplicationBootstrapper;\n";
-        $wrapperContent .= "use MBMigration\Core\Config;\n";
-        $wrapperContent .= "use MBMigration\Layer\Brizy\BrizyAPI;\n";
-        $wrapperContent .= "use Symfony\Component\HttpFoundation\Request;\n\n";
-        
-        $wrapperContent .= "error_log('[WaveWrapper] Script started at ' . date('Y-m-d H:i:s'));\n";
-        $wrapperContent .= "error_log('[WaveWrapper] Wave ID: {$waveIdEscaped}');\n";
-        $wrapperContent .= "error_log('[WaveWrapper] Project root: {$projectRootEscaped}');\n";
-        $wrapperContent .= "error_log('[WaveWrapper] PHP version: ' . PHP_VERSION);\n";
-        $wrapperContent .= "error_log('[WaveWrapper] Working directory: ' . getcwd());\n\n";
-        
-        $wrapperContent .= "try {\n";
-        $wrapperContent .= "    error_log('[WaveWrapper] Initializing DatabaseService...');\n";
-        $wrapperContent .= "    \$dbService = new DatabaseService();\n";
-        $wrapperContent .= "    error_log('[WaveWrapper] Getting wave data from DB...');\n";
-        $wrapperContent .= "    \$wave = \$dbService->getWave('{$waveIdEscaped}');\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    if (!\$wave) {\n";
-        $wrapperContent .= "        error_log('[WaveWrapper] ERROR: Wave not found: {$waveIdEscaped}');\n";
-        $wrapperContent .= "        exit(1);\n";
-        $wrapperContent .= "    }\n";
-        $wrapperContent .= "    error_log('[WaveWrapper] Wave data loaded: workspaceId=' . (\$wave['workspace_id'] ?? 'null') . ', projects=' . count(\$wave['project_uuids'] ?? []));\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    // Обновляем статус на in_progress\n";
-        $wrapperContent .= "    error_log('[WaveWrapper] Updating wave status to in_progress...');\n";
-        $wrapperContent .= "    \$dbService->updateWaveProgress('{$waveIdEscaped}', \$wave['progress'], \$wave['migrations'], 'in_progress');\n";
-        $wrapperContent .= "    error_log('[WaveWrapper] Wave status updated to in_progress');\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    error_log('[WaveWrapper] Initializing BrizyAPI...');\n";
-        $wrapperContent .= "    \$brizyApi = new BrizyAPI();\n";
-        $wrapperContent .= "    \$workspaceId = \$wave['workspace_id'];\n";
-        $wrapperContent .= "    \$projectUuids = \$wave['project_uuids'];\n";
-        $wrapperContent .= "    \$batchSize = \$wave['batch_size'];\n";
-        $wrapperContent .= "    error_log('[WaveWrapper] Workspace ID: ' . \$workspaceId . ', Projects count: ' . count(\$projectUuids) . ', Batch size: ' . \$batchSize);\n";
-        $wrapperContent .= "    \$mgrManual = \$wave['mgr_manual'];\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    \$migrations = \$wave['migrations'] ?? [];\n";
-        $wrapperContent .= "    \$progress = \$wave['progress'];\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    // Загружаем настройки по умолчанию\n";
-        $wrapperContent .= "    \$settings = \$dbService->getSettings();\n";
-        $wrapperContent .= "    \$mbSiteId = \$settings['mb_site_id'] ?? null;\n";
-        $wrapperContent .= "    \$mbSecret = \$settings['mb_secret'] ?? null;\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    if (empty(\$mbSiteId) || empty(\$mbSecret)) {\n";
-        $wrapperContent .= "        error_log('MB Site ID or Secret not configured');\n";
-        $wrapperContent .= "        \$dbService->updateWaveProgress('{$waveIdEscaped}', \$progress, \$migrations, 'error');\n";
-        $wrapperContent .= "        exit(1);\n";
-        $wrapperContent .= "    }\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    // Инициализируем ApplicationBootstrapper\n";
-        $wrapperContent .= "    \$context = [];\n";
-        $wrapperContent .= "    \$request = Request::create('/', 'GET');\n";
-        $wrapperContent .= "    \$app = new ApplicationBootstrapper(\$context, \$request);\n";
-        $wrapperContent .= "    \$app->doInnitConfig();\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    // Выполняем миграции параллельно с учетом batch_size\n";
-        $wrapperContent .= "    \$pending = array_values(\$projectUuids);\n";
-        $wrapperContent .= "    \$activeProcesses = [];\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    while (!empty(\$pending) || !empty(\$activeProcesses)) {\n";
-        $wrapperContent .= "        // Запускаем новые миграции до достижения batch_size\n";
-        $wrapperContent .= "        while (count(\$activeProcesses) < \$batchSize && !empty(\$pending)) {\n";
-        $wrapperContent .= "            \$mbUuid = array_shift(\$pending);\n";
-        $wrapperContent .= "            \n";
-        $wrapperContent .= "            try {\n";
-        $wrapperContent .= "                // Запускаем миграцию в отдельном процессе (создание проекта будет внутри скрипта)\n";
-        $wrapperContent .= "                \$migrationScript = sys_get_temp_dir() . '/wave_migration_' . '{$waveIdEscaped}' . '_' . md5(\$mbUuid) . '_' . time() . '_' . getmypid() . '.php';\n";
-        $wrapperContent .= "                \$scriptContent = '<?php' . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"chdir('{$projectRootEscaped}');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"require_once '{$projectRootEscaped}/vendor/autoload_runtime.php';\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"use Dashboard\\\\Services\\\\DatabaseService;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"use MBMigration\\\\ApplicationBootstrapper;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"use MBMigration\\\\Layer\\\\Brizy\\\\BrizyAPI;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"use Symfony\\\\Component\\\\HttpFoundation\\\\Request;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"use Exception;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"error_log('[WaveMigration] Starting migration for MB UUID: ' . \\\$mbUuid);\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"try {\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] Step 1: Initializing DatabaseService...');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$dbService = new DatabaseService();\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] Step 2: Loading wave data from DB...');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$wave = \$dbService->getWave('{$waveIdEscaped}');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    if (!\$wave) throw new Exception('Wave not found: {$waveIdEscaped}');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$workspaceId = \$wave['workspace_id'];\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$migrations = \$wave['migrations'] ?? [];\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$progress = \$wave['progress'];\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \\\$mgrManual = {$mgrManualValue};\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \\\$mbUuid = \" . var_export(\$mbUuid, true) . \";\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] Step 3: Initializing BrizyAPI...');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$brizyApi = new BrizyAPI();\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$projectName = 'Project_' . \\\$mbUuid;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] Step 4: Creating project in workspace. Name: ' . \$projectName . ', Workspace ID: ' . \$workspaceId);\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \\\$brzProjectId = \$brizyApi->createProject(\$projectName, \$workspaceId, 'id');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] Step 5: Project creation result: ' . (\\\$brzProjectId ? 'SUCCESS, ID=' . \\\$brzProjectId : 'FAILED'));\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    if (!\\\$brzProjectId) throw new Exception('Failed to create project in workspace. Project name: ' . \$projectName . ', Workspace ID: ' . \$workspaceId);\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    // Обновляем статус миграции на in_progress\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$migrationIndex = array_search(\\\$mbUuid, array_column(\$migrations, 'mb_project_uuid'));\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    if (\$migrationIndex === false) {\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"        \$migrations[] = ['mb_project_uuid' => \\\$mbUuid, 'brz_project_id' => \\\$brzProjectId, 'status' => 'in_progress'];\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    } else {\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"        \$migrations[\$migrationIndex]['status'] = 'in_progress';\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"        \$migrations[\$migrationIndex]['brz_project_id'] = \\\$brzProjectId;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    }\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$dbService->updateWaveProgress('{$waveIdEscaped}', \$progress, \$migrations);\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] Step 7: Initializing ApplicationBootstrapper...');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$context = [];\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$request = Request::create('/', 'GET');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$app = new ApplicationBootstrapper(\$context, \$request);\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$app->doInnitConfig();\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] Step 8: Starting migrationFlow. MB UUID: ' . \\\$mbUuid . ', Brizy Project ID: ' . \\\$brzProjectId . ', Workspace ID: ' . \$workspaceId . ', MgrManual: ' . (\\\$mgrManual ? 'true' : 'false'));\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \\\$result = \\\$app->migrationFlow(\\\$mbUuid, \\\$brzProjectId, \$workspaceId, '', false, \\\$mgrManual);\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] Step 9: migrationFlow completed. Result type: ' . gettype(\\\$result) . ', Is array: ' . (is_array(\\\$result) ? 'yes' : 'no'));\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$migrationData = is_array(\$result) ? \$result : [];\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$migrationIndex = array_search(\\\$mbUuid, array_column(\$migrations, 'mb_project_uuid'));\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    if (\$migrationIndex !== false) {\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"        \$migrations[\$migrationIndex]['status'] = 'completed';\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"        \$migrations[\$migrationIndex]['brizy_project_domain'] = \$migrationData['brizy_project_domain'] ?? null;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"        \$migrations[\$migrationIndex]['completed_at'] = date('Y-m-d H:i:s');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    }\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$finalBrzProjectId = \$migrationData['brizy_project_id'] ?? \" . \$brzProjectId . \";\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$dbService->upsertMigrationMapping(\\\$finalBrzProjectId, \\\$mbUuid, ['status' => 'completed', 'brizy_project_domain' => \$migrationData['brizy_project_domain'] ?? null, 'brizy_project_id' => \\\$finalBrzProjectId, 'completed_at' => date('Y-m-d H:i:s')]);\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$progress['completed']++;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$dbService->updateWaveProgress('{$waveIdEscaped}', \$progress, \$migrations);\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    file_put_contents('\" . \$migrationScript . \".result', json_encode(['success' => true, 'mb_uuid' => \\\$mbUuid, 'result' => \$migrationData]));\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"} catch (Exception \$e) {\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] ERROR: Exception caught: ' . \$e->getMessage());\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] ERROR: File: ' . \$e->getFile() . ', Line: ' . \$e->getLine());\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    error_log('[WaveMigration] ERROR: Stack trace: ' . \$e->getTraceAsString());\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$dbService = new DatabaseService();\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$wave = \$dbService->getWave('{$waveIdEscaped}');\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$migrations = \$wave['migrations'] ?? [];\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$progress = \$wave['progress'];\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \\\$mbUuid = \" . var_export(\$mbUuid, true) . \";\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$migrationIndex = array_search(\\\$mbUuid, array_column(\$migrations, 'mb_project_uuid'));\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    if (\$migrationIndex !== false) {\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"        \$migrations[\$migrationIndex]['status'] = 'error';\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"        \$migrations[\$migrationIndex]['error'] = \$e->getMessage();\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    }\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$progress['failed']++;\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    \$dbService->updateWaveProgress('{$waveIdEscaped}', \$progress, \$migrations);\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"    file_put_contents('\" . \$migrationScript . \".result', json_encode(['success' => false, 'mb_uuid' => \\\$mbUuid, 'error' => \$e->getMessage(), 'file' => \$e->getFile(), 'line' => \$e->getLine()]));\" . PHP_EOL;\n";
-        $wrapperContent .= "                \$scriptContent .= \"}\";\n";
-        $wrapperContent .= "                \n";
-                $wrapperContent .= "                error_log('[WaveWrapper] Saving migration script: ' . \$migrationScript);\n";
-                $wrapperContent .= "                file_put_contents(\$migrationScript, \$scriptContent);\n";
-                $wrapperContent .= "                error_log('[WaveWrapper] Migration script saved: ' . \$migrationScript . ' (' . filesize(\$migrationScript) . ' bytes)');\n";
-                $wrapperContent .= "                \n";
-                $wrapperContent .= "                // Запускаем процесс в фоне\n";
-                $wrapperContent .= "                \$command = sprintf('cd %s && nohup php -f %s > /dev/null 2>&1 & echo $!', escapeshellarg('{$projectRootEscaped}'), escapeshellarg(\$migrationScript));\n";
-                $wrapperContent .= "                error_log('[WaveWrapper] Starting migration process for ' . \$mbUuid . ': ' . \$command);\n";
-                $wrapperContent .= "                \$pid = trim(shell_exec(\$command));\n";
-                $wrapperContent .= "                error_log('[WaveWrapper] Migration process started: mbUuid=' . \$mbUuid . ', pid=' . (\$pid ?: 'NOT SET'));\n";
-                $wrapperContent .= "                \n";
-                $wrapperContent .= "                if (!empty(\$pid) && is_numeric(\$pid)) {\n";
-                $wrapperContent .= "                    \$activeProcesses[\$mbUuid] = ['pid' => (int)\$pid, 'script' => \$migrationScript];\n";
-                $wrapperContent .= "                    error_log('[WaveWrapper] Active processes count: ' . count(\$activeProcesses));\n";
-                $wrapperContent .= "                } else {\n";
-                $wrapperContent .= "                    error_log('[WaveWrapper] ERROR: Failed to start migration process for ' . \$mbUuid . ', pid=' . (\$pid ?: 'empty'));\n";
-                $wrapperContent .= "                    throw new Exception('Failed to start migration process');\n";
-                $wrapperContent .= "                }\n";
-        $wrapperContent .= "            } catch (Exception \$e) {\n";
-        $wrapperContent .= "                error_log('Error starting migration for ' . \$mbUuid . ': ' . \$e->getMessage());\n";
-        $wrapperContent .= "                \$migrationIndex = array_search(\$mbUuid, array_column(\$migrations, 'mb_project_uuid'));\n";
-        $wrapperContent .= "                if (\$migrationIndex !== false) {\n";
-        $wrapperContent .= "                    \$migrations[\$migrationIndex]['status'] = 'error';\n";
-        $wrapperContent .= "                    \$migrations[\$migrationIndex]['error'] = \$e->getMessage();\n";
-        $wrapperContent .= "                }\n";
-        $wrapperContent .= "                \$progress['failed']++;\n";
-        $wrapperContent .= "                \$dbService->updateWaveProgress('{$waveIdEscaped}', \$progress, \$migrations);\n";
-        $wrapperContent .= "            }\n";
-        $wrapperContent .= "        }\n";
-        $wrapperContent .= "        \n";
-        $wrapperContent .= "        // Проверяем завершенные процессы\n";
-        $wrapperContent .= "        error_log('[WaveWrapper] Checking completed processes. Active processes count: ' . count(\$activeProcesses));\n";
-        $wrapperContent .= "        foreach (\$activeProcesses as \$mbUuid => \$processInfo) {\n";
-        $wrapperContent .= "            \$pid = \$processInfo['pid'];\n";
-        $wrapperContent .= "            \$script = \$processInfo['script'];\n";
-        $wrapperContent .= "            \$resultFile = \$script . '.result';\n";
-        $wrapperContent .= "            \n";
-        $wrapperContent .= "            error_log('[WaveWrapper] Checking process: mbUuid=' . \$mbUuid . ', pid=' . \$pid . ', script=' . \$script);\n";
-        $wrapperContent .= "            \n";
-        $wrapperContent .= "            // Проверяем, завершился ли процесс\n";
-        $wrapperContent .= "            \$processRunning = false;\n";
-        $wrapperContent .= "            if (\$pid > 0) {\n";
-        $wrapperContent .= "                \$checkCommand = sprintf('ps -p %d -o pid= 2>/dev/null', \$pid);\n";
-        $wrapperContent .= "                \$psOutput = trim(shell_exec(\$checkCommand));\n";
-        $wrapperContent .= "                \$processRunning = !empty(\$psOutput);\n";
-        $wrapperContent .= "                error_log('[WaveWrapper] Process check result: mbUuid=' . \$mbUuid . ', pid=' . \$pid . ', running=' . (\$processRunning ? 'yes' : 'no'));\n";
-        $wrapperContent .= "            }\n";
-        $wrapperContent .= "            \n";
-        $wrapperContent .= "            // Если процесс завершился и есть результат\n";
-        $wrapperContent .= "            if (!\$processRunning && file_exists(\$resultFile)) {\n";
-        $wrapperContent .= "                error_log('[WaveWrapper] Process completed: mbUuid=' . \$mbUuid . ', reading result file: ' . \$resultFile);\n";
-        $wrapperContent .= "                \$resultData = json_decode(file_get_contents(\$resultFile), true);\n";
-        $wrapperContent .= "                if (\$resultData && \$resultData['success']) {\n";
-        $wrapperContent .= "                    error_log('[WaveWrapper] Migration SUCCESS: mbUuid=' . \$mbUuid);\n";
-        $wrapperContent .= "                } else {\n";
-        $wrapperContent .= "                    error_log('[WaveWrapper] Migration FAILED: mbUuid=' . \$mbUuid . ', error=' . (\$resultData['error'] ?? 'unknown'));\n";
-        $wrapperContent .= "                }\n";
-        $wrapperContent .= "                unset(\$activeProcesses[\$mbUuid]);\n";
-        $wrapperContent .= "                @unlink(\$script);\n";
-        $wrapperContent .= "                @unlink(\$resultFile);\n";
-        $wrapperContent .= "                error_log('[WaveWrapper] Cleaned up script and result file for: mbUuid=' . \$mbUuid);\n";
-        $wrapperContent .= "            } elseif (!\$processRunning && !file_exists(\$resultFile)) {\n";
-        $wrapperContent .= "                error_log('[WaveWrapper] WARNING: Process completed but no result file found: mbUuid=' . \$mbUuid . ', pid=' . \$pid . ', script=' . \$script);\n";
-        $wrapperContent .= "            }\n";
-        $wrapperContent .= "        }\n";
-        $wrapperContent .= "        \n";
-        $wrapperContent .= "        // Небольшая задержка перед следующей итерацией\n";
-        $wrapperContent .= "        if (!empty(\$activeProcesses)) {\n";
-        $wrapperContent .= "            usleep(500000); // 0.5 секунды\n";
-        $wrapperContent .= "        }\n";
-        $wrapperContent .= "    }\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    // Очищаем оставшиеся скрипты (на случай ошибок)\n";
-        $wrapperContent .= "    foreach (glob(sys_get_temp_dir() . '/wave_migration_' . '{$waveIdEscaped}' . '_*.php') as \$script) {\n";
-        $wrapperContent .= "        @unlink(\$script);\n";
-        $wrapperContent .= "        @unlink(\$script . '.result');\n";
-        $wrapperContent .= "    }\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    // Выполняем миграции последовательно (старый код для совместимости - удалить после тестирования)\n";
-        $wrapperContent .= "    /*\n";
-        $wrapperContent .= "    foreach (\$projectUuids as \$mbUuid) {\n";
-        $wrapperContent .= "            \n";
-        $wrapperContent .= "            try {\n";
-        $wrapperContent .= "                // Создаем проект в workspace\n";
-        $wrapperContent .= "                \$projectName = 'Project_' . \$mbUuid;\n";
-        $wrapperContent .= "                \$brzProjectId = \$brizyApi->createProject(\$projectName, \$workspaceId, 'id');\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                if (!\$brzProjectId) {\n";
-        $wrapperContent .= "                    throw new Exception('Failed to create project in workspace');\n";
-        $wrapperContent .= "                }\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                // Обновляем статус миграции на in_progress\n";
-        $wrapperContent .= "                \$migrationIndex = array_search(\$mbUuid, array_column(\$migrations, 'mb_project_uuid'));\n";
-        $wrapperContent .= "                if (\$migrationIndex === false) {\n";
-        $wrapperContent .= "                    \$migrations[] = [\n";
-        $wrapperContent .= "                        'mb_project_uuid' => \$mbUuid,\n";
-        $wrapperContent .= "                        'brz_project_id' => \$brzProjectId,\n";
-        $wrapperContent .= "                        'status' => 'in_progress',\n";
-        $wrapperContent .= "                    ];\n";
-        $wrapperContent .= "                } else {\n";
-        $wrapperContent .= "                    \$migrations[\$migrationIndex]['status'] = 'in_progress';\n";
-        $wrapperContent .= "                    \$migrations[\$migrationIndex]['brz_project_id'] = \$brzProjectId;\n";
-        $wrapperContent .= "                }\n";
-        $wrapperContent .= "                \$dbService->updateWaveProgress('{$waveIdEscaped}', \$progress, \$migrations);\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                // Выполняем миграцию\n";
-        $wrapperContent .= "                \$result = \$app->migrationFlow(\n";
-        $wrapperContent .= "                    \$mbUuid,\n";
-        $wrapperContent .= "                    \$brzProjectId,\n";
-        $wrapperContent .= "                    \$workspaceId,\n";
-        $wrapperContent .= "                    '',\n";
-        $wrapperContent .= "                    false,\n";
-        $wrapperContent .= "                    \$mgrManual\n";
-        $wrapperContent .= "                );\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                // migrationFlow возвращает массив напрямую\n";
-        $wrapperContent .= "                // Формируем структуру ответа для сохранения в migration_result_list\n";
-        $wrapperContent .= "                \$migrationData = is_array(\$result) ? \$result : [];\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                // Формируем полный ответ в формате для migration_result_list\n";
-        $wrapperContent .= "                \$responseData = ['value' => \$migrationData];\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                // Обновляем результат миграции\n";
-        $wrapperContent .= "                \$migrationIndex = array_search(\$mbUuid, array_column(\$migrations, 'mb_project_uuid'));\n";
-        $wrapperContent .= "                if (\$migrationIndex !== false) {\n";
-        $wrapperContent .= "                    \$migrations[\$migrationIndex]['status'] = 'completed';\n";
-        $wrapperContent .= "                    \$migrations[\$migrationIndex]['brizy_project_domain'] = \$migrationData['brizy_project_domain'] ?? null;\n";
-        $wrapperContent .= "                    \$migrations[\$migrationIndex]['completed_at'] = date('Y-m-d H:i:s');\n";
-        $wrapperContent .= "                }\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                // Сохраняем результат в migrations_mapping\n";
-        $wrapperContent .= "                \$finalBrzProjectId = \$migrationData['brizy_project_id'] ?? \$brzProjectId;\n";
-        $wrapperContent .= "                \$dbService->upsertMigrationMapping(\$finalBrzProjectId, \$mbUuid, [\n";
-        $wrapperContent .= "                    'status' => 'completed',\n";
-        $wrapperContent .= "                    'brizy_project_domain' => \$migrationData['brizy_project_domain'] ?? null,\n";
-        $wrapperContent .= "                    'brizy_project_id' => \$finalBrzProjectId,\n";
-        $wrapperContent .= "                    'migration_id' => \$migrationData['migration_id'] ?? null,\n";
-        $wrapperContent .= "                    'date' => \$migrationData['date'] ?? null,\n";
-        $wrapperContent .= "                    'theme' => \$migrationData['theme'] ?? null,\n";
-        $wrapperContent .= "                    'mb_product_name' => \$migrationData['mb_product_name'] ?? null,\n";
-        $wrapperContent .= "                    'mb_site_id' => \$migrationData['mb_site_id'] ?? null,\n";
-        $wrapperContent .= "                    'progress' => \$migrationData['progress'] ?? null,\n";
-        $wrapperContent .= "                    'DEV_MODE' => \$migrationData['DEV_MODE'] ?? null,\n";
-        $wrapperContent .= "                    'message' => \$migrationData['message'] ?? null,\n";
-        $wrapperContent .= "                    'completed_at' => date('Y-m-d H:i:s'),\n";
-        $wrapperContent .= "                ]);\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                // Сохраняем результат в migration_result_list\n";
-        $wrapperContent .= "                // Используем mb_uuid из результата или из параметров\n";
-        $wrapperContent .= "                \$resultMbUuid = \$migrationData['mb_uuid'] ?? \$mbUuid;\n";
-        $wrapperContent .= "                \$resultBrzProjectId = \$migrationData['brizy_project_id'] ?? \$brzProjectId;\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                if (\$resultBrzProjectId && \$resultMbUuid) {\n";
-        $wrapperContent .= "                    try {\n";
-        $wrapperContent .= "                        \$migrationUuid = time() . random_int(100, 999);\n";
-        $wrapperContent .= "                        \$dbService->saveMigrationResult([\n";
-        $wrapperContent .= "                            'migration_uuid' => \$migrationUuid,\n";
-        $wrapperContent .= "                            'brz_project_id' => (int)\$resultBrzProjectId,\n";
-        $wrapperContent .= "                            'brizy_project_domain' => \$migrationData['brizy_project_domain'] ?? '',\n";
-        $wrapperContent .= "                            'mb_project_uuid' => \$resultMbUuid,\n";
-        $wrapperContent .= "                            'result_json' => json_encode(\$responseData)\n";
-        $wrapperContent .= "                        ]);\n";
-        $wrapperContent .= "                    } catch (Exception \$saveEx) {\n";
-        $wrapperContent .= "                        error_log('Save result error: ' . \$saveEx->getMessage());\n";
-        $wrapperContent .= "                    }\n";
-        $wrapperContent .= "                }\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                \$progress['completed']++;\n";
-        $wrapperContent .= "                \$dbService->updateWaveProgress('{$waveIdEscaped}', \$progress, \$migrations);\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "            } catch (Exception \$e) {\n";
-        $wrapperContent .= "                error_log('Migration error for ' . \$mbUuid . ': ' . \$e->getMessage());\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                // Обновляем статус на error\n";
-        $wrapperContent .= "                \$migrationIndex = array_search(\$mbUuid, array_column(\$migrations, 'mb_project_uuid'));\n";
-        $wrapperContent .= "                if (\$migrationIndex !== false) {\n";
-        $wrapperContent .= "                    \$migrations[\$migrationIndex]['status'] = 'error';\n";
-        $wrapperContent .= "                    \$migrations[\$migrationIndex]['error'] = \$e->getMessage();\n";
-        $wrapperContent .= "                } else {\n";
-        $wrapperContent .= "                    \$migrations[] = [\n";
-        $wrapperContent .= "                        'mb_project_uuid' => \$mbUuid,\n";
-        $wrapperContent .= "                        'status' => 'error',\n";
-        $wrapperContent .= "                        'error' => \$e->getMessage(),\n";
-        $wrapperContent .= "                    ];\n";
-        $wrapperContent .= "                }\n";
-        $wrapperContent .= "                \n";
-        $wrapperContent .= "                \$progress['failed']++;\n";
-        $wrapperContent .= "                \$dbService->updateWaveProgress('{$waveIdEscaped}', \$progress, \$migrations);\n";
-        $wrapperContent .= "            }\n";
-        $wrapperContent .= "        }\n";
-        $wrapperContent .= "    }\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    // Обновляем финальный статус\n";
-        $wrapperContent .= "    \$finalStatus = (\$progress['failed'] > 0) ? 'error' : 'completed';\n";
-        $wrapperContent .= "    \$dbService->updateWaveProgress('{$waveIdEscaped}', \$progress, \$migrations, \$finalStatus);\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    error_log('Wave execution completed: {$waveIdEscaped}');\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "} catch (Exception \$e) {\n";
-        $wrapperContent .= "    error_log('Wave execution error: ' . \$e->getMessage());\n";
-        $wrapperContent .= "    error_log('Stack trace: ' . \$e->getTraceAsString());\n";
-        $wrapperContent .= "    \n";
-        $wrapperContent .= "    try {\n";
-        $wrapperContent .= "        \$dbService = new DatabaseService();\n";
-        $wrapperContent .= "        \$wave = \$dbService->getWave('{$waveIdEscaped}');\n";
-        $wrapperContent .= "        if (\$wave) {\n";
-        $wrapperContent .= "            \$dbService->updateWaveProgress('{$waveIdEscaped}', \$wave['progress'], \$wave['migrations'], 'error');\n";
-        $wrapperContent .= "        }\n";
-        $wrapperContent .= "    } catch (Exception \$dbEx) {\n";
-        $wrapperContent .= "        error_log('DB update error: ' . \$dbEx->getMessage());\n";
-        $wrapperContent .= "    }\n";
-        $wrapperContent .= "    exit(1);\n";
-        $wrapperContent .= "}\n";
-        
-        @file_put_contents($wrapperScript, $wrapperContent);
-        
-        // Запускаем скрипт в фоне
-        $command = sprintf(
-            'cd %s && nohup php -f %s >> %s 2>&1 &',
-            escapeshellarg($projectRoot),
-            escapeshellarg($wrapperScript),
-            escapeshellarg($logFile)
-        );
-        
-        @file_put_contents($logFile, "Command: " . $command . "\n", FILE_APPEND);
-        
-        $pid = null;
-        @exec($command, $output, $returnVar);
-        
-        if ($returnVar !== 0) {
-            $command = sprintf(
-                'cd %s && nohup php -f %s >> %s 2>&1 & echo $!',
-                escapeshellarg($projectRoot),
-                escapeshellarg($wrapperScript),
-                escapeshellarg($logFile)
-            );
-            $result = @shell_exec($command);
-            $pid = $result ? trim($result) : 'background';
-        } else {
-            $pid = 'background';
+        if (empty($mbSiteId) || empty($mbSecret)) {
+            $errorMsg = "MB Site ID or Secret not configured";
+            WaveLogger::error($errorMsg, ['mb_site_id' => $mbSiteId, 'mb_secret_set' => !empty($mbSecret)]);
+            error_log("[WaveService::runWaveInBackground] ОШИБКА: {$errorMsg}");
+            $dbService->updateWaveProgress($waveId, $wave['progress'] ?? ['total' => 0, 'completed' => 0, 'failed' => 0], $wave['migrations'] ?? [], 'error');
+            throw new Exception($errorMsg);
         }
         
-        @file_put_contents($logFile, "PID: " . ($pid ?: 'unknown') . "\n", FILE_APPEND);
+        WaveLogger::debug("Настройки загружены", ['mb_site_id' => $mbSiteId]);
+        
+        // Обновляем статус волны на in_progress
+        WaveLogger::info("Обновление статуса волны на in_progress", ['wave_id' => $waveId]);
+        $dbService->updateWaveProgress($waveId, $wave['progress'] ?? ['total' => 0, 'completed' => 0, 'failed' => 0], $wave['migrations'] ?? [], 'in_progress');
+        
+        // Подготавливаем миграции для запуска
+        $projectUuids = $wave['project_uuids'] ?? [];
+        $workspaceId = $wave['workspace_id'];
+        $batchSize = $wave['batch_size'] ?? 3;
+        $mgrManual = $wave['mgr_manual'] ?? false;
+        
+        WaveLogger::info("Подготовка миграций", [
+            'wave_id' => $waveId,
+            'projects_count' => count($projectUuids),
+            'batch_size' => $batchSize,
+            'mgr_manual' => $mgrManual
+        ]);
+        
+        // КРИТИЧНО: Сначала создаем проекты для всех миграций
+        // Это гарантирует, что у каждой миграции будет brz_project_id перед запуском
+        WaveLogger::info("🔨 [ЭТАП 0] Создание проектов для миграций", [
+            'wave_id' => $waveId,
+            'projects_count' => count($projectUuids),
+            'workspace_id' => $workspaceId
+        ]);
+        
+        $migrations = [];
+        foreach ($projectUuids as $index => $mbUuid) {
+            try {
+                // Создаем проект в workspace
+                $brzProjectId = $this->createOrGetProject($mbUuid, $workspaceId, $waveId);
+                
+                if ($brzProjectId <= 0) {
+                    throw new Exception("Не удалось создать или найти проект для {$mbUuid}");
+                }
+                
+                WaveLogger::info("✅ [ЭТАП 0] Проект создан/найден", [
+                    'wave_id' => $waveId,
+                    'mb_uuid' => $mbUuid,
+                    'brz_project_id' => $brzProjectId,
+                    'workspace_id' => $workspaceId,
+                    'position' => $index + 1
+                ]);
+                
+                $migrationParams = [
+                    'mb_project_uuid' => $mbUuid,
+                    'brz_project_id' => $brzProjectId, // Теперь у нас есть brz_project_id!
+                    'brz_workspaces_id' => $workspaceId,
+                    'mb_site_id' => $mbSiteId,
+                    'mb_secret' => $mbSecret,
+                    'mgr_manual' => $mgrManual ? 1 : 0,
+                    'quality_analysis' => false,
+                    'wave_id' => $waveId // Добавляем wave_id для логирования
+                ];
+                $migrations[] = $migrationParams;
+                
+                WaveLogger::info("📝 Подготовка миграции #" . ($index + 1), [
+                    'wave_id' => $waveId,
+                    'mb_uuid' => $mbUuid,
+                    'brz_project_id' => $brzProjectId,
+                    'workspace_id' => $workspaceId,
+                    'mb_site_id' => $mbSiteId,
+                    'mgr_manual' => $mgrManual,
+                    'total_in_wave' => count($projectUuids),
+                    'position' => $index + 1
+                ]);
+            } catch (Exception $e) {
+                WaveLogger::error("❌ [ОШИБКА] Не удалось создать проект для миграции", [
+                    'wave_id' => $waveId,
+                    'mb_uuid' => $mbUuid,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                
+                // Добавляем миграцию с ошибкой
+                $migrations[] = [
+                    'mb_project_uuid' => $mbUuid,
+                    'brz_project_id' => 0,
+                    'brz_workspaces_id' => $workspaceId,
+                    'mb_site_id' => $mbSiteId,
+                    'mb_secret' => $mbSecret,
+                    'mgr_manual' => $mgrManual ? 1 : 0,
+                    'quality_analysis' => false,
+                    'error' => $e->getMessage()
+                ];
+            }
+        }
+        
+        WaveLogger::info("Подготовлено миграций", ['count' => count($migrations), 'batch_size' => $batchSize]);
+        error_log("[WaveService::runWaveInBackground] Подготовлено миграций: " . count($migrations) . ", batchSize: {$batchSize}");
+        
+        // Запускаем миграции через MigrationExecutionService
+        try {
+            // Принудительно пишем в лог перед вызовом executeBatch
+            $logFile = dirname(__DIR__, 3) . '/var/log/wave_dashboard.log';
+            @file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] [INFO] 🔄 ПЕРЕД вызовом executeBatch для wave_id={$waveId}, migrations=" . count($migrations) . ", batch_size={$batchSize}\n", FILE_APPEND);
+            
+            WaveLogger::info("Инициализация MigrationExecutionService", ['wave_id' => $waveId]);
+            $executionService = new MigrationExecutionService();
+            WaveLogger::info("MigrationExecutionService инициализирован", ['wave_id' => $waveId]);
+            
+            WaveLogger::info("Запуск executeBatch", [
+                'wave_id' => $waveId,
+                'migrations_count' => count($migrations),
+                'batch_size' => $batchSize
+            ]);
+            
+            // Принудительно пишем в лог перед вызовом
+            @file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] [INFO] 🚀 ВЫЗОВ executeBatch для wave_id={$waveId}\n", FILE_APPEND);
+            
+            $result = $executionService->executeBatch($migrations, $batchSize);
+            
+            // Принудительно пишем в лог после вызова
+            @file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] [INFO] ✅ executeBatch завершен для wave_id={$waveId}, results=" . count($result['results'] ?? []) . "\n", FILE_APPEND);
+            
+            WaveLogger::info("📊 Результат executeBatch получен", [
+                'wave_id' => $waveId,
+                'total' => $result['total'] ?? 0,
+                'processed' => $result['processed'] ?? 0,
+                'results_count' => count($result['results'] ?? [])
+            ]);
+            
+            // Обновляем статусы миграций в БД на основе результатов
+            WaveLogger::info("🔄 Начало обновления статусов миграций в БД", [
+                'wave_id' => $waveId,
+                'results_to_process' => count($result['results'] ?? [])
+            ]);
+            
+            $waveMigrations = $wave['migrations'] ?? [];
+            $progress = $wave['progress'] ?? ['total' => count($migrations), 'completed' => 0, 'failed' => 0];
+            $successCount = 0;
+            $failedCount = 0;
+            
+            foreach ($result['results'] as $resultIndex => $migrationResult) {
+                $mbUuid = $migrationResult['migration']['mb_project_uuid'] ?? null;
+                if (!$mbUuid) {
+                    WaveLogger::warning("⚠️ Миграция без mb_uuid в результате", [
+                        'wave_id' => $waveId,
+                        'result_index' => $resultIndex,
+                        'result' => $migrationResult
+                    ]);
+                    continue;
+                }
+                
+                $isSuccess = $migrationResult['success'] ?? false;
+                $status = $migrationResult['status'] ?? ($isSuccess ? 'in_progress' : 'error');
+                
+                // brz_project_id уже должен быть известен (создан на этапе 0)
+                // Но проверяем ответ на случай, если он был обновлен
+                $brzProjectId = $migrationResult['migration']['brz_project_id'] ?? 0;
+                if ($brzProjectId <= 0) {
+                    // Пытаемся получить из ответа (на случай, если был обновлен)
+                    $brzProjectId = $migrationResult['brz_project_id'] ?? 
+                                   ($migrationResult['data']['brizy_project_id'] ?? 
+                                    ($migrationResult['data']['value']['brizy_project_id'] ?? 0));
+                }
+                $httpCode = $migrationResult['http_code'] ?? null;
+                $errorMessage = $migrationResult['error'] ?? ($migrationResult['message'] ?? null);
+                $url = $migrationResult['url'] ?? null;
+                
+                WaveLogger::info("📋 Обработка результата миграции #" . ($resultIndex + 1), [
+                    'wave_id' => $waveId,
+                    'mb_uuid' => $mbUuid,
+                    'success' => $isSuccess,
+                    'status' => $status,
+                    'http_code' => $httpCode,
+                    'brz_project_id' => $brzProjectId,
+                    'url' => $url,
+                    'has_error' => !empty($migrationResult['error']),
+                    'error_message' => $errorMessage
+                ]);
+                
+                if ($isSuccess) {
+                    $successCount++;
+                    WaveLogger::info("✅ Миграция успешно запущена и обработана", [
+                        'wave_id' => $waveId,
+                        'mb_uuid' => $mbUuid,
+                        'brz_project_id' => $brzProjectId,
+                        'http_code' => $httpCode,
+                        'status' => $status,
+                        'url' => $url
+                    ]);
+        } else {
+                    $failedCount++;
+                    $errorMsg = $migrationResult['error'] ?? $migrationResult['message'] ?? 'Unknown error';
+                    
+                    // Если была ошибка создания проекта, используем её
+                    if (isset($migration['error']) && !empty($migration['error'])) {
+                        $errorMsg = $migration['error'];
+                    }
+                    
+                    $errorDetails = [
+                        'wave_id' => $waveId,
+                        'mb_uuid' => $mbUuid,
+                        'status' => $status,
+                        'http_code' => $httpCode,
+                        'url' => $url,
+                        'error' => $errorMsg,
+                        'message' => $migrationResult['message'] ?? null,
+                        'result_data' => $migrationResult['data'] ?? null,
+                        'brz_project_id' => $brzProjectId
+                    ];
+                    WaveLogger::error("❌ Миграция НЕ запущена - ОШИБКА", $errorDetails);
+                    error_log("[WaveService::runWaveInBackground] Ошибка запуска миграции {$mbUuid}: " . $errorMsg);
+                }
+                
+                // Находим или создаем запись миграции
+                $migrationIndex = array_search($mbUuid, array_column($waveMigrations, 'mb_project_uuid'));
+                
+                // Определяем ошибку для сохранения
+                $errorToSave = null;
+                if (!$isSuccess) {
+                    // Если была ошибка создания проекта, используем её
+                    if (isset($migration['error']) && !empty($migration['error'])) {
+                        $errorToSave = $migration['error'];
+                    } else {
+                        $errorToSave = $migrationResult['error'] ?? $migrationResult['message'] ?? 'Unknown error';
+                    }
+                }
+                
+                if ($migrationIndex === false) {
+                    $waveMigrations[] = [
+                        'mb_project_uuid' => $mbUuid,
+                        'brz_project_id' => $brzProjectId,
+                        'status' => $status,
+                        'error' => $errorToSave
+                    ];
+                } else {
+                    $waveMigrations[$migrationIndex]['status'] = $status;
+                    $waveMigrations[$migrationIndex]['brz_project_id'] = $brzProjectId;
+                    if ($errorToSave) {
+                        $waveMigrations[$migrationIndex]['error'] = $errorToSave;
+                    }
+                }
+
+                // Сохраняем миграцию в таблицу migrations
+                try {
+                    $migrationData = $migrationResult['data'] ?? [];
+                    $resultData = is_array($migrationData) ? $migrationData : (isset($migrationData['value']) ? $migrationData['value'] : []);
+                    
+                    $saveData = [
+                        'migration_uuid' => $waveId,
+                        'brz_project_id' => $brzProjectId > 0 ? $brzProjectId : null,
+                        'brizy_project_domain' => $resultData['brizy_project_domain'] ?? $migrationData['brizy_project_domain'] ?? null,
+                        'mb_project_uuid' => $mbUuid,
+                        'mb_project_domain' => $resultData['mb_project_domain'] ?? $migrationData['mb_project_domain'] ?? null,
+                        'status' => $status,
+                        'error' => $errorToSave,
+                        'mb_site_id' => $migrationResult['migration']['mb_site_id'] ?? null,
+                        'mb_page_slug' => $migrationResult['migration']['mb_page_slug'] ?? null,
+                        'mb_product_name' => $resultData['mb_product_name'] ?? $migrationData['mb_product_name'] ?? null,
+                        'theme' => $resultData['theme'] ?? $migrationData['theme'] ?? null,
+                        'migration_id' => $resultData['migration_id'] ?? $migrationData['migration_id'] ?? null,
+                        'date' => $resultData['date'] ?? $migrationData['date'] ?? date('Y-m-d'),
+                        'wave_id' => $waveId,
+                        'result_json' => json_encode($migrationResult),
+                        'started_at' => $status === 'in_progress' ? date('Y-m-d H:i:s') : null,
+                        'completed_at' => in_array($status, ['completed', 'error']) ? date('Y-m-d H:i:s') : null
+                    ];
+                    
+                    WaveLogger::info("💾 Сохранение миграции в таблицу migrations", [
+                        'wave_id' => $waveId,
+                        'mb_uuid' => $mbUuid,
+                        'brz_project_id' => $brzProjectId,
+                        'status' => $status,
+                        'has_brz_id' => $brzProjectId > 0
+                    ]);
+                    
+                    $migrationId = $this->dbService->saveMigration($saveData);
+                    
+                    WaveLogger::info("✅ Миграция успешно сохранена в таблицу migrations", [
+                        'wave_id' => $waveId,
+                        'mb_uuid' => $mbUuid,
+                        'migration_id' => $migrationId,
+                        'brz_project_id' => $brzProjectId
+                    ]);
+                } catch (Exception $e) {
+                    WaveLogger::error("❌ Ошибка сохранения миграции в таблицу migrations", [
+                        'wave_id' => $waveId,
+                        'mb_uuid' => $mbUuid,
+                        'brz_project_id' => $brzProjectId,
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    error_log("Ошибка сохранения миграции в таблицу migrations: " . $e->getMessage());
+                    error_log("Stack trace: " . $e->getTraceAsString());
+                }
+            }
+            
+            // Обновляем прогресс
+            $progress['failed'] = $failedCount;
+            $waveStatus = ($failedCount === count($migrations)) ? 'error' : 'in_progress';
+            
+            WaveLogger::info("Обновление прогресса волны", [
+                'wave_id' => $waveId,
+                'success_count' => $successCount,
+                'failed_count' => $failedCount,
+                'total' => count($migrations),
+                'wave_status' => $waveStatus
+            ]);
+            
+            $dbService->updateWaveProgress($waveId, $progress, $waveMigrations, $waveStatus);
+            
+            WaveLogger::info("Статусы обновлены", [
+                'wave_id' => $waveId,
+                'success' => $successCount,
+                'failed' => $failedCount
+            ]);
+            error_log("[WaveService::runWaveInBackground] Обновлены статусы: успешно={$successCount}, ошибок={$failedCount}");
+            
+            WaveLogger::info("Волна успешно запущена, миграции выполняются в фоне", ['wave_id' => $waveId]);
+            WaveLogger::endOperation('runWaveInBackground', [
+                'wave_id' => $waveId,
+                'success_count' => $successCount,
+                'failed_count' => $failedCount
+            ]);
+            error_log("[WaveService::runWaveInBackground] Волна успешно запущена, миграции выполняются в фоне");
+            
+        } catch (Exception $e) {
+            // Принудительно пишем в лог, чтобы убедиться, что ошибка логируется
+            $logFile = dirname(__DIR__, 3) . '/var/log/wave_dashboard.log';
+            $errorMsg = "[" . date('Y-m-d H:i:s') . "] [ERROR] ❌❌❌ КРИТИЧЕСКАЯ ОШИБКА в runWaveInBackground для wave_id={$waveId}: " . $e->getMessage() . "\n";
+            @file_put_contents($logFile, $errorMsg, FILE_APPEND);
+            
+            WaveLogger::error("ОШИБКА при запуске миграций", [
+                'wave_id' => $waveId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            error_log("[WaveService::runWaveInBackground] ОШИБКА при запуске миграций: " . $e->getMessage());
+            error_log("[WaveService::runWaveInBackground] Stack trace: " . $e->getTraceAsString());
+            
+            // Обновляем статус волны на error
+            WaveLogger::info("Обновление статуса волны на error", ['wave_id' => $waveId]);
+            $dbService->updateWaveProgress($waveId, $wave['progress'] ?? ['total' => 0, 'completed' => 0, 'failed' => 0], $wave['migrations'] ?? [], 'error');
+            
+            throw $e;
+        }
     }
 
     /**
@@ -658,12 +646,283 @@ class WaveService
             return null;
         }
 
+        // КРИТИЧНО: Обновляем статусы миграций на основе lock-файлов и процессов
+        $this->updateMigrationStatusesFromMonitoring($waveId);
+
         $migrations = $this->dbService->getWaveMigrations($waveId);
         
         return [
             'wave' => $wave,
             'migrations' => $migrations,
         ];
+    }
+    
+    /**
+     * Обновить статусы миграций в волне на основе мониторинга (lock-файлы, процессы)
+     * 
+     * @param string $waveId ID волны
+     * @return void
+     */
+    private function updateMigrationStatusesFromMonitoring(string $waveId): void
+    {
+        try {
+            $migrations = $this->dbService->getWaveMigrations($waveId);
+            if (empty($migrations)) {
+                return;
+            }
+            
+            $migrationService = new MigrationService();
+            $updatedMigrations = [];
+            $hasUpdates = false;
+            
+            foreach ($migrations as $migration) {
+                $mbUuid = $migration['mb_project_uuid'] ?? null;
+                $brzProjectId = (int)($migration['brz_project_id'] ?? 0);
+                $currentStatus = $migration['status'] ?? 'pending';
+                
+                if (!$mbUuid) {
+                    continue;
+                }
+                
+                // Пропускаем миграции, которые уже завершены или в ошибке
+                if ($currentStatus === 'completed' || $currentStatus === 'error') {
+                    continue;
+                }
+                
+                // Получаем информацию о процессе через мониторинг
+                // ВАЖНО: Если brz_project_id = 0, проверяем все lock-файлы для mb_uuid
+                $processInfo = null;
+                $lockFileExists = false;
+                $processRunning = false;
+                $lockFileAge = 999999;
+                
+                if ($brzProjectId > 0) {
+                    // Если brz_project_id известен, используем стандартный мониторинг
+                    $processInfo = $migrationService->getMigrationProcessInfo($mbUuid, $brzProjectId);
+                    $processRunning = $processInfo['process']['running'] ?? false;
+                    $lockFileExists = $processInfo['lock_file_exists'] ?? false;
+                    $lockFileAge = $processInfo['process']['lock_file_age'] ?? 999999;
+                } else {
+                    // Если brz_project_id = 0, ищем lock-файлы по mb_uuid
+                    // Проверяем все возможные lock-файлы для этого mb_uuid
+                    $projectRoot = dirname(__DIR__, 3);
+                    $cachePath = $_ENV['CACHE_PATH'] ?? getenv('CACHE_PATH') ?: $projectRoot . '/var/cache';
+                    $lockFilePattern = $cachePath . '/' . $mbUuid . '-*.lock';
+                    $lockFiles = glob($lockFilePattern);
+                    
+                    if (!empty($lockFiles)) {
+                        // Найден хотя бы один lock-файл
+                        $lockFileExists = true;
+                        // Берем самый свежий lock-файл
+                        $newestLockFile = null;
+                        $newestMtime = 0;
+                        foreach ($lockFiles as $lockFile) {
+                            $mtime = filemtime($lockFile);
+                            if ($mtime > $newestMtime) {
+                                $newestMtime = $mtime;
+                                $newestLockFile = $lockFile;
+                            }
+                        }
+                        
+                        if ($newestLockFile) {
+                            $lockFileAge = time() - $newestMtime;
+                            
+                            // Пытаемся извлечь brz_project_id из имени файла или содержимого
+                            if (preg_match('/' . preg_quote($mbUuid, '/') . '-(\d+)\.lock$/', $newestLockFile, $matches)) {
+                                $foundBrzProjectId = (int)$matches[1];
+                                if ($foundBrzProjectId > 0) {
+                                    // Обновляем brz_project_id и проверяем процесс
+                                    $brzProjectId = $foundBrzProjectId;
+                                    $processInfo = $migrationService->getMigrationProcessInfo($mbUuid, $brzProjectId);
+                                    $processRunning = $processInfo['process']['running'] ?? false;
+                                }
+                            }
+                            
+                            // Если процесс не найден, проверяем содержимое lock-файла
+                            if (!$processRunning) {
+                                $lockContent = @file_get_contents($newestLockFile);
+                                if ($lockContent) {
+                                    $lockData = json_decode($lockContent, true);
+                                    if ($lockData && isset($lockData['pid'])) {
+                                        $pid = (int)$lockData['pid'];
+                                        if ($pid > 0) {
+                                            // Проверяем процесс по PID
+                                            $command = sprintf('ps -p %d -o pid= 2>/dev/null', $pid);
+                                            $psOutput = @shell_exec($command);
+                                            $processRunning = !empty(trim($psOutput ?? ''));
+                                            
+                                            // Если нашли brz_project_id в lock-файле, обновляем
+                                            if (isset($lockData['brz_project_id']) && $lockData['brz_project_id'] > 0) {
+                                                $brzProjectId = (int)$lockData['brz_project_id'];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Определяем новый статус на основе мониторинга
+                $newStatus = $currentStatus;
+                $error = null;
+                
+                if ($processRunning) {
+                    // Процесс запущен - статус in_progress
+                    $newStatus = 'in_progress';
+                } elseif ($lockFileExists) {
+                    // Lock-файл существует, но процесс не найден
+                    // Проверяем возраст lock-файла
+                    if ($lockFileAge > 600) {
+                        // Lock-файл старый (более 10 минут) - считаем ошибкой
+                        $newStatus = 'error';
+                        $error = 'Процесс миграции не найден, lock-файл устарел';
+                    } else {
+                        // Lock-файл свежий - возможно процесс только что запустился
+                        $newStatus = 'in_progress';
+                    }
+                } else {
+                    // Lock-файл не существует
+                    if ($currentStatus === 'in_progress') {
+                        // КРИТИЧНО: Перед установкой статуса error, проверяем логи миграции
+                        // Если миграция завершилась успешно, обновляем статус на completed
+                        $migrationCompleted = false;
+                        
+                        try {
+                            $migrationCompleted = $migrationService->checkMigrationCompletedFromLogs($brzProjectId);
+                        } catch (Exception $e) {
+                            // Игнорируем ошибки проверки логов
+                            WaveLogger::warning("Ошибка проверки логов миграции", [
+                                'wave_id' => $waveId,
+                                'mb_uuid' => $mbUuid,
+                                'brz_project_id' => $brzProjectId,
+                                'error' => $e->getMessage()
+                            ]);
+                        }
+                        
+                        if ($migrationCompleted) {
+                            // Миграция завершилась успешно
+                            $newStatus = 'completed';
+                            $error = null;
+                        } else {
+                            // Миграция не завершилась или завершилась с ошибкой
+                            $newStatus = 'error';
+                            $error = 'Lock-файл не найден, процесс миграции не запущен';
+                        }
+                    }
+                    // Если статус pending, оставляем как есть
+                }
+                
+                // Обновляем статус, если он изменился, или если нашли brz_project_id
+                $foundBrzProjectId = ($brzProjectId > 0 && $brzProjectId !== (int)($migration['brz_project_id'] ?? 0));
+                if ($newStatus !== $currentStatus || $foundBrzProjectId) {
+                    $updatedMigrations[] = [
+                        'mb_project_uuid' => $mbUuid,
+                        'brz_project_id' => $brzProjectId, // Обновляем brz_project_id, даже если он был найден из lock-файла
+                        'status' => $newStatus,
+                        'error' => $error
+                    ];
+                    $hasUpdates = true;
+                    
+                    WaveLogger::info("Обновление статуса миграции на основе мониторинга", [
+                        'wave_id' => $waveId,
+                        'mb_uuid' => $mbUuid,
+                        'brz_project_id' => $brzProjectId,
+                        'old_status' => $currentStatus,
+                        'new_status' => $newStatus,
+                        'error' => $error,
+                        'process_running' => $processRunning,
+                        'lock_file_exists' => $lockFileExists,
+                        'lock_file_age' => $lockFileAge
+                    ]);
+                    
+                    // Если нашли brz_project_id из lock-файла, обновляем его
+                    if ($brzProjectId > 0 && $brzProjectId !== (int)($migration['brz_project_id'] ?? 0)) {
+                        WaveLogger::info("Обнаружен brz_project_id из lock-файла", [
+                            'wave_id' => $waveId,
+                            'mb_uuid' => $mbUuid,
+                            'old_brz_project_id' => $migration['brz_project_id'] ?? 0,
+                            'new_brz_project_id' => $brzProjectId
+                        ]);
+                    }
+                }
+            }
+            
+            // Обновляем статусы в БД, если есть изменения
+            if ($hasUpdates) {
+                $wave = $this->dbService->getWave($waveId);
+                $waveMigrations = $wave['migrations'] ?? [];
+                
+                // Обновляем статусы в массиве миграций
+                foreach ($updatedMigrations as $updated) {
+                    $mbUuid = $updated['mb_project_uuid'];
+                    $migrationIndex = array_search($mbUuid, array_column($waveMigrations, 'mb_project_uuid'));
+                    
+                    if ($migrationIndex !== false) {
+                        $waveMigrations[$migrationIndex]['status'] = $updated['status'];
+                        // Обновляем brz_project_id, если он был найден
+                        if ($updated['brz_project_id'] > 0) {
+                            $waveMigrations[$migrationIndex]['brz_project_id'] = $updated['brz_project_id'];
+                        }
+                        if ($updated['error']) {
+                            $waveMigrations[$migrationIndex]['error'] = $updated['error'];
+                        }
+                    } else {
+                        // Добавляем новую миграцию, если её нет
+                        $waveMigrations[] = [
+                            'mb_project_uuid' => $mbUuid,
+                            'brz_project_id' => $updated['brz_project_id'],
+                            'status' => $updated['status'],
+                            'error' => $updated['error']
+                        ];
+                    }
+                }
+                
+                // Обновляем прогресс волны
+                $progress = $wave['progress'] ?? ['total' => count($waveMigrations), 'completed' => 0, 'failed' => 0];
+                $completed = 0;
+                $failed = 0;
+                
+                foreach ($waveMigrations as $migration) {
+                    $status = $migration['status'] ?? 'pending';
+                    if ($status === 'completed') {
+                        $completed++;
+                    } elseif ($status === 'error') {
+                        $failed++;
+                    }
+                }
+                
+                $progress['completed'] = $completed;
+                $progress['failed'] = $failed;
+                
+                // Определяем общий статус волны
+                $totalProcessed = $completed + $failed;
+                $waveStatus = 'in_progress';
+                if ($totalProcessed === $progress['total']) {
+                    $waveStatus = ($failed > 0) ? 'error' : 'completed';
+                }
+                
+                // Обновляем в БД
+                $this->dbService->updateWaveProgress($waveId, $progress, $waveMigrations, $waveStatus);
+                
+                WaveLogger::info("Статусы миграций обновлены на основе мониторинга", [
+                    'wave_id' => $waveId,
+                    'updated_count' => count($updatedMigrations),
+                    'progress' => $progress,
+                    'wave_status' => $waveStatus
+                ]);
+            }
+        } catch (Exception $e) {
+            // Логируем ошибку, но не прерываем выполнение
+            $logFile = dirname(__DIR__, 3) . '/var/log/wave_dashboard.log';
+            $errorMsg = "[" . date('Y-m-d H:i:s') . "] [ERROR] ❌ ОШИБКА обновления статусов на основе мониторинга: wave_id={$waveId}, error=" . $e->getMessage() . "\n";
+            @file_put_contents($logFile, $errorMsg, FILE_APPEND);
+            WaveLogger::error("Ошибка обновления статусов на основе мониторинга", [
+                'wave_id' => $waveId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
     }
 
     /**
@@ -767,6 +1026,21 @@ class WaveService
                     'started_at' => date('Y-m-d H:i:s')
                 ]
             ]);
+
+            // Сохраняем запись о начале миграции в таблицу migrations
+            try {
+                $this->dbService->saveMigration([
+                    'migration_uuid' => $waveId,
+                    'brz_project_id' => $brzProjectId > 0 ? $brzProjectId : null,
+                    'mb_project_uuid' => $mbUuid,
+                    'status' => 'in_progress',
+                    'wave_id' => $waveId,
+                    'started_at' => date('Y-m-d H:i:s'),
+                    'result_json' => json_encode(['status' => 'in_progress', 'message' => 'Миграция запущена'])
+                ]);
+            } catch (Exception $saveError) {
+                error_log("Ошибка сохранения начала миграции в таблицу migrations: " . $saveError->getMessage());
+            }
             
             $result = $app->migrationFlow(
                 $mbUuid,
@@ -846,8 +1120,32 @@ class WaveService
 
             $this->dbService->updateWaveProgress($waveId, $progress, $migrations);
 
-            // Сохраняем результат в migrations_mapping
+            // Сохраняем результат в новую таблицу migrations
             $finalBrzProjectId = $result['brizy_project_id'] ?? $brzProjectId;
+            try {
+                $this->dbService->saveMigration([
+                    'migration_uuid' => $waveId,
+                    'brz_project_id' => $finalBrzProjectId,
+                    'brizy_project_domain' => $result['brizy_project_domain'] ?? null,
+                    'mb_project_uuid' => $mbUuid,
+                    'mb_project_domain' => $result['mb_project_domain'] ?? null,
+                    'status' => 'completed',
+                    'mb_site_id' => $result['mb_site_id'] ?? null,
+                    'mb_product_name' => $result['mb_product_name'] ?? null,
+                    'theme' => $result['theme'] ?? null,
+                    'migration_id' => $result['migration_id'] ?? null,
+                    'date' => $result['date'] ?? date('Y-m-d'),
+                    'wave_id' => $waveId,
+                    'result_json' => json_encode($result),
+                    'completed_at' => date('Y-m-d H:i:s')
+                ]);
+            } catch (Exception $e) {
+                error_log("Ошибка сохранения миграции в новую таблицу: " . $e->getMessage());
+            }
+
+            // Сохраняем в migrations_mapping ТОЛЬКО для волн (это специальная таблица для маппинга волн)
+            // brz_project_id - это ID проекта бризи (мигрированный проект)
+            // mb_project_uuid - это UUID проекта MB (исходный проект)
             $this->dbService->upsertMigrationMapping($finalBrzProjectId, $mbUuid, [
                 'status' => 'completed',
                 'brizy_project_domain' => $result['brizy_project_domain'] ?? null,
@@ -855,7 +1153,7 @@ class WaveService
                 'completed_at' => date('Y-m-d H:i:s'),
             ]);
 
-            // Обновляем запись в migration_result_list с результатами миграции
+            // Обновляем запись в migration_result_list с результатами миграции (для обратной совместимости)
             $this->dbService->updateMigrationResult($waveId, $mbUuid, [
                 'brz_project_id' => $finalBrzProjectId,
                 'brizy_project_domain' => $result['brizy_project_domain'] ?? '',
@@ -870,6 +1168,22 @@ class WaveService
                 'data' => $result,
             ];
         } catch (Exception $e) {
+            // Сохраняем ошибку в таблицу migrations
+            try {
+                $this->dbService->saveMigration([
+                    'migration_uuid' => $waveId,
+                    'brz_project_id' => $brzProjectId > 0 ? $brzProjectId : null,
+                    'mb_project_uuid' => $mbUuid,
+                    'status' => 'error',
+                    'error' => $e->getMessage(),
+                    'wave_id' => $waveId,
+                    'result_json' => json_encode(['error' => $e->getMessage(), 'status' => 'error']),
+                    'completed_at' => date('Y-m-d H:i:s')
+                ]);
+            } catch (Exception $saveError) {
+                error_log("Ошибка сохранения миграции с ошибкой в таблицу migrations: " . $saveError->getMessage());
+            }
+
             // Обновляем статус на error в migration_result_list
             $this->dbService->updateMigrationResult($waveId, $mbUuid, [
                 'result_json' => [
@@ -1207,6 +1521,164 @@ class WaveService
             $settings
         );
     }
+    
+    /**
+     * Создать или получить проект в workspace для миграции
+     * 
+     * @param string $mbUuid UUID проекта MB
+     * @param int $workspaceId ID workspace
+     * @param string $waveId ID волны (для логирования)
+     * @return int ID созданного или найденного проекта Brizy
+     * @throws Exception
+     */
+    private function createOrGetProject(string $mbUuid, int $workspaceId, string $waveId): int
+    {
+        WaveLogger::startOperation('WaveService::createOrGetProject', [
+            'mb_uuid' => $mbUuid,
+            'workspace_id' => $workspaceId,
+            'wave_id' => $waveId
+        ]);
+        
+        try {
+            // Инициализируем Config и Logger, если нужно
+            if (!Logger::isInitialized()) {
+                $logPath = dirname(__DIR__, 3) . '/var/log/wave_dashboard.log';
+                @mkdir(dirname($logPath), 0755, true);
+                Logger::initialize(
+                    'WaveService',
+                    \Monolog\Logger::DEBUG,
+                    $logPath
+                );
+            }
+            
+            if (empty(Config::$mainToken)) {
+                $this->initializeConfig();
+            }
+            
+            $brizyApi = new BrizyAPI();
+            
+            // Получаем домен проекта MB для имени проекта
+            // Используем UUID как имя проекта, если домен недоступен
+            $projectName = $mbUuid; // По умолчанию используем UUID
+            
+            try {
+                // Пытаемся получить домен из MB API (если доступен)
+                // Пока используем UUID, можно улучшить позже
+            } catch (Exception $e) {
+                // Игнорируем ошибки получения домена
+            }
+            
+            // Проверяем, существует ли уже проект с таким именем в workspace
+            $existingProjectId = $brizyApi->getProject($workspaceId, $projectName);
+            
+            if ($existingProjectId) {
+                WaveLogger::info("Проект уже существует в workspace", [
+                    'wave_id' => $waveId,
+                    'mb_uuid' => $mbUuid,
+                    'brz_project_id' => $existingProjectId,
+                    'workspace_id' => $workspaceId,
+                    'project_name' => $projectName
+                ]);
+                
+                WaveLogger::endOperation('WaveService::createOrGetProject', [
+                    'success' => true,
+                    'brz_project_id' => $existingProjectId,
+                    'created' => false
+                ]);
+                
+                return (int)$existingProjectId;
+            }
+            
+            // Создаем новый проект
+            WaveLogger::info("Создание нового проекта в workspace", [
+                'wave_id' => $waveId,
+                'mb_uuid' => $mbUuid,
+                'workspace_id' => $workspaceId,
+                'project_name' => $projectName
+            ]);
+            
+            $createResult = $brizyApi->createProject($projectName, $workspaceId, 'id');
+            
+            if (empty($createResult)) {
+                throw new Exception('Пустой ответ от API при создании проекта');
+            }
+            
+            // Проверяем статус ответа
+            if (is_array($createResult) && isset($createResult['status']) && 
+                ($createResult['status'] === false || $createResult['status'] >= 400)) {
+                $errorMsg = 'Ошибка создания проекта: ';
+                if (isset($createResult['body'])) {
+                    $errorBody = json_decode($createResult['body'], true);
+                    if (is_array($errorBody)) {
+                        $errorMsg .= $errorBody['message'] ?? $errorBody['error'] ?? json_encode($errorBody);
+                    } else {
+                        $errorMsg .= $createResult['body'];
+                    }
+                } else {
+                    $errorMsg .= 'HTTP ' . ($createResult['status'] === false ? 'Connection failed' : $createResult['status']);
+                }
+                throw new Exception($errorMsg);
+            }
+            
+            // Парсим ответ
+            $projectId = null;
+            if (is_numeric($createResult)) {
+                $projectId = (int)$createResult;
+            } elseif (is_array($createResult) && isset($createResult['id'])) {
+                $projectId = (int)$createResult['id'];
+            } elseif (isset($createResult['body'])) {
+                $bodyData = json_decode($createResult['body'], true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    if (is_numeric($bodyData)) {
+                        $projectId = (int)$bodyData;
+                    } elseif (isset($bodyData['id'])) {
+                        $projectId = (int)$bodyData['id'];
+                    }
+                } elseif (is_numeric($createResult['body'])) {
+                    $projectId = (int)$createResult['body'];
+                }
+            }
+            
+            if (!$projectId || $projectId <= 0) {
+                // Пытаемся найти созданный проект
+                sleep(1);
+                $projectId = $brizyApi->getProject($workspaceId, $projectName);
+                if (!$projectId) {
+                    throw new Exception('Проект создан, но ID не получен. Попробуйте еще раз.');
+                }
+            }
+            
+            WaveLogger::info("Проект успешно создан", [
+                'wave_id' => $waveId,
+                'mb_uuid' => $mbUuid,
+                'brz_project_id' => $projectId,
+                'workspace_id' => $workspaceId,
+                'project_name' => $projectName
+            ]);
+            
+            WaveLogger::endOperation('WaveService::createOrGetProject', [
+                'success' => true,
+                'brz_project_id' => $projectId,
+                'created' => true
+            ]);
+            
+            return $projectId;
+            
+        } catch (Exception $e) {
+            WaveLogger::error("Ошибка создания/получения проекта", [
+                'wave_id' => $waveId,
+                'mb_uuid' => $mbUuid,
+                'workspace_id' => $workspaceId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            WaveLogger::endOperation('WaveService::createOrGetProject', [
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+    }
 
     /**
      * Получить логи миграции из файла
@@ -1333,6 +1805,56 @@ class WaveService
             'log_files' => $logFiles,
             'brz_project_id' => $brzProjectId,
             'mb_uuid' => $mbUuid
+        ];
+    }
+
+    /**
+     * Получить логи проекта в волне
+     * 
+     * @param string $waveId ID волны
+     * @param int $brzProjectId ID проекта Brizy
+     * @return array Логи проекта
+     * @throws Exception
+     */
+    public function getProjectLogsInWave(string $waveId, int $brzProjectId): array
+    {
+        $projectRoot = dirname(__DIR__, 3);
+        $logPath = $_ENV['LOG_PATH'] ?? getenv('LOG_PATH') ?: $projectRoot . '/var/log';
+        
+        // Путь к лог-файлу проекта в волне
+        $waveLogDir = $logPath . '/wave_' . $waveId;
+        $logFilePath = $waveLogDir . '/project_' . $brzProjectId . '.log';
+        
+        if (!file_exists($logFilePath)) {
+            return [
+                'logs' => [],
+                'log_file' => $logFilePath,
+                'exists' => false,
+                'message' => 'Лог-файл для проекта не найден'
+            ];
+        }
+        
+        if (!is_readable($logFilePath)) {
+            throw new Exception('Лог-файл недоступен для чтения: ' . $logFilePath);
+        }
+        
+        $content = file_get_contents($logFilePath);
+        if ($content === false) {
+            throw new Exception('Не удалось прочитать лог-файл: ' . $logFilePath);
+        }
+        
+        // Разбиваем логи по строкам
+        $lines = explode("\n", $content);
+        $logs = array_filter(array_map('trim', $lines), function($line) {
+            return !empty($line);
+        });
+        
+        return [
+            'logs' => array_values($logs),
+            'log_file' => $logFilePath,
+            'exists' => true,
+            'total_lines' => count($logs),
+            'file_size' => filesize($logFilePath)
         ];
     }
 

@@ -129,7 +129,11 @@ class MigrationService
         
         if ($status) {
             if ($status === 'success') {
-                return 'success';
+                // Если status = "success", это означает completed
+                return 'completed';
+            }
+            if ($status === 'completed') {
+                return 'completed';
             }
             if ($status === 'error' || $status === 'failed') {
                 return 'error';
@@ -191,29 +195,10 @@ class MigrationService
             $params['mb_secret'] = $defaultSettings['mb_secret'];
         }
         
-        // Создаем запись в БД сразу при запуске, чтобы избежать 404
+        // НЕ создаем запись в migrations_mapping при запуске
+        // Запись будет создана только после успешного завершения миграции
         $brzProjectId = (int)($params['brz_project_id'] ?? 0);
         $mbProjectUuid = $params['mb_project_uuid'] ?? '';
-        
-        if ($brzProjectId > 0 && !empty($mbProjectUuid)) {
-            try {
-                // Создаем/обновляем маппинг сразу при запуске
-                $this->dbService->upsertMigrationMapping(
-                    $brzProjectId,
-                    $mbProjectUuid,
-                    [
-                        'status' => 'in_progress',
-                        'started_at' => date('Y-m-d H:i:s'),
-                        'mb_site_id' => $params['mb_site_id'] ?? null,
-                        'mb_page_slug' => $params['mb_page_slug'] ?? null,
-                        'mb_secret' => isset($params['mb_secret']) ? '***' : null, // Не сохраняем секрет
-                    ]
-                );
-            } catch (Exception $e) {
-                // Логируем ошибку, но не прерываем выполнение
-                error_log("Ошибка создания записи миграции: " . $e->getMessage());
-            }
-        }
         
         try {
             // Запускаем через прокси
@@ -229,44 +214,27 @@ class MigrationService
                 ];
             }
             
-            // Если миграция не успешна, возвращаем ошибку сразу
-            if (!$result['success']) {
-                $errorMessage = 'Миграция завершилась с ошибкой';
-                if (isset($result['data']['error'])) {
-                    $errorMessage = is_string($result['data']['error']) ? $result['data']['error'] : json_encode($result['data']['error']);
-                } elseif (isset($result['raw_data']['error'])) {
-                    $errorMessage = is_string($result['raw_data']['error']) ? $result['raw_data']['error'] : json_encode($result['raw_data']['error']);
-                }
-                
-                // Обновляем статус в БД на ошибку
-                if ($brzProjectId > 0 && !empty($mbProjectUuid)) {
-                    try {
-                        $this->dbService->upsertMigrationMapping(
-                            $brzProjectId,
-                            $mbProjectUuid,
-                            [
-                                'status' => 'error',
-                                'error' => $errorMessage,
-                                'updated_at' => date('Y-m-d H:i:s'),
-                            ]
-                        );
-                    } catch (Exception $e) {
-                        error_log("Ошибка обновления статуса миграции: " . $e->getMessage());
-                    }
-                }
-                
-                return [
-                    'success' => false,
-                    'http_code' => isset($result['http_code']) ? (int)$result['http_code'] : 400,
-                    'data' => ['error' => $errorMessage],
-                    'raw_data' => $result['raw_data'] ?? ['error' => $errorMessage]
-                ];
-            }
-            
-            $migrationData = $result['data'];
+            $migrationData = $result['data'] ?? [];
             
             // Проверяем, что данные миграции есть
             if (empty($migrationData)) {
+                // Если миграция не успешна и нет данных, возвращаем ошибку
+                if (!$result['success']) {
+                    $errorMessage = 'Миграция завершилась с ошибкой';
+                    if (isset($result['data']['error'])) {
+                        $errorMessage = is_string($result['data']['error']) ? $result['data']['error'] : json_encode($result['data']['error']);
+                    } elseif (isset($result['raw_data']['error'])) {
+                        $errorMessage = is_string($result['raw_data']['error']) ? $result['raw_data']['error'] : json_encode($result['raw_data']['error']);
+                    }
+                    
+                    return [
+                        'success' => false,
+                        'http_code' => isset($result['http_code']) ? (int)$result['http_code'] : 400,
+                        'data' => ['error' => $errorMessage],
+                        'raw_data' => $result['raw_data'] ?? ['error' => $errorMessage]
+                    ];
+                }
+                
                 return [
                     'success' => false,
                     'http_code' => 500,
@@ -274,23 +242,20 @@ class MigrationService
                     'raw_data' => $result
                 ];
             }
-        } catch (Exception $e) {
-            // Если произошла ошибка в прокси, обновляем статус в БД
-            if ($brzProjectId > 0 && !empty($mbProjectUuid)) {
-                try {
-                    $this->dbService->upsertMigrationMapping(
-                        $brzProjectId,
-                        $mbProjectUuid,
-                        [
-                            'status' => 'error',
-                            'error' => $e->getMessage(),
-                            'updated_at' => date('Y-m-d H:i:s'),
-                        ]
-                    );
-                } catch (Exception $dbEx) {
-                    error_log("Ошибка обновления статуса миграции: " . $dbEx->getMessage());
+            
+            // Если миграция не успешна, но есть данные (миграция реально выполнялась)
+            // Продолжаем обработку, чтобы создать запись в migrations_mapping
+            if (!$result['success']) {
+                // Логируем ошибку, но продолжаем обработку
+                $errorMessage = 'Миграция завершилась с ошибкой';
+                if (isset($migrationData['error'])) {
+                    $errorMessage = is_string($migrationData['error']) ? $migrationData['error'] : json_encode($migrationData['error']);
                 }
+                error_log("Миграция завершилась с ошибкой, но данные есть: " . $errorMessage);
             }
+        } catch (Exception $e) {
+            // НЕ создаем запись в migrations_mapping при ошибке прокси
+            // Запись будет создана только после реального выполнения миграции
             
             // Если произошла ошибка в прокси, возвращаем её
             return [
@@ -301,43 +266,53 @@ class MigrationService
             ];
         }
 
-        // Сохраняем результат в migration_result_list
-        if (isset($migrationData['brizy_project_id']) && isset($migrationData['mb_uuid'])) {
+        // Сохраняем результат в новую таблицу migrations
+        // Используем исходный mbProjectUuid из параметров, если mb_uuid отсутствует в результате
+        if (isset($migrationData['brizy_project_id'])) {
             $migrationUuid = time() . random_int(100, 999); // Генерируем UUID для миграции
+            $mbUuidToUse = $migrationData['mb_uuid'] ?? $mbProjectUuid;
             
-            try {
-                $this->dbService->saveMigrationResult([
-                    'migration_uuid' => $migrationUuid,
-                    'brz_project_id' => (int)$migrationData['brizy_project_id'],
-                    'brizy_project_domain' => $migrationData['brizy_project_domain'] ?? '',
-                    'mb_project_uuid' => $migrationData['mb_uuid'],
-                    'result_json' => json_encode($migrationData)
-                ]);
-            } catch (Exception $e) {
-                // Логируем ошибку, но не прерываем выполнение
-                error_log("Ошибка сохранения результата миграции: " . $e->getMessage());
-            }
-        }
-
-        // Сохраняем/обновляем маппинг в migrations_mapping с финальными данными
-        if ($result['success'] && isset($migrationData['brizy_project_id']) && isset($migrationData['mb_uuid'])) {
-            try {
-                $this->dbService->upsertMigrationMapping(
-                    (int)$migrationData['brizy_project_id'],
-                    $migrationData['mb_uuid'],
-                    [
-                        'date' => $migrationData['date'] ?? date('Y-m-d'),
-                        'status' => $migrationData['status'] ?? 'success',
-                        'mb_site_id' => $migrationData['mb_site_id'] ?? $params['mb_site_id'] ?? null,
+            if (!empty($mbUuidToUse)) {
+                try {
+                    // Сохраняем в новую таблицу migrations
+                    $this->dbService->saveMigration([
+                        'migration_uuid' => $migrationUuid,
+                        'brz_project_id' => (int)$migrationData['brizy_project_id'],
+                        'brizy_project_domain' => $migrationData['brizy_project_domain'] ?? '',
+                        'mb_project_uuid' => $mbUuidToUse,
+                        'status' => $result['success'] ? 'completed' : 'error',
+                        'error' => !$result['success'] ? ($migrationData['error'] ?? 'Миграция завершилась с ошибкой') : null,
+                        'mb_site_id' => $params['mb_site_id'] ?? null,
+                        'mb_page_slug' => $params['mb_page_slug'] ?? null,
                         'mb_product_name' => $migrationData['mb_product_name'] ?? null,
                         'theme' => $migrationData['theme'] ?? null,
                         'migration_id' => $migrationData['migration_id'] ?? null,
-                    ]
-                );
-            } catch (Exception $e) {
-                error_log("Ошибка сохранения маппинга: " . $e->getMessage());
+                        'date' => $migrationData['date'] ?? date('Y-m-d'),
+                        'wave_id' => $params['wave_id'] ?? null,
+                        'result_json' => json_encode($migrationData),
+                        'completed_at' => date('Y-m-d H:i:s')
+                    ]);
+                    
+                    // Также сохраняем в старую таблицу для обратной совместимости
+                    $this->dbService->saveMigrationResult([
+                        'migration_uuid' => $migrationUuid,
+                        'brz_project_id' => (int)$migrationData['brizy_project_id'],
+                        'brizy_project_domain' => $migrationData['brizy_project_domain'] ?? '',
+                        'mb_project_uuid' => $mbUuidToUse,
+                        'result_json' => json_encode($migrationData)
+                    ]);
+                } catch (Exception $e) {
+                    // Логируем ошибку, но не прерываем выполнение
+                    error_log("Ошибка сохранения результата миграции: " . $e->getMessage());
+                }
+            } else {
+                error_log("Ошибка: не удалось определить mb_project_uuid для сохранения результата миграции");
             }
         }
+
+        // НЕ сохраняем в migrations_mapping из MigrationService
+        // migrations_mapping используется только для волн (WaveService)
+        // Все записи о миграциях сохраняются в новую таблицу migrations
 
         return $result;
     }
@@ -373,12 +348,25 @@ class MigrationService
             $lockFile = $this->getLockFilePath($mbUuid, $brzProjectId);
             $lockFileAge = file_exists($lockFile) ? (time() - filemtime($lockFile)) : 999999;
             
-            // Если lock-файл не существует или очень старый (более 10 минут), обновляем статус
+            // Если lock-файл не существует или очень старый (более 10 минут)
             if (!file_exists($lockFile) || $lockFileAge > 600) {
+                // КРИТИЧНО: Перед установкой статуса error, проверяем логи миграции
+                // Если миграция завершилась успешно, обновляем статус на completed
+                $migrationCompleted = $this->checkMigrationCompletedFromLogs($brzProjectId);
+                
                 try {
-                    $changesJson['status'] = 'error';
-                    $changesJson['error'] = 'Процесс миграции был прерван или завершился некорректно. Статус обновлен автоматически.';
-                    $changesJson['status_updated_at'] = date('Y-m-d H:i:s');
+                    if ($migrationCompleted) {
+                        // Миграция завершилась успешно
+                        $changesJson['status'] = 'completed';
+                        $changesJson['completed_at'] = date('Y-m-d H:i:s');
+                        $changesJson['status_updated_at'] = date('Y-m-d H:i:s');
+                        $changesJson['status_source'] = 'log_file_check';
+                    } else {
+                        // Миграция не завершилась или завершилась с ошибкой
+                        $changesJson['status'] = 'error';
+                        $changesJson['error'] = 'Процесс миграции был прерван или завершился некорректно. Статус обновлен автоматически.';
+                        $changesJson['status_updated_at'] = date('Y-m-d H:i:s');
+                    }
                     
                     $this->dbService->upsertMigrationMapping(
                         $brzProjectId,
@@ -886,13 +874,57 @@ class MigrationService
             // Игнорируем ошибки БД
         }
         
-        // Проверяем и обновляем статус, если процесс не найден
-        if ($mapping) {
-            $this->checkAndUpdateStaleStatus($mbUuid, $brzProjectId, $mapping);
-        }
-        
         $lockFile = $this->getLockFilePath($mbUuid, $brzProjectId);
         $processInfo = $this->findMigrationProcess($mbUuid, $brzProjectId);
+        
+        // Если lock-файл не существует и процесс не запущен, проверяем логи
+        // чтобы определить, завершилась ли миграция успешно
+        if (!file_exists($lockFile) && !$processInfo['running']) {
+            // Проверяем и обновляем статус, если процесс не найден
+            if ($mapping) {
+                $this->checkAndUpdateStaleStatus($mbUuid, $brzProjectId, $mapping);
+            } else {
+                // Если маппинга нет, но есть lock-файл был, проверяем логи напрямую
+                // и обновляем статус в migration_result_list
+                $migrationCompleted = $this->checkMigrationCompletedFromLogs($brzProjectId);
+                if ($migrationCompleted) {
+                    try {
+                        // Обновляем статус в migration_result_list
+                        $dbService = new \Dashboard\Services\DatabaseService();
+                        $db = $dbService->getWriteConnection();
+                        $migrationResult = $db->find(
+                            'SELECT * FROM migration_result_list WHERE brz_project_id = ? ORDER BY created_at DESC LIMIT 1',
+                            [$brzProjectId]
+                        );
+                        
+                        if ($migrationResult) {
+                            $resultJson = json_decode($migrationResult['result_json'] ?? '{}', true);
+                            if (!isset($resultJson['status']) || $resultJson['status'] !== 'completed') {
+                                $resultJson['status'] = 'completed';
+                                $resultJson['completed_at'] = date('Y-m-d H:i:s');
+                                $resultJson['status_source'] = 'log_file_check';
+                                
+                                // Используем рефлексию для доступа к PDO
+                                $reflection = new \ReflectionClass($db);
+                                $pdoProperty = $reflection->getProperty('pdo');
+                                $pdoProperty->setAccessible(true);
+                                $pdo = $pdoProperty->getValue($db);
+                                
+                                $stmt = $pdo->prepare(
+                                    'UPDATE migration_result_list SET result_json = ? WHERE brz_project_id = ?'
+                                );
+                                $stmt->execute([json_encode($resultJson), $brzProjectId]);
+                            }
+                        }
+                    } catch (Exception $e) {
+                        error_log("Ошибка обновления статуса из логов: " . $e->getMessage());
+                    }
+                }
+            }
+        } elseif ($mapping) {
+            // Проверяем и обновляем статус, если процесс не найден
+            $this->checkAndUpdateStaleStatus($mbUuid, $brzProjectId, $mapping);
+        }
         
         $result = [
             'success' => true,
@@ -1399,6 +1431,22 @@ class MigrationService
             }
         }
         
+        // Вариант 4: Ищем файл migration_ApplicationBootstrapper.log (общий лог)
+        // Логи пишутся в формат: LOG_FILE_PATH_ApplicationBootstrapper.log
+        $appBootstrapLog = $logPath . '/migration_ApplicationBootstrapper.log';
+        if (file_exists($appBootstrapLog)) {
+            // Проверяем, содержит ли файл логи для этой миграции
+            // Обычно в общем логе есть упоминание brz_project_id или brizy-{id}
+            $content = @file_get_contents($appBootstrapLog);
+            if ($content && (strpos($content, (string)$brzProjectId) !== false || 
+                strpos($content, 'brizy-' . $brzProjectId) !== false ||
+                preg_match('/brizy[_-]' . preg_quote($brzProjectId, '/') . '/i', $content))) {
+                if (!in_array($appBootstrapLog, $logFiles)) {
+                    $logFiles[] = $appBootstrapLog;
+                }
+            }
+        }
+        
         // Сортируем по времени модификации (новые первыми)
         usort($logFiles, function($a, $b) {
             return filemtime($b) - filemtime($a);
@@ -1424,5 +1472,95 @@ class MigrationService
         }
         
         return implode("\n\n", $allLogs);
+    }
+    
+    /**
+     * Проверить, завершилась ли миграция успешно
+     * Проверяет migration_result_list на наличие value.status = "success" и логи
+     * 
+     * @param int $brzProjectId ID проекта Brizy
+     * @return bool true если миграция завершилась успешно
+     */
+    public function checkMigrationCompletedFromLogs(int $brzProjectId): bool
+    {
+        try {
+            // СНАЧАЛА проверяем migration_result_list на наличие value.status = "success"
+            // Это более надежный способ, чем проверка логов
+            try {
+                $db = $this->dbService->getWriteConnection();
+                $migrationResult = $db->find(
+                    'SELECT * FROM migration_result_list WHERE brz_project_id = ? ORDER BY created_at DESC LIMIT 1',
+                    [$brzProjectId]
+                );
+                
+                if ($migrationResult && isset($migrationResult['result_json'])) {
+                    $resultJson = json_decode($migrationResult['result_json'] ?? '{}', true);
+                    
+                    // Проверяем value.status = "success"
+                    if (isset($resultJson['value']['status']) && $resultJson['value']['status'] === 'success') {
+                        return true;
+                    }
+                    
+                    // Также проверяем корневой status
+                    if (isset($resultJson['status']) && ($resultJson['status'] === 'success' || $resultJson['status'] === 'completed')) {
+                        return true;
+                    }
+                }
+            } catch (Exception $e) {
+                // Игнорируем ошибки БД, продолжаем проверку логов
+            }
+            
+            // Если в БД нет успешного статуса, проверяем логи
+            $logs = $this->getMigrationLogs($brzProjectId);
+            
+            if (empty($logs) || strpos($logs, 'Лог-файлы для миграции не найдены') !== false) {
+                return false;
+            }
+            
+            // Ищем признаки успешного завершения в логах
+            $successPatterns = [
+                '/Project migration completed successfully/i',
+                '/migration completed successfully/i',
+                '/Migration completed successfully/i',
+                '/Migration finished successfully/i',
+                '/Migration process completed/i',
+                '/finalSuccess.*status.*success/i',
+                '/Status.*Total.*Success/i'
+            ];
+            
+            foreach ($successPatterns as $pattern) {
+                if (preg_match($pattern, $logs)) {
+                    return true;
+                }
+            }
+            
+            // Также проверяем отсутствие критических ошибок
+            $errorPatterns = [
+                '/Fatal error/i',
+                '/Critical error/i',
+                '/Migration failed/i',
+                '/Exception.*migration/i'
+            ];
+            
+            $hasCriticalErrors = false;
+            foreach ($errorPatterns as $pattern) {
+                if (preg_match($pattern, $logs)) {
+                    $hasCriticalErrors = true;
+                    break;
+                }
+            }
+            
+            // Если в конце логов нет критических ошибок и есть информация о завершении, считаем успешной
+            // Берем последние 1000 символов лога для проверки
+            $lastPart = substr($logs, -1000);
+            if (!$hasCriticalErrors && (strpos($lastPart, 'completed') !== false || strpos($lastPart, 'finished') !== false)) {
+                return true;
+            }
+            
+            return false;
+        } catch (Exception $e) {
+            error_log("Ошибка проверки статуса миграции: " . $e->getMessage());
+            return false;
+        }
     }
 }

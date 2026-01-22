@@ -140,7 +140,25 @@ class ApplicationBootstrapper
             $this->context['AWS_BUCKET'] ?? ''
         );
 
-        $logFilePath = $this->context['LOG_FILE_PATH'] . '_' . $brz_project_id . '.log';
+        // Проверяем, запущена ли миграция под управлением волны
+        $waveId = $this->request->get('wave_id');
+        if (!empty($waveId)) {
+            // Создаем отдельный лог-файл для проекта в волне
+            $logPath = $this->context['LOG_PATH'];
+            $waveLogDir = $logPath . '/wave_' . $waveId;
+            @mkdir($waveLogDir, 0755, true);
+            $logFilePath = $waveLogDir . '/project_' . $brz_project_id . '.log';
+            
+            Logger::instance()->info('Migration started under wave management', [
+                'wave_id' => $waveId,
+                'brz_project_id' => $brz_project_id,
+                'mb_project_uuid' => $mb_project_uuid,
+                'log_file' => $logFilePath
+            ]);
+        } else {
+            // Обычный лог-файл для миграции без волны
+            $logFilePath = $this->context['LOG_FILE_PATH'] . '_' . $brz_project_id . '.log';
+        }
 
         $logger = Logger::initialize(
             "brizy-$brz_project_id",

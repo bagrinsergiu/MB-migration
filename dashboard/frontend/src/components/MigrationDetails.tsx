@@ -1426,6 +1426,50 @@ export default function MigrationDetails() {
             )}
           </div>
         )}
+
+        {/* Карточка с ответом миграции при завершении */}
+        {(details.result?.result_json || resultData) && (details.result?.result_json?.value || resultData?.value) && (
+          <div className="card" style={{ marginTop: '1.5rem' }}>
+            <div className="card-header">
+              <h3 className="card-title">Ответ миграции при завершении</h3>
+            </div>
+            <div className="card-body">
+              <div className="json-section">
+                <div className="json-viewer" style={{ 
+                  backgroundColor: '#f8f9fa', 
+                  border: '1px solid #dee2e6', 
+                  borderRadius: '4px', 
+                  padding: '1rem',
+                  maxHeight: '600px',
+                  overflow: 'auto'
+                }}>
+                  <pre style={{ 
+                    margin: 0, 
+                    whiteSpace: 'pre-wrap', 
+                    wordBreak: 'break-word',
+                    fontFamily: 'Monaco, Menlo, "Ubuntu Mono", Consolas, "source-code-pro", monospace',
+                    fontSize: '0.875rem',
+                    lineHeight: '1.5'
+                  }}>
+                    {JSON.stringify(details.result?.result_json || resultData, null, 2)}
+                  </pre>
+                </div>
+              </div>
+              {((details.result?.result_json?.value?.status === 'success') || (resultData?.value?.status === 'success')) && (
+                <div className="alert alert-success" style={{ 
+                  marginTop: '1rem', 
+                  padding: '0.75rem', 
+                  borderRadius: '4px', 
+                  backgroundColor: '#d4edda', 
+                  border: '1px solid #c3e6cb', 
+                  color: '#155724' 
+                }}>
+                  ✅ Миграция завершена успешно (status: success)
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
       )}
 

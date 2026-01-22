@@ -1,7 +1,7 @@
 <?php
 /**
  * Dashboard Entry Point
- * Доступен по адресу: http://localhost:8080/dashboard
+ * Доступен по адресу: http://localhost:8000/dashboard
  */
 
 // Проверяем, запрашивается ли API
@@ -52,8 +52,11 @@ if (file_exists($distPath) && is_dir($distPath)) {
 // Иначе отдаем HTML страницу React приложения
 $indexHtmlPath = __DIR__ . '/frontend/dist/index.html';
 if (file_exists($indexHtmlPath)) {
+    // Устанавливаем правильный Content-Type для HTML ПЕРЕД любым выводом
+    header('Content-Type: text/html; charset=UTF-8');
+    header('Cache-Control: no-cache, must-revalidate');
     // Просто отдаем HTML как есть, пути уже правильные благодаря base: '/dashboard/' в vite.config.ts
-    readfile($indexHtmlPath);
+    echo file_get_contents($indexHtmlPath);
     exit;
 }
 
@@ -149,7 +152,7 @@ if (file_exists($indexHtmlPath)) {
         <div class="status">
             <h2>✅ API работает</h2>
             <p>
-                API endpoints доступны по адресу <strong>http://localhost:8080/dashboard/api</strong><br>
+                API endpoints доступны по адресу <strong>http://localhost:8000/dashboard/api</strong><br>
                 <a href="/dashboard/api/health" style="color: #3b82f6;">Проверить API</a>
             </p>
         </div>

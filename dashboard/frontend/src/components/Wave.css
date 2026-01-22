@@ -15,12 +15,16 @@
   font-size: 0.875rem;
   resize: vertical;
   min-height: 150px;
+  background-color: var(--surface);
+  color: var(--text);
+  transition: border-color 0.2s, background-color 0.2s;
 }
 
 .form-textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background-color: var(--surface);
 }
 
 .waves-table {

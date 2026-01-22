@@ -33,7 +33,7 @@ export interface Migration {
   brz_project_id: number;
   created_at: string;
   updated_at: string;
-  status: 'pending' | 'in_progress' | 'success' | 'error';
+  status: 'pending' | 'in_progress' | 'success' | 'completed' | 'error';
   changes_json?: any;
   result?: any;
 }

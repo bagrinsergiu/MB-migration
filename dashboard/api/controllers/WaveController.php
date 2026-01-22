@@ -3,6 +3,7 @@
 namespace Dashboard\Controllers;
 
 use Dashboard\Services\WaveService;
+use Dashboard\Services\WaveLogger;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,11 @@ class WaveController
      */
     public function create(Request $request): JsonResponse
     {
+        WaveLogger::startOperation('WaveController::create', [
+            'method' => $request->getMethod(),
+            'content_type' => $request->headers->get('Content-Type')
+        ]);
+        
         try {
             $data = json_decode($request->getContent(), true);
             
@@ -30,8 +36,15 @@ class WaveController
                 $data = $request->request->all();
             }
 
+            WaveLogger::debug("Получены данные запроса", [
+                'has_name' => !empty($data['name']),
+                'has_project_uuids' => !empty($data['project_uuids']),
+                'project_uuids_count' => is_array($data['project_uuids'] ?? null) ? count($data['project_uuids']) : 0
+            ]);
+
             // Валидация
             if (empty($data['name'])) {
+                WaveLogger::error("Валидация: название волны пустое");
                 return new JsonResponse([
                     'success' => false,
                     'error' => 'Название волны обязательно'
@@ -39,6 +52,7 @@ class WaveController
             }
 
             if (empty($data['project_uuids']) || !is_array($data['project_uuids'])) {
+                WaveLogger::error("Валидация: список UUID проектов пустой или не массив");
                 return new JsonResponse([
                     'success' => false,
                     'error' => 'Список UUID проектов обязателен и должен быть массивом'
@@ -63,6 +77,13 @@ class WaveController
             $batchSize = isset($data['batch_size']) ? (int)$data['batch_size'] : 3;
             $mgrManual = isset($data['mgr_manual']) ? (bool)$data['mgr_manual'] : false;
 
+            WaveLogger::info("Вызов WaveService::createWave", [
+                'name' => $data['name'],
+                'projects_count' => count($projectUuids),
+                'batch_size' => $batchSize,
+                'mgr_manual' => $mgrManual
+            ]);
+
             $result = $this->waveService->createWave(
                 $data['name'],
                 array_values($projectUuids),
@@ -70,12 +91,26 @@ class WaveController
                 $mgrManual
             );
 
+            WaveLogger::endOperation('WaveController::create', [
+                'success' => true,
+                'wave_id' => $result['wave_id'] ?? null
+            ]);
+
             return new JsonResponse([
                 'success' => true,
                 'data' => $result
             ], 201);
 
         } catch (Exception $e) {
+            WaveLogger::error("Ошибка в WaveController::create", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            WaveLogger::endOperation('WaveController::create', [
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+            
             return new JsonResponse([
                 'success' => false,
                 'error' => $e->getMessage()
@@ -89,6 +124,7 @@ class WaveController
      */
     public function list(Request $request): JsonResponse
     {
+        // Убираем избыточное логирование для быстрого списка - логируем только ошибки
         try {
             $waves = $this->waveService->getWavesList();
             
@@ -108,6 +144,9 @@ class WaveController
             ], 200);
 
         } catch (Exception $e) {
+            WaveLogger::error("Ошибка в WaveController::list", ['error' => $e->getMessage()]);
+            WaveLogger::endOperation('WaveController::list', ['success' => false, 'error' => $e->getMessage()]);
+            
             return new JsonResponse([
                 'success' => false,
                 'error' => $e->getMessage()
@@ -121,6 +160,7 @@ class WaveController
      */
     public function getDetails(Request $request, string $id): JsonResponse
     {
+        // Убираем избыточное логирование для быстрого получения деталей - логируем только ошибки
         try {
             $details = $this->waveService->getWaveDetails($id);
 
@@ -137,6 +177,12 @@ class WaveController
             ], 200);
 
         } catch (Exception $e) {
+            // Логируем только ошибки
+            WaveLogger::error("Ошибка в WaveController::getDetails", [
+                'wave_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
             return new JsonResponse([
                 'success' => false,
                 'error' => $e->getMessage()
@@ -150,6 +196,7 @@ class WaveController
      */
     public function getStatus(string $id): JsonResponse
     {
+        // Убираем избыточное логирование для быстрого статуса - логируем только ошибки
         try {
             $details = $this->waveService->getWaveDetails($id);
 
@@ -169,6 +216,11 @@ class WaveController
             ], 200);
 
         } catch (Exception $e) {
+            WaveLogger::error("Ошибка получения статуса волны", [
+                'wave_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
             return new JsonResponse([
                 'success' => false,
                 'error' => $e->getMessage()
@@ -252,13 +304,24 @@ class WaveController
                 ], 200);
             }
 
-            // Получаем логи через WaveService
-            $logs = $this->waveService->getMigrationLogs($id, $mbUuid, $brzProjectId);
-
-            return new JsonResponse([
-                'success' => true,
-                'data' => $logs
-            ], 200);
+            // Получаем логи проекта в волне через новый метод
+            try {
+                $logs = $this->waveService->getProjectLogsInWave($id, $brzProjectId);
+                
+                return new JsonResponse([
+                    'success' => true,
+                    'data' => $logs
+                ], 200);
+            } catch (Exception $e) {
+                // Если новый метод не нашел логи, пробуем старый метод
+                $logs = $this->waveService->getMigrationLogs($id, $mbUuid, $brzProjectId);
+                
+                return new JsonResponse([
+                    'success' => true,
+                    'data' => $logs,
+                    'note' => 'Использован старый метод получения логов'
+                ], 200);
+            }
 
         } catch (Exception $e) {
             return new JsonResponse([
@@ -360,6 +423,26 @@ class WaveController
             return new JsonResponse([
                 'success' => true,
                 'data' => ['logs' => $logs],
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/waves/:id/projects/:brz_project_id/logs
+     * Получить логи проекта в волне по brz_project_id
+     */
+    public function getProjectLogs(Request $request, string $id, int $brzProjectId): JsonResponse
+    {
+        try {
+            $logs = $this->waveService->getProjectLogsInWave($id, $brzProjectId);
+            return new JsonResponse([
+                'success' => true,
+                'data' => $logs
             ], 200);
         } catch (Exception $e) {
             return new JsonResponse([

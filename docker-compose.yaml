@@ -10,7 +10,8 @@ services:
 #      mg_mysql:
 #        condition: service_healthy
     ports:
-      - 8080:80
+      - 8080:80  # Migration API
+      - 8000:8000  # Dashboard
     build:
       context: ./
       target: development

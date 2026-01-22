@@ -1,7 +1,7 @@
 <?php
 /**
  * Dashboard API Entry Point
- * Доступен по адресу: http://localhost:8080/dashboard/api/*
+ * Доступен по адресу: http://localhost:8000/dashboard/api/*
  */
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload_runtime.php';
@@ -46,6 +46,8 @@ $classesToLoad = [
     'Dashboard\\Services\\ApiProxyService' => __DIR__ . '/services/ApiProxyService.php',
     'Dashboard\\Services\\MigrationService' => __DIR__ . '/services/MigrationService.php',
     'Dashboard\\Services\\WaveService' => __DIR__ . '/services/WaveService.php',
+    'Dashboard\\Services\\WaveLogger' => __DIR__ . '/services/WaveLogger.php',
+    'Dashboard\\Services\\MigrationExecutionService' => __DIR__ . '/services/MigrationExecutionService.php',
     'Dashboard\\Services\\QualityAnalysisService' => __DIR__ . '/services/QualityAnalysisService.php',
     'Dashboard\\Controllers\\MigrationController' => __DIR__ . '/controllers/MigrationController.php',
     'Dashboard\\Controllers\\LogController' => __DIR__ . '/controllers/LogController.php',
@@ -113,6 +115,7 @@ return static function (array $context, Request $request): Response {
                 '/api/waves/:id/migrations/:mb_uuid/restart' => 'POST - Перезапустить миграцию в волне',
                 '/api/waves/:id/logs' => 'GET - Логи волны',
                 '/api/waves/:id/migrations/:mb_uuid/logs' => 'GET - Логи миграции в волне',
+                '/api/waves/:id/projects/:brz_project_id/logs' => 'GET - Логи проекта в волне по brz_project_id',
                 '/api/waves/:id/migrations/:mb_uuid/lock' => 'DELETE - Удалить lock-файл миграции',
             ]
         ], 200);
@@ -558,6 +561,29 @@ return static function (array $context, Request $request): Response {
             }
         }
 
+        // Новый endpoint для получения логов проекта в волне по brz_project_id
+        if (preg_match('#^/waves/([^/]+)/projects/(\d+)/logs$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                try {
+                    $waveId = $matches[1];
+                    $brzProjectId = (int)$matches[2];
+                    error_log("[API] Get wave project logs request: waveId={$waveId}, brzProjectId={$brzProjectId}");
+                    $controller = new WaveController();
+                    return $controller->getProjectLogs($request, $waveId, $brzProjectId);
+                } catch (\Throwable $e) {
+                    error_log("[API] Fatal error in get wave project logs route: " . $e->getMessage());
+                    error_log("[API] Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => $e->getMessage(),
+                        'file' => basename($e->getFile()),
+                        'line' => $e->getLine(),
+                        'type' => get_class($e)
+                    ], 500);
+                }
+            }
+        }
+
         if (preg_match('#^/waves/([^/]+)/migrations/([^/]+)/lock$#', $apiPath, $matches)) {
             if ($request->getMethod() === 'DELETE') {
                 $waveId = $matches[1];
@@ -596,6 +622,7 @@ return static function (array $context, Request $request): Response {
                 'GET /waves/:id/mapping',
                 'POST /waves/:id/migrations/:mb_uuid/restart',
                 'GET /waves/:id/migrations/:mb_uuid/logs',
+                'GET /waves/:id/projects/:brz_project_id/logs',
             ]
         ], 404);
 

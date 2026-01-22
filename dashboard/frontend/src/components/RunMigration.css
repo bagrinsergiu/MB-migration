@@ -56,6 +56,23 @@
   height: 1.25rem;
   cursor: pointer;
   accent-color: var(--primary);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.form-checkbox:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.form-checkbox:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
 }
 
 .checkbox-label span {

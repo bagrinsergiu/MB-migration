@@ -47,12 +47,16 @@
   border-radius: 6px;
   font-size: 0.875rem;
   transition: border-color 0.2s;
+  background-color: var(--surface);
+  color: var(--text);
 }
 
 .filter-group input:focus,
 .filter-group select:focus {
   border-color: var(--primary);
   outline: none;
+  background-color: var(--surface);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .stats {
@@ -68,6 +72,19 @@
   border-radius: 8px;
   box-shadow: var(--shadow);
   text-align: center;
+  transition: all 0.2s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-card-active {
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), var(--shadow-lg);
 }
 
 .stat-value {

@@ -5,12 +5,12 @@ echo ""
 
 # Проверка API
 echo "1. Проверка Backend API..."
-API_RESPONSE=$(curl -s http://localhost:8080/dashboard/api/health 2>&1)
+API_RESPONSE=$(curl -s http://localhost:8000/dashboard/api/health 2>&1)
 if echo "$API_RESPONSE" | grep -q "success"; then
     echo "   ✅ API работает"
 else
-    echo "   ❌ API не доступен на http://localhost:8080/dashboard/api"
-    echo "   Запустите PHP сервер на порту 8080"
+    echo "   ❌ API не доступен на http://localhost:8000/dashboard/api"
+    echo "   Запустите PHP сервер на порту 8000"
     exit 1
 fi
 
@@ -62,10 +62,13 @@ echo ""
 echo "✅ Проверка завершена!"
 echo ""
 echo "📋 Следующие шаги:"
-echo "   1. Откройте браузер: http://localhost:8080/dashboard"
+echo "   1. Откройте браузер: http://localhost:8000/dashboard"
 echo "   2. Выберите миграцию"
 echo "   3. Перейдите на вкладку 'Анализ'"
 echo ""
 echo "💡 Для разработки с hot reload:"
 echo "   cd dashboard/frontend && npm run dev"
 echo "   Затем откройте: http://localhost:3000"
+echo ""
+echo "⚠️  Важно: Migration API работает на порту 8080"
+echo "   Dashboard работает на порту 8000"
