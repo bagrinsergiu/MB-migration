@@ -11,7 +11,10 @@ use Exception;
  */
 class ApiProxyService
 {
-    private string $baseUrl;
+    /**
+     * @var string
+     */
+    private $baseUrl;
 
     public function __construct()
     {
@@ -57,6 +60,11 @@ class ApiProxyService
         }
         $queryParams['mgr_manual'] = $params['mgr_manual'] ?? 0;
         
+        // Добавляем параметр quality_analysis если он передан
+        if (isset($params['quality_analysis'])) {
+            $queryParams['quality_analysis'] = $params['quality_analysis'] ? 'true' : 'false';
+        }
+        
         $url = $this->baseUrl . '/?' . http_build_query($queryParams);
 
         // Запускаем миграцию асинхронно в фоне через PHP напрямую
@@ -91,6 +99,22 @@ class ApiProxyService
         $mbProjectUuid = $params['mb_project_uuid'];
         
         $wrapperContent .= "return static function (array \$context, Request \$request): JsonResponse {\n";
+        $wrapperContent .= "    // Обновляем PID в lock-файле при запуске процесса\n";
+        $wrapperContent .= "    \$pid = getmypid();\n";
+        $wrapperContent .= "    \$cachePath = \$context['CACHE_PATH'] ?? '{$projectRootEscaped}/var/cache';\n";
+        $wrapperContent .= "    \$lockFile = \$cachePath . '/' . '{$mbProjectUuid}' . '-' . {$brzProjectId} . '.lock';\n";
+        $wrapperContent .= "    if (file_exists(\$lockFile)) {\n";
+        $wrapperContent .= "        \$lockContent = @file_get_contents(\$lockFile);\n";
+        $wrapperContent .= "        \$lockData = \$lockContent ? json_decode(\$lockContent, true) : [];\n";
+        $wrapperContent .= "        if (!is_array(\$lockData)) \$lockData = [];\n";
+        $wrapperContent .= "        \$lockData['pid'] = \$pid;\n";
+        $wrapperContent .= "        \$lockData['started_at'] = date('Y-m-d H:i:s');\n";
+        $wrapperContent .= "        \$lockData['started_timestamp'] = time();\n";
+        $wrapperContent .= "        \$lockData['mb_project_uuid'] = '{$mbProjectUuid}';\n";
+        $wrapperContent .= "        \$lockData['brz_project_id'] = {$brzProjectId};\n";
+        $wrapperContent .= "        @file_put_contents(\$lockFile, json_encode(\$lockData, JSON_PRETTY_PRINT));\n";
+        $wrapperContent .= "    }\n";
+        $wrapperContent .= "    \n";
         $wrapperContent .= "    \$app = new MBMigration\ApplicationBootstrapper(\$context, \$request);\n";
         $wrapperContent .= "    try {\n";
         $wrapperContent .= "        \$config = \$app->doInnitConfig();\n";
@@ -169,23 +193,61 @@ class ApiProxyService
         $wrapperContent .= "};\n";
         @file_put_contents($wrapperScript, $wrapperContent);
         
-        // Запускаем PHP скрипт-обертку в фоне через nohup
+        // Создаем lock-файл заранее с PID (будет обновлен процессом)
+        $cachePath = $_ENV['CACHE_PATH'] ?? getenv('CACHE_PATH') ?: $projectRoot . '/var/cache';
+        $lockFile = $cachePath . '/' . $params['mb_project_uuid'] . '-' . $params['brz_project_id'] . '.lock';
+        
+        // Запускаем PHP скрипт-обертку в фоне через nohup и получаем PID
         $command = sprintf(
-            'cd %s && nohup php -f %s >> %s 2>&1 &',
+            'cd %s && nohup php -f %s >> %s 2>&1 & echo $!',
             escapeshellarg($projectRoot),
             escapeshellarg($wrapperScript),
             escapeshellarg($logFile)
         );
         
         $pid = null;
+        $output = [];
         @exec($command, $output, $returnVar);
         
-        // Если exec не сработал, пробуем через shell_exec
-        if ($returnVar !== 0) {
+        // Извлекаем PID из вывода
+        if (!empty($output)) {
+            $pid = (int)trim(end($output));
+        }
+        
+        // Если не получили PID через exec, пробуем другой способ
+        if (!$pid || $pid <= 0) {
             $result = @shell_exec($command);
-            $pid = $result ? trim($result) : 'background';
-        } else {
-            $pid = 'background';
+            if ($result) {
+                $lines = explode("\n", trim($result));
+                $pid = (int)trim(end($lines));
+            }
+        }
+        
+        // Если все еще нет PID, пробуем через ps после небольшой задержки
+        if (!$pid || $pid <= 0) {
+            usleep(500000); // 0.5 секунды
+            $psCommand = sprintf(
+                'ps aux | grep -E "php.*%s" | grep -v grep | awk \'{print $2}\' | head -1',
+                escapeshellarg(basename($wrapperScript))
+            );
+            $psOutput = @shell_exec($psCommand);
+            if ($psOutput) {
+                $pid = (int)trim($psOutput);
+            }
+        }
+        
+        // Сохраняем PID в lock-файл, если получили
+        if ($pid && $pid > 0) {
+            $lockData = [
+                'mb_project_uuid' => $params['mb_project_uuid'],
+                'brz_project_id' => $params['brz_project_id'],
+                'pid' => $pid,
+                'started_at' => date('Y-m-d H:i:s'),
+                'started_timestamp' => time(),
+                'wrapper_script' => $wrapperScript,
+                'log_file' => $logFile
+            ];
+            @file_put_contents($lockFile, json_encode($lockData, JSON_PRETTY_PRINT));
         }
         
         // Логируем PID
@@ -209,6 +271,7 @@ class ApiProxyService
 
     /**
      * Получить логи миграции
+     * Сначала пытается получить через HTTP API, если не получается - читает из файлов
      * 
      * @param int $brzProjectId
      * @return array
@@ -216,30 +279,104 @@ class ApiProxyService
      */
     public function getMigrationLogs(int $brzProjectId): array
     {
+        // Сначала пытаемся получить через HTTP API
         $url = $this->baseUrl . '/migration_log?brz_project_id=' . $brzProjectId;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5); // Короткий таймаут
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
         
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
         curl_close($ch);
 
-        if ($error) {
-            throw new Exception("Ошибка при получении логов: {$error}");
+        // Если HTTP запрос успешен, возвращаем результат
+        if (!$error && $httpCode === 200 && $response) {
+            $data = json_decode($response, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return [
+                    'http_code' => $httpCode,
+                    'data' => $data
+                ];
+            }
         }
 
-        $data = json_decode($response, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception("Ошибка декодирования JSON: " . json_last_error_msg());
+        // Если HTTP запрос не удался, читаем логи из файлов напрямую
+        $projectRoot = dirname(__DIR__, 3);
+        $logPath = $_ENV['LOG_PATH'] ?? getenv('LOG_PATH') ?: $projectRoot . '/var/log';
+        
+        // Ищем лог-файлы по паттерну
+        $logFiles = [];
+        
+        // Вариант 1: Ищем файл по паттерну migration_*_$brzProjectId.log
+        $pattern = $logPath . '/migration_*_' . $brzProjectId . '.log';
+        $files = glob($pattern);
+        if ($files) {
+            $logFiles = array_merge($logFiles, $files);
         }
-
-        return [
-            'http_code' => $httpCode,
-            'data' => $data
-        ];
+        
+        // Вариант 2: Ищем файл по паттерну *_$brzProjectId.log (более общий)
+        $pattern2 = $logPath . '/*_' . $brzProjectId . '.log';
+        $files2 = glob($pattern2);
+        if ($files2) {
+            $logFiles = array_merge($logFiles, $files2);
+        }
+        
+        // Вариант 3: Ищем в директориях волн
+        $waveDirs = glob($logPath . '/wave_*', GLOB_ONLYDIR);
+        foreach ($waveDirs as $waveDir) {
+            $projectLogFile = $waveDir . '/project_' . $brzProjectId . '.log';
+            if (file_exists($projectLogFile)) {
+                $logFiles[] = $projectLogFile;
+            }
+        }
+        
+        // Сортируем по времени изменения (новые первыми)
+        usort($logFiles, function($a, $b) {
+            return filemtime($b) - filemtime($a);
+        });
+        
+        $allLogs = [];
+        foreach ($logFiles as $logFile) {
+            if (file_exists($logFile) && is_readable($logFile)) {
+                $content = file_get_contents($logFile);
+                if ($content) {
+                    // Разбиваем логи по строкам
+                    $content = str_replace('][', "]\n[", $content);
+                    $lines = explode("\n", $content);
+                    foreach ($lines as $line) {
+                        $line = trim($line);
+                        if (!empty($line)) {
+                            // Фильтруем только строки, связанные с этой миграцией
+                            if (strpos($line, "brizy-$brzProjectId") !== false || 
+                                strpos($line, (string)$brzProjectId) !== false ||
+                                strpos($logFile, '_' . $brzProjectId . '.log') !== false ||
+                                preg_match('/\[202\d-\d{2}-\d{2}/', $line)) {
+                                $allLogs[] = $line;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Если нашли логи в файлах, возвращаем их
+        if (!empty($allLogs)) {
+            return [
+                'http_code' => 200,
+                'data' => [
+                    'migration_id' => $brzProjectId,
+                    'logs' => array_values(array_unique($allLogs)),
+                    'log_files' => $logFiles,
+                    'source' => 'file'
+                ]
+            ];
+        }
+        
+        // Если ничего не нашли, возвращаем ошибку
+        throw new Exception("Лог-файлы для миграции не найдены. brz_project_id: {$brzProjectId}");
     }
 }

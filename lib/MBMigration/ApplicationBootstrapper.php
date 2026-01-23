@@ -128,7 +128,8 @@ class ApplicationBootstrapper
         $brz_workspaces_id,
         $mb_page_slug,
         $mMgrIgnore = false,
-        $mrgManual = false
+        $mrgManual = false,
+        $qualityAnalysis = false
     ): array
     {
         $s3Uploader = new S3Uploader(
@@ -139,7 +140,25 @@ class ApplicationBootstrapper
             $this->context['AWS_BUCKET'] ?? ''
         );
 
-        $logFilePath = $this->context['LOG_FILE_PATH'] . '_' . $brz_project_id . '.log';
+        // Проверяем, запущена ли миграция под управлением волны
+        $waveId = $this->request->get('wave_id');
+        if (!empty($waveId)) {
+            // Создаем отдельный лог-файл для проекта в волне
+            $logPath = $this->context['LOG_PATH'];
+            $waveLogDir = $logPath . '/wave_' . $waveId;
+            @mkdir($waveLogDir, 0755, true);
+            $logFilePath = $waveLogDir . '/project_' . $brz_project_id . '.log';
+            
+            Logger::instance()->info('Migration started under wave management', [
+                'wave_id' => $waveId,
+                'brz_project_id' => $brz_project_id,
+                'mb_project_uuid' => $mb_project_uuid,
+                'log_file' => $logFilePath
+            ]);
+        } else {
+            // Обычный лог-файл для миграции без волны
+            $logFilePath = $this->context['LOG_FILE_PATH'] . '_' . $brz_project_id . '.log';
+        }
 
         $logger = Logger::initialize(
             "brizy-$brz_project_id",
@@ -149,17 +168,136 @@ class ApplicationBootstrapper
 
         $lockFile = $this->context['CACHE_PATH'] . "/" . $mb_project_uuid . "-" . $brz_project_id . ".lock";
 
+        // Проверяем lock-файл и реальное состояние процесса
         if (file_exists($lockFile)) {
-            Logger::instance()->warning('The process migration is already running.', [$lockFile]);
-
-            throw new Exception('The process migration is already running.', 400);
+            $lockContent = @file_get_contents($lockFile);
+            $processRunning = false;
+            $pid = null;
+            
+            if ($lockContent) {
+                // Пытаемся распарсить как JSON (новый формат с PID)
+                $lockData = json_decode($lockContent, true);
+                if ($lockData && isset($lockData['pid'])) {
+                    $pid = (int)$lockData['pid'];
+                    
+                    // Проверяем, запущен ли процесс по PID
+                    if ($pid > 0) {
+                        // Используем ps для проверки существования процесса (более надежно)
+                        $command = sprintf('ps -p %d -o pid= 2>/dev/null', $pid);
+                        $psOutput = @shell_exec($command);
+                        $psOutputTrimmed = trim($psOutput ?? '');
+                        $processRunning = !empty($psOutputTrimmed);
+                        
+                        // Дополнительная проверка через exec для надежности
+                        if (!$processRunning) {
+                            exec($command, $execOutput, $execReturnCode);
+                            $processRunning = ($execReturnCode === 0 && !empty($execOutput));
+                        }
+                        
+                        Logger::instance()->info('Checking process by PID', [
+                            'pid' => $pid,
+                            'ps_output' => $psOutputTrimmed,
+                            'ps_output_raw' => $psOutput,
+                            'process_running' => $processRunning,
+                            'command' => $command
+                        ]);
+                        
+                        // Если процесс не найден через ps, считаем его неактивным
+                        // независимо от возраста lock-файла (ps более надежен)
+                        if (!$processRunning) {
+                            Logger::instance()->info('Process not found by PID, will remove stale lock file', [
+                                'pid' => $pid,
+                                'lock_file' => $lockFile,
+                                'ps_output' => $psOutputTrimmed
+                            ]);
+                        }
+                    } else {
+                        Logger::instance()->warning('Invalid PID in lock file', [
+                            'pid' => $pid,
+                            'lock_file' => $lockFile
+                        ]);
+                    }
+                } else {
+                    // Старый формат lock-файла - проверяем время модификации
+                    // Если файл недавно обновлялся (менее 5 минут), считаем процесс активным
+                    $lockFileMtime = filemtime($lockFile);
+                    $lockFileAge = time() - $lockFileMtime;
+                    $processRunning = $lockFileAge < 300; // 5 минут
+                    
+                    Logger::instance()->info('Old format lock file detected', [
+                        'lock_file' => $lockFile,
+                        'age_seconds' => $lockFileAge,
+                        'process_running' => $processRunning
+                    ]);
+                }
+            } else {
+                // Не удалось прочитать файл - проверяем время модификации
+                $lockFileMtime = filemtime($lockFile);
+                $lockFileAge = time() - $lockFileMtime;
+                $processRunning = $lockFileAge < 300; // 5 минут
+            }
+            
+            if ($processRunning) {
+                Logger::instance()->warning('The process migration is already running.', [
+                    'lock_file' => $lockFile,
+                    'pid' => $pid ?? 'unknown'
+                ]);
+                throw new Exception('The process migration is already running.', 400);
+            } else {
+                // Процесс не запущен, но lock-файл существует - удаляем его
+                Logger::instance()->info('Lock file exists but process is not running, removing stale lock file', [
+                    'lock_file' => $lockFile,
+                    'pid' => $pid ?? 'unknown'
+                ]);
+                
+                // Удаляем lock-файл
+                $unlinkResult = @unlink($lockFile);
+                if ($unlinkResult) {
+                    Logger::instance()->info('Stale lock file removed successfully', [
+                        'lock_file' => $lockFile,
+                        'pid' => $pid ?? 'unknown'
+                    ]);
+                } else {
+                    $lastError = error_get_last();
+                    Logger::instance()->warning('Failed to remove stale lock file, trying chmod + unlink', [
+                        'lock_file' => $lockFile,
+                        'pid' => $pid ?? 'unknown',
+                        'error' => $lastError,
+                        'file_exists' => file_exists($lockFile),
+                        'is_writable' => is_writable($lockFile)
+                    ]);
+                    // Пытаемся удалить через chmod + unlink
+                    @chmod($lockFile, 0666);
+                    $unlinkResult2 = @unlink($lockFile);
+                    if ($unlinkResult2) {
+                        Logger::instance()->info('Stale lock file removed after chmod', [$lockFile]);
+                    } else {
+                        Logger::instance()->error('Still failed to remove lock file after chmod', [
+                            'lock_file' => $lockFile,
+                            'error' => error_get_last()
+                        ]);
+                    }
+                    // Все равно продолжаем, так как процесс не запущен
+                }
+            }
         }
 
         try {
-            file_put_contents($lockFile, $mb_project_uuid . "-" . $brz_project_id);
-            Logger::instance()->info('Creating lock file', [$lockFile]);
+            // Сохраняем PID процесса в lock-файл в формате JSON
+            $pid = getmypid();
+            $lockData = [
+                'mb_project_uuid' => $mb_project_uuid,
+                'brz_project_id' => $brz_project_id,
+                'pid' => $pid,
+                'started_at' => date('Y-m-d H:i:s'),
+                'started_timestamp' => time(),
+                'current_stage' => 'Инициализация миграции',
+                'stage_updated_at' => time()
+            ];
+            file_put_contents($lockFile, json_encode($lockData, JSON_PRETTY_PRINT));
+            Logger::instance()->info('Creating lock file with PID', ['lock_file' => $lockFile, 'pid' => $pid]);
 
-            $migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore, $mrgManual);
+            $migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore, $mrgManual, $qualityAnalysis);
             $migrationPlatform->start($mb_project_uuid, $brz_project_id);
 
             $this->projectPagesList = $migrationPlatform->getProjectPagesList();

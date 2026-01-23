@@ -55,7 +55,8 @@ class MigrationRunnerWave
                             $this->workspaceID,
                             '',
                             true,
-                            true
+                            true,
+                            false // quality_analysis по умолчанию false для wave миграций
                         );
                     } catch (\Exception $e) {
                         $ed = $e->getMessage();

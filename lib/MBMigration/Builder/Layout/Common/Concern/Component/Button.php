@@ -356,7 +356,13 @@ trait Button
 
     protected function getButtonStyle(ElementContextInterface $data): array
     {
-        $mbSectionId = $data->getMbSection()['sectionId'];
+        $mbSection = $data->getMbSection();
+        $mbSectionId = $mbSection['sectionId'] ?? null;
+
+        if ($mbSectionId === null) {
+            Logger::instance()->warning('sectionId not found in mbSection, using empty string');
+            $mbSectionId = '';
+        }
 
         Logger::instance()->info('Searching for button styles', [
             'section_id' => $mbSectionId,

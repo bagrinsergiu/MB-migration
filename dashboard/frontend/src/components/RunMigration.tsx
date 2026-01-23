@@ -17,6 +17,7 @@ export default function RunMigration() {
     brz_workspaces_id: undefined,
     mb_page_slug: '',
     mgr_manual: 0,
+    quality_analysis: false,
   });
   const [defaultSettings, setDefaultSettings] = useState<{ mb_site_id?: number; mb_secret?: string }>({});
 
@@ -64,6 +65,9 @@ export default function RunMigration() {
       }
       if (formData.mgr_manual !== undefined) {
         params.mgr_manual = formData.mgr_manual;
+      }
+      if (formData.quality_analysis !== undefined) {
+        params.quality_analysis = formData.quality_analysis;
       }
 
       const response = await api.runMigration(params);
@@ -120,7 +124,7 @@ export default function RunMigration() {
     }
   };
 
-  const handleChange = (field: keyof RunMigrationParams, value: string | number | undefined) => {
+  const handleChange = (field: keyof RunMigrationParams, value: string | number | boolean | undefined) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -255,6 +259,21 @@ export default function RunMigration() {
               <option value="1">Вручную</option>
             </select>
             <div className="form-help">Режим миграции</div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label checkbox-label">
+              <input
+                type="checkbox"
+                checked={formData.quality_analysis || false}
+                onChange={(e) => handleChange('quality_analysis', e.target.checked)}
+                className="form-checkbox"
+              />
+              <span>Включить анализ качества миграции</span>
+            </label>
+            <div className="form-help">
+              При включении будет выполнен AI-анализ качества миграции каждой страницы с сравнением скриншотов и выявлением проблем
+            </div>
           </div>
 
           <div className="form-actions">

@@ -10,8 +10,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 class MigrationController
 {
-    private MigrationService $migrationService;
-    private ApiProxyService $apiProxy;
+    /**
+     * @var MigrationService
+     */
+    private $migrationService;
+    /**
+     * @var ApiProxyService
+     */
+    private $apiProxy;
 
     public function __construct()
     {
@@ -59,13 +65,128 @@ class MigrationController
     public function getDetails(Request $request, int $id): JsonResponse
     {
         try {
+            $brzProjectId = $id;
+            
+            // Сначала пытаемся найти миграцию в migrations_mapping
             $details = $this->migrationService->getMigrationDetails($id);
 
             if (!$details) {
-                return new JsonResponse([
-                    'success' => false,
-                    'error' => 'Миграция не найдена'
-                ], 404);
+                // Миграция не найдена в migrations_mapping
+                // Пытаемся найти mb_uuid из lock-файла или migration_result_list
+                $mbUuid = null;
+                $migrationResult = null;
+                
+                // Пытаемся найти mb_uuid из lock-файла по brz_project_id
+                $projectRoot = dirname(__DIR__, 3);
+                $cachePath = $_ENV['CACHE_PATH'] ?? getenv('CACHE_PATH') ?: $projectRoot . '/var/cache';
+                $lockFilePattern = $cachePath . '/*-' . $brzProjectId . '.lock';
+                $lockFiles = glob($lockFilePattern);
+                $lockFile = null;
+                
+                if (!empty($lockFiles)) {
+                    // Берем первый найденный lock-файл
+                    $lockFile = $lockFiles[0];
+                    // Извлекаем mb_uuid из имени файла: {mb_uuid}-{brz_id}.lock
+                    if (preg_match('#/([^/]+)-' . preg_quote($brzProjectId, '#') . '\.lock$#', $lockFile, $matches)) {
+                        $mbUuid = $matches[1];
+                    }
+                }
+                
+                // Пытаемся найти в migration_result_list
+                try {
+                    $dbService = new \Dashboard\Services\DatabaseService();
+                    $db = $dbService->getWriteConnection();
+                    $migrationResult = $db->find(
+                        'SELECT mb_project_uuid, result_json, migration_uuid, brizy_project_domain FROM migration_result_list WHERE brz_project_id = ? ORDER BY created_at DESC LIMIT 1',
+                        [$brzProjectId]
+                    );
+                    
+                    if ($migrationResult && isset($migrationResult['mb_project_uuid'])) {
+                        $mbUuid = $migrationResult['mb_project_uuid'];
+                    }
+                } catch (Exception $e) {
+                    // Игнорируем ошибки БД
+                }
+                
+                // Если mb_uuid найден (из lock-файла или migration_result_list), формируем детали
+                if ($mbUuid) {
+                    $resultJson = [];
+                    $resultData = null;
+                    
+                    if ($migrationResult && isset($migrationResult['result_json'])) {
+                        $resultJson = json_decode($migrationResult['result_json'] ?? '{}', true);
+                        $resultData = $resultJson['value'] ?? $resultJson;
+                    }
+                    
+                    // Если есть lock-файл, пытаемся прочитать информацию из него
+                    $lockData = null;
+                    if ($lockFile && file_exists($lockFile)) {
+                        $lockContent = @file_get_contents($lockFile);
+                        if ($lockContent) {
+                            $lockData = json_decode($lockContent, true);
+                        }
+                    }
+                    
+                    // Определяем статус
+                    $status = 'unknown';
+                    if ($lockData && isset($lockData['current_stage'])) {
+                        // Если есть lock-файл с информацией о стадии, статус in_progress
+                        $status = 'in_progress';
+                    } elseif ($resultData && isset($resultData['status'])) {
+                        $status = $resultData['status'];
+                    } elseif ($resultJson && isset($resultJson['status'])) {
+                        $status = $resultJson['status'];
+                    }
+                    
+                    // Формируем детали миграции
+                    $details = [
+                        'mapping' => [
+                            'brz_project_id' => $brzProjectId,
+                            'mb_project_uuid' => $mbUuid,
+                            'changes_json' => json_encode([
+                                'status' => $status,
+                                'brizy_project_domain' => $migrationResult['brizy_project_domain'] ?? $resultData['brizy_project_domain'] ?? null,
+                                'current_stage' => $lockData['current_stage'] ?? null,
+                                'stage_updated_at' => $lockData['stage_updated_at'] ?? null,
+                                'total_pages' => $lockData['total_pages'] ?? null,
+                                'processed_pages' => $lockData['processed_pages'] ?? null,
+                                'progress_percent' => $lockData['progress_percent'] ?? null
+                            ])
+                        ],
+                        'result' => $migrationResult ? [
+                            'migration_uuid' => $migrationResult['migration_uuid'] ?? null,
+                            'result_json' => $resultJson
+                        ] : null,
+                        'result_data' => $resultData,
+                        'status' => $status,
+                        'migration_uuid' => $migrationResult['migration_uuid'] ?? null,
+                        'brizy_project_domain' => $migrationResult['brizy_project_domain'] ?? $resultData['brizy_project_domain'] ?? null,
+                        'mb_project_domain' => $resultData['mb_project_domain'] ?? null,
+                        'progress' => $resultData['progress'] ?? ($lockData ? [
+                            'total_pages' => $lockData['total_pages'] ?? null,
+                            'processed_pages' => $lockData['processed_pages'] ?? null,
+                            'progress_percent' => $lockData['progress_percent'] ?? null
+                        ] : null),
+                        'warnings' => $resultData['message']['warning'] ?? [],
+                        'lock_file_info' => $lockData ? [
+                            'current_stage' => $lockData['current_stage'] ?? null,
+                            'started_at' => $lockData['started_at'] ?? null,
+                            'pid' => $lockData['pid'] ?? null
+                        ] : null
+                    ];
+                } else {
+                    // Если mb_uuid не найден, возвращаем ошибку
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Миграция не найдена. Не удалось определить mb_project_uuid для brz_project_id: ' . $brzProjectId,
+                        'debug' => [
+                            'brz_project_id' => $brzProjectId,
+                            'cache_path' => $cachePath ?? null,
+                            'lock_files_found' => count($lockFiles ?? []),
+                            'mb_uuid_found' => false
+                        ]
+                    ], 404);
+                }
             }
 
             return new JsonResponse([
@@ -203,7 +324,19 @@ class MigrationController
                 'brz_workspaces_id' => !empty($data['brz_workspaces_id']) ? (int)$data['brz_workspaces_id'] : null,
                 'mb_page_slug' => !empty($data['mb_page_slug']) ? $data['mb_page_slug'] : null,
                 'mgr_manual' => !empty($data['mgr_manual']) ? (int)$data['mgr_manual'] : 0,
+                'quality_analysis' => isset($data['quality_analysis']) ? (bool)$data['quality_analysis'] : false,
             ];
+            
+            // Если перезапускаем с анализом качества, помечаем старые результаты как устаревшие
+            if (!empty($params['quality_analysis'])) {
+                try {
+                    $qualityReport = new \MBMigration\Analysis\QualityReport();
+                    $qualityReport->archiveOldReports($id);
+                } catch (Exception $e) {
+                    // Логируем, но не прерываем перезапуск миграции
+                    error_log("Failed to archive old quality reports: " . $e->getMessage());
+                }
+            }
 
             // Проверяем, что mb_site_id и mb_secret либо переданы, либо есть в настройках
             if (empty($params['mb_site_id'])) {
@@ -263,6 +396,468 @@ class MigrationController
             return new JsonResponse([
                 'success' => false,
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * DELETE /api/migrations/:id/lock
+     * Удалить lock-файл миграции
+     */
+    public function removeLock(Request $request, int $id): JsonResponse
+    {
+        try {
+            $details = $this->migrationService->getMigrationDetails($id);
+            
+            if (!$details) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Миграция не найдена'
+                ], 404);
+            }
+
+            $mbUuid = $details['mapping']['mb_project_uuid'];
+            $brzProjectId = $details['mapping']['brz_project_id'];
+
+            $result = $this->migrationService->removeMigrationLock($mbUuid, $brzProjectId);
+
+            return new JsonResponse([
+                'success' => $result['success'],
+                'data' => $result
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/migrations/:id/kill
+     * Убить процесс миграции
+     */
+    public function killProcess(Request $request, int $id): JsonResponse
+    {
+        try {
+            $details = $this->migrationService->getMigrationDetails($id);
+            
+            if (!$details) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Миграция не найдена'
+                ], 404);
+            }
+
+            $mbUuid = $details['mapping']['mb_project_uuid'];
+            $brzProjectId = $details['mapping']['brz_project_id'];
+
+            $data = json_decode($request->getContent(), true);
+            $force = isset($data['force']) ? (bool)$data['force'] : false;
+
+            $result = $this->migrationService->killMigrationProcess($mbUuid, $brzProjectId, $force);
+
+            return new JsonResponse([
+                'success' => $result['success'],
+                'data' => $result
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/migrations/:id/process
+     * Получить информацию о процессе миграции (мониторинг)
+     */
+    public function getProcessInfo(Request $request, int $id): JsonResponse
+    {
+        try {
+            $brzProjectId = $id; // Используем id как brz_project_id
+            $mbUuid = null;
+            
+            // Сначала пытаемся найти миграцию в migrations_mapping
+            $details = $this->migrationService->getMigrationDetails($id);
+            
+            if ($details && isset($details['mapping'])) {
+                // Миграция найдена в migrations_mapping
+                $mbUuid = $details['mapping']['mb_project_uuid'];
+            } else {
+                // Миграция не найдена в migrations_mapping
+                // Пытаемся найти mb_uuid из lock-файла по brz_project_id
+                $projectRoot = dirname(__DIR__, 3);
+                $cachePath = $_ENV['CACHE_PATH'] ?? getenv('CACHE_PATH') ?: $projectRoot . '/var/cache';
+                $lockFilePattern = $cachePath . '/*-' . $brzProjectId . '.lock';
+                $lockFiles = glob($lockFilePattern);
+                
+                if (!empty($lockFiles)) {
+                    // Берем первый найденный lock-файл
+                    $lockFile = $lockFiles[0];
+                    // Извлекаем mb_uuid из имени файла: {mb_uuid}-{brz_id}.lock
+                    if (preg_match('#/([^/]+)-' . preg_quote($brzProjectId, '#') . '\.lock$#', $lockFile, $matches)) {
+                        $mbUuid = $matches[1];
+                    }
+                }
+                
+                // Если не нашли в lock-файле, пытаемся найти в migration_result_list
+                if (!$mbUuid) {
+                    try {
+                        $dbService = new \Dashboard\Services\DatabaseService();
+                        $db = $dbService->getWriteConnection();
+                        $migrationResult = $db->find(
+                            'SELECT mb_project_uuid FROM migration_result_list WHERE brz_project_id = ? LIMIT 1',
+                            [$brzProjectId]
+                        );
+                        
+                        if ($migrationResult && isset($migrationResult['mb_project_uuid'])) {
+                            $mbUuid = $migrationResult['mb_project_uuid'];
+                        }
+                    } catch (Exception $e) {
+                        // Игнорируем ошибки БД
+                    }
+                }
+            }
+            
+            // Если mbUuid все еще не найден, возвращаем ошибку
+            if (!$mbUuid) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Миграция не найдена. Не удалось определить mb_project_uuid для brz_project_id: ' . $brzProjectId,
+                    'debug' => [
+                        'brz_project_id' => $brzProjectId,
+                        'cache_path' => $cachePath ?? null,
+                        'lock_files_found' => count($lockFiles ?? [])
+                    ]
+                ], 404);
+            }
+
+            $result = $this->migrationService->getMigrationProcessInfo($mbUuid, $brzProjectId);
+
+            return new JsonResponse([
+                'success' => $result['success'],
+                'data' => $result
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * DELETE /api/migrations/:id/cache
+     * Удалить кэш-файл миграции
+     */
+    public function removeCache(Request $request, int $id): JsonResponse
+    {
+        try {
+            $details = $this->migrationService->getMigrationDetails($id);
+            
+            if (!$details) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Миграция не найдена'
+                ], 404);
+            }
+
+            $mbUuid = $details['mapping']['mb_project_uuid'];
+            $brzProjectId = $details['mapping']['brz_project_id'];
+
+            $result = $this->migrationService->removeMigrationCache($mbUuid, $brzProjectId);
+
+            return new JsonResponse([
+                'success' => $result['success'],
+                'data' => $result
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/migrations/:id/reset-status
+     * Сбросить статус миграции на pending
+     */
+    public function resetStatus(Request $request, int $id): JsonResponse
+    {
+        try {
+            $details = $this->migrationService->getMigrationDetails($id);
+            
+            if (!$details) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Миграция не найдена'
+                ], 404);
+            }
+
+            $mbUuid = $details['mapping']['mb_project_uuid'];
+            $brzProjectId = $details['mapping']['brz_project_id'];
+
+            $result = $this->migrationService->resetMigrationStatus($mbUuid, $brzProjectId);
+
+            return new JsonResponse([
+                'success' => $result['success'],
+                'data' => $result
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/migrations/:id/hard-reset
+     * Hard reset миграции: удаляет lock-файл, cache-файл, убивает процесс и сбрасывает статус
+     */
+    public function hardReset(Request $request, int $id): JsonResponse
+    {
+        try {
+            $details = $this->migrationService->getMigrationDetails($id);
+            
+            if (!$details) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Миграция не найдена'
+                ], 404);
+            }
+
+            $mbUuid = $details['mapping']['mb_project_uuid'];
+            $brzProjectId = $details['mapping']['brz_project_id'];
+
+            $result = $this->migrationService->hardResetMigration($mbUuid, $brzProjectId);
+
+            return new JsonResponse([
+                'success' => $result['success'],
+                'data' => $result
+            ], $result['success'] ? 200 : 500);
+        } catch (Exception $e) {
+            error_log("Hard reset controller exception: " . $e->getMessage());
+            error_log("Hard reset controller stack trace: " . $e->getTraceAsString());
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'exception' => [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
+            ], 500);
+        } catch (\Throwable $e) {
+            error_log("Hard reset controller throwable: " . $e->getMessage());
+            error_log("Hard reset controller stack trace: " . $e->getTraceAsString());
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Критическая ошибка: ' . $e->getMessage(),
+                'exception' => [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/migrations/:id/rebuild-page
+     * Пересобрать конкретную страницу
+     */
+    public function rebuildPage(Request $request, int $id): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            
+            if (!$data) {
+                $data = $request->request->all();
+            }
+
+            $pageSlug = $data['page_slug'] ?? null;
+            
+            if (!$pageSlug) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Параметр page_slug обязателен'
+                ], 400);
+            }
+
+            $details = $this->migrationService->getMigrationDetails($id);
+            
+            if (!$details) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Миграция не найдена'
+                ], 404);
+            }
+
+            $mbUuid = $details['mapping']['mb_project_uuid'];
+            $brzProjectId = $details['mapping']['brz_project_id'];
+
+            // Получаем параметры из настроек или из данных миграции
+            $params = [
+                'mb_project_uuid' => $mbUuid,
+                'brz_project_id' => $brzProjectId,
+                'mb_page_slug' => $pageSlug,
+                'mgr_manual' => 0,
+                'quality_analysis' => true, // Включаем анализ качества при пересборке
+            ];
+
+            // Получаем настройки из БД или используем значения по умолчанию
+            $dbService = new \Dashboard\Services\DatabaseService();
+            $settings = $dbService->getSettings();
+            
+            if ($settings) {
+                $params['mb_site_id'] = $settings['mb_site_id'] ?? null;
+                $params['mb_secret'] = $settings['mb_secret'] ?? null;
+                $params['brz_workspaces_id'] = $settings['brz_workspaces_id'] ?? null;
+            }
+
+            // Если параметры переданы в запросе, используем их
+            if (isset($data['mb_site_id'])) {
+                $params['mb_site_id'] = $data['mb_site_id'];
+            }
+            if (isset($data['mb_secret'])) {
+                $params['mb_secret'] = $data['mb_secret'];
+            }
+            if (isset($data['brz_workspaces_id'])) {
+                $params['brz_workspaces_id'] = $data['brz_workspaces_id'];
+            }
+
+            // Запускаем пересборку страницы через ApiProxyService
+            $result = $this->apiProxy->runMigration($params);
+
+            return new JsonResponse([
+                'success' => true,
+                'data' => [
+                    'message' => 'Пересборка страницы запущена',
+                    'page_slug' => $pageSlug,
+                    'migration_id' => $id
+                ]
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/migrations/:id/logs
+     * Получить логи миграции
+     */
+    public function getMigrationLogs(Request $request, int $id): JsonResponse
+    {
+        try {
+            $migrationService = new \Dashboard\Services\MigrationService();
+            $logs = $migrationService->getMigrationLogs($id);
+            
+            return new JsonResponse([
+                'success' => true,
+                'data' => ['logs' => $logs],
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/migrations/:id/rebuild-page-no-analysis
+     * Пересобрать конкретную страницу миграции без анализа качества
+     */
+    public function rebuildPageNoAnalysis(Request $request, int $id): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            
+            if (!$data) {
+                $data = $request->request->all();
+            }
+
+            $pageSlug = $data['page_slug'] ?? null;
+            
+            if (!$pageSlug) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Параметр page_slug обязателен'
+                ], 400);
+            }
+
+            $details = $this->migrationService->getMigrationDetails($id);
+            
+            if (!$details) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Миграция не найдена'
+                ], 404);
+            }
+
+            $mbUuid = $details['mapping']['mb_project_uuid'];
+            $brzProjectId = $details['mapping']['brz_project_id'];
+
+            // Получаем параметры из настроек или из данных миграции
+            $params = [
+                'mb_project_uuid' => $mbUuid,
+                'brz_project_id' => $brzProjectId,
+                'mb_page_slug' => $pageSlug,
+                'mgr_manual' => 0,
+                'quality_analysis' => false, // Отключаем анализ качества
+            ];
+
+            // Получаем настройки из БД или используем значения по умолчанию
+            $dbService = new \Dashboard\Services\DatabaseService();
+            $settings = $dbService->getSettings();
+            
+            if ($settings) {
+                $params['mb_site_id'] = $settings['mb_site_id'] ?? null;
+                $params['mb_secret'] = $settings['mb_secret'] ?? null;
+                $params['brz_workspaces_id'] = $settings['brz_workspaces_id'] ?? null;
+            }
+
+            // Если параметры переданы в запросе, используем их
+            if (isset($data['mb_site_id'])) {
+                $params['mb_site_id'] = $data['mb_site_id'];
+            }
+            if (isset($data['mb_secret'])) {
+                $params['mb_secret'] = $data['mb_secret'];
+            }
+            if (isset($data['brz_workspaces_id'])) {
+                $params['brz_workspaces_id'] = $data['brz_workspaces_id'];
+            }
+
+            // Запускаем пересборку страницы через ApiProxyService без анализа
+            $result = $this->apiProxy->runMigration($params);
+
+            return new JsonResponse([
+                'success' => true,
+                'data' => [
+                    'message' => 'Пересборка страницы запущена (без анализа качества)',
+                    'page_slug' => $pageSlug,
+                    'migration_id' => $id
+                ]
+            ], 200);
+        } catch (Exception $e) {
+            error_log("Error rebuilding page without analysis: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'details' => [
+                    'migration_id' => $id,
+                    'file' => basename($e->getFile()),
+                    'line' => $e->getLine(),
+                    'type' => get_class($e)
+                ]
             ], 500);
         }
     }

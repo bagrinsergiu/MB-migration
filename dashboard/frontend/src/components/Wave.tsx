@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { api, Wave as WaveType } from '../api/client';
 import { getStatusConfig } from '../utils/status';
 import { formatDate } from '../utils/format';
 import './common.css';
 import './Wave.css';
+import './WaveDetails.css';
 
 export default function Wave() {
   const [waves, setWaves] = useState<WaveType[]>([]);
@@ -20,18 +21,11 @@ export default function Wave() {
     mgr_manual: false,
   });
   const [statusFilter, setStatusFilter] = useState('');
-
-  useEffect(() => {
-    loadWaves();
-    // Обновляем список каждые 5 секунд если есть активные волны
-    const interval = setInterval(() => {
-      const hasActiveWaves = waves.some(w => w.status === 'in_progress' || w.status === 'pending');
-      if (hasActiveWaves) {
-        loadWaves();
-      }
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [waves]);
+  const [autoRefreshing, setAutoRefreshing] = useState(false);
+  const [showLogs, setShowLogs] = useState<string | null>(null);
+  const [logs, setLogs] = useState<string | null>(null);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+  const logsContentRef = useRef<HTMLDivElement>(null);
 
   const loadWaves = async () => {
     try {
@@ -50,6 +44,109 @@ export default function Wave() {
       setLoading(false);
     }
   };
+
+  const refreshWaves = async () => {
+    // Фоновое обновление списка волн без полной перерисовки
+    try {
+      setAutoRefreshing(true);
+      const filters = statusFilter ? { status: statusFilter } : undefined;
+      const response = await api.getWaves(filters);
+      if (response.success && response.data) {
+        // Обновляем список волн, чтобы получить актуальные статусы и прогресс
+        setWaves(response.data);
+      } else if (response.error) {
+        console.error('Error refreshing waves:', response.error);
+      }
+    } catch (err: any) {
+      console.error('Error refreshing waves:', err);
+    } finally {
+      setAutoRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    loadWaves();
+  }, [statusFilter]);
+
+  useEffect(() => {
+    // Обновляем список каждые 5 секунд для активных волн, каждые 30 секунд для завершенных
+    const hasActiveWaves = waves.some(w => w.status === 'in_progress' || w.status === 'pending');
+    const intervalTime = hasActiveWaves ? 5000 : 30000;
+    
+    const interval = setInterval(() => {
+      refreshWaves();
+    }, intervalTime);
+    
+    return () => clearInterval(interval);
+  }, [waves, statusFilter]);
+
+  const loadWaveLogs = async (waveId: string) => {
+    try {
+      setLoadingLogs(true);
+      const response = await api.getWaveLogs(waveId);
+      
+      if (response.success && response.data) {
+        let logText = '';
+        
+        // Обрабатываем разные форматы ответа
+        if (Array.isArray(response.data.logs)) {
+          logText = response.data.logs
+            .filter((line: string) => line && line.trim())
+            .join('\n');
+        } else if (typeof response.data.logs === 'string') {
+          logText = response.data.logs;
+        } else if (typeof response.data === 'string') {
+          logText = response.data;
+        } else {
+          logText = JSON.stringify(response.data, null, 2);
+        }
+        
+        // Нормализуем переносы строк
+        logText = logText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        logText = logText.replace(/\]\[/g, ']\n[');
+        
+        setLogs(logText);
+      } else {
+        setLogs('Не удалось загрузить логи: ' + (response.error || 'Неизвестная ошибка'));
+      }
+    } catch (err: any) {
+      setLogs('Ошибка загрузки логов: ' + (err.message || 'Неизвестная ошибка'));
+    } finally {
+      setLoadingLogs(false);
+    }
+  };
+
+  const handleShowLogs = async (waveId: string) => {
+    if (showLogs === waveId) {
+      setShowLogs(null);
+      setLogs(null);
+      return;
+    }
+
+    setShowLogs(waveId);
+    await loadWaveLogs(waveId);
+  };
+
+  // Автообновление логов для активных волн
+  useEffect(() => {
+    if (!showLogs) return;
+    
+    const wave = waves.find(w => w.id === showLogs);
+    if (wave?.status === 'in_progress' || wave?.status === 'pending') {
+      const interval = setInterval(() => {
+        loadWaveLogs(showLogs);
+      }, 3000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [showLogs, waves]);
+
+  // Автопрокрутка логов вверх при обновлении
+  useEffect(() => {
+    if (logsContentRef.current && showLogs && logs) {
+      logsContentRef.current.scrollTop = 0;
+    }
+  }, [logs, showLogs]);
 
   const handleCreateWave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +205,14 @@ export default function Wave() {
   return (
     <div className="wave-page">
       <div className="page-header">
-        <h2>Волны миграций</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h2>Волны миграций</h2>
+          {autoRefreshing && (
+            <span className="status-refresh-indicator" title="Обновление списка волн...">
+              <span className="inline-spinner" />
+            </span>
+          )}
+        </div>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
           className="btn btn-primary"
@@ -290,18 +394,134 @@ export default function Wave() {
                     </td>
                     <td>{formatDate(wave.created_at)}</td>
                     <td>
-                      <Link
-                        to={`/wave/${wave.id}`}
-                        className="btn btn-sm btn-primary"
-                      >
-                        Детали
-                      </Link>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <Link
+                          to={`/wave/${wave.id}`}
+                          className="btn btn-sm btn-primary"
+                        >
+                          Детали
+                        </Link>
+                        <button
+                          onClick={() => handleShowLogs(wave.id)}
+                          className="btn btn-sm btn-secondary"
+                          title="Показать логи волны"
+                        >
+                          📋 Логи
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Модальное окно для логов волны */}
+      {showLogs && (
+        <div className="page-analysis-modal" onClick={() => {
+          setShowLogs(null);
+          setLogs(null);
+        }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '90vh' }}>
+            <div className="modal-header">
+              <h2>
+                Логи волны: {waves.find(w => w.id === showLogs)?.name || showLogs}
+                {(waves.find(w => w.id === showLogs)?.status === 'in_progress' || waves.find(w => w.id === showLogs)?.status === 'pending') && (
+                  <span className="auto-refresh-badge" style={{ marginLeft: '1rem', fontSize: '0.875rem', fontWeight: 'normal' }}>🔄 Автообновление</span>
+                )}
+              </h2>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <button
+                  onClick={() => loadWaveLogs(showLogs)}
+                  className="btn btn-sm btn-secondary"
+                  title="Обновить логи"
+                  disabled={loadingLogs}
+                >
+                  {loadingLogs ? '...' : '↻'}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowLogs(null);
+                    setLogs(null);
+                  }}
+                  className="btn-close"
+                  title="Закрыть"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div className="modal-body" style={{ padding: 0 }}>
+              {loadingLogs && !logs ? (
+                <div className="loading-container" style={{ padding: '3rem' }}>
+                  <div className="spinner"></div>
+                  <p>Загрузка логов...</p>
+                </div>
+              ) : (
+                <div 
+                  ref={logsContentRef}
+                  className="logs-content" 
+                  style={{ padding: '1.5rem', maxHeight: 'calc(90vh - 100px)', overflowY: 'auto' }}
+                >
+                  {logs ? (
+                    <div className="logs-text">
+                      {logs
+                        .split('\n')
+                        .filter(line => line.trim())
+                        .reverse()
+                        .map((line, index) => {
+                          let lineClass = 'log-line';
+                          const trimmedLine = line.trim();
+                          const lowerLine = trimmedLine.toLowerCase();
+                          
+                          if (/\.[CRITICAL|ERROR|FATAL]:/i.test(trimmedLine) ||
+                              lowerLine.includes('.critical:') ||
+                              lowerLine.includes('.error:') ||
+                              lowerLine.includes('.fatal:')) {
+                            lineClass += ' log-error';
+                          } else if (/\.[WARNING|WARN]:/i.test(trimmedLine) ||
+                                     lowerLine.includes('.warning:') ||
+                                     lowerLine.includes('.warn:')) {
+                            lineClass += ' log-warning';
+                          } else if (/\.[INFO|SUCCESS]:/i.test(trimmedLine) ||
+                                     lowerLine.includes('.info:') ||
+                                     lowerLine.includes('.success:') ||
+                                     lowerLine.includes('completed') ||
+                                     lowerLine.includes('done')) {
+                            lineClass += ' log-info';
+                          } else if (/\.[DEBUG|TRACE]:/i.test(trimmedLine) ||
+                                     lowerLine.includes('.debug:') ||
+                                     lowerLine.includes('.trace:')) {
+                            lineClass += ' log-debug';
+                          } else if (lowerLine.includes('error') || 
+                                     lowerLine.includes('exception') || 
+                                     lowerLine.includes('failed') ||
+                                     lowerLine.includes('critical')) {
+                            lineClass += ' log-error';
+                          } else if (lowerLine.includes('warning') || 
+                                     lowerLine.includes('warn') ||
+                                     lowerLine.includes('deprecated')) {
+                            lineClass += ' log-warning';
+                          }
+                          
+                          return (
+                            <div key={`log-${index}`} className={lineClass}>
+                              <span className="log-line-content">{line || '\u00A0'}</span>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  ) : (
+                    <div className="logs-empty">
+                      <p>Логи не найдены</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

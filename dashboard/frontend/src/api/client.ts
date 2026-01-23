@@ -33,7 +33,7 @@ export interface Migration {
   brz_project_id: number;
   created_at: string;
   updated_at: string;
-  status: 'pending' | 'in_progress' | 'success' | 'error';
+  status: 'pending' | 'in_progress' | 'success' | 'completed' | 'error';
   changes_json?: any;
   result?: any;
 }
@@ -69,6 +69,7 @@ export interface RunMigrationParams {
   brz_workspaces_id?: number;
   mb_page_slug?: string;
   mgr_manual?: number;
+  quality_analysis?: boolean;
 }
 
 export interface ApiResponse<T> {
@@ -76,6 +77,7 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
   count?: number;
+  details?: any;
 }
 
 export const api = {
@@ -97,6 +99,11 @@ export const api = {
 
   async getMigrationDetails(id: number): Promise<ApiResponse<MigrationDetails>> {
     const response = await apiClient.get(`/migrations/${id}`);
+    return response.data;
+  },
+
+  async getMigrationLogs(id: number): Promise<ApiResponse<any>> {
+    const response = await apiClient.get(`/migrations/${id}/logs`);
     return response.data;
   },
 
@@ -137,6 +144,36 @@ export const api = {
 
   async restartMigration(id: number, params: Partial<RunMigrationParams>): Promise<ApiResponse<any>> {
     const response = await apiClient.post(`/migrations/${id}/restart`, params);
+    return response.data;
+  },
+
+  async removeMigrationLock(id: number): Promise<ApiResponse<any>> {
+    const response = await apiClient.delete(`/migrations/${id}/lock`);
+    return response.data;
+  },
+
+  async killMigrationProcess(id: number, force: boolean = false): Promise<ApiResponse<any>> {
+    const response = await apiClient.post(`/migrations/${id}/kill`, { force });
+    return response.data;
+  },
+
+  async getMigrationProcessInfo(id: number): Promise<ApiResponse<any>> {
+    const response = await apiClient.get(`/migrations/${id}/process`);
+    return response.data;
+  },
+
+  async removeMigrationCache(id: number): Promise<ApiResponse<any>> {
+    const response = await apiClient.delete(`/migrations/${id}/cache`);
+    return response.data;
+  },
+
+  async resetMigrationStatus(id: number): Promise<ApiResponse<any>> {
+    const response = await apiClient.post(`/migrations/${id}/reset-status`);
+    return response.data;
+  },
+
+  async hardResetMigration(id: number): Promise<ApiResponse<any>> {
+    const response = await apiClient.post(`/migrations/${id}/hard-reset`);
     return response.data;
   },
 
@@ -193,6 +230,18 @@ export const api = {
         return response.data;
       },
 
+      async restartAllWaveMigrations(waveId: string, mbUuids?: string[]): Promise<ApiResponse<any>> {
+        const response = await apiClient.post(`/waves/${waveId}/restart-all`, {
+          mb_uuids: mbUuids || []
+        });
+        return response.data;
+      },
+
+      async getWaveLogs(waveId: string): Promise<ApiResponse<any>> {
+        const response = await apiClient.get(`/waves/${waveId}/logs`);
+        return response.data;
+      },
+
       async getWaveMigrationLogs(waveId: string, mbUuid: string): Promise<ApiResponse<any>> {
         const response = await apiClient.get(`/waves/${waveId}/migrations/${mbUuid}/logs`);
         return response.data;
@@ -201,6 +250,65 @@ export const api = {
       async removeWaveMigrationLock(waveId: string, mbUuid: string): Promise<ApiResponse<any>> {
         const response = await apiClient.delete(`/waves/${waveId}/migrations/${mbUuid}/lock`);
         return response.data;
+      },
+
+      // Quality Analysis
+      async getQualityAnalysis(migrationId: number): Promise<ApiResponse<QualityAnalysisReport[]>> {
+        const response = await apiClient.get(`/migrations/${migrationId}/quality-analysis`);
+        return response.data;
+      },
+
+      async getArchivedQualityAnalysis(migrationId: number): Promise<ApiResponse<QualityAnalysisReport[]>> {
+        const response = await apiClient.get(`/migrations/${migrationId}/quality-analysis/archived`);
+        return response.data;
+      },
+
+      async getQualityStatistics(migrationId: number): Promise<ApiResponse<QualityStatistics>> {
+        const response = await apiClient.get(`/migrations/${migrationId}/quality-analysis/statistics`);
+        return response.data;
+      },
+
+      async getMigrationPages(migrationId: number): Promise<ApiResponse<any[]>> {
+        const response = await apiClient.get(`/migrations/${migrationId}/pages`);
+        return response.data;
+      },
+
+      async getPageQualityAnalysis(migrationId: number, pageSlug: string, includeArchived: boolean = false): Promise<ApiResponse<QualityAnalysisReport>> {
+        const params = includeArchived ? { include_archived: 'true' } : {};
+        const response = await apiClient.get(`/migrations/${migrationId}/quality-analysis/${encodeURIComponent(pageSlug)}`, { params });
+        return response.data;
+      },
+
+      getScreenshotUrl(filename: string): string {
+        return `${API_BASE_URL}/screenshots/${filename}`;
+      },
+
+      async rebuildPage(migrationId: number, pageSlug: string): Promise<ApiResponse<any>> {
+        const response = await apiClient.post(`/migrations/${migrationId}/rebuild-page`, {
+          page_slug: pageSlug
+        });
+        return response.data;
+      },
+
+      async rebuildPageNoAnalysis(migrationId: number, pageSlug: string): Promise<ApiResponse<any>> {
+        const response = await apiClient.post(`/migrations/${migrationId}/rebuild-page-no-analysis`, {
+          page_slug: pageSlug
+        });
+        return response.data;
+      },
+
+      async reanalyzePage(migrationId: number, pageSlug: string): Promise<ApiResponse<any>> {
+        try {
+          const response = await apiClient.post(`/migrations/${migrationId}/quality-analysis/${encodeURIComponent(pageSlug)}/reanalyze`);
+          return response.data;
+        } catch (error: any) {
+          // Если сервер вернул ошибку с данными, возвращаем их
+          if (error.response && error.response.data) {
+            return error.response.data;
+          }
+          // Иначе пробрасываем ошибку дальше
+          throw error;
+        }
       },
     };
 
@@ -282,6 +390,60 @@ export const api = {
       workspace_id: number;
       workspace_name: string;
       status: string;
+    }
+
+    export interface QualityAnalysisReport {
+      id: number;
+      migration_id: number;
+      mb_project_uuid: string;
+      page_slug: string;
+      source_url?: string;
+      migrated_url?: string;
+      analysis_status: 'pending' | 'analyzing' | 'completed' | 'error';
+      quality_score?: number | string; // Может быть строкой из API
+      severity_level: 'critical' | 'high' | 'medium' | 'low' | 'none';
+      token_usage?: {
+        prompt_tokens?: number;
+        completion_tokens?: number;
+        total_tokens?: number;
+        estimated_prompt_tokens?: number;
+        estimation_accuracy_percent?: number;
+        cost_estimate_usd?: number;
+        model?: string;
+      };
+      issues_summary?: {
+        summary?: string;
+        missing_elements?: string[];
+        changed_elements?: string[];
+        recommendations?: string[];
+      };
+      detailed_report?: any;
+      screenshots_path?: {
+        source?: string;
+        migrated?: string;
+      };
+      created_at: string;
+      updated_at: string;
+    }
+
+    export interface QualityStatistics {
+      total_pages: number;
+      avg_quality_score: number | null;
+      by_severity: {
+        critical: number;
+        high: number;
+        medium: number;
+        low: number;
+        none: number;
+      };
+      token_statistics?: {
+        total_prompt_tokens: number;
+        total_completion_tokens: number;
+        total_tokens: number;
+        avg_tokens_per_page: number;
+        total_cost_usd: number;
+        avg_cost_per_page_usd: number;
+      };
     }
 
     export default api;

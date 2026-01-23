@@ -16,7 +16,8 @@ class DatabaseService
     // Разрешенный хост для записи (строгая проверка)
     private const ALLOWED_WRITE_HOST = 'mb-migration.cupzc9ey0cip.us-east-1.rds.amazonaws.com';
 
-    private ?MySQL $writeConnection = null;
+    /** @var MySQL|null */
+    private $writeConnection = null;
 
     /**
      * Получить настройки подключения из переменных окружения
@@ -94,7 +95,7 @@ class DatabaseService
     }
 
     /**
-     * Получить список миграций из migrations_mapping
+     * Получить список миграций из новой таблицы migrations
      * 
      * @return array
      * @throws Exception
@@ -103,12 +104,12 @@ class DatabaseService
     {
         $db = $this->getWriteConnection();
         return $db->getAllRows(
-            'SELECT * FROM migrations_mapping ORDER BY created_at DESC'
+            'SELECT * FROM migrations ORDER BY created_at DESC'
         );
     }
 
     /**
-     * Получить миграцию по ID
+     * Получить миграцию по ID проекта Brizy
      * 
      * @param int $brzProjectId
      * @return array|null
@@ -118,7 +119,7 @@ class DatabaseService
     {
         $db = $this->getWriteConnection();
         $result = $db->find(
-            'SELECT * FROM migrations_mapping WHERE brz_project_id = ?',
+            'SELECT * FROM migrations WHERE brz_project_id = ? ORDER BY created_at DESC LIMIT 1',
             [$brzProjectId]
         );
         return $result ?: null;
@@ -135,7 +136,7 @@ class DatabaseService
     {
         $db = $this->getWriteConnection();
         $result = $db->find(
-            'SELECT * FROM migrations_mapping WHERE mb_project_uuid = ?',
+            'SELECT * FROM migrations WHERE mb_project_uuid = ? ORDER BY created_at DESC LIMIT 1',
             [$mbProjectUuid]
         );
         return $result ?: null;
@@ -238,7 +239,8 @@ class DatabaseService
     }
 
     /**
-     * Сохранить результат миграции в migration_result_list
+     * Сохранить результат миграции в migration_result_list (старая таблица, для обратной совместимости)
+     * И также сохранить в новую таблицу migrations
      * 
      * @param array $data
      * @return int ID записи
@@ -256,13 +258,133 @@ class DatabaseService
             }
         }
 
-        return $db->insert('migration_result_list', [
+        // Сохраняем в старую таблицу для обратной совместимости
+        $oldId = $db->insert('migration_result_list', [
             'migration_uuid' => $data['migration_uuid'],
             'brz_project_id' => (int)$data['brz_project_id'],
             'brizy_project_domain' => $data['brizy_project_domain'] ?? '',
             'mb_project_uuid' => $data['mb_project_uuid'],
             'result_json' => is_string($data['result_json']) ? $data['result_json'] : json_encode($data['result_json'])
         ]);
+
+        // Сохраняем в новую таблицу migrations
+        $this->saveMigration($data);
+
+        return $oldId;
+    }
+
+    /**
+     * Сохранить или обновить миграцию в новой таблице migrations
+     * 
+     * @param array $data Данные миграции
+     * @return int ID записи
+     * @throws Exception
+     */
+    public function saveMigration(array $data): int
+    {
+        $db = $this->getWriteConnection();
+        
+        // Парсим result_json если он есть
+        $resultJson = $data['result_json'] ?? null;
+        if (is_string($resultJson)) {
+            $resultData = json_decode($resultJson, true) ?: [];
+        } else {
+            $resultData = $resultJson ?: [];
+        }
+
+        // Извлекаем данные из result_json если они там есть
+        $value = $resultData['value'] ?? $resultData;
+        
+        // Определяем статус
+        $status = $data['status'] ?? $value['status'] ?? $resultData['status'] ?? 'pending';
+        if ($status === 'success') {
+            $status = 'completed';
+        }
+
+        // Проверяем существующую запись
+        $mbUuid = $data['mb_project_uuid'] ?? '';
+        $brzId = $data['brz_project_id'] ?? $value['brizy_project_id'] ?? null;
+        $migrationUuid = $data['migration_uuid'] ?? null;
+        $waveId = $data['wave_id'] ?? null;
+
+        $existing = null;
+        // Ищем по комбинации wave_id + mb_project_uuid (для миграций из волны)
+        // или по migration_uuid + mb_project_uuid (для других миграций)
+        if ($mbUuid) {
+            if ($waveId) {
+                // Для миграций из волны ищем по wave_id + mb_project_uuid
+                $existing = $db->find(
+                    'SELECT * FROM migrations WHERE wave_id = ? AND mb_project_uuid = ? ORDER BY created_at DESC LIMIT 1',
+                    [$waveId, $mbUuid]
+                );
+            } elseif ($migrationUuid) {
+                // Для других миграций ищем по migration_uuid + mb_project_uuid
+                $existing = $db->find(
+                    'SELECT * FROM migrations WHERE migration_uuid = ? AND mb_project_uuid = ? ORDER BY created_at DESC LIMIT 1',
+                    [$migrationUuid, $mbUuid]
+                );
+            }
+            
+            // Если не нашли и есть brz_project_id, ищем по mb_project_uuid + brz_project_id
+            if (!$existing && $brzId) {
+                $existing = $db->find(
+                    'SELECT * FROM migrations WHERE mb_project_uuid = ? AND brz_project_id = ? ORDER BY created_at DESC LIMIT 1',
+                    [$mbUuid, $brzId]
+                );
+            }
+        }
+
+        $migrationData = [
+            'mb_project_uuid' => $mbUuid,
+            'brz_project_id' => $brzId ? (int)$brzId : null,
+            'brizy_project_domain' => $data['brizy_project_domain'] ?? $value['brizy_project_domain'] ?? null,
+            'mb_project_domain' => $value['mb_project_domain'] ?? null,
+            'status' => $status,
+            'error' => $data['error'] ?? $value['error'] ?? ($status === 'error' ? 'Миграция завершилась с ошибкой' : null),
+            'mb_site_id' => $data['mb_site_id'] ?? $value['mb_site_id'] ?? null,
+            'mb_page_slug' => $data['mb_page_slug'] ?? null,
+            'mb_product_name' => $data['mb_product_name'] ?? $value['mb_product_name'] ?? null,
+            'theme' => $data['theme'] ?? $value['theme'] ?? null,
+            'migration_id' => $data['migration_id'] ?? $value['migration_id'] ?? null,
+            'migration_date' => $data['date'] ?? $value['date'] ?? date('Y-m-d'),
+            'wave_id' => $data['wave_id'] ?? null,
+            'migration_uuid' => $migrationUuid,
+            'result_json' => is_string($data['result_json']) ? $data['result_json'] : json_encode($data['result_json'] ?? []),
+            'started_at' => $data['started_at'] ?? ($status === 'in_progress' ? date('Y-m-d H:i:s') : null),
+            'completed_at' => $data['completed_at'] ?? (in_array($status, ['completed', 'error']) ? date('Y-m-d H:i:s') : null),
+        ];
+
+        if ($existing) {
+            // Обновляем существующую запись
+            $id = (int)$existing['id'];
+            $updateFields = [];
+            $updateValues = [];
+            
+            foreach ($migrationData as $key => $value) {
+                if ($value !== null) {
+                    $updateFields[] = "{$key} = ?";
+                    $updateValues[] = $value;
+                }
+            }
+            
+            $updateFields[] = "updated_at = NOW()";
+            $updateValues[] = $id; // Добавляем id в конец для WHERE
+            
+            $sql = 'UPDATE migrations SET ' . implode(', ', $updateFields) . ' WHERE id = ?';
+            
+            $reflection = new \ReflectionClass($db);
+            $pdoProperty = $reflection->getProperty('pdo');
+            $pdoProperty->setAccessible(true);
+            $pdo = $pdoProperty->getValue($db);
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($updateValues);
+            
+            return $id;
+        } else {
+            // Создаем новую запись
+            return $db->insert('migrations', $migrationData);
+        }
     }
 
     /**
@@ -450,25 +572,8 @@ class DatabaseService
         ];
         $this->upsertMigrationMapping(0, $waveUuid, $changesJson);
         
-        // Создаем записи в migration_result_list для всех UUID проектов
-        // Это позволяет сразу видеть список миграций в волне
-        foreach ($projectUuids as $mbUuid) {
-            try {
-                $this->saveMigrationResult([
-                    'migration_uuid' => $waveId,
-                    'brz_project_id' => 0, // Пока проект не создан
-                    'brizy_project_domain' => '',
-                    'mb_project_uuid' => $mbUuid,
-                    'result_json' => json_encode([
-                        'status' => 'pending',
-                        'message' => 'Миграция ожидает выполнения'
-                    ])
-                ]);
-            } catch (Exception $e) {
-                // Логируем ошибку, но не прерываем создание волны
-                error_log('Ошибка создания записи в migration_result_list для UUID ' . $mbUuid . ': ' . $e->getMessage());
-            }
-        }
+        // НЕ создаем записи в migration_result_list или migrations при создании волны
+        // Записи будут созданы только когда миграции реально запускаются
         
         return $waveIdDb;
     }
@@ -624,6 +729,12 @@ class DatabaseService
             $stmt = $pdo->prepare($sql);
             $stmt->execute($values);
         } catch (Exception $e) {
+            // КРИТИЧНО: Логируем ошибку при обновлении таблицы waves
+            $logFile = dirname(__DIR__, 3) . '/var/log/wave_dashboard.log';
+            $errorMsg = "[" . date('Y-m-d H:i:s') . "] [ERROR] ❌ ОШИБКА обновления таблицы waves: wave_id={$waveId}, error=" . $e->getMessage() . ", переключение на старый способ\n";
+            @file_put_contents($logFile, $errorMsg, FILE_APPEND);
+            error_log("DatabaseService::updateWaveProgress - Ошибка обновления waves для {$waveId}: " . $e->getMessage());
+            
             // Если таблица waves не существует, используем старый способ
             $waveUuid = "wave_{$waveId}";
             
@@ -664,29 +775,157 @@ class DatabaseService
                 'UPDATE migrations_mapping SET changes_json = ?, updated_at = NOW() WHERE mb_project_uuid = ? AND brz_project_id = 0'
             );
             $stmt->execute([json_encode($changesJson), $waveUuid]);
+        } catch (Exception $fallbackError) {
+            // КРИТИЧНО: Логируем ошибку при обновлении через старый способ
+            $logFile = dirname(__DIR__, 3) . '/var/log/wave_dashboard.log';
+            $errorMsg = "[" . date('Y-m-d H:i:s') . "] [ERROR] ❌❌❌ КРИТИЧЕСКАЯ ОШИБКА в updateWaveProgress (старый способ): wave_id={$waveId}, error=" . $fallbackError->getMessage() . ", trace=" . $fallbackError->getTraceAsString() . "\n";
+            @file_put_contents($logFile, $errorMsg, FILE_APPEND);
+            error_log("DatabaseService::updateWaveProgress - КРИТИЧЕСКАЯ ОШИБКА (старый способ): " . $fallbackError->getMessage());
+            error_log("DatabaseService::updateWaveProgress - Stack trace: " . $fallbackError->getTraceAsString());
+            throw $fallbackError; // Пробрасываем дальше, так как это критическая ошибка
         }
         
-        // Также обновляем миграции в старой структуре для обратной совместимости
+        // КРИТИЧНО: Обновляем статусы миграций в migration_result_list
+        // Это нужно, чтобы getWaveMigrations возвращал актуальные статусы
         if (!empty($migrations)) {
-            $waveUuid = "wave_{$waveId}";
-            $mapping = $db->find(
-                'SELECT * FROM migrations_mapping WHERE mb_project_uuid = ? AND brz_project_id = 0',
-                [$waveUuid]
-            );
+            $logFile = dirname(__DIR__, 3) . '/var/log/wave_dashboard.log';
             
-            if ($mapping) {
-                $changesJson = json_decode($mapping['changes_json'] ?? '{}', true);
-                $changesJson['migrations'] = $migrations;
-                
+            try {
                 $reflection = new \ReflectionClass($db);
                 $pdoProperty = $reflection->getProperty('pdo');
                 $pdoProperty->setAccessible(true);
                 $pdo = $pdoProperty->getValue($db);
                 
-                $stmt = $pdo->prepare(
-                    'UPDATE migrations_mapping SET changes_json = ?, updated_at = NOW() WHERE mb_project_uuid = ? AND brz_project_id = 0'
+                foreach ($migrations as $migration) {
+                    $mbUuid = $migration['mb_project_uuid'] ?? null;
+                    $migrationStatus = $migration['status'] ?? 'pending';
+                    $brzProjectId = $migration['brz_project_id'] ?? 0;
+                    
+                    if (!$mbUuid) {
+                        $errorMsg = "[" . date('Y-m-d H:i:s') . "] [ERROR] ❌ updateWaveProgress: миграция без mb_project_uuid, wave_id={$waveId}\n";
+                        @file_put_contents($logFile, $errorMsg, FILE_APPEND);
+                        continue;
+                    }
+                    
+                    try {
+                        // Обновляем или создаем запись в migration_result_list
+                        // Используем migration_uuid = wave_id для связи с волной
+                        $stmt = $pdo->prepare(
+                            'SELECT id FROM migration_result_list WHERE migration_uuid = ? AND mb_project_uuid = ? LIMIT 1'
+                        );
+                        $stmt->execute([$waveId, $mbUuid]);
+                        $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
+                        
+                        if ($existing) {
+                            // Обновляем существующую запись
+                            // ВАЖНО: В таблице migration_result_list НЕТ колонки status!
+                            // Статус хранится в result_json
+                            $updateFields = [];
+                            
+                            if ($brzProjectId > 0) {
+                                $updateFields['brz_project_id'] = $brzProjectId;
+                            }
+                            
+                            // Обновляем result_json с статусом и ошибкой (если есть)
+                            $resultJsonData = [];
+                            try {
+                                $existingResultJson = $pdo->prepare('SELECT result_json FROM migration_result_list WHERE id = ?');
+                                $existingResultJson->execute([$existing['id']]);
+                                $existingRow = $existingResultJson->fetch(\PDO::FETCH_ASSOC);
+                                if ($existingRow && !empty($existingRow['result_json'])) {
+                                    $resultJsonData = json_decode($existingRow['result_json'], true) ?: [];
+                                }
+                            } catch (Exception $e) {
+                                // Игнорируем ошибку чтения существующего JSON
+                            }
+                            
+                            $resultJsonData['status'] = $migrationStatus;
+                            if (isset($migration['error']) && $migration['error']) {
+                                $resultJsonData['error'] = $migration['error'];
+                            }
+                            
+                            $updateFields['result_json'] = json_encode($resultJsonData);
+                            
+                            $setParts = [];
+                            $values = [];
+                            foreach ($updateFields as $field => $value) {
+                                $setParts[] = "{$field} = ?";
+                                $values[] = $value;
+                            }
+                            $values[] = $existing['id'];
+                            
+                            $sql = 'UPDATE migration_result_list SET ' . implode(', ', $setParts) . ' WHERE id = ?';
+                            $updateStmt = $pdo->prepare($sql);
+                            $updateStmt->execute($values);
+                        } else {
+                            // Создаем новую запись
+                            // ВАЖНО: В таблице migration_result_list НЕТ колонки status!
+                            // Статус хранится в result_json
+                            $insertFields = [
+                                'migration_uuid' => $waveId,
+                                'mb_project_uuid' => $mbUuid,
+                                'brz_project_id' => $brzProjectId,
+                                'brizy_project_domain' => '', // Обязательное поле
+                            ];
+                            
+                            // Статус и ошибка хранятся в result_json
+                            $resultJsonData = ['status' => $migrationStatus];
+                            if (isset($migration['error']) && $migration['error']) {
+                                $resultJsonData['error'] = $migration['error'];
+                            }
+                            $insertFields['result_json'] = json_encode($resultJsonData);
+                            
+                            $fields = implode(', ', array_keys($insertFields));
+                            $placeholders = implode(', ', array_fill(0, count($insertFields), '?'));
+                            $sql = "INSERT INTO migration_result_list ({$fields}) VALUES ({$placeholders})";
+                            $insertStmt = $pdo->prepare($sql);
+                            $insertStmt->execute(array_values($insertFields));
+                        }
+                    } catch (Exception $migrationError) {
+                        // КРИТИЧНО: Логируем ошибку для каждой миграции
+                        $errorMsg = "[" . date('Y-m-d H:i:s') . "] [ERROR] ❌ ОШИБКА обновления migration_result_list: wave_id={$waveId}, mb_uuid={$mbUuid}, error=" . $migrationError->getMessage() . "\n";
+                        @file_put_contents($logFile, $errorMsg, FILE_APPEND);
+                        error_log("DatabaseService::updateWaveProgress - Ошибка обновления migration_result_list для {$mbUuid}: " . $migrationError->getMessage());
+                    }
+                }
+            } catch (Exception $e) {
+                // КРИТИЧНО: Логируем общую ошибку при обновлении migration_result_list
+                $errorMsg = "[" . date('Y-m-d H:i:s') . "] [ERROR] ❌❌❌ КРИТИЧЕСКАЯ ОШИБКА в updateWaveProgress при обновлении migration_result_list: wave_id={$waveId}, error=" . $e->getMessage() . ", trace=" . $e->getTraceAsString() . "\n";
+                @file_put_contents($logFile, $errorMsg, FILE_APPEND);
+                error_log("DatabaseService::updateWaveProgress - КРИТИЧЕСКАЯ ОШИБКА: " . $e->getMessage());
+                error_log("DatabaseService::updateWaveProgress - Stack trace: " . $e->getTraceAsString());
+            }
+        }
+        
+        // Также обновляем миграции в старой структуре для обратной совместимости
+        if (!empty($migrations)) {
+            try {
+                $waveUuid = "wave_{$waveId}";
+                $mapping = $db->find(
+                    'SELECT * FROM migrations_mapping WHERE mb_project_uuid = ? AND brz_project_id = 0',
+                    [$waveUuid]
                 );
-                $stmt->execute([json_encode($changesJson), $waveUuid]);
+                
+                if ($mapping) {
+                    $changesJson = json_decode($mapping['changes_json'] ?? '{}', true);
+                    $changesJson['migrations'] = $migrations;
+                    
+                    $reflection = new \ReflectionClass($db);
+                    $pdoProperty = $reflection->getProperty('pdo');
+                    $pdoProperty->setAccessible(true);
+                    $pdo = $pdoProperty->getValue($db);
+                    
+                    $stmt = $pdo->prepare(
+                        'UPDATE migrations_mapping SET changes_json = ?, updated_at = NOW() WHERE mb_project_uuid = ? AND brz_project_id = 0'
+                    );
+                    $stmt->execute([json_encode($changesJson), $waveUuid]);
+                }
+            } catch (Exception $compatError) {
+                // Логируем ошибку, но не прерываем выполнение (это для обратной совместимости)
+                $logFile = dirname(__DIR__, 3) . '/var/log/wave_dashboard.log';
+                $errorMsg = "[" . date('Y-m-d H:i:s') . "] [ERROR] ⚠️ ОШИБКА обновления migrations_mapping (обратная совместимость): wave_id={$waveId}, error=" . $compatError->getMessage() . "\n";
+                @file_put_contents($logFile, $errorMsg, FILE_APPEND);
+                error_log("DatabaseService::updateWaveProgress - Ошибка обновления migrations_mapping для {$waveId}: " . $compatError->getMessage());
             }
         }
     }
@@ -709,16 +948,43 @@ class DatabaseService
             
             $result = [];
             foreach ($waves as $wave) {
+                $progressTotal = (int)($wave['progress_total'] ?? 0);
+                $progressCompleted = (int)($wave['progress_completed'] ?? 0);
+                $progressFailed = (int)($wave['progress_failed'] ?? 0);
+                $dbStatus = $wave['status'] ?? 'pending';
+                
+                // Пересчитываем статус на основе прогресса, если он не соответствует
+                $calculatedStatus = $dbStatus;
+                if ($progressTotal > 0) {
+                    $totalProcessed = $progressCompleted + $progressFailed;
+                    if ($totalProcessed >= $progressTotal) {
+                        // Все миграции завершены
+                        $calculatedStatus = $progressFailed > 0 ? 'error' : 'completed';
+                    } elseif ($totalProcessed > 0) {
+                        // Есть прогресс, но не все завершено
+                        if ($dbStatus === 'pending') {
+                            $calculatedStatus = 'in_progress';
+                        }
+                    }
+                }
+                
+                // Используем пересчитанный статус, если он отличается от БД и БД статус не завершен
+                // Это позволяет исправить случаи, когда статус в БД не обновился
+                $finalStatus = ($calculatedStatus !== $dbStatus && 
+                               ($dbStatus === 'in_progress' || $dbStatus === 'pending')) 
+                    ? $calculatedStatus 
+                    : $dbStatus;
+                
                 $result[] = [
                     'id' => $wave['wave_id'],
                     'name' => $wave['name'],
                     'workspace_id' => $wave['workspace_id'],
                     'workspace_name' => $wave['workspace_name'] ?? '',
-                    'status' => $wave['status'] ?? 'pending',
+                    'status' => $finalStatus,
                     'progress' => [
-                        'total' => (int)($wave['progress_total'] ?? 0),
-                        'completed' => (int)($wave['progress_completed'] ?? 0),
-                        'failed' => (int)($wave['progress_failed'] ?? 0),
+                        'total' => $progressTotal,
+                        'completed' => $progressCompleted,
+                        'failed' => $progressFailed,
                     ],
                     'created_at' => $wave['created_at'],
                     'updated_at' => $wave['updated_at'],
@@ -740,13 +1006,44 @@ class DatabaseService
                 // Извлекаем wave_id из mb_project_uuid (формат: wave_{waveId})
                 $waveId = str_replace('wave_', '', $mapping['mb_project_uuid']);
                 
+                $progress = $changesJson['progress'] ?? ['total' => 0, 'completed' => 0, 'failed' => 0];
+                $progressTotal = (int)($progress['total'] ?? 0);
+                $progressCompleted = (int)($progress['completed'] ?? 0);
+                $progressFailed = (int)($progress['failed'] ?? 0);
+                $dbStatus = $changesJson['status'] ?? 'pending';
+                
+                // Пересчитываем статус на основе прогресса, если он не соответствует
+                $calculatedStatus = $dbStatus;
+                if ($progressTotal > 0) {
+                    $totalProcessed = $progressCompleted + $progressFailed;
+                    if ($totalProcessed >= $progressTotal) {
+                        // Все миграции завершены
+                        $calculatedStatus = $progressFailed > 0 ? 'error' : 'completed';
+                    } elseif ($totalProcessed > 0) {
+                        // Есть прогресс, но не все завершено
+                        if ($dbStatus === 'pending') {
+                            $calculatedStatus = 'in_progress';
+                        }
+                    }
+                }
+                
+                // Используем пересчитанный статус, если он отличается от БД и БД статус не завершен
+                $finalStatus = ($calculatedStatus !== $dbStatus && 
+                               ($dbStatus === 'in_progress' || $dbStatus === 'pending')) 
+                    ? $calculatedStatus 
+                    : $dbStatus;
+                
                 $waves[] = [
                     'id' => $waveId,
                     'name' => $changesJson['wave_name'] ?? '',
                     'workspace_id' => $changesJson['workspace_id'] ?? null,
                     'workspace_name' => $changesJson['workspace_name'] ?? '',
-                    'status' => $changesJson['status'] ?? 'pending',
-                    'progress' => $changesJson['progress'] ?? ['total' => 0, 'completed' => 0, 'failed' => 0],
+                    'status' => $finalStatus,
+                    'progress' => [
+                        'total' => $progressTotal,
+                        'completed' => $progressCompleted,
+                        'failed' => $progressFailed,
+                    ],
                     'created_at' => $mapping['created_at'],
                     'updated_at' => $mapping['updated_at'],
                     'completed_at' => $changesJson['completed_at'] ?? null,
@@ -809,17 +1106,36 @@ class DatabaseService
             // Получаем данные из migrations_mapping (из кеша)
             $migrationMapping = $migrationsMapping[$brzProjectId] ?? null;
             
-            // Парсим result_json
-            $resultData = json_decode($migrationResult['result_json'] ?? '{}', true);
-            $resultValue = $resultData['value'] ?? $resultData ?? null;
+            // Парсим result_json (с защитой от больших/поврежденных JSON)
+            $resultJson = $migrationResult['result_json'] ?? '{}';
+            $resultData = null;
+            $resultValue = null;
+            if (!empty($resultJson) && is_string($resultJson)) {
+                // Проверяем, не обрезан ли JSON
+                $trimmed = trim($resultJson);
+                if (!empty($trimmed) && (substr($trimmed, -1) === '}' || substr($trimmed, -1) === ']')) {
+                    try {
+                        $resultData = json_decode($trimmed, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $resultValue = $resultData['value'] ?? $resultData ?? null;
+                        }
+                    } catch (Exception $e) {
+                        // Игнорируем ошибки парсинга JSON
+                    }
+                }
+            }
+            if ($resultData === null) {
+                $resultData = [];
+            }
             
             // Объединяем данные из разных источников
             $migrationChanges = $migrationMapping 
                 ? json_decode($migrationMapping['changes_json'] ?? '{}', true) 
                 : [];
 
-            // Определяем статус: приоритет у данных из result, затем из mapping
-            $status = $resultValue['status'] 
+            // Определяем статус: приоритет у данных из result_json (status напрямую), затем из result value, затем из mapping
+            $status = $resultData['status'] 
+                ?? $resultValue['status'] 
                 ?? $migrationChanges['status'] 
                 ?? 'completed';
 

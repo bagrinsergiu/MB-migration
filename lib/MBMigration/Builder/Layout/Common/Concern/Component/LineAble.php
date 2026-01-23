@@ -53,14 +53,15 @@ trait LineAble
                 ]
             );
 
-            $topBorderWidth = (int)$lineStylesD['data']['border-top-width'];
-            $bottomBorderWidth = (int)$lineStylesD['data']['border-bottom-width'];
+            $data = $lineStylesD['data'] ?? [];
+            $topBorderWidth = (int)($data['border-top-width'] ?? 0);
+            $bottomBorderWidth = (int)($data['border-bottom-width'] ?? 0);
 
             $lineStyles = [
-                'color' => ColorConverter::rgba2hex($lineStylesD['data']['border-bottom-color']),
-                'width' => (int)$lineStylesD['data']['width'],
+                'color' => ColorConverter::rgba2hex($data['border-bottom-color'] ?? 'rgba(0,0,0,1)'),
+                'width' => (int)($data['width'] ?? 0),
                 'borderWidth' => max($topBorderWidth, $bottomBorderWidth),
-                'align' => $lineStylesD['data']['text-align'],
+                'align' => $data['text-align'] ?? 'left',
             ];
 
             $brizySection->addLine(

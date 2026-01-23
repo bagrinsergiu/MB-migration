@@ -27,6 +27,7 @@ use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
+use MBMigration\Analysis\PageQualityAnalyzer;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -45,20 +46,51 @@ class PageController
      * @var BrizyAPI
      */
     private $brizyAPI;
-    private LoggerInterface $logger;
-    private string $domain;
-    private QueryBuilder $QueryBuilder;
-    private MBProjectDataCollector $parser;
-    private int $projectID_Brizy;
-    private PageDto $pageDTO;
-    private ArrayManipulator $ArrayManipulator;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+    /**
+     * @var string
+     */
+    private $domain;
+    /**
+     * @var QueryBuilder
+     */
+    private $QueryBuilder;
+    /**
+     * @var MBProjectDataCollector
+     */
+    private $parser;
+    /**
+     * @var int
+     */
+    private $projectID_Brizy;
+    /**
+     * @var PageDto
+     */
+    private $pageDTO;
+    /**
+     * @var ArrayManipulator
+     */
+    private $ArrayManipulator;
+    /**
+     * @var bool
+     */
+    private $qualityAnalysisEnabled;
+    /**
+     * @var string|null
+     */
+    private $designName;
 
     public function __construct(
         MBProjectDataCollector $MBProjectDataCollector,
         BrizyAPI $brizyAPI,
         QueryBuilder $QueryBuilder,
         LoggerInterface $logger,
-        $projectID_Brizy
+        $projectID_Brizy,
+        $designName = null,
+        bool $qualityAnalysis = false
     )
     {
         $this->cache = VariableCache::getInstance();
@@ -70,6 +102,8 @@ class PageController
         $this->projectID_Brizy = $projectID_Brizy;
         $this->logger = $logger;
         $this->parser = $MBProjectDataCollector;
+        $this->qualityAnalysisEnabled = $qualityAnalysis;
+        $this->designName = $designName;
     }
 
     /**     * @throws ElementNotFound
@@ -79,7 +113,7 @@ class PageController
     public function run($preparedSectionOfThePage, $pageMapping): bool
     {
         $itemsID = $this->cache->get('currentPageOnWork');
-        $brizyContainerId = $this->cache->get('container',);
+        $brizyContainerId = $this->cache->get('container');
         $mainCollectionType = $this->cache->get('mainCollectionType');
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
@@ -90,7 +124,15 @@ class PageController
 
         if(!$this->ArrayManipulator->compareArrays($fontsFromProject))
         {
-            Logger::instance()->error('There is a difference in fonts -> saved: ['.json_encode($previousFonts).'], project: ['.json_encode($fontsFromProject).']');
+            // Extract detailed differences for better debugging
+            $differences = $this->analyzeFontDifferences($previousFonts, $fontsFromProject);
+            Logger::instance()->error('There is a difference in fonts', [
+                'differences' => $differences,
+                'saved_fonts_summary' => $this->getFontsSummary($previousFonts),
+                'project_fonts_summary' => $this->getFontsSummary($fontsFromProject),
+                'saved_full' => $previousFonts,
+                'project_full' => $fontsFromProject
+            ]);
         } else {
             Logger::instance()->info('Project fonts and migration fonts without damage');
         }
@@ -203,6 +245,27 @@ class PageController
             Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
             Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
             $this->cache->update('Success', '++', 'Status');
+
+            // После сборки каждой страницы очищаем скомпилированный кеш проекта Brizy,
+            // чтобы новая версия HTML была доступна для просмотра и анализа
+            try {
+                Logger::instance()->info('[Migration] Clearing compiled cache for project after page build', [
+                    'project_id_brizy' => $this->projectID_Brizy,
+                    'slug' => $slug,
+                    'item_id' => $itemsID,
+                ]);
+                $this->brizyAPI->clearCompileds($this->projectID_Brizy);
+            } catch (\Exception $clearEx) {
+                Logger::instance()->error('[Migration] Failed to clear compiled cache after page build', [
+                    'project_id_brizy' => $this->projectID_Brizy,
+                    'slug' => $slug,
+                    'item_id' => $itemsID,
+                    'error' => $clearEx->getMessage(),
+                ]);
+            }
+
+            // Запускаем анализ качества миграции (после того как кеш был сброшен)
+            $this->runQualityAnalysis($slug);
 
             return true;
 
@@ -699,5 +762,221 @@ class PageController
         $fontController->upLoadCustomFonts($RootListFontFamilyExtractor);
     }
 
+    /**
+     * Запустить анализ качества миграции страницы
+     * 
+     * @param string $pageSlug Slug страницы
+     * @return void
+     */
+    private function runQualityAnalysis(string $pageSlug): void
+    {
+        try {
+            // BREAKPOINT 1: Проверка включения анализа
+            $cacheData = $this->cache->getCache();
+            Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 1: Checking if quality analysis should run =====", [
+                'page_slug' => $pageSlug,
+                'quality_analysis_enabled_param' => $this->qualityAnalysisEnabled,
+                'env_quality_analysis_enabled' => $_ENV['QUALITY_ANALYSIS_ENABLED'] ?? 'not_set',
+                'cache_keys_sample' => array_slice(array_keys($cacheData), 0, 10)
+            ]);
+            
+            // Проверяем, включен ли анализ через параметр запроса или переменную окружения
+            if (!$this->qualityAnalysisEnabled) {
+                // Если параметр не передан или false, проверяем переменную окружения
+                $analysisEnabled = $_ENV['QUALITY_ANALYSIS_ENABLED'] ?? false;
+                Logger::instance()->debug("[Quality Analysis] Parameter disabled, checking env variable", [
+                    'env_value' => $analysisEnabled,
+                    'page_slug' => $pageSlug
+                ]);
+                if (!$analysisEnabled) {
+                    Logger::instance()->info("[Quality Analysis] Analysis disabled, skipping", [
+                        'page_slug' => $pageSlug,
+                        'reason' => 'Both parameter and env variable are false/not set'
+                    ]);
+                    return;
+                }
+            }
+
+            // BREAKPOINT 2: Получение данных из кэша
+            $sourceUrl = $this->cache->get('CurrentPageURL');
+            $brizyProjectDomain = $this->cache->get('brizyProjectDomain');
+            $mbProjectUuid = $this->cache->get('mb_project_uuid') ?? $this->cache->get('projectId_MB');
+            
+            $cacheData = $this->cache->getCache();
+            Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 2: Retrieved data from cache =====", [
+                'source_url' => $sourceUrl,
+                'brizy_project_domain' => $brizyProjectDomain,
+                'mb_project_uuid' => $mbProjectUuid,
+                'brizy_project_id' => $this->projectID_Brizy,
+                'page_slug' => $pageSlug,
+                'has_source_url' => !empty($sourceUrl),
+                'has_brizy_domain' => !empty($brizyProjectDomain),
+                'has_mb_uuid' => !empty($mbProjectUuid),
+                'cache_keys_sample' => array_slice(array_keys($cacheData), 0, 10)
+            ]);
+
+            if (empty($sourceUrl) || empty($brizyProjectDomain)) {
+                $cacheData = $this->cache->getCache();
+                Logger::instance()->warning("[Quality Analysis] ===== BREAKPOINT 2 FAILED: Missing required URLs =====", [
+                    'source_url' => $sourceUrl,
+                    'brizy_domain' => $brizyProjectDomain,
+                    'page_slug' => $pageSlug,
+                    'available_cache_keys_sample' => array_slice(array_keys($cacheData), 0, 20)
+                ]);
+                return;
+            }
+
+            // BREAKPOINT 3: Формирование URL мигрированной страницы
+            $migratedUrl = rtrim($brizyProjectDomain, '/') . '/' . ltrim($pageSlug, '/');
+            
+            // Получаем designName из кэша или используем сохраненное значение
+            $designName = $this->designName;
+            if (empty($designName)) {
+                $settings = $this->cache->get('settings');
+                $designName = $settings['design'] ?? 'default';
+            }
+            
+            Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 3: URLs prepared, ready to start analysis =====", [
+                'page_slug' => $pageSlug,
+                'source_url' => $sourceUrl,
+                'migrated_url' => $migratedUrl,
+                'mb_project_uuid' => $mbProjectUuid,
+                'brizy_project_id' => $this->projectID_Brizy,
+                'brizy_project_domain' => $brizyProjectDomain,
+                'design_name' => $designName
+            ]);
+
+            // Запускаем анализ
+            $analyzer = new PageQualityAnalyzer($this->qualityAnalysisEnabled);
+            $reportId = $analyzer->analyzePage(
+                $sourceUrl,
+                $migratedUrl,
+                $pageSlug,
+                (string)$mbProjectUuid,
+                $this->projectID_Brizy,
+                $designName
+            );
+            
+            // BREAKPOINT 4: Результат анализа
+            Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 4: Analysis completed =====", [
+                'page_slug' => $pageSlug,
+                'report_id' => $reportId,
+                'has_report_id' => !empty($reportId)
+            ]);
+
+        } catch (\Exception $e) {
+            // Не прерываем процесс миграции из-за ошибки анализа
+            Logger::instance()->error("[Quality Analysis] ===== BREAKPOINT ERROR: Quality analysis failed (non-blocking) =====", [
+                'page_slug' => $pageSlug,
+                'error_message' => $e->getMessage(),
+                'error_code' => $e->getCode(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
+
+    /**
+     * Analyze differences between saved and project fonts
+     * 
+     * @param array $savedFonts
+     * @param array $projectFonts
+     * @return array
+     */
+    private function analyzeFontDifferences(array $savedFonts, array $projectFonts): array
+    {
+        $differences = [
+            'deleted_families' => [],
+            'added_families' => [],
+            'changed_identifiers' => [],
+            'sections_compared' => ['config', 'upload', 'google', 'blocks']
+        ];
+
+        // Compare each font section
+        foreach (['config', 'upload', 'google', 'blocks'] as $section) {
+            $savedData = $savedFonts[$section]['data'] ?? [];
+            $projectData = $projectFonts[$section]['data'] ?? [];
+
+            $savedFamilies = $this->extractFontFamiliesFromSection($savedData);
+            $projectFamilies = $this->extractFontFamiliesFromSection($projectData);
+
+            // Find deleted families
+            foreach ($savedFamilies as $family => $identifier) {
+                if (!isset($projectFamilies[$family])) {
+                    $differences['deleted_families'][] = [
+                        'section' => $section,
+                        'family' => $family,
+                        'identifier' => $identifier
+                    ];
+                } elseif ($projectFamilies[$family] !== $identifier) {
+                    $differences['changed_identifiers'][] = [
+                        'section' => $section,
+                        'family' => $family,
+                        'old_identifier' => $identifier,
+                        'new_identifier' => $projectFamilies[$family]
+                    ];
+                }
+            }
+
+            // Find added families
+            foreach ($projectFamilies as $family => $identifier) {
+                if (!isset($savedFamilies[$family])) {
+                    $differences['added_families'][] = [
+                        'section' => $section,
+                        'family' => $family,
+                        'identifier' => $identifier
+                    ];
+                }
+            }
+        }
+
+        return $differences;
+    }
+
+    /**
+     * Extract font families from a section's data array
+     * 
+     * @param array $data
+     * @return array
+     */
+    private function extractFontFamiliesFromSection(array $data): array
+    {
+        $families = [];
+        foreach ($data as $item) {
+            if (is_array($item) && isset($item['family'])) {
+                $identifier = $item['id'] ?? $item['uuid'] ?? $item['brizyId'] ?? null;
+                if ($identifier !== null) {
+                    $families[$item['family']] = $identifier;
+                }
+            }
+        }
+        return $families;
+    }
+
+    /**
+     * Get summary of fonts structure
+     * 
+     * @param array $fonts
+     * @return array
+     */
+    private function getFontsSummary(array $fonts): array
+    {
+        $summary = [];
+        foreach (['config', 'upload', 'google', 'blocks'] as $section) {
+            $data = $fonts[$section]['data'] ?? [];
+            $families = [];
+            foreach ($data as $item) {
+                if (is_array($item) && isset($item['family'])) {
+                    $families[] = $item['family'];
+                }
+            }
+            $summary[$section] = [
+                'count' => count($families),
+                'families' => $families
+            ];
+        }
+        return $summary;
+    }
 
 }
