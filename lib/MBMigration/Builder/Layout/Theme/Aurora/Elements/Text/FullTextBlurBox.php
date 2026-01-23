@@ -25,7 +25,7 @@ class FullTextBlurBox extends FullTextElement
         // Возвращаем внутренний Column (0,0,0,0,0) - Column внутри Row внутри внешнего Column
         // Структура: SectionItem(0) -> Row(0,0) -> Column(0,0,0) -> Row(0,0,0,0) -> Column(0,0,0,0,0)
         $innerColumn = $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
-        
+
         // Если внутренний Column не найден, пытаемся получить его через альтернативный путь
         if (!$innerColumn) {
             // Попробуем получить через внешний Column -> Row -> Column
@@ -37,7 +37,7 @@ class FullTextBlurBox extends FullTextElement
                 }
             }
         }
-        
+
         return $innerColumn ?: $brizySection->getItemWithDepth(0, 0, 0);
     }
 
@@ -45,7 +45,7 @@ class FullTextBlurBox extends FullTextElement
         // Возвращаем внутренний Column (0,0,0,0,0) - Column внутри Row внутри внешнего Column
         // Структура: SectionItem(0) -> Row(0,0) -> Column(0,0,0) -> Row(0,0,0,0) -> Column(0,0,0,0,0)
         $innerColumn = $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
-        
+
         // Если внутренний Column не найден, пытаемся получить его через альтернативный путь
         if (!$innerColumn) {
             // Попробуем получить через внешний Column -> Row -> Column
@@ -57,7 +57,7 @@ class FullTextBlurBox extends FullTextElement
                 }
             }
         }
-        
+
         return $innerColumn ?: $brizySection->getItemWithDepth(0, 0, 0);
     }
 
@@ -131,7 +131,7 @@ class FullTextBlurBox extends FullTextElement
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         if (!empty($styles['data']['bg-gradient'])) {
             $this->handleSectionGradient($sectionItemComponent, $styles['data']);
-            
+
             // Добавляем параметры для градиента на SectionItem
             $sectionItemValue = $sectionItemComponent->getValue();
             $sectionItemValue->set('gradientActivePointer', 'finishPointer');
@@ -252,7 +252,39 @@ class FullTextBlurBox extends FullTextElement
 
     /**
      * Обработка стилей для blur-box элемента
-     * Извлекает все стили с исходной страницы и применяет их к нужным компонентам
+     * Извлекает все стили с исходной страницы, нормализует их в BlurBoxStyles и применяет к нужным компонентам
+     *
+     * @param ElementContextInterface $data Контекст элемента с данными секции
+     * @param BrizyComponent $brizySection Компонент Brizy секции
+     * @param string $selectId ID секции для селектора
+     *
+     * Структура BlurBoxStyles:
+     * [
+     *   'background' => [
+     *     'imageUrl' => string,
+     *     'imageFileName' => string,
+     *     'size' => string,
+     *     'height' => int,
+     *     'padding' => ['type' => string, 'top' => int, 'right' => int, 'bottom' => int, 'left' => int, 'suffix' => string],
+     *     'tabletPadding' => [...],
+     *     'mobilePadding' => [...],
+     *     'mobileMargin' => [...]
+     *   ],
+     *   'overlay' => [
+     *     'bgColorHex' => string,
+     *     'bgColorOpacity' => float,
+     *     'borderStyle' => string,
+     *     'borderColorHex' => string,
+     *     'borderWidth' => int,
+     *     'borderTopWidth' => int,
+     *     'borderRightWidth' => int,
+     *     'borderBottomWidth' => int,
+     *     'borderLeftWidth' => int,
+     *     'padding' => [...],
+     *     'margin' => [...],
+     *     'mobileMargin' => [...]
+     *   ]
+     * ]
      */
     protected function handleBlurBoxStyles(ElementContextInterface $data, BrizyComponent $brizySection, $selectId): void
     {
@@ -265,25 +297,68 @@ class FullTextBlurBox extends FullTextElement
         }
 
         $mbSectionItem = $data->getMbSection();
-        
-        // Получаем внешний Column (0,0,0) - первый Column в первой Row в SectionItem
+
+        // Получаем компоненты
         $outerColumn = $brizySection->getItemWithDepth(0, 0, 0);
-        
-        // Получаем внутренний Column (0,0,0,0,0)
         $innerColumn = $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
-        
-        // Получаем SectionItem
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
-        
-        // 1. Извлекаем фоновое изображение из секции data-id="942277" (исходная секция)
-        // Фон берется с секции, а не с body
+
+        // Собираем и нормализуем все стили blur-box в единый массив BlurBoxStyles
+        $blurBoxStyles = $this->collectBlurBoxStyles($data, $mbSectionItem);
+
+        // Применяем стили к outerColumn (фон секции)
+        if ($outerColumn && !empty($blurBoxStyles['background']['imageUrl'])) {
+            $this->applyBackgroundStyles($outerColumn, $blurBoxStyles['background']);
+        }
+
+        // Очищаем фоновое изображение с SectionItem
+        if ($sectionItemComponent) {
+            $this->clearSectionItemBackground($sectionItemComponent);
+        }
+
+        // Применяем стили к innerColumn (overlay с текстом)
+        if ($innerColumn) {
+            $this->applyOverlayStyles($innerColumn, $blurBoxStyles['overlay']);
+        }
+    }
+
+    /**
+     * Собирает и нормализует все стили blur-box из DOM и настроек секции
+     *
+     * @param ElementContextInterface $data Контекст элемента
+     * @param array $mbSectionItem Данные секции из MB
+     * @return array Нормализованный массив BlurBoxStyles
+     */
+    protected function collectBlurBoxStyles(ElementContextInterface $data, array $mbSectionItem): array
+    {
+        $originalSectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
+
+        // Собираем стили фона (background)
+        $backgroundStyles = $this->collectBackgroundStyles($data, $mbSectionItem, $originalSectionId);
+
+        // Собираем стили overlay (внутренний контейнер .group)
+        $overlayStyles = $this->collectOverlayStyles($data, $originalSectionId);
+
+        return [
+            'background' => $backgroundStyles,
+            'overlay' => $overlayStyles
+        ];
+    }
+
+    /**
+     * Собирает стили фона для outerColumn
+     * 
+     * @param ElementContextInterface $data Контекст элемента
+     * @param array $mbSectionItem Данные секции
+     * @param string $originalSectionId ID исходной секции
+     * @return array Нормализованные стили фона
+     */
+    protected function collectBackgroundStyles(ElementContextInterface $data, array $mbSectionItem, string $originalSectionId): array
+    {
         $imageUrl = '';
         $imageFileName = '';
         
-        // Используем исходный sectionId для получения фонового изображения
-        $originalSectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
-        
-        // Получаем фоновое изображение из настроек секции
+        // 1. Пытаемся получить из настроек секции
         if (isset($mbSectionItem['settings']['sections']['background']['photo']) && !empty($mbSectionItem['settings']['sections']['background']['photo'])) {
             $background = $mbSectionItem['settings']['sections']['background'];
             $rawImageUrl = $background['photo'];
@@ -297,7 +372,7 @@ class FullTextBlurBox extends FullTextElement
             }
         }
         
-        // Если нет в настройках, пытаемся получить из DOM секции
+        // 2. Если нет в настройках, пытаемся получить из DOM секции
         if (empty($imageUrl)) {
             $sectionBgSelector = '[data-id="' . $originalSectionId . '"]';
             $sectionBgStyles = $this->getDomElementStyles(
@@ -319,7 +394,7 @@ class FullTextBlurBox extends FullTextElement
             }
         }
         
-        // Если все еще нет, проверяем .blur-box .has-background
+        // 3. Если все еще нет, проверяем .blur-box .has-background
         if (empty($imageUrl)) {
             $blurBoxBgSelector = '[data-id="' . $originalSectionId . '"] .blur-box .has-background';
             $blurBoxBgStyles = $this->getDomElementStyles(
@@ -341,303 +416,536 @@ class FullTextBlurBox extends FullTextElement
             }
         }
         
-        // 2. Устанавливаем фоновое изображение на внешний Column
-        if ($outerColumn && !empty($imageUrl)) {
-            $outerValue = $outerColumn->getValue();
-            
-            // Основные параметры изображения
-            $outerValue->set_bgImageSrc($imageUrl)
-                ->set_bgImageFileName($imageFileName)
-                ->set_bgImageType('internal')
-                ->set_bgSize('cover')
-                ->set_bgColorType('none')
-                ->set_bgColorOpacity(0)
-                ->set_heightStyle('custom')
-                ->set_height(600)
-                ->set_heightSuffix('px')
-                ->set_verticalAlign('center')
-                ->set_width(100);
-            
-            // Padding - извлекаем из секции или используем значения по умолчанию
-            $outerValue->set_paddingType('ungrouped')
-                ->set_padding(80)
-                ->set_paddingSuffix('px')
-                ->set_paddingTop(0)
-                ->set_paddingTopSuffix('px')
-                ->set_paddingRight(80)
-                ->set_paddingRightSuffix('px')
-                ->set_paddingBottom(0)
-                ->set_paddingBottomSuffix('px')
-                ->set_paddingLeft(80)
-                ->set_paddingLeftSuffix('px');
-            
-            // Tablet padding
-            $outerValue->set_tabletPaddingType('grouped')
-                ->set_tabletPadding(25)
-                ->set_tabletPaddingSuffix('px')
-                ->set_tabletPaddingTop(25)
-                ->set_tabletPaddingTopSuffix('px')
-                ->set_tabletPaddingRight(25)
-                ->set_tabletPaddingRightSuffix('px')
-                ->set_tabletPaddingBottom(25)
-                ->set_tabletPaddingBottomSuffix('px')
-                ->set_tabletPaddingLeft(25)
-                ->set_tabletPaddingLeftSuffix('px');
-            
-            // Mobile padding
-            $outerValue->set_mobilePaddingType('grouped')
-                ->set_mobilePadding(35)
-                ->set_mobilePaddingSuffix('px')
-                ->set_mobilePaddingTop(35)
-                ->set_mobilePaddingTopSuffix('px')
-                ->set_mobilePaddingRight(35)
-                ->set_mobilePaddingRightSuffix('px')
-                ->set_mobilePaddingBottom(35)
-                ->set_mobilePaddingBottomSuffix('px')
-                ->set_mobilePaddingLeft(35)
-                ->set_mobilePaddingLeftSuffix('px');
-            
-            // Mobile margin
-            $outerValue->set_mobileMarginType('ungrouped')
-                ->set_mobileMargin(10)
-                ->set_mobileMarginSuffix('px')
-                ->set_mobileMarginTop(0)
-                ->set_mobileMarginTopSuffix('px')
-                ->set_mobileMarginRight(0)
-                ->set_mobileMarginRightSuffix('px')
-                ->set_mobileMarginBottom(0)
-                ->set_mobileMarginBottomSuffix('px')
-                ->set_mobileMarginLeft(0)
-                ->set_mobileMarginLeftSuffix('px');
-            
-            // Дополнительные параметры для внешнего Column
-            $outerValue->set('bgImageExtension', 'jpg')
-                ->set('bgImageWidth', 394)
-                ->set('bgImageHeight', 394)
-                ->set('gradientColorHex', '#009900')
-                ->set('gradientColorOpacity', 1)
-                ->set('gradientColorPalette', '')
-                ->set('gradientType', 'linear')
-                ->set('gradientStartPointer', 0)
-                ->set('gradientFinishPointer', 100)
-                ->set('gradientActivePointer', 'startPointer')
-                ->set('gradientLinearDegree', 90)
-                ->set('gradientRadialDegree', 90)
-                ->set('tabsState', 'normal');
-        }
+        // 4. Получаем padding из .content-wrapper (родитель .group)
+        $contentWrapperSelector = '[data-id="' . $originalSectionId . '"] .content-wrapper';
+        $contentWrapperStyles = $this->getDomElementStyles(
+            $contentWrapperSelector,
+            ['padding-top', 'padding-right', 'padding-bottom', 'padding-left'],
+            $this->browserPage,
+            $data->getFontFamilies(),
+            $data->getDefaultFontFamily()
+        );
         
-        // 3. Очищаем фоновое изображение с SectionItem и удаляем его из customCSS
-        if ($sectionItemComponent) {
-            $sectionItemComponent->getValue()
-                ->set_bgImageSrc('')
-                ->set_bgImageFileName('')
-                ->set_bgImageType('none');
-            
-            // Полностью очищаем customCSS от фонового изображения
-            $customCSS = $sectionItemComponent->getValue()->get_customCSS() ?? '';
-            if (!empty($customCSS)) {
-                // Удаляем строки с background-image
-                $customCSS = preg_replace('/[^\n]*background-image[^\n]*\n?/', '', $customCSS);
-                // Удаляем блоки с .brz-bg:not(:has(.brz-bg-image))
-                $customCSS = preg_replace('/\.brz-section__item\s*>\s*\.brz-bg:not\(:has\(\.brz-bg-image\)\)\s*\{[^}]*\}/s', '', $customCSS);
-                // Удаляем пустые строки и лишние пробелы
-                $customCSS = preg_replace('/\n\s*\n/', "\n", $customCSS);
-                $customCSS = trim($customCSS);
-                $sectionItemComponent->getValue()->set_customCSS($customCSS);
+        // Нормализуем padding из .content-wrapper или используем значения по умолчанию
+        $paddingTop = !empty($contentWrapperStyles['padding-top'])
+            ? (int)NumberProcessor::convertToInt($contentWrapperStyles['padding-top'])
+            : 95;
+        $paddingRight = !empty($contentWrapperStyles['padding-right'])
+            ? (int)NumberProcessor::convertToInt($contentWrapperStyles['padding-right'])
+            : 115;
+        $paddingBottom = !empty($contentWrapperStyles['padding-bottom'])
+            ? (int)NumberProcessor::convertToInt($contentWrapperStyles['padding-bottom'])
+            : 95;
+        $paddingLeft = !empty($contentWrapperStyles['padding-left'])
+            ? (int)NumberProcessor::convertToInt($contentWrapperStyles['padding-left'])
+            : 115;
+        
+        return [
+            'imageUrl' => $imageUrl,
+            'imageFileName' => $imageFileName,
+            'size' => 'cover',
+            'height' => 600,
+            'heightSuffix' => 'px',
+            'padding' => [
+                'type' => 'ungrouped',
+                'top' => $paddingTop,
+                'right' => $paddingRight,
+                'bottom' => $paddingBottom,
+                'left' => $paddingLeft,
+                'suffix' => 'px'
+            ],
+            'tabletPadding' => [
+                'type' => 'grouped',
+                'top' => 25,
+                'right' => 25,
+                'bottom' => 25,
+                'left' => 25,
+                'suffix' => 'px'
+            ],
+            'mobilePadding' => [
+                'type' => 'grouped',
+                'top' => 35,
+                'right' => 35,
+                'bottom' => 35,
+                'left' => 35,
+                'suffix' => 'px'
+            ],
+            'mobileMargin' => [
+                'type' => 'ungrouped',
+                'top' => 0,
+                'right' => 0,
+                'bottom' => 0,
+                'left' => 0,
+                'suffix' => 'px'
+            ]
+        ];
+    }
+
+    /**
+     * Собирает стили overlay для innerColumn
+     * Проверяет псевдоэлемент ::before у .blur-box, .bg-opacity, .group и другие элементы для определения стилей overlay
+     * 
+     * @param ElementContextInterface $data Контекст элемента
+     * @param string $originalSectionId ID исходной секции
+     * @return array Нормализованные стили overlay
+     */
+    protected function collectOverlayStyles(ElementContextInterface $data, string $originalSectionId): array
+    {
+        // 1. Сначала проверяем псевдоэлемент ::before у .blur-box (основной источник overlay)
+        $blurBoxSelector = '[data-id="' . $originalSectionId . '"] .blur-box';
+        $blurBoxBeforeStyles = $this->getDomElementStyles(
+            $blurBoxSelector,
+            [
+                'background-color',
+                'opacity',
+                'border-color',
+                'border-width',
+                'border-top-width',
+                'border-right-width',
+                'border-bottom-width',
+                'border-left-width',
+                'border-style'
+            ],
+            $this->browserPage,
+            $data->getFontFamilies(),
+            $data->getDefaultFontFamily(),
+            '::before'
+        );
+
+        // 2. Пытаемся получить стили из .bg-opacity (альтернативный источник)
+        $bgOpacitySelector = '[data-id="' . $originalSectionId . '"] .bg-opacity';
+        $bgOpacityStyles = $this->getDomElementStyles(
+            $bgOpacitySelector,
+            [
+                'background-color',
+                'opacity'
+            ],
+            $this->browserPage,
+            $data->getFontFamilies(),
+            $data->getDefaultFontFamily()
+        );
+
+        // 3. Проверяем .group для padding/margin и border
+        $textContainerSelector = '[data-id="' . $originalSectionId . '"] .group';
+        $textContainerStyles = $this->getDomElementStyles(
+            $textContainerSelector,
+            [
+                'background-color',
+                'opacity',
+                'padding-top',
+                'padding-right',
+                'padding-bottom',
+                'padding-left',
+                'margin-top',
+                'margin-right',
+                'margin-bottom',
+                'margin-left',
+                'border-color',
+                'border-width',
+                'border-top-width',
+                'border-right-width',
+                'border-bottom-width',
+                'border-left-width',
+                'border-style'
+            ],
+            $this->browserPage,
+            $data->getFontFamilies(),
+            $data->getDefaultFontFamily()
+        );
+
+        // Нормализуем background-color и opacity
+        // Приоритет: ::before у .blur-box > .bg-opacity > .group
+        $bgColor = '#000000';
+        $opacity = 0.45;
+        
+        if (!empty($blurBoxBeforeStyles['background-color']) && $blurBoxBeforeStyles['background-color'] !== 'rgba(0, 0, 0, 0)') {
+            // Используем стили из ::before псевдоэлемента
+            $bgColor = ColorConverter::rgba2hex($blurBoxBeforeStyles['background-color']);
+            if (!empty($blurBoxBeforeStyles['opacity']) && (float)$blurBoxBeforeStyles['opacity'] > 0) {
+                $opacity = (float)$blurBoxBeforeStyles['opacity'];
+            } else {
+                $opacity = ColorConverter::rgba2opacity($blurBoxBeforeStyles['background-color']);
             }
-        }
-
-        // 4. Извлекаем и устанавливаем стили для внутреннего Column из .group элемента
-        if ($innerColumn) {
-            // Используем исходный sectionId для получения стилей
-            $textContainerSelector = '[data-id="' . $originalSectionId . '"] .group';
-            $textContainerStyles = $this->getDomElementStyles(
-                $textContainerSelector,
-                [
-                    'background-color', 
-                    'opacity', 
-                    'padding-top', 
-                    'padding-right', 
-                    'padding-bottom', 
-                    'padding-left',
-                    'margin-top',
-                    'margin-right', 
-                    'margin-bottom', 
-                    'margin-left',
-                    'border-color', 
-                    'border-width',
-                    'border-top-width',
-                    'border-right-width',
-                    'border-bottom-width',
-                    'border-left-width',
-                    'border-style'
-                ],
-                $this->browserPage,
-                $data->getFontFamilies(),
-                $data->getDefaultFontFamily()
-            );
-
-            $bgColor = !empty($textContainerStyles['background-color']) 
-                ? ColorConverter::rgba2hex($textContainerStyles['background-color'])
-                : '#000000';
-            
-            $opacity = !empty($textContainerStyles['opacity']) 
-                ? (float)$textContainerStyles['opacity'] 
-                : 0.45;
-            
-            if ($opacity >= 1.0 && !empty($textContainerStyles['background-color'])) {
+        } elseif (!empty($bgOpacityStyles['background-color']) && $bgOpacityStyles['background-color'] !== 'rgba(0, 0, 0, 0)') {
+            $bgColor = ColorConverter::rgba2hex($bgOpacityStyles['background-color']);
+            if (!empty($bgOpacityStyles['opacity']) && (float)$bgOpacityStyles['opacity'] > 0) {
+                $opacity = (float)$bgOpacityStyles['opacity'];
+            } else {
+                $opacity = ColorConverter::rgba2opacity($bgOpacityStyles['background-color']);
+            }
+        } elseif (!empty($textContainerStyles['background-color']) && $textContainerStyles['background-color'] !== 'rgba(0, 0, 0, 0)') {
+            $bgColor = ColorConverter::rgba2hex($textContainerStyles['background-color']);
+            if (!empty($textContainerStyles['opacity'])) {
+                $opacity = (float)$textContainerStyles['opacity'];
+            } else {
                 $opacity = ColorConverter::rgba2opacity($textContainerStyles['background-color']);
             }
-            
-            if ($opacity >= 1.0) {
-                $opacity = 0.45;
-            }
-            
-            // Извлекаем padding из отдельных свойств
-            $paddingTop = !empty($textContainerStyles['padding-top']) 
-                ? (int)str_replace('px', '', $textContainerStyles['padding-top']) 
-                : 60;
-            $paddingRight = !empty($textContainerStyles['padding-right']) 
-                ? (int)str_replace('px', '', $textContainerStyles['padding-right']) 
-                : 60;
-            $paddingBottom = !empty($textContainerStyles['padding-bottom']) 
-                ? (int)str_replace('px', '', $textContainerStyles['padding-bottom']) 
-                : 60;
-            $paddingLeft = !empty($textContainerStyles['padding-left']) 
-                ? (int)str_replace('px', '', $textContainerStyles['padding-left']) 
-                : 60;
-            
-            // Извлекаем margin из отдельных свойств
-            $marginTop = !empty($textContainerStyles['margin-top']) 
-                ? (int)str_replace('px', '', $textContainerStyles['margin-top']) 
-                : 0;
-            $marginRight = !empty($textContainerStyles['margin-right']) 
-                ? (int)str_replace('px', '', $textContainerStyles['margin-right']) 
-                : 60;
-            $marginBottom = !empty($textContainerStyles['margin-bottom']) 
-                ? (int)str_replace('px', '', $textContainerStyles['margin-bottom']) 
-                : 0;
-            $marginLeft = !empty($textContainerStyles['margin-left']) 
-                ? (int)str_replace('px', '', $textContainerStyles['margin-left']) 
-                : 60;
-            
-            // Извлекаем border
-            $borderColor = !empty($textContainerStyles['border-color']) 
-                ? ColorConverter::rgba2hex($textContainerStyles['border-color'])
-                : '#fcfcfc';
-            
-            $borderStyle = !empty($textContainerStyles['border-style']) && $textContainerStyles['border-style'] !== 'none'
-                ? $textContainerStyles['border-style']
-                : 'solid';
-            
-            // Извлекаем border-width из отдельных свойств или общего
-            $borderWidth = 1;
-            if (!empty($textContainerStyles['border-top-width'])) {
-                $borderWidth = (int)str_replace('px', '', $textContainerStyles['border-top-width']);
-            } elseif (!empty($textContainerStyles['border-width'])) {
-                $borderWidth = (int)str_replace('px', '', $textContainerStyles['border-width']);
-            }
-            
-            // Извлекаем отдельные border-width если есть
-            $borderTopWidth = !empty($textContainerStyles['border-top-width']) 
-                ? (int)str_replace('px', '', $textContainerStyles['border-top-width']) 
-                : $borderWidth;
-            $borderRightWidth = !empty($textContainerStyles['border-right-width']) 
-                ? (int)str_replace('px', '', $textContainerStyles['border-right-width']) 
-                : $borderWidth;
-            $borderBottomWidth = !empty($textContainerStyles['border-bottom-width']) 
-                ? (int)str_replace('px', '', $textContainerStyles['border-bottom-width']) 
-                : $borderWidth;
-            $borderLeftWidth = !empty($textContainerStyles['border-left-width']) 
-                ? (int)str_replace('px', '', $textContainerStyles['border-left-width']) 
-                : $borderWidth;
-            
-            $innerValue = $innerColumn->getValue();
-            
-            // Основные параметры внутреннего Column
-            $innerValue->set_width(100)
-                ->set_verticalAlign('between')
-                ->set_bgColorType('solid')
-                ->set_bgColorHex($bgColor)
-                ->set_bgColorOpacity($opacity)
-                ->set_mobileBgColorType('solid')
-                ->set_mobileBgColorHex($bgColor)
-                ->set_mobileBgColorOpacity($opacity)
-                ->set_borderStyle($borderStyle)
-                ->set_borderColorHex($borderColor)
-                ->set_borderColorOpacity(1)
-                ->set_borderWidthType('grouped')
-                ->set_borderWidth($borderWidth);
-            
-            // Padding
-            $innerValue->set_paddingType('ungrouped')
-                ->set_padding(15)
-                ->set_paddingSuffix('px')
-                ->set_paddingTop($paddingTop)
-                ->set_paddingTopSuffix('px')
-                ->set_paddingRight($paddingRight)
-                ->set_paddingRightSuffix('px')
-                ->set_paddingBottom($paddingBottom)
-                ->set_paddingBottomSuffix('px')
-                ->set_paddingLeft($paddingLeft)
-                ->set_paddingLeftSuffix('px');
-            
-            // Margin
-            $innerValue->set_marginType('ungrouped')
-                ->set_margin(0)
-                ->set_marginSuffix('px')
-                ->set_marginTop($marginTop)
-                ->set_marginTopSuffix('px')
-                ->set_marginRight($marginRight)
-                ->set_marginRightSuffix('px')
-                ->set_marginBottom($marginBottom)
-                ->set_marginBottomSuffix('px')
-                ->set_marginLeft($marginLeft)
-                ->set_marginLeftSuffix('px');
-            
-            // Border
-            $innerValue->set_borderTopWidth($borderTopWidth)
-                ->set_borderRightWidth($borderRightWidth)
-                ->set_borderBottomWidth($borderBottomWidth)
-                ->set_borderLeftWidth($borderLeftWidth);
-            
-            // Mobile margin
-            $innerValue->set_mobileMarginType('ungrouped')
-                ->set_mobileMargin(10)
-                ->set_mobileMarginSuffix('px')
-                ->set_mobileMarginTop(0)
-                ->set_mobileMarginTopSuffix('px')
-                ->set_mobileMarginRight(0)
-                ->set_mobileMarginRightSuffix('px')
-                ->set_mobileMarginBottom(0)
-                ->set_mobileMarginBottomSuffix('px')
-                ->set_mobileMarginLeft(0)
-                ->set_mobileMarginLeftSuffix('px');
-            
-            // Дополнительные параметры для внутреннего Column
-            $innerValue->set('gradientColorHex', '#009900')
-                ->set('gradientColorOpacity', 1)
-                ->set('gradientColorPalette', '')
-                ->set('gradientType', 'linear')
-                ->set('gradientStartPointer', 0)
-                ->set('gradientFinishPointer', 100)
-                ->set('gradientActivePointer', 'startPointer')
-                ->set('gradientLinearDegree', 90)
-                ->set('gradientRadialDegree', 90)
-                ->set('tabsState', 'normal')
-                ->set('mobileGradientColorHex', '#009900')
-                ->set('mobileGradientColorOpacity', 1)
-                ->set('mobileGradientColorPalette', '')
-                ->set('mobileGradientType', 'linear')
-                ->set('mobileGradientStartPointer', 0)
-                ->set('mobileGradientFinishPointer', 100)
-                ->set('mobileGradientActivePointer', 'startPointer')
-                ->set('mobileGradientLinearDegree', 90)
-                ->set('mobileGradientRadialDegree', 90)
-                ->set('bgColorPalette', '')
-                ->set('mobileBgColorPalette', '')
-                ->set('borderColorPalette', '');
         }
+
+        // Если opacity >= 1.0, но background-color имеет альфа-канал, используем его
+        if ($opacity >= 1.0 && !empty($blurBoxBeforeStyles['background-color'])) {
+            $opacity = ColorConverter::rgba2opacity($blurBoxBeforeStyles['background-color']);
+        } elseif ($opacity >= 1.0 && !empty($bgOpacityStyles['background-color'])) {
+            $opacity = ColorConverter::rgba2opacity($bgOpacityStyles['background-color']);
+        } elseif ($opacity >= 1.0 && !empty($textContainerStyles['background-color'])) {
+            $opacity = ColorConverter::rgba2opacity($textContainerStyles['background-color']);
+        }
+
+        // Если все еще >= 1.0, используем значение по умолчанию
+        if ($opacity >= 1.0) {
+            $opacity = 0.45;
+        }
+
+        // Нормализуем padding - используем значения по умолчанию, так как в .group они обычно 0
+        $paddingTop = !empty($textContainerStyles['padding-top']) && (int)NumberProcessor::convertToInt($textContainerStyles['padding-top']) > 0
+            ? (int)NumberProcessor::convertToInt($textContainerStyles['padding-top'])
+            : 60;
+        $paddingRight = !empty($textContainerStyles['padding-right']) && (int)NumberProcessor::convertToInt($textContainerStyles['padding-right']) > 0
+            ? (int)NumberProcessor::convertToInt($textContainerStyles['padding-right'])
+            : 60;
+        $paddingBottom = !empty($textContainerStyles['padding-bottom']) && (int)NumberProcessor::convertToInt($textContainerStyles['padding-bottom']) > 0
+            ? (int)NumberProcessor::convertToInt($textContainerStyles['padding-bottom'])
+            : 60;
+        $paddingLeft = !empty($textContainerStyles['padding-left']) && (int)NumberProcessor::convertToInt($textContainerStyles['padding-left']) > 0
+            ? (int)NumberProcessor::convertToInt($textContainerStyles['padding-left'])
+            : 60;
+
+        // Нормализуем margin
+        $marginTop = !empty($textContainerStyles['margin-top'])
+            ? (int)NumberProcessor::convertToInt($textContainerStyles['margin-top'])
+            : 0;
+        $marginRight = !empty($textContainerStyles['margin-right'])
+            ? (int)NumberProcessor::convertToInt($textContainerStyles['margin-right'])
+            : 60;
+        $marginBottom = !empty($textContainerStyles['margin-bottom'])
+            ? (int)NumberProcessor::convertToInt($textContainerStyles['margin-bottom'])
+            : 0;
+        $marginLeft = !empty($textContainerStyles['margin-left'])
+            ? (int)NumberProcessor::convertToInt($textContainerStyles['margin-left'])
+            : 60;
+
+        // Нормализуем border
+        // Приоритет: ::before у .blur-box > .group
+        $borderColor = '#fcfcfc';
+        $borderStyle = 'solid';
+        
+        if (!empty($blurBoxBeforeStyles['border-color']) && $blurBoxBeforeStyles['border-color'] !== 'rgba(0, 0, 0, 0)') {
+            $borderColor = ColorConverter::rgba2hex($blurBoxBeforeStyles['border-color']);
+            if (!empty($blurBoxBeforeStyles['border-style']) && $blurBoxBeforeStyles['border-style'] !== 'none') {
+                $borderStyle = $blurBoxBeforeStyles['border-style'];
+            }
+        } elseif (!empty($textContainerStyles['border-color']) && $textContainerStyles['border-color'] !== 'rgba(0, 0, 0, 0)') {
+            $borderColor = ColorConverter::rgba2hex($textContainerStyles['border-color']);
+            if (!empty($textContainerStyles['border-style']) && $textContainerStyles['border-style'] !== 'none') {
+                $borderStyle = $textContainerStyles['border-style'];
+            }
+        }
+
+        // Нормализуем border-width - приоритет: ::before > .group
+        $borderWidth = 1;
+        if (!empty($blurBoxBeforeStyles['border-top-width']) && (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-top-width']) > 0) {
+            $borderWidth = (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-top-width']);
+        } elseif (!empty($blurBoxBeforeStyles['border-width']) && (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-width']) > 0) {
+            $borderWidth = (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-width']);
+        } elseif (!empty($textContainerStyles['border-top-width']) && (int)NumberProcessor::convertToInt($textContainerStyles['border-top-width']) > 0) {
+            $borderWidth = (int)NumberProcessor::convertToInt($textContainerStyles['border-top-width']);
+        } elseif (!empty($textContainerStyles['border-width']) && (int)NumberProcessor::convertToInt($textContainerStyles['border-width']) > 0) {
+            $borderWidth = (int)NumberProcessor::convertToInt($textContainerStyles['border-width']);
+        } elseif (!empty($borderColor) && $borderColor !== '#fcfcfc') {
+            // Если border-color задан, но border-width = 0, используем 1px по умолчанию
+            $borderWidth = 1;
+        }
+
+        $borderTopWidth = 1;
+        if (!empty($blurBoxBeforeStyles['border-top-width']) && (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-top-width']) > 0) {
+            $borderTopWidth = (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-top-width']);
+        } elseif (!empty($textContainerStyles['border-top-width']) && (int)NumberProcessor::convertToInt($textContainerStyles['border-top-width']) > 0) {
+            $borderTopWidth = (int)NumberProcessor::convertToInt($textContainerStyles['border-top-width']);
+        } else {
+            $borderTopWidth = $borderWidth;
+        }
+
+        $borderRightWidth = 1;
+        if (!empty($blurBoxBeforeStyles['border-right-width']) && (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-right-width']) > 0) {
+            $borderRightWidth = (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-right-width']);
+        } elseif (!empty($textContainerStyles['border-right-width']) && (int)NumberProcessor::convertToInt($textContainerStyles['border-right-width']) > 0) {
+            $borderRightWidth = (int)NumberProcessor::convertToInt($textContainerStyles['border-right-width']);
+        } else {
+            $borderRightWidth = $borderWidth;
+        }
+
+        $borderBottomWidth = 1;
+        if (!empty($blurBoxBeforeStyles['border-bottom-width']) && (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-bottom-width']) > 0) {
+            $borderBottomWidth = (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-bottom-width']);
+        } elseif (!empty($textContainerStyles['border-bottom-width']) && (int)NumberProcessor::convertToInt($textContainerStyles['border-bottom-width']) > 0) {
+            $borderBottomWidth = (int)NumberProcessor::convertToInt($textContainerStyles['border-bottom-width']);
+        } else {
+            $borderBottomWidth = $borderWidth;
+        }
+
+        $borderLeftWidth = 1;
+        if (!empty($blurBoxBeforeStyles['border-left-width']) && (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-left-width']) > 0) {
+            $borderLeftWidth = (int)NumberProcessor::convertToInt($blurBoxBeforeStyles['border-left-width']);
+        } elseif (!empty($textContainerStyles['border-left-width']) && (int)NumberProcessor::convertToInt($textContainerStyles['border-left-width']) > 0) {
+            $borderLeftWidth = (int)NumberProcessor::convertToInt($textContainerStyles['border-left-width']);
+        } else {
+            $borderLeftWidth = $borderWidth;
+        }
+
+        return [
+            'bgColorHex' => $bgColor,
+            'bgColorOpacity' => $opacity,
+            'borderStyle' => $borderStyle,
+            'borderColorHex' => $borderColor,
+            'borderWidth' => $borderWidth,
+            'borderTopWidth' => $borderTopWidth,
+            'borderRightWidth' => $borderRightWidth,
+            'borderBottomWidth' => $borderBottomWidth,
+            'borderLeftWidth' => $borderLeftWidth,
+            'padding' => [
+                'type' => 'ungrouped',
+                'top' => $paddingTop,
+                'right' => $paddingRight,
+                'bottom' => $paddingBottom,
+                'left' => $paddingLeft,
+                'suffix' => 'px'
+            ],
+            'margin' => [
+                'type' => 'ungrouped',
+                'top' => $marginTop,
+                'right' => $marginRight,
+                'bottom' => $marginBottom,
+                'left' => $marginLeft,
+                'suffix' => 'px'
+            ],
+            'mobileMargin' => [
+                'type' => 'ungrouped',
+                'top' => 0,
+                'right' => 0,
+                'bottom' => 0,
+                'left' => 0,
+                'suffix' => 'px'
+            ]
+        ];
+    }
+
+    /**
+     * Применяет стили фона к outerColumn
+     *
+     * @param BrizyComponent $outerColumn Компонент внешнего Column
+     * @param array $backgroundStyles Стили фона из BlurBoxStyles
+     */
+    protected function applyBackgroundStyles(BrizyComponent $outerColumn, array $backgroundStyles): void
+    {
+        $outerValue = $outerColumn->getValue();
+
+        // Основные параметры изображения
+        $outerValue->set_bgImageSrc($backgroundStyles['imageUrl'])
+            ->set_bgImageFileName($backgroundStyles['imageFileName'])
+            ->set_bgImageType('internal')
+            ->set_bgSize($backgroundStyles['size'])
+            ->set_bgColorType('none')
+            ->set_bgColorOpacity(0)
+            ->set_heightStyle('custom')
+            ->set_height($backgroundStyles['height'])
+            ->set_heightSuffix($backgroundStyles['heightSuffix'])
+            ->set_verticalAlign('center')
+            ->set_width(100);
+
+        // Padding
+        $padding = $backgroundStyles['padding'];
+        $outerValue->set_paddingType($padding['type'])
+            ->set_padding(15)
+            ->set_paddingSuffix($padding['suffix'])
+            ->set_paddingTop($padding['top'])
+            ->set_paddingTopSuffix($padding['suffix'])
+            ->set_paddingRight($padding['right'])
+            ->set_paddingRightSuffix($padding['suffix'])
+            ->set_paddingBottom($padding['bottom'])
+            ->set_paddingBottomSuffix($padding['suffix'])
+            ->set_paddingLeft($padding['left'])
+            ->set_paddingLeftSuffix($padding['suffix']);
+
+        // Tablet padding
+        $tabletPadding = $backgroundStyles['tabletPadding'];
+        $outerValue->set_tabletPaddingType($tabletPadding['type'])
+            ->set_tabletPadding($tabletPadding['top'])
+            ->set_tabletPaddingSuffix($tabletPadding['suffix'])
+            ->set_tabletPaddingTop($tabletPadding['top'])
+            ->set_tabletPaddingTopSuffix($tabletPadding['suffix'])
+            ->set_tabletPaddingRight($tabletPadding['right'])
+            ->set_tabletPaddingRightSuffix($tabletPadding['suffix'])
+            ->set_tabletPaddingBottom($tabletPadding['bottom'])
+            ->set_tabletPaddingBottomSuffix($tabletPadding['suffix'])
+            ->set_tabletPaddingLeft($tabletPadding['left'])
+            ->set_tabletPaddingLeftSuffix($tabletPadding['suffix']);
+
+        // Mobile padding
+        $mobilePadding = $backgroundStyles['mobilePadding'];
+        $outerValue->set_mobilePaddingType($mobilePadding['type'])
+            ->set_mobilePadding($mobilePadding['top'])
+            ->set_mobilePaddingSuffix($mobilePadding['suffix'])
+            ->set_mobilePaddingTop($mobilePadding['top'])
+            ->set_mobilePaddingTopSuffix($mobilePadding['suffix'])
+            ->set_mobilePaddingRight($mobilePadding['right'])
+            ->set_mobilePaddingRightSuffix($mobilePadding['suffix'])
+            ->set_mobilePaddingBottom($mobilePadding['bottom'])
+            ->set_mobilePaddingBottomSuffix($mobilePadding['suffix'])
+            ->set_mobilePaddingLeft($mobilePadding['left'])
+            ->set_mobilePaddingLeftSuffix($mobilePadding['suffix']);
+
+        // Mobile margin
+        $mobileMargin = $backgroundStyles['mobileMargin'];
+        $outerValue->set_mobileMarginType($mobileMargin['type'])
+            ->set_mobileMargin(10)
+            ->set_mobileMarginSuffix($mobileMargin['suffix'])
+            ->set_mobileMarginTop($mobileMargin['top'])
+            ->set_mobileMarginTopSuffix($mobileMargin['suffix'])
+            ->set_mobileMarginRight($mobileMargin['right'])
+            ->set_mobileMarginRightSuffix($mobileMargin['suffix'])
+            ->set_mobileMarginBottom($mobileMargin['bottom'])
+            ->set_mobileMarginBottomSuffix($mobileMargin['suffix'])
+            ->set_mobileMarginLeft($mobileMargin['left'])
+            ->set_mobileMarginLeftSuffix($mobileMargin['suffix']);
+
+        // Дополнительные параметры
+        $outerValue->set('bgImageExtension', 'jpg')
+            ->set('bgImageWidth', 394)
+            ->set('bgImageHeight', 394)
+            ->set('gradientColorHex', '#009900')
+            ->set('gradientColorOpacity', 1)
+            ->set('gradientColorPalette', '')
+            ->set('gradientType', 'linear')
+            ->set('gradientStartPointer', 0)
+            ->set('gradientFinishPointer', 100)
+            ->set('gradientActivePointer', 'startPointer')
+            ->set('gradientLinearDegree', 90)
+            ->set('gradientRadialDegree', 90)
+            ->set('tabsState', 'normal');
+    }
+
+    /**
+     * Очищает фоновое изображение с SectionItem и удаляет его из customCSS
+     *
+     * @param BrizyComponent $sectionItemComponent Компонент SectionItem
+     */
+    protected function clearSectionItemBackground(BrizyComponent $sectionItemComponent): void
+    {
+        $sectionItemComponent->getValue()
+            ->set_bgImageSrc('')
+            ->set_bgImageFileName('')
+            ->set_bgImageType('none');
+
+        // Полностью очищаем customCSS от фонового изображения
+        $customCSS = $sectionItemComponent->getValue()->get_customCSS() ?? '';
+        if (!empty($customCSS)) {
+            // Удаляем строки с background-image
+            $customCSS = preg_replace('/[^\n]*background-image[^\n]*\n?/', '', $customCSS);
+            // Удаляем блоки с .brz-bg:not(:has(.brz-bg-image))
+            $customCSS = preg_replace('/\.brz-section__item\s*>\s*\.brz-bg:not\(:has\(\.brz-bg-image\)\)\s*\{[^}]*\}/s', '', $customCSS);
+            // Удаляем пустые строки и лишние пробелы
+            $customCSS = preg_replace('/\n\s*\n/', "\n", $customCSS);
+            $customCSS = trim($customCSS);
+            $sectionItemComponent->getValue()->set_customCSS($customCSS);
+        }
+    }
+
+    /**
+     * Применяет стили overlay к innerColumn
+     *
+     * @param BrizyComponent $innerColumn Компонент внутреннего Column
+     * @param array $overlayStyles Стили overlay из BlurBoxStyles
+     */
+    protected function applyOverlayStyles(BrizyComponent $innerColumn, array $overlayStyles): void
+    {
+        $innerValue = $innerColumn->getValue();
+
+        // Основные параметры внутреннего Column
+        $innerValue->set_width(100)
+            ->set_verticalAlign('between')
+            ->set_bgColorType('solid')
+            ->set_bgColorHex($overlayStyles['bgColorHex'])
+            ->set_bgColorOpacity($overlayStyles['bgColorOpacity'])
+            ->set_mobileBgColorType('solid')
+            ->set_mobileBgColorHex($overlayStyles['bgColorHex'])
+            ->set_mobileBgColorOpacity($overlayStyles['bgColorOpacity'])
+            ->set_borderStyle($overlayStyles['borderStyle'])
+            ->set_borderColorHex($overlayStyles['borderColorHex'])
+            ->set_borderColorOpacity(1)
+            ->set_borderWidthType('grouped')
+            ->set_borderWidth($overlayStyles['borderWidth']);
+
+        // Padding
+        $padding = $overlayStyles['padding'];
+        $innerValue->set_paddingType($padding['type'])
+            ->set_padding(15)
+            ->set_paddingSuffix($padding['suffix'])
+            ->set_paddingTop($padding['top'])
+            ->set_paddingTopSuffix($padding['suffix'])
+            ->set_paddingRight($padding['right'])
+            ->set_paddingRightSuffix($padding['suffix'])
+            ->set_paddingBottom($padding['bottom'])
+            ->set_paddingBottomSuffix($padding['suffix'])
+            ->set_paddingLeft($padding['left'])
+            ->set_paddingLeftSuffix($padding['suffix']);
+
+        // Margin
+        $margin = $overlayStyles['margin'];
+        $innerValue->set_marginType($margin['type'])
+            ->set_margin(0)
+            ->set_marginSuffix($margin['suffix'])
+            ->set_marginTop($margin['top'])
+            ->set_marginTopSuffix($margin['suffix'])
+            ->set_marginRight($margin['right'])
+            ->set_marginRightSuffix($margin['suffix'])
+            ->set_marginBottom($margin['bottom'])
+            ->set_marginBottomSuffix($margin['suffix'])
+            ->set_marginLeft($margin['left'])
+            ->set_marginLeftSuffix($margin['suffix']);
+
+        // Border
+        $innerValue->set_borderTopWidth($overlayStyles['borderTopWidth'])
+            ->set_borderRightWidth($overlayStyles['borderRightWidth'])
+            ->set_borderBottomWidth($overlayStyles['borderBottomWidth'])
+            ->set_borderLeftWidth($overlayStyles['borderLeftWidth']);
+
+        // Mobile margin
+        $mobileMargin = $overlayStyles['mobileMargin'];
+        $innerValue->set_mobileMarginType($mobileMargin['type'])
+            ->set_mobileMargin(10)
+            ->set_mobileMarginSuffix($mobileMargin['suffix'])
+            ->set_mobileMarginTop($mobileMargin['top'])
+            ->set_mobileMarginTopSuffix($mobileMargin['suffix'])
+            ->set_mobileMarginRight($mobileMargin['right'])
+            ->set_mobileMarginRightSuffix($mobileMargin['suffix'])
+            ->set_mobileMarginBottom($mobileMargin['bottom'])
+            ->set_mobileMarginBottomSuffix($mobileMargin['suffix'])
+            ->set_mobileMarginLeft($mobileMargin['left'])
+            ->set_mobileMarginLeftSuffix($mobileMargin['suffix']);
+
+        // Дополнительные параметры
+        $innerValue->set('gradientColorHex', '#009900')
+            ->set('gradientColorOpacity', 1)
+            ->set('gradientColorPalette', '')
+            ->set('gradientType', 'linear')
+            ->set('gradientStartPointer', 0)
+            ->set('gradientFinishPointer', 100)
+            ->set('gradientActivePointer', 'startPointer')
+            ->set('gradientLinearDegree', 90)
+            ->set('gradientRadialDegree', 90)
+            ->set('tabsState', 'normal')
+            ->set('mobileGradientColorHex', '#009900')
+            ->set('mobileGradientColorOpacity', 1)
+            ->set('mobileGradientColorPalette', '')
+            ->set('mobileGradientType', 'linear')
+            ->set('mobileGradientStartPointer', 0)
+            ->set('mobileGradientFinishPointer', 100)
+            ->set('mobileGradientActivePointer', 'startPointer')
+            ->set('mobileGradientLinearDegree', 90)
+            ->set('mobileGradientRadialDegree', 90)
+            ->set('bgColorPalette', '')
+            ->set('mobileBgColorPalette', '')
+            ->set('borderColorPalette', '');
     }
 
     /**

@@ -98,6 +98,9 @@ abstract class AbstractElement implements ElementInterface
             $this->globalTransformSection($component);
             Logger::instance()->info('Global section transformation completed', ['element_class' => static::class]);
 
+            $this->afterTransformItem($data, $component);
+            Logger::instance()->info('After transform', ['element_class' => static::class]);
+
             $this->afterTransformToItem($component);
             Logger::instance()->info('After transform hook completed', ['element_class' => static::class]);
 
