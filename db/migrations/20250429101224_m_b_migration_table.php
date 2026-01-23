@@ -19,6 +19,12 @@ final class MBMigrationTable extends AbstractMigration
      */
     public function change(): void
     {
+        // Проверяем, существует ли таблица
+        if ($this->hasTable('migrations_mapping')) {
+            // Таблица уже существует, пропускаем миграцию
+            return;
+        }
+        
         $this->table('migrations_mapping')
             ->addColumn('brz_project_id', 'integer', ['null' => true])
             ->addColumn('mb_project_uuid', 'string', ['null' => true])

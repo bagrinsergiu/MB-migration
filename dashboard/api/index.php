@@ -49,11 +49,13 @@ $classesToLoad = [
     'Dashboard\\Services\\WaveLogger' => __DIR__ . '/services/WaveLogger.php',
     'Dashboard\\Services\\MigrationExecutionService' => __DIR__ . '/services/MigrationExecutionService.php',
     'Dashboard\\Services\\QualityAnalysisService' => __DIR__ . '/services/QualityAnalysisService.php',
+    'Dashboard\\Services\\TestMigrationService' => __DIR__ . '/services/TestMigrationService.php',
     'Dashboard\\Controllers\\MigrationController' => __DIR__ . '/controllers/MigrationController.php',
     'Dashboard\\Controllers\\LogController' => __DIR__ . '/controllers/LogController.php',
     'Dashboard\\Controllers\\SettingsController' => __DIR__ . '/controllers/SettingsController.php',
     'Dashboard\\Controllers\\WaveController' => __DIR__ . '/controllers/WaveController.php',
     'Dashboard\\Controllers\\QualityAnalysisController' => __DIR__ . '/controllers/QualityAnalysisController.php',
+    'Dashboard\\Controllers\\TestMigrationController' => __DIR__ . '/controllers/TestMigrationController.php',
 ];
 
 foreach ($classesToLoad as $class => $file) {
@@ -66,6 +68,7 @@ use Dashboard\Controllers\MigrationController;
 use Dashboard\Controllers\LogController;
 use Dashboard\Controllers\WaveController;
 use Dashboard\Controllers\QualityAnalysisController;
+use Dashboard\Controllers\TestMigrationController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -601,6 +604,48 @@ return static function (array $context, Request $request): Response {
             }
         }
 
+        // Тестовые миграции
+        if (preg_match('#^/test-migrations$#', $apiPath)) {
+            $controller = new TestMigrationController();
+            if ($request->getMethod() === 'GET') {
+                return $controller->list($request);
+            }
+            if ($request->getMethod() === 'POST') {
+                return $controller->create($request);
+            }
+        }
+
+        if (preg_match('#^/test-migrations/(\d+)$#', $apiPath, $matches)) {
+            $id = (int)$matches[1];
+            $controller = new TestMigrationController();
+            
+            if ($request->getMethod() === 'GET') {
+                return $controller->getDetails($request, $id);
+            }
+            if ($request->getMethod() === 'PUT') {
+                return $controller->update($request, $id);
+            }
+            if ($request->getMethod() === 'DELETE') {
+                return $controller->delete($request, $id);
+            }
+        }
+
+        if (preg_match('#^/test-migrations/(\d+)/run$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                $id = (int)$matches[1];
+                $controller = new TestMigrationController();
+                return $controller->run($request, $id);
+            }
+        }
+
+        if (preg_match('#^/test-migrations/(\d+)/reset-status$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                $id = (int)$matches[1];
+                $controller = new TestMigrationController();
+                return $controller->resetStatus($request, $id);
+            }
+        }
+
         // Если не найден маршрут
         return new JsonResponse([
             'error' => 'Endpoint not found',
@@ -623,6 +668,12 @@ return static function (array $context, Request $request): Response {
                 'POST /waves/:id/migrations/:mb_uuid/restart',
                 'GET /waves/:id/migrations/:mb_uuid/logs',
                 'GET /waves/:id/projects/:brz_project_id/logs',
+                'GET /test-migrations',
+                'POST /test-migrations',
+                'GET /test-migrations/:id',
+                'PUT /test-migrations/:id',
+                'DELETE /test-migrations/:id',
+                'POST /test-migrations/:id/run',
             ]
         ], 404);
 

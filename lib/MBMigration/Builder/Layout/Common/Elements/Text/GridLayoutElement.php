@@ -88,6 +88,23 @@ abstract class GridLayoutElement extends AbstractElement
                 $itemContext = $data->instanceWithBrizyComponent($brizySectionItem);
 
                 foreach ($item['items'] as $mbItem) {
+                    // #region agent log
+                    file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
+                        'sessionId' => 'debug-session',
+                        'runId' => 'run1',
+                        'hypothesisId' => 'B',
+                        'location' => 'GridLayoutElement.php:90',
+                        'message' => 'Processing item in list',
+                        'data' => [
+                            'itemId' => $mbItem['id'] ?? null,
+                            'category' => $mbItem['category'] ?? null,
+                            'item_type' => $mbItem['item_type'] ?? null,
+                            'content' => substr($mbItem['content'] ?? '', 0, 100)
+                        ],
+                        'timestamp' => time() * 1000
+                    ]) . "\n", FILE_APPEND);
+                    // #endregion
+                    
                     switch ($mbItem['category']) {
                         case 'photo':
 
@@ -128,23 +145,116 @@ abstract class GridLayoutElement extends AbstractElement
                             }
                             break;
                         default:
+                            // #region agent log
+                            file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
+                                'sessionId' => 'debug-session',
+                                'runId' => 'run1',
+                                'hypothesisId' => 'B',
+                                'location' => 'GridLayoutElement.php:130',
+                                'message' => 'Entering default case for text item',
+                                'data' => [
+                                    'itemId' => $mbItem['id'] ?? null,
+                                    'category' => $mbItem['category'] ?? null
+                                ],
+                                'timestamp' => time() * 1000
+                            ]) . "\n", FILE_APPEND);
+                            // #endregion
+                            
+                            $textContainerComponent = $this->getItemTextContainerComponent($brizySectionItem);
+                            
+                            // #region agent log
+                            file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
+                                'sessionId' => 'debug-session',
+                                'runId' => 'run1',
+                                'hypothesisId' => 'A',
+                                'location' => 'GridLayoutElement.php:133',
+                                'message' => 'Got text container component',
+                                'data' => [
+                                    'componentType' => $textContainerComponent->getType(),
+                                    'itemId' => $mbItem['id'] ?? null
+                                ],
+                                'timestamp' => time() * 1000
+                            ]) . "\n", FILE_APPEND);
+                            // #endregion
+                            
                             $elementContext = $data->instanceWithBrizyComponentAndMBSection(
                                 $mbItem,
-                                $this->getItemTextContainerComponent($brizySectionItem)
+                                $textContainerComponent
                             );
 
                             $dataIdSelector = '[data-id="'.$mbItem['id'].'"]';
+
+                            // #region agent log
+                            file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
+                                'sessionId' => 'debug-session',
+                                'runId' => 'run1',
+                                'hypothesisId' => 'D',
+                                'location' => 'GridLayoutElement.php:136',
+                                'message' => 'Checking selector for text item',
+                                'data' => [
+                                    'selector' => $dataIdSelector,
+                                    'itemId' => $mbItem['id'] ?? null
+                                ],
+                                'timestamp' => time() * 1000
+                            ]) . "\n", FILE_APPEND);
+                            // #endregion
 
                             $displayItem = $this->getDomElementStyles(
                                 $dataIdSelector,
                                 ['display'],
                                 $this->browserPage);
 
+                            // #region agent log
+                            file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
+                                'sessionId' => 'debug-session',
+                                'runId' => 'run1',
+                                'hypothesisId' => 'D',
+                                'location' => 'GridLayoutElement.php:138',
+                                'message' => 'Display check result',
+                                'data' => [
+                                    'display' => $displayItem['display'] ?? null,
+                                    'willSkip' => isset($displayItem['display']) && trim($displayItem['display']) === 'none'
+                                ],
+                                'timestamp' => time() * 1000
+                            ]) . "\n", FILE_APPEND);
+                            // #endregion
+
                             if(isset($displayItem['display']) && trim($displayItem['display']) === 'none'){
                                 continue 2;
                             }
 
+                            // #region agent log
+                            file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
+                                'sessionId' => 'debug-session',
+                                'runId' => 'run1',
+                                'hypothesisId' => 'B',
+                                'location' => 'GridLayoutElement.php:147',
+                                'message' => 'Before handleRichTextItem call',
+                                'data' => [
+                                    'itemId' => $mbItem['id'] ?? null,
+                                    'contentLength' => strlen($mbItem['content'] ?? '')
+                                ],
+                                'timestamp' => time() * 1000
+                            ]) . "\n", FILE_APPEND);
+                            // #endregion
+
                             $this->handleRichTextItem($elementContext, $this->browserPage, null, ['setEmptyText' => true]);
+                            
+                            // #region agent log
+                            file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
+                                'sessionId' => 'debug-session',
+                                'runId' => 'run1',
+                                'hypothesisId' => 'C',
+                                'location' => 'GridLayoutElement.php:147',
+                                'message' => 'After handleRichTextItem call',
+                                'data' => [
+                                    'itemId' => $mbItem['id'] ?? null,
+                                    'componentItemsCount' => count($textContainerComponent->getValue()->get_items() ?? [])
+                                ],
+                                'timestamp' => time() * 1000
+                            ]) . "\n", FILE_APPEND);
+                            // #endregion
+                            
                             $this->handleItemTextAfter($elementContext, $itemContext);
                             $this->handleDonationsButton($elementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
 

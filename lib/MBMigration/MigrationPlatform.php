@@ -63,6 +63,9 @@ class MigrationPlatform
     private bool $mMgrIgnore;
     private bool $mgr_manual;
     private int $processedPagesCount = 0;
+    private string $mb_element_name;
+    private bool $skip_media_upload;
+    private bool $skip_cache;
 
     use checking;
     use DebugBackTrace;
@@ -74,7 +77,10 @@ class MigrationPlatform
                         $workspacesId = 0,
         bool            $mMgrIgnore = true,
                         $mgr_manual = false,
-        bool            $qualityAnalysis = false
+        bool            $qualityAnalysis = false,
+        string          $mb_element_name = '',
+        bool            $skip_media_upload = false,
+        bool            $skip_cache = false
     )
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
@@ -83,6 +89,9 @@ class MigrationPlatform
         $this->mMgrIgnore = $mMgrIgnore;
         $this->mgr_manual = $mgr_manual;
         $this->qualityAnalysisEnabled = $qualityAnalysis;
+        $this->mb_element_name = $mb_element_name;
+        $this->skip_media_upload = $skip_media_upload;
+        $this->skip_cache = $skip_cache;
 
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
@@ -101,10 +110,21 @@ class MigrationPlatform
     public function start(string $projectID_MB, int $projectID_Brizy = 0)
     {
         try {
-            $this->cache->loadDump($projectID_MB, $projectID_Brizy);
+            // Пропускаем загрузку кэша, если указан параметр skip_cache
+            if (!$this->skip_cache) {
+                $this->cache->loadDump($projectID_MB, $projectID_Brizy);
+            } else {
+                Logger::instance()->info('Skipping cache load (skip_cache=true)');
+            }
 
             $this->run($projectID_MB, $projectID_Brizy);
-            $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
+            
+            // Пропускаем сохранение кэша, если указан параметр skip_cache
+            if (!$this->skip_cache) {
+                $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
+            } else {
+                Logger::instance()->info('Skipping cache dump (skip_cache=true)');
+            }
         } catch (GuzzleException $e) {
             Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
@@ -273,7 +293,10 @@ class MigrationPlatform
             $this->logger,
             $this->projectID_Brizy,
             $designName,
-            $this->qualityAnalysisEnabled
+            $this->qualityAnalysisEnabled,
+            $this->mb_element_name,
+            $this->skip_media_upload,
+            $this->skip_cache
         );
 
 //        if (!$this->mMgrIgnore) {
@@ -340,7 +363,12 @@ class MigrationPlatform
             // Обновляем этап миграции
             $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Загрузка медиа главной секции');
             
-            $mainSection = MediaController::uploadPicturesFromSections($mainSection, $this->projectId, $this->brizyApi);
+            // Пропускаем загрузку медиа, если указан параметр skip_media_upload
+            if (!$this->skip_media_upload) {
+                $mainSection = MediaController::uploadPicturesFromSections($mainSection, $this->projectId, $this->brizyApi);
+            } else {
+                Logger::instance()->info('Skipping media upload for main section (skip_media_upload=true)');
+            }
             $this->cache->set('mainSection', $mainSection);
             $this->cache->dumpCache($projectUUID_MB, $this->projectID_Brizy);
         }
@@ -352,11 +380,20 @@ class MigrationPlatform
             $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Создание пустых страниц');
             
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
+            
+            // Если тестируем один элемент, не удаляем существующие страницы
+            // Используем существующую страницу для тестирования
+            if (empty($this->mb_element_name)) {
+                // Обычная миграция - удаляем все страницы
 //            if (!$this->buildPage) {
                 $existingBrizyPages['listPages'] = $this->pageController->deleteAllPages(
                     $existingBrizyPages['listPages']
                 );
 //            }
+            } else {
+                // Тестирование одного элемента - сохраняем существующие страницы
+                Logger::instance()->info('Testing single element - preserving existing pages (mb_element_name=' . $this->mb_element_name . ')');
+            }
 
             $this->pageController->createBlankPages(
                 $parentPages,
@@ -543,7 +580,12 @@ class MigrationPlatform
                 "Загрузка медиа страницы: {$pageName}"
             );
             
-            $preparedSectionOfThePage = MediaController::uploadPicturesFromSections($preparedSectionOfThePage, $this->projectId, $this->brizyApi);
+            // Пропускаем загрузку медиа, если указан параметр skip_media_upload
+            if (!$this->skip_media_upload) {
+                $preparedSectionOfThePage = MediaController::uploadPicturesFromSections($preparedSectionOfThePage, $this->projectId, $this->brizyApi);
+            } else {
+                Logger::instance()->info("Skipping media upload for page: {$pageName} (skip_media_upload=true)");
+            }
             $preparedSectionOfThePage = ArrayManipulator::sortArrayByPosition($preparedSectionOfThePage);
             $this->cache->set('preparedSectionOfThePage_' . $page['id'], $preparedSectionOfThePage);
         }

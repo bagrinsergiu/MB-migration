@@ -483,6 +483,14 @@ class Bridge
 
         $brz_workspaces_id = (int)$this->request->get('brz_workspaces_id') ?? 0;
         $mb_page_slug = $this->request->get('mb_page_slug') ?? '';
+        $mb_element_name = $this->request->get('mb_element_name') ?? '';
+        
+        // Получаем параметры для быстрого тестирования
+        $skip_media_upload = $this->request->get('skip_media_upload');
+        $skip_media_upload = ($skip_media_upload === 'true' || $skip_media_upload === '1' || $skip_media_upload === true);
+        
+        $skip_cache = $this->request->get('skip_cache');
+        $skip_cache = ($skip_cache === 'true' || $skip_cache === '1' || $skip_cache === true);
         
         // Получаем параметр quality_analysis (по умолчанию false если не указан)
         $quality_analysis = $this->request->get('quality_analysis');
@@ -566,7 +574,10 @@ class Bridge
                 $mb_page_slug,
                 false,
                 $mgr_manual,
-                $quality_analysis
+                $quality_analysis,
+                $mb_element_name,
+                $skip_media_upload,
+                $skip_cache
             );
 
             if (!empty($result['mMigration']) && $result['mMigration'] === true) {
@@ -588,7 +599,10 @@ class Bridge
                         $mb_page_slug,
                         true,
                         $mgr_manual,
-                        $quality_analysis
+                        $quality_analysis,
+                        $mb_element_name,
+                        $skip_media_upload,
+                        $skip_cache
                     );
                     $result['mgrClone'] = 'failed';
                     $this->prepareResponseMessage($result);

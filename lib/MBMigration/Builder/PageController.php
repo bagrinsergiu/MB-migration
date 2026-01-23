@@ -82,6 +82,21 @@ class PageController
      * @var string|null
      */
     private $designName;
+    
+    /**
+     * @var string Имя элемента для фильтрации
+     */
+    private string $mb_element_name = '';
+    
+    /**
+     * @var bool Пропустить загрузку медиа
+     */
+    private bool $skip_media_upload = false;
+    
+    /**
+     * @var bool Пропустить использование кэша
+     */
+    private bool $skip_cache = false;
 
     public function __construct(
         MBProjectDataCollector $MBProjectDataCollector,
@@ -90,7 +105,10 @@ class PageController
         LoggerInterface $logger,
         $projectID_Brizy,
         $designName = null,
-        bool $qualityAnalysis = false
+        bool $qualityAnalysis = false,
+        string $mb_element_name = '',
+        bool $skip_media_upload = false,
+        bool $skip_cache = false
     )
     {
         $this->cache = VariableCache::getInstance();
@@ -104,6 +122,9 @@ class PageController
         $this->parser = $MBProjectDataCollector;
         $this->qualityAnalysisEnabled = $qualityAnalysis;
         $this->designName = $designName;
+        $this->mb_element_name = $mb_element_name;
+        $this->skip_media_upload = $skip_media_upload;
+        $this->skip_cache = $skip_cache;
     }
 
     /**     * @throws ElementNotFound
@@ -233,7 +254,43 @@ class PageController
             $this->pageDTO->setPageStyleDetails($_WorkClassTemplate->beforeBuildPage());
 
             $_WorkClassTemplate->setThemeContext($themeContext);
+            
+            // Устанавливаем параметры миграции для быстрого тестирования
+            $_WorkClassTemplate->setMigrationOptions(
+                $this->mb_element_name,
+                $this->skip_media_upload,
+                $this->skip_cache
+            );
+            
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
+
+            // Если тестируем один элемент, сохраняем результат transformBlocks для тестовой миграции
+            if (!empty($this->mb_element_name)) {
+                try {
+                    // Преобразуем BrizyPage в массив для JSON сериализации
+                    $brizySectionsArray = $brizySections->jsonSerialize();
+                    $sectionJson = json_encode($brizySectionsArray, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    
+                    // Сохраняем в кэше для последующего сохранения в БД
+                    $cacheKey = 'test_migration_transform_blocks_result_' . $this->mb_element_name;
+                    $this->cache->set($cacheKey, [
+                        'element_name' => $this->mb_element_name,
+                        'section_json' => $sectionJson,
+                        'brizy_sections' => $brizySectionsArray,
+                        'timestamp' => time(),
+                        'slug' => $slug,
+                        'page_id' => $pageId
+                    ]);
+                    
+                    Logger::instance()->info("Saved transformBlocks result for test migration", [
+                        'element_name' => $this->mb_element_name,
+                        'slug' => $slug,
+                        'json_length' => strlen($sectionJson)
+                    ]);
+                } catch (\Exception $saveEx) {
+                    Logger::instance()->warning("Failed to save transformBlocks result: " . $saveEx->getMessage());
+                }
+            }
 
             $pageData = json_encode($brizySections);
             $queryBuilder = $this->cache->getClass('QueryBuilder');
@@ -398,13 +455,58 @@ class PageController
                 continue;
             }
 
-            if (isset($existingBrizyPages[$page['slug']])) {
-                continue;
+            // Если тестируем один элемент и страница уже существует - используем её
+            if (!empty($this->mb_element_name)) {
+                // Проверяем в обеих структурах данных
+                $pageId = null;
+                if (isset($existingBrizyPages['listPages'][$page['slug']])) {
+                    $pageId = $existingBrizyPages['listPages'][$page['slug']];
+                } elseif (isset($existingBrizyPages[$page['slug']])) {
+                    $pageId = $existingBrizyPages[$page['slug']];
+                }
+                
+                if ($pageId) {
+                    // Страница существует - получаем правильную структуру через getCollectionItem
+                    $collectionItem = $this->getCollectionItem($page['slug']);
+                    if ($collectionItem) {
+                        $page['collection'] = $collectionItem;
+                        Logger::instance()->info('Using existing page for element testing', [
+                            'slug' => $page['slug'],
+                            'element' => $this->mb_element_name,
+                            'page_id' => $pageId,
+                            'collection' => $collectionItem
+                        ]);
+                        continue;
+                    } else {
+                        // Если не удалось получить через getCollectionItem, создаем минимальную структуру
+                        $page['collection'] = $pageId;
+                        Logger::instance()->warning('Using existing page ID directly (getCollectionItem failed)', [
+                            'slug' => $page['slug'],
+                            'page_id' => $pageId
+                        ]);
+                        continue;
+                    }
+                }
+            } else {
+                // Обычная миграция - пропускаем существующие страницы
+                if (isset($existingBrizyPages[$page['slug']]) || 
+                    (isset($existingBrizyPages['listPages']) && isset($existingBrizyPages['listPages'][$page['slug']]))) {
+                    continue;
+                }
             }
 
             $title = $page['name'];
 
             if ($page['landing'] == true) {
+                // Если тестируем один элемент и страница не существует - создаём её
+                // В обычной миграции страницы уже должны быть созданы или удалены
+                if (!empty($this->mb_element_name)) {
+                    Logger::instance()->info('Creating page for element testing', [
+                        'slug' => $page['slug'],
+                        'element' => $this->mb_element_name
+                    ]);
+                }
+                
                 $isHome = ($page['slug'] === $this->cache->get('homePageSlug'));
                 try {
                     $newPage = $this->creteNewPage(
@@ -420,7 +522,15 @@ class PageController
                         Logger::instance()->warning('Failed to create page', $page);
                     } else {
                         $pageStatus = $hiddenPage ? "hidden" : "public";
-                        Logger::instance()->info('Successfully created ' . $pageStatus . ' page', $page);
+                        if (!empty($this->mb_element_name)) {
+                            Logger::instance()->info('Successfully created page for element testing', [
+                                'slug' => $page['slug'],
+                                'element' => $this->mb_element_name,
+                                'status' => $pageStatus
+                            ]);
+                        } else {
+                            Logger::instance()->info('Successfully created ' . $pageStatus . ' page', $page);
+                        }
                         $page['collection'] = $newPage;
                     }
 

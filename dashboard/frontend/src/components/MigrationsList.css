@@ -148,8 +148,14 @@
   color: var(--text);
 }
 
-.migrations-table tbody tr:hover {
+.migrations-table tbody tr:hover,
+.migrations-table-row:hover {
   background: var(--bg);
+}
+
+[data-theme="dark"] .migrations-table tbody tr:hover,
+[data-theme="dark"] .migrations-table-row:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .uuid-cell {

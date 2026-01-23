@@ -46,7 +46,23 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             ]
         );
 
-        $this->handleItemBackground($brizySection, $styles['data']);
+        // Получаем градиент из дополнительных опций, если он есть
+        $additionalOptions = $data->getThemeContext()->getPageDTO()->getPageStyleDetails();
+        if (!empty($additionalOptions['bg-gradient'])) {
+            $styles['data']['bg-gradient'] = $additionalOptions['bg-gradient'];
+        }
+
+        // Устанавливаем градиент или цвет фона на SectionItem
+        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
+        if (!empty($styles['data']['bg-gradient'])) {
+            $this->handleSectionGradient($sectionItemComponent, $styles['data']);
+            
+            // Добавляем параметры для градиента на SectionItem
+            $sectionItemValue = $sectionItemComponent->getValue();
+            $sectionItemValue->set('gradientActivePointer', 'finishPointer');
+        } else {
+            $this->handleItemBackground($sectionItemComponent, $styles['data']);
+        }
     }
 
     protected function getDeepWidgetItem(BrizyComponent $brizySection): BrizyComponent

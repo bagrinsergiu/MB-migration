@@ -323,6 +323,9 @@ class MigrationController
                 'mb_secret' => !empty($data['mb_secret']) ? $data['mb_secret'] : ($defaultSettings['mb_secret'] ?? null),
                 'brz_workspaces_id' => !empty($data['brz_workspaces_id']) ? (int)$data['brz_workspaces_id'] : null,
                 'mb_page_slug' => !empty($data['mb_page_slug']) ? $data['mb_page_slug'] : null,
+                'mb_element_name' => !empty($data['mb_element_name']) ? $data['mb_element_name'] : null,
+                'skip_media_upload' => isset($data['skip_media_upload']) ? (bool)$data['skip_media_upload'] : false,
+                'skip_cache' => isset($data['skip_cache']) ? (bool)$data['skip_cache'] : false,
                 'mgr_manual' => !empty($data['mgr_manual']) ? (int)$data['mgr_manual'] : 0,
                 'quality_analysis' => isset($data['quality_analysis']) ? (bool)$data['quality_analysis'] : false,
             ];

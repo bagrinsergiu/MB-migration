@@ -129,6 +129,9 @@ abstract class GalleryLayoutElement extends AbstractElement
                 ->set_sliderAutoPlaySpeed($rotatorSpeed);
         }
 
+        // Получаем стили для slides (опционально, если метод переопределен в дочернем классе)
+        $slidesStyles = $this->handleStyle($data, $mbSection);
+
         $brizySectionItems = [];
 
         if (isset($mbSection['settings']['sections']['background']['video']) && count($mbSection['slide']) <= 1){
@@ -158,18 +161,30 @@ abstract class GalleryLayoutElement extends AbstractElement
                     $this->setSlideLinks($brizySectionItemImage, $mbSection['settings']['sections']['background']);
                 }
 
+                // Применяем стили к slide после установки изображения, чтобы не перезаписать важные свойства
+                if (!empty($slidesStyles) && isset($slidesStyles[0])) {
+                    $this->applySlideStyles($brizySectionItem, $brizySectionItemImage, $slidesStyles[0]);
+                }
+
                 $brizySection->getValue()->set_slider("off");
 
                 $brizySectionItems[] = $brizySectionItem;
             } else {
-                foreach ($mbSection['slide'] as $mbItem) {
+                foreach ($mbSection['slide'] as $index => $mbItem) {
                     $brizySectionItem = new BrizyComponent($slideJson);
 
                     $this->handleSectionGradient($brizySectionItem, $additionalOptions);
 
                     $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
+                    
                     $this->setSlideImage($brizySectionItemImage, $mbItem, $properties);
                     $this->setSlideLinks($brizySectionItemImage, $mbItem);
+                    
+                    // Применяем стили к slide после установки изображения, чтобы не перезаписать важные свойства
+                    if (!empty($slidesStyles) && isset($slidesStyles[$index])) {
+                        $this->applySlideStyles($brizySectionItem, $brizySectionItemImage, $slidesStyles[$index]);
+                    }
+                    
                     $brizySectionItems[] = $brizySectionItem;
                 }
             }
@@ -394,6 +409,141 @@ abstract class GalleryLayoutElement extends AbstractElement
     protected function customizationSection(BrizyComponent $brizySectionItem):BrizyComponent
     {
         return $brizySectionItem;
+    }
+
+    /**
+     * Обработка и нормализация стилей для slides
+     * Переопределяется в дочерних классах для получения стилей из DOM
+     * 
+     * @param ElementContextInterface $data Контекст элемента
+     * @param array $mbSectionItem Элемент секции из исходного проекта
+     * @return array Нормализованные стили для всех slides (SlidesStyles). Пустой массив по умолчанию.
+     */
+    protected function handleStyle(ElementContextInterface $data, array $mbSectionItem): array
+    {
+        // По умолчанию возвращаем пустой массив, чтобы не ломать логику других тем
+        // Дочерние классы могут переопределить этот метод для получения стилей
+        return [];
+    }
+
+    /**
+     * Применение стилей к slide и его картинке
+     * Переопределяется в дочерних классах для специфичной логики применения стилей
+     * 
+     * @param BrizyComponent $brizySectionItem Slide компонент
+     * @param BrizyComponent $brizySectionItemImage Image компонент внутри slide
+     * @param array $styles Нормализованные стили для применения
+     */
+    protected function applySlideStyles(BrizyComponent $brizySectionItem, BrizyComponent $brizySectionItemImage, array $styles): void
+    {
+        if (empty($styles)) {
+            return;
+        }
+
+        $slideValue = $brizySectionItem->getValue();
+        $imageValue = $brizySectionItemImage->getValue();
+
+        // Список свойств, которые не должны перезаписываться (уже установлены в setSlideImage)
+        $protectedImageProperties = [
+            'bgImageSrc', 'bgImageFileName', 'bgImageType', 'bgImageWidth', 'bgImageHeight',
+            'imageExtension', 'customCSS', 'sizeType', 'width', 'height',
+            'widthSuffix', 'heightSuffix', 'tabletWidthSuffix', 'tabletHeightSuffix',
+            'mobileBgSizeType', 'mobileBgSize', 'mobileHeightSuffix',
+            'marginTop', 'marginBottom' // Эти свойства уже установлены в setSlideImage
+        ];
+
+        // Применяем стили к slide (SectionItem)
+        $slideProperties = [
+            'paddingType', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+            'paddingTopSuffix', 'paddingRightSuffix', 'paddingBottomSuffix', 'paddingLeftSuffix',
+            'tabletPaddingType', 'tabletPaddingTop', 'tabletPaddingBottom',
+            'tabletPaddingTopSuffix', 'tabletPaddingBottomSuffix',
+            'mobilePaddingType', 'mobilePaddingTop', 'mobilePaddingRight', 'mobilePaddingBottom', 'mobilePaddingLeft',
+            'mobilePaddingSuffix', 'mobilePaddingTopSuffix', 'mobilePaddingRightSuffix',
+            'mobilePaddingBottomSuffix', 'mobilePaddingLeftSuffix',
+            'marginType', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft',
+            'marginSuffix', 'marginTopSuffix', 'marginRightSuffix', 'marginBottomSuffix', 'marginLeftSuffix',
+            'mobileMarginType', 'mobileMargin', 'mobileMarginTop', 'mobileMarginRight',
+            'mobileMarginBottom', 'mobileMarginLeft',
+            'mobileMarginSuffix', 'mobileMarginTopSuffix', 'mobileMarginRightSuffix',
+            'mobileMarginBottomSuffix', 'mobileMarginLeftSuffix',
+            'bgColorHex', 'bgColorOpacity', 'bgColorType', 'bgColorPalette',
+            'borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius',
+            'borderBottomLeftRadius', 'borderBottomRightRadius',
+            'height', 'heightStyle', 'opacity',
+            'tabsState', 'gradientColorHex', 'gradientColorOpacity', 'gradientColorPalette',
+            'gradientType', 'gradientStartPointer', 'gradientFinishPointer',
+            'gradientActivePointer', 'gradientLinearDegree', 'gradientRadialDegree'
+        ];
+
+        foreach ($slideProperties as $key) {
+            if (!isset($styles[$key])) {
+                continue;
+            }
+
+            $method = 'set_' . $key;
+            if (method_exists($slideValue, $method)) {
+                try {
+                    $slideValue->$method($styles[$key]);
+                } catch (\Exception $e) {
+                    Logger::instance()->debug("Failed to set style {$key} on slide: " . $e->getMessage());
+                }
+            } else {
+                try {
+                    $slideValue->set($key, $styles[$key]);
+                } catch (\Exception $e) {
+                    Logger::instance()->debug("Failed to set property {$key} on slide: " . $e->getMessage());
+                }
+            }
+        }
+
+        // Применяем стили к картинке (Column/Image), исключая защищенные свойства
+        $imageStyles = [
+            'bgColorHex', 'bgColorOpacity', 'bgColorType', 'bgColorPalette',
+            'bgSize', 'bgSizeType',
+            'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+            'paddingTopSuffix', 'paddingRightSuffix', 'paddingBottomSuffix', 'paddingLeftSuffix',
+            'marginRight', 'marginLeft',
+            'marginRightSuffix', 'marginLeftSuffix',
+            'borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius',
+            'borderBottomLeftRadius', 'borderBottomRightRadius',
+            'heightStyle', 'opacity'
+        ];
+
+        foreach ($imageStyles as $key) {
+            if (!isset($styles[$key]) || in_array($key, $protectedImageProperties)) {
+                continue;
+            }
+
+            $method = 'set_' . $key;
+            if (method_exists($imageValue, $method)) {
+                try {
+                    $imageValue->$method($styles[$key]);
+                } catch (\Exception $e) {
+                    Logger::instance()->debug("Failed to set style {$key} on image: " . $e->getMessage());
+                }
+            } else {
+                try {
+                    $imageValue->set($key, $styles[$key]);
+                } catch (\Exception $e) {
+                    Logger::instance()->debug("Failed to set property {$key} on image: " . $e->getMessage());
+                }
+            }
+        }
+
+        // Применяем background-image только если он не был установлен в setSlideImage
+        // (проверяем, что bgImageSrc пустой или не установлен)
+        if (!empty($styles['bgImageSrc']) && empty($imageValue->get('bgImageSrc'))) {
+            try {
+                $imageValue->set_bgImageSrc($styles['bgImageSrc']);
+                if (isset($styles['bgImageFileName'])) {
+                    $imageValue->set_bgImageFileName($styles['bgImageFileName']);
+                }
+                $imageValue->set_bgImageType('internal');
+            } catch (\Exception $e) {
+                Logger::instance()->debug("Failed to set bgImageSrc on image: " . $e->getMessage());
+            }
+        }
     }
 
 }

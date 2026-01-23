@@ -310,6 +310,46 @@ export const api = {
           throw error;
         }
       },
+
+      // Test Migrations
+      async getTestMigrations(filters?: {
+        status?: string;
+        mb_project_uuid?: string;
+        brz_project_id?: number;
+      }): Promise<ApiResponse<TestMigration[]>> {
+        const response = await apiClient.get('/test-migrations', { params: filters });
+        return response.data;
+      },
+
+      async getTestMigrationDetails(id: number): Promise<ApiResponse<TestMigration>> {
+        const response = await apiClient.get(`/test-migrations/${id}`);
+        return response.data;
+      },
+
+      async createTestMigration(params: CreateTestMigrationParams): Promise<ApiResponse<TestMigration>> {
+        const response = await apiClient.post('/test-migrations', params);
+        return response.data;
+      },
+
+      async updateTestMigration(id: number, params: Partial<CreateTestMigrationParams>): Promise<ApiResponse<TestMigration>> {
+        const response = await apiClient.put(`/test-migrations/${id}`, params);
+        return response.data;
+      },
+
+      async deleteTestMigration(id: number): Promise<ApiResponse<any>> {
+        const response = await apiClient.delete(`/test-migrations/${id}`);
+        return response.data;
+      },
+
+      async runTestMigration(id: number): Promise<ApiResponse<any>> {
+        const response = await apiClient.post(`/test-migrations/${id}/run`);
+        return response.data;
+      },
+
+      async resetTestMigrationStatus(id: number): Promise<ApiResponse<any>> {
+        const response = await apiClient.post(`/test-migrations/${id}/reset-status`);
+        return response.data;
+      },
     };
 
     export interface Wave {
@@ -444,6 +484,45 @@ export const api = {
         total_cost_usd: number;
         avg_cost_per_page_usd: number;
       };
+    }
+
+    export interface TestMigration {
+      id: number;
+      mb_project_uuid: string;
+      brz_project_id: number;
+      mb_site_id?: number;
+      mb_secret?: string;
+      brz_workspaces_id?: number;
+      mb_page_slug?: string;
+      mb_element_name?: string;
+      skip_media_upload: boolean;
+      skip_cache: boolean;
+      mgr_manual: number;
+      quality_analysis: boolean;
+      status: 'pending' | 'in_progress' | 'success' | 'completed' | 'error';
+      changes_json?: any;
+      section_json?: string | null;
+      element_result_json?: string | null;
+      created_at: string;
+      updated_at: string;
+      result?: any;
+      migration_uuid?: string;
+      brizy_project_domain?: string;
+      mb_project_domain?: string;
+    }
+
+    export interface CreateTestMigrationParams {
+      mb_project_uuid: string;
+      brz_project_id: number;
+      mb_site_id?: number;
+      mb_secret?: string;
+      brz_workspaces_id?: number;
+      mb_page_slug?: string;
+      mb_element_name?: string;
+      skip_media_upload?: boolean;
+      skip_cache?: boolean;
+      mgr_manual?: number;
+      quality_analysis?: boolean;
     }
 
     export default api;

@@ -129,7 +129,10 @@ class ApplicationBootstrapper
         $mb_page_slug,
         $mMgrIgnore = false,
         $mrgManual = false,
-        $qualityAnalysis = false
+        $qualityAnalysis = false,
+        $mb_element_name = '',
+        $skip_media_upload = false,
+        $skip_cache = false
     ): array
     {
         $s3Uploader = new S3Uploader(
@@ -297,7 +300,18 @@ class ApplicationBootstrapper
             file_put_contents($lockFile, json_encode($lockData, JSON_PRETTY_PRINT));
             Logger::instance()->info('Creating lock file with PID', ['lock_file' => $lockFile, 'pid' => $pid]);
 
-            $migrationPlatform = new MigrationPlatform($this->config, $logger, $mb_page_slug, $brz_workspaces_id, $mMgrIgnore, $mrgManual, $qualityAnalysis);
+            $migrationPlatform = new MigrationPlatform(
+                $this->config, 
+                $logger, 
+                $mb_page_slug, 
+                $brz_workspaces_id, 
+                $mMgrIgnore, 
+                $mrgManual, 
+                $qualityAnalysis,
+                $mb_element_name,
+                $skip_media_upload,
+                $skip_cache
+            );
             $migrationPlatform->start($mb_project_uuid, $brz_project_id);
 
             $this->projectPagesList = $migrationPlatform->getProjectPagesList();
