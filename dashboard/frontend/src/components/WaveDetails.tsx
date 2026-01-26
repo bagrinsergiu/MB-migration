@@ -26,6 +26,7 @@ export default function WaveDetails() {
   const [removingLock, setRemovingLock] = useState<string | null>(null);
   const [restartingAll, setRestartingAll] = useState(false);
   const [selectedMigrations, setSelectedMigrations] = useState<Set<string>>(new Set());
+  const [togglingCloning, setTogglingCloning] = useState<number | null>(null);
 
   const loadDetails = async () => {
     if (!id) return;
@@ -139,6 +140,36 @@ export default function WaveDetails() {
       setError(err.message || 'Ошибка удаления lock-файла');
     } finally {
       setRemovingLock(null);
+    }
+  };
+
+  const handleToggleCloning = async (brzProjectId: number, currentValue: boolean) => {
+    if (!id) return;
+    
+    setTogglingCloning(brzProjectId);
+    try {
+      const newValue = !currentValue;
+      const response = await api.toggleCloning(id, brzProjectId, newValue);
+      
+      if (response.success) {
+        // Обновляем локальное состояние
+        if (details) {
+          setDetails({
+            ...details,
+            migrations: details.migrations.map(m => 
+              m.brz_project_id === brzProjectId 
+                ? { ...m, cloning_enabled: newValue }
+                : m
+            )
+          });
+        }
+      } else {
+        setError(response.error || 'Ошибка обновления параметра клонирования');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Ошибка обновления параметра клонирования');
+    } finally {
+      setTogglingCloning(null);
     }
   };
 
@@ -539,6 +570,7 @@ export default function WaveDetails() {
                     <th>Brizy Project ID</th>
                     <th>Статус</th>
                     <th>Domain</th>
+                    <th>Клонирование</th>
                     <th>Прогресс</th>
                     <th>Дата</th>
                     <th>Действия</th>
@@ -610,6 +642,27 @@ export default function WaveDetails() {
                             >
                               {migration.brizy_project_domain}
                             </a>
+                          ) : (
+                            '-'
+                          )}
+                        </td>
+                        <td>
+                          {migration.brz_project_id ? (
+                            <label className="toggle-switch">
+                              <input
+                                type="checkbox"
+                                checked={migration.cloning_enabled ?? false}
+                                onChange={() => handleToggleCloning(
+                                  migration.brz_project_id!,
+                                  migration.cloning_enabled ?? false
+                                )}
+                                disabled={togglingCloning === migration.brz_project_id}
+                              />
+                              <span className="toggle-slider"></span>
+                              <span className="toggle-label">
+                                {migration.cloning_enabled ? 'Вкл' : 'Выкл'}
+                              </span>
+                            </label>
                           ) : (
                             '-'
                           )}

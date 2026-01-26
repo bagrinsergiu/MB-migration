@@ -76,19 +76,22 @@ class WaveController
 
             $batchSize = isset($data['batch_size']) ? (int)$data['batch_size'] : 3;
             $mgrManual = isset($data['mgr_manual']) ? (bool)$data['mgr_manual'] : false;
+            $enableCloning = isset($data['enable_cloning']) ? (bool)$data['enable_cloning'] : false;
 
             WaveLogger::info("Вызов WaveService::createWave", [
                 'name' => $data['name'],
                 'projects_count' => count($projectUuids),
                 'batch_size' => $batchSize,
-                'mgr_manual' => $mgrManual
+                'mgr_manual' => $mgrManual,
+                'enable_cloning' => $enableCloning
             ]);
 
             $result = $this->waveService->createWave(
                 $data['name'],
                 array_values($projectUuids),
                 $batchSize,
-                $mgrManual
+                $mgrManual,
+                $enableCloning
             );
 
             WaveLogger::endOperation('WaveController::create', [
@@ -488,6 +491,39 @@ class WaveController
                 'success' => $result['success'],
                 'message' => $result['message'],
                 'data' => $result['results']
+            ], 200);
+
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * PUT /api/waves/:id/mapping/:brz_project_id/cloning
+     * Переключить параметр cloning_enabled для проекта
+     */
+    public function toggleCloning(Request $request, string $id, int $brzProjectId): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            
+            if (!$data) {
+                $data = $request->request->all();
+            }
+
+            $cloningEnabled = isset($data['cloning_enabled']) 
+                ? (bool)$data['cloning_enabled'] 
+                : true;
+
+            $result = $this->waveService->updateCloningEnabled($brzProjectId, $cloningEnabled);
+
+            return new JsonResponse([
+                'success' => true,
+                'data' => $result,
+                'message' => 'Параметр клонирования успешно обновлен'
             ], 200);
 
         } catch (Exception $e) {

@@ -44,6 +44,30 @@ class MenuHandler
 
         $parentPages = $cache->get('menuList');
 
+        // #region agent log
+        $logFile = '/home/sg/projects/MB-migration/.cursor/debug.log';
+        $logDir = dirname($logFile);
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0755, true);
+        }
+        $logData = [
+            'location' => 'MenuHandler.php:39',
+            'message' => 'Menu creation started',
+            'data' => [
+                'parent_pages_count' => count($parentPages['list'] ?? []),
+                'design' => $cache->get('design'),
+                'has_collection_ids' => self::countPagesWithCollection($parentPages['list'] ?? []),
+                'visible_pages_count' => self::countVisiblePages($parentPages['list'] ?? []),
+                'hidden_pages_count' => self::countHiddenPages($parentPages['list'] ?? [])
+            ],
+            'timestamp' => time() * 1000,
+            'sessionId' => 'debug-session',
+            'runId' => 'run1',
+            'hypothesisId' => 'A'
+        ];
+        @file_put_contents($logFile, json_encode($logData) . "\n", FILE_APPEND | LOCK_EX);
+        // #endregion
+
         $design = $cache->get('design');
         $brizyProject = $cache->get('projectId_Brizy');
         $fonts = $cache->get('fonts', 'settings');
@@ -51,6 +75,31 @@ class MenuHandler
 
         $menuBuilder = MenuBuilderFactory::instanceOfThemeMenuBuilder($design, $brizyProject, $brizyApi, $fonts);
         $menuStructure = $menuBuilder->transformToBrizyMenu($parentPages['list']);
+        
+        // #region agent log
+        $logFile = '/home/sg/projects/MB-migration/.cursor/debug.log';
+        $logData2 = [
+            'location' => 'MenuHandler.php:66',
+            'message' => 'Menu structure transformed',
+            'data' => [
+                'menu_items_count' => count($menuStructure),
+                'menu_items' => array_map(function($item) {
+                    return [
+                        'label' => $item['label'] ?? 'N/A',
+                        'id' => $item['id'] ?? 'N/A',
+                        'has_items' => !empty($item['items']),
+                        'items_count' => count($item['items'] ?? [])
+                    ];
+                }, $menuStructure)
+            ],
+            'timestamp' => time() * 1000,
+            'sessionId' => 'debug-session',
+            'runId' => 'run1',
+            'hypothesisId' => 'B'
+        ];
+        @file_put_contents($logFile, json_encode($logData2) . "\n", FILE_APPEND | LOCK_EX);
+        // #endregion
+        
         $result = $menuBuilder->createBrizyMenu('mainMenu', $menuStructure);
 
         $cache->set('brizyMenuItems', $menuStructure);
@@ -170,5 +219,47 @@ class MenuHandler
         } else {
             return false;
         }
+    }
+
+    private static function countPagesWithCollection(array $pages): int
+    {
+        $count = 0;
+        foreach ($pages as $page) {
+            if (!empty($page['collection'])) {
+                $count++;
+            }
+            if (!empty($page['child'])) {
+                $count += self::countPagesWithCollection($page['child']);
+            }
+        }
+        return $count;
+    }
+
+    private static function countVisiblePages(array $pages): int
+    {
+        $count = 0;
+        foreach ($pages as $page) {
+            if (($page['hidden'] ?? false) === false) {
+                $count++;
+            }
+            if (!empty($page['child'])) {
+                $count += self::countVisiblePages($page['child']);
+            }
+        }
+        return $count;
+    }
+
+    private static function countHiddenPages(array $pages): int
+    {
+        $count = 0;
+        foreach ($pages as $page) {
+            if (($page['hidden'] ?? false) === true) {
+                $count++;
+            }
+            if (!empty($page['child'])) {
+                $count += self::countHiddenPages($page['child']);
+            }
+        }
+        return $count;
     }
 }

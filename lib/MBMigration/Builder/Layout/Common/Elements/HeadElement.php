@@ -130,7 +130,28 @@ abstract class HeadElement extends AbstractElement
 
         // Use cache only if theme allows it
         if ($useCached) {
-            return $this->getCache(self::CACHE_KEY, $transformLogic);
+            $cachedComponent = $this->getCache(self::CACHE_KEY, $transformLogic);
+            
+            // Если makeGlobalBlock() = false, клонируем компонент для каждой страницы
+            // Это позволяет создавать отдельный блок для каждой страницы,
+            // но использовать одинаковые стили (которые были извлечены один раз)
+            if (!$this->makeGlobalBlock()) {
+                // Клонируем компонент через JSON сериализацию/десериализацию
+                // Используем fromArray для правильного создания компонента с учетом его типа
+                $componentJson = json_encode($cachedComponent);
+                $componentData = json_decode($componentJson, true);
+                $clonedComponent = BrizyComponent::fromArray($componentData);
+                
+                Logger::instance()->info('HeadElement component cloned for non-global block', [
+                    'theme' => get_class($data->getThemeInstance()),
+                    'page_id' => $this->pageTDO ? $this->pageTDO->getId() : null,
+                    'component_type' => $clonedComponent->getType()
+                ]);
+                
+                return $clonedComponent;
+            }
+            
+            return $cachedComponent;
         }
 
         // Execute transformation without caching
@@ -257,9 +278,60 @@ abstract class HeadElement extends AbstractElement
     {
         $menuComponentValue = $component->getValue();
         $projectName = $data->getThemeContext()->getProjectName();
+        $menuEntity = $data->getBrizyMenuEntity();
+        $menuList = $menuEntity['list'] ?? [];
+        
+        // #region agent log
+        $logFile = '/home/sg/projects/MB-migration/.cursor/debug.log';
+        $logDir = dirname($logFile);
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0755, true);
+        }
+        $logData = [
+            'location' => 'HeadElement.php:273',
+            'message' => 'buildMenuItemsAndSetTheMenuUid called',
+            'data' => [
+                'menu_entity_list_count' => count($menuList),
+                'menu_entity_uid' => $menuEntity['uid'] ?? 'N/A',
+                'items_with_collection' => array_sum(array_map(function($item) {
+                    return !empty($item['collection']) ? 1 : 0;
+                }, $menuList)),
+                'items_without_collection' => array_sum(array_map(function($item) {
+                    return empty($item['collection']) ? 1 : 0;
+                }, $menuList))
+            ],
+            'timestamp' => time() * 1000,
+            'sessionId' => 'debug-session',
+            'runId' => 'run1',
+            'hypothesisId' => 'E'
+        ];
+        @file_put_contents($logFile, json_encode($logData) . "\n", FILE_APPEND | LOCK_EX);
+        // #endregion
+        
+        $createdMenuItems = $this->createMenu($menuList);
+        
+        // #region agent log
+        $logFile = '/home/sg/projects/MB-migration/.cursor/debug.log';
+        $logData2 = [
+            'location' => 'HeadElement.php:295',
+            'message' => 'Menu items created',
+            'data' => [
+                'created_items_count' => count($createdMenuItems),
+                'items_with_itemId' => array_sum(array_map(function($item) {
+                    return !empty($item->getValue()->get_itemId()) ? 1 : 0;
+                }, $createdMenuItems))
+            ],
+            'timestamp' => time() * 1000,
+            'sessionId' => 'debug-session',
+            'runId' => 'run1',
+            'hypothesisId' => 'E'
+        ];
+        @file_put_contents($logFile, json_encode($logData2) . "\n", FILE_APPEND | LOCK_EX);
+        // #endregion
+        
         $menuComponentValue
-            ->set('items', $this->createMenu($data->getBrizyMenuEntity()['list']))
-            ->set_menuSelected($data->getBrizyMenuEntity()['uid'])
+            ->set('items', $createdMenuItems)
+            ->set_menuSelected($menuEntity['uid'])
             ->set_mMenuTitle($projectName);
 
         // apply menu styles
