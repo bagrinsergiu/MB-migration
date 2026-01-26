@@ -11,6 +11,7 @@ export default function WaveMapping() {
   const [mappings, setMappings] = useState<WaveMappingType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [toggling, setToggling] = useState<number | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -33,6 +34,31 @@ export default function WaveMapping() {
       setError(err.message || 'Ошибка загрузки маппинга');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleCloning = async (brzProjectId: number, currentValue: boolean) => {
+    if (!id) return;
+    
+    setToggling(brzProjectId);
+    try {
+      const newValue = !currentValue;
+      const response = await api.toggleCloning(id, brzProjectId, newValue);
+      
+      if (response.success) {
+        // Обновляем локальное состояние
+        setMappings(prev => prev.map(m => 
+          m.brz_project_id === brzProjectId 
+            ? { ...m, cloning_enabled: newValue }
+            : m
+        ));
+      } else {
+        setError(response.error || 'Ошибка обновления параметра клонирования');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Ошибка обновления параметра клонирования');
+    } finally {
+      setToggling(null);
     }
   };
 
@@ -89,6 +115,7 @@ export default function WaveMapping() {
                   <th>MB Project UUID</th>
                   <th>Brizy Project ID</th>
                   <th>Domain</th>
+                  <th>Клонирование</th>
                   <th>Changes JSON</th>
                   <th>Создано</th>
                   <th>Обновлено</th>
@@ -122,6 +149,27 @@ export default function WaveMapping() {
                         >
                           {mapping.brizy_project_domain}
                         </a>
+                      ) : (
+                        '-'
+                      )}
+                    </td>
+                    <td>
+                      {mapping.brz_project_id ? (
+                        <label className="toggle-switch">
+                          <input
+                            type="checkbox"
+                            checked={mapping.cloning_enabled ?? false}
+                            onChange={() => handleToggleCloning(
+                              mapping.brz_project_id,
+                              mapping.cloning_enabled ?? false
+                            )}
+                            disabled={toggling === mapping.brz_project_id}
+                          />
+                          <span className="toggle-slider"></span>
+                          <span className="toggle-label">
+                            {mapping.cloning_enabled ? 'Вкл' : 'Выкл'}
+                          </span>
+                        </label>
                       ) : (
                         '-'
                       )}

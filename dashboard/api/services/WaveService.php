@@ -39,7 +39,8 @@ class WaveService
         string $name,
         array $projectUuids,
         int $batchSize = 3,
-        bool $mgrManual = false
+        bool $mgrManual = false,
+        bool $enableCloning = false
     ): array {
         WaveLogger::startOperation('createWave', [
             'name' => $name,
@@ -192,7 +193,8 @@ class WaveService
                 $workspaceId,
                 $name, // workspace_name = name волны
                 $batchSize,
-                $mgrManual
+                $mgrManual,
+                $enableCloning
             );
             WaveLogger::info("Волна успешно сохранена в БД", ['wave_id' => $waveId]);
             error_log("[WaveService::createWave] Волна успешно сохранена в БД");
@@ -1153,6 +1155,28 @@ class WaveService
                 'completed_at' => date('Y-m-d H:i:s'),
             ]);
 
+            // Автоматически включаем cloning_enabled при завершении миграции, если это указано в волне
+            try {
+                $wave = $this->dbService->getWave($waveId);
+                $enableCloning = $wave['enable_cloning'] ?? false;
+                
+                if ($enableCloning && $finalBrzProjectId > 0) {
+                    WaveLogger::info("Автоматическое включение cloning_enabled для проекта", [
+                        'wave_id' => $waveId,
+                        'brz_project_id' => $finalBrzProjectId,
+                        'mb_uuid' => $mbUuid
+                    ]);
+                    
+                    $this->updateCloningEnabled($finalBrzProjectId, true);
+                }
+            } catch (Exception $e) {
+                WaveLogger::warning("Ошибка при автоматическом включении cloning_enabled", [
+                    'wave_id' => $waveId,
+                    'brz_project_id' => $finalBrzProjectId,
+                    'error' => $e->getMessage()
+                ]);
+            }
+
             // Обновляем запись в migration_result_list с результатами миграции (для обратной совместимости)
             $this->dbService->updateMigrationResult($waveId, $mbUuid, [
                 'brz_project_id' => $finalBrzProjectId,
@@ -1230,6 +1254,30 @@ class WaveService
         }
 
         return $this->dbService->getWaveMapping($waveId);
+    }
+
+    /**
+     * Обновить параметр cloning_enabled для проекта
+     * 
+     * @param int $brzProjectId ID проекта Brizy
+     * @param bool $cloningEnabled Включено ли клонирование
+     * @return array
+     * @throws Exception
+     */
+    public function updateCloningEnabled(int $brzProjectId, bool $cloningEnabled): array
+    {
+        // Обновляем в БД
+        $this->dbService->updateCloningEnabled($brzProjectId, $cloningEnabled);
+        
+        // Обновляем в Brizy API
+        $brizyApi = new BrizyAPI();
+        $brizyApi->setCloningLink($cloningEnabled, $brzProjectId);
+        
+        return [
+            'success' => true,
+            'brz_project_id' => $brzProjectId,
+            'cloning_enabled' => $cloningEnabled
+        ];
     }
 
     /**

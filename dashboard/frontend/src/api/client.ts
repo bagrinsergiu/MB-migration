@@ -252,6 +252,13 @@ export const api = {
         return response.data;
       },
 
+      async toggleCloning(waveId: string, brzProjectId: number, cloningEnabled: boolean): Promise<ApiResponse<any>> {
+        const response = await apiClient.put(`/waves/${waveId}/mapping/${brzProjectId}/cloning`, {
+          cloning_enabled: cloningEnabled
+        });
+        return response.data;
+      },
+
       // Quality Analysis
       async getQualityAnalysis(migrationId: number): Promise<ApiResponse<QualityAnalysisReport[]>> {
         const response = await apiClient.get(`/migrations/${migrationId}/quality-analysis`);
@@ -383,6 +390,7 @@ export const api = {
     }
 
     export interface WaveMigration {
+      cloning_enabled?: boolean;
       mb_project_uuid: string;
       brz_project_id?: number;
       status: 'pending' | 'in_progress' | 'completed' | 'error';
@@ -414,6 +422,7 @@ export const api = {
       mb_project_uuid: string;
       brizy_project_domain?: string | null;
       changes_json?: any;
+      cloning_enabled?: boolean;
       created_at: string;
       updated_at: string;
     }

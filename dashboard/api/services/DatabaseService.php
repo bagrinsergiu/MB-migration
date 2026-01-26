@@ -519,7 +519,8 @@ class DatabaseService
         int $workspaceId,
         string $workspaceName,
         int $batchSize = 3,
-        bool $mgrManual = false
+        bool $mgrManual = false,
+        bool $enableCloning = false
     ): int {
         $db = $this->getWriteConnection();
         
@@ -536,6 +537,7 @@ class DatabaseService
             'progress_failed' => 0,
             'batch_size' => $batchSize,
             'mgr_manual' => $mgrManual ? 1 : 0,
+            'enable_cloning' => $enableCloning ? 1 : 0,
         ];
         
         try {
@@ -630,6 +632,7 @@ class DatabaseService
                 'project_uuids' => $projectUuids,
                 'batch_size' => (int)($wave['batch_size'] ?? 3),
                 'mgr_manual' => (bool)($wave['mgr_manual'] ?? false),
+                'enable_cloning' => (bool)($wave['enable_cloning'] ?? false),
                 'status' => $wave['status'] ?? 'pending',
                 'progress' => [
                     'total' => (int)($wave['progress_total'] ?? 0),
@@ -1164,6 +1167,7 @@ class DatabaseService
                 'completed_at' => $completedAt,
                 'migration_uuid' => $migrationResult['migration_uuid'],
                 'migration_id' => $migrationMapping['id'] ?? null,
+                'cloning_enabled' => (bool)($migrationMapping['cloning_enabled'] ?? false),
             ];
 
             // Добавляем дополнительные данные из result_json если есть
@@ -1253,6 +1257,7 @@ class DatabaseService
                     'mb_project_uuid' => $migrationResult['mb_project_uuid'],
                     'brizy_project_domain' => $migrationResult['brizy_project_domain'] ?? null,
                     'changes_json' => null,
+                    'cloning_enabled' => false,
                     'created_at' => $migrationResult['created_at'],
                     'updated_at' => $migrationResult['created_at'],
                 ];
@@ -1270,11 +1275,38 @@ class DatabaseService
                     ?? $changesJson['brizy_project_domain'] 
                     ?? null,
                 'changes_json' => $changesJson,
+                'cloning_enabled' => (bool)($mapping['cloning_enabled'] ?? false),
                 'created_at' => $mapping['created_at'],
                 'updated_at' => $mapping['updated_at'],
             ];
         }
         
         return $result;
+    }
+
+    /**
+     * Обновить параметр cloning_enabled для проекта в migrations_mapping
+     * 
+     * @param int $brzProjectId ID проекта Brizy
+     * @param bool $cloningEnabled Включено ли клонирование
+     * @return bool
+     * @throws Exception
+     */
+    public function updateCloningEnabled(int $brzProjectId, bool $cloningEnabled): bool
+    {
+        $db = $this->getWriteConnection();
+        
+        try {
+            $db->update(
+                'migrations_mapping',
+                ['cloning_enabled' => $cloningEnabled ? 1 : 0],
+                ['brz_project_id' => $brzProjectId]
+            );
+            
+            return true;
+        } catch (Exception $e) {
+            error_log("Ошибка обновления cloning_enabled для проекта {$brzProjectId}: " . $e->getMessage());
+            throw $e;
+        }
     }
 }

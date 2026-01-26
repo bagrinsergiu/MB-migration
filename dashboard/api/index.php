@@ -604,6 +604,15 @@ return static function (array $context, Request $request): Response {
             }
         }
 
+        if (preg_match('#^/waves/([^/]+)/mapping/(\d+)/cloning$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'PUT') {
+                $waveId = $matches[1];
+                $brzProjectId = (int)$matches[2];
+                $controller = new WaveController();
+                return $controller->toggleCloning($request, $waveId, $brzProjectId);
+            }
+        }
+
         // Тестовые миграции
         if (preg_match('#^/test-migrations$#', $apiPath)) {
             $controller = new TestMigrationController();
@@ -665,6 +674,7 @@ return static function (array $context, Request $request): Response {
                 'GET /waves/:id',
                 'GET /waves/:id/status',
                 'GET /waves/:id/mapping',
+                'PUT /waves/:id/mapping/:brz_project_id/cloning',
                 'POST /waves/:id/migrations/:mb_uuid/restart',
                 'GET /waves/:id/migrations/:mb_uuid/logs',
                 'GET /waves/:id/projects/:brz_project_id/logs',

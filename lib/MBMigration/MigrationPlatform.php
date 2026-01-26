@@ -400,6 +400,28 @@ class MigrationPlatform
                 $existingBrizyPages
             );
 
+            // #region agent log
+            $logFile = '/home/sg/projects/MB-migration/.cursor/debug.log';
+            $logDir = dirname($logFile);
+            if (!is_dir($logDir)) {
+                @mkdir($logDir, 0755, true);
+            }
+            $logData = [
+                'location' => 'MigrationPlatform.php:398',
+                'message' => 'After createBlankPages',
+                'data' => [
+                    'parent_pages_count' => count($parentPages),
+                    'pages_with_collection' => self::countPagesWithCollection($parentPages),
+                    'visible_pages_with_collection' => self::countVisiblePagesWithCollection($parentPages)
+                ],
+                'timestamp' => time() * 1000,
+                'sessionId' => 'debug-session',
+                'runId' => 'run1',
+                'hypothesisId' => 'F'
+            ];
+            @file_put_contents($logFile, json_encode($logData) . "\n", FILE_APPEND | LOCK_EX);
+            // #endregion
+
             $this->cache->set('menuList', [
                 'id' => null,
                 'uid' => null,
@@ -702,6 +724,34 @@ class MigrationPlatform
     public function getProjectUUID(): string
     {
         return $this->projectUUID_MB;
+    }
+
+    private static function countPagesWithCollection(array $pages): int
+    {
+        $count = 0;
+        foreach ($pages as $page) {
+            if (!empty($page['collection'])) {
+                $count++;
+            }
+            if (!empty($page['child'])) {
+                $count += self::countPagesWithCollection($page['child']);
+            }
+        }
+        return $count;
+    }
+
+    private static function countVisiblePagesWithCollection(array $pages): int
+    {
+        $count = 0;
+        foreach ($pages as $page) {
+            if (($page['hidden'] ?? false) === false && !empty($page['collection'])) {
+                $count++;
+            }
+            if (!empty($page['child'])) {
+                $count += self::countVisiblePagesWithCollection($page['child']);
+            }
+        }
+        return $count;
     }
 
 }
