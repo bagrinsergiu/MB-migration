@@ -122,7 +122,7 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
         // getSlideLocation возвращает компонент на глубине (0,0,0) для Boulevard
         $carouselComponent = $this->getSlideLocation($brizySection);
         
-        // Устанавливаем настройки цвета стрелок для Boulevard на компонент Carousel: opacity = 1 (вместо 0.75)
+        // Устанавливаем настройки цвета стрелок и точек для Boulevard на компонент Carousel: opacity = 1 (вместо 0.75)
         $carouselComponent->getValue()
             ->set_sliderArrowsColorHex($colorArrows)
             ->set_sliderArrowsColorOpacity(1)  // Boulevard: opacity = 1
@@ -130,7 +130,15 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             
             ->set_hoverSliderArrowsColorHex($colorArrows)
             ->set_hoverSliderArrowsColorOpacity(1)
-            ->set_hoverSliderArrowsColorPalette('');
+            ->set_hoverSliderArrowsColorPalette('')
+            
+            ->set_sliderDotsColorHex($colorArrows)
+            ->set_sliderDotsColorOpacity(1)  // Boulevard: opacity = 1 для точек
+            ->set_sliderDotsColorPalette('')
+            
+            ->set_hoverSliderDotsColorHex($colorArrows)
+            ->set_hoverSliderDotsColorOpacity(1)
+            ->set_hoverSliderDotsColorPalette('');
         
         return $brizySection;
     }

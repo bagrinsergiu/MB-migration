@@ -344,7 +344,8 @@ class BrizyAPI extends Utils
     {
         Logger::instance()->debug('Create Global Block', [$position, $rules]);
 
-        $requestData['project'] = Utils::$cache->get('projectId_Brizy');
+        $projectId = Utils::$cache->get('projectId_Brizy');
+        $requestData['project'] = $projectId;
         $requestData['status'] = 'publish';
         $requestData['position'] = $position;
         $requestData['rules'] = $rules;
@@ -354,7 +355,8 @@ class BrizyAPI extends Utils
         $requestData['is_autosave'] = 0;
         $requestData['uid'] = self::generateCharID(12);
 
-        $url = $this->createPrivateUrlAPI('globalBlocks');
+        // New endpoint format: /api/projects/{project}/globalblocks
+        $url = $this->createPrivateUrlAPI('projects') . '/' . $projectId . '/globalblocks';
 
         $result = $this->httpClient('POST', $url, $requestData);
 
@@ -368,14 +370,17 @@ class BrizyAPI extends Utils
 
     public function deleteAllGlobalBlocks()
     {
-        $url = $this->createPrivateUrlAPI('globalBlocks');
-        $requestData['project'] = Utils::$cache->get('projectId_Brizy');
+        $projectId = Utils::$cache->get('projectId_Brizy');
+        // New endpoint format: /api/projects/{project}/globalblocks
+        $url = $this->createPrivateUrlAPI('projects') . '/' . $projectId . '/globalblocks';
+        $requestData['project'] = $projectId;
         $requestData['fields'] = ['id', 'uid'];
         $response = $this->httpClient('GET', $url, $requestData);
         if ($response['status'] == 200) {
             $globalBlocks = json_decode($response['body'], true);
             foreach ($globalBlocks as $block) {
                 Logger::instance()->debug("Delete global block {$block['id']}");
+                // DELETE endpoint: /api/projects/{project}/globalblocks/{id}
                 $response = $this->httpClient('DELETE', $url . "/" . $block['id']);
             }
         }
