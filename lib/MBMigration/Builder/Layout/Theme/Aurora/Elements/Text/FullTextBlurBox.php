@@ -10,141 +10,537 @@ use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
 use MBMigration\Builder\Media\MediaController;
 use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Core\Logger;
 
 class FullTextBlurBox extends FullTextElement
 {
-    use SectionStylesAble;
+    /**
+     * Получить стили для blur-box из DOM
+     *
+     * @param ElementContextInterface $data
+     * @param BrowserPageInterface $browserPage
+     * @return array
+     */
+    protected function getBlurBoxStyles(ElementContextInterface $data, BrowserPageInterface $browserPage): array
+    {
+        $mbSectionItem = $data->getMbSection();
+        $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
+        $families = $data->getFontFamilies();
+        $defaultFont = $data->getDefaultFontFamily();
 
+        $selector = '[data-id="' . $sectionId . '"] .blur-box';
+
+        // Получаем стили самого blur-box (для бордера и паддингов)
+        $blurBoxProperties = [
+            'border-color',
+            'border-width',
+            'border-style',
+            'border-top-width',
+            'border-right-width',
+            'border-bottom-width',
+            'border-left-width',
+            'padding-top',
+            'padding-bottom',
+            'padding-left',
+            'padding-right',
+        ];
+
+        $blurBoxStyles = $this->getDomElementStyles(
+            $selector,
+            $blurBoxProperties,
+            $browserPage,
+            $families,
+            $defaultFont
+        );
+
+        // Получаем стили ::before псевдоэлемента (для background-color и opacity)
+        $beforeProperties = [
+            'background-color',
+            'opacity',
+        ];
+
+        $beforeStyles = $this->getDomElementStyles(
+            $selector,
+            $beforeProperties,
+            $browserPage,
+            $families,
+            $defaultFont,
+            '::before'
+        );
+
+        // Объединяем стили
+        $allStyles = array_merge($blurBoxStyles, $beforeStyles);
+
+        return $allStyles;
+    }
+
+    /**
+     * Нормализовать стили blur-box в единый массив BlurBoxStyles
+     *
+     * @param array $rawStyles
+     * @return array
+     */
+    protected function normalizeBlurBoxStyles(array $rawStyles): array
+    {
+        $normalized = [];
+
+        // Background-color и opacity из ::before
+        if (isset($rawStyles['background-color'])) {
+            $normalized['bgColorHex'] = ColorConverter::rgba2hex($rawStyles['background-color']);
+            $normalized['bgColorOpacity'] = ColorConverter::rgba2opacity($rawStyles['background-color']);
+        } else {
+            $normalized['bgColorHex'] = '#000000';
+            $normalized['bgColorOpacity'] = 0.5; // значение по умолчанию
+        }
+
+        // Opacity из ::before (если есть отдельное значение)
+        if (isset($rawStyles['opacity'])) {
+            $opacity = NumberProcessor::convertToNumeric($rawStyles['opacity']);
+            // Умножаем opacity на bgColorOpacity для итоговой прозрачности
+            $normalized['bgColorOpacity'] = $normalized['bgColorOpacity'] * $opacity;
+        }
+
+        // Border стили
+        if (isset($rawStyles['border-color'])) {
+            $normalized['borderColorHex'] = ColorConverter::rgba2hex($rawStyles['border-color']);
+            $normalized['borderColorOpacity'] = ColorConverter::rgba2opacity($rawStyles['border-color']);
+        } else {
+            $normalized['borderColorHex'] = '#ffffff';
+            $normalized['borderColorOpacity'] = 1;
+        }
+
+        // Border width
+        if (isset($rawStyles['border-width'])) {
+            $normalized['borderWidth'] = (int)str_replace('px', '', $rawStyles['border-width']);
+        } elseif (isset($rawStyles['border-top-width'])) {
+            $normalized['borderWidth'] = (int)str_replace('px', '', $rawStyles['border-top-width']);
+        } else {
+            $normalized['borderWidth'] = 1;
+        }
+
+        // Border style
+        $normalized['borderStyle'] = $rawStyles['border-style'] ?? 'solid';
+
+        // Border width type (ungrouped если разные значения, grouped если одинаковые)
+        $hasDifferentWidths = isset($rawStyles['border-top-width']) &&
+                             isset($rawStyles['border-right-width']) &&
+                             isset($rawStyles['border-bottom-width']) &&
+                             isset($rawStyles['border-left-width']) &&
+                             ($rawStyles['border-top-width'] !== $rawStyles['border-right-width'] ||
+                              $rawStyles['border-top-width'] !== $rawStyles['border-bottom-width'] ||
+                              $rawStyles['border-top-width'] !== $rawStyles['border-left-width']);
+
+        $normalized['borderWidthType'] = $hasDifferentWidths ? 'ungrouped' : 'grouped';
+
+        // Индивидуальные border widths если ungrouped
+        if ($hasDifferentWidths) {
+            $normalized['borderTopWidth'] = isset($rawStyles['border-top-width'])
+                ? (int)str_replace('px', '', $rawStyles['border-top-width'])
+                : $normalized['borderWidth'];
+            $normalized['borderRightWidth'] = isset($rawStyles['border-right-width'])
+                ? (int)str_replace('px', '', $rawStyles['border-right-width'])
+                : $normalized['borderWidth'];
+            $normalized['borderBottomWidth'] = isset($rawStyles['border-bottom-width'])
+                ? (int)str_replace('px', '', $rawStyles['border-bottom-width'])
+                : $normalized['borderWidth'];
+            $normalized['borderLeftWidth'] = isset($rawStyles['border-left-width'])
+                ? (int)str_replace('px', '', $rawStyles['border-left-width'])
+                : $normalized['borderWidth'];
+        }
+        
+        // Padding стили для внутренних отступов вокруг текста
+        $normalized['paddingTop'] = isset($rawStyles['padding-top'])
+            ? (int)str_replace('px', '', $rawStyles['padding-top'])
+            : 0;
+        $normalized['paddingBottom'] = isset($rawStyles['padding-bottom'])
+            ? (int)str_replace('px', '', $rawStyles['padding-bottom'])
+            : 0;
+        $normalized['paddingLeft'] = isset($rawStyles['padding-left'])
+            ? (int)str_replace('px', '', $rawStyles['padding-left'])
+            : 0;
+        $normalized['paddingRight'] = isset($rawStyles['padding-right'])
+            ? (int)str_replace('px', '', $rawStyles['padding-right'])
+            : 0;
+
+        return $normalized;
+    }
+
+    /**
+     * Обработать стили blur-box и применить к компоненту
+     *
+     * @param ElementContextInterface $data
+     * @param BrowserPageInterface $browserPage
+     * @param BrizyComponent $component
+     * @return BrizyComponent
+     */
+    protected function handleBlurBoxStyles(
+        ElementContextInterface $data,
+        BrowserPageInterface $browserPage,
+        BrizyComponent $component
+    ): BrizyComponent {
+        try {
+            // 1. Получаем все нужные стили для blur-box
+            $rawStyles = $this->getBlurBoxStyles($data, $browserPage);
+
+            if (empty($rawStyles)) {
+                Logger::instance()->warning('BlurBox styles not found, using defaults');
+                return $component;
+            }
+
+            // 2. Нормализуем стили в единый массив
+            $blurBoxStyles = $this->normalizeBlurBoxStyles($rawStyles);
+
+            // 3. Применяем стили к компоненту
+            $component->getValue()
+                ->set_bgColorType('solid')
+                ->set_bgColorHex($blurBoxStyles['bgColorHex'])
+                ->set_bgColorOpacity($blurBoxStyles['bgColorOpacity'])
+                ->set_bgColorPalette('')
+                ->set_borderStyle($blurBoxStyles['borderStyle'])
+                ->set_borderColorHex($blurBoxStyles['borderColorHex'])
+                ->set_borderColorOpacity($blurBoxStyles['borderColorOpacity'])
+                ->set_borderColorPalette('')
+                ->set_borderWidthType($blurBoxStyles['borderWidthType']);
+
+            if ($blurBoxStyles['borderWidthType'] === 'grouped') {
+                $component->getValue()->set_borderWidth($blurBoxStyles['borderWidth']);
+            } else {
+                $component->getValue()
+                    ->set_borderTopWidth($blurBoxStyles['borderTopWidth'] ?? $blurBoxStyles['borderWidth'])
+                    ->set_borderRightWidth($blurBoxStyles['borderRightWidth'] ?? $blurBoxStyles['borderWidth'])
+                    ->set_borderBottomWidth($blurBoxStyles['borderBottomWidth'] ?? $blurBoxStyles['borderWidth'])
+                    ->set_borderLeftWidth($blurBoxStyles['borderLeftWidth'] ?? $blurBoxStyles['borderWidth']);
+            }
+
+            // Применяем те же стили для mobile
+            $component->getValue()
+                ->set_mobileBgColorType('solid')
+                ->set_mobileBgColorHex($blurBoxStyles['bgColorHex'])
+                ->set_mobileBgColorOpacity($blurBoxStyles['bgColorOpacity'])
+                ->set_mobileBgColorPalette('');
+            
+            // Применяем внутренние отступы вокруг текста
+            $component->getValue()
+                ->set_paddingType('ungrouped')
+                ->set_paddingTop($blurBoxStyles['paddingTop'] ?? 0)
+                ->set_paddingTopSuffix('px')
+                ->set_paddingBottom($blurBoxStyles['paddingBottom'] ?? 0)
+                ->set_paddingBottomSuffix('px')
+                ->set_paddingLeft($blurBoxStyles['paddingLeft'] ?? 0)
+                ->set_paddingLeftSuffix('px')
+                ->set_paddingRight($blurBoxStyles['paddingRight'] ?? 0)
+                ->set_paddingRightSuffix('px');
+
+        } catch (\Exception $e) {
+            Logger::instance()->error('Error handling BlurBox styles: ' . $e->getMessage());
+        }
+
+        return $component;
+    }
+
+    /**
+     * Получить компонент контейнера текста
+     * Внутренний Column на глубине (0, 0, 0, 0, 0, 0) для применения стилей blur-box
+     * Структура: Section -> SectionItem -> Row -> Column -> Row -> Column
+     *
+     * @param BrizyComponent $brizySection
+     * @return BrizyComponent
+     */
+    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0, 0, 0, 0, 0);
+    }
+
+    /**
+     * Получить компонент секции
+     *
+     * @param BrizyComponent $brizySection
+     * @return BrizyComponent
+     */
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
     }
 
-    protected function getInsideItemComponent(BrizyComponent $brizySection): BrizyComponent
-    {
-        // Возвращаем внутренний Column (0,0,0,0,0) - Column внутри Row внутри внешнего Column
-        // Структура: SectionItem(0) -> Row(0,0) -> Column(0,0,0) -> Row(0,0,0,0) -> Column(0,0,0,0,0)
-        $innerColumn = $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
-        
-        // Если внутренний Column не найден, пытаемся получить его через альтернативный путь
-        if (!$innerColumn) {
-            // Попробуем получить через внешний Column -> Row -> Column
-            $outerColumn = $brizySection->getItemWithDepth(0, 0, 0);
-            if ($outerColumn) {
-                $innerRow = $outerColumn->getItemWithDepth(0);
-                if ($innerRow) {
-                    $innerColumn = $innerRow->getItemWithDepth(0);
-                }
-            }
-        }
-        
-        return $innerColumn ?: $brizySection->getItemWithDepth(0, 0, 0);
-    }
-
-    protected function getTextContainerComponent(BrizyComponent $brizySection): BrizyComponent {
-        // Возвращаем внутренний Column (0,0,0,0,0) - Column внутри Row внутри внешнего Column
-        // Структура: SectionItem(0) -> Row(0,0) -> Column(0,0,0) -> Row(0,0,0,0) -> Column(0,0,0,0,0)
-        $innerColumn = $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
-        
-        // Если внутренний Column не найден, пытаемся получить его через альтернативный путь
-        if (!$innerColumn) {
-            // Попробуем получить через внешний Column -> Row -> Column
-            $outerColumn = $brizySection->getItemWithDepth(0, 0, 0);
-            if ($outerColumn) {
-                $innerRow = $outerColumn->getItemWithDepth(0);
-                if ($innerRow) {
-                    $innerColumn = $innerRow->getItemWithDepth(0);
-                }
-            }
-        }
-        
-        return $innerColumn ?: $brizySection->getItemWithDepth(0, 0, 0);
-    }
-
-    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
-    {
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
-        $brizySection->getValue()->set_marginTop(0);
-        $brizySection->getValue()->set_marginBottum(0);
-
-        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
-        $insideItemComponent = $this->getInsideItemComponent($brizySection);
-        $textContainerComponent = $this->getTextContainerComponent($brizySection);
-
-        // Проверяем, что внутренний Column существует
-        if (!$insideItemComponent || !$textContainerComponent) {
-            // Если внутренний Column не найден, используем внешний Column как fallback
-            $insideItemComponent = $brizySection->getItemWithDepth(0, 0, 0);
-            $textContainerComponent = $brizySection->getItemWithDepth(0, 0, 0);
-        }
-
-        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
-        $insideElementContext = $data->instanceWithBrizyComponent($insideItemComponent);
-
-        $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());
-
-        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
-
-        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
-
-        $this->transformItem($insideElementContext, $textContainerComponent, $styleList);
-
-        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
-
-        $fff = json_encode( $data->getThemeContext()->getFamilies());
-        // Используем insideElementContext для добавления RichText элементов во внутренний Column
-        $this->handleRichTextItems($insideElementContext, $this->browserPage);
-        $this->handleDonationsButton($insideElementContext, $this->browserPage, $this->brizyKit, $this->getDonationsButtonOptions());
-
-        return $brizySection;
-    }
-
+    /**
+     * Трансформировать элемент с применением стилей
+     *
+     * @param ElementContextInterface $data
+     * @param BrizyComponent $brizySection
+     * @param array $params
+     * @return BrizyComponent
+     */
     protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {
         $this->handleItemBackground($brizySection, $params);
         return $brizySection;
     }
 
-    protected function afterTransformItem(ElementContextInterface $data, BrizyComponent $brizySection): void
+    /**
+     * Получить стили внешнего Column из исходного сайта
+     * Пробует различные селекторы для получения background-color, padding-top, padding-bottom контейнера с изображением
+     *
+     * @param array $mbSectionItem
+     * @param array $sectionStyles
+     * @return array
+     */
+    protected function getOuterColumnStyles($mbSectionItem, $sectionStyles): array
     {
-        $mbSectionItem = $data->getMbSection();
-        $selectId = $mbSectionItem['id'] ?? $mbSectionItem['sectionId'];
+        $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
 
-        $sectionSelector = '[data-id="' .$selectId. '"] .bg-helper>.bg-opacity';
-        $styles = $this->browserPage->evaluateScript(
-            'brizy.getStyles',
-            [
-                'selector' => $sectionSelector,
-                'styleProperties' => ['background-color','opacity'],
-                'families' => [],
-                'defaultFamily' => '',
-            ]
-        );
+        // Пробуем разные селекторы для получения стилей внешнего Column
+        // Порядок важен - от более специфичных к общим
+        $outerColumnSelectors = [
+            '[data-id="' . $sectionId . '"] .content-wrapper',
+            '[data-id="' . $sectionId . '"] .row > .column:first-child',
+            '[data-id="' . $sectionId . '"] > div > div',
+            '[data-id="' . $sectionId . '"] > div',
+            '[data-id="' . $sectionId . '"] .row > .column',
+            '[data-id="' . $sectionId . '"]',
+        ];
 
-        // Получаем градиент из дополнительных опций, если он есть
-        $additionalOptions = $data->getThemeContext()->getPageDTO()->getPageStyleDetails();
-        if (!empty($additionalOptions['bg-gradient'])) {
-            $styles['data']['bg-gradient'] = $additionalOptions['bg-gradient'];
+        $families = [];
+        $defaultFont = '';
+
+        $resultStyles = [];
+        $foundBgColor = false;
+
+        // Пытаемся получить стили из разных селекторов
+        foreach ($outerColumnSelectors as $selector) {
+            $styles = $this->getDomElementStyles(
+                $selector,
+                ['background-color', 'opacity', 'padding-top', 'padding-bottom'],
+                $this->browserPage,
+                $families,
+                $defaultFont
+            );
+
+            // Собираем padding-top и padding-bottom из всех селекторов
+            if (isset($styles['padding-top']) && !isset($resultStyles['padding-top'])) {
+                $resultStyles['padding-top'] = $styles['padding-top'];
+            }
+            if (isset($styles['padding-bottom']) && !isset($resultStyles['padding-bottom'])) {
+                $resultStyles['padding-bottom'] = $styles['padding-bottom'];
+            }
+
+            // Проверяем, что background-color валидный и не прозрачный
+            if (!empty($styles['background-color']) && !$foundBgColor) {
+                $bgColor = strtolower(trim($styles['background-color']));
+                $transparentValues = [
+                    'rgba(0, 0, 0, 0)',
+                    'rgba(255, 255, 255, 0)',
+                    'transparent',
+                    'rgba(0,0,0,0)',
+                    'rgba(255,255,255,0)',
+                ];
+
+                if (!in_array($bgColor, $transparentValues)) {
+                    $resultStyles['background-color'] = $styles['background-color'];
+                    if (isset($styles['opacity'])) {
+                        $resultStyles['opacity'] = $styles['opacity'];
+                    }
+                    $foundBgColor = true;
+                }
+            }
         }
 
-        // Устанавливаем градиент или цвет фона на SectionItem
-        $sectionItemComponent = $this->getSectionItemComponent($brizySection);
-        if (!empty($styles['data']['bg-gradient'])) {
-            $this->handleSectionGradient($sectionItemComponent, $styles['data']);
-            
-            // Добавляем параметры для градиента на SectionItem
-            $sectionItemValue = $sectionItemComponent->getValue();
-            $sectionItemValue->set('gradientActivePointer', 'finishPointer');
-        } else {
-            $this->handleItemBackground($sectionItemComponent, $styles['data']);
-        }
-
-        // Обработка blur-box для full-text-blur-box элемента
-        $this->handleBlurBoxStyles($data, $brizySection, $selectId);
+        return $resultStyles;
     }
 
     /**
-     * Переопределяем handleSectionStyles, чтобы предотвратить установку фонового изображения через handleSectionTexture
+     * Переопределяем handleSectionBackground для установки изображения на внешний Column
+     * Градиент остается на SectionItem, изображение устанавливается на внешний Column
+     *
+     * ВАЖНО: $brizySection здесь это SectionItem, поэтому depth считается относительно него:
+     * SectionItem -> Row (0) -> Column (0,0) - это внешний Column для изображения
+     *
+     * @param BrizyComponent $brizySection (это SectionItem)
+     * @param array $mbSectionItem
+     * @param array $sectionStyles
+     * @param array $options
+     */
+    protected function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom'])
+    {
+        if ($brizySection->getType() == 'Section') {
+            return;
+        }
+
+        // Обрабатываем background-color для градиента на внешней секции
+        if (isset($sectionStyles['background-color'])) {
+            $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
+                $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'] ?? 'rgba(255,255,255,1)')
+            );
+        } else {
+            $selectorSectionStyles = 'body';
+
+            $styles = $this->getDomElementStyles(
+                $selectorSectionStyles,
+                ['background-color', 'opacity'],
+                $this->browserPage,
+                [],
+                []
+            );
+            $sectionStyles['background-color'] = ColorConverter::convertColorRgbToHex($styles['background-color'] ?? '#ffffff');
+            $sectionStyles['opacity'] = ColorConverter::normalizeOpacity($styles['opacity']);
+        }
+
+        // Применяем градиент/цвет к внешней секции (SectionItem) - без изображения
+        $this->handleItemBackground($brizySection, $sectionStyles);
+
+        // Если есть изображение, применяем его к внешнему Column
+        // Относительно SectionItem: Row (0) -> Column (0,0) - это внешний Column
+        if (isset($mbSectionItem['settings']['sections']['background']['photo']) &&
+            $mbSectionItem['settings']['sections']['background']['photo'] != '') {
+            $background = $mbSectionItem['settings']['sections']['background'];
+            if (isset($background['filename']) && isset($background['photo'])) {
+                // Получаем внешний Column для установки изображения
+                // Относительно SectionItem: Row (0) -> Column (0,0)
+                $outerColumn = $brizySection->getItemWithDepth(0, 0);
+
+                if ($outerColumn) {
+                    // Получаем стили внешнего Column из исходного сайта
+                    $outerColumnStyles = $this->getOuterColumnStyles($mbSectionItem, $sectionStyles);
+
+                    // Извлекаем расширение из оригинального имени файла
+                    $extension = pathinfo($background['filename'], PATHINFO_EXTENSION);
+
+                    // bgImageSrc - это имя файла после загрузки в Brizy
+                    // photo уже содержит имя файла (например: "56b7826206b375035803e2ff1c38e0de.jpg")
+                    $bgImageSrc = $background['photo'];
+
+                    // Если photo это URL, извлекаем только имя файла
+                    if (filter_var($bgImageSrc, FILTER_VALIDATE_URL)) {
+                        $bgImageSrc = basename(parse_url($bgImageSrc, PHP_URL_PATH));
+                    }
+
+                    // Получаем размеры изображения из метаданных или настроек
+                    $bgImageWidth = null;
+                    $bgImageHeight = null;
+
+                    // Проверяем метаданные после загрузки
+                    if (isset($background['metadata'])) {
+                        $metadata = is_string($background['metadata'])
+                            ? json_decode($background['metadata'], true)
+                            : $background['metadata'];
+                        if (isset($metadata['width'])) {
+                            $bgImageWidth = (int)$metadata['width'];
+                        }
+                        if (isset($metadata['height'])) {
+                            $bgImageHeight = (int)$metadata['height'];
+                        }
+                    }
+
+                    // Если нет в метаданных, проверяем в настройках
+                    if ($bgImageWidth === null) {
+                        $bgImageWidth = $background['width'] ?? $background['imageWidth'] ?? null;
+                    }
+                    if ($bgImageHeight === null) {
+                        $bgImageHeight = $background['height'] ?? $background['imageHeight'] ?? null;
+                    }
+
+                    // Получаем background-color и opacity для внешнего Column
+                    // Если не найден цвет из исходного сайта, используем прозрачный фон
+                    // чтобы не перекрывать изображение
+                    $bgColorHex = '#ffffff';
+                    $bgColorOpacity = 0;
+
+                    if (!empty($outerColumnStyles['background-color'])) {
+                        $bgColorHex = ColorConverter::rgba2hex($outerColumnStyles['background-color']);
+                        $bgColorOpacity = ColorConverter::rgba2opacity($outerColumnStyles['background-color']);
+
+                        // Если есть отдельное значение opacity, учитываем его
+                        if (isset($outerColumnStyles['opacity'])) {
+                            $opacity = NumberProcessor::convertToNumeric($outerColumnStyles['opacity']);
+                            $bgColorOpacity = $bgColorOpacity * $opacity;
+                        }
+                    }
+
+                    // Получаем padding-top и padding-bottom для внешнего Column из исходного сайта
+                    $paddingTop = 0;
+                    $paddingBottom = 0;
+
+                    if (isset($outerColumnStyles['padding-top'])) {
+                        $paddingTop = (int)str_replace('px', '', $outerColumnStyles['padding-top']);
+                    }
+                    if (isset($outerColumnStyles['padding-bottom'])) {
+                        $paddingBottom = (int)str_replace('px', '', $outerColumnStyles['padding-bottom']);
+                    }
+
+                    $outerColumn->getValue()
+                        ->set_bgImageSrc($bgImageSrc)
+                        ->set_bgImageFileName($background['filename'])
+                        ->set_bgImageExtension($extension)
+                        ->set_bgImageType('internal')
+                        ->set_heightStyle('custom')
+                        ->set_verticalAlign('center')
+                        ->set_bgColorType('solid')
+                        ->set_bgColorHex($bgColorHex)
+                        ->set_bgColorOpacity($bgColorOpacity)
+                        ->set_bgColorPalette('')
+                        ->set_mobileBgColorType('solid')
+                        ->set_mobileBgColorHex($bgColorHex)
+                        ->set_mobileBgColorOpacity($bgColorOpacity)
+                        ->set_mobileBgColorPalette('')
+                        ->set_paddingType('ungrouped')
+                        ->set_paddingTop($paddingTop)
+                        ->set_paddingTopSuffix('px')
+                        ->set_paddingBottom($paddingBottom)
+                        ->set_paddingBottomSuffix('px');
+
+                    if ($bgImageWidth !== null) {
+                        $outerColumn->getValue()->set_bgImageWidth((int)$bgImageWidth);
+                    }
+                    if ($bgImageHeight !== null) {
+                        $outerColumn->getValue()->set_bgImageHeight((int)$bgImageHeight);
+                    }
+
+                    // Настройки для изображения
+                    if (isset($background['photoOption'])) {
+                        switch ($background['photoOption']) {
+                            case 'parallax-scroll':
+                                $outerColumn->getValue()->set_bgAttachment('animated');
+                                break;
+                            case 'parallax-fixed':
+                                $outerColumn->getValue()->set_bgAttachment('fixed');
+                                break;
+                            case 'fill':
+                                $outerColumn->getValue()->set_bgAttachment('none');
+                                break;
+                            case 'tile':
+                                $outerColumn->getValue()->set_bgRepeat('on');
+                                break;
+                        }
+                    }
+                }
+
+                // Настройка высоты секции
+                if ($options['heightType'] == 'auto') {
+                    $brizySection
+                        ->getParent()
+                        ->getValue()
+                        ->set_sectionHeight(500)
+                        ->set_fullHeight('auto');
+                } else if ($options['heightType'] == 'custom') {
+                    $heightValue = isset($sectionStyles['height']) ? (int)str_replace('px', '', $sectionStyles['height']) : 500;
+                    $brizySection
+                        ->getParent()
+                        ->getValue()
+                        ->set_sectionHeight($heightValue)
+                        ->set_fullHeight('custom');
+                }
+            }
+        }
+    }
+
+    /**
+     * Переопределяем handleSectionStyles чтобы не устанавливать паддинги на SectionItem
+     * Паддинги должны быть только на внешнем Column
+     * Используем стандартную логику из трейта, но убираем установку паддингов
+     *
+     * @param ElementContextInterface $data
+     * @param BrowserPageInterface $browserPage
+     * @param array $additionalOptions
+     * @return BrizyComponent
      */
     protected function handleSectionStyles(
         ElementContextInterface $data,
@@ -154,11 +550,6 @@ class FullTextBlurBox extends FullTextElement
     {
         $mbSectionItem = $data->getMbSection();
         $brizySection = $data->getBrizySection();
-
-        // Проверяем наличие blur-box в секции
-        $selectId = $mbSectionItem['id'] ?? $mbSectionItem['sectionId'];
-        $blurBoxSelector = '[data-id="' . $selectId . '"] .blur-box';
-        $hasBlurBox = $this->hasNode($blurBoxSelector, $browserPage);
 
         $sectionStyles = $this->getSectionListStyle($data, $browserPage);
 
@@ -176,20 +567,12 @@ class FullTextBlurBox extends FullTextElement
 
         $options = ['heightType' => $this->getHeightTypeHandleSectionStyles()];
 
-        // Для blur-box элементов не вызываем handleSectionTexture, чтобы не устанавливать фоновое изображение через customCSS
-        if ($hasBlurBox) {
-            // Удаляем background-image из sectionStyles, чтобы handleSectionTexture не сработал
-            unset($sectionStyles['background-image']);
-        }
-
+        // Устанавливаем градиент/фон через handleSectionBackground
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles, $options);
 
-        // Вызываем handleSectionTexture только если нет blur-box
-        if (!$hasBlurBox) {
-            $this->handleSectionTexture($brizySection, $mbSectionItem, $sectionStyles, $options);
-        }
-
-        // Устанавливаем padding и margin
+        // НЕ устанавливаем паддинги на SectionItem - они должны быть только на внешнем Column
+        // Устанавливаем паддинги в 0, чтобы они не применялись
+        // Устанавливаем только margin и высоту (как в стандартном методе, но без паддингов)
         $brizySection->getValue()
             ->set_paddingType('ungrouped')
             ->set_paddingTop(0)
@@ -197,12 +580,38 @@ class FullTextBlurBox extends FullTextElement
             ->set_paddingRight(0)
             ->set_paddingLeft(0)
             ->set_marginType('ungrouped')
-            ->set_marginTop(0)
-            ->set_marginBottom(0)
-            ->set_marginLeft(0)
-            ->set_marginRight(0);
+            ->set_marginLeft((int)($sectionStyles['margin-left'] ?? 0))
+            ->set_marginRight((int)($sectionStyles['margin-right'] ?? 0))
+            ->set_marginTop((int)($sectionStyles['margin-top'] ?? 0))
+            ->set_marginBottom((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_fullHeight('custom')
+            ->set_sectionHeight((int)($sectionStyles['height'] ?? 0))
+            ->set_mobileBgSize('cover')
+            ->set_mobileBgSizeType('original')
+            ->set_mobileBgRepeat('off')
+            ->set_mobilePaddingType('ungrouped')
+            ->set_mobilePadding(0)
+            ->set_mobilePaddingSuffix('px')
+            ->set_mobilePaddingTop(0)
+            ->set_mobilePaddingTopSuffix('px')
+            ->set_mobilePaddingRight(0)
+            ->set_mobilePaddingRightSuffix('px')
+            ->set_mobilePaddingBottom(0)
+            ->set_mobilePaddingBottomSuffix('px')
+            ->set_mobilePaddingLeft(0)
+            ->set_mobilePaddingLeftSuffix('px')
+            ->set_mobileMarginType('ungrouped')
+            ->set_mobileMargin((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_mobileMarginSuffix('px')
+            ->set_mobileMarginTop((int)($sectionStyles['margin-top'] ?? 0))
+            ->set_mobileMarginTopSuffix('px')
+            ->set_mobileMarginRight((int)($sectionStyles['margin-right'] ?? 0))
+            ->set_mobileMarginRightSuffix('px')
+            ->set_mobileMarginBottom((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_mobileMarginBottomSuffix('px')
+            ->set_mobileMarginLeft((int)($sectionStyles['margin-left'] ?? 0))
+            ->set_mobileMarginLeftSuffix('px');
 
-        // Устанавливаем дополнительные опции
         foreach ($additionalOptions as $key => $value) {
             if (is_array($value)) {
                 continue;
@@ -217,472 +626,51 @@ class FullTextBlurBox extends FullTextElement
     }
 
     /**
-     * Переопределяем handleSectionBackground, чтобы не устанавливать фоновое изображение на SectionItem для blur-box
-     * Но устанавливаем градиент, если он есть
+     * Переопределяем метод для применения стилей blur-box
+     *
+     * @param ElementContextInterface $data
+     * @return BrizyComponent
+     * @throws \Exception
      */
-    protected function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom'])
+    protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        // Проверяем наличие blur-box в секции
-        $selectId = $mbSectionItem['id'] ?? $mbSectionItem['sectionId'];
-        $blurBoxSelector = '[data-id="' . $selectId . '"] .blur-box';
-        $hasBlurBox = $this->hasNode($blurBoxSelector, $this->browserPage);
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizySection->getValue()->set_marginTop(0);
 
-        // Если есть blur-box, не устанавливаем фоновое изображение на SectionItem
-        // Оно будет установлено на внешний Column в handleBlurBoxStyles
-        if ($hasBlurBox) {
-            // Устанавливаем градиент, если он есть в sectionStyles
-            if (!empty($sectionStyles['bg-gradient'])) {
-                $this->handleSectionGradient($brizySection, $sectionStyles);
-            } else {
-                // Устанавливаем только цвет фона и другие стили, но не изображение
-                if (isset($sectionStyles['background-color'])) {
-                    $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
-                        $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'] ?? 'rgba(255,255,255,1)')
-                    );
-                }
-                $this->handleItemBackground($brizySection, $sectionStyles);
-            }
-            return;
-        }
-
-        // Для обычных секций вызываем родительский метод
-        parent::handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles, $options);
-    }
-
-
-    /**
-     * Обработка стилей для blur-box элемента
-     * Извлекает все стили с исходной страницы и применяет их к нужным компонентам
-     */
-    protected function handleBlurBoxStyles(ElementContextInterface $data, BrizyComponent $brizySection, $selectId): void
-    {
-        // Проверяем наличие blur-box в секции
-        $blurBoxSelector = '[data-id="' . $selectId . '"] .blur-box';
-        $hasBlurBox = $this->hasNode($blurBoxSelector, $this->browserPage);
-
-        if (!$hasBlurBox) {
-            return;
-        }
-
-        $mbSectionItem = $data->getMbSection();
-        
-        // Получаем внешний Column (0,0,0) - первый Column в первой Row в SectionItem
-        $outerColumn = $brizySection->getItemWithDepth(0, 0, 0);
-        
-        // Получаем внутренний Column (0,0,0,0,0)
-        $innerColumn = $brizySection->getItemWithDepth(0, 0, 0, 0, 0);
-        
-        // Получаем SectionItem
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
-        
-        // 1. Извлекаем фоновое изображение из секции data-id="942277" (исходная секция)
-        // Фон берется с секции, а не с body
-        $imageUrl = '';
-        $imageFileName = '';
-        
-        // Используем исходный sectionId для получения фонового изображения
-        $originalSectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
-        
-        // Получаем фоновое изображение из настроек секции
-        if (isset($mbSectionItem['settings']['sections']['background']['photo']) && !empty($mbSectionItem['settings']['sections']['background']['photo'])) {
-            $background = $mbSectionItem['settings']['sections']['background'];
-            $rawImageUrl = $background['photo'];
-            $imageFileName = $background['filename'] ?? '';
-            
-            $validatedUrl = MediaController::validateBgImag($rawImageUrl);
-            $imageUrl = $validatedUrl ? $validatedUrl : $rawImageUrl;
-            
-            if (empty($imageFileName) && preg_match('/([^\/]+)\.(jpg|jpeg|png|gif|webp)$/i', $imageUrl, $fileMatches)) {
-                $imageFileName = $fileMatches[1] . '.' . $fileMatches[2];
-            }
-        }
-        
-        // Если нет в настройках, пытаемся получить из DOM секции
-        if (empty($imageUrl)) {
-            $sectionBgSelector = '[data-id="' . $originalSectionId . '"]';
-            $sectionBgStyles = $this->getDomElementStyles(
-                $sectionBgSelector,
-                ['background-image'],
-                $this->browserPage,
-                $data->getFontFamilies(),
-                $data->getDefaultFontFamily()
-            );
-            
-            if (!empty($sectionBgStyles['background-image']) && $sectionBgStyles['background-image'] !== 'none') {
-                $bgImageUrl = $sectionBgStyles['background-image'];
-                if (preg_match('/url\(["\']?([^"\']+)["\']?\)/', $bgImageUrl, $matches)) {
-                    $imageUrl = $matches[1];
-                    if (preg_match('/([^\/]+)\.(jpg|jpeg|png|gif|webp)$/i', $imageUrl, $fileMatches)) {
-                        $imageFileName = $fileMatches[1] . '.' . $fileMatches[2];
-                    }
-                }
-            }
-        }
-        
-        // Если все еще нет, проверяем .blur-box .has-background
-        if (empty($imageUrl)) {
-            $blurBoxBgSelector = '[data-id="' . $originalSectionId . '"] .blur-box .has-background';
-            $blurBoxBgStyles = $this->getDomElementStyles(
-                $blurBoxBgSelector,
-                ['background-image'],
-                $this->browserPage,
-                $data->getFontFamilies(),
-                $data->getDefaultFontFamily()
-            );
-            
-            if (!empty($blurBoxBgStyles['background-image']) && $blurBoxBgStyles['background-image'] !== 'none') {
-                $bgImageUrl = $blurBoxBgStyles['background-image'];
-                if (preg_match('/url\(["\']?([^"\']+)["\']?\)/', $bgImageUrl, $matches)) {
-                    $imageUrl = $matches[1];
-                    if (preg_match('/([^\/]+)\.(jpg|jpeg|png|gif|webp)$/i', $imageUrl, $fileMatches)) {
-                        $imageFileName = $fileMatches[1] . '.' . $fileMatches[2];
-                    }
-                }
-            }
-        }
-        
-        // 2. Устанавливаем фоновое изображение на внешний Column
-        if ($outerColumn && !empty($imageUrl)) {
-            $outerValue = $outerColumn->getValue();
-            
-            // Основные параметры изображения
-            $outerValue->set_bgImageSrc($imageUrl)
-                ->set_bgImageFileName($imageFileName)
-                ->set_bgImageType('internal')
-                ->set_bgSize('cover')
-                ->set_bgColorType('none')
-                ->set_bgColorOpacity(0)
-                ->set_heightStyle('custom')
-                ->set_height(600)
-                ->set_heightSuffix('px')
-                ->set_verticalAlign('center')
-                ->set_width(100);
-            
-            // Padding - извлекаем из секции или используем значения по умолчанию
-            $outerValue->set_paddingType('ungrouped')
-                ->set_padding(80)
-                ->set_paddingSuffix('px')
-                ->set_paddingTop(0)
-                ->set_paddingTopSuffix('px')
-                ->set_paddingRight(80)
-                ->set_paddingRightSuffix('px')
-                ->set_paddingBottom(0)
-                ->set_paddingBottomSuffix('px')
-                ->set_paddingLeft(80)
-                ->set_paddingLeftSuffix('px');
-            
-            // Tablet padding
-            $outerValue->set_tabletPaddingType('grouped')
-                ->set_tabletPadding(25)
-                ->set_tabletPaddingSuffix('px')
-                ->set_tabletPaddingTop(25)
-                ->set_tabletPaddingTopSuffix('px')
-                ->set_tabletPaddingRight(25)
-                ->set_tabletPaddingRightSuffix('px')
-                ->set_tabletPaddingBottom(25)
-                ->set_tabletPaddingBottomSuffix('px')
-                ->set_tabletPaddingLeft(25)
-                ->set_tabletPaddingLeftSuffix('px');
-            
-            // Mobile padding
-            $outerValue->set_mobilePaddingType('grouped')
-                ->set_mobilePadding(35)
-                ->set_mobilePaddingSuffix('px')
-                ->set_mobilePaddingTop(35)
-                ->set_mobilePaddingTopSuffix('px')
-                ->set_mobilePaddingRight(35)
-                ->set_mobilePaddingRightSuffix('px')
-                ->set_mobilePaddingBottom(35)
-                ->set_mobilePaddingBottomSuffix('px')
-                ->set_mobilePaddingLeft(35)
-                ->set_mobilePaddingLeftSuffix('px');
-            
-            // Mobile margin
-            $outerValue->set_mobileMarginType('ungrouped')
-                ->set_mobileMargin(10)
-                ->set_mobileMarginSuffix('px')
-                ->set_mobileMarginTop(0)
-                ->set_mobileMarginTopSuffix('px')
-                ->set_mobileMarginRight(0)
-                ->set_mobileMarginRightSuffix('px')
-                ->set_mobileMarginBottom(0)
-                ->set_mobileMarginBottomSuffix('px')
-                ->set_mobileMarginLeft(0)
-                ->set_mobileMarginLeftSuffix('px');
-            
-            // Дополнительные параметры для внешнего Column
-            $outerValue->set('bgImageExtension', 'jpg')
-                ->set('bgImageWidth', 394)
-                ->set('bgImageHeight', 394)
-                ->set('gradientColorHex', '#009900')
-                ->set('gradientColorOpacity', 1)
-                ->set('gradientColorPalette', '')
-                ->set('gradientType', 'linear')
-                ->set('gradientStartPointer', 0)
-                ->set('gradientFinishPointer', 100)
-                ->set('gradientActivePointer', 'startPointer')
-                ->set('gradientLinearDegree', 90)
-                ->set('gradientRadialDegree', 90)
-                ->set('tabsState', 'normal');
-        }
-        
-        // 3. Очищаем фоновое изображение с SectionItem и удаляем его из customCSS
-        if ($sectionItemComponent) {
-            $sectionItemComponent->getValue()
-                ->set_bgImageSrc('')
-                ->set_bgImageFileName('')
-                ->set_bgImageType('none');
-            
-            // Полностью очищаем customCSS от фонового изображения
-            $customCSS = $sectionItemComponent->getValue()->get_customCSS() ?? '';
-            if (!empty($customCSS)) {
-                // Удаляем строки с background-image
-                $customCSS = preg_replace('/[^\n]*background-image[^\n]*\n?/', '', $customCSS);
-                // Удаляем блоки с .brz-bg:not(:has(.brz-bg-image))
-                $customCSS = preg_replace('/\.brz-section__item\s*>\s*\.brz-bg:not\(:has\(\.brz-bg-image\)\)\s*\{[^}]*\}/s', '', $customCSS);
-                // Удаляем пустые строки и лишние пробелы
-                $customCSS = preg_replace('/\n\s*\n/', "\n", $customCSS);
-                $customCSS = trim($customCSS);
-                $sectionItemComponent->getValue()->set_customCSS($customCSS);
-            }
-        }
+        $textContainerComponent = $this->getTextContainerComponent($brizySection);
+        $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
-        // 4. Извлекаем и устанавливаем стили для внутреннего Column из .group элемента
-        if ($innerColumn) {
-            // Используем исходный sectionId для получения стилей
-            $textContainerSelector = '[data-id="' . $originalSectionId . '"] .group';
-            $textContainerStyles = $this->getDomElementStyles(
-                $textContainerSelector,
-                [
-                    'background-color', 
-                    'opacity', 
-                    'padding-top', 
-                    'padding-right', 
-                    'padding-bottom', 
-                    'padding-left',
-                    'margin-top',
-                    'margin-right', 
-                    'margin-bottom', 
-                    'margin-left',
-                    'border-color', 
-                    'border-width',
-                    'border-top-width',
-                    'border-right-width',
-                    'border-bottom-width',
-                    'border-left-width',
-                    'border-style'
-                ],
-                $this->browserPage,
-                $data->getFontFamilies(),
-                $data->getDefaultFontFamily()
-            );
+        $additionalOptions = array_merge(
+            $data->getThemeContext()->getPageDTO()->getPageStyleDetails(),
+            $this->getPropertiesMainSection()
+        );
 
-            $bgColor = !empty($textContainerStyles['background-color']) 
-                ? ColorConverter::rgba2hex($textContainerStyles['background-color'])
-                : '#000000';
-            
-            $opacity = !empty($textContainerStyles['opacity']) 
-                ? (float)$textContainerStyles['opacity'] 
-                : 0.45;
-            
-            if ($opacity >= 1.0 && !empty($textContainerStyles['background-color'])) {
-                $opacity = ColorConverter::rgba2opacity($textContainerStyles['background-color']);
-            }
-            
-            if ($opacity >= 1.0) {
-                $opacity = 0.45;
-            }
-            
-            // Извлекаем padding из отдельных свойств
-            $paddingTop = !empty($textContainerStyles['padding-top']) 
-                ? (int)str_replace('px', '', $textContainerStyles['padding-top']) 
-                : 60;
-            $paddingRight = !empty($textContainerStyles['padding-right']) 
-                ? (int)str_replace('px', '', $textContainerStyles['padding-right']) 
-                : 60;
-            $paddingBottom = !empty($textContainerStyles['padding-bottom']) 
-                ? (int)str_replace('px', '', $textContainerStyles['padding-bottom']) 
-                : 60;
-            $paddingLeft = !empty($textContainerStyles['padding-left']) 
-                ? (int)str_replace('px', '', $textContainerStyles['padding-left']) 
-                : 60;
-            
-            // Извлекаем margin из отдельных свойств
-            $marginTop = !empty($textContainerStyles['margin-top']) 
-                ? (int)str_replace('px', '', $textContainerStyles['margin-top']) 
-                : 0;
-            $marginRight = !empty($textContainerStyles['margin-right']) 
-                ? (int)str_replace('px', '', $textContainerStyles['margin-right']) 
-                : 60;
-            $marginBottom = !empty($textContainerStyles['margin-bottom']) 
-                ? (int)str_replace('px', '', $textContainerStyles['margin-bottom']) 
-                : 0;
-            $marginLeft = !empty($textContainerStyles['margin-left']) 
-                ? (int)str_replace('px', '', $textContainerStyles['margin-left']) 
-                : 60;
-            
-            // Извлекаем border
-            $borderColor = !empty($textContainerStyles['border-color']) 
-                ? ColorConverter::rgba2hex($textContainerStyles['border-color'])
-                : '#fcfcfc';
-            
-            $borderStyle = !empty($textContainerStyles['border-style']) && $textContainerStyles['border-style'] !== 'none'
-                ? $textContainerStyles['border-style']
-                : 'solid';
-            
-            // Извлекаем border-width из отдельных свойств или общего
-            $borderWidth = 1;
-            if (!empty($textContainerStyles['border-top-width'])) {
-                $borderWidth = (int)str_replace('px', '', $textContainerStyles['border-top-width']);
-            } elseif (!empty($textContainerStyles['border-width'])) {
-                $borderWidth = (int)str_replace('px', '', $textContainerStyles['border-width']);
-            }
-            
-            // Извлекаем отдельные border-width если есть
-            $borderTopWidth = !empty($textContainerStyles['border-top-width']) 
-                ? (int)str_replace('px', '', $textContainerStyles['border-top-width']) 
-                : $borderWidth;
-            $borderRightWidth = !empty($textContainerStyles['border-right-width']) 
-                ? (int)str_replace('px', '', $textContainerStyles['border-right-width']) 
-                : $borderWidth;
-            $borderBottomWidth = !empty($textContainerStyles['border-bottom-width']) 
-                ? (int)str_replace('px', '', $textContainerStyles['border-bottom-width']) 
-                : $borderWidth;
-            $borderLeftWidth = !empty($textContainerStyles['border-left-width']) 
-                ? (int)str_replace('px', '', $textContainerStyles['border-left-width']) 
-                : $borderWidth;
-            
-            $innerValue = $innerColumn->getValue();
-            
-            // Основные параметры внутреннего Column
-            $innerValue->set_width(100)
-                ->set_verticalAlign('between')
-                ->set_bgColorType('solid')
-                ->set_bgColorHex($bgColor)
-                ->set_bgColorOpacity($opacity)
-                ->set_mobileBgColorType('solid')
-                ->set_mobileBgColorHex($bgColor)
-                ->set_mobileBgColorOpacity($opacity)
-                ->set_borderStyle($borderStyle)
-                ->set_borderColorHex($borderColor)
-                ->set_borderColorOpacity(1)
-                ->set_borderWidthType('grouped')
-                ->set_borderWidth($borderWidth);
-            
-            // Padding
-            $innerValue->set_paddingType('ungrouped')
-                ->set_padding(15)
-                ->set_paddingSuffix('px')
-                ->set_paddingTop($paddingTop)
-                ->set_paddingTopSuffix('px')
-                ->set_paddingRight($paddingRight)
-                ->set_paddingRightSuffix('px')
-                ->set_paddingBottom($paddingBottom)
-                ->set_paddingBottomSuffix('px')
-                ->set_paddingLeft($paddingLeft)
-                ->set_paddingLeftSuffix('px');
-            
-            // Margin
-            $innerValue->set_marginType('ungrouped')
-                ->set_margin(0)
-                ->set_marginSuffix('px')
-                ->set_marginTop($marginTop)
-                ->set_marginTopSuffix('px')
-                ->set_marginRight($marginRight)
-                ->set_marginRightSuffix('px')
-                ->set_marginBottom($marginBottom)
-                ->set_marginBottomSuffix('px')
-                ->set_marginLeft($marginLeft)
-                ->set_marginLeftSuffix('px');
-            
-            // Border
-            $innerValue->set_borderTopWidth($borderTopWidth)
-                ->set_borderRightWidth($borderRightWidth)
-                ->set_borderBottomWidth($borderBottomWidth)
-                ->set_borderLeftWidth($borderLeftWidth);
-            
-            // Mobile margin
-            $innerValue->set_mobileMarginType('ungrouped')
-                ->set_mobileMargin(10)
-                ->set_mobileMarginSuffix('px')
-                ->set_mobileMarginTop(0)
-                ->set_mobileMarginTopSuffix('px')
-                ->set_mobileMarginRight(0)
-                ->set_mobileMarginRightSuffix('px')
-                ->set_mobileMarginBottom(0)
-                ->set_mobileMarginBottomSuffix('px')
-                ->set_mobileMarginLeft(0)
-                ->set_mobileMarginLeftSuffix('px');
-            
-            // Дополнительные параметры для внутреннего Column
-            $innerValue->set('gradientColorHex', '#009900')
-                ->set('gradientColorOpacity', 1)
-                ->set('gradientColorPalette', '')
-                ->set('gradientType', 'linear')
-                ->set('gradientStartPointer', 0)
-                ->set('gradientFinishPointer', 100)
-                ->set('gradientActivePointer', 'startPointer')
-                ->set('gradientLinearDegree', 90)
-                ->set('gradientRadialDegree', 90)
-                ->set('tabsState', 'normal')
-                ->set('mobileGradientColorHex', '#009900')
-                ->set('mobileGradientColorOpacity', 1)
-                ->set('mobileGradientColorPalette', '')
-                ->set('mobileGradientType', 'linear')
-                ->set('mobileGradientStartPointer', 0)
-                ->set('mobileGradientFinishPointer', 100)
-                ->set('mobileGradientActivePointer', 'startPointer')
-                ->set('mobileGradientLinearDegree', 90)
-                ->set('mobileGradientRadialDegree', 90)
-                ->set('bgColorPalette', '')
-                ->set('mobileBgColorPalette', '')
-                ->set('borderColorPalette', '');
-        }
-    }
+        $this->handleSectionStyles($elementContext, $this->browserPage, $additionalOptions);
 
-    /**
-     * Получить селектор для custom CSS секции
-     */
-    protected function getSelectorSectionCustomCSS(): string
-    {
-        return '.brz-section__item';
-    }
+        $styleList = $this->getSectionListStyle($elementContext, $this->browserPage);
 
-    protected function getPropertiesMainSection(): array
-    {
-        return [
-            "mobilePaddingType"=> "ungrouped",
-            "mobilePadding" => 0,
-            "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 0,
-            "mobilePaddingTopSuffix" => "px",
-            "mobilePaddingRight" => 0,
-            "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 0,
-            "mobilePaddingBottomSuffix" => "px",
-            "mobilePaddingLeft" => 0,
-            "mobilePaddingLeftSuffix" => "px",
+        $this->transformItem($elementContext, $textContainerComponent, $styleList);
 
-            "paddingType"=> "ungrouped",
-            "padding" => 0,
-            "paddingSuffix" => "px",
-            "paddingTop" => 0,
-            "paddingTopSuffix" => "px",
-            "paddingRight" => 0,
-            "paddingRightSuffix" => "px",
-            "paddingBottom" => 0,
-            "paddingBottomSuffix" => "px",
-            "paddingLeft" => 0,
-            "paddingLeftSuffix" => "px",
-        ];
+        // Применяем стили blur-box к текстовому контейнеру (Column)
+        $this->handleBlurBoxStyles($elementContext, $this->browserPage, $textContainerComponent);
+
+        $this->setTopPaddingOfTheFirstElement($data, $sectionItemComponent);
+
+        $elementContext = $data->instanceWithBrizyComponent($textContainerComponent);
+        $this->handleRichTextItems($elementContext, $this->browserPage);
+        $this->handleDonationsButton(
+            $elementContext,
+            $this->browserPage,
+            $this->brizyKit,
+            $this->getDonationsButtonOptions(),
+            $this->getDonationButtonTextTransform()
+        );
+
+        return $brizySection;
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
-    {
-        return 0;
-    }
-
-    protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 0;
     }
