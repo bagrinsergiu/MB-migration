@@ -30,7 +30,7 @@ class FullText extends FullTextElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizySection->getValue()->set_marginTop(0);
-        $brizySection->getValue()->set_marginBottum(0);
+        $brizySection->getValue()->set_marginBottom(0);
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $insideItemComponent = $this->getInsideItemComponent($brizySection);
