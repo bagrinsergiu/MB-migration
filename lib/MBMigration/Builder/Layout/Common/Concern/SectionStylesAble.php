@@ -136,15 +136,15 @@ trait SectionStylesAble
             ->set_mobileBgSizeType('original')
             ->set_mobileBgRepeat('off')
             ->set_mobilePaddingType('ungrouped')
-            ->set_mobilePadding((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_mobilePadding((int)($additionalOptions['mobilePadding'] ?? $sectionStyles['padding-top'] ?? 0))
             ->set_mobilePaddingSuffix('px')
-            ->set_mobilePaddingTop((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_mobilePaddingTop((int)($additionalOptions['mobilePaddingTop'] ?? $sectionStyles['padding-top'] ?? 0))
             ->set_mobilePaddingTopSuffix('px')
-            ->set_mobilePaddingRight((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_mobilePaddingRight((int)($additionalOptions['mobilePaddingRight'] ?? $sectionStyles['padding-right'] ?? 0))
             ->set_mobilePaddingRightSuffix('px')
-            ->set_mobilePaddingBottom((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_mobilePaddingBottom((int)($additionalOptions['mobilePaddingBottom'] ?? $sectionStyles['padding-bottom'] ?? 0))
             ->set_mobilePaddingBottomSuffix('px')
-            ->set_mobilePaddingLeft((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_mobilePaddingLeft((int)($additionalOptions['mobilePaddingLeft'] ?? $sectionStyles['padding-left'] ?? 0))
             ->set_mobilePaddingLeftSuffix('px');
 
         try {
@@ -271,9 +271,17 @@ trait SectionStylesAble
         }
     }
 
-    private function handleSectionTexture(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom']): bool
+    protected function handleSectionTexture(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom']): bool
     {
         if (!empty($sectionStyles['background-image']) && $sectionStyles['background-image'] !== 'none') {
+            // Извлекаем URL из background-image
+            $backgroundImageUrl = $this->extractBackgroundImageUrl($sectionStyles['background-image']);
+            
+            // Если URL не найден, пропускаем обработку
+            if (empty($backgroundImageUrl)) {
+                return false;
+            }
+            
             $brizySection->getValue()
                 ->set_bgColorType('none')
                 ->set_bgColorPalette('')
@@ -282,13 +290,41 @@ trait SectionStylesAble
   background-color: ' . ColorConverter::rgba2hex($sectionStyles['background-color']) . ';
 }
 '. $this->getSelectorSectionCustomCSS().' > .brz-bg:not(:has(.brz-bg-image)){
-  background-image: url("https://s3.amazonaws.com/media.cloversites.com/72/7290ecab-484a-4a04-9f79-bf6583b3e296/backgrounds/561e0414-b1f1-4624-9c01-3d5b175eec22.png");
+  background-image: url("' . $backgroundImageUrl . '");
 }
 
 ');
             return true;
         }
         return false;
+    }
+
+    /**
+     * Извлекает URL из CSS строки background-image
+     *
+     * @param string $backgroundImage
+     * @return string|null
+     */
+    protected function extractBackgroundImageUrl(string $backgroundImage): ?string
+    {
+        if (empty($backgroundImage) || $backgroundImage === 'none') {
+            return null;
+        }
+
+        // Если это уже URL
+        if (filter_var($backgroundImage, FILTER_VALIDATE_URL)) {
+            return $backgroundImage;
+        }
+
+        // Извлекаем URL из CSS строки вида url("...") или url('...') или url(...)
+        if (preg_match('/url\(["\']?(.*?)["\']?\)/', $backgroundImage, $matches)) {
+            $url = trim($matches[1], "'\"");
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                return $url;
+            }
+        }
+
+        return null;
     }
 
     protected function getSelectorSectionCustomCSS(): string

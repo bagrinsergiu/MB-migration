@@ -90,7 +90,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
                 $brizySectionItem = new BrizyComponent($itemJson);
 
                 $brizySectionItem
-                    ->addPadding(15, 5, 15, 5)
+                    ->addPadding(0, 5, 0, 5)
                     ->addMobilePadding(10)
                     ->addMobileMargin();
 
