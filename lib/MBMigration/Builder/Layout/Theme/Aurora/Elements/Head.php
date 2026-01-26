@@ -10,9 +10,6 @@ use MBMigration\Builder\Utils\PathSlugExtractor;
 
 class Head extends HeadElement
 {
-    protected array $headParams = [
-        'addMenuItems' => false
-    ];
     /**
      * @param BrizyComponent $brizySection
      * @return mixed|null
@@ -38,6 +35,14 @@ class Head extends HeadElement
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function beforeTransformToItem(ElementContextInterface $data): void
+    {
+        // Устанавливаем параметры headParams перед трансформацией
+        $this->headParams = [
+            'addMenuItems' => false
+        ];
     }
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
@@ -219,51 +224,102 @@ class Head extends HeadElement
 
     }
 
+    /**
+     * Селектор для активного (выбранного) элемента основного меню
+     * Исходный проект: c3forchrist.org
+     * Структура: #main-navigation > ul > li.selected > a
+     */
     public function getThemeMenuItemActiveSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li.selected a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li.selected > a", "pseudoEl" => ""];
     }
 
+    /**
+     * Селектор для невыбранных элементов основного меню
+     * Исходный проект: c3forchrist.org
+     * Структура: #main-navigation > ul > li:not(.selected) > a
+     * Используется для извлечения цвета обычного состояния меню
+     */
     public function getThemeMenuItemSelector(): array
     {
-        return ["selector" => "#main-navigation>ul>li:not(.selected) a", "pseudoEl" => ""];
+        return ["selector" => "#main-navigation > ul > li:not(.selected) > a", "pseudoEl" => ""];
     }
 
+    /**
+     * Селектор для родительского элемента меню (используется для открытия подменю)
+     * Исходный проект: c3forchrist.org
+     * Структура: #main-navigation (контейнер основного меню)
+     */
     public function getThemeParentMenuItemSelector(): array
     {
         return ["selector" => "#main-navigation", "pseudoEl" => ""];
     }
 
+    /**
+     * Селектор для невыбранных элементов подменю
+     * Исходный проект: c3forchrist.org
+     * Структура: #selected-sub-navigation > ul > li:not(.selected) > a
+     */
     public function getThemeSubMenuNotSelectedItemSelector(): array
     {
         return ["selector" => "#selected-sub-navigation > ul > li:not(.selected) > a", "pseudoEl" => ""];
     }
 
+    /**
+     * Селектор для добавления класса selected к элементам подменю
+     * Исходный проект: c3forchrist.org
+     * Структура: #selected-sub-navigation > ul > li
+     */
     public function getThemeSubMenuItemClassSelected(): array
     {
         return ["selector" => "#selected-sub-navigation > ul > li", "className" => "selected"];
     }
 
+    /**
+     * Селектор для фона подменю
+     * Исходный проект: c3forchrist.org
+     * Структура: #selected-sub-navigation
+     */
     public function getThemeSubMenuItemBGSelector(): array
     {
         return ["selector" => "#selected-sub-navigation", "pseudoEl" => ""];
     }
 
+    /**
+     * Селектор для мобильного меню
+     * Исходный проект: c3forchrist.org
+     * Структура: #mobile-navigation
+     */
     public function getThemeMobileNavSelector(): array
     {
         return ["selector" => "#mobile-navigation", "pseudoEl" => ""];
     }
 
+    /**
+     * Селектор для элементов мобильного меню (первый элемент с классами first и landing)
+     * Исходный проект: c3forchrist.org
+     * Структура: #mobile-navigation > nav > ul > li.first.landing > a
+     */
     public function getThemeMenuItemMobileSelector(): array
     {
         return ["selector" => "#mobile-navigation > nav > ul > li.first.landing > a", "pseudoEl" => ""];
     }
 
+    /**
+     * Селектор для padding элементов меню
+     * Исходный проект: c3forchrist.org
+     * Использует тот же селектор, что и обычные элементы меню
+     */
     public function getThemeMenuItemPaddingSelector(): array
     {
         return $this->getThemeMenuItemSelector();
     }
 
+    /**
+     * Селектор для кнопки мобильного меню
+     * Исходный проект: c3forchrist.org
+     * Структура: #mobile-nav-button-container
+     */
     public function getThemeMobileBtnSelector(): array
     {
         return ["selector" => "#mobile-nav-button-container", "pseudoEl" => ""];
@@ -352,35 +408,164 @@ class Head extends HeadElement
         ];
     }
 
+    /**
+     * Селектор для всех элементов подменю
+     * Исходный проект: c3forchrist.org
+     * Структура: #selected-sub-navigation > ul > li > a
+     */
     protected function getThemeSubMenuItemSelector(): array
     {
         return ["selector" => "#selected-sub-navigation > ul > li > a", "pseudoEl" => ""];
     }
 
+    /**
+     * Селектор для фона элементов меню
+     * Исходный проект: c3forchrist.org
+     * Использует тот же селектор, что и обычные элементы меню
+     */
     public function getMenuItemBgSelector(): array
     {
         return $this->getThemeMenuItemSelector();
     }
 
+    /**
+     * Селектор для фона элементов меню при наведении
+     * Исходный проект: c3forchrist.org
+     * Использует селектор фона подменю
+     */
     public function getMenuHoverItemBgSelector(): array
     {
         return $this->getThemeSubMenuItemBGSelector();
     }
 
+    /**
+     * Селектор для фона невыбранных элементов меню
+     * Исходный проект: c3forchrist.org
+     * Использует тот же селектор, что и обычные элементы меню
+     */
     public function getNotSelectedMenuItemBgSelector(): array
     {
         return $this->getThemeMenuItemSelector();
     }
 
+    /**
+     * Селектор для выбранных элементов подменю в мобильном меню
+     * Исходный проект: c3forchrist.org
+     * Структура: #mobile-navigation > nav > ul > li.selected > a
+     */
     public function getThemeSubMenuSelectedItemSelector(): array
     {
-        return ["selector" => "#mobile-navigation li.selected a", "pseudoEl" => ""];
+        return ["selector" => "#mobile-navigation > nav > ul > li.selected > a", "pseudoEl" => ""];
     }
 
+    /**
+     * Селектор для выпадающего подменю
+     * Исходный проект: c3forchrist.org
+     * Структура: #mobile-navigation .main-navigation (для мобильного меню)
+     * Альтернатива: #main-navigation > ul > li.has-sub > ul (для десктопного меню)
+     */
     protected function getThemeSubMenuItemDropDownSelector(): array
     {
         return ["selector" => "#mobile-navigation .main-navigation", "pseudoEl" => ""];
-        //#main-navigation > ul:nth-child(1) > li.has-sub > ul
+    }
+
+    /**
+     * Переопределяем метод для получения обычных стилей меню
+     * Для темы Aurora нужно открыть мобильное меню и использовать его для извлечения цветов
+     * Исходный проект: c3forchrist.org
+     */
+    protected function getNormalStyleMenuItems(array $menuItemSelector, array $itemMobileSelector, $families, $defaultFamilies): array
+    {
+        // Открываем мобильное меню перед извлечением стилей
+        $mobileBtnSelector = $this->getThemeMobileBtnSelector();
+        if ($mobileBtnSelector && isset($mobileBtnSelector['selector'])) {
+            $this->browserPage->triggerEvent('click', $mobileBtnSelector['selector']);
+            sleep(1); // Даем время для открытия меню
+        }
+
+        // Используем мобильное меню для извлечения цветов вместо десктопного
+        // Селектор для обычных пунктов мобильного меню
+        $mobileMenuItemSelector = [
+            "selector" => "#mobile-navigation > nav > ul > li:not(.selected) > a",
+            "pseudoEl" => ""
+        ];
+        
+        // Селектор для активного пункта мобильного меню
+        $mobileActiveSelector = [
+            "selector" => "#mobile-navigation > nav > ul > li.selected > a",
+            "pseudoEl" => ""
+        ];
+
+        return $this->browserPage->evaluateScript('brizy.getMenuItem', [
+            'itemSelector' => $mobileMenuItemSelector, // Используем мобильное меню вместо десктопного
+            'itemActiveSelector' => $mobileActiveSelector, // Активный элемент из мобильного меню
+            'itemBgSelector' => $this->getMenuItemBgSelector(),
+            'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
+            'itemMobileSelector' => $itemMobileSelector,
+            'itemMobileBtnSelector' => $this->getThemeMobileBtnSelector(),
+            'itemMobileNavSelector' => $this->getThemeMobileNavSelector(),
+            'families' => $families,
+            'defaultFamily' => $defaultFamilies,
+            'isBgHoverItemMenu' => $this->isBgHoverItemMenu(),
+            'hover' => false,
+        ]);
+    }
+
+    /**
+     * Переопределяем метод для получения hover стилей меню
+     * Для темы Aurora нужно сначала сделать click на элемент меню, а потом hover
+     * Исходный проект: c3forchrist.org
+     *
+     * Логика: сначала кликаем на элемент меню для активации состояния,
+     * затем наводим на него для получения hover стилей
+     */
+    protected function getHoverStyleMenuItems(array $menuItemSelector, $families, $defaultFamilies): array
+    {
+        $hoverMenuItemStyles = [];
+
+        // Селектор для элемента меню, на который будем кликать и наводить
+        $menuItemBgSelector = $this->getNotSelectedMenuItemBgSelector();
+        $clickSelector = $menuItemBgSelector['selector'];
+
+        // Сначала делаем click на элемент меню для активации состояния
+        if ($this->browserPage->triggerEvent('click', $clickSelector)) {
+            // Небольшая задержка для применения состояния после click
+            sleep(1);
+
+            // После click делаем hover на тот же элемент
+            if ($this->browserPage->triggerEvent('hover', $clickSelector)) {
+                // Даем время для применения hover стилей
+                sleep(1);
+
+                $options = [
+                    'itemSelector' => $menuItemSelector,
+                    'itemBgSelector' => $this->getMenuHoverItemBgSelector(),
+                    'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
+                    'families' => $families,
+                    'defaultFamily' => $defaultFamilies,
+                    'hover' => true,
+                    'isBgHoverItemMenu' => $this->isBgHoverItemMenu()
+                ];
+
+                $hoverMenuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', $options);
+            }
+        }
+
+        return $hoverMenuItemStyles;
+    }
+
+    /**
+     * Корректировка стилей меню для темы Aurora
+     * Исходный проект: c3forchrist.org
+     * 
+     * Метод вызывается после извлечения стилей из исходного сайта.
+     * Здесь можно добавить логику для корректировки стилей, если необходимо,
+     * но НЕ хардкодить цвета - все цвета должны извлекаться из исходного сайта.
+     */
+    protected function menuItemStylesValueConditions(array &$menuItemStyles): void
+    {
+        // Не хардкодим цвета - все цвета извлекаются из исходного сайта
+        // Если нужна какая-то корректировка, она должна быть основана на данных из исходного сайта
     }
 
 }
