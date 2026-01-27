@@ -14,6 +14,7 @@ use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Config;
 use MBMigration\Layer\DataSource\DBConnector;
 use MBMigration\Contracts\MBProjectDataCollectorInterface;
+use Psr\Log\LoggerInterface;
 
 class MBProjectDataCollector implements MBProjectDataCollectorInterface
 {
@@ -42,11 +43,32 @@ class MBProjectDataCollector implements MBProjectDataCollectorInterface
     use DebugBackTrace;
 
     /**
+     * Безопасный вызов Logger::instance() - не выбрасывает исключение, если Logger не инициализирован
+     * 
+     * @return LoggerInterface|null Logger instance или null, если не инициализирован
+     */
+    private static function safeLogger(): ?LoggerInterface
+    {
+        try {
+            if (Logger::isInitialized()) {
+                return Logger::instance();
+            }
+        } catch (\Exception $e) {
+            // Игнорируем ошибку, если Logger не инициализирован
+        }
+        return null;
+    }
+
+    /**
      * @throws Exception
      */
     public function __construct($projectId = null)
     {
-        Logger::instance()->debug('MBProjectDataCollector Initialization');
+        // Безопасный вызов Logger::instance()
+        $logger = self::safeLogger();
+        if ($logger) {
+            $logger->debug('MBProjectDataCollector Initialization');
+        }
         $this->cache = VariableCacheFactory::create();
 
         // If a specific project ID is provided, use it
@@ -63,9 +85,10 @@ class MBProjectDataCollector implements MBProjectDataCollectorInterface
         $this->db = DBConnector::getInstance();
         $this->manipulator = new ArrayManipulator();
 
-        // Initialize FontsController only if container is available
-        if ($this->container) {
-            $this->fontsController = new FontsController($this->container);
+        // Initialize FontsController only if projectId_Brizy is available
+        // Note: FontsController constructor expects projectId_Brizy, not container
+        if ($this->projectId) {
+            $this->fontsController = new FontsController($this->projectId);
         }
 
         $this->additionalMappingFonts = [
@@ -112,23 +135,67 @@ class MBProjectDataCollector implements MBProjectDataCollectorInterface
     /**
      * Ensure fontsController is initialized, try to get container from cache if needed
      * 
-     * @throws Exception if container is not available
-     * @return void
+     * @throws Exception if container is not available and cannot be retrieved
+     * @return bool true if FontsController was successfully initialized, false otherwise
      */
-    private function ensureFontsController(): void
+    private function ensureFontsController(): bool
     {
-        if ($this->fontsController === null) {
-            // Try to get container from cache if not set
+        if ($this->fontsController !== null) {
+            return true;
+        }
+        
+        // Try to get container from cache if not set
+        if ($this->container === null) {
+            $this->container = $this->cache->get('container');
+        }
+        
+        // FontsController constructor expects projectId_Brizy (or container ID)
+        // Try to get projectId_Brizy from cache if not set
+        if ($this->projectId === null) {
+            $this->projectId = $this->cache->get('projectId_Brizy');
+        }
+        
+        // If projectId_Brizy is not available, try to get container from cache
+        // Container can be used as projectId for FontsController
+        if ($this->projectId === null) {
             if ($this->container === null) {
                 $this->container = $this->cache->get('container');
             }
-            
+            // If container is available, use it as projectId
             if ($this->container) {
-                $this->fontsController = new FontsController($this->container);
-                Logger::instance()->info('FontsController initialized from cache');
-            } else {
-                throw new Exception('FontsController cannot be initialized: container is not available. Please ensure container is set in cache before using font-related methods.');
+                $this->projectId = $this->container;
             }
+        }
+        
+        // If still not available, try to get container from BrizyAPI
+        if ($this->projectId === null) {
+            $projectId_Brizy = $this->cache->get('projectId_Brizy');
+            if ($projectId_Brizy) {
+                // Try to get container from BrizyAPI if available
+                $brizyApi = $this->cache->getClass('brizyApi');
+                if ($brizyApi) {
+                    try {
+                        $containerData = $brizyApi->getProjectContainer($projectId_Brizy, false);
+                        if ($containerData) {
+                            $this->container = $containerData;
+                            $this->cache->set('container', $this->container);
+                            $this->projectId = $this->container; // Use container as projectId
+                            Logger::instance()->info('Container retrieved from BrizyAPI and cached');
+                        }
+                    } catch (\Exception $e) {
+                        Logger::instance()->warning('Failed to get container from BrizyAPI: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
+        
+        if ($this->projectId) {
+            $this->fontsController = new FontsController($this->projectId);
+            Logger::instance()->info('FontsController initialized with projectId: ' . $this->projectId);
+            return true;
+        } else {
+            Logger::instance()->warning('FontsController cannot be initialized: projectId_Brizy or container is not available. Font-related methods will be skipped.');
+            return false;
         }
     }
 
@@ -164,8 +231,12 @@ class MBProjectDataCollector implements MBProjectDataCollectorInterface
         $settingSite = $db->requestArray("SELECT id from sites WHERE uuid = '".$projectUUID_MB."'");
 
         if (empty($settingSite)) {
-            Logger::instance()->info(self::trace(0).'Message: MB project not found');
-            Logger::instance()->critical("MB project not found with uuid: $projectUUID_MB");
+            // Безопасный вызов Logger::instance()
+            $logger = self::safeLogger();
+            if ($logger) {
+                $logger->info(self::trace(0).'Message: MB project not found');
+                $logger->critical("MB project not found with uuid: $projectUUID_MB");
+            }
         }
 
         return (int) $settingSite[0]['id'];
@@ -572,8 +643,11 @@ class MBProjectDataCollector implements MBProjectDataCollectorInterface
         ];
 
         // upload and add fonts to project
-        $this->ensureFontsController();
-        $fontStyles = $this->fontsController->addFontsToBrizyProject($fontStyles);
+        if ($this->ensureFontsController()) {
+            $fontStyles = $this->fontsController->addFontsToBrizyProject($fontStyles);
+        } else {
+            Logger::instance()->warning('Skipping font upload: FontsController not available');
+        }
 
         foreach ($fontStyles as &$font) {
             $font['fontFamily'] = $this->transLiterationFontFamily($font['fontFamily']);
@@ -630,12 +704,20 @@ class MBProjectDataCollector implements MBProjectDataCollectorInterface
                             }
 
                             $dbFont = $this->getFont($fontName);
-                            $this->ensureFontsController();
-                            $uploadedFont[] = [
-                                'fontName' => $fontName,
-                                'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
-                                'uuid' => $this->fontsController->upLoadFont($fontName, null, 'getMainSection'),
-                            ];
+                            if ($this->ensureFontsController()) {
+                                $uploadedFont[] = [
+                                    'fontName' => $fontName,
+                                    'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
+                                    'uuid' => $this->fontsController->upLoadFont($fontName, null, 'getMainSection'),
+                                ];
+                            } else {
+                                Logger::instance()->warning("Skipping font upload for {$fontName}: FontsController not available");
+                                $uploadedFont[] = [
+                                    'fontName' => $fontName,
+                                    'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
+                                    'uuid' => null,
+                                ];
+                            }
 
                             $defaultFont = array_merge($defaultFont, $uploadedFont);
                             $this->cache->set('fonts', $defaultFont, 'settings');
@@ -985,12 +1067,20 @@ class MBProjectDataCollector implements MBProjectDataCollectorInterface
                         }
 
                         $dbFont = $this->getFont($fontName);
-                        $this->ensureFontsController();
-                        $uploadedFont[] = [
-                            'fontName' => $fontName,
-                            'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
-                            'uuid' => $this->fontsController->upLoadFont($fontName, null, 'getItemsFromSection'),
-                        ];
+                        if ($this->ensureFontsController()) {
+                            $uploadedFont[] = [
+                                'fontName' => $fontName,
+                                'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
+                                'uuid' => $this->fontsController->upLoadFont($fontName, null, 'getItemsFromSection'),
+                            ];
+                        } else {
+                            Logger::instance()->warning("Skipping font upload for {$fontName}: FontsController not available");
+                            $uploadedFont[] = [
+                                'fontName' => $fontName,
+                                'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
+                                'uuid' => null,
+                            ];
+                        }
 
                         $defaultFont = array_merge($defaultFont, $uploadedFont);
                         $this->cache->set('fonts', $defaultFont, 'settings');

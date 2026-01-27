@@ -8,6 +8,8 @@ use MBMigration\Core\Logger;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
+use MBMigration\Browser\BrowserInterface;
+use MBMigration\Builder\Fonts\FontsController;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -47,6 +49,8 @@ class PageControllerStudyTest extends TestCase
         $brizyAPI = $this->createMock(BrizyAPI::class);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $logger = new NullLogger();
+        $browser = $this->createMock(BrowserInterface::class);
+        $fontsController = $this->createMock(FontsController::class);
         $projectID_Brizy = 12345;
 
         // Act: Создание объекта PageController
@@ -55,6 +59,8 @@ class PageControllerStudyTest extends TestCase
             $brizyAPI,
             $queryBuilder,
             $logger,
+            $browser,
+            $fontsController,
             $projectID_Brizy
         );
 
@@ -74,6 +80,8 @@ class PageControllerStudyTest extends TestCase
         $brizyAPI = $this->createMock(BrizyAPI::class);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $logger = new NullLogger();
+        $browser = $this->createMock(BrowserInterface::class);
+        $fontsController = $this->createMock(FontsController::class);
         $projectID_Brizy = 12345;
         $designName = 'test-design';
         $qualityAnalysis = true;
@@ -87,6 +95,8 @@ class PageControllerStudyTest extends TestCase
             $brizyAPI,
             $queryBuilder,
             $logger,
+            $browser,
+            $fontsController,
             $projectID_Brizy,
             $designName,
             $qualityAnalysis,
@@ -114,6 +124,8 @@ class PageControllerStudyTest extends TestCase
         $brizyAPI = $this->createMock(BrizyAPI::class);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $logger = new NullLogger();
+        $browser = $this->createMock(BrowserInterface::class);
+        $fontsController = $this->createMock(FontsController::class);
         $projectID_Brizy = 12345;
 
         // Act: Создание объекта PageController
@@ -122,6 +134,8 @@ class PageControllerStudyTest extends TestCase
             $brizyAPI,
             $queryBuilder,
             $logger,
+            $browser,
+            $fontsController,
             $projectID_Brizy
         );
 
@@ -162,6 +176,8 @@ class PageControllerStudyTest extends TestCase
         $brizyAPI = $this->createMock(BrizyAPI::class);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $logger = new NullLogger();
+        $browser = $this->createMock(BrowserInterface::class);
+        $fontsController = $this->createMock(FontsController::class);
         $projectID_Brizy = 12345;
 
         // Act: Создание объекта PageController
@@ -170,6 +186,8 @@ class PageControllerStudyTest extends TestCase
             $brizyAPI,
             $queryBuilder,
             $logger,
+            $browser,
+            $fontsController,
             $projectID_Brizy
         );
 
@@ -214,6 +232,8 @@ class PageControllerStudyTest extends TestCase
         $brizyAPI = $this->createMock(BrizyAPI::class);
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $logger = new NullLogger();
+        $browser = $this->createMock(BrowserInterface::class);
+        $fontsController = $this->createMock(FontsController::class);
         $projectID_Brizy = 12345;
 
         // Act: Создание объекта PageController
@@ -222,6 +242,8 @@ class PageControllerStudyTest extends TestCase
             $brizyAPI,
             $queryBuilder,
             $logger,
+            $browser,
+            $fontsController,
             $projectID_Brizy
         );
 

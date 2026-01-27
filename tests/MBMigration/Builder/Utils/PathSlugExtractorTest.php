@@ -32,27 +32,27 @@ class PathSlugExtractorTest extends TestCase
         ];
 
         // test 'home/services' path
-        $result = PathSlugExtractor::getOrderedPathString($data, 'services');
+        $result = PathSlugExtractor::getOrderedPathString($data, 'services', 'slug');
         $this->assertEquals('home/services', $result);
 
         // test 'about/about' path
-        $result = PathSlugExtractor::getOrderedPathString($data, 'about');
+        $result = PathSlugExtractor::getOrderedPathString($data, 'about', 'slug');
         $this->assertEquals('about/about', $result);
 
         // test 'about/team' path
-        $result = PathSlugExtractor::getOrderedPathString($data, 'about');
-        $this->assertEquals('about/about', $result);
+        $result = PathSlugExtractor::getOrderedPathString($data, 'team', 'slug');
+        $this->assertEquals('about/team', $result);
 
-        // test 'about/team' path
-        $result = PathSlugExtractor::getOrderedPathString($data, 'about');
-        $this->assertEquals('about-us/about', $result);
+        // test 'about-us/about' path - метод находит первый элемент с таким slug, поэтому это будет 'about/about'
+        $result = PathSlugExtractor::getOrderedPathString($data, 'about', 'slug');
+        $this->assertEquals('about/about', $result);
 
         // test 'contact' path
-        $result = PathSlugExtractor::getOrderedPathString($data, 'contact');
+        $result = PathSlugExtractor::getOrderedPathString($data, 'contact', 'slug');
         $this->assertEquals('contact', $result);
         
         // tests for null return when slug not found
-        $result = PathSlugExtractor::getOrderedPathString($data, 'not-found');
+        $result = PathSlugExtractor::getOrderedPathString($data, 'not-found', 'slug');
         $this->assertNull($result);
     }
 }

@@ -23,15 +23,15 @@
 
 ## 📝 Места создания MigrationPlatform
 
-### 1. lib/MBMigration/ApplicationBootstrapper.php:316
+### 1. lib/MBMigration/ApplicationBootstrapper.php:303
 
 #### Метод
-`migrationFlow()` - публичный метод класса `ApplicationBootstrapper`
+`doMigration()` - публичный метод класса `ApplicationBootstrapper`
 
 #### Контекст
 - Класс: `ApplicationBootstrapper`
-- Метод: `migrationFlow()`
-- Строка: 316
+- Метод: `doMigration()`
+- Строка: 303
 - Контекст создания: Создание объекта `MigrationPlatform` для выполнения миграции проекта
 
 #### Текущие параметры конструктора (из кода)

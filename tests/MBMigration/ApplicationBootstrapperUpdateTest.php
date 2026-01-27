@@ -68,7 +68,7 @@ class ApplicationBootstrapperUpdateTest extends TestCase
         $fileContent = file_get_contents($filePath);
         
         // Проверяем, что создаются зависимости
-        $this->assertStringContainsString('$brizyApi = new BrizyAPI();', $fileContent,
+        $this->assertStringContainsString('$brizyApi = new BrizyAPI($logger);', $fileContent,
             'Должно быть создание BrizyAPI перед MigrationPlatform');
         
         $this->assertStringContainsString('$mbCollector = new MBProjectDataCollector();', $fileContent,

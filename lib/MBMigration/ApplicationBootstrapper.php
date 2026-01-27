@@ -151,7 +151,7 @@ class ApplicationBootstrapper
             $this->context['AWS_BUCKET'] ?? ''
         );
 
-        // Проверяем, запущена ли миграция под управлением волны
+        // Определяем путь к лог-файлу
         $waveId = $this->request->get('wave_id');
         if (!empty($waveId)) {
             // Создаем отдельный лог-файл для проекта в волне
@@ -159,23 +159,37 @@ class ApplicationBootstrapper
             $waveLogDir = $logPath . '/wave_' . $waveId;
             @mkdir($waveLogDir, 0755, true);
             $logFilePath = $waveLogDir . '/project_' . $brz_project_id . '.log';
-            
-            $this->logger->info('Migration started under wave management', [
-                'wave_id' => $waveId,
-                'brz_project_id' => $brz_project_id,
-                'mb_project_uuid' => $mb_project_uuid,
-                'log_file' => $logFilePath
-            ]);
         } else {
             // Обычный лог-файл для миграции без волны
             $logFilePath = $this->context['LOG_FILE_PATH'] . '_' . $brz_project_id . '.log';
         }
 
+        // ВАЖНО: Инициализируем Logger СРАЗУ после определения пути к лог-файлу,
+        // ДО всех операций, которые могут использовать Logger::instance()
+        // Это необходимо, так как getIdByUUID() и конструктор MBProjectDataCollector используют Logger::instance()
         $logger = LoggerFactory::create(
             "brizy-$brz_project_id",
             $this->context['LOG_LEVEL'],
             $logFilePath
         );
+
+        // Инициализируем глобальный экземпляр Logger для обратной совместимости
+        // (некоторые классы используют Logger::instance())
+        Logger::initialize(
+            "brizy-$brz_project_id",
+            $this->context['LOG_LEVEL'],
+            $logFilePath
+        );
+
+        // Теперь можно использовать logger для логирования
+        if (!empty($waveId)) {
+            $logger->info('Migration started under wave management', [
+                'wave_id' => $waveId,
+                'brz_project_id' => $brz_project_id,
+                'mb_project_uuid' => $mb_project_uuid,
+                'log_file' => $logFilePath
+            ]);
+        }
 
         $lockFile = $this->context['CACHE_PATH'] . "/" . $mb_project_uuid . "-" . $brz_project_id . ".lock";
 
@@ -310,8 +324,13 @@ class ApplicationBootstrapper
 
             // Создаем зависимости для MigrationPlatform (рефакторинг для тестируемости)
             // Эти зависимости теперь инжектируются через конструктор вместо создания внутри класса
+            
+            // Получаем projectId_MB из UUID для передачи в MBProjectDataCollector
+            // Это необходимо, так как MBProjectDataCollector требует projectId при создании
+            $projectId_MB = MBProjectDataCollector::getIdByUUID($mb_project_uuid);
+            
             $brizyApi = new BrizyAPI($logger);
-            $mbCollector = new MBProjectDataCollector();
+            $mbCollector = new MBProjectDataCollector($projectId_MB);
 
             $migrationPlatform = new MigrationPlatform(
                 $this->config, 
