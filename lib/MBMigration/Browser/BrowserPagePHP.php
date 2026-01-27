@@ -8,6 +8,8 @@ use HeadlessChromium\Exception\FilesystemException;
 use HeadlessChromium\Exception\ScreenshotFailed;
 use HeadlessChromium\Page;
 use MBMigration\Core\Logger;
+use MBMigration\Core\Factory\LoggerFactory;
+use Psr\Log\LoggerInterface;
 
 class BrowserPagePHP implements BrowserPageInterface
 {
@@ -16,6 +18,10 @@ class BrowserPagePHP implements BrowserPageInterface
      */
     private $page;
     private $scriptPath;
+    /**
+     * @var LoggerInterface Логгер для записи событий BrowserPagePHP
+     */
+    private LoggerInterface $logger;
 
     /**
      * Generic helper for safe callFunction with timeout and one quick retry.
@@ -37,8 +43,14 @@ class BrowserPagePHP implements BrowserPageInterface
         }
     }
 
-    public function __construct($page, $scriptPath)
+    public function __construct($page, $scriptPath, ?LoggerInterface $logger = null)
     {
+        // Если Logger не передан, создаем через LoggerFactory для обратной совместимости
+        if ($logger === null) {
+            $logger = LoggerFactory::createDefault('BrowserPagePHP');
+        }
+        $this->logger = $logger;
+        
         $this->page = $page;
         $this->scriptPath = $scriptPath;
         $this->page->addScriptTag([
@@ -65,7 +77,7 @@ class BrowserPagePHP implements BrowserPageInterface
 
                 return $result ?: [];
             } catch (Exception $e2) {
-                Logger::instance()->error('evaluateScript failed', [
+                $this->logger->error('evaluateScript failed', [
                     'function' => is_string($jsScript) ? $jsScript : '<function>',
                     'error' => $e2->getMessage()
                 ]);
@@ -102,7 +114,7 @@ class BrowserPagePHP implements BrowserPageInterface
                     return true;
                 }
             } catch (Exception $e) {
-                Logger::instance()->warning("waitForNode: ".$e->getMessage(), [$selector]);
+                $this->logger->warning("waitForNode: ".$e->getMessage(), [$selector]);
             }
             usleep($intervalMs * 1000);
         } while ((microtime(true) - $start) * 1000 < $timeoutMs);
@@ -130,7 +142,7 @@ class BrowserPagePHP implements BrowserPageInterface
                 return $rect;
             }
         } catch (Exception $e) {
-            Logger::instance()->info("scrollIntoViewAndGetCenter: ".$e->getMessage(), [$selector]);
+            $this->logger->info("scrollIntoViewAndGetCenter: ".$e->getMessage(), [$selector]);
         }
 
         return null;
@@ -153,11 +165,11 @@ class BrowserPagePHP implements BrowserPageInterface
                     }
                     if ($center) {
                         $this->page->mouse()->move($center['x'], $center['y']);
-                        Logger::instance()->debug('Hover Selector: ' . $elementSelector);
+                        $this->logger->debug('Hover Selector: ' . $elementSelector);
                     } else {
                         $pos = $this->page->mouse()->find($elementSelector, 0)->getPosition();
                         $this->page->mouse()->move($pos['x'], $pos['y']);
-                        Logger::instance()->debug('Hover Selector: ' . $elementSelector);
+                        $this->logger->debug('Hover Selector: ' . $elementSelector);
                     }
                     break;
 
@@ -172,7 +184,7 @@ class BrowserPagePHP implements BrowserPageInterface
                     break;
             }
         } catch (Exception $e) {
-            Logger::instance()->critical("triggerEvent: ".$e->getMessage(), [$eventNameMethod,$elementSelector, $params]);
+            $this->logger->critical("triggerEvent: ".$e->getMessage(), [$eventNameMethod,$elementSelector, $params]);
 
             return false; // element not found
         }
@@ -184,7 +196,7 @@ class BrowserPagePHP implements BrowserPageInterface
         try{
             $this->page->screenshot()->saveToFile('/project/var/cache/pageScreen_'. $prefix .'.jpg');
         }catch(Exception $e){
-           Logger::instance()->info("getPageScreen: ".$e->getMessage());
+           $this->logger->info("getPageScreen: ".$e->getMessage());
         }
     }
 
@@ -216,7 +228,7 @@ class BrowserPagePHP implements BrowserPageInterface
                 3000
             );
         } catch (Exception $e) {
-            Logger::instance()->warning("hasNode timeout: ".$e->getMessage(), [$selector]);
+            $this->logger->warning("hasNode timeout: ".$e->getMessage(), [$selector]);
             return false;
         }
 
@@ -235,7 +247,7 @@ class BrowserPagePHP implements BrowserPageInterface
                 3000
             );
         } catch (Exception $e) {
-            Logger::instance()->warning("getNodeText timeout: ".$e->getMessage(), [$selector]);
+            $this->logger->warning("getNodeText timeout: ".$e->getMessage(), [$selector]);
             return null;
         }
 
@@ -255,7 +267,7 @@ class BrowserPagePHP implements BrowserPageInterface
                 3000
             );
         } catch (Exception $e) {
-            Logger::instance()->warning("setNodeStyles timeout: ".$e->getMessage(), [$selector, $attributes]);
+            $this->logger->warning("setNodeStyles timeout: ".$e->getMessage(), [$selector, $attributes]);
         }
     }
 
@@ -272,7 +284,7 @@ class BrowserPagePHP implements BrowserPageInterface
             3000
         );
         } catch (Exception $e) {
-            Logger::instance()->warning("setNodeAttribute timeout: ".$e->getMessage(), [$selector, $attributes]);
+            $this->logger->warning("setNodeAttribute timeout: ".$e->getMessage(), [$selector, $attributes]);
         }
     }
 

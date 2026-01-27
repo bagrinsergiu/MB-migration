@@ -74,7 +74,10 @@ return static function (array $context, Request $request): Response {
         return new JsonResponse(['error' => $e->getMessage()], $e->getCode());
     }
 
-    $bridge = new MBMigration\Bridge\Bridge($app, $config, $request);
+    // Создаем зависимости для Bridge (рефакторинг для тестируемости)
+    // BrizyAPIInterface теперь инжектируется через конструктор вместо создания в методах
+    $brizyApi = new \MBMigration\Layer\Brizy\BrizyAPI();
+    $bridge = new MBMigration\Bridge\Bridge($app, $config, $request, $brizyApi);
 
     switch ($request->getPathInfo()) {
         case '/mapping':

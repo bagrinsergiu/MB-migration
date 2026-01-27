@@ -7,6 +7,7 @@ use Exception;
 use MBMigration\Builder\ItemBuilder;
 use MBMigration\Builder\Layout\Theme\Solstice\Elements\Element;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Logger;
 
 class TopMedia extends Element
@@ -19,7 +20,7 @@ class TopMedia extends Element
 
     public function __construct($jsonKitElements)
     {
-        $this->cache = VariableCache::getInstance();
+        $this->cache = VariableCacheFactory::create();
         $this->jsonDecode = $jsonKitElements;
     }
 

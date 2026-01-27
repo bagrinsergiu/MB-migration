@@ -10,10 +10,12 @@ use MBMigration\Builder\DebugBackTrace;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Config;
 use MBMigration\Layer\DataSource\DBConnector;
+use MBMigration\Contracts\MBProjectDataCollectorInterface;
 
-class MBProjectDataCollector
+class MBProjectDataCollector implements MBProjectDataCollectorInterface
 {
     private $db;
     private $siteId;
@@ -45,7 +47,7 @@ class MBProjectDataCollector
     public function __construct($projectId = null)
     {
         Logger::instance()->debug('MBProjectDataCollector Initialization');
-        $this->cache = VariableCache::getInstance();
+        $this->cache = VariableCacheFactory::create();
 
         // If a specific project ID is provided, use it
         if ($projectId !== null) {
@@ -88,11 +90,54 @@ class MBProjectDataCollector
     }
 
     /**
+     * Ensure siteId is set, try to get it from cache if not set
+     * 
+     * @throws Exception if siteId cannot be determined
+     * @return void
+     */
+    private function ensureSiteId(): void
+    {
+        if (empty($this->siteId)) {
+            // Try to get from cache
+            $cachedSiteId = $this->cache->get('projectId_MB');
+            if (!empty($cachedSiteId)) {
+                $this->siteId = $cachedSiteId;
+                Logger::instance()->info('SiteId retrieved from cache: ' . $this->siteId);
+            } else {
+                throw new Exception('SiteId is not set and cannot be retrieved from cache. Please set projectId_MB in cache or provide projectId to constructor.');
+            }
+        }
+    }
+
+    /**
+     * Ensure fontsController is initialized, try to get container from cache if needed
+     * 
+     * @throws Exception if container is not available
+     * @return void
+     */
+    private function ensureFontsController(): void
+    {
+        if ($this->fontsController === null) {
+            // Try to get container from cache if not set
+            if ($this->container === null) {
+                $this->container = $this->cache->get('container');
+            }
+            
+            if ($this->container) {
+                $this->fontsController = new FontsController($this->container);
+                Logger::instance()->info('FontsController initialized from cache');
+            } else {
+                throw new Exception('FontsController cannot be initialized: container is not available. Please ensure container is set in cache before using font-related methods.');
+            }
+        }
+    }
+
+    /**
      * @throws Exception
      */
     public function getDesignSite()
     {
-
+        $this->ensureSiteId();
         $settingSite = $this->db->requestArray("SELECT design_uuid from sites WHERE id = ".$this->siteId);
         if (empty($settingSite)) {
             Logger::instance()->info(self::trace(0).'Message: MB project not found');
@@ -373,6 +418,7 @@ class MBProjectDataCollector
      */
     public function getSite()
     {
+        $this->ensureSiteId();
         $siteData = $this->db->requestOne(
             "
             SELECT
@@ -526,6 +572,7 @@ class MBProjectDataCollector
         ];
 
         // upload and add fonts to project
+        $this->ensureFontsController();
         $fontStyles = $this->fontsController->addFontsToBrizyProject($fontStyles);
 
         foreach ($fontStyles as &$font) {
@@ -554,6 +601,7 @@ class MBProjectDataCollector
      */
     public function getMainSection(): array
     {
+        $this->ensureSiteId();
         Logger::instance()->info('Obtaining the main section');
         $result = [];
         $requestMainSections = $this->db->request(
@@ -582,6 +630,7 @@ class MBProjectDataCollector
                             }
 
                             $dbFont = $this->getFont($fontName);
+                            $this->ensureFontsController();
                             $uploadedFont[] = [
                                 'fontName' => $fontName,
                                 'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),
@@ -621,6 +670,7 @@ class MBProjectDataCollector
 
     public function getPages(): array
     {
+        $this->ensureSiteId();
         $result = [];
 
         $allPages = $this->db->request(
@@ -682,6 +732,7 @@ class MBProjectDataCollector
      */
     public function getParentPages(): array
     {
+        $this->ensureSiteId();
         Logger::instance()->info('Get parent pages');
         $result = [];
         $requestPageSite = $this->db->request(
@@ -727,6 +778,7 @@ class MBProjectDataCollector
      */
     private function getChildPages($parentId): array
     {
+        $this->ensureSiteId();
         Logger::instance()->info('Get child pages');
         $result = [];
 
@@ -759,6 +811,7 @@ class MBProjectDataCollector
      */
     public function getChildFromPages($parenId): array
     {
+        $this->ensureSiteId();
         Logger::instance()->info('Get child from pages');
         $result = [];
 
@@ -932,6 +985,7 @@ class MBProjectDataCollector
                         }
 
                         $dbFont = $this->getFont($fontName);
+                        $this->ensureFontsController();
                         $uploadedFont[] = [
                             'fontName' => $fontName,
                             'fontFamily' => $this->transLiterationFontFamily($dbFont[0]['family']),

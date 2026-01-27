@@ -4,6 +4,7 @@ namespace MBMigration\Bridge;
 
 use Exception;
 use MBMigration\Bridge\Interfaces\ResponseHandlerInterface;
+use MBMigration\Core\Factory\LoggerFactory;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\HTTP\RequestHandlerPOST;
 
@@ -38,7 +39,8 @@ class TagManager
      */
     public function addTagManualMigrationFromDB(array $mappings): MgResponse
     {
-        $brizyApi = new BrizyAPI();
+        $logger = LoggerFactory::createDefault('TagManager');
+        $brizyApi = new BrizyAPI($logger);
 
         try {
             foreach ($mappings as $value) {
@@ -59,7 +61,8 @@ class TagManager
      */
     public function delTagManualMigration(): MgResponse
     {
-        $brizyApi = new BrizyAPI();
+        $logger = LoggerFactory::createDefault('TagManager');
+        $brizyApi = new BrizyAPI($logger);
 
         try {
             $inputProperties = $this->POST->checkInputProperties(['brz_project_id']);
@@ -80,7 +83,8 @@ class TagManager
      */
     public function addTagManualMigration(): MgResponse
     {
-        $brizyApi = new BrizyAPI();
+        $logger = LoggerFactory::createDefault('TagManager');
+        $brizyApi = new BrizyAPI($logger);
 
         try {
             $inputProperties = $this->POST->checkInputProperties(['brz_project_id']);

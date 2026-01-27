@@ -3,21 +3,63 @@
 namespace MBMigration\Builder;
 
 use MBMigration\Core\Logger;
+use MBMigration\Core\Factory\LoggerFactory;
 use InvalidArgumentException;
 
+/**
+ * Класс VariableCache для хранения временных данных в памяти
+ * 
+ * Используется для кэширования данных во время миграции.
+ * Поддерживает работу с секциями и объектами.
+ * 
+ * @deprecated Статический метод getInstance() помечен как deprecated.
+ * Используйте конструктор или VariableCacheFactory для создания экземпляров.
+ */
 class VariableCache
 {
     private $cachePath;
+    /**
+     * @var array Статическое свойство для обратной совместимости с getInstance()
+     * @deprecated Используется только для обратной совместимости
+     */
     private static $instance = null;
     private $cache;
 
-    private function __construct($cachePath)
+    /**
+     * Конструктор VariableCache
+     * 
+     * Создает новый экземпляр VariableCache с указанным путем к кэшу.
+     * 
+     * @param string|null $cachePath Путь к директории кэша. Если не указан, используется Config::$cachePath
+     * @param \Psr\Log\LoggerInterface|null $logger Логгер для записи событий. Если не передан, будет использован LoggerFactory
+     */
+    public function __construct($cachePath = null, ?\Psr\Log\LoggerInterface $logger = null)
     {
-        Logger::instance()->debug('VariableCache initialization');
+        // Если Logger не передан, создаем через LoggerFactory для обратной совместимости
+        if ($logger === null) {
+            $logger = LoggerFactory::createDefault('VariableCache');
+        }
+        
+        $logger->debug('VariableCache initialization');
+        
+        // Если cachePath не указан, используем Config::$cachePath
+        if ($cachePath === null) {
+            $cachePath = \MBMigration\Core\Config::$cachePath ?? './var/cache';
+        }
+        
         $this->cachePath = rtrim($cachePath, '/');
         $this->cache = ['OBJECTS' => []];
     }
 
+    /**
+     * Получить экземпляр VariableCache (Singleton)
+     * 
+     * @deprecated Используйте конструктор или VariableCacheFactory::create() вместо этого метода
+     * Этот метод сохранен для обратной совместимости, но не рекомендуется для использования в новом коде.
+     * 
+     * @param string|null $cachePath Путь к директории кэша
+     * @return VariableCache Экземпляр VariableCache
+     */
     public static function getInstance($cachePath = null)
     {
         $subclass = static::class;
@@ -28,9 +70,17 @@ class VariableCache
         return self::$instance[$subclass];
     }
 
+    /**
+     * Установить путь к кэшу
+     * 
+     * @param string $cachePath Путь к директории кэша
+     * @return void
+     */
     public function setCachePath($cachePath)
     {
-        Logger::instance()->debug('VariableCache initialization');
+        // Используем LoggerFactory для создания Logger, так как Logger::instance() deprecated
+        $logger = LoggerFactory::createDefault('VariableCache');
+        $logger->debug('VariableCache initialization');
         $this->cachePath = rtrim($cachePath, '/');
         $this->cache = ['OBJECTS' => []];
     }

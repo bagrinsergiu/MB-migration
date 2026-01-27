@@ -2,8 +2,59 @@
 
 namespace MBMigration\Browser;
 
+use Exception;
+
+/**
+ * Интерфейс для работы с браузером
+ * 
+ * Этот интерфейс определяет контракт для работы с браузером (Chrome/Chromium).
+ * Интерфейс абстрагирует работу с браузером и позволяет использовать Dependency Injection
+ * для тестирования с моками.
+ * 
+ * Интерфейс поддерживает:
+ * - Открытие страниц по URL
+ * - Закрытие страниц
+ * - Закрытие браузера
+ * 
+ * @package MBMigration\Browser
+ * @see \MBMigration\Browser\Browser
+ * @see \MBMigration\Browser\BrowserPHP
+ */
 interface BrowserInterface
 {
-    public function openPage($url,$theme): BrowserPageInterface;
+    /**
+     * Открыть страницу в браузере и перейти по указанному URL
+     * 
+     * Создает новую страницу (если еще не создана) и переходит по указанному URL.
+     * Возвращает объект BrowserPageInterface для взаимодействия со страницей.
+     * 
+     * @param string $url URL страницы для открытия
+     * @param string $theme Название темы (используется для формирования пути к ресурсам)
+     * @return BrowserPageInterface Объект для взаимодействия со страницей
+     * @throws Exception Может выбрасывать исключения при навигации или создании страницы
+     */
+    public function openPage(string $url, string $theme): BrowserPageInterface;
+
+    /**
+     * Закрыть текущую открытую страницу
+     * 
+     * Закрывает текущую страницу в браузере. Если страница уже закрыта или не существует,
+     * метод обрабатывает ошибку внутри и не выбрасывает исключения.
+     * 
+     * @return void
+     */
     public function closePage(): void;
+
+    /**
+     * Закрыть браузер полностью
+     * 
+     * Закрывает браузер и освобождает все ресурсы. После вызова этого метода
+     * браузер больше не может быть использован.
+     * 
+     * Если браузер уже закрыт или произошла ошибка, метод обрабатывает ошибку
+     * внутри и не выбрасывает исключения.
+     * 
+     * @return void
+     */
+    public function closeBrowser(): void;
 }

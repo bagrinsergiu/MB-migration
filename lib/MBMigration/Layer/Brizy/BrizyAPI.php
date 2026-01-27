@@ -12,10 +12,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Config;
 use MBMigration\Core\Utils;
+use MBMigration\Contracts\BrizyAPIInterface;
+use Psr\Log\LoggerInterface;
 
-class BrizyAPI extends Utils
+class BrizyAPI extends Utils implements BrizyAPIInterface
 {
     private $projectToken;
     private $nameFolder;
@@ -26,15 +29,28 @@ class BrizyAPI extends Utils
     protected $cacheBR;
 
     private QueryBuilder $QueryBuilder;
+    /**
+     * @var LoggerInterface Логгер для записи событий BrizyAPI
+     */
+    private LoggerInterface $logger;
 
     /**
+     * Конструктор BrizyAPI
+     * 
+     * @param LoggerInterface|null $logger Логгер для записи событий. Если не передан, будет использован LoggerFactory для создания
      * @throws Exception
      */
-    public function __construct()
+    public function __construct(?LoggerInterface $logger = null)
     {
-        Logger::instance()->debug('BrizyAPI Initialization');
+        // Если Logger не передан, создаем через LoggerFactory для обратной совместимости
+        if ($logger === null) {
+            $logger = \MBMigration\Core\Factory\LoggerFactory::createDefault('BrizyAPI');
+        }
+        $this->logger = $logger;
+        
+        $this->logger->debug('BrizyAPI Initialization');
         $this->projectToken = $this->check(Config::$mainToken, 'Config not initialized');
-        $this->cacheBR = VariableCache::getInstance();
+        $this->cacheBR = VariableCacheFactory::create(Config::$cachePath ?? null);
     }
 
     /**
@@ -71,8 +87,8 @@ class BrizyAPI extends Utils
 
         $result = $this->httpClient('GET', $url, $param);
         if ($result['status'] > 200) {
-            Logger::instance()->warning('Response: ' . json_encode($result));
-            Logger::instance()->info('Response: ' . json_encode($result));
+            $this->logger->warning('Response: ' . json_encode($result));
+            $this->logger->info('Response: ' . json_encode($result));
             throw new Exception('Bad Response from Brizy: ' . json_encode($result));
         } else {
             return json_decode($result['body'], true);
@@ -91,8 +107,8 @@ class BrizyAPI extends Utils
 
         $result = $this->httpClient('GET', $url, $param);
         if ($result['status'] > 200) {
-            Logger::instance()->warning('Response: ' . json_encode($result));
-            Logger::instance()->info('Response: ' . json_encode($result));
+            $this->logger->warning('Response: ' . json_encode($result));
+            $this->logger->info('Response: ' . json_encode($result));
             throw new Exception('Bad Response from Brizy: ' . json_encode($result));
         } else {
             return json_decode($result['body'], true);
@@ -199,21 +215,21 @@ class BrizyAPI extends Utils
 
         $result = $this->httpClient('GET', $this->createUrlApiProject($projectid));
         if ($result['status'] > 200) {
-            Logger::instance()->warning('Response: ' . json_encode($result));
-            Logger::instance()->info('Response: ' . json_encode($result));
+            $this->logger->warning('Response: ' . json_encode($result));
+            $this->logger->info('Response: ' . json_encode($result));
             throw new Exception('Bad Response from Brizy: ' . json_encode($result));
         }
         $resultDecode = json_decode($result['body'], true);
 
         if (!is_array($resultDecode)) {
-            Logger::instance()->warning('Bad Response');
-            Logger::instance()->info('Bad Response from Brizy' . json_encode($result));
+            $this->logger->warning('Bad Response');
+            $this->logger->info('Bad Response from Brizy' . json_encode($result));
             throw new Exception('Bad Response from Brizy: ' . json_encode($result));
         }
         if (array_key_exists('code', $result)) {
             if ($resultDecode['code'] == 500) {
-                Logger::instance()->error('Error getting token');
-                Logger::instance()->info('Getting token' . json_encode($result));
+                $this->logger->error('Error getting token');
+                $this->logger->info('Getting token' . json_encode($result));
                 throw new Exception('getting token: ' . json_encode($result));
             }
         }
@@ -283,17 +299,17 @@ class BrizyAPI extends Utils
         $pathToFileName = $this->isUrlOrFile($pathOrUrlToFileName);
 
         if ($pathToFileName['status'] === false) {
-            Logger::instance()->warning('Failed get path image!!! path: ' . $pathOrUrlToFileName);
+            $this->logger->warning('Failed get path image!!! path: ' . $pathOrUrlToFileName);
             return false;
         }
 
         $mime_type = mime_content_type($pathToFileName['path']);
-        Logger::instance()->debug('Mime type image; ' . $mime_type);
+        $this->logger->debug('Mime type image; ' . $mime_type);
         if ($this->getFileExtension($mime_type)) {
 
             $file_contents = file_get_contents($pathToFileName['path']);
             if (!$file_contents) {
-                Logger::instance()->warning('Failed get contents image!!! path: ' . $pathToFileName['path']);
+                $this->logger->warning('Failed get contents image!!! path: ' . $pathToFileName['path']);
             }
             $base64_content = base64_encode($file_contents);
 
@@ -342,7 +358,7 @@ class BrizyAPI extends Utils
      */
     public function createGlobalBlock($data, $position, $rules)
     {
-        Logger::instance()->debug('Create Global Block', [$position, $rules]);
+        $this->logger->debug('Create Global Block', [$position, $rules]);
 
         $projectId = Utils::$cache->get('projectId_Brizy');
         $requestData['project'] = $projectId;
@@ -379,7 +395,7 @@ class BrizyAPI extends Utils
         if ($response['status'] == 200) {
             $globalBlocks = json_decode($response['body'], true);
             foreach ($globalBlocks as $block) {
-                Logger::instance()->debug("Delete global block {$block['id']}");
+                $this->logger->debug("Delete global block {$block['id']}");
                 // DELETE endpoint: /api/projects/{project}/globalblocks/{id}
                 $response = $this->httpClient('DELETE', $url . "/" . $block['id']);
             }
@@ -413,7 +429,7 @@ class BrizyAPI extends Utils
         $fonts = [];
         $__presenceLogged = false;
         foreach ($KitFonts as $fontWeight => $pathToFonts) {
-            Logger::instance()->info("Request to Upload font name: $fontsName, font weight: $fontWeight");
+            $this->logger->info("Request to Upload font name: $fontsName, font weight: $fontWeight");
             if (!$__presenceLogged) {
                 $this->logFontPresenceIfExists($fontsName, $displayName);
                 $__presenceLogged = true;
@@ -450,13 +466,13 @@ class BrizyAPI extends Utils
             sleep(1);
             $decoded = json_decode($res->getBody()->getContents(), true);
             if (!is_array($decoded)) {
-                Logger::instance()->warning('createFonts: unexpected response payload', ['fontsName' => $fontsName]);
+                $this->logger->warning('createFonts: unexpected response payload', ['fontsName' => $fontsName]);
             } else {
-                Logger::instance()->info('createFonts: API responded', ['fontsName' => $fontsName, 'uid' => $decoded['uid'] ?? null, 'family' => $decoded['family'] ?? null]);
+                $this->logger->info('createFonts: API responded', ['fontsName' => $fontsName, 'uid' => $decoded['uid'] ?? null, 'family' => $decoded['family'] ?? null]);
             }
             return $decoded;
         } catch (Exception $e) {
-            Logger::instance()->error('createFonts API call failed', ['fontsName' => $fontsName, 'error' => $e->getMessage()]);
+            $this->logger->error('createFonts API call failed', ['fontsName' => $fontsName, 'error' => $e->getMessage()]);
             throw $e;
         }
     }
@@ -467,7 +483,7 @@ class BrizyAPI extends Utils
      */
     public function addFontAndUpdateProject(array $data, string $configFonts = 'upload'): string
     {
-        Logger::instance()->info('Add font ' . ($data['family'] ?? 'n/a') . ' in project and update project', ['section' => $configFonts]);
+        $this->logger->info('Add font ' . ($data['family'] ?? 'n/a') . ' in project and update project', ['section' => $configFonts]);
         $containerID = Utils::$cache->get('projectId_Brizy');
 
         $projectFullData = $this->getProjectContainer($containerID, true);
@@ -499,14 +515,14 @@ class BrizyAPI extends Utils
                 $fontId = FontUtils::convertFontFamily($data['family']);
                 break;
             default:
-                Logger::instance()->warning('addFontAndUpdateProject: unknown section', ['section' => $configFonts]);
+                $this->logger->warning('addFontAndUpdateProject: unknown section', ['section' => $configFonts]);
                 $fontId = '';
         }
 
         $projectFullData['data'] = json_encode($projectData);
 
         $result = $this->updateProject($projectFullData);
-        Logger::instance()->info('Project updated after font add', ['section' => $configFonts, 'brizyId' => $brzFontId, 'fontId' => $fontId]);
+        $this->logger->info('Project updated after font add', ['section' => $configFonts, 'brizyId' => $brzFontId, 'fontId' => $fontId]);
 
         sleep(3);
         $this->checkUpdateFonts($result, $brzFontId, $data['family'] ?? null);
@@ -516,16 +532,16 @@ class BrizyAPI extends Utils
 
     public function checkUpdateFonts(array $projectDataResponse, $brzFontId, $fontNmae = null)
     {
-        Logger::instance()->info("checking the response to see if there is a fontName: $fontNmae ");
+        $this->logger->info("checking the response to see if there is a fontName: $fontNmae ");
         foreach ($projectDataResponse['fonts'] as $fontsList) {
             foreach ($fontsList['data'] as $font) {
                 if ($font['brizyId'] === $brzFontId) {
-                    Logger::instance()->info("The font was successfully added to the project: $brzFontId => " . $font['brizyId']);
+                    $this->logger->info("The font was successfully added to the project: $brzFontId => " . $font['brizyId']);
                     return;
                 }
             }
         }
-        Logger::instance()->warning("The font has not been added to the project: $brzFontId");
+        $this->logger->warning("The font has not been added to the project: $brzFontId");
     }
 
     private function logFontPresenceIfExists(string $fontsName, string $displayName): void
@@ -558,13 +574,13 @@ class BrizyAPI extends Utils
                     $idStr = $id ? $id : 'n/a';
                     $brizyIdStr = $brizyId ? $brizyId : 'n/a';
 
-                    Logger::instance()->info("Font already present in project: $familyNorm (type: $section), id: $idStr, brizyId: $brizyIdStr");
+                    $this->logger->info("Font already present in project: $familyNorm (type: $section), id: $idStr, brizyId: $brizyIdStr");
                     return;
                 }
             }
         } catch (Exception $e) {
             // do not interrupt font upload flow; presence check is best-effort
-            Logger::instance()->warning('Font presence check failed', ['font' => $fontsName, 'error' => $e->getMessage()]);
+            $this->logger->warning('Font presence check failed', ['font' => $fontsName, 'error' => $e->getMessage()]);
         }
     }
 
@@ -573,7 +589,7 @@ class BrizyAPI extends Utils
      */
     public function clearAllFontsInProject()
     {
-        Logger::instance()->info('clear all fonts in the project');
+        $this->logger->info('clear all fonts in the project');
 
         $containerID = Utils::$cache->get('projectId_Brizy');
 
@@ -596,7 +612,7 @@ class BrizyAPI extends Utils
 
     public function setLabelManualMigration(bool $value, $projectID = null)
     {
-        Logger::instance()->info('set Label Manual Migration');
+        $this->logger->info('set Label Manual Migration');
 
         if (empty($projectID)) {
             $containerID = Utils::$cache->get('projectId_Brizy');
@@ -617,7 +633,7 @@ class BrizyAPI extends Utils
 
     public function setCloningLink(bool $value, $projectID = null)
     {
-        Logger::instance()->info('set Label Manual Migration');
+        $this->logger->info('set Label Manual Migration');
 
         if (empty($projectID)) {
             $containerID = Utils::$cache->get('projectId_Brizy');
@@ -645,7 +661,7 @@ class BrizyAPI extends Utils
 
     public function updateProject(array $projectFullData): array
     {
-        Logger::instance()->info('Update Project Data');
+        $this->logger->info('Update Project Data');
         $containerID = Utils::$cache->get('projectId_Brizy');
         $url = $this->createPrivateUrlAPI('projects') . '/' . $containerID;
 
@@ -683,10 +699,10 @@ class BrizyAPI extends Utils
      */
     public function setMetaDate()
     {
-        Logger::instance()->info('Check metaDate settings');
+        $this->logger->info('Check metaDate settings');
         if (Config::$metaData) {
 
-            Logger::instance()->info('Create links between projects');
+            $this->logger->info('Create links between projects');
 
             $projectId_Brizy = Utils::$cache->get('projectId_Brizy');
 
@@ -963,18 +979,18 @@ class BrizyAPI extends Utils
      */
     public function createMenu($data)
     {
-        Logger::instance()->info('Request to create menu');
+        $this->logger->info('Request to create menu');
         $result = $this->httpClient('POST', $this->createPrivateUrlAPI('menu'), [
             'project' => $data['project'],
             'name' => $data['name'],
             'data' => $data['data'],
         ]);
         if ($result['status'] !== 201) {
-            Logger::instance()->warning('Failed menu');
+            $this->logger->warning('Failed menu');
 
             return false;
         }
-        Logger::instance()->info('Created menu');
+        $this->logger->info('Created menu');
 
         return json_decode($result['body'], true);
     }
@@ -1097,7 +1113,7 @@ class BrizyAPI extends Utils
         curl_close($ch);
 
         if ($image_data === false) {
-            Logger::instance()->warning('Failed to download image from URL: ' . $url);
+            $this->logger->warning('Failed to download image from URL: ' . $url);
             return ['status' => false];
         }
 
@@ -1105,7 +1121,7 @@ class BrizyAPI extends Utils
         $fileNameParts = explode(".", $file_name);
 
         if (count($fileNameParts) < 2) {
-            Logger::instance()->warning('Invalid file name format: ' . $file_name);
+            $this->logger->warning('Invalid file name format: ' . $file_name);
             return ['status' => false];
         }
 
@@ -1114,7 +1130,7 @@ class BrizyAPI extends Utils
         file_put_contents($path, $image_data);
 
         if (!file_exists($path)) {
-            Logger::instance()->warning('Failed to save image to path: ' . $path);
+            $this->logger->warning('Failed to save image to path: ' . $path);
             return ['status' => false];
         }
 
@@ -1133,7 +1149,7 @@ class BrizyAPI extends Utils
         $newDetailsImage = $this->convertImageFormat($path, $extensionImage);
 
         if ($newDetailsImage['status'] === false) {
-            Logger::instance()->warning('Failed to convert image format: ' . $path);
+            $this->logger->warning('Failed to convert image format: ' . $path);
             return ['status' => false];
         }
 
@@ -1153,14 +1169,14 @@ class BrizyAPI extends Utils
     private function convertImageFormat($filePath, $targetExtension): array
     {
         if (!file_exists($filePath) || !is_readable($filePath)) {
-            Logger::instance()->warning('File not found or not readable: ' . $filePath);
+            $this->logger->warning('File not found or not readable: ' . $filePath);
             return ['status' => false];
         }
 
         $image = file_get_contents($filePath);
 
         if ($image === false) {
-            Logger::instance()->warning('Failed to create image resource for conversion: ' . $filePath);
+            $this->logger->warning('Failed to create image resource for conversion: ' . $filePath);
             return ['status' => false];
         }
 
@@ -1169,10 +1185,10 @@ class BrizyAPI extends Utils
 
         if ($saveResult) {
             if (!unlink($filePath)) {
-                Logger::instance()->warning('Failed to delete original file: ' . $filePath);
+                $this->logger->warning('Failed to delete original file: ' . $filePath);
             }
         } else {
-            Logger::instance()->warning('Failed to save image in target format: ' . $newFilePath);
+            $this->logger->warning('Failed to save image in target format: ' . $newFilePath);
             return ['status' => false];
         }
 
@@ -1191,7 +1207,7 @@ class BrizyAPI extends Utils
         $maxSizeBytes = $maxSizeMB * 1024 * 1024;
 
         if (!file_exists($filePath)) {
-            Logger::instance()->warning('Compression file not found: ' . $filePath);
+            $this->logger->warning('Compression file not found: ' . $filePath);
 
             return;
         }
@@ -1204,7 +1220,7 @@ class BrizyAPI extends Utils
 
         $imageInfo = getimagesize($filePath);
         if (!$imageInfo) {
-            Logger::instance()->warning('The file is not an image: ' . $filePath);
+            $this->logger->warning('The file is not an image: ' . $filePath);
             return;
         }
 
@@ -1221,7 +1237,7 @@ class BrizyAPI extends Utils
                 $image = imagecreatefromwebp($filePath);
                 break;
             default:
-                Logger::instance()->warning('The image type is not supported: ' . $filePath);
+                $this->logger->warning('The image type is not supported: ' . $filePath);
                 return;
         }
 
@@ -1254,7 +1270,7 @@ class BrizyAPI extends Utils
         imagedestroy($image);
         imagedestroy($resizedImage);
 
-        Logger::instance()->info('The image has been compressed to an acceptable size: ' . $filePath);
+        $this->logger->info('The image has been compressed to an acceptable size: ' . $filePath);
 
     }
 
@@ -1348,11 +1364,11 @@ class BrizyAPI extends Utils
             try {
                 return $client->request($method, $uri, $options);
             } catch (ConnectException $e) {
-                Logger::instance()->error("Connection error ({$attempt}/{$retryAttempts}): " . $e->getMessage());
+                $this->logger->error("Connection error ({$attempt}/{$retryAttempts}): " . $e->getMessage());
             } catch (RequestException $e) {
                 $response = $e->getResponse();
                 $statusCode = $response ? $response->getStatusCode() : 'N/A';
-                Logger::instance()->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage());
+                $this->logger->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage());
 
                 if ($response && $statusCode >= 400 && $statusCode < 500) {
                     return $response;
@@ -1364,7 +1380,7 @@ class BrizyAPI extends Utils
             }
         }
 
-        Logger::instance()->critical("Request failed after {$retryAttempts} attempts: {$method} {$uri}");
+        $this->logger->critical("Request failed after {$retryAttempts} attempts: {$method} {$uri}");
         return null;
     }
 
@@ -1412,18 +1428,18 @@ class BrizyAPI extends Utils
                     'body' => $response->getBody()->getContents(),
                 ];
             } catch (ConnectException $e) {
-                Logger::instance()->error("Connection error ({$attempt}/{$retryAttempts}): " . $e->getMessage());
+                $this->logger->error("Connection error ({$attempt}/{$retryAttempts}): " . $e->getMessage());
             } catch (RequestException $e) {
                 $response = $e->getResponse();
                 $statusCode = $response ? $response->getStatusCode() : 'N/A';
                 $body = $response ? $response->getBody()->getContents() : 'No response body';
-                Logger::instance()->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage());
+                $this->logger->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage());
 
                 if ($statusCode >= 400 && $statusCode < 500) {
                     return ['status' => $statusCode, 'body' => $body];
                 }
             } catch (GuzzleException $e) {
-                Logger::instance()->critical("GuzzleException: " . $e->getMessage());
+                $this->logger->critical("GuzzleException: " . $e->getMessage());
                 return ['status' => false, 'body' => $e->getMessage()];
             }
 
@@ -1432,7 +1448,7 @@ class BrizyAPI extends Utils
             }
         }
 
-        Logger::instance()->critical("Request failed after {$retryAttempts} attempts: {$method} {$url}");
+        $this->logger->critical("Request failed after {$retryAttempts} attempts: {$method} {$url}");
         return ['status' => false, 'body' => 'Request failed after retries'];
     }
 

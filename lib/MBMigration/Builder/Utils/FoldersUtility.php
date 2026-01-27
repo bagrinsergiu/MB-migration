@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Utils;
 
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Config;
 use MBMigration\Core\Logger;
 
@@ -13,7 +14,7 @@ class FoldersUtility
      */
     public static function createProjectFolders($projectId): void
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
 
         $folds = [
             'main' => '/',

@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Utils;
 
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\MB\MBProjectDataCollector;
 
@@ -15,7 +16,7 @@ class PathSlugExtractor
      */
     private static function getWorkingDomain(): string
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         
         // Check cache for already verified working domain
         $cachedWorkingDomain = $cache->get('workingDomain');
@@ -72,7 +73,7 @@ class PathSlugExtractor
 
     public static function getFullUrl($slug, bool $getPath = false): string
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         $treePages = $cache->get('ParentPages');
 
         $domain = self::getWorkingDomain();
@@ -90,7 +91,7 @@ class PathSlugExtractor
 
     public static function getFullUrlById($id, bool $getPath = false): string
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         $treePages = $cache->get('ParentPages');
 
         $domain = self::getWorkingDomain();

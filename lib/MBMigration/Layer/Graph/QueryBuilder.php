@@ -10,6 +10,7 @@ use GraphQL\Query;
 use GraphQL\Results;
 use GraphQL\Variable;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Logger;
 
 class QueryBuilder
@@ -22,7 +23,7 @@ class QueryBuilder
 
     public function __construct($endpoint, $token)
     {
-        $this->cache = VariableCache::getInstance();
+        $this->cache = VariableCacheFactory::create();
         $this->session = $token;
         $this->brizy_cms_api_url = $endpoint;
         $this->setProject();

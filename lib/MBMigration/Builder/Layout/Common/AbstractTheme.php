@@ -159,7 +159,7 @@ abstract class AbstractTheme implements ThemeInterface
                         $this->themeContext->getProjectID(); // Получаем projectID для контекста
                         
                         // Используем VariableCache для сохранения результата
-                        $cache = \MBMigration\Builder\VariableCache::getInstance();
+                        $cache = \MBMigration\Builder\Factory\VariableCacheFactory::create();
                         $cache->set($cacheKey, [
                             'element_name' => $elementName,
                             'section_json' => $sectionJson,

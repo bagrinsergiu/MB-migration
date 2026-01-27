@@ -5,10 +5,11 @@ namespace MBMigration\Layer\DataSource\driver;
 use MBMigration\Core\Logger;
 use Exception;
 use MBMigration\Core\Config;
+use MBMigration\Contracts\DatabaseInterface;
 use PDO;
 use PDOException;
 
-class PostgresSQL
+class PostgresSQL implements DatabaseInterface
 {
     private $connection;
 
@@ -70,6 +71,48 @@ class PostgresSQL
     public function requestArray($sql)
     {
         return $this->request($sql);
+    }
+
+    /**
+     * Выполнить SQL запрос и вернуть все строки результата
+     * 
+     * Реализация метода интерфейса DatabaseInterface.
+     * Использует существующий метод request().
+     * 
+     * Примечание: Параметры $params игнорируются, так как PostgresSQL::request()
+     * не поддерживает подготовленные запросы. Для использования параметров
+     * рекомендуется использовать метод request() напрямую или обновить реализацию.
+     * 
+     * @param string $sql SQL запрос для выполнения
+     * @param array $params Параметры для подготовленного запроса (игнорируются)
+     * @return array Массив всех строк результата
+     * @throws Exception
+     */
+    public function query(string $sql, array $params = []): array
+    {
+        // Игнорируем параметры, так как request() не поддерживает подготовленные запросы
+        // В будущем можно добавить поддержку параметров через PDO::prepare()
+        return $this->request($sql);
+    }
+
+    /**
+     * Выполнить SQL запрос и вернуть одну строку результата
+     * 
+     * Реализация метода интерфейса DatabaseInterface.
+     * Использует существующий метод request() и возвращает первую строку.
+     * 
+     * Примечание: Параметры $params игнорируются, так как PostgresSQL::request()
+     * не поддерживает подготовленные запросы.
+     * 
+     * @param string $sql SQL запрос для выполнения
+     * @param array $params Параметры для подготовленного запроса (игнорируются)
+     * @return array|null Первая строка результата или null
+     * @throws Exception
+     */
+    public function queryOne(string $sql, array $params = []): ?array
+    {
+        $result = $this->request($sql);
+        return empty($result) ? null : $result[0];
     }
 
 }

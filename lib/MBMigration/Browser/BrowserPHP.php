@@ -21,6 +21,10 @@ class BrowserPHP implements BrowserInterface
      * @var Page|null
      */
     private ?Page $page = null;
+    /**
+     * @var LoggerInterface Логгер для записи событий BrowserPHP
+     */
+    private LoggerInterface $logger;
 
     static public function instance($scriptPath, LoggerInterface $logger = null)
     {
@@ -36,6 +40,7 @@ class BrowserPHP implements BrowserInterface
             $logger = new Logger('browser');
             $logger->pushHandler(new StreamHandler($_ENV['CHROME_LOG_FILE_PATH'], $_ENV['CHROME_LOG_LEVEL']));
         }
+        $this->logger = $logger;
 
         $browserFactory = new BrowserFactory($chromeExecutable);
 
@@ -128,41 +133,41 @@ class BrowserPHP implements BrowserInterface
         $this->scriptPath = $scriptPath;
     }
 
-    public function openPage($url, $theme): BrowserPageInterface
+    public function openPage(string $url, string $theme): BrowserPageInterface
     {
-        \MBMigration\Core\Logger::instance()->debug('Opening a new page');
+        $this->logger->debug('Opening a new page');
 
         if (!$this->page) {
-            \MBMigration\Core\Logger::instance()->debug('Creating a new browser tab.');
+            $this->logger->debug('Creating a new browser tab.');
             $this->page = $this->browser->createPage();
         }
 
-        \MBMigration\Core\Logger::instance()->debug('Navigate to: '.$url);
+        $this->logger->debug('Navigate to: '.$url);
         $this->page->navigate($url)->waitForNavigation(Page::DOM_CONTENT_LOADED, 120000);
 
 
-        return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist");
+        return new BrowserPagePHP($this->page, $this->scriptPath."/Theme/".$theme."/Assets/dist", $this->logger);
     }
 
     public function closePage(): void
     {
         try {
-            \MBMigration\Core\Logger::instance()->info('Closing the page');
+            $this->logger->info('Closing the page');
             $this->page->close();
             sleep(2);
             $this->page = null;
         } catch (Exception $e) {
-            \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
+            $this->logger->critical($e->getMessage(), $e->getTrace());
         }
     }
 
-    public function closeBrowser()
+    public function closeBrowser(): void
     {
         try {
             $this->browser->close();
             $this->browser = null;
         } catch (Exception $e) {
-            \MBMigration\Core\Logger::instance()->critical($e->getMessage(), $e->getTrace());
+            $this->logger->critical($e->getMessage(), $e->getTrace());
         }
     }
 }

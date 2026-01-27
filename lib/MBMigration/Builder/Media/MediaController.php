@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Config;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Brizy\BrizyAPI;
@@ -16,7 +17,7 @@ class MediaController
 {
     public static function getURLDoc($fileName): string
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         $uuid = $cache->get('settings')['uuid'];
         $prefix = substr($uuid, 0, 2);
 
@@ -25,7 +26,7 @@ class MediaController
 
     public static function getMediaURL(string $fileName, string $directory): string
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         $uuid = $cache->get('settings')['uuid'];
         $prefix = substr($uuid, 0, 2);
 
@@ -97,7 +98,7 @@ class MediaController
 
     public static function getPicturesUrl($nameImage, $type): string
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
 
         $folder = [
             'gallery-layout' => '/gallery/slides/',

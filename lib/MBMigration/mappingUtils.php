@@ -3,6 +3,7 @@
 namespace MBMigration;
 
 use MBMigration\Core\Logger;
+use MBMigration\Core\Factory\LoggerFactory;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\DataSource\driver\MySQL;
 
@@ -12,18 +13,22 @@ class mappingUtils
 {
     private MySQL $DB;
     private BrizyAPI $brizyApi;
+    /**
+     * @var \Psr\Log\LoggerInterface Логгер для записи событий mappingUtils
+     */
+    private \Psr\Log\LoggerInterface $logger;
 
     public function __construct()
     {
         // Initialize logger to a local file for this utility
-        Logger::initialize('', 'info', './create_migration_mapping.log');
+        $this->logger = LoggerFactory::create('mappingUtils', 'info', './create_migration_mapping.log');
 
         // Use same DB config as in CreateMigrationMapping for consistency
         $this->DB = (new MySQL(
 
         ))->doConnect();
 
-        $this->brizyApi = new BrizyAPI();
+        $this->brizyApi = new BrizyAPI($this->logger);
     }
 
     /**
@@ -42,7 +47,7 @@ class mappingUtils
         ];
 
         if (empty($projectUuids)) {
-            Logger::instance()->warning('mappingUtils.process called with empty projectUuids');
+            $this->logger->warning('mappingUtils.process called with empty projectUuids');
             return $summary;
         }
 
@@ -62,11 +67,11 @@ class mappingUtils
                 $summary['updated']++;
             } catch (\Exception $e) {
                 $summary['errors'][] = ['uuid' => $uuid, 'error' => $e->getMessage()];
-                Logger::instance()->error('Failed to update project for UUID ' . $uuid . ': ' . $e->getMessage());
+                $this->logger->error('Failed to update project for UUID ' . $uuid . ': ' . $e->getMessage());
             }
         }
 
-        Logger::instance()->info('mappingUtils.process finished', $summary);
+        $this->logger->info('mappingUtils.process finished', $summary);
         return $summary;
     }
 }

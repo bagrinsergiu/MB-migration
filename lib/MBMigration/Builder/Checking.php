@@ -3,12 +3,13 @@
 namespace MBMigration\Builder;
 
 use Exception;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 
 trait Checking {
 
     protected function pageCheck($slug): bool
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         $ListPages = $cache->get('ListPages');
         foreach ($ListPages as $listSlug => $collectionItems) {
             if ($listSlug == $slug) {

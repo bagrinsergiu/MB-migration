@@ -9,8 +9,11 @@ use MBMigration\Builder\Layout\Common\RootListFontFamilyExtractor;
 use MBMigration\Builder\Utils\builderUtils;
 use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Logger;
+use MBMigration\Core\Factory\LoggerFactory;
 use MBMigration\Layer\Brizy\BrizyAPI;
+use Psr\Log\LoggerInterface;
 
 class FontsController extends builderUtils
 {
@@ -22,16 +25,30 @@ class FontsController extends builderUtils
     private VariableCache $cache;
 
     private array $googeFontsMap;
+    /**
+     * @var LoggerInterface Логгер для записи событий FontsController
+     */
+    private LoggerInterface $logger;
 
     /**
+     * Конструктор FontsController
+     * 
+     * @param mixed $projectId ID проекта
+     * @param LoggerInterface|null $logger Логгер для записи событий. Если не передан, будет использован LoggerFactory для создания
      * @throws Exception
      */
-    public function __construct($projectId)
+    public function __construct($projectId, ?LoggerInterface $logger = null)
     {
-        $this->BrizyApi = new BrizyAPI();
+        // Если Logger не передан, создаем через LoggerFactory для обратной совместимости
+        if ($logger === null) {
+            $logger = LoggerFactory::createDefault('FontsController');
+        }
+        $this->logger = $logger;
+        
+        $this->BrizyApi = new BrizyAPI($this->logger);
         $this->loadFontsMap();
         $this->projectId = $projectId;
-        $this->cache = VariableCache::getInstance();
+        $this->cache = VariableCacheFactory::create();
         $this->layoutName = 'FontsController';
     }
 
@@ -62,7 +79,7 @@ class FontsController extends builderUtils
                 $this->BrizyApi->getProjectContainer($containerID, true)['data'],
                 true) ?? [];
         } catch (Exception|GuzzleException $e) {
-            Logger::instance()->error('getProjectData failed: ' . $e->getMessage());
+            $this->logger->error('getProjectData failed: ' . $e->getMessage());
             return [];
         }
     }
@@ -71,7 +88,7 @@ class FontsController extends builderUtils
     {
         $containerID = $this->cache->get('projectId_Brizy');
         if (!$containerID) {
-            Logger::instance()->warning('getFontsFromProjectData: No container ID found in cache');
+            $this->logger->warning('getFontsFromProjectData: No container ID found in cache');
             return [];
         }
 
@@ -82,7 +99,7 @@ class FontsController extends builderUtils
         // Try to get cached data first
         $cachedData = $this->cache->get($cacheKey);
         if ($cachedData !== null && $this->isValidCachedData($cachedData, $cacheKey)) {
-            Logger::instance()->info('getFontsFromProjectData: Using cached fonts data', [
+            $this->logger->info('getFontsFromProjectData: Using cached fonts data', [
                 'cacheKey' => $cacheKey,
                 'fontTypesCount' => $this->countFontTypes($cachedData)
             ]);
@@ -90,7 +107,7 @@ class FontsController extends builderUtils
         }
 
         // Cache miss or invalid - make API call
-        Logger::instance()->info('getFontsFromProjectData: Cache miss, fetching from API', [
+        $this->logger->info('getFontsFromProjectData: Cache miss, fetching from API', [
             'cacheKey' => $cacheKey,
             'containerID' => $containerID
         ]);
@@ -112,14 +129,14 @@ class FontsController extends builderUtils
                 $this->cache->set($cacheKey . '_timestamp', time());
                 $this->cache->set($cacheKey . '_expiration', time() + $cacheExpiration);
 
-                Logger::instance()->info('getFontsFromProjectData: API call successful, data cached', [
+                $this->logger->info('getFontsFromProjectData: API call successful, data cached', [
                     'cacheKey' => $cacheKey,
                     'apiResponseTime' => round($apiResponseTime, 3),
                     'fontTypesCount' => $this->countFontTypes($fontsData),
                     'cacheExpiration' => $cacheExpiration
                 ]);
             } else {
-                Logger::instance()->warning('getFontsFromProjectData: API response validation failed, not caching', [
+                $this->logger->warning('getFontsFromProjectData: API response validation failed, not caching', [
                     'cacheKey' => $cacheKey
                 ]);
             }
@@ -127,7 +144,7 @@ class FontsController extends builderUtils
             return $fontsData;
 
         } catch (Exception|GuzzleException $e) {
-            Logger::instance()->error('getFontsFromProjectData API call failed', [
+            $this->logger->error('getFontsFromProjectData API call failed', [
                 'error' => $e->getMessage(),
                 'containerID' => $containerID,
                 'cacheKey' => $cacheKey
@@ -135,7 +152,7 @@ class FontsController extends builderUtils
 
             // Try to return stale cached data if available as fallback
             if ($cachedData !== null) {
-                Logger::instance()->info('getFontsFromProjectData: Returning stale cached data due to API failure', [
+                $this->logger->info('getFontsFromProjectData: Returning stale cached data due to API failure', [
                     'cacheKey' => $cacheKey
                 ]);
                 return $cachedData;
@@ -147,10 +164,11 @@ class FontsController extends builderUtils
 
     public static function getProject_Data()
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         $containerID = $cache->get('projectId_Brizy');
         try {
-            $BrizyApi = new BrizyAPI();
+            $logger = LoggerFactory::createDefault('FontsController');
+            $BrizyApi = new BrizyAPI($logger);
 
             return json_decode(
                 $BrizyApi->getProjectContainer($containerID, true)['data'],
@@ -176,23 +194,23 @@ class FontsController extends builderUtils
         $allUpLoadFonts = $this->getAllUpLoadFonts();
         $fontsList = $RootListFontFamilyExtractor->getAllFontName();
 
-        Logger::instance()->info('Fonts detected on page', [
+        $this->logger->info('Fonts detected on page', [
             'detectedCount' => count($fontsList),
             'detected' => $fontsList,
         ]);
-        Logger::instance()->info('Fonts already in project (by family)', [
+        $this->logger->info('Fonts already in project (by family)', [
             'presentCount' => count($allUpLoadFonts),
             'present' => $allUpLoadFonts,
         ]);
 
         $fontListToAdd = array_unique(array_diff($fontsList, $allUpLoadFonts));
-        Logger::instance()->info('Fonts to upload (diff)', [
+        $this->logger->info('Fonts to upload (diff)', [
             'toUploadCount' => count($fontListToAdd),
             'toUpload' => $fontListToAdd,
         ]);
 
         if (empty($fontListToAdd)) {
-            Logger::instance()->info('No fonts require upload for this page');
+            $this->logger->info('No fonts require upload for this page');
         }
 
         foreach ($fontListToAdd as $font) {
@@ -210,12 +228,12 @@ class FontsController extends builderUtils
         foreach ($this->fontsMap as $key => $font) {
             if ($key === $fontName) {
                 try {
-                    Logger::instance()->info("Uploading MB-packaged font", ['font' => $fontName]);
+                    $this->logger->info("Uploading MB-packaged font", ['font' => $fontName]);
                     $this->upLoadFont($fontName, null, 'upLoadMBFonts');
-                    Logger::instance()->info("MB font upload completed", ['font' => $fontName]);
+                    $this->logger->info("MB font upload completed", ['font' => $fontName]);
                     return true;
                 } catch (Exception|GuzzleException $e) {
-                    Logger::instance()->error("MB font upload failed", ['font' => $fontName, 'error' => $e->getMessage()]);
+                    $this->logger->error("MB font upload failed", ['font' => $fontName, 'error' => $e->getMessage()]);
                     return false;
                 }
             }
@@ -230,7 +248,7 @@ class FontsController extends builderUtils
             if ($KitFonts) {
                 $fontNameLower = FontUtils::convertFontFamily($KitFonts['family']);
                 if (!$this->cache->get($fontNameLower, 'responseDataAddedNewFont')) {
-                    Logger::instance()->info("Create FontName $fontNameLower, type font: google");
+                    $this->logger->info("Create FontName $fontNameLower, type font: google");
                     $this->cache->add('responseDataAddedNewFont', [$fontNameLower => $KitFonts]);
 
                     $fontId = $this->BrizyApi->addFontAndUpdateProject($KitFonts, 'google');
@@ -238,21 +256,21 @@ class FontsController extends builderUtils
                     if ($fontId) {
                         // Persist only after success: uuid should be the id returned by API; fontFamily is the normalized family name
                         self::addFontInMigration($fontNameLower, $fontId, $fontNameLower, 'google');
-                        Logger::instance()->info('Google font added to project', ['family' => $fontNameLower, 'fontId' => $fontId]);
+                        $this->logger->info('Google font added to project', ['family' => $fontNameLower, 'fontId' => $fontId]);
 
                         // Clear fonts cache since project fonts have been modified
                         $this->clearProjectFontsCache();
                     } else {
-                        Logger::instance()->warning('Google font upload returned empty fontId', ['family' => $fontNameLower]);
+                        $this->logger->warning('Google font upload returned empty fontId', ['family' => $fontNameLower]);
                     }
                 } else {
-                    Logger::instance()->info('Skip Google font upload (cached)', ['family' => $fontNameLower]);
+                    $this->logger->info('Skip Google font upload (cached)', ['family' => $fontNameLower]);
                 }
             } else {
-                Logger::instance()->warning('Google font not found in map', ['requested' => $fontName]);
+                $this->logger->warning('Google font not found in map', ['requested' => $fontName]);
             }
         } catch (Exception|GuzzleException $e) {
-            Logger::instance()->error('Google font upload failed', ['font' => $fontName, 'error' => $e->getMessage()]);
+            $this->logger->error('Google font upload failed', ['font' => $fontName, 'error' => $e->getMessage()]);
             return;
         }
     }
@@ -267,7 +285,7 @@ class FontsController extends builderUtils
         $projectGoogleFonts = $this->getGoogleFontsFromProject();
 
         $all = array_unique(array_merge($projectDefaultFonts, $projectUploadedFonts, $projectGoogleFonts));
-        Logger::instance()->info('Aggregated project fonts (normalized families)', [
+        $this->logger->info('Aggregated project fonts (normalized families)', [
             'defaultCount' => count($projectDefaultFonts),
             'uploadCount' => count($projectUploadedFonts),
             'googleCount' => count($projectGoogleFonts),
@@ -357,7 +375,7 @@ class FontsController extends builderUtils
     private function trackFontMetrics(string $fontName, float $startTime, bool $success): void
     {
         $duration = microtime(true) - $startTime;
-        Logger::instance()->info('Font operation metrics', [
+        $this->logger->info('Font operation metrics', [
             'font' => $fontName,
             'duration' => round($duration, 3),
             'success' => $success
@@ -380,7 +398,7 @@ class FontsController extends builderUtils
                 $this->trackFontMetrics($fontName, $startTime, true);
                 return $result;
             } catch (Exception|GuzzleException $e) {
-                Logger::instance()->warning("Font upload attempt $attempt failed", [
+                $this->logger->warning("Font upload attempt $attempt failed", [
                     'font' => $fontName,
                     'error' => $e->getMessage(),
                     'attempt' => $attempt,
@@ -389,7 +407,7 @@ class FontsController extends builderUtils
 
                 if ($attempt === $maxRetries) {
                     $this->trackFontMetrics($fontName, $startTime, false);
-                    Logger::instance()->error('All font upload attempts failed, falling back to default', [
+                    $this->logger->error('All font upload attempts failed, falling back to default', [
                         'font' => $fontName,
                         'totalAttempts' => $maxRetries
                     ]);
@@ -398,7 +416,7 @@ class FontsController extends builderUtils
 
                 // Exponential backoff
                 $backoffDelay = $attempt * 2;
-                Logger::instance()->info("Retrying font upload after backoff", [
+                $this->logger->info("Retrying font upload after backoff", [
                     'font' => $fontName,
                     'backoffDelay' => $backoffDelay
                 ]);
@@ -418,7 +436,7 @@ class FontsController extends builderUtils
     {
         $containerID = $containerID ?? $this->cache->get('projectId_Brizy');
         if (!$containerID) {
-            Logger::instance()->warning('clearProjectFontsCache: No container ID available');
+            $this->logger->warning('clearProjectFontsCache: No container ID available');
             return false;
         }
 
@@ -430,13 +448,13 @@ class FontsController extends builderUtils
             $this->cache->set($cacheKey . '_timestamp', null);
             $this->cache->set($cacheKey . '_expiration', null);
 
-            Logger::instance()->info('Project fonts cache cleared', [
+            $this->logger->info('Project fonts cache cleared', [
                 'cacheKey' => $cacheKey,
                 'containerID' => $containerID
             ]);
             return true;
         } catch (Exception $e) {
-            Logger::instance()->error('Failed to clear project fonts cache', [
+            $this->logger->error('Failed to clear project fonts cache', [
                 'cacheKey' => $cacheKey,
                 'error' => $e->getMessage()
             ]);
@@ -464,7 +482,7 @@ class FontsController extends builderUtils
                 }
 
                 if ($staleCacheCount > 0) {
-                    Logger::instance()->info('Cleared stale font cache entries', [
+                    $this->logger->info('Cleared stale font cache entries', [
                         'clearedCount' => $staleCacheCount,
                         'cacheKey' => $cacheKey
                     ]);
@@ -488,7 +506,7 @@ class FontsController extends builderUtils
         // Check cache expiration
         $expirationTime = $this->cache->get($cacheKey . '_expiration');
         if ($expirationTime !== null && time() > $expirationTime) {
-            Logger::instance()->info('Cache expired for fonts data', [
+            $this->logger->info('Cache expired for fonts data', [
                 'cacheKey' => $cacheKey,
                 'expirationTime' => $expirationTime,
                 'currentTime' => time()
@@ -517,7 +535,7 @@ class FontsController extends builderUtils
         foreach ($validSections as $section) {
             if (isset($fontsData[$section])) {
                 if (!is_array($fontsData[$section])) {
-                    Logger::instance()->warning('Invalid fonts data structure: section not array', [
+                    $this->logger->warning('Invalid fonts data structure: section not array', [
                         'section' => $section,
                         'type' => gettype($fontsData[$section])
                     ]);
@@ -526,7 +544,7 @@ class FontsController extends builderUtils
 
                 // If data key exists, it should be an array
                 if (isset($fontsData[$section]['data']) && !is_array($fontsData[$section]['data'])) {
-                    Logger::instance()->warning('Invalid fonts data structure: data not array', [
+                    $this->logger->warning('Invalid fonts data structure: data not array', [
                         'section' => $section,
                         'dataType' => gettype($fontsData[$section]['data'])
                     ]);
@@ -567,14 +585,14 @@ class FontsController extends builderUtils
         $maxSize = 5 * 1024 * 1024; // 5MB
 
         if (!isset($fontData['files']) || empty($fontData['files'])) {
-            Logger::instance()->warning('Font data missing files', ['font' => $fontData['family'] ?? 'unknown']);
+            $this->logger->warning('Font data missing files', ['font' => $fontData['family'] ?? 'unknown']);
             return false;
         }
 
         // Handle nested structure: files -> weight -> format -> url/info
         foreach ($fontData['files'] as $weight => $weightData) {
             if (!is_array($weightData)) {
-                Logger::instance()->warning('Invalid weight data structure', [
+                $this->logger->warning('Invalid weight data structure', [
                     'weight' => $weight,
                     'font' => $fontData['family'] ?? 'unknown'
                 ]);
@@ -583,7 +601,7 @@ class FontsController extends builderUtils
 
             foreach ($weightData as $format => $fileInfo) {
                 if (!in_array($format, $validFormats)) {
-                    Logger::instance()->warning('Invalid font format detected', [
+                    $this->logger->warning('Invalid font format detected', [
                         'format' => $format,
                         'weight' => $weight,
                         'font' => $fontData['family'] ?? 'unknown',
@@ -594,7 +612,7 @@ class FontsController extends builderUtils
 
                 // Check file size if provided
                 if (is_array($fileInfo) && isset($fileInfo['size']) && $fileInfo['size'] > $maxSize) {
-                    Logger::instance()->warning('Font file exceeds size limit', [
+                    $this->logger->warning('Font file exceeds size limit', [
                         'size' => $fileInfo['size'],
                         'maxSize' => $maxSize,
                         'format' => $format,
@@ -606,7 +624,7 @@ class FontsController extends builderUtils
 
                 // Validate URL if fileInfo is a string (URL)
                 if (is_string($fileInfo) && !filter_var($fileInfo, FILTER_VALIDATE_URL)) {
-                    Logger::instance()->warning('Invalid font file URL', [
+                    $this->logger->warning('Invalid font file URL', [
                         'url' => $fileInfo,
                         'format' => $format,
                         'weight' => $weight,
@@ -617,7 +635,7 @@ class FontsController extends builderUtils
             }
         }
 
-        Logger::instance()->info('Font data validation passed', ['font' => $fontData['family'] ?? 'unknown']);
+        $this->logger->info('Font data validation passed', ['font' => $fontData['family'] ?? 'unknown']);
         return true;
     }
 
@@ -635,7 +653,7 @@ class FontsController extends builderUtils
         if (!$presentFont = $this->cache->get($fontName, 'responseDataAddedNewFont')) {
             $KitFonts = $this->getPathFont($fontName);
             if ($KitFonts) {
-                Logger::instance()->info("Create FontName $fontName, type font: upload", [$nameFunctionExec]);
+                $this->logger->info("Create FontName $fontName, type font: upload", [$nameFunctionExec]);
 
                 $startTime = microtime(true);
                 $responseDataAddedNewFont = $this->BrizyApi->createFonts(
@@ -647,14 +665,14 @@ class FontsController extends builderUtils
 
                 // Validate font data before proceeding
                 if (!$this->validateFontData($responseDataAddedNewFont)) {
-                    Logger::instance()->error('Font validation failed, falling back to default', ['font' => $fontName]);
+                    $this->logger->error('Font validation failed, falling back to default', ['font' => $fontName]);
                     return 'lato';
                 }
 
                 // Dynamic delay based on API response time (minimum 1s, maximum 5s)
                 $responseTime = microtime(true) - $startTime;
                 $dynamicDelay = max(1, min(5, ceil($responseTime * 2)));
-                Logger::instance()->info('Using dynamic delay after font creation', [
+                $this->logger->info('Using dynamic delay after font creation', [
                     'responseTime' => round($responseTime, 3),
                     'delay' => $dynamicDelay
                 ]);
@@ -667,7 +685,7 @@ class FontsController extends builderUtils
                 $fontFamilyConverted = FontUtils::transliterateFontFamily($fontName ?? $KitFonts['displayName']);
 
                 self::addFontInMigration($fontName, $fontFamilyId, $fontFamilyConverted);
-                Logger::instance()->info('Upload font added to project', ['family' => $fontFamilyConverted, 'fontId' => $fontFamilyId]);
+                $this->logger->info('Upload font added to project', ['family' => $fontFamilyConverted, 'fontId' => $fontFamilyId]);
 
                 // Clear fonts cache since project fonts have been modified
                 $this->clearProjectFontsCache();
@@ -675,10 +693,10 @@ class FontsController extends builderUtils
                 return $fontFamilyId;
             }
 
-            Logger::instance()->warning('Font not found in MB packaged map, fallback to default', ['requested' => $fontName]);
+            $this->logger->warning('Font not found in MB packaged map, fallback to default', ['requested' => $fontName]);
             return 'lato';
         } else {
-            Logger::instance()->info('Skip font creation (cached upload present)', ['family' => $fontName, 'uid' => $presentFont['uid'] ?? null]);
+            $this->logger->info('Skip font creation (cached upload present)', ['family' => $fontName, 'uid' => $presentFont['uid'] ?? null]);
             return $presentFont['uid'];
         }
     }
@@ -705,7 +723,7 @@ class FontsController extends builderUtils
         }
 
         $fontListToAdd = array_unique(array_diff($mbFontsProjectList, $brzFontsProjectList));
-        Logger::instance()->info('MB default fonts to attach (diff vs project upload)', [
+        $this->logger->info('MB default fonts to attach (diff vs project upload)', [
             'toAttachCount' => count($fontListToAdd),
             'toAttach' => $fontListToAdd,
         ]);
@@ -722,7 +740,7 @@ class FontsController extends builderUtils
                     );
                     $this->cache->add('responseDataAddedNewFont', [$fontName => $fontToAttach]);
                 } else {
-                    Logger::instance()->info('Using cached created font payload for attach', ['font' => $fontName]);
+                    $this->logger->info('Using cached created font payload for attach', ['font' => $fontName]);
                 }
 
                 $newData = [];
@@ -740,15 +758,15 @@ class FontsController extends builderUtils
                         $mbFontNeedID['uuid'] = $fontToAttach['uid'];
                     }
                 }
-                Logger::instance()->info('MB default font attached to project data', ['font' => $fontName, 'uid' => $fontToAttach['uid']]);
+                $this->logger->info('MB default font attached to project data', ['font' => $fontName, 'uid' => $fontToAttach['uid']]);
             } else {
-                Logger::instance()->warning('MB default font not found in packaged map', ['requested' => $fontName]);
+                $this->logger->warning('MB default font not found in packaged map', ['requested' => $fontName]);
             }
         }
 
         $projectFullData['data'] = json_encode($projectData);
         $this->BrizyApi->updateProject($projectFullData);
-        Logger::instance()->info('Project updated after attaching default fonts', ['attachedCount' => count($fontListToAdd)]);
+        $this->logger->info('Project updated after attaching default fonts', ['attachedCount' => count($fontListToAdd)]);
 
         // Clear fonts cache since project fonts have been modified
         if (count($fontListToAdd) > 0) {
@@ -760,7 +778,7 @@ class FontsController extends builderUtils
 
     static public function addFontInMigration($fontName, $FontFamilyId, $FontFamily, $uploadType = null)
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         $settings = $cache->get('settings') ?? [];
 
         if (!isset($settings['fonts']) || !is_array($settings['fonts'])) {
@@ -883,7 +901,7 @@ class FontsController extends builderUtils
             ],
             'kit' => []
         ];
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         $fonts = $cache->get('fonts', 'settings');
         if (!is_array($fonts)) {
             return $fontFamily;
@@ -911,7 +929,7 @@ class FontsController extends builderUtils
                 $fullNormalizedKey = FontUtils::normalizeFontFamilyFull($fontFamilyString);
                 if ($fullNormalizedKey !== $key && !isset($fontFamily['kit'][$fullNormalizedKey])) {
                     $fontFamily['kit'][$fullNormalizedKey] = $fontData;
-                    Logger::instance()->debug('Added full normalized font key', [
+                    $this->logger->debug('Added full normalized font key', [
                         'original' => $fontFamilyString,
                         'fullKey' => $fullNormalizedKey,
                         'fontUuid' => $font['uuid'] ?? null
@@ -929,14 +947,14 @@ class FontsController extends builderUtils
                         // Первая часть - добавляем только если еще не существует
                         if (!isset($fontFamily['kit'][$partKey])) {
                             $fontFamily['kit'][$partKey] = $fontData;
-                            Logger::instance()->debug('Added first part font key', [
+                            $this->logger->debug('Added first part font key', [
                                 'original' => $fontFamilyString,
                                 'partKey' => $partKey,
                                 'fontUuid' => $font['uuid'] ?? null
                             ]);
                         } else {
                             // Если ключ уже существует, логируем конфликт
-                            Logger::instance()->debug('Font key conflict (first part)', [
+                            $this->logger->debug('Font key conflict (first part)', [
                                 'original' => $fontFamilyString,
                                 'partKey' => $partKey,
                                 'existingFontUuid' => $fontFamily['kit'][$partKey]['name'] ?? null,
@@ -947,7 +965,7 @@ class FontsController extends builderUtils
                         // Для остальных частей - всегда добавляем, так как они более специфичные
                         // Это позволяет находить точные совпадения типа "oswald_light"
                         $fontFamily['kit'][$partKey] = $fontData;
-                        Logger::instance()->debug('Added specific font part key', [
+                        $this->logger->debug('Added specific font part key', [
                             'original' => $fontFamilyString,
                             'partKey' => $partKey,
                             'fontUuid' => $font['uuid'] ?? null
@@ -960,7 +978,7 @@ class FontsController extends builderUtils
                 $firstPartKey = FontUtils::normalizeFontFamilyFirst($fontFamilyString);
                 if (!isset($fontFamily['kit'][$firstPartKey])) {
                     $fontFamily['kit'][$firstPartKey] = $fontData;
-                    Logger::instance()->debug('Added first part normalized font key (fallback)', [
+                    $this->logger->debug('Added first part normalized font key (fallback)', [
                         'original' => $fontFamilyString,
                         'firstPartKey' => $firstPartKey,
                         'fontUuid' => $font['uuid'] ?? null
@@ -969,7 +987,7 @@ class FontsController extends builderUtils
             }
         }
 
-        Logger::instance()->info('Font family map created', [
+        $this->logger->info('Font family map created', [
             'totalKeys' => count($fontFamily['kit']),
             'defaultFont' => $fontFamily['Default']['name'] ?? 'none'
         ]);
@@ -981,7 +999,7 @@ class FontsController extends builderUtils
     static public function getFontsFamilyFromName($name): string
     {
         $fontFamily = 'google';
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
         $fonts = $cache->get('fonts', 'settings');
         foreach ($fonts as $font) {
             if (isset($font['name']) && $font['name'] === $name) {

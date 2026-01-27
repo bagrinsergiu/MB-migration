@@ -7,6 +7,9 @@ use Exception;
 use MBMigration\ApplicationBootstrapper;
 use MBMigration\Core\Config;
 use MBMigration\Core\Logger;
+use MBMigration\Core\Factory\LoggerFactory;
+use MBMigration\Contracts\BrizyAPIInterface;
+use Psr\Log\LoggerInterface;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\DataSource\driver\MySQL;
 use MBMigration\Layer\HTTP\RequestHandlerDELETE;
@@ -32,18 +35,47 @@ class Bridge
     private array $listReport;
     private ApplicationBootstrapper $app;
     private MySQL $DB;
-    private BrizyAPI $brizyApi;
+    /**
+     * @var BrizyAPIInterface Интерфейс для работы с Brizy API (инжектируется через конструктор для тестируемости)
+     */
+    private BrizyAPIInterface $brizyApi;
+    /**
+     * @var LoggerInterface Логгер для записи событий Bridge
+     */
+    private LoggerInterface $logger;
 
+    /**
+     * Конструктор Bridge
+     * 
+     * Принимает зависимости через Dependency Injection для улучшения тестируемости.
+     * Зависимость BrizyAPIInterface теперь инжектируется через конструктор
+     * вместо создания в различных методах.
+     * 
+     * @param ApplicationBootstrapper $app Загрузчик приложения
+     * @param Config $config Конфигурация приложения
+     * @param Request $request HTTP запрос (Symfony)
+     * @param BrizyAPIInterface $brizyApi Интерфейс для работы с Brizy API (инжектируется для тестируемости)
+     * @param LoggerInterface|null $logger Логгер для записи событий. Если не передан, будет использован LoggerFactory для создания
+     */
     public function __construct(
         ApplicationBootstrapper $app,
         Config                  $config,
-        Request                 $request
+        Request                 $request,
+        BrizyAPIInterface       $brizyApi,
+        ?LoggerInterface        $logger = null
     )
     {
+        // Если Logger не передан, создаем через LoggerFactory для обратной совместимости
+        if ($logger === null) {
+            $logger = LoggerFactory::createDefault('Bridge');
+        }
+        $this->logger = $logger;
+        
         $this->listReport = [];
         $this->app = $app;
         $this->config = $config;
         $this->request = $request;
+        $this->brizyApi = $brizyApi; // Инжектированный BrizyAPIInterface (рефакторинг для тестируемости)
 
         $this->GET = new RequestHandlerGET($request);
         $this->POST = new RequestHandlerPOST($request);
@@ -503,8 +535,8 @@ class Bridge
         }
 
         // Check if the project was manually migrated
-        $brizyAPI = new BrizyAPI();
-        $isManuallyMigrated = $brizyAPI->checkProjectManualMigration($brz_project_id);
+        // Используем инжектированный BrizyAPIInterface вместо создания нового (рефакторинг для тестируемости)
+        $isManuallyMigrated = $this->brizyApi->checkProjectManualMigration($brz_project_id);
 
         if ($isManuallyMigrated) {
             // Scenario 1: Project was manually migrated
@@ -689,12 +721,11 @@ class Bridge
 
     public function clearWorkspace(): Bridge
     {
-        $brizyApi = new BrizyAPI();
-
-        $result = $brizyApi->getAllProjectFromContainer(0);
+        // Используем инжектированный BrizyAPIInterface вместо создания нового (рефакторинг для тестируемости)
+        $result = $this->brizyApi->getAllProjectFromContainer(0);
 
         foreach ($result as $value) {
-            $brizyApi->deleteProject($value['id']);
+            $this->brizyApi->deleteProject($value['id']);
         }
 
         $this->prepareResponseMessage(
@@ -706,13 +737,12 @@ class Bridge
 
     public function addTagManualMigrationFromDB(): Bridge
     {
-        $brizyApi = new BrizyAPI();
-
+        // Используем инжектированный BrizyAPIInterface вместо создания нового (рефакторинг для тестируемости)
         $result = $this->db->getAllRows('SELECT * FROM migrations_mapping WHERE `ignore` = 0');
 
         try {
             foreach ($result as $value) {
-                $brizyApi->setLabelManualMigration(true, (int)$value['brz_project_id']);
+                $this->brizyApi->setLabelManualMigration(true, (int)$value['brz_project_id']);
 
             }
         } catch (\Exception $e) {
@@ -729,11 +759,10 @@ class Bridge
 
     public function delTagManualMigration(): MgResponse
     {
-        $brizyApi = new BrizyAPI();
-
+        // Используем инжектированный BrizyAPIInterface вместо создания нового (рефакторинг для тестируемости)
         try {
             $inputProperties = $this->POST->checkInputProperties(['brz_project_id']);
-            $brizyApi->setLabelManualMigration(false, (int)$inputProperties['brz_project_id']);
+            $this->brizyApi->setLabelManualMigration(false, (int)$inputProperties['brz_project_id']);
 
             $this->prepareResponseMessage(
                 "Tag deleted",
@@ -752,11 +781,10 @@ class Bridge
 
     public function addTagManualMigration(): MgResponse
     {
-        $brizyApi = new BrizyAPI();
-
+        // Используем инжектированный BrizyAPIInterface вместо создания нового (рефакторинг для тестируемости)
         try {
             $inputProperties = $this->POST->checkInputProperties(['brz_project_id']);
-            $brizyApi->setLabelManualMigration(true, (int)$inputProperties['brz_project_id']);
+            $this->brizyApi->setLabelManualMigration(true, (int)$inputProperties['brz_project_id']);
 
             $this->prepareResponseMessage(
                 "Tag set",
@@ -775,11 +803,10 @@ class Bridge
 
     public function setCloningLincMigration(): MgResponse
     {
-        $brizyApi = new BrizyAPI();
-
+        // Используем инжектированный BrizyAPIInterface вместо создания нового (рефакторинг для тестируемости)
         try {
             $inputProperties = $this->POST->checkInputProperties(['brz_project_id']);
-            $brizyApi->setCloningLink(true, (int)$inputProperties['brz_project_id']);
+            $this->brizyApi->setCloningLink(true, (int)$inputProperties['brz_project_id']);
 
             $this->prepareResponseMessage(
                 "Tag set",
@@ -799,8 +826,7 @@ class Bridge
     public function mApp_2(): MgResponse
     {
         //$this->addTagManualMigration();
-        $brizyApi = new BrizyAPI();
-
+        // Используем инжектированный BrizyAPIInterface вместо создания нового (рефакторинг для тестируемости)
         $dir1 = dirname(__DIR__) . '/../../public/migration_results_mapping.json';
 //        $dir2 = dirname(__DIR__) . '/../../public/migration_results_08-05-2025_22.json';
 
@@ -814,7 +840,7 @@ class Bridge
                     continue;
                 }
 
-                $brizyApi->setCloningLink(true, (int)$value['brz_project_id']);
+                $this->brizyApi->setCloningLink(true, (int)$value['brz_project_id']);
 
 //                $result = $this->insertMigrationMapping($value['brizy_project_id'], $key, json_encode(['data' => '2025-05-13']));
             }
@@ -844,7 +870,8 @@ class Bridge
             'mb-migration.cupzc9ey0cip.us-east-1.rds.amazonaws.com',
         ))->doConnect();
 
-        $this->brizyApi = new BrizyAPI();
+        // Примечание: $this->brizyApi уже инжектирован через конструктор
+        // Это переопределение используется только в методе mApp() для специальных операций
 
         $projectUuids = ["84d47e95-4cc9-4922-a676-bfa0bae2ca35",
             "1b3725b9-3cda-4e88-beaa-2211f70d74f4",
@@ -883,7 +910,7 @@ class Bridge
         ];
 
         if (empty($projectUuids)) {
-            Logger::instance()->warning('mappingUtils.process called with empty projectUuids');
+            $this->logger->warning('mappingUtils.process called with empty projectUuids');
             $this->prepareResponseMessage(
                 $summary,
                 'message'
@@ -906,11 +933,11 @@ class Bridge
                 $summary['updated']++;
             } catch (\Exception $e) {
                 $summary['errors'][] = ['uuid' => $uuid, 'error' => $e->getMessage()];
-                Logger::instance()->error('Failed to update project for UUID ' . $uuid . ': ' . $e->getMessage());
+                $this->logger->error('Failed to update project for UUID ' . $uuid . ': ' . $e->getMessage());
             }
         }
 
-        Logger::instance()->info('mappingUtils.process finished', $summary);
+        $this->logger->info('mappingUtils.process finished', $summary);
 
         $this->prepareResponseMessage(
             $summary,
@@ -922,12 +949,10 @@ class Bridge
 
     public function doCloningProjects(): MgResponse
     {
-
-        $brizyApi = new BrizyAPI();
-
+        // Используем инжектированный BrizyAPIInterface вместо создания нового (рефакторинг для тестируемости)
         $inputProperties = $this->POST->checkInputProperties(['brz_project_id', 'workspace']);
 
-        $brizyApi->cloneProject($inputProperties['brz_project_id'], $inputProperties['workspace']);
+        $this->brizyApi->cloneProject($inputProperties['brz_project_id'], $inputProperties['workspace']);
 
         $this->prepareResponseMessage(
             "Cloning completed",
@@ -996,14 +1021,13 @@ class Bridge
                 break;
             case 'POST':
                 try{
-                    $api = new BrizyAPI();
-
+                    // Используем инжектированный BrizyAPIInterface вместо создания нового (рефакторинг для тестируемости)
                     $workspaceId = $this->POST->checkInputProperties(['workspaceId']);
-                    $list = $api->getAllProjectFromContainerV1($workspaceId['workspaceId'], 200);
+                    $list = $this->brizyApi->getAllProjectFromContainerV1($workspaceId['workspaceId'], 200);
 
                     foreach ($list as $value) {
                         if ($value['is_pro'] === true) continue;
-                        $api->upgradeProject($value['id']);
+                        $this->brizyApi->upgradeProject($value['id']);
                     }
 
                     $this->prepareResponseMessage(

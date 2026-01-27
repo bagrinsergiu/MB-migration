@@ -4,6 +4,7 @@ namespace MBMigration\Bridge;
 
 use Exception;
 use MBMigration\Bridge\Interfaces\ResponseHandlerInterface;
+use MBMigration\Core\Factory\LoggerFactory;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\HTTP\RequestHandlerPOST;
 
@@ -37,7 +38,8 @@ class CloningManager
      */
     public function setCloningLinkMigration(): MgResponse
     {
-        $brizyApi = new BrizyAPI();
+        $logger = LoggerFactory::createDefault('CloningManager');
+        $brizyApi = new BrizyAPI($logger);
 
         try {
             $inputProperties = $this->POST->checkInputProperties(['brz_project_id']);
@@ -60,7 +62,8 @@ class CloningManager
      */
     public function processMultipleProjects(string $filePath1, string $filePath2): MgResponse
     {
-        $brizyApi = new BrizyAPI();
+        $logger = LoggerFactory::createDefault('CloningManager');
+        $brizyApi = new BrizyAPI($logger);
 
         try {
             $fileCont1 = array_merge(
@@ -91,7 +94,8 @@ class CloningManager
      */
     public function cloneProjects(): MgResponse
     {
-        $brizyApi = new BrizyAPI();
+        $logger = LoggerFactory::createDefault('CloningManager');
+        $brizyApi = new BrizyAPI($logger);
 
         try {
             $inputProperties = $this->POST->checkInputProperties(['brz_project_id', 'workspace']);

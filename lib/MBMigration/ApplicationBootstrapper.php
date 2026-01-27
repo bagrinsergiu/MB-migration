@@ -5,7 +5,11 @@ namespace MBMigration;
 use Exception;
 use MBMigration\Core\Config;
 use MBMigration\Core\Logger;
+use MBMigration\Core\Factory\LoggerFactory;
 use MBMigration\Core\S3Uploader;
+use Psr\Log\LoggerInterface;
+use MBMigration\Layer\Brizy\BrizyAPI;
+use MBMigration\Layer\MB\MBProjectDataCollector;
 use Symfony\Component\HttpFoundation\Request;
 
 class ApplicationBootstrapper
@@ -15,6 +19,10 @@ class ApplicationBootstrapper
     private Config $config;
     private array $projectPagesList;
     private string $projectUUID;
+    /**
+     * @var LoggerInterface Логгер для записи событий ApplicationBootstrapper
+     */
+    private LoggerInterface $logger;
 
     public function __construct(array $context, Request $request)
     {
@@ -24,7 +32,7 @@ class ApplicationBootstrapper
 
         $logFilePath = $this->context['LOG_FILE_PATH'] . '_ApplicationBootstrapper.log';
 
-        $logger = Logger::initialize(
+        $this->logger = LoggerFactory::create(
             "ApplicationBootstrapper",
             $this->context['LOG_LEVEL'],
             $logFilePath
@@ -152,7 +160,7 @@ class ApplicationBootstrapper
             @mkdir($waveLogDir, 0755, true);
             $logFilePath = $waveLogDir . '/project_' . $brz_project_id . '.log';
             
-            Logger::instance()->info('Migration started under wave management', [
+            $this->logger->info('Migration started under wave management', [
                 'wave_id' => $waveId,
                 'brz_project_id' => $brz_project_id,
                 'mb_project_uuid' => $mb_project_uuid,
@@ -163,7 +171,7 @@ class ApplicationBootstrapper
             $logFilePath = $this->context['LOG_FILE_PATH'] . '_' . $brz_project_id . '.log';
         }
 
-        $logger = Logger::initialize(
+        $logger = LoggerFactory::create(
             "brizy-$brz_project_id",
             $this->context['LOG_LEVEL'],
             $logFilePath
@@ -197,7 +205,7 @@ class ApplicationBootstrapper
                             $processRunning = ($execReturnCode === 0 && !empty($execOutput));
                         }
                         
-                        Logger::instance()->info('Checking process by PID', [
+                        $logger->info('Checking process by PID', [
                             'pid' => $pid,
                             'ps_output' => $psOutputTrimmed,
                             'ps_output_raw' => $psOutput,
@@ -208,14 +216,14 @@ class ApplicationBootstrapper
                         // Если процесс не найден через ps, считаем его неактивным
                         // независимо от возраста lock-файла (ps более надежен)
                         if (!$processRunning) {
-                            Logger::instance()->info('Process not found by PID, will remove stale lock file', [
+                            $logger->info('Process not found by PID, will remove stale lock file', [
                                 'pid' => $pid,
                                 'lock_file' => $lockFile,
                                 'ps_output' => $psOutputTrimmed
                             ]);
                         }
                     } else {
-                        Logger::instance()->warning('Invalid PID in lock file', [
+                        $logger->warning('Invalid PID in lock file', [
                             'pid' => $pid,
                             'lock_file' => $lockFile
                         ]);
@@ -227,7 +235,7 @@ class ApplicationBootstrapper
                     $lockFileAge = time() - $lockFileMtime;
                     $processRunning = $lockFileAge < 300; // 5 минут
                     
-                    Logger::instance()->info('Old format lock file detected', [
+                    $logger->info('Old format lock file detected', [
                         'lock_file' => $lockFile,
                         'age_seconds' => $lockFileAge,
                         'process_running' => $processRunning
@@ -241,14 +249,14 @@ class ApplicationBootstrapper
             }
             
             if ($processRunning) {
-                Logger::instance()->warning('The process migration is already running.', [
+                $logger->warning('The process migration is already running.', [
                     'lock_file' => $lockFile,
                     'pid' => $pid ?? 'unknown'
                 ]);
                 throw new Exception('The process migration is already running.', 400);
             } else {
                 // Процесс не запущен, но lock-файл существует - удаляем его
-                Logger::instance()->info('Lock file exists but process is not running, removing stale lock file', [
+                $logger->info('Lock file exists but process is not running, removing stale lock file', [
                     'lock_file' => $lockFile,
                     'pid' => $pid ?? 'unknown'
                 ]);
@@ -256,13 +264,13 @@ class ApplicationBootstrapper
                 // Удаляем lock-файл
                 $unlinkResult = @unlink($lockFile);
                 if ($unlinkResult) {
-                    Logger::instance()->info('Stale lock file removed successfully', [
+                    $logger->info('Stale lock file removed successfully', [
                         'lock_file' => $lockFile,
                         'pid' => $pid ?? 'unknown'
                     ]);
                 } else {
                     $lastError = error_get_last();
-                    Logger::instance()->warning('Failed to remove stale lock file, trying chmod + unlink', [
+                    $logger->warning('Failed to remove stale lock file, trying chmod + unlink', [
                         'lock_file' => $lockFile,
                         'pid' => $pid ?? 'unknown',
                         'error' => $lastError,
@@ -273,9 +281,9 @@ class ApplicationBootstrapper
                     @chmod($lockFile, 0666);
                     $unlinkResult2 = @unlink($lockFile);
                     if ($unlinkResult2) {
-                        Logger::instance()->info('Stale lock file removed after chmod', [$lockFile]);
+                        $logger->info('Stale lock file removed after chmod', [$lockFile]);
                     } else {
-                        Logger::instance()->error('Still failed to remove lock file after chmod', [
+                        $logger->error('Still failed to remove lock file after chmod', [
                             'lock_file' => $lockFile,
                             'error' => error_get_last()
                         ]);
@@ -298,11 +306,18 @@ class ApplicationBootstrapper
                 'stage_updated_at' => time()
             ];
             file_put_contents($lockFile, json_encode($lockData, JSON_PRETTY_PRINT));
-            Logger::instance()->info('Creating lock file with PID', ['lock_file' => $lockFile, 'pid' => $pid]);
+            $logger->info('Creating lock file with PID', ['lock_file' => $lockFile, 'pid' => $pid]);
+
+            // Создаем зависимости для MigrationPlatform (рефакторинг для тестируемости)
+            // Эти зависимости теперь инжектируются через конструктор вместо создания внутри класса
+            $brizyApi = new BrizyAPI($logger);
+            $mbCollector = new MBProjectDataCollector();
 
             $migrationPlatform = new MigrationPlatform(
                 $this->config, 
-                $logger, 
+                $logger,
+                $brizyApi,              // BrizyAPIInterface - инжектируется для тестируемости
+                $mbCollector,           // MBProjectDataCollectorInterface - инжектируется для тестируемости
                 $mb_page_slug, 
                 $brz_workspaces_id, 
                 $mMgrIgnore, 
@@ -326,19 +341,19 @@ class ApplicationBootstrapper
             throw new Exception($e->getMessage(), 400);
         }
 
-        Logger::instance()->info('Releasing lock file', [$lockFile]);
+        $logger->info('Releasing lock file', [$lockFile]);
         if (file_exists($lockFile)) {
             if (!unlink($lockFile)) {
-                Logger::instance()->warning('Failed to release lock file.', [$lockFile]);
+                $logger->warning('Failed to release lock file.', [$lockFile]);
             }
         } else {
-            Logger::instance()->warning('Lock file does not exist, nothing to release.', [$lockFile]);
+            $logger->warning('Lock file does not exist, nothing to release.', [$lockFile]);
         }
 
         try {
             $fullLogUrl = $s3Uploader->uploadLogFile($brz_project_id, $logFilePath);
         } catch (\Exception $e) {
-            Logger::instance()->warning('Failed to upload log file to S3.', [$e->getMessage()]);
+            $logger->warning('Failed to upload log file to S3.', [$e->getMessage()]);
         }
 
         $migrationStatus = $migrationPlatform->getLogs() ?? [];

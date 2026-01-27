@@ -9,6 +9,7 @@ use MBMigration\Browser\BrowserPagePHP;
 use MBMigration\Builder\PageController;
 use MBMigration\Builder\Utils\TextTools;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Utils;
 use MBMigration\Layer\Brizy\BrizyAPI;
 
@@ -25,7 +26,7 @@ class MenuHandler
 
     public function __construct(BrowserPagePHP $browserPage)
     {
-        $this->cache = VariableCache::getInstance();
+        $this->cache = VariableCacheFactory::create();
         
         $this->browserPage = $browserPage;
         
@@ -38,7 +39,7 @@ class MenuHandler
      */
     public static function createMenuList(): void
     {
-        $cache = VariableCache::getInstance();
+        $cache = VariableCacheFactory::create();
 
         Logger::instance()->info('Create menu structure');
 

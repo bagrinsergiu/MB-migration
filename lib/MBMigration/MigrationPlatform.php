@@ -16,23 +16,28 @@ use MBMigration\Builder\Utils\ExecutionTimer;
 use MBMigration\Builder\Utils\FoldersUtility;
 use MBMigration\Builder\Utils\TimeUtility;
 use MBMigration\Builder\VariableCache;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Core\Config;
 use MBMigration\Core\ErrorDump;
 use MBMigration\Core\Logger;
 use MBMigration\Core\Utils;
+use MBMigration\Contracts\BrizyAPIInterface;
+use MBMigration\Contracts\MBProjectDataCollectorInterface;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
 use MBMigration\Layer\MB\MonkcmsAPI;
+use MBMigration\Browser\BrowserPHP;
+use MBMigration\Builder\Fonts\FontsController;
 use Psr\Log\LoggerInterface;
 
 class MigrationPlatform
 {
     protected VariableCache $cache;
     protected string $projectId;
-    private MBProjectDataCollector $parser;
+    private MBProjectDataCollectorInterface $parser;
     private QueryBuilder $QueryBuilder;
-    private BrizyApi $brizyApi;
+    private BrizyAPIInterface $brizyApi;
     private $projectID_Brizy;
     private $startTime;
     private $graphApiBrizy;
@@ -41,6 +46,9 @@ class MigrationPlatform
     private array $finalSuccess;
     private string $buildPage;
     private PageController $pageController;
+    /**
+     * @var LoggerInterface Логгер для записи событий миграции
+     */
     private LoggerInterface $logger;
     private array $pageMapping;
     private Config $config;
@@ -70,21 +78,40 @@ class MigrationPlatform
     use checking;
     use DebugBackTrace;
 
+    /**
+     * Конструктор MigrationPlatform
+     * 
+     * Принимает зависимости через Dependency Injection для возможности тестирования с моками.
+     * 
+     * @param Config $config Конфигурация проекта
+     * @param LoggerInterface $logger Логгер для записи событий
+     * @param BrizyAPIInterface $brizyApi Интерфейс для работы с Brizy API (инжектируется для тестируемости)
+     * @param MBProjectDataCollectorInterface $mbCollector Интерфейс для получения данных проектов MB (инжектируется для тестируемости)
+     * @param string $buildPage Имя страницы для сборки (по умолчанию пустая строка)
+     * @param int $workspacesId ID workspace (по умолчанию 0)
+     * @param bool $mMgrIgnore Игнорировать менеджер миграции (по умолчанию true)
+     * @param mixed $mgr_manual Ручная миграция (по умолчанию false)
+     * @param bool $qualityAnalysis Включить анализ качества (по умолчанию false)
+     * @param string $mb_element_name Имя элемента MB для тестирования (по умолчанию пустая строка)
+     * @param bool $skip_media_upload Пропустить загрузку медиа (по умолчанию false)
+     * @param bool $skip_cache Пропустить кэш (по умолчанию false)
+     */
     public function __construct(
-        Config          $config,
-        LoggerInterface $logger,
-                        $buildPage = '',
-                        $workspacesId = 0,
-        bool            $mMgrIgnore = true,
-                        $mgr_manual = false,
-        bool            $qualityAnalysis = false,
-        string          $mb_element_name = '',
-        bool            $skip_media_upload = false,
-        bool            $skip_cache = false
+        Config                        $config,
+        LoggerInterface               $logger,
+        BrizyAPIInterface            $brizyApi,
+        MBProjectDataCollectorInterface $mbCollector,
+                                    $buildPage = '',
+                                    $workspacesId = 0,
+        bool                         $mMgrIgnore = true,
+                                    $mgr_manual = false,
+        bool                         $qualityAnalysis = false,
+        string                       $mb_element_name = '',
+        bool                         $skip_media_upload = false,
+        bool                         $skip_cache = false
     )
     {
-        $this->cache = VariableCache::getInstance(Config::$cachePath);
-        $this->cache->setCachePath(Config::$cachePath);
+        $this->cache = VariableCacheFactory::create(Config::$cachePath);
         $this->logger = $logger;
         $this->mMgrIgnore = $mMgrIgnore;
         $this->mgr_manual = $mgr_manual;
@@ -92,6 +119,10 @@ class MigrationPlatform
         $this->mb_element_name = $mb_element_name;
         $this->skip_media_upload = $skip_media_upload;
         $this->skip_cache = $skip_cache;
+
+        // Сохраняем инжектированные зависимости
+        $this->brizyApi = $brizyApi;
+        $this->parser = $mbCollector;
 
         $this->errorDump = new ErrorDump($this->cache);
         set_error_handler([$this->errorDump, 'handleError']);
@@ -114,7 +145,7 @@ class MigrationPlatform
             if (!$this->skip_cache) {
                 $this->cache->loadDump($projectID_MB, $projectID_Brizy);
             } else {
-                Logger::instance()->info('Skipping cache load (skip_cache=true)');
+                $this->logger->info('Skipping cache load (skip_cache=true)');
             }
 
             $this->run($projectID_MB, $projectID_Brizy);
@@ -123,14 +154,14 @@ class MigrationPlatform
             if (!$this->skip_cache) {
                 $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
             } else {
-                Logger::instance()->info('Skipping cache dump (skip_cache=true)');
+                $this->logger->info('Skipping cache dump (skip_cache=true)');
             }
         } catch (GuzzleException $e) {
-            Logger::instance()->critical($e->getMessage(), $e->getTrace());
+            $this->logger->critical($e->getMessage(), $e->getTrace());
 
             throw $e;
         } catch (Exception $e) {
-            Logger::instance()->critical($e->getMessage(), $e->getTrace());
+            $this->logger->critical($e->getMessage(), $e->getTrace());
 
             throw $e;
         }
@@ -182,13 +213,13 @@ class MigrationPlatform
             }
         } catch (Exception $e) {
             // Игнорируем ошибки обновления этапа, чтобы не прерывать миграцию
-            Logger::instance()->debug('Failed to update migration stage: ' . $e->getMessage());
+            $this->logger->debug('Failed to update migration stage: ' . $e->getMessage());
         }
     }
 
     private function init(string $projectID_MB, int $projectID_Brizy): void
     {
-        Logger::instance()->info('Starting the migration for ' . $projectID_MB . ' to ' . $projectID_Brizy);
+        $this->logger->info('Starting the migration for ' . $projectID_MB . ' to ' . $projectID_Brizy);
         
         // Обновляем этап миграции
         $this->updateMigrationStage($projectID_MB, $projectID_Brizy, 'Инициализация миграции');
@@ -198,7 +229,7 @@ class MigrationPlatform
         $this->startTime = microtime(true);
 
         $this->cache->set('migrationID', $this->migrationID);
-        Logger::instance()->info('Migration ID: ' . $this->migrationID);
+        $this->logger->info('Migration ID: ' . $this->migrationID);
 
         $this->graphApiBrizy = Utils::strReplace(Config::$urlGraphqlAPI, '{ProjectId}', $projectID_Brizy);
 
@@ -210,7 +241,8 @@ class MigrationPlatform
 
         $this->manualMigrate = false;
 
-        $this->parser = new MBProjectDataCollector();
+        // $this->parser теперь инжектируется через конструктор (MBProjectDataCollectorInterface)
+        // Убрано: $this->parser = new MBProjectDataCollector();
     }
 
     /**
@@ -219,7 +251,8 @@ class MigrationPlatform
      */
     private function run(string $projectUUID_MB, int $projectID_Brizy = 0): bool
     {
-        $this->brizyApi = new BrizyAPI();
+        // $this->brizyApi теперь инжектируется через конструктор (BrizyAPIInterface)
+        // Убрано: $this->brizyApi = new BrizyAPI();
 
         $this->cache->setClass($this->brizyApi, 'brizyApi');
 
@@ -286,11 +319,23 @@ class MigrationPlatform
             $graphToken
         );
 
+        // Создаем зависимости для PageController (рефакторинг для тестируемости)
+        // Эти зависимости теперь инжектируются через конструктор вместо создания внутри класса
+        $brizyContainerId = $this->cache->get('container');
+        // Путь к директории Layout относительно PageController.php (lib/MBMigration/Builder/Layout)
+        // Из MigrationPlatform (lib/MBMigration/) путь будет: __DIR__ . '/Builder/Layout'
+        $layoutBasePath = __DIR__ . '/Builder/Layout';
+        
+        $browser = BrowserPHP::instance($layoutBasePath);
+        $fontsController = new FontsController($brizyContainerId);
+
         $this->pageController = new PageController(
             $this->parser,
             $this->brizyApi,
             $this->QueryBuilder,
             $this->logger,
+            $browser,              // НОВЫЙ параметр: BrowserInterface (инжектируется для тестируемости)
+            $fontsController,      // НОВЫЙ параметр: FontsController (инжектируется для тестируемости)
             $this->projectID_Brizy,
             $designName,
             $this->qualityAnalysisEnabled,
@@ -344,7 +389,7 @@ class MigrationPlatform
         $parentPages = $this->parser->getPages();
 
         if (empty($parentPages)) {
-            Logger::instance()->info(
+            $this->logger->info(
                 'MB project not found, migration did not start, process completed without errors!'
             );
             $this->logFinalProcess($this->startTime, false);
@@ -358,7 +403,7 @@ class MigrationPlatform
 
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
-            Logger::instance()->debug('Upload section pictures');
+            $this->logger->debug('Upload section pictures');
             
             // Обновляем этап миграции
             $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Загрузка медиа главной секции');
@@ -367,14 +412,14 @@ class MigrationPlatform
             if (!$this->skip_media_upload) {
                 $mainSection = MediaController::uploadPicturesFromSections($mainSection, $this->projectId, $this->brizyApi);
             } else {
-                Logger::instance()->info('Skipping media upload for main section (skip_media_upload=true)');
+                $this->logger->info('Skipping media upload for main section (skip_media_upload=true)');
             }
             $this->cache->set('mainSection', $mainSection);
             $this->cache->dumpCache($projectUUID_MB, $this->projectID_Brizy);
         }
 
         if (!$this->cache->get('menuList')) {
-            Logger::instance()->info('Start create blank pages');
+            $this->logger->info('Start create blank pages');
             
             // Обновляем этап миграции
             $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Создание пустых страниц');
@@ -392,7 +437,7 @@ class MigrationPlatform
 //            }
             } else {
                 // Тестирование одного элемента - сохраняем существующие страницы
-                Logger::instance()->info('Testing single element - preserving existing pages (mb_element_name=' . $this->mb_element_name . ')');
+                $this->logger->info('Testing single element - preserving existing pages (mb_element_name=' . $this->mb_element_name . ')');
             }
 
             $this->pageController->createBlankPages(
@@ -473,7 +518,7 @@ class MigrationPlatform
         // Обновляем этап миграции
         $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Завершение миграции');
         
-        Logger::instance()->info('Project migration completed successfully!');
+        $this->logger->info('Project migration completed successfully!');
 
         $this->logFinalProcess($this->startTime);
         $this->dumpProjectDataCache(
@@ -562,9 +607,9 @@ class MigrationPlatform
                     'id' => $page['id'] ?? null,
                 ];
             } catch (Exception $e) {
-                Logger::instance()->critical($e->getMessage(), $e->getTrace());
+                $this->logger->critical($e->getMessage(), $e->getTrace());
             } catch (GuzzleException $e) {
-                Logger::instance()->critical('HTTP request: ' . $e->getMessage(), $e->getTrace());
+                $this->logger->critical('HTTP request: ' . $e->getMessage(), $e->getTrace());
             }
 
         }
@@ -606,7 +651,7 @@ class MigrationPlatform
             if (!$this->skip_media_upload) {
                 $preparedSectionOfThePage = MediaController::uploadPicturesFromSections($preparedSectionOfThePage, $this->projectId, $this->brizyApi);
             } else {
-                Logger::instance()->info("Skipping media upload for page: {$pageName} (skip_media_upload=true)");
+                $this->logger->info("Skipping media upload for page: {$pageName} (skip_media_upload=true)");
             }
             $preparedSectionOfThePage = ArrayManipulator::sortArrayByPosition($preparedSectionOfThePage);
             $this->cache->set('preparedSectionOfThePage_' . $page['id'], $preparedSectionOfThePage);
@@ -616,7 +661,7 @@ class MigrationPlatform
 
         if ($collectionItem) {
             $this->pageController->setCurrentPageOnWork($collectionItem);
-            Logger::instance()->info('Run Page Builder for page', ['slug' => $page['slug'], 'name' => $page['name']]);
+            $this->logger->info('Run Page Builder for page', ['slug' => $page['slug'], 'name' => $page['name']]);
             
             $pageName = $page['name'] ?? $page['slug'] ?? 'Неизвестная страница';
             
@@ -629,7 +674,7 @@ class MigrationPlatform
             
             $this->pageController->run($preparedSectionOfThePage, $this->pageMapping);
         } else {
-            Logger::instance()->info(
+            $this->logger->info(
                 'Failed to run collector for page: ' . $page['slug'] . '. The collection item was not found.'
             );
         }
@@ -658,7 +703,7 @@ class MigrationPlatform
     public function getLogs(): array
     {
         if ($this->finalSuccess['status'] === 'success') {
-            Logger::instance()->debug(json_encode($this->errorDump->getDetailsMessage()));
+            $this->logger->debug(json_encode($this->errorDump->getDetailsMessage()));
 
             return $this->finalSuccess;
         }
@@ -697,7 +742,7 @@ class MigrationPlatform
         $this->finalSuccess['progress']['processTime'] = round($executionTime, 1);
         $this->finalSuccess['message']['warning'] = ErrorDump::$warningMessage ?? [];
 
-        Logger::instance()->info('Work time: ' . TimeUtility::Time($executionTime) . ' (seconds: ' . round($executionTime, 1) . ')');
+        $this->logger->info('Work time: ' . TimeUtility::Time($executionTime) . ' (seconds: ' . round($executionTime, 1) . ')');
     }
 
     private function dumpProjectDataCache(array $projectData)

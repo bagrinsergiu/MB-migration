@@ -5,8 +5,9 @@ namespace MBMigration\Core;
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 use Exception;
+use MBMigration\Contracts\S3UploaderInterface;
 
-class S3Uploader
+class S3Uploader implements S3UploaderInterface
 {
     private S3Client $s3Client;
     private $bucketName;

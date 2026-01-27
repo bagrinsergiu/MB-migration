@@ -5,8 +5,9 @@ namespace MBMigration\Layer\DataSource\driver;
 use Exception;
 use PDO;
 use PDOException;
+use MBMigration\Contracts\DatabaseInterface;
 
-class MySQL
+class MySQL implements DatabaseInterface
 {
     private PDO $pdo;
     private string $dsn;
@@ -235,6 +236,39 @@ class MySQL
     private function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * Выполнить SQL запрос и вернуть все строки результата
+     * 
+     * Реализация метода интерфейса DatabaseInterface.
+     * Использует существующий метод getAllRows().
+     * 
+     * @param string $sql SQL запрос для выполнения
+     * @param array $params Параметры для подготовленного запроса (по умолчанию [])
+     * @return array Массив всех строк результата
+     * @throws Exception
+     */
+    public function query(string $sql, array $params = []): array
+    {
+        return $this->getAllRows($sql, $params);
+    }
+
+    /**
+     * Выполнить SQL запрос и вернуть одну строку результата
+     * 
+     * Реализация метода интерфейса DatabaseInterface.
+     * Использует существующий метод find().
+     * 
+     * @param string $sql SQL запрос для выполнения
+     * @param array $params Параметры для подготовленного запроса (по умолчанию [])
+     * @return array|null Первая строка результата или null
+     * @throws Exception
+     */
+    public function queryOne(string $sql, array $params = []): ?array
+    {
+        $result = $this->find($sql, $params);
+        return $result === false ? null : $result;
     }
 
 }

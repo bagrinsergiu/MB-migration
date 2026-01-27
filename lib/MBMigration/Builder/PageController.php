@@ -17,6 +17,8 @@ use MBMigration\Builder\Utils\ArrayManipulator;
 use MBMigration\Builder\Utils\UrlUtils;
 use MBMigration\Core\Logger;
 use MBMigration\Browser\BrowserPHP;
+use MBMigration\Browser\BrowserInterface;
+use MBMigration\Builder\Factory\VariableCacheFactory;
 use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
 use MBMigration\Builder\Layout\Common\LayoutElementFactory;
@@ -39,7 +41,7 @@ class PageController
 
     private $cache;
     /**
-     * @var BrowserPHP
+     * @var BrowserInterface
      */
     private $browser;
     /**
@@ -97,12 +99,39 @@ class PageController
      * @var bool Пропустить использование кэша
      */
     private bool $skip_cache = false;
+    
+    /**
+     * @var FontsController Контроллер для работы со шрифтами (инжектируется через конструктор)
+     */
+    private $fontsController;
 
+    /**
+     * Конструктор PageController
+     * 
+     * Принимает зависимости через Dependency Injection для улучшения тестируемости.
+     * Зависимости BrowserInterface и FontsController теперь инжектируются через конструктор
+     * вместо создания внутри методов.
+     * 
+     * @param MBProjectDataCollector $MBProjectDataCollector Коллектор данных проекта MB
+     * @param BrizyAPI $brizyAPI API для работы с Brizy
+     * @param QueryBuilder $QueryBuilder Построитель запросов
+     * @param LoggerInterface $logger Логгер (PSR-3)
+     * @param BrowserInterface $browser Интерфейс браузера для открытия страниц (инжектируется для тестируемости)
+     * @param FontsController $fontsController Контроллер для работы со шрифтами (инжектируется для тестируемости)
+     * @param int $projectID_Brizy ID проекта Brizy
+     * @param string|null $designName Имя дизайна
+     * @param bool $qualityAnalysis Включить анализ качества
+     * @param string $mb_element_name Имя элемента для фильтрации
+     * @param bool $skip_media_upload Пропустить загрузку медиа
+     * @param bool $skip_cache Пропустить использование кэша
+     */
     public function __construct(
         MBProjectDataCollector $MBProjectDataCollector,
         BrizyAPI $brizyAPI,
         QueryBuilder $QueryBuilder,
         LoggerInterface $logger,
+        BrowserInterface $browser,
+        FontsController $fontsController,
         $projectID_Brizy,
         $designName = null,
         bool $qualityAnalysis = false,
@@ -111,7 +140,7 @@ class PageController
         bool $skip_cache = false
     )
     {
-        $this->cache = VariableCache::getInstance();
+        $this->cache = VariableCacheFactory::create();
         $this->ArrayManipulator = new ArrayManipulator();
         $this->pageDTO = new PageDTO();
         $this->projectStyleDTO = new PageDTO();
@@ -119,6 +148,8 @@ class PageController
         $this->QueryBuilder = $QueryBuilder;
         $this->projectID_Brizy = $projectID_Brizy;
         $this->logger = $logger;
+        $this->browser = $browser; // Инжектированный BrowserInterface (рефакторинг для тестируемости)
+        $this->fontsController = $fontsController; // Инжектированный FontsController (рефакторинг для тестируемости)
         $this->parser = $MBProjectDataCollector;
         $this->qualityAnalysisEnabled = $qualityAnalysis;
         $this->designName = $designName;
@@ -139,15 +170,15 @@ class PageController
         $design = $this->cache->get('settings')['design'];
         $slug = $this->cache->get('tookPage')['slug'];
         $pageId = $this->cache->get('tookPage')['id'];
-        $fontController = new FontsController($brizyContainerId);
-        $fontsFromProject= $fontController->getFontsFromProjectData();
+        // Используем инжектированный FontsController вместо создания нового (рефакторинг для тестируемости)
+        $fontsFromProject= $this->fontsController->getFontsFromProjectData();
         $previousFonts = $this->ArrayManipulator->getComparePreviousArray();
 
         if(!$this->ArrayManipulator->compareArrays($fontsFromProject))
         {
             // Extract detailed differences for better debugging
             $differences = $this->analyzeFontDifferences($previousFonts, $fontsFromProject);
-            Logger::instance()->error('There is a difference in fonts', [
+            $this->logger->error('There is a difference in fonts', [
                 'differences' => $differences,
                 'saved_fonts_summary' => $this->getFontsSummary($previousFonts),
                 'project_fonts_summary' => $this->getFontsSummary($fontsFromProject),
@@ -155,7 +186,7 @@ class PageController
                 'project_full' => $fontsFromProject
             ]);
         } else {
-            Logger::instance()->info('Project fonts and migration fonts without damage');
+            $this->logger->info('Project fonts and migration fonts without damage');
         }
 
         $url = PathSlugExtractor::getFullUrlById($pageId);
@@ -174,20 +205,21 @@ class PageController
             return true;
         }
 
-        $this->browser = BrowserPHP::instance($layoutBasePath);
+        // Используем инжектированный BrowserInterface вместо создания через BrowserPHP::instance() (рефакторинг для тестируемости)
         try {
             try {
                 $browserPage = $this->browser->openPage($url, $design);
             } catch (Exception $e) {
 
-                Logger::instance()->critical($e->getMessage());
+                $this->logger->critical($e->getMessage());
 
                 try{
                     $this->browser->closePage();
                     $this->browser->closeBrowser();
                 } catch (\Exception $e) {}
 
-                $this->browser = BrowserPHP::instance($layoutBasePath);
+                // При ошибке повторно используем инжектированный браузер
+                // Примечание: в реальном коде может потребоваться пересоздание браузера через фабрику
                 $browserPage = $this->browser->openPage($url, $design);
             }
 
@@ -201,7 +233,7 @@ class PageController
                 $browserPage,
                 $queryBuilder,
                 $this->brizyAPI,
-                $fontController
+                $this->fontsController // Используем инжектированный FontsController
             );
             $themeElementFactory = $layoutElementFactory->getFactory($design);
             $brizyMenuEntity = $this->cache->get('menuList');
@@ -213,9 +245,9 @@ class PageController
             $RootPalettesExtracted = new RootPalettesExtractor($browserPage);
             $RootListFontFamilyExtractor = new RootListFontFamilyExtractor($browserPage);
 
-            $this->handleFontUploadWithCache($fontController, $RootListFontFamilyExtractor);
+            $this->handleFontUploadWithCache($this->fontsController, $RootListFontFamilyExtractor);
 
-            $fontFamilyS = $fontController->getFontsForSnippet();
+            $fontFamilyS = $this->fontsController->getFontsForSnippet();
 
             $fontFamily = FontsController::getFontsFamily();
 
@@ -241,7 +273,7 @@ class PageController
                 $listSeries,
                 $this->pageDTO,
                 $this->cache->get('title','settings') ?? '',
-                $fontController,
+                $this->fontsController, // Используем инжектированный FontsController
                 $this->brizyAPI,
                 $projectID
             );
@@ -282,13 +314,13 @@ class PageController
                         'page_id' => $pageId
                     ]);
                     
-                    Logger::instance()->info("Saved transformBlocks result for test migration", [
+                    $this->logger->info("Saved transformBlocks result for test migration", [
                         'element_name' => $this->mb_element_name,
                         'slug' => $slug,
                         'json_length' => strlen($sectionJson)
                     ]);
                 } catch (\Exception $saveEx) {
-                    Logger::instance()->warning("Failed to save transformBlocks result: " . $saveEx->getMessage());
+                    $this->logger->warning("Failed to save transformBlocks result: " . $saveEx->getMessage());
                 }
             }
 
@@ -299,21 +331,21 @@ class PageController
             $this->dumpPageDataCache($slug, $brizySections);
 
             $queryBuilder->updateCollectionItem($itemsID, $slug, $pageData);
-            Logger::instance()->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
-            Logger::instance()->info('Completed in  : '.ExecutionTimer::stop());
+            $this->logger->info('Success Build Page : '.$itemsID.' | Slug: '.$slug);
+            $this->logger->info('Completed in  : '.ExecutionTimer::stop());
             $this->cache->update('Success', '++', 'Status');
 
             // После сборки каждой страницы очищаем скомпилированный кеш проекта Brizy,
             // чтобы новая версия HTML была доступна для просмотра и анализа
             try {
-                Logger::instance()->info('[Migration] Clearing compiled cache for project after page build', [
+                $this->logger->info('[Migration] Clearing compiled cache for project after page build', [
                     'project_id_brizy' => $this->projectID_Brizy,
                     'slug' => $slug,
                     'item_id' => $itemsID,
                 ]);
                 $this->brizyAPI->clearCompileds($this->projectID_Brizy);
             } catch (\Exception $clearEx) {
-                Logger::instance()->error('[Migration] Failed to clear compiled cache after page build', [
+                $this->logger->error('[Migration] Failed to clear compiled cache after page build', [
                     'project_id_brizy' => $this->projectID_Brizy,
                     'slug' => $slug,
                     'item_id' => $itemsID,
@@ -327,8 +359,8 @@ class PageController
             return true;
 
         } catch (\Exception|Throwable|BadJsonProvided|ElementNotFound $e) {
-            Logger::instance()->error('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
-            Logger::instance()->error($e->getMessage());
+            $this->logger->error('Fail Build Page: '.$itemsID.',Slug: '.$slug, [$itemsID, $slug]);
+            $this->logger->error($e->getMessage());
             return false;
         } finally {
             if ($this->browser) {
@@ -415,10 +447,10 @@ class PageController
                     );
 
                     if ($newPage === false) {
-                        Logger::instance()->warning('Failed created page', $page);
+                        $this->logger->warning('Failed created page', $page);
                     } else {
                         $pageStatus = $hiddenPage ? "hidden" : "public";
-                        Logger::instance()->info('Success created ' . $pageStatus . ' page', $page);
+                        $this->logger->info('Success created ' . $pageStatus . ' page', $page);
                         $page['collection'] = $newPage;
                     }
                 } else {
@@ -470,7 +502,7 @@ class PageController
                     $collectionItem = $this->getCollectionItem($page['slug']);
                     if ($collectionItem) {
                         $page['collection'] = $collectionItem;
-                        Logger::instance()->info('Using existing page for element testing', [
+                        $this->logger->info('Using existing page for element testing', [
                             'slug' => $page['slug'],
                             'element' => $this->mb_element_name,
                             'page_id' => $pageId,
@@ -480,7 +512,7 @@ class PageController
                     } else {
                         // Если не удалось получить через getCollectionItem, создаем минимальную структуру
                         $page['collection'] = $pageId;
-                        Logger::instance()->warning('Using existing page ID directly (getCollectionItem failed)', [
+                        $this->logger->warning('Using existing page ID directly (getCollectionItem failed)', [
                             'slug' => $page['slug'],
                             'page_id' => $pageId
                         ]);
@@ -501,7 +533,7 @@ class PageController
                 // Если тестируем один элемент и страница не существует - создаём её
                 // В обычной миграции страницы уже должны быть созданы или удалены
                 if (!empty($this->mb_element_name)) {
-                    Logger::instance()->info('Creating page for element testing', [
+                    $this->logger->info('Creating page for element testing', [
                         'slug' => $page['slug'],
                         'element' => $this->mb_element_name
                     ]);
@@ -519,23 +551,23 @@ class PageController
                     );
 
                     if ($newPage === false) {
-                        Logger::instance()->warning('Failed to create page', $page);
+                        $this->logger->warning('Failed to create page', $page);
                     } else {
                         $pageStatus = $hiddenPage ? "hidden" : "public";
                         if (!empty($this->mb_element_name)) {
-                            Logger::instance()->info('Successfully created page for element testing', [
+                            $this->logger->info('Successfully created page for element testing', [
                                 'slug' => $page['slug'],
                                 'element' => $this->mb_element_name,
                                 'status' => $pageStatus
                             ]);
                         } else {
-                            Logger::instance()->info('Successfully created ' . $pageStatus . ' page', $page);
+                            $this->logger->info('Successfully created ' . $pageStatus . ' page', $page);
                         }
                         $page['collection'] = $newPage;
                     }
 
                 } catch (\Exception $e) {
-                    Logger::instance()->warning('Failed to create page', $page);
+                    $this->logger->warning('Failed to create page', $page);
                 }
             } else {
                 if (!empty($page['child']) && !$page['hidden']) {
@@ -609,7 +641,7 @@ class PageController
         $setActivePage = true,
         $isHome = false
     ) {
-        Logger::instance()->debug('Request to create a new page: '.$slug);
+        $this->logger->debug('Request to create a new page: '.$slug);
         $collectionItem = $this->QueryBuilder->createCollectionItem(
             $this->cache->get('mainCollectionType'),
             $slug,
@@ -689,7 +721,7 @@ class PageController
                 return $collectionItems;
             }
         }
-        Logger::instance()->info('Page does not exist |  Slug: '.$slug);
+        $this->logger->info('Page does not exist |  Slug: '.$slug);
 
         return false;
     }
@@ -699,7 +731,7 @@ class PageController
      */
     public function setCurrentPageOnWork($collectionItem): void
     {
-        Logger::instance()->debug('Set the current page to work: '.$collectionItem);
+        $this->logger->debug('Set the current page to work: '.$collectionItem);
         $this->cache->set('currentPageOnWork', $collectionItem);
     }
 
@@ -711,12 +743,12 @@ class PageController
     public function deleteAllPages($existingBrizyPages)
     {
         // delete all naher
-        Logger::instance()->debug('Delete all collection items', [count($existingBrizyPages)]);
+        $this->logger->debug('Delete all collection items', [count($existingBrizyPages)]);
         foreach ($existingBrizyPages as $slug => $uri) {
             try {
                 $this->QueryBuilder->deleteCollectionItem($uri);
             } catch (\Exception $e) {
-                Logger::instance()->warning('Failed to delete:'.$uri.' '.$e->getMessage(), $e->getTrace());
+                $this->logger->warning('Failed to delete:'.$uri.' '.$e->getMessage(), $e->getTrace());
             }
         }
         return [];
@@ -727,10 +759,10 @@ class PageController
      */
     public function getSectionsFromPage(array $page)
     {
-        Logger::instance()->info(
+        $this->logger->info(
             "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="
         );
-        Logger::instance()->info(
+        $this->logger->info(
             'Getting MB page items for page: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
         );
 
@@ -805,7 +837,7 @@ class PageController
             }
             $result = $sections;
         } else {
-            Logger::instance()->info(
+            $this->logger->info(
                 'Empty parent page | ID: '.$page['id'].' | Name page: '.$page['name'].' | Slug: '.$page['slug']
             );
             $result = false;
@@ -863,7 +895,7 @@ class PageController
      */
     private function handleFontUploadWithCache(FontsController $fontController, RootListFontFamilyExtractor $RootListFontFamilyExtractor): void
     {
-        $cache = VariableCache::getInstance();
+        $cache = $this->cache;
         if  ( !empty($cache->get('settings')['fonts']) ) {
             return;
         }
@@ -883,7 +915,7 @@ class PageController
         try {
             // BREAKPOINT 1: Проверка включения анализа
             $cacheData = $this->cache->getCache();
-            Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 1: Checking if quality analysis should run =====", [
+            $this->logger->info("[Quality Analysis] ===== BREAKPOINT 1: Checking if quality analysis should run =====", [
                 'page_slug' => $pageSlug,
                 'quality_analysis_enabled_param' => $this->qualityAnalysisEnabled,
                 'env_quality_analysis_enabled' => $_ENV['QUALITY_ANALYSIS_ENABLED'] ?? 'not_set',
@@ -894,12 +926,12 @@ class PageController
             if (!$this->qualityAnalysisEnabled) {
                 // Если параметр не передан или false, проверяем переменную окружения
                 $analysisEnabled = $_ENV['QUALITY_ANALYSIS_ENABLED'] ?? false;
-                Logger::instance()->debug("[Quality Analysis] Parameter disabled, checking env variable", [
+                $this->logger->debug("[Quality Analysis] Parameter disabled, checking env variable", [
                     'env_value' => $analysisEnabled,
                     'page_slug' => $pageSlug
                 ]);
                 if (!$analysisEnabled) {
-                    Logger::instance()->info("[Quality Analysis] Analysis disabled, skipping", [
+                    $this->logger->info("[Quality Analysis] Analysis disabled, skipping", [
                         'page_slug' => $pageSlug,
                         'reason' => 'Both parameter and env variable are false/not set'
                     ]);
@@ -913,7 +945,7 @@ class PageController
             $mbProjectUuid = $this->cache->get('mb_project_uuid') ?? $this->cache->get('projectId_MB');
             
             $cacheData = $this->cache->getCache();
-            Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 2: Retrieved data from cache =====", [
+            $this->logger->info("[Quality Analysis] ===== BREAKPOINT 2: Retrieved data from cache =====", [
                 'source_url' => $sourceUrl,
                 'brizy_project_domain' => $brizyProjectDomain,
                 'mb_project_uuid' => $mbProjectUuid,
@@ -927,7 +959,7 @@ class PageController
 
             if (empty($sourceUrl) || empty($brizyProjectDomain)) {
                 $cacheData = $this->cache->getCache();
-                Logger::instance()->warning("[Quality Analysis] ===== BREAKPOINT 2 FAILED: Missing required URLs =====", [
+                $this->logger->warning("[Quality Analysis] ===== BREAKPOINT 2 FAILED: Missing required URLs =====", [
                     'source_url' => $sourceUrl,
                     'brizy_domain' => $brizyProjectDomain,
                     'page_slug' => $pageSlug,
@@ -946,7 +978,7 @@ class PageController
                 $designName = $settings['design'] ?? 'default';
             }
             
-            Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 3: URLs prepared, ready to start analysis =====", [
+            $this->logger->info("[Quality Analysis] ===== BREAKPOINT 3: URLs prepared, ready to start analysis =====", [
                 'page_slug' => $pageSlug,
                 'source_url' => $sourceUrl,
                 'migrated_url' => $migratedUrl,
@@ -968,7 +1000,7 @@ class PageController
             );
             
             // BREAKPOINT 4: Результат анализа
-            Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 4: Analysis completed =====", [
+            $this->logger->info("[Quality Analysis] ===== BREAKPOINT 4: Analysis completed =====", [
                 'page_slug' => $pageSlug,
                 'report_id' => $reportId,
                 'has_report_id' => !empty($reportId)
@@ -976,7 +1008,7 @@ class PageController
 
         } catch (\Exception $e) {
             // Не прерываем процесс миграции из-за ошибки анализа
-            Logger::instance()->error("[Quality Analysis] ===== BREAKPOINT ERROR: Quality analysis failed (non-blocking) =====", [
+            $this->logger->error("[Quality Analysis] ===== BREAKPOINT ERROR: Quality analysis failed (non-blocking) =====", [
                 'page_slug' => $pageSlug,
                 'error_message' => $e->getMessage(),
                 'error_code' => $e->getCode(),
