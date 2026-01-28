@@ -140,6 +140,40 @@ abstract class EventLayoutElement extends AbstractElement
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleNormal);
         ColorConverter::rewriteColorIfSetOpacity($basicButtonStyleHover);
 
+        // Check if button styles are empty (no buttons found in section)
+        // If empty, prioritize subpalette colors over button styles
+        $hasButtonStyles = !empty($basicButtonStyleNormal) && !empty($basicButtonStyleHover);
+        
+        // Helper function to get button background color with proper fallback
+        $getButtonBg = function($hover = false) use ($hasButtonStyles, $sectionPalette, $basicButtonStyleNormal, $basicButtonStyleHover) {
+            $style = $hover ? $basicButtonStyleHover : $basicButtonStyleNormal;
+            if ($hasButtonStyles && !empty($style['background-color'])) {
+                return $style['background-color'];
+            }
+            return $sectionPalette['btn-bg'] ?? $sectionPalette['btn'] ?? $sectionPalette['bg'] ?? '#f8f8f8';
+        };
+        
+        // Helper function to get button text color with proper fallback
+        $getButtonText = function($hover = false) use ($hasButtonStyles, $sectionPalette, $basicButtonStyleNormal, $basicButtonStyleHover) {
+            $style = $hover ? $basicButtonStyleHover : $basicButtonStyleNormal;
+            if ($hasButtonStyles && !empty($style['color'])) {
+                return $style['color'];
+            }
+            return $sectionPalette['btn-text'] ?? $sectionPalette['text'] ?? '#333333';
+        };
+        
+        // Helper function to get button background opacity
+        $getButtonBgOpacity = function($hover = false) use ($hasButtonStyles, $basicButtonStyleNormal, $basicButtonStyleHover) {
+            $style = $hover ? $basicButtonStyleHover : $basicButtonStyleNormal;
+            return $style['background-color-opacity'] ?? 1;
+        };
+        
+        // Helper function to get button text opacity
+        $getButtonTextOpacity = function($hover = false) use ($hasButtonStyles, $basicButtonStyleNormal, $basicButtonStyleHover) {
+            $style = $hover ? $basicButtonStyleHover : $basicButtonStyleNormal;
+            return $style['color-opacity'] ?? 1;
+        };
+
         $sectionProperties = [
             'eventDetailPageButtonText' => 'Learn More',
 
@@ -180,24 +214,24 @@ abstract class EventLayoutElement extends AbstractElement
             'listPaginationColorOpacity' => 1,
             'listPaginationColorPalette' => '',
 
-            'filterBgColorHex' => $sectionPalette['bg'] ?? $basicButtonStyleNormal['background-color'] ?? '#f8f8f8',
+            'filterBgColorHex' => $sectionPalette['bg'] ?? $getButtonBg() ?? '#f8f8f8',
             'filterBgColorOpacity' => 1,
             'filterBgColorPalette' => '',
 
-            'calendarDaysBgColorHex' => $sectionPalette['bg'] ?? $basicButtonStyleNormal['background-color'],
-            'calendarDaysBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
+            'calendarDaysBgColorHex' => $sectionPalette['bg'] ?? $getButtonBg(),
+            'calendarDaysBgColorOpacity' => $getButtonBgOpacity(),
             'calendarDaysBgColorPalette' => '',
 
-            'calendarHeadingColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'],
-            'calendarHeadingColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
+            'calendarHeadingColorHex' => $sectionPalette['text'] ?? $getButtonText(),
+            'calendarHeadingColorOpacity' => $getButtonTextOpacity(),
             'calendarHeadingColorPalette' => '',
 
-            'calendarDaysColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'],
-            'calendarDaysColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
+            'calendarDaysColorHex' => $sectionPalette['text'] ?? $getButtonText(),
+            'calendarDaysColorOpacity' => $getButtonTextOpacity(),
             'calendarDaysColorPalette' => '',
 
             'calendarBorderStyle' => 'solid',
-            'calendarBorderColorHex' => $sectionPalette['text'] ?? $basicButtonStyleNormal['color'] ?? '#e0e0e0',
+            'calendarBorderColorHex' => $sectionPalette['text'] ?? $getButtonText() ?? '#e0e0e0',
             'calendarBorderColorOpacity' => 0.3,
             'calendarBorderColorPalette' => '',
             'calendarBorderWidth' => 1,
@@ -223,8 +257,8 @@ abstract class EventLayoutElement extends AbstractElement
             'listItemMetaColorOpacity' => 1,
             'listItemMetaColorPalette' => '',
 
-            'listItemDateColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'] ?? $sectionPalette['text'],
-            'listItemDateColorOpacity' => 0.75 ?? $basicButtonStyleHover['color-opacity'] ?? 1,
+            'listItemDateColorHex' => $getButtonText(true),
+            'listItemDateColorOpacity' => $getButtonTextOpacity(true),
             'listItemDateColorPalette' => '',
 
             'listTitleColorHex' => $sectionPalette['text'],
@@ -247,22 +281,22 @@ abstract class EventLayoutElement extends AbstractElement
             'dateColorOpacity' => 1,
             'dateColorPalette' => '',
 
-            'listItemDateBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'listItemDateBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
+            'listItemDateBgColorHex' => $getButtonBg(true),
+            'listItemDateBgColorOpacity' => $getButtonBgOpacity(true),
             'listItemDateBgColorType' => 'solid',
             'listItemDateBgColorPalette' => '',
 
-            'detailButtonBgColorHex' => $basicButtonStyleNormal['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'detailButtonBgColorOpacity' => $basicButtonStyleNormal['background-color-opacity'] ?? 1,
+            'detailButtonBgColorHex' => $getButtonBg(),
+            'detailButtonBgColorOpacity' => $getButtonBgOpacity(),
             'detailButtonBgColorPalette' => '',
 
-            'hoverDetailButtonBgColorHex' => $basicButtonStyleHover['background-color'] ?? $sectionPalette['btn-bg'] ?? $sectionPalette['btn'],
-            'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
+            'hoverDetailButtonBgColorHex' => $getButtonBg(true),
+            'hoverDetailButtonBgColorOpacity' => $getButtonBgOpacity(true),
             'hoverDetailButtonBgColorPalette' => '',
 
 //            'detailButtonBorderStyle' => 'solid',
-//            'detailButtonBorderColorHex' => $basicButtonStyleNormal['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-//            'detailButtonBorderColorOpacity' => $basicButtonStyleNormal['border-top-color-opacity'] ?? 1,
+//            'detailButtonBorderColorHex' => $getButtonText() ?? $sectionPalette['text'],
+//            'detailButtonBorderColorOpacity' => 1,
 //            'detailButtonBorderColorPalette' => '',
 //
 //            "detailButtonBorderWidthType" => "grouped",
@@ -272,12 +306,12 @@ abstract class EventLayoutElement extends AbstractElement
 //            "detailButtonBorderBottomWidth" => 1,
 //            "detailButtonBorderLeftWidth" => 1,
 
-            'detailButtonColorHex' => $basicButtonStyleNormal['color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonColorHex' => $getButtonText(),
             'detailButtonColorOpacity' => 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'] ?? $sectionPalette['text'],
-            'hoverDetailButtonColorOpacity' => 0.75 ?? $basicButtonStyleHover['color-opacity'] ?? 1,
+            'hoverDetailButtonColorHex' => $getButtonText(true),
+            'hoverDetailButtonColorOpacity' => $getButtonTextOpacity(true),
             'hoverDetailButtonColorPalette' => '',
 
             'detailButtonGradientColorHex' => $sectionPalette['btn-text'] ?? $sectionPalette['text'],

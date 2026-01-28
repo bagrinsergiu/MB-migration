@@ -30,7 +30,10 @@ abstract class EventListLayout extends AbstractElement
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
-        $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
+        $brizyWidget = new BrizyComponent(json_decode($this->brizyKit['EventLayoutElement']['widget'], true));
+
+
+        $brizySection = new BrizyComponent(json_decode($this->brizyKit['EventListElement']['main'], true));
         $brizySectionHead = new BrizyComponent(json_decode($this->brizyKit['head'], true));
         $detailsSection = new BrizyComponent(json_decode($this->brizyKit['details'], true));
         $brizyComponent = $this->getSectionItemComponent($brizySection);

@@ -6,6 +6,8 @@ use MBMigration\Browser\BrowserPageInterface;
 use MBMigration\Builder\Layout\Common\AbstractThemeElementFactory;
 use MBMigration\Builder\Layout\Common\ElementInterface;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Events\EventLayoutElement;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\Events\EventListElement;
+use MBMigration\Builder\Layout\Theme\Aurora\Elements\Events\EventListLayout;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Footer;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Forms\Form;
 use MBMigration\Builder\Layout\Theme\Aurora\Elements\Forms\LeftForm;
@@ -80,6 +82,7 @@ class ElementFactory extends AbstractThemeElementFactory
 
             case 'event-list-layout':
             case 'event-tile-layout':
+                return new EventListElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
             case 'event-gallery-layout':
             case 'event-calendar-layout':
                 return new EventLayoutElement($this->blockKit['dynamic'], $browserPage, $this->getQueryBuilder());
