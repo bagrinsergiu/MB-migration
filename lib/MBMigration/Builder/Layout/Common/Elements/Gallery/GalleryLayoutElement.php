@@ -92,7 +92,7 @@ abstract class GalleryLayoutElement extends AbstractElement
 //            ->set_sectionHeight(650)
 
             ->set_mobileFullHeight('custom')
-            ->set_mobileSectionHeight(300)
+            ->set_mobileSectionHeight(250)
 
             ->set_tabletSectionHeight(450)
             ->set_tabletSectionHeight(450)
@@ -176,15 +176,15 @@ abstract class GalleryLayoutElement extends AbstractElement
                     $this->handleSectionGradient($brizySectionItem, $additionalOptions);
 
                     $brizySectionItemImage = $this->getSlideImageComponent($brizySectionItem);
-                    
+
                     $this->setSlideImage($brizySectionItemImage, $mbItem, $properties);
                     $this->setSlideLinks($brizySectionItemImage, $mbItem);
-                    
+
                     // Применяем стили к slide после установки изображения, чтобы не перезаписать важные свойства
                     if (!empty($slidesStyles) && isset($slidesStyles[$index])) {
                         $this->applySlideStyles($brizySectionItem, $brizySectionItemImage, $slidesStyles[$index]);
                     }
-                    
+
                     $brizySectionItems[] = $brizySectionItem;
                 }
             }
@@ -414,7 +414,7 @@ abstract class GalleryLayoutElement extends AbstractElement
     /**
      * Обработка и нормализация стилей для slides
      * Переопределяется в дочерних классах для получения стилей из DOM
-     * 
+     *
      * @param ElementContextInterface $data Контекст элемента
      * @param array $mbSectionItem Элемент секции из исходного проекта
      * @return array Нормализованные стили для всех slides (SlidesStyles). Пустой массив по умолчанию.
@@ -429,7 +429,7 @@ abstract class GalleryLayoutElement extends AbstractElement
     /**
      * Применение стилей к slide и его картинке
      * Переопределяется в дочерних классах для специфичной логики применения стилей
-     * 
+     *
      * @param BrizyComponent $brizySectionItem Slide компонент
      * @param BrizyComponent $brizySectionItemImage Image компонент внутри slide
      * @param array $styles Нормализованные стили для применения
