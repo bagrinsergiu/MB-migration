@@ -37,28 +37,10 @@ class Head extends HeadElement
         return $brizySection->getItemWithDepth(0, 0, 0);
     }
 
-    /**
-     * Трансформация Head элемента для темы Boulevard.
-     * 
-     * ВАЖНО: Благодаря кешированию (useHeadElementCached() = true) стили меню
-     * извлекаются только один раз для всей миграции из первой обрабатываемой страницы
-     * и затем используются для всех остальных страниц.
-     * 
-     * Однако из-за особой структуры секций и положения меню в теме Boulevard,
-     * Head НЕ сохраняется как глобальный блок (makeGlobalBlock() = false).
-     * Компонент клонируется при возврате из кеша, что позволяет:
-     * - Использовать одинаковые стили меню для всех страниц
-     * - Создавать отдельный блок Head для каждой страницы
-     * - Сохранять корректную структуру секций для каждой страницы
-     * 
-     * @param ElementContextInterface $data
-     * @return BrizyComponent
-     */
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $section = $this->getPageLayout();
 
-        // Извлечение стилей меню из браузера (выполняется только один раз благодаря кешированию)
         $headStyles = $this->extractBlockBrowserData(
             $data->getMbSection()['sectionId'],
             $data->getFontFamilies(),
@@ -72,36 +54,6 @@ class Head extends HeadElement
         $menuTargetComponent = $this->getTargetMenuComponent($section);
 
         $headStyles['menu']['itemPadding'] = 0;
-
-        // #region agent log
-        $logFile = '/home/sg/projects/MB-migration/.cursor/debug.log';
-        $logDir = dirname($logFile);
-        if (!is_dir($logDir)) {
-            @mkdir($logDir, 0755, true);
-        }
-        $brizyMenuItems = $data->getBrizyMenuItems();
-        $menuEntity = $data->getBrizyMenuEntity();
-        $logData = [
-            'location' => 'Boulevard/Elements/Head.php:76',
-            'message' => 'Before buildMenuItemsAndSetTheMenuUid',
-            'data' => [
-                'brizy_menu_items_count' => count($brizyMenuItems),
-                'menu_entity_uid' => $menuEntity['uid'] ?? 'N/A',
-                'menu_entity_list_count' => count($menuEntity['list'] ?? []),
-                'menu_items_with_id' => array_sum(array_map(function($item) {
-                    return !empty($item['id']) ? 1 : 0;
-                }, $brizyMenuItems)),
-                'menu_items_sample' => array_slice(array_map(function($item) {
-                    return ['label' => $item['label'] ?? 'N/A', 'id' => $item['id'] ?? 'N/A'];
-                }, $brizyMenuItems), 0, 5)
-            ],
-            'timestamp' => time() * 1000,
-            'sessionId' => 'debug-session',
-            'runId' => 'run1',
-            'hypothesisId' => 'D'
-        ];
-        @file_put_contents($logFile, json_encode($logData) . "\n", FILE_APPEND | LOCK_EX);
-        // #endregion
 
         $this->buildMenuItemsAndSetTheMenuUid($data, $menuTargetComponent, $headStyles ?? []);
         $this->handleMenuItemStyle($menuTargetComponent);
@@ -149,9 +101,7 @@ class Head extends HeadElement
 
         $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getSubMenuDropdown', $menuSubItemDropdownStylesOptions );
 
-        if (isset($menuSubItemDropdownStyles['data']) && is_array($menuSubItemDropdownStyles['data'])) {
-            $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'] ?? [], $menuSubItemDropdownStyles['data']);
-        }
+        $menuSubItemStyles['data'] = array_merge($menuSubItemStyles['data'], $menuSubItemDropdownStyles['data']);
 
         if (isset($menuSubItemStyles['error'])) {
             $this->browserPage->evaluateScript('brizy.dom.removeNodeClass', [
@@ -257,21 +207,6 @@ class Head extends HeadElement
         return true;
     }
 
-    /**
-     * Определяет, должен ли Head сохраняться как глобальный блок.
-     * 
-     * Для темы Boulevard возвращает false, так как из-за особой структуры секций
-     * и положения меню Head должен создаваться отдельно для каждой страницы.
-     * Однако стили меню кешируются и используются одинаковые для всех страниц
-     * (благодаря useHeadElementCached() = true).
-     * 
-     * Это позволяет:
-     * - Извлекать стили меню один раз (благодаря кешированию)
-     * - Создавать отдельный блок Head для каждой страницы (благодаря makeGlobalBlock = false)
-     * - Сохранять корректную структуру секций для каждой страницы
-     * 
-     * @return bool
-     */
     protected function makeGlobalBlock(): bool
     {
         return false;
