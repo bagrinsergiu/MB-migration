@@ -116,8 +116,8 @@ class FullMediaElement extends FullMediaElementElement
                 $brizyImageComponent,
                 $this->browserPage,
                 $data->getFontFamilies(),
-                $data->getDefaultFontFamily(),
-                $imageMb['order_by'] ?? null
+                $imageMb['order_by'] ?? null,
+                $data
             );
         }
 
