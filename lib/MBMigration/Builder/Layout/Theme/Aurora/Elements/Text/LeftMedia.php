@@ -74,8 +74,23 @@ class LeftMedia extends PhotoTextElement
     protected function transformItem(ElementContextInterface $data, BrizyComponent $brizySection, array $params = []): BrizyComponent
     {
         $mbSectionItem = $data->getMbSection();
-        $this->handleItemBackground($brizySection, $params);
-        $this->handleSectionBackground($brizySection, $mbSectionItem, []);
+        $options = ['heightType' => 'custom'];
+
+        // Обработка фонового изображения из настроек секции (если есть)
+        // handleSectionBackground также вызывает handleItemBackground внутри
+        $this->handleSectionBackground($brizySection, $mbSectionItem, $params, $options);
+
+        // Обработка фонового изображения из CSS (если нет в настройках секции)
+        // handleSectionTexture обрабатывает только CSS background-image
+        $hasImageBg = isset($mbSectionItem['settings']['sections']['background']['photo']) 
+            && $mbSectionItem['settings']['sections']['background']['photo'] != '';
+        $hasVideoBg = isset($mbSectionItem['settings']['sections']['background']['video']) 
+            && $mbSectionItem['settings']['sections']['background']['video'] != '';
+        
+        if (!$hasImageBg && !$hasVideoBg) {
+            $this->handleSectionTexture($brizySection, $mbSectionItem, $params, $options);
+        }
+
         return $brizySection;
     }
 
@@ -116,74 +131,5 @@ class LeftMedia extends PhotoTextElement
     protected function getMobileTopPaddingOfTheFirstElement(): int
     {
         return 0;
-    }
-
-    protected function getSectionListStyle(
-        ElementContextInterface $data,
-        BrowserPageInterface $browserPage
-    )
-    {
-        $mbSectionItem = $data->getMbSection();
-        $families = $data->getFontFamilies();
-        $defaultFont = $data->getDefaultFontFamily();
-
-        // Use id first, then fall back to sectionId (fixes issue with data-id="3422616")
-        $sectionId = $mbSectionItem['id'] ?? $mbSectionItem['sectionId'];
-
-        if (!$this->getStyleFromPseudo()) {
-            $sectionStyles = $this->getSectionStyles(
-                $sectionId,
-                $browserPage,
-                $families,
-                $defaultFont
-            );
-        } else {
-            $sectionStyles = $this->getSectionStyles(
-                $sectionId,
-                $browserPage,
-                $families,
-                $defaultFont,
-                ':before'
-            );
-        }
-
-        try {
-            $sectionBgEclipseStyles = $this->getBgEclipseStyles(
-                $sectionId,
-                $browserPage,
-                $families,
-                $defaultFont
-            );
-
-            $sectionBgVideoStyles = $this->getBgVideoStyles(
-                $sectionId,
-                $browserPage,
-                $families,
-                $defaultFont
-            );
-
-            if (empty($sectionBgEclipseStyles)) {
-                $sectionBgStyles = $this->getBgHelperStyles(
-                    $sectionId,
-                    $browserPage,
-                    $families,
-                    $defaultFont
-                );
-                $sectionBgStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgStyles['opacity'] ?? 1);
-
-                if ($sectionBgStyles['opacity'] !== 0) {
-                    $sectionStyles = array_merge($sectionStyles, $sectionBgStyles);
-                }
-            } else {
-                $sectionBgEclipseStyles['opacity'] = ColorConverter::normalizeOpacity($sectionBgEclipseStyles['opacity']);
-
-                if ($sectionBgEclipseStyles['opacity'] !== 0) {
-                    $sectionStyles = array_merge($sectionStyles, $sectionBgEclipseStyles);
-                }
-            }
-        } catch (\Exception $e) {
-        }
-
-        return $sectionStyles;
     }
 }
