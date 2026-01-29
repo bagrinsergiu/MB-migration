@@ -53,6 +53,13 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         return $brizySection;
     }
 
+    protected function handleRowListItem(BrizyComponent $brizySection, $position = 'left'): void
+    {
+        $brizySection
+            ->getItemWithDepth(0)
+            ->addPadding(55, 50, 55, 50);
+    }
+
     protected function getPropertiesMainSection(): array
     {
         return [
