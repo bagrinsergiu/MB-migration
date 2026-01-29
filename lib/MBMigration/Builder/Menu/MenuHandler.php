@@ -175,15 +175,22 @@ class MenuHandler
                     "items" => $this->transformToBrizyMenu($item['child'], $textTransform),
                 ];
             } else {
-                if (empty($item['collection'])) {
-                    $item['collection'] = $item['child'][0]['collection'];
+                // Если у страницы нет collection, пытаемся взять его у первого дочернего элемента
+                if (empty($item['collection']) && !empty($item['child'])) {
+                    // Ищем первый дочерний элемент с collection
+                    foreach ($item['child'] as $child) {
+                        if (!empty($child['collection'])) {
+                            $item['collection'] = $child['collection'];
+                            break;
+                        }
+                    }
                 }
                 $mainMenu[] = [
-                    "id" => $item['collection'],
+                    "id" => $item['collection'] ?? '',
                     "uid" => Utils::getNameHash(),
                     "isNewTab" => $this->checkOpenInNewTab($settings),
                     "label" => TextTools::transformText($item['name'], $textTransform),
-                    "items" => $this->transformToBrizyMenu($item['child'], $textTransform),
+                    "items" => $this->transformToBrizyMenu($item['child'] ?? [], $textTransform),
                 ];
             }
         }
