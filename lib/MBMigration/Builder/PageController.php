@@ -147,15 +147,81 @@ class PageController
         {
             // Extract detailed differences for better debugging
             $differences = $this->analyzeFontDifferences($previousFonts, $fontsFromProject);
-            Logger::instance()->error('There is a difference in fonts', [
-                'differences' => $differences,
-                'saved_fonts_summary' => $this->getFontsSummary($previousFonts),
-                'project_fonts_summary' => $this->getFontsSummary($fontsFromProject),
-                'saved_full' => $previousFonts,
-                'project_full' => $fontsFromProject
-            ]);
+            
+            // Log different types of changes with appropriate severity levels
+            $hasChanges = false;
+            
+            // Added fonts - INFO level (expected behavior during migration)
+            if (!empty($differences['added_families'])) {
+                $addedCount = count($differences['added_families']);
+                $addedFamilies = array_map(function($item) {
+                    return $item['family'];
+                }, $differences['added_families']);
+                
+                Logger::instance()->info('Fonts added during migration (expected behavior)', [
+                    'page_slug' => $slug,
+                    'page_id' => $pageId,
+                    'added_count' => $addedCount,
+                    'added_families' => $addedFamilies,
+                    'added_details' => $differences['added_families']
+                ]);
+                $hasChanges = true;
+            }
+            
+            // Deleted fonts - WARNING level (may indicate a problem)
+            if (!empty($differences['deleted_families'])) {
+                $deletedCount = count($differences['deleted_families']);
+                $deletedFamilies = array_map(function($item) {
+                    return $item['family'];
+                }, $differences['deleted_families']);
+                
+                Logger::instance()->warning('Fonts deleted during migration (may indicate a problem)', [
+                    'page_slug' => $slug,
+                    'page_id' => $pageId,
+                    'deleted_count' => $deletedCount,
+                    'deleted_families' => $deletedFamilies,
+                    'deleted_details' => $differences['deleted_families'],
+                    'saved_fonts_summary' => $this->getFontsSummary($previousFonts),
+                    'project_fonts_summary' => $this->getFontsSummary($fontsFromProject)
+                ]);
+                $hasChanges = true;
+            }
+            
+            // Changed identifiers - ERROR level (critical problem)
+            if (!empty($differences['changed_identifiers'])) {
+                $changedCount = count($differences['changed_identifiers']);
+                $changedFamilies = array_map(function($item) {
+                    return $item['family'];
+                }, $differences['changed_identifiers']);
+                
+                Logger::instance()->error('Font identifiers changed during migration (critical issue)', [
+                    'page_slug' => $slug,
+                    'page_id' => $pageId,
+                    'changed_count' => $changedCount,
+                    'changed_families' => $changedFamilies,
+                    'changed_details' => $differences['changed_identifiers'],
+                    'saved_fonts_summary' => $this->getFontsSummary($previousFonts),
+                    'project_fonts_summary' => $this->getFontsSummary($fontsFromProject),
+                    'saved_full' => $previousFonts,
+                    'project_full' => $fontsFromProject
+                ]);
+                $hasChanges = true;
+            }
+            
+            // Fallback: if no specific changes detected but comparison failed, log as warning
+            if (!$hasChanges) {
+                Logger::instance()->warning('Font comparison failed but no specific differences detected', [
+                    'page_slug' => $slug,
+                    'page_id' => $pageId,
+                    'saved_fonts_summary' => $this->getFontsSummary($previousFonts),
+                    'project_fonts_summary' => $this->getFontsSummary($fontsFromProject)
+                ]);
+            }
         } else {
-            Logger::instance()->info('Project fonts and migration fonts without damage');
+            Logger::instance()->info('Project fonts and migration fonts without damage', [
+                'page_slug' => $slug,
+                'page_id' => $pageId
+            ]);
         }
 
         $url = PathSlugExtractor::getFullUrlById($pageId);
