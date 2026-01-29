@@ -118,7 +118,7 @@ class MigrationPlatform
             }
 
             $this->run($projectID_MB, $projectID_Brizy);
-            
+
             // Пропускаем сохранение кэша, если указан параметр skip_cache
             if (!$this->skip_cache) {
                 $this->cache->dumpCache($projectID_MB, $projectID_Brizy);
@@ -155,7 +155,7 @@ class MigrationPlatform
                     if ($lockData) {
                         $lockData['current_stage'] = $stage;
                         $lockData['stage_updated_at'] = time();
-                        
+
                         // Сохраняем информацию о прогрессе
                         // total_pages обновляем только если он еще не установлен или если явно передан
                         // Это предотвращает перезапись общего количества страниц при рекурсивных вызовах
@@ -168,14 +168,14 @@ class MigrationPlatform
                         if ($processedPages !== null) {
                             $lockData['processed_pages'] = $processedPages;
                         }
-                        
+
                         // Вычисляем процент выполнения
                         if (isset($lockData['total_pages']) && isset($lockData['processed_pages']) && $lockData['total_pages'] > 0) {
                             // Ограничиваем процент до 100%, чтобы избежать значений больше 100%
                             $calculatedPercent = round(($lockData['processed_pages'] / $lockData['total_pages']) * 100, 1);
                             $lockData['progress_percent'] = min($calculatedPercent, 100);
                         }
-                        
+
                         @file_put_contents($lockFile, json_encode($lockData, JSON_PRETTY_PRINT));
                     }
                 }
@@ -189,7 +189,7 @@ class MigrationPlatform
     private function init(string $projectID_MB, int $projectID_Brizy): void
     {
         Logger::instance()->info('Starting the migration for ' . $projectID_MB . ' to ' . $projectID_Brizy);
-        
+
         // Обновляем этап миграции
         $this->updateMigrationStage($projectID_MB, $projectID_Brizy, 'Инициализация миграции');
 
@@ -268,7 +268,7 @@ class MigrationPlatform
 //        $this->brizyApi->setLabelManualMigration(false);
 
         $this->checkDesign($designName);
-        
+
         // Обновляем этап миграции
         $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Загрузка данных проекта');
 
@@ -359,10 +359,10 @@ class MigrationPlatform
         if (!$this->cache->get('mainSection')) {
             $mainSection = $this->parser->getMainSection();
             Logger::instance()->debug('Upload section pictures');
-            
+
             // Обновляем этап миграции
             $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Загрузка медиа главной секции');
-            
+
             // Пропускаем загрузку медиа, если указан параметр skip_media_upload
             if (!$this->skip_media_upload) {
                 $mainSection = MediaController::uploadPicturesFromSections($mainSection, $this->projectId, $this->brizyApi);
@@ -375,12 +375,12 @@ class MigrationPlatform
 
         if (!$this->cache->get('menuList')) {
             Logger::instance()->info('Start create blank pages');
-            
+
             // Обновляем этап миграции
             $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Создание пустых страниц');
-            
+
             $existingBrizyPages = $this->brizyApi->getAllProjectPages();
-            
+
             // Если тестируем один элемент, не удаляем существующие страницы
             // Используем существующую страницу для тестирования
             if (empty($this->mb_element_name)) {
@@ -446,7 +446,7 @@ class MigrationPlatform
                 if (isset($page['child']) && !empty($page['child'])) {
                     $countPagesForMigration($page['child']);
                 }
-                if (isset($page['landing']) && $page['landing'] === true && 
+                if (isset($page['landing']) && $page['landing'] === true &&
                     (!Config::$devMode || $this->buildPage === '' || $page['slug'] === $this->buildPage) &&
                     ($page['hidden'] ?? false) === false) {
                     $totalPagesForMigration++;
@@ -457,22 +457,22 @@ class MigrationPlatform
 
         // Обновляем этап миграции с информацией о прогрессе
         $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Миграция страниц', $totalPagesForMigration, 0);
-        
+
         // Инициализируем счетчик обработанных страниц
         $this->processedPagesCount = 0;
-        
+
         $this->launch($parentPages, false);
-        //$this->launch($parentPages, true);
+        $this->launch($parentPages, true);
 
 
         // Обновляем этап миграции
         $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Очистка скомпилированных данных');
-        
+
         $this->brizyApi->clearCompileds($this->projectID_Brizy);
 
         // Обновляем этап миграции
         $this->updateMigrationStage($projectUUID_MB, $this->projectID_Brizy, 'Завершение миграции');
-        
+
         Logger::instance()->info('Project migration completed successfully!');
 
         $this->logFinalProcess($this->startTime);
@@ -502,7 +502,7 @@ class MigrationPlatform
                 if (isset($page['child']) && !empty($page['child'])) {
                     $countPages($page['child']);
                 }
-                if (isset($page['landing']) && $page['landing'] === true && 
+                if (isset($page['landing']) && $page['landing'] === true &&
                     (!Config::$devMode || $this->buildPage === '' || $page['slug'] === $this->buildPage) &&
                     ($page['hidden'] ?? false) === $hiddenPage) {
                     $totalPages++;
@@ -510,7 +510,7 @@ class MigrationPlatform
             }
         };
         $countPages($parentPages);
-        
+
         foreach ($parentPages as $i => $page) {
             if (!empty($page['parentSettings'])) {
                 $settings = json_decode($page['parentSettings'], true);
@@ -524,14 +524,41 @@ class MigrationPlatform
 //                }
             }
 
-            if (!empty($page['child'])) {
-                $this->launch($page['child'], $hiddenPage);
-            }
+            // Проверяем, нужно ли обрабатывать эту страницу или её дочерние страницы
+            $shouldProcessThisPage = true;
+            $shouldProcessChildren = true;
+            
             if (Config::$devMode && $this->buildPage !== '') {
-                if ($page['slug'] !== $this->buildPage) {
-                    continue;
+                // Если ищем конкретную страницу, проверяем текущую страницу и её дочерние
+                if ($page['slug'] === $this->buildPage) {
+                    // Это та страница, которую ищем - обрабатываем её
+                    $shouldProcessThisPage = true;
+                    $shouldProcessChildren = true;
+                } else {
+                    // Это не та страница - проверяем, есть ли искомая страница среди дочерних
+                    $hasTargetInChildren = self::hasPageWithSlugInTree($page['child'] ?? [], $this->buildPage);
+                    if ($hasTargetInChildren) {
+                        // Искомая страница есть среди дочерних - обрабатываем только дочерние
+                        $shouldProcessThisPage = false;
+                        $shouldProcessChildren = true;
+                    } else {
+                        // Искомая страница не найдена - пропускаем эту ветку
+                        $shouldProcessThisPage = false;
+                        $shouldProcessChildren = false;
+                    }
                 }
             }
+
+            // Обрабатываем дочерние страницы, если нужно
+            if ($shouldProcessChildren && !empty($page['child'])) {
+                $this->launch($page['child'], $hiddenPage);
+            }
+            
+            // Пропускаем обработку текущей страницы, если она не нужна
+            if (!$shouldProcessThisPage) {
+                continue;
+            }
+            
             if ($page['landing'] !== true) {
                 continue;
             }
@@ -546,15 +573,15 @@ class MigrationPlatform
                 // Не передаем локальный $totalPages, чтобы не перезаписывать общее количество страниц
                 // Используем null для totalPages, чтобы сохранить уже установленное значение
                 $this->updateMigrationStage(
-                    $this->projectUUID_MB, 
-                    $this->projectID_Brizy, 
+                    $this->projectUUID_MB,
+                    $this->projectID_Brizy,
                     "Миграция страницы {$this->processedPagesCount}: {$pageName}",
                     null, // Не обновляем total_pages при каждой странице
                     $this->processedPagesCount
                 );
-                
+
                 $this->collector($page);
-                
+
                 // Добавляем страницу в список мигрированных страниц
                 $this->projectPagesList[] = [
                     'slug' => $page['slug'] ?? '',
@@ -582,26 +609,26 @@ class MigrationPlatform
 
         if (!($preparedSectionOfThePage = $this->cache->get('preparedSectionOfThePage_' . $page['id']))) {
             $pageName = $page['name'] ?? $page['slug'] ?? 'Неизвестная страница';
-            
+
             // Обновляем этап - обработка секций
             $this->updateMigrationStage(
-                $this->projectUUID_MB, 
-                $this->projectID_Brizy, 
+                $this->projectUUID_MB,
+                $this->projectID_Brizy,
                 "Обработка секций страницы: {$pageName}"
             );
-            
+
             $preparedSectionOfThePage = $this->pageController->getSectionsFromPage($page);
             if (!$preparedSectionOfThePage) {
                 return;
             }
-            
+
             // Обновляем этап - загрузка медиа
             $this->updateMigrationStage(
-                $this->projectUUID_MB, 
-                $this->projectID_Brizy, 
+                $this->projectUUID_MB,
+                $this->projectID_Brizy,
                 "Загрузка медиа страницы: {$pageName}"
             );
-            
+
             // Пропускаем загрузку медиа, если указан параметр skip_media_upload
             if (!$this->skip_media_upload) {
                 $preparedSectionOfThePage = MediaController::uploadPicturesFromSections($preparedSectionOfThePage, $this->projectId, $this->brizyApi);
@@ -617,16 +644,16 @@ class MigrationPlatform
         if ($collectionItem) {
             $this->pageController->setCurrentPageOnWork($collectionItem);
             Logger::instance()->info('Run Page Builder for page', ['slug' => $page['slug'], 'name' => $page['name']]);
-            
+
             $pageName = $page['name'] ?? $page['slug'] ?? 'Неизвестная страница';
-            
+
             // Обновляем этап - создание блоков
             $this->updateMigrationStage(
-                $this->projectUUID_MB, 
-                $this->projectID_Brizy, 
+                $this->projectUUID_MB,
+                $this->projectID_Brizy,
                 "Создание блоков страницы: {$pageName}"
             );
-            
+
             $this->pageController->run($preparedSectionOfThePage, $this->pageMapping);
         } else {
             Logger::instance()->info(
@@ -738,6 +765,28 @@ class MigrationPlatform
             }
         }
         return $count;
+    }
+
+    /**
+     * Проверяет, есть ли страница с указанным slug в дереве страниц
+     * 
+     * @param array $pages Массив страниц для поиска
+     * @param string $slug Slug для поиска
+     * @return bool True если страница найдена, false иначе
+     */
+    private static function hasPageWithSlugInTree(array $pages, string $slug): bool
+    {
+        foreach ($pages as $page) {
+            if (isset($page['slug']) && $page['slug'] === $slug) {
+                return true;
+            }
+            if (!empty($page['child'])) {
+                if (self::hasPageWithSlugInTree($page['child'], $slug)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static function countVisiblePagesWithCollection(array $pages): int
