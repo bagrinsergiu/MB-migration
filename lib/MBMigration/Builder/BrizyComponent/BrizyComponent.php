@@ -1099,4 +1099,32 @@ class BrizyComponent implements JsonSerializable
 
         return $this;
     }
+
+    /**
+     * Delete items from component.
+     *
+     * @param int|null $index
+     *
+     * @return BrizyComponent
+     */
+    public function clearItems(?int $index = null): BrizyComponent
+    {
+        $items = $this->getValue()->get('items');
+
+        if (!is_array($items)) {
+            return $this;
+        }
+
+        if ($index === null) {
+            $this->getValue()->set('items', []);
+        } else {
+            if (array_key_exists($index, $items)) {
+                unset($items[$index]);
+                $items = array_values($items);
+                $this->getValue()->set('items', $items);
+            }
+        }
+
+        return $this;
+    }
 }
