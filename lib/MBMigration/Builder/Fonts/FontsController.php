@@ -229,6 +229,9 @@ class FontsController extends builderUtils
             $KitFonts = $this->getGoogleFontBnName($fontName);
             if ($KitFonts) {
                 $fontNameLower = FontUtils::convertFontFamily($KitFonts['family']);
+                // Use the actual Google Font family name (e.g., "Ubuntu") instead of normalized version
+                // This allows getFontsFamily() to create proper keys for matching font variations
+                $actualFontFamily = $KitFonts['family'] ?? $fontNameLower;
                 if (!$this->cache->get($fontNameLower, 'responseDataAddedNewFont')) {
                     Logger::instance()->info("Create FontName $fontNameLower, type font: google");
                     $this->cache->add('responseDataAddedNewFont', [$fontNameLower => $KitFonts]);
@@ -236,9 +239,9 @@ class FontsController extends builderUtils
                     $fontId = $this->BrizyApi->addFontAndUpdateProject($KitFonts, 'google');
 
                     if ($fontId) {
-                        // Persist only after success: uuid should be the id returned by API; fontFamily is the normalized family name
-                        self::addFontInMigration($fontNameLower, $fontId, $fontNameLower, 'google');
-                        Logger::instance()->info('Google font added to project', ['family' => $fontNameLower, 'fontId' => $fontId]);
+                        // Persist with actual Google Font family name (e.g., "Ubuntu") so getFontsFamily() can create proper matching keys
+                        self::addFontInMigration($fontNameLower, $fontId, $actualFontFamily, 'google');
+                        Logger::instance()->info('Google font added to project', ['family' => $actualFontFamily, 'fontId' => $fontId, 'normalized' => $fontNameLower]);
 
                         // Clear fonts cache since project fonts have been modified
                         $this->clearProjectFontsCache();
