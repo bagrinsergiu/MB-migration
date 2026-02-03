@@ -10,6 +10,7 @@ use MBMigration\Builder\Layout\Common\ElementContext;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\VariableCache;
 use MBMigration\Core\Logger;
 
 class Boulevard extends AbstractTheme
@@ -53,7 +54,16 @@ class Boulevard extends AbstractTheme
         $this->addSectionIfNeeded($mbPageSections);
 
         Logger::instance()->debug("Handling [head] page section.");
-        $elementFactory->getElement('head', $browserPage)->transformToItem($elementContext);
+
+        $cache= VariableCache::getInstance();
+
+        if($cache->get('boulevard_head_element_cached')) {
+            $brizyComponent = $cache->get('boulevard_head_element_cached');
+            $brizyComponent->getItemWithDepth(0,0,1)->clearItems();
+        } else {
+            $brizyComponent = $elementFactory->getElement('head', $browserPage)->transformToItem($elementContext);
+            $cache->set('boulevard_head_element_cached', $brizyComponent);
+        }
 
         $elementsList = ['event'];
         $processedItems = [];
