@@ -4,6 +4,7 @@ namespace Dashboard\Controllers;
 
 use Dashboard\Services\WaveService;
 use Dashboard\Services\WaveLogger;
+use Dashboard\Services\WaveReviewService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -526,6 +527,180 @@ class WaveController
                 'message' => 'Параметр клонирования успешно обновлен'
             ], 200);
 
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/waves/:id/review-token
+     * Создать токен для публичного доступа к ревью волны
+     */
+    public function createReviewToken(Request $request, string $id): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            
+            if (!$data) {
+                $data = $request->request->all();
+            }
+
+            $expiresInDays = isset($data['expires_in_days']) ? (int)$data['expires_in_days'] : null;
+            $name = $data['name'] ?? null;
+            $description = $data['description'] ?? null;
+            $createdBy = $request->attributes->get('user_id'); // Из AuthMiddleware
+            $settings = $data['settings'] ?? null;
+            $projectSettings = $data['project_settings'] ?? null;
+
+            $reviewService = new WaveReviewService();
+            $tokenData = $reviewService->createReviewToken(
+                $id, 
+                $expiresInDays,
+                $name,
+                $description,
+                $createdBy,
+                $settings,
+                $projectSettings
+            );
+
+            // Формируем URL для ревью
+            $baseUrl = $request->getSchemeAndHttpHost();
+            $reviewUrl = $baseUrl . '/dashboard/review/' . $tokenData['token'];
+
+            return new JsonResponse([
+                'success' => true,
+                'data' => [
+                    'id' => $tokenData['id'],
+                    'token' => $tokenData['token'],
+                    'review_url' => $reviewUrl,
+                    'expires_in_days' => $expiresInDays
+                ]
+            ], 200);
+
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/waves/:id/review-tokens
+     * Получить список токенов для волны
+     */
+    public function getReviewTokens(Request $request, string $id): JsonResponse
+    {
+        try {
+            $reviewService = new WaveReviewService();
+            $tokens = $reviewService->getWaveTokens($id);
+
+            // Формируем полные URL для каждого токена
+            $baseUrl = $request->getSchemeAndHttpHost();
+            foreach ($tokens as &$token) {
+                $token['review_url'] = $baseUrl . '/dashboard/review/' . $token['token'];
+            }
+            unset($token);
+
+            return new JsonResponse([
+                'success' => true,
+                'data' => $tokens
+            ], 200);
+
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * PUT /api/waves/:id/review-tokens/:tokenId
+     * Обновить токен
+     */
+    public function updateReviewToken(Request $request, string $id, int $tokenId): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            
+            $reviewService = new WaveReviewService();
+            $updated = $reviewService->updateToken($tokenId, $data);
+            
+            if ($updated) {
+                return new JsonResponse([
+                    'success' => true,
+                    'message' => 'Токен обновлен'
+                ], 200);
+            }
+            
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Не удалось обновить токен'
+            ], 500);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * DELETE /api/waves/:id/review-tokens/:tokenId
+     * Удалить токен
+     */
+    public function deleteReviewToken(Request $request, string $id, int $tokenId): JsonResponse
+    {
+        try {
+            $reviewService = new WaveReviewService();
+            $deleted = $reviewService->deleteToken($tokenId);
+            
+            if ($deleted) {
+                return new JsonResponse([
+                    'success' => true,
+                    'message' => 'Токен удален'
+                ], 200);
+            }
+            
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Не удалось удалить токен'
+            ], 500);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * PUT /api/waves/:id/review-tokens/:tokenId/projects/:mbUuid
+     * Обновить настройки доступа для проекта
+     */
+    public function updateProjectAccess(Request $request, string $id, int $tokenId, string $mbUuid): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            
+            $reviewService = new WaveReviewService();
+            $updated = $reviewService->updateProjectAccess($tokenId, $mbUuid, $data);
+            
+            if ($updated) {
+                return new JsonResponse([
+                    'success' => true,
+                    'message' => 'Настройки доступа обновлены'
+                ], 200);
+            }
+            
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Не удалось обновить настройки доступа'
+            ], 500);
         } catch (Exception $e) {
             return new JsonResponse([
                 'success' => false,

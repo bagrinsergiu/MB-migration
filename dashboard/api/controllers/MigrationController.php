@@ -60,7 +60,7 @@ class MigrationController
 
     /**
      * GET /api/migrations/:id
-     * Получить детали миграции
+     * Получить детали миграции по brz_project_id
      */
     public function getDetails(Request $request, int $id): JsonResponse
     {
@@ -192,6 +192,59 @@ class MigrationController
             return new JsonResponse([
                 'success' => true,
                 'data' => $details
+            ], 200);
+        } catch (Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/migrations/by-uuid/:mbUuid
+     * Получить детали миграции по mb_project_uuid
+     */
+    public function getDetailsByUuid(Request $request, string $mbUuid): JsonResponse
+    {
+        try {
+            $details = $this->migrationService->getMigrationDetailsByUuid($mbUuid);
+            
+            if (!$details) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Миграция не найдена'
+                ], 404);
+            }
+
+            // Формируем ответ в том же формате, что и getDetails
+            $responseData = [
+                'id' => $details['mapping']['brz_project_id'],
+                'mb_project_uuid' => $details['mapping']['mb_project_uuid'],
+                'brz_project_id' => $details['mapping']['brz_project_id'],
+                'status' => $details['status'],
+                'brizy_project_domain' => $details['brizy_project_domain'],
+                'mb_project_domain' => $details['mb_project_domain'],
+                'progress' => $details['progress'],
+                'created_at' => $details['mapping']['created_at'],
+                'updated_at' => $details['mapping']['updated_at'],
+                'result_data' => $details['result_data'],
+                'migration_uuid' => $details['migration_uuid'],
+            ];
+
+            // Добавляем ошибки и предупреждения
+            if ($details['result_data']) {
+                if (isset($details['result_data']['error'])) {
+                    $responseData['error'] = $details['result_data']['error'];
+                }
+                if (isset($details['warnings']) && !empty($details['warnings'])) {
+                    $responseData['result_data']['warnings'] = $details['warnings'];
+                }
+            }
+
+            return new JsonResponse([
+                'success' => true,
+                'data' => $responseData
             ], 200);
         } catch (Exception $e) {
             return new JsonResponse([

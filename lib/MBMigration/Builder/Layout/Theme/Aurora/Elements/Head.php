@@ -470,6 +470,36 @@ class Head extends HeadElement
     }
 
     /**
+     * Переопределяем метод для извлечения стилей подменю
+     * Добавляем извлечение размера шрифта подменю из десктопного меню
+     * Исходный проект: c3forchrist.org
+     * На Clover сайте элементы подменю на 10-11px меньше основных элементов меню
+     */
+    protected function getNormalSubMenuStyle($families, $defaultFamilies): array
+    {
+        $data = parent::getNormalSubMenuStyle($families, $defaultFamilies);
+
+        // Извлекаем размер шрифта подменю из десктопного меню
+        // Селектор: #main-navigation > ul > li.has-sub > ul > li > a
+        $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getStyles', [
+            'selector' => "#main-navigation > ul > li.has-sub > ul > li > a",
+            'styleProperties' => ['font-size'],
+            'families' => [],
+            'defaultFamily' => '',
+        ]);
+        
+        if (isset($menuSubItemDropdownStyles['data']['font-size'])) {
+            // Извлекаем числовое значение размера шрифта (убираем 'px')
+            $fontSize = (int) str_replace('px', '', $menuSubItemDropdownStyles['data']['font-size']);
+            $data['subMenuFontSize'] = $fontSize;
+            $data['mobileSubMenuFontSize'] = $fontSize;
+            $data['tabletSubMenuFontSize'] = $fontSize;
+        }
+
+        return $data;
+    }
+
+    /**
      * Переопределяем метод для получения обычных стилей меню
      * Для темы Aurora нужно открыть мобильное меню и использовать его для извлечения цветов
      * Исходный проект: c3forchrist.org
@@ -490,15 +520,13 @@ class Head extends HeadElement
             "pseudoEl" => ""
         ];
         
-        // Селектор для активного пункта мобильного меню
-        $mobileActiveSelector = [
-            "selector" => "#mobile-navigation > nav > ul > li.selected > a",
-            "pseudoEl" => ""
-        ];
+        // Используем десктопный активный селектор вместо мобильного
+        // Для мобильного подменю нужно использовать активный цвет десктопного меню
+        $desktopActiveSelector = $this->getThemeMenuItemActiveSelector();
 
-        return $this->browserPage->evaluateScript('brizy.getMenuItem', [
+        $menuItemStyles = $this->browserPage->evaluateScript('brizy.getMenuItem', [
             'itemSelector' => $mobileMenuItemSelector, // Используем мобильное меню вместо десктопного
-            'itemActiveSelector' => $mobileActiveSelector, // Активный элемент из мобильного меню
+            'itemActiveSelector' => $desktopActiveSelector, // Активный элемент из десктопного меню
             'itemBgSelector' => $this->getMenuItemBgSelector(),
             'itemPaddingSelector' => $this->getThemeMenuItemPaddingSelector(),
             'itemMobileSelector' => $itemMobileSelector,
@@ -509,6 +537,8 @@ class Head extends HeadElement
             'isBgHoverItemMenu' => $this->isBgHoverItemMenu(),
             'hover' => false,
         ]);
+
+        return $menuItemStyles;
     }
 
     /**
@@ -552,6 +582,99 @@ class Head extends HeadElement
         }
 
         return $hoverMenuItemStyles;
+    }
+
+    /**
+     * Переопределяем метод для получения hover стилей подменю
+     * Для темы Aurora используем активный цвет из десктопного меню для мобильного подменю
+     * Исходный проект: c3forchrist.org
+     * Проблема: мобильное подменю не получает активный цвет, нужно использовать тот же цвет, что и для десктопной версии
+     */
+    protected function getHoverSubMenuStyle(): array
+    {
+        $hoverMenuSubItemStyles = ['data' => []];
+        
+        // Открываем мобильное меню
+        if ($this->browserPage->triggerEvent('click', '#mobile-nav-button-container')) {
+            $selector1 = $this->getThemeSubMenuNotSelectedItemSelector()['selector'];
+            if ($this->browserPage->triggerEvent('hover', $selector1)) {
+
+                $entrySubMenu = [
+                    'itemSelector' => $this->getThemeSubMenuNotSelectedItemSelector(),
+                    'itemBgSelector' => $this->getThemeSubMenuItemBGSelector(),
+                    'families' => '',
+                    'defaultFamily' => [],
+                    'hover' => true,
+                ];
+
+                $hoverMenuSubItemStyles = $this->browserPage->evaluateScript('brizy.getSubMenuItem', $entrySubMenu);
+            }
+
+            sleep(1);
+
+            // Извлекаем активный цвет из десктопного меню (не из мобильного!)
+            // Селектор: #main-navigation > ul > li.selected > a
+            $desktopActiveSelector = $this->getThemeMenuItemActiveSelector();
+            $desktopActiveStyles = $this->scrapeStyle($desktopActiveSelector['selector'], ['color']);
+
+            // Убеждаемся, что данные инициализированы
+            if (!isset($hoverMenuSubItemStyles['data'])) {
+                $hoverMenuSubItemStyles['data'] = [];
+            }
+
+            if (isset($desktopActiveStyles['color'])) {
+                // Используем активный цвет десктопного меню для мобильного подменю
+                // ВАЖНО: устанавливаем значение ПОСЛЕ получения всех данных, чтобы перезаписать любое неправильное значение
+                $activeColorHex = ColorConverter::rgba2hex($desktopActiveStyles['color']);
+                $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = $activeColorHex;
+                $hoverMenuSubItemStyles['data']['hoverSubMenuColorHex'] = $activeColorHex;
+                $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
+                $hoverMenuSubItemStyles['data']['hoverSubMenuColorOpacity'] = 1;
+            }
+
+            $menuSubItemDropdownStyles = $this->browserPage->evaluateScript('brizy.getStyles', [
+                'selector' => '#mobile-navigation .main-navigation',
+                'styleProperties' => ['background-color', 'opacity'],
+                'families' => [],
+                'defaultFamily' => '',
+            ]);
+
+            if (isset($menuSubItemDropdownStyles['data']['background-color'])) {
+                $hoverMenuSubItemStyles['data']['hoverSubMenuBgColorHex'] = ColorConverter::convertColorRgbToHex($menuSubItemDropdownStyles['data']['background-color']);
+                $hoverMenuSubItemStyles['data']['hoverSubMenuBgColorOpacity'] = ColorConverter::rgba2opacity(1);
+            }
+        }
+
+        // ВАЖНО: ВСЕГДА устанавливаем активный цвет из десктопного меню в самом конце,
+        // чтобы перезаписать любое значение, которое могло быть установлено из мобильного меню
+        $desktopActiveSelector = $this->getThemeMenuItemActiveSelector();
+        $desktopActiveStyles = $this->scrapeStyle($desktopActiveSelector['selector'], ['color']);
+        
+        if (isset($desktopActiveStyles['color'])) {
+            if (!isset($hoverMenuSubItemStyles['data'])) {
+                $hoverMenuSubItemStyles['data'] = [];
+            }
+            // Перезаписываем активный цвет подменю цветом из десктопного меню
+            // Устанавливаем для всех устройств (desktop, mobile, tablet)
+            $activeColorHex = ColorConverter::rgba2hex($desktopActiveStyles['color']);
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorHex'] = $activeColorHex;
+            $hoverMenuSubItemStyles['data']['hoverSubMenuColorHex'] = $activeColorHex;
+            $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
+            $hoverMenuSubItemStyles['data']['hoverSubMenuColorOpacity'] = 1;
+            
+            // Устанавливаем отдельные ключи для мобильного и планшетного подменю
+            // Используем тот же цвет из десктопного меню
+            $hoverMenuSubItemStyles['data']['mobileActiveSubMenuColorHex'] = $activeColorHex;
+            $hoverMenuSubItemStyles['data']['tabletActiveSubMenuColorHex'] = $activeColorHex;
+            $hoverMenuSubItemStyles['data']['mobileActiveSubMenuColorOpacity'] = 1;
+            $hoverMenuSubItemStyles['data']['tabletActiveSubMenuColorOpacity'] = 1;
+            $hoverMenuSubItemStyles['data']['mobileHoverSubMenuColorHex'] = $activeColorHex;
+            $hoverMenuSubItemStyles['data']['tabletHoverSubMenuColorHex'] = $activeColorHex;
+            $hoverMenuSubItemStyles['data']['mobileHoverSubMenuColorOpacity'] = 1;
+            $hoverMenuSubItemStyles['data']['tabletHoverSubMenuColorOpacity'] = 1;
+        }
+
+        return $hoverMenuSubItemStyles['data'] ?? [];
     }
 
     /**

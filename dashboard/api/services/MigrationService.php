@@ -443,6 +443,26 @@ class MigrationService
     }
 
     /**
+     * Получить детали миграции по mb_project_uuid
+     * 
+     * @param string $mbUuid
+     * @return array|null
+     * @throws Exception
+     */
+    public function getMigrationDetailsByUuid(string $mbUuid): ?array
+    {
+        $mapping = $this->dbService->getMigrationByUuid($mbUuid);
+        if (!$mapping) {
+            return null;
+        }
+
+        $brzProjectId = $mapping['brz_project_id'];
+        
+        // Используем существующий метод getMigrationDetails
+        return $this->getMigrationDetails($brzProjectId);
+    }
+
+    /**
      * Получить путь к lock файлу для миграции
      * 
      * @param string $mbUuid UUID проекта MB
