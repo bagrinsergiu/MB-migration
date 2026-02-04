@@ -207,6 +207,53 @@ class MySQL
         }
     }
 
+    public function update($table, $data, $where = [])
+    {
+        $setParts = [];
+        $whereParts = [];
+        $params = [];
+
+        foreach ($data as $key => $value) {
+            $setParts[] = "$key = :set_$key";
+            $params[":set_$key"] = $value;
+        }
+
+        if (is_array($where)) {
+            foreach ($where as $key => $value) {
+                $whereParts[] = "$key = :where_$key";
+                $params[":where_$key"] = $value;
+            }
+        } else {
+            // Если where - строка, используем её как есть
+            $whereParts[] = $where;
+        }
+
+        $setClause = implode(", ", $setParts);
+        $whereClause = !empty($whereParts) ? "WHERE " . implode(" AND ", $whereParts) : "";
+
+        $sql = "UPDATE $table SET $setClause $whereClause";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute($params);
+            return $result ? $stmt->rowCount() : false;
+        } catch (PDOException $e) {
+            // Check if it's a "server has gone away" error
+            if ($e->errorInfo[1] == 2006 || $e->errorInfo[1] == 2013 || strpos($e->getMessage(), 'server has gone away') !== false) {
+                // Try to reconnect
+                $this->doConnect();
+
+                // Retry the operation
+                $stmt = $this->pdo->prepare($sql);
+                $result = $stmt->execute($params);
+                return $result ? $stmt->rowCount() : false;
+            } else {
+                // For other errors, rethrow the exception
+                throw $e;
+            }
+        }
+    }
+
     private function setUserName($username)
     {
         $this->userName = $username;

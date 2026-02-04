@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api, WaveDetails as WaveDetailsType } from '../api/client';
 import { getStatusConfig } from '../utils/status';
 import { formatDate, formatUUID } from '../utils/format';
+import ReviewTokensManager from './ReviewTokensManager';
 import './common.css';
 import './WaveDetails.css';
 import './QualityAnalysis.css';
@@ -538,6 +539,18 @@ export default function WaveDetails() {
                 )}
               </span>
             </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Публичные ссылки для ревью</h3>
+          </div>
+          <div className="card-body">
+            <ReviewTokensManager 
+              waveId={id!} 
+              projects={details.migrations}
+            />
           </div>
         </div>
 

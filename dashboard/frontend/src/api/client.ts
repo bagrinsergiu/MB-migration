@@ -9,21 +9,34 @@ const apiClient = axios.create({
   },
 });
 
+// Interceptor для добавления session_id в заголовки
+apiClient.interceptors.request.use(
+  (config) => {
+    const sessionId = localStorage.getItem('dashboard_session');
+    if (sessionId) {
+      config.headers['X-Dashboard-Session'] = sessionId;
+    }
+    // Также добавляем в cookies если нужно
+    if (sessionId && config.headers) {
+      config.withCredentials = true;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Interceptor для обработки ошибок
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Успешный ответ
+    return response;
+  },
   (error) => {
-    // Пробрасываем ошибку дальше, но с правильной структурой
-    if (error.response) {
-      // Сервер вернул ошибку с данными
-      return Promise.reject(error);
-    } else if (error.request) {
-      // Запрос был отправлен, но ответа не получено
-      return Promise.reject(new Error('Не удалось подключиться к серверу'));
-    } else {
-      // Ошибка при настройке запроса
-      return Promise.reject(error);
-    }
+    // Ошибка - пробрасываем дальше для обработки в методах API
+    // Методы сами решат, как обработать ошибку
+    return Promise.reject(error);
   }
 );
 
@@ -85,6 +98,49 @@ export const api = {
   async health() {
     const response = await apiClient.get('/health');
     return response.data;
+  },
+
+  // Auth
+  async login(username: string, password: string): Promise<ApiResponse<{ session_id: string; user: any }>> {
+    try {
+      const response = await apiClient.post('/auth/login', { username, password });
+      return response.data;
+    } catch (error: any) {
+      console.error('Login API error:', error);
+      // Если есть ответ от сервера, возвращаем его данные
+      if (error.response && error.response.data) {
+        return error.response.data;
+      }
+      // Если нет ответа, возвращаем ошибку подключения
+      return {
+        success: false,
+        error: error.message || 'Не удалось подключиться к серверу. Убедитесь, что сервер запущен на порту 8000.'
+      };
+    }
+  },
+
+  async logout(): Promise<ApiResponse<any>> {
+    const response = await apiClient.post('/auth/logout');
+    localStorage.removeItem('dashboard_session');
+    return response.data;
+  },
+
+  async checkAuth(): Promise<ApiResponse<{ authenticated: boolean; user?: any }>> {
+    try {
+      const response = await apiClient.get('/auth/check');
+      return response.data;
+    } catch (error: any) {
+      // Если есть ответ от сервера, возвращаем его данные
+      if (error.response && error.response.data) {
+        return error.response.data;
+      }
+      // Если нет ответа, возвращаем ошибку подключения
+      return {
+        success: false,
+        authenticated: false,
+        error: error.message || 'Не удалось подключиться к серверу'
+      };
+    }
   },
 
   // Migrations
@@ -256,6 +312,86 @@ export const api = {
         const response = await apiClient.put(`/waves/${waveId}/mapping/${brzProjectId}/cloning`, {
           cloning_enabled: cloningEnabled
         });
+        return response.data;
+      },
+
+      async createReviewToken(
+        waveId: string, 
+        data: {
+          expires_in_days?: number;
+          name?: string;
+          description?: string;
+          settings?: any;
+          project_settings?: Record<string, { allowed_tabs: string[]; is_active: boolean }>;
+        }
+      ): Promise<ApiResponse<{ id: number; token: string; review_url: string }>> {
+        const response = await apiClient.post(`/waves/${waveId}/review-token`, data);
+        return response.data;
+      },
+
+      async getReviewTokens(waveId: string): Promise<ApiResponse<any[]>> {
+        const response = await apiClient.get(`/waves/${waveId}/review-tokens`);
+        return response.data;
+      },
+
+      async updateReviewToken(waveId: string, tokenId: number, data: any): Promise<ApiResponse<any>> {
+        const response = await apiClient.put(`/waves/${waveId}/review-tokens/${tokenId}`, data);
+        return response.data;
+      },
+
+      async deleteReviewToken(waveId: string, tokenId: number): Promise<ApiResponse<any>> {
+        const response = await apiClient.delete(`/waves/${waveId}/review-tokens/${tokenId}`);
+        return response.data;
+      },
+
+      async updateProjectAccess(
+        waveId: string, 
+        tokenId: number, 
+        mbUuid: string, 
+        config: { allowed_tabs: string[]; is_active: boolean }
+      ): Promise<ApiResponse<any>> {
+        const response = await apiClient.put(`/waves/${waveId}/review-tokens/${tokenId}/projects/${mbUuid}`, config);
+        return response.data;
+      },
+
+      // Users Management
+      async getUsers(): Promise<ApiResponse<any[]>> {
+        const response = await apiClient.get('/users');
+        return response.data;
+      },
+
+      async getUser(id: number): Promise<ApiResponse<any>> {
+        const response = await apiClient.get(`/users/${id}`);
+        return response.data;
+      },
+
+      async createUser(data: any): Promise<ApiResponse<any>> {
+        const response = await apiClient.post('/users', data);
+        return response.data;
+      },
+
+      async updateUser(id: number, data: any): Promise<ApiResponse<any>> {
+        const response = await apiClient.put(`/users/${id}`, data);
+        return response.data;
+      },
+
+      async deleteUser(id: number): Promise<ApiResponse<any>> {
+        const response = await apiClient.delete(`/users/${id}`);
+        return response.data;
+      },
+
+      async getRoles(): Promise<ApiResponse<any[]>> {
+        const response = await apiClient.get('/users/roles');
+        return response.data;
+      },
+
+      async getPermissions(): Promise<ApiResponse<any[]>> {
+        const response = await apiClient.get('/users/permissions');
+        return response.data;
+      },
+
+      async getUserPermissions(userId: number): Promise<ApiResponse<any[]>> {
+        const response = await apiClient.get(`/users/${userId}/permissions`);
         return response.data;
       },
 

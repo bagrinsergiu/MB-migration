@@ -14,6 +14,19 @@ if (strpos($pathInfo, '/dashboard/api') === 0) {
     exit;
 }
 
+// Если запрос к публичному ревью (без авторизации)
+// Поддерживаем как /review/:token, так и /review/:token/project/:mbUuid
+if (preg_match('#^/dashboard/review/([^/]+)(?:/project/([^/]+))?$#', $pathInfo, $matches)) {
+    // Отдаем HTML страницу React приложения (React Router обработает маршрут)
+    $indexHtmlPath = __DIR__ . '/frontend/dist/index.html';
+    if (file_exists($indexHtmlPath)) {
+        header('Content-Type: text/html; charset=UTF-8');
+        header('Cache-Control: no-cache, must-revalidate');
+        echo file_get_contents($indexHtmlPath);
+        exit;
+    }
+}
+
 // Если запрос к статическим файлам фронтенда (CSS, JS, assets)
 $distPath = __DIR__ . '/frontend/dist';
 if (file_exists($distPath) && is_dir($distPath)) {

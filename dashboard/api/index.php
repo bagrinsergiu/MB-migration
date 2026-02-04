@@ -4,6 +4,30 @@
  * Доступен по адресу: http://localhost:8000/dashboard/api/*
  */
 
+// Отключаем вывод ошибок в HTML формате
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+ini_set('log_errors', '1');
+
+// Устанавливаем обработчик ошибок для перехвата всех ошибок
+// Важно: не выводим ошибки, только логируем
+set_error_handler(function($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return false;
+    }
+    // Логируем ошибку, но не выводим
+    error_log("PHP Error: $message in $file on line $line");
+    // Возвращаем true, чтобы предотвратить стандартную обработку ошибки
+    return true;
+}, E_ALL | E_STRICT);
+
+// Устанавливаем обработчик исключений
+set_exception_handler(function($exception) {
+    error_log("Uncaught exception: " . $exception->getMessage());
+    error_log("Stack trace: " . $exception->getTraceAsString());
+    // Не выводим исключение, только логируем
+});
+
 require_once dirname(__DIR__, 2) . '/vendor/autoload_runtime.php';
 
 // Загрузка переменных окружения из .env
@@ -50,12 +74,19 @@ $classesToLoad = [
     'Dashboard\\Services\\MigrationExecutionService' => __DIR__ . '/services/MigrationExecutionService.php',
     'Dashboard\\Services\\QualityAnalysisService' => __DIR__ . '/services/QualityAnalysisService.php',
     'Dashboard\\Services\\TestMigrationService' => __DIR__ . '/services/TestMigrationService.php',
+    'Dashboard\\Services\\AuthService' => __DIR__ . '/services/AuthService.php',
+    'Dashboard\\Services\\WaveReviewService' => __DIR__ . '/services/WaveReviewService.php',
+    'Dashboard\\Services\\UserService' => __DIR__ . '/services/UserService.php',
     'Dashboard\\Controllers\\MigrationController' => __DIR__ . '/controllers/MigrationController.php',
     'Dashboard\\Controllers\\LogController' => __DIR__ . '/controllers/LogController.php',
     'Dashboard\\Controllers\\SettingsController' => __DIR__ . '/controllers/SettingsController.php',
     'Dashboard\\Controllers\\WaveController' => __DIR__ . '/controllers/WaveController.php',
     'Dashboard\\Controllers\\QualityAnalysisController' => __DIR__ . '/controllers/QualityAnalysisController.php',
     'Dashboard\\Controllers\\TestMigrationController' => __DIR__ . '/controllers/TestMigrationController.php',
+    'Dashboard\\Controllers\\AuthController' => __DIR__ . '/controllers/AuthController.php',
+    'Dashboard\\Controllers\\UserController' => __DIR__ . '/controllers/UserController.php',
+    'Dashboard\\Middleware\\AuthMiddleware' => __DIR__ . '/middleware/AuthMiddleware.php',
+    'Dashboard\\Middleware\\PermissionMiddleware' => __DIR__ . '/middleware/PermissionMiddleware.php',
 ];
 
 foreach ($classesToLoad as $class => $file) {
@@ -69,6 +100,13 @@ use Dashboard\Controllers\LogController;
 use Dashboard\Controllers\WaveController;
 use Dashboard\Controllers\QualityAnalysisController;
 use Dashboard\Controllers\TestMigrationController;
+use Dashboard\Controllers\AuthController;
+use Dashboard\Controllers\UserController;
+use Dashboard\Services\QualityAnalysisService;
+use Dashboard\Services\MigrationService;
+use Dashboard\Services\WaveReviewService;
+use Dashboard\Middleware\AuthMiddleware;
+use Dashboard\Middleware\PermissionMiddleware;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -126,6 +164,597 @@ return static function (array $context, Request $request): Response {
 
     // Маршрутизация API endpoints
     try {
+        // Публичный доступ к скриншотам по токену ревью (без авторизации)
+        if (preg_match('#^/review/wave/([^/]+)/screenshots/(.+)$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $token = $matches[1];
+                $filename = basename($matches[2]);
+                
+                // Проверяем токен (но не требуем полной авторизации)
+                $reviewService = new WaveReviewService();
+                $waveId = $reviewService->validateToken($token);
+                
+                if (!$waveId) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Недействительный или истекший токен доступа'
+                    ], 403);
+                }
+                
+                // Ищем файл в var/tmp/project_*/ директориях
+                $currentFile = __FILE__;
+                $projectRoot = dirname(dirname(dirname($currentFile)));
+                $screenshotsDir = $projectRoot . '/var/tmp/';
+                
+                $found = false;
+                $filePath = null;
+                $dirs = [];
+                
+                if (is_dir($screenshotsDir)) {
+                    $dirs = glob($screenshotsDir . 'project_*', GLOB_ONLYDIR);
+                    
+                    foreach ($dirs as $dir) {
+                        $potentialPath = $dir . '/' . $filename;
+                        if (file_exists($potentialPath)) {
+                            $filePath = $potentialPath;
+                            $found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Также проверяем корневую директорию var/tmp/
+                if (!$found) {
+                    $rootPath = $screenshotsDir . $filename;
+                    if (file_exists($rootPath)) {
+                        $filePath = $rootPath;
+                        $found = true;
+                    }
+                }
+                
+                if (!$found || !$filePath) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Скриншот не найден: ' . $filename
+                    ], 404);
+                }
+                
+                // Определяем MIME тип
+                $mimeType = mime_content_type($filePath);
+                if (!$mimeType) {
+                    $mimeType = 'image/png';
+                }
+                
+                // Возвращаем файл
+                $response = new Response(file_get_contents($filePath), 200);
+                $response->headers->set('Content-Type', $mimeType);
+                $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
+                $response->headers->set('Cache-Control', 'public, max-age=3600');
+                return $response;
+            }
+        }
+
+        // Публичный доступ к ревью волны (без авторизации)
+        if (preg_match('#^/review/wave/([^/]+)$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $token = $matches[1];
+                $reviewService = new WaveReviewService();
+                $waveId = $reviewService->validateToken($token);
+                
+                if (!$waveId) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Недействительный или истекший токен доступа'
+                    ], 403);
+                }
+                
+                // Получаем информацию о токене и настройках доступа
+                $tokenInfo = $reviewService->getTokenInfo($token);
+                if (!$tokenInfo) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Токен не найден'
+                    ], 403);
+                }
+                
+                // Получаем детали волны
+                $waveController = new WaveController();
+                $waveResponse = $waveController->getDetails($request, $waveId);
+                
+                // Если ответ успешный, добавляем информацию о настройках доступа
+                if ($waveResponse->getStatusCode() === 200) {
+                    $waveData = json_decode($waveResponse->getContent(), true);
+                    if ($waveData && $waveData['success']) {
+                        // Добавляем настройки доступа для каждого проекта
+                        if (isset($waveData['data']['migrations']) && is_array($waveData['data']['migrations'])) {
+                            foreach ($waveData['data']['migrations'] as &$migration) {
+                                // Проверяем оба возможных ключа для UUID
+                                $mbUuid = $migration['mb_uuid'] ?? $migration['mb_project_uuid'] ?? null;
+                                if ($mbUuid) {
+                                    $projectAccess = $reviewService->getProjectAccess($token, $mbUuid);
+                                    // Если нет индивидуальных настроек, проект доступен по умолчанию
+                                    // Устанавливаем review_access только если есть настройки, иначе null (что означает доступ по умолчанию)
+                                    $migration['review_access'] = $projectAccess;
+                                } else {
+                                    // Если нет UUID, проект недоступен
+                                    $migration['review_access'] = ['is_active' => false];
+                                }
+                            }
+                            unset($migration);
+                        }
+                        
+                        // Добавляем информацию о токене
+                        $waveData['data']['token_info'] = [
+                            'name' => $tokenInfo['name'],
+                            'description' => $tokenInfo['description'],
+                            'settings' => $tokenInfo['settings']
+                        ];
+                        
+                        return new JsonResponse($waveData, 200);
+                    }
+                }
+                
+                return $waveResponse;
+            }
+        }
+
+        // Публичный доступ к деталям миграции по токену (без авторизации)
+        if (preg_match('#^/review/wave/([^/]+)/migration/([^/]+)$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $token = $matches[1];
+                $mbUuid = $matches[2];
+                
+                $reviewService = new WaveReviewService();
+                $waveId = $reviewService->validateToken($token);
+                
+                if (!$waveId) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Недействительный или истекший токен доступа'
+                    ], 403);
+                }
+                
+                // Проверяем настройки доступа для проекта
+                // Если токен валиден, доступ разрешен по умолчанию
+                // Блокируем только если явно установлено is_active = false
+                $projectAccess = $reviewService->getProjectAccess($token, $mbUuid);
+                
+                // Если есть индивидуальные настройки и проект заблокирован
+                if ($projectAccess && isset($projectAccess['is_active']) && $projectAccess['is_active'] === false) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Доступ к этому проекту ограничен'
+                    ], 403);
+                }
+                
+                // Получаем детали миграции по mb_uuid
+                $migrationController = new MigrationController();
+                $migrationResponse = $migrationController->getDetailsByUuid($request, $mbUuid);
+                
+                // Если ответ успешный, добавляем информацию о разрешенных вкладках
+                if ($migrationResponse->getStatusCode() === 200) {
+                    $migrationData = json_decode($migrationResponse->getContent(), true);
+                    if ($migrationData && $migrationData['success']) {
+                        // Если есть индивидуальные настройки, используем их, иначе все вкладки доступны
+                        $allowedTabs = $projectAccess && isset($projectAccess['allowed_tabs']) 
+                            ? $projectAccess['allowed_tabs'] 
+                            : ['overview', 'details', 'logs', 'screenshots', 'quality', 'analysis']; // Все вкладки по умолчанию
+                        $migrationData['data']['allowed_tabs'] = $allowedTabs;
+                        return new JsonResponse($migrationData, 200);
+                    }
+                }
+                
+                return $migrationResponse;
+            }
+        }
+
+        // Публичный доступ к статистике анализа качества миграции по токену
+        if (preg_match('#^/review/wave/([^/]+)/migration/([^/]+)/analysis/statistics$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                try {
+                    $token = $matches[1];
+                    $mbUuid = $matches[2];
+                    
+                    $reviewService = new WaveReviewService();
+                    $waveId = $reviewService->validateToken($token);
+                    
+                    if (!$waveId) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Недействительный или истекший токен доступа'
+                        ], 403, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Проверяем настройки доступа для проекта
+                    $projectAccess = $reviewService->getProjectAccess($token, $mbUuid);
+                    
+                    // Если есть индивидуальные настройки и проект заблокирован
+                    if ($projectAccess && isset($projectAccess['is_active']) && $projectAccess['is_active'] === false) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Доступ к этому проекту ограничен'
+                        ], 403, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Получаем детали миграции для получения brz_project_id
+                    $migrationService = new MigrationService();
+                    $migrationDetails = $migrationService->getMigrationDetailsByUuid($mbUuid);
+                    
+                    if (!$migrationDetails) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Миграция не найдена'
+                        ], 404, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Извлекаем brz_project_id
+                    $brzProjectId = null;
+                    if (isset($migrationDetails['mapping']['brz_project_id'])) {
+                        $brzProjectId = (int)$migrationDetails['mapping']['brz_project_id'];
+                    } elseif (isset($migrationDetails['brz_project_id'])) {
+                        $brzProjectId = (int)$migrationDetails['brz_project_id'];
+                    }
+                    
+                    if (!$brzProjectId) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Не удалось определить ID проекта Brizy'
+                        ], 404, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Получаем статистику анализа качества
+                    $qualityService = new QualityAnalysisService();
+                    $statistics = $qualityService->getMigrationStatistics($brzProjectId);
+                    
+                    return new JsonResponse([
+                        'success' => true,
+                        'data' => $statistics
+                    ], 200, ['Content-Type' => 'application/json; charset=utf-8']);
+                } catch (\Throwable $e) {
+                    error_log("Error in analysis statistics endpoint: " . $e->getMessage());
+                    error_log("Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => true,
+                        'data' => [
+                            'total_pages' => 0,
+                            'avg_quality_score' => null,
+                            'by_severity' => [
+                                'critical' => 0,
+                                'high' => 0,
+                                'medium' => 0,
+                                'low' => 0,
+                                'none' => 0
+                            ],
+                            'token_statistics' => [
+                                'total_prompt_tokens' => 0,
+                                'total_completion_tokens' => 0,
+                                'total_tokens' => 0,
+                                'avg_tokens_per_page' => 0,
+                                'total_cost_usd' => 0,
+                                'avg_cost_per_page_usd' => 0
+                            ]
+                        ]
+                    ], 200, ['Content-Type' => 'application/json; charset=utf-8']);
+                }
+            }
+        }
+
+        // Публичный доступ к отчетам анализа качества миграции по токену
+        if (preg_match('#^/review/wave/([^/]+)/migration/([^/]+)/analysis/reports$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                try {
+                    $token = $matches[1];
+                    $mbUuid = $matches[2];
+                    
+                    $reviewService = new WaveReviewService();
+                    $waveId = $reviewService->validateToken($token);
+                    
+                    if (!$waveId) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Недействительный или истекший токен доступа'
+                        ], 403, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Проверяем настройки доступа для проекта
+                    $projectAccess = $reviewService->getProjectAccess($token, $mbUuid);
+                    
+                    // Если есть индивидуальные настройки и проект заблокирован
+                    if ($projectAccess && isset($projectAccess['is_active']) && $projectAccess['is_active'] === false) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Доступ к этому проекту ограничен'
+                        ], 403, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Получаем детали миграции для получения brz_project_id
+                    $migrationService = new MigrationService();
+                    $migrationDetails = $migrationService->getMigrationDetailsByUuid($mbUuid);
+                    
+                    if (!$migrationDetails) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Миграция не найдена'
+                        ], 404, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Извлекаем brz_project_id
+                    $brzProjectId = null;
+                    if (isset($migrationDetails['mapping']['brz_project_id'])) {
+                        $brzProjectId = (int)$migrationDetails['mapping']['brz_project_id'];
+                    } elseif (isset($migrationDetails['brz_project_id'])) {
+                        $brzProjectId = (int)$migrationDetails['brz_project_id'];
+                    }
+                    
+                    if (!$brzProjectId) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Не удалось определить ID проекта Brizy'
+                        ], 404, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Получаем список отчетов анализа качества
+                    $qualityService = new QualityAnalysisService();
+                    $reports = $qualityService->getReportsByMigration($brzProjectId);
+                    
+                    // Убеждаемся, что $reports - это массив
+                    if (!is_array($reports)) {
+                        $reports = [];
+                    }
+                    
+                    return new JsonResponse([
+                        'success' => true,
+                        'data' => $reports,
+                        'count' => count($reports)
+                    ], 200, ['Content-Type' => 'application/json; charset=utf-8']);
+                } catch (\Throwable $e) {
+                    error_log("Error in analysis reports endpoint: " . $e->getMessage());
+                    error_log("Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Ошибка при получении отчетов анализа: ' . $e->getMessage()
+                    ], 500, ['Content-Type' => 'application/json; charset=utf-8']);
+                }
+            }
+        }
+
+        // Публичный доступ к деталям анализа конкретной страницы по токену
+        if (preg_match('#^/review/wave/([^/]+)/migration/([^/]+)/analysis/([^/]+)$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                try {
+                    $token = $matches[1];
+                    $mbUuid = $matches[2];
+                    $pageSlug = urldecode($matches[3]);
+                    
+                    $reviewService = new WaveReviewService();
+                    $waveId = $reviewService->validateToken($token);
+                    
+                    if (!$waveId) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Недействительный или истекший токен доступа'
+                        ], 403, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Проверяем настройки доступа для проекта
+                    $projectAccess = $reviewService->getProjectAccess($token, $mbUuid);
+                    
+                    // Если есть индивидуальные настройки и проект заблокирован
+                    if ($projectAccess && isset($projectAccess['is_active']) && $projectAccess['is_active'] === false) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Доступ к этому проекту ограничен'
+                        ], 403, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Получаем детали миграции для получения brz_project_id
+                    $migrationService = new MigrationService();
+                    $migrationDetails = $migrationService->getMigrationDetailsByUuid($mbUuid);
+                    
+                    if (!$migrationDetails) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Миграция не найдена'
+                        ], 404, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Извлекаем brz_project_id
+                    $brzProjectId = null;
+                    if (isset($migrationDetails['mapping']['brz_project_id'])) {
+                        $brzProjectId = (int)$migrationDetails['mapping']['brz_project_id'];
+                    } elseif (isset($migrationDetails['brz_project_id'])) {
+                        $brzProjectId = (int)$migrationDetails['brz_project_id'];
+                    }
+                    
+                    if (!$brzProjectId) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Не удалось определить ID проекта Brizy'
+                        ], 404, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    // Получаем детали анализа страницы
+                    $qualityService = new QualityAnalysisService();
+                    $report = $qualityService->getReportBySlug($brzProjectId, $pageSlug, false);
+                    
+                    if (!$report) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Анализ страницы не найден'
+                        ], 404, ['Content-Type' => 'application/json; charset=utf-8']);
+                    }
+                    
+                    return new JsonResponse([
+                        'success' => true,
+                        'data' => $report
+                    ], 200, ['Content-Type' => 'application/json; charset=utf-8']);
+                } catch (\Throwable $e) {
+                    error_log("Error in page analysis endpoint: " . $e->getMessage());
+                    error_log("Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Ошибка при получении деталей анализа: ' . $e->getMessage()
+                    ], 500, ['Content-Type' => 'application/json; charset=utf-8']);
+                }
+            }
+        }
+
+        // Публичный доступ к анализу качества миграции по токену (список страниц)
+        if (preg_match('#^/review/wave/([^/]+)/migration/([^/]+)/analysis$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                try {
+                    $token = $matches[1];
+                    $mbUuid = $matches[2];
+                    
+                    $reviewService = new WaveReviewService();
+                    $waveId = $reviewService->validateToken($token);
+                    
+                    if (!$waveId) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Недействительный или истекший токен доступа'
+                        ], 403);
+                    }
+                    
+                    // Проверяем настройки доступа для проекта
+                    $projectAccess = $reviewService->getProjectAccess($token, $mbUuid);
+                    
+                    // Если есть индивидуальные настройки и проект заблокирован
+                    if ($projectAccess && isset($projectAccess['is_active']) && $projectAccess['is_active'] === false) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Доступ к этому проекту ограничен'
+                        ], 403);
+                    }
+                    
+                    // Получаем детали миграции для получения brz_project_id
+                    $migrationService = new MigrationService();
+                    $migrationDetails = $migrationService->getMigrationDetailsByUuid($mbUuid);
+                    
+                    if (!$migrationDetails) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Миграция не найдена'
+                        ], 404);
+                    }
+                    
+                    // Извлекаем brz_project_id из mapping или из результата
+                    $brzProjectId = null;
+                    if (isset($migrationDetails['mapping']['brz_project_id'])) {
+                        $brzProjectId = (int)$migrationDetails['mapping']['brz_project_id'];
+                    } elseif (isset($migrationDetails['brz_project_id'])) {
+                        $brzProjectId = (int)$migrationDetails['brz_project_id'];
+                    }
+                    
+                    if (!$brzProjectId) {
+                        return new JsonResponse([
+                            'success' => false,
+                            'error' => 'Не удалось определить ID проекта Brizy'
+                        ], 404);
+                    }
+                    
+                    // Получаем список страниц с анализом качества
+                    $qualityService = new QualityAnalysisService();
+                    $pages = $qualityService->getPagesList($brzProjectId);
+                    
+                    // Убеждаемся, что $pages - это массив
+                    if (!is_array($pages)) {
+                        $pages = [];
+                    }
+                    
+                    return new JsonResponse([
+                        'success' => true,
+                        'data' => $pages,
+                        'count' => count($pages)
+                    ], 200, ['Content-Type' => 'application/json; charset=utf-8']);
+                } catch (\Throwable $e) {
+                    error_log("Error in analysis endpoint: " . $e->getMessage());
+                    error_log("Stack trace: " . $e->getTraceAsString());
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Ошибка при получении данных анализа: ' . $e->getMessage()
+                    ], 500, ['Content-Type' => 'application/json; charset=utf-8']);
+                }
+            }
+        }
+
+        // Публичный доступ к логам миграции по токену
+        if (preg_match('#^/review/wave/([^/]+)/migration/([^/]+)/logs$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $token = $matches[1];
+                $mbUuid = $matches[2];
+                
+                $reviewService = new WaveReviewService();
+                $waveId = $reviewService->validateToken($token);
+                
+                if (!$waveId) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Недействительный или истекший токен доступа'
+                    ], 403);
+                }
+                
+                // Проверяем настройки доступа для проекта
+                // Если токен валиден, доступ разрешен по умолчанию
+                // Блокируем только если явно установлено is_active = false
+                $projectAccess = $reviewService->getProjectAccess($token, $mbUuid);
+                
+                // Если есть индивидуальные настройки и проект заблокирован
+                if ($projectAccess && isset($projectAccess['is_active']) && $projectAccess['is_active'] === false) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Доступ к этому проекту ограничен'
+                    ], 403);
+                }
+                
+                // Проверяем, разрешена ли вкладка logs
+                // Если нет индивидуальных настроек, все вкладки доступны по умолчанию
+                $allowedTabs = $projectAccess && isset($projectAccess['allowed_tabs']) 
+                    ? $projectAccess['allowed_tabs'] 
+                    : ['overview', 'details', 'logs', 'screenshots', 'quality', 'analysis']; // Все вкладки по умолчанию
+                
+                if (!in_array('logs', $allowedTabs)) {
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'Доступ к логам не разрешен для этого проекта'
+                    ], 403);
+                }
+                
+                // Получаем логи миграции
+                $waveController = new WaveController();
+                return $waveController->getMigrationLogs($request, $waveId, $mbUuid);
+            }
+        }
+
+        // Авторизация (публичные endpoints)
+        if (preg_match('#^/auth/login$#', $apiPath)) {
+            if ($request->getMethod() === 'POST') {
+                $controller = new AuthController();
+                return $controller->login($request);
+            }
+        }
+
+        if (preg_match('#^/auth/logout$#', $apiPath)) {
+            if ($request->getMethod() === 'POST') {
+                $controller = new AuthController();
+                return $controller->logout($request);
+            }
+        }
+
+        if (preg_match('#^/auth/check$#', $apiPath)) {
+            if ($request->getMethod() === 'GET') {
+                $controller = new AuthController();
+                return $controller->check($request);
+            }
+        }
+
+        // Проверка авторизации для защищенных endpoints
+        $authMiddleware = new AuthMiddleware();
+        $authResponse = $authMiddleware->checkAuth($request);
+        if ($authResponse !== null) {
+            return $authResponse;
+        }
+
         // Миграции
         if (preg_match('#^/migrations$#', $apiPath)) {
             $controller = new MigrationController();
@@ -613,6 +1242,45 @@ return static function (array $context, Request $request): Response {
             }
         }
 
+        if (preg_match('#^/waves/([^/]+)/review-token$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'POST') {
+                $waveId = $matches[1];
+                $controller = new WaveController();
+                return $controller->createReviewToken($request, $waveId);
+            }
+        }
+
+        if (preg_match('#^/waves/([^/]+)/review-tokens/(\d+)/projects/([^/]+)$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'PUT') {
+                $waveId = $matches[1];
+                $tokenId = (int)$matches[2];
+                $mbUuid = $matches[3];
+                $controller = new WaveController();
+                return $controller->updateProjectAccess($request, $waveId, $tokenId, $mbUuid);
+            }
+        }
+
+        if (preg_match('#^/waves/([^/]+)/review-tokens/(\d+)$#', $apiPath, $matches)) {
+            $waveId = $matches[1];
+            $tokenId = (int)$matches[2];
+            $controller = new WaveController();
+            
+            if ($request->getMethod() === 'PUT') {
+                return $controller->updateReviewToken($request, $waveId, $tokenId);
+            }
+            if ($request->getMethod() === 'DELETE') {
+                return $controller->deleteReviewToken($request, $waveId, $tokenId);
+            }
+        }
+
+        if (preg_match('#^/waves/([^/]+)/review-tokens$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $waveId = $matches[1];
+                $controller = new WaveController();
+                return $controller->getReviewTokens($request, $waveId);
+            }
+        }
+
         // Тестовые миграции
         if (preg_match('#^/test-migrations$#', $apiPath)) {
             $controller = new TestMigrationController();
@@ -652,6 +1320,93 @@ return static function (array $context, Request $request): Response {
                 $id = (int)$matches[1];
                 $controller = new TestMigrationController();
                 return $controller->resetStatus($request, $id);
+            }
+        }
+
+        // Управление пользователями (требует разрешение users.manage)
+        if (preg_match('#^/users$#', $apiPath)) {
+            $permissionMiddleware = new PermissionMiddleware();
+            $permissionCheck = $permissionMiddleware->checkPermission($request, 'users', 'view');
+            if ($permissionCheck !== null) {
+                return $permissionCheck;
+            }
+
+            $controller = new UserController();
+            if ($request->getMethod() === 'GET') {
+                return $controller->list($request);
+            }
+            if ($request->getMethod() === 'POST') {
+                $permissionCheck = $permissionMiddleware->checkPermission($request, 'users', 'create');
+                if ($permissionCheck !== null) {
+                    return $permissionCheck;
+                }
+                return $controller->create($request);
+            }
+        }
+
+        if (preg_match('#^/users/(\d+)$#', $apiPath, $matches)) {
+            $permissionMiddleware = new PermissionMiddleware();
+            $permissionCheck = $permissionMiddleware->checkPermission($request, 'users', 'view');
+            if ($permissionCheck !== null) {
+                return $permissionCheck;
+            }
+
+            $id = (int)$matches[1];
+            $controller = new UserController();
+            
+            if ($request->getMethod() === 'GET') {
+                return $controller->getDetails($request, $id);
+            }
+            if ($request->getMethod() === 'PUT') {
+                $permissionCheck = $permissionMiddleware->checkPermission($request, 'users', 'edit');
+                if ($permissionCheck !== null) {
+                    return $permissionCheck;
+                }
+                return $controller->update($request, $id);
+            }
+            if ($request->getMethod() === 'DELETE') {
+                $permissionCheck = $permissionMiddleware->checkPermission($request, 'users', 'delete');
+                if ($permissionCheck !== null) {
+                    return $permissionCheck;
+                }
+                return $controller->delete($request, $id);
+            }
+        }
+
+        if (preg_match('#^/users/roles$#', $apiPath)) {
+            if ($request->getMethod() === 'GET') {
+                $permissionMiddleware = new PermissionMiddleware();
+                $permissionCheck = $permissionMiddleware->checkPermission($request, 'users', 'view');
+                if ($permissionCheck !== null) {
+                    return $permissionCheck;
+                }
+                $controller = new UserController();
+                return $controller->getRoles($request);
+            }
+        }
+
+        if (preg_match('#^/users/permissions$#', $apiPath)) {
+            if ($request->getMethod() === 'GET') {
+                $permissionMiddleware = new PermissionMiddleware();
+                $permissionCheck = $permissionMiddleware->checkPermission($request, 'users', 'view');
+                if ($permissionCheck !== null) {
+                    return $permissionCheck;
+                }
+                $controller = new UserController();
+                return $controller->getPermissions($request);
+            }
+        }
+
+        if (preg_match('#^/users/(\d+)/permissions$#', $apiPath, $matches)) {
+            if ($request->getMethod() === 'GET') {
+                $permissionMiddleware = new PermissionMiddleware();
+                $permissionCheck = $permissionMiddleware->checkPermission($request, 'users', 'view');
+                if ($permissionCheck !== null) {
+                    return $permissionCheck;
+                }
+                $id = (int)$matches[1];
+                $controller = new UserController();
+                return $controller->getUserPermissions($request, $id);
             }
         }
 
