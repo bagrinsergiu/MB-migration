@@ -27,6 +27,7 @@ use MBMigration\Builder\Utils\PathSlugExtractor;
 use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
+use MBMigration\Layer\Database\PageRepository;
 use MBMigration\Analysis\PageQualityAnalyzer;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -82,17 +83,17 @@ class PageController
      * @var string|null
      */
     private $designName;
-    
+
     /**
      * @var string Имя элемента для фильтрации
      */
     private string $mb_element_name = '';
-    
+
     /**
      * @var bool Пропустить загрузку медиа
      */
     private bool $skip_media_upload = false;
-    
+
     /**
      * @var bool Пропустить использование кэша
      */
@@ -147,17 +148,17 @@ class PageController
         {
             // Extract detailed differences for better debugging
             $differences = $this->analyzeFontDifferences($previousFonts, $fontsFromProject);
-            
+
             // Log different types of changes with appropriate severity levels
             $hasChanges = false;
-            
+
             // Added fonts - INFO level (expected behavior during migration)
             if (!empty($differences['added_families'])) {
                 $addedCount = count($differences['added_families']);
                 $addedFamilies = array_map(function($item) {
                     return $item['family'];
                 }, $differences['added_families']);
-                
+
                 Logger::instance()->info('Fonts added during migration (expected behavior)', [
                     'page_slug' => $slug,
                     'page_id' => $pageId,
@@ -167,14 +168,14 @@ class PageController
                 ]);
                 $hasChanges = true;
             }
-            
+
             // Deleted fonts - WARNING level (may indicate a problem)
             if (!empty($differences['deleted_families'])) {
                 $deletedCount = count($differences['deleted_families']);
                 $deletedFamilies = array_map(function($item) {
                     return $item['family'];
                 }, $differences['deleted_families']);
-                
+
                 Logger::instance()->warning('Fonts deleted during migration (may indicate a problem)', [
                     'page_slug' => $slug,
                     'page_id' => $pageId,
@@ -186,14 +187,14 @@ class PageController
                 ]);
                 $hasChanges = true;
             }
-            
+
             // Changed identifiers - ERROR level (critical problem)
             if (!empty($differences['changed_identifiers'])) {
                 $changedCount = count($differences['changed_identifiers']);
                 $changedFamilies = array_map(function($item) {
                     return $item['family'];
                 }, $differences['changed_identifiers']);
-                
+
                 Logger::instance()->error('Font identifiers changed during migration (critical issue)', [
                     'page_slug' => $slug,
                     'page_id' => $pageId,
@@ -207,7 +208,7 @@ class PageController
                 ]);
                 $hasChanges = true;
             }
-            
+
             // Fallback: if no specific changes detected but comparison failed, log as warning
             if (!$hasChanges) {
                 Logger::instance()->warning('Font comparison failed but no specific differences detected', [
@@ -320,14 +321,14 @@ class PageController
             $this->pageDTO->setPageStyleDetails($_WorkClassTemplate->beforeBuildPage());
 
             $_WorkClassTemplate->setThemeContext($themeContext);
-            
+
             // Устанавливаем параметры миграции для быстрого тестирования
             $_WorkClassTemplate->setMigrationOptions(
                 $this->mb_element_name,
                 $this->skip_media_upload,
                 $this->skip_cache
             );
-            
+
             $brizySections = $_WorkClassTemplate->transformBlocks($preparedSectionOfThePage);
 
             // Если тестируем один элемент, сохраняем результат transformBlocks для тестовой миграции
@@ -336,7 +337,7 @@ class PageController
                     // Преобразуем BrizyPage в массив для JSON сериализации
                     $brizySectionsArray = $brizySections->jsonSerialize();
                     $sectionJson = json_encode($brizySectionsArray, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                    
+
                     // Сохраняем в кэше для последующего сохранения в БД
                     $cacheKey = 'test_migration_transform_blocks_result_' . $this->mb_element_name;
                     $this->cache->set($cacheKey, [
@@ -347,7 +348,7 @@ class PageController
                         'slug' => $slug,
                         'page_id' => $pageId
                     ]);
-                    
+
                     Logger::instance()->info("Saved transformBlocks result for test migration", [
                         'element_name' => $this->mb_element_name,
                         'slug' => $slug,
@@ -530,7 +531,7 @@ class PageController
                 } elseif (isset($existingBrizyPages[$page['slug']])) {
                     $pageId = $existingBrizyPages[$page['slug']];
                 }
-                
+
                 if ($pageId) {
                     // Страница существует - получаем правильную структуру через getCollectionItem
                     $collectionItem = $this->getCollectionItem($page['slug']);
@@ -555,7 +556,7 @@ class PageController
                 }
             } else {
                 // Обычная миграция - пропускаем существующие страницы
-                if (isset($existingBrizyPages[$page['slug']]) || 
+                if (isset($existingBrizyPages[$page['slug']]) ||
                     (isset($existingBrizyPages['listPages']) && isset($existingBrizyPages['listPages'][$page['slug']]))) {
                     continue;
                 }
@@ -572,7 +573,7 @@ class PageController
                         'element' => $this->mb_element_name
                     ]);
                 }
-                
+
                 $isHome = ($page['slug'] === $this->cache->get('homePageSlug'));
                 try {
                     $newPage = $this->creteNewPage(
@@ -698,6 +699,33 @@ class PageController
 
         $mainCollectionItem = $this->getCollectionItem($slug);
         if ($mainCollectionItem) {
+            // Сохраняем информацию о странице в базу данных
+            try {
+                // Извлекаем числовой ID из строки вида "/collection_items/8841650"
+                $collectionItemsId = $this->extractCollectionItemId($collectionItem['id']);
+
+                if ($collectionItemsId !== null) {
+                    $this->savePageToDatabase(
+                        $slug,
+                        $collectionItemsId,
+                        $title,
+                        $isHome,
+                        $protectedPage
+                    );
+                } else {
+                    Logger::instance()->warning('Cannot save page: invalid collection_items_id', [
+                        'slug' => $slug,
+                        'collection_items_id' => $collectionItem['id']
+                    ]);
+                }
+            } catch (\Exception $e) {
+                // Логируем ошибку, но не прерываем процесс миграции
+                Logger::instance()->warning('Failed to save page to database: ' . $e->getMessage(), [
+                    'slug' => $slug,
+                    'collection_items_id' => $collectionItem['id']
+                ]);
+            }
+
             if ($setActivePage) {
                 $this->cache->set('currentPageOnWork', $mainCollectionItem);
 
@@ -940,7 +968,7 @@ class PageController
 
     /**
      * Запустить анализ качества миграции страницы
-     * 
+     *
      * @param string $pageSlug Slug страницы
      * @return void
      */
@@ -955,7 +983,7 @@ class PageController
                 'env_quality_analysis_enabled' => $_ENV['QUALITY_ANALYSIS_ENABLED'] ?? 'not_set',
                 'cache_keys_sample' => array_slice(array_keys($cacheData), 0, 10)
             ]);
-            
+
             // Проверяем, включен ли анализ через параметр запроса или переменную окружения
             if (!$this->qualityAnalysisEnabled) {
                 // Если параметр не передан или false, проверяем переменную окружения
@@ -977,7 +1005,7 @@ class PageController
             $sourceUrl = $this->cache->get('CurrentPageURL');
             $brizyProjectDomain = $this->cache->get('brizyProjectDomain');
             $mbProjectUuid = $this->cache->get('mb_project_uuid') ?? $this->cache->get('projectId_MB');
-            
+
             $cacheData = $this->cache->getCache();
             Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 2: Retrieved data from cache =====", [
                 'source_url' => $sourceUrl,
@@ -1004,14 +1032,14 @@ class PageController
 
             // BREAKPOINT 3: Формирование URL мигрированной страницы
             $migratedUrl = rtrim($brizyProjectDomain, '/') . '/' . ltrim($pageSlug, '/');
-            
+
             // Получаем designName из кэша или используем сохраненное значение
             $designName = $this->designName;
             if (empty($designName)) {
                 $settings = $this->cache->get('settings');
                 $designName = $settings['design'] ?? 'default';
             }
-            
+
             Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 3: URLs prepared, ready to start analysis =====", [
                 'page_slug' => $pageSlug,
                 'source_url' => $sourceUrl,
@@ -1032,7 +1060,7 @@ class PageController
                 $this->projectID_Brizy,
                 $designName
             );
-            
+
             // BREAKPOINT 4: Результат анализа
             Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 4: Analysis completed =====", [
                 'page_slug' => $pageSlug,
@@ -1055,7 +1083,7 @@ class PageController
 
     /**
      * Analyze differences between saved and project fonts
-     * 
+     *
      * @param array $savedFonts
      * @param array $projectFonts
      * @return array
@@ -1112,7 +1140,7 @@ class PageController
 
     /**
      * Extract font families from a section's data array
-     * 
+     *
      * @param array $data
      * @return array
      */
@@ -1131,8 +1159,88 @@ class PageController
     }
 
     /**
+     * Извлечь числовой ID из строки вида "/collection_items/8841650"
+     *
+     * @param string|int $collectionItemId ID collection item (может быть строкой "/collection_items/8841650" или числом)
+     * @return int|null Числовой ID или null, если не удалось извлечь
+     */
+    private function extractCollectionItemId($collectionItemId): ?int
+    {
+        if (is_int($collectionItemId)) {
+            return $collectionItemId;
+        }
+
+        if (is_string($collectionItemId)) {
+            // Если это строка вида "/collection_items/8841650", извлекаем числовую часть
+            if (preg_match('/\/collection_items\/(\d+)/', $collectionItemId, $matches)) {
+                return (int)$matches[1];
+            }
+
+            // Если это просто число в виде строки
+            if (is_numeric($collectionItemId)) {
+                return (int)$collectionItemId;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Сохранить информацию о странице в базу данных
+     *
+     * @param string $slug Slug страницы
+     * @param int $collectionItemsId ID collection item страницы
+     * @param string $title Название страницы
+     * @param bool $isHomepage Флаг главной страницы
+     * @param bool $isProtected Флаг защищенной страницы
+     * @return void
+     * @throws Exception
+     */
+    private function savePageToDatabase(
+        string $slug,
+        int $collectionItemsId,
+        string $title,
+        bool $isHomepage = false,
+        bool $isProtected = false
+    ): void {
+        try {
+            $brzProjectId = $this->projectID_Brizy;
+            $mbProjectUuid = $this->cache->get('uuid', 'settings');
+            $migrationId = null; // Будет найден автоматически в PageRepository
+
+            if (!$brzProjectId || !$mbProjectUuid) {
+                Logger::instance()->warning('Cannot save page: missing project data', [
+                    'slug' => $slug,
+                    'brz_project_id' => $brzProjectId,
+                    'mb_project_uuid' => $mbProjectUuid
+                ]);
+                return;
+            }
+
+            $pageRepository = new PageRepository();
+            $pageRepository->savePage(
+                $migrationId,
+                $brzProjectId,
+                $mbProjectUuid,
+                $slug,
+                $collectionItemsId,
+                $title,
+                $isHomepage,
+                $isProtected
+            );
+        } catch (\Exception $e) {
+            // Логируем ошибку, но не прерываем процесс миграции
+            Logger::instance()->error('Error saving page to database: ' . $e->getMessage(), [
+                'slug' => $slug,
+                'collection_items_id' => $collectionItemsId,
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
+
+    /**
      * Get summary of fonts structure
-     * 
+     *
      * @param array $fonts
      * @return array
      */

@@ -487,7 +487,7 @@ class Head extends HeadElement
             'families' => [],
             'defaultFamily' => '',
         ]);
-        
+
         if (isset($menuSubItemDropdownStyles['data']['font-size'])) {
             // Извлекаем числовое значение размера шрифта (убираем 'px')
             $fontSize = (int) str_replace('px', '', $menuSubItemDropdownStyles['data']['font-size']);
@@ -519,7 +519,7 @@ class Head extends HeadElement
             "selector" => "#mobile-navigation > nav > ul > li:not(.selected) > a",
             "pseudoEl" => ""
         ];
-        
+
         // Используем десктопный активный селектор вместо мобильного
         // Для мобильного подменю нужно использовать активный цвет десктопного меню
         $desktopActiveSelector = $this->getThemeMenuItemActiveSelector();
@@ -593,7 +593,7 @@ class Head extends HeadElement
     protected function getHoverSubMenuStyle(): array
     {
         $hoverMenuSubItemStyles = ['data' => []];
-        
+
         // Открываем мобильное меню
         if ($this->browserPage->triggerEvent('click', '#mobile-nav-button-container')) {
             $selector1 = $this->getThemeSubMenuNotSelectedItemSelector()['selector'];
@@ -649,7 +649,7 @@ class Head extends HeadElement
         // чтобы перезаписать любое значение, которое могло быть установлено из мобильного меню
         $desktopActiveSelector = $this->getThemeMenuItemActiveSelector();
         $desktopActiveStyles = $this->scrapeStyle($desktopActiveSelector['selector'], ['color']);
-        
+
         if (isset($desktopActiveStyles['color'])) {
             if (!isset($hoverMenuSubItemStyles['data'])) {
                 $hoverMenuSubItemStyles['data'] = [];
@@ -661,7 +661,7 @@ class Head extends HeadElement
             $hoverMenuSubItemStyles['data']['hoverSubMenuColorHex'] = $activeColorHex;
             $hoverMenuSubItemStyles['data']['activeSubMenuColorOpacity'] = 1;
             $hoverMenuSubItemStyles['data']['hoverSubMenuColorOpacity'] = 1;
-            
+
             // Устанавливаем отдельные ключи для мобильного и планшетного подменю
             // Используем тот же цвет из десктопного меню
             $hoverMenuSubItemStyles['data']['mobileActiveSubMenuColorHex'] = $activeColorHex;
@@ -680,7 +680,7 @@ class Head extends HeadElement
     /**
      * Корректировка стилей меню для темы Aurora
      * Исходный проект: c3forchrist.org
-     * 
+     *
      * Метод вызывается после извлечения стилей из исходного сайта.
      * Здесь можно добавить логику для корректировки стилей, если необходимо,
      * но НЕ хардкодить цвета - все цвета должны извлекаться из исходного сайта.

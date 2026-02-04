@@ -137,7 +137,7 @@ export const api = {
       // Если нет ответа, возвращаем ошибку подключения
       return {
         success: false,
-        authenticated: false,
+        data: { authenticated: false },
         error: error.message || 'Не удалось подключиться к серверу'
       };
     }

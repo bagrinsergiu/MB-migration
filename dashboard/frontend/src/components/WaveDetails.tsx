@@ -549,7 +549,7 @@ export default function WaveDetails() {
           <div className="card-body">
             <ReviewTokensManager 
               waveId={id!} 
-              projects={details.migrations}
+              projects={details.migrations.map(m => ({ mb_uuid: m.mb_project_uuid, ...m }))}
             />
           </div>
         </div>
