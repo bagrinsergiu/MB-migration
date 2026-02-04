@@ -295,6 +295,21 @@ export default function QualityAnalysis() {
                 </div>
               </div>
               <div className="page-card-body">
+                {(report as any).collection_items_id && (report as any).brz_project_id && (
+                  <div style={{ marginBottom: '0.75rem' }}>
+                    <a
+                      href={`https://admin.brizy.io/projects/${(report as any).brz_project_id}/editor/page/${(report as any).collection_items_id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-primary"
+                      style={{ textDecoration: 'none', display: 'inline-block' }}
+                      onClick={(e) => e.stopPropagation()}
+                      title="Открыть страницу в редакторе Brizy"
+                    >
+                      Редактировать
+                    </a>
+                  </div>
+                )}
                 {report.token_usage && (
                   <div className="page-tokens-info" style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap', fontSize: '0.875rem' }}>
                     <span className="tokens-value" style={{ color: '#6c757d' }}>
@@ -470,7 +485,22 @@ export function PageAnalysisDetails({ migrationId, pageSlug, onClose }: PageAnal
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Анализ страницы: {report.page_slug}</h2>
-          <button onClick={onClose} className="btn-close">×</button>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {(report as any).collection_items_id && (report as any).brz_project_id && (
+              <a
+                href={`https://admin.brizy.io/projects/${(report as any).brz_project_id}/editor/page/${(report as any).collection_items_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-sm btn-primary"
+                style={{ textDecoration: 'none' }}
+                onClick={(e) => e.stopPropagation()}
+                title="Открыть страницу в редакторе Brizy"
+              >
+                Редактировать
+              </a>
+            )}
+            <button onClick={onClose} className="btn-close">×</button>
+          </div>
         </div>
 
         <div className="modal-tabs">
@@ -777,6 +807,24 @@ export function PageAnalysisDetails({ migrationId, pageSlug, onClose }: PageAnal
               </p>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {(report as any).collection_items_id && (report as any).brz_project_id && (
+                  <div className="action-card">
+                    <h4>Редактирование страницы</h4>
+                    <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem' }}>
+                      Открыть страницу в редакторе Brizy для ручного редактирования.
+                    </p>
+                    <a
+                      href={`https://admin.brizy.io/projects/${(report as any).brz_project_id}/editor/page/${(report as any).collection_items_id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary"
+                      style={{ width: '100%', textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}
+                    >
+                      Редактировать в Brizy
+                    </a>
+                  </div>
+                )}
+                
                 <div className="action-card">
                   <h4>Пересборка страницы</h4>
                   <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem' }}>

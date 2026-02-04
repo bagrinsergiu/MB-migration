@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { UserProvider } from './contexts/UserContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import Layout from './components/Layout';
 import Login from './components/Login';
 import WaveReview from './components/WaveReview';
@@ -24,6 +25,7 @@ function App() {
   return (
     <ThemeProvider>
       <UserProvider>
+        <LanguageProvider>
         <BrowserRouter 
         basename="/dashboard"
         future={{
@@ -59,6 +61,7 @@ function App() {
           } />
         </Routes>
       </BrowserRouter>
+      </LanguageProvider>
       </UserProvider>
     </ThemeProvider>
   );

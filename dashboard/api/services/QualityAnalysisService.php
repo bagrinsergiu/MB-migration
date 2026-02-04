@@ -33,7 +33,48 @@ class QualityAnalysisService
      */
     public function getReportsByMigration(int $migrationId): array
     {
-        return $this->qualityReport->getReportsByMigration($migrationId);
+        $reports = $this->qualityReport->getReportsByMigration($migrationId);
+        
+        // Обогащаем отчеты данными из migration_pages
+        try {
+            $dbService = new \Dashboard\Services\DatabaseService();
+            $db = $dbService->getWriteConnection();
+            
+            // Получаем страницы из migration_pages
+            $migrationPages = $db->getAllRows(
+                'SELECT slug, collection_items_id, brz_project_id 
+                 FROM migration_pages 
+                 WHERE brz_project_id = ?',
+                [$migrationId]
+            );
+            
+            // Создаем карту slug -> page data
+            $pagesMap = [];
+            foreach ($migrationPages as $page) {
+                $pagesMap[$page['slug']] = [
+                    'collection_items_id' => isset($page['collection_items_id']) ? (int)$page['collection_items_id'] : null,
+                    'brz_project_id' => isset($page['brz_project_id']) ? (int)$page['brz_project_id'] : $migrationId,
+                ];
+            }
+            
+            // Обогащаем отчеты данными из migration_pages
+            foreach ($reports as &$report) {
+                $pageSlug = $report['page_slug'] ?? '';
+                if (!empty($pageSlug) && isset($pagesMap[$pageSlug])) {
+                    $report['collection_items_id'] = $pagesMap[$pageSlug]['collection_items_id'];
+                    $report['brz_project_id'] = $pagesMap[$pageSlug]['brz_project_id'];
+                } else {
+                    // Если страница не найдена в migration_pages, используем migrationId как brz_project_id
+                    $report['brz_project_id'] = $migrationId;
+                }
+            }
+            unset($report); // Сбрасываем ссылку
+        } catch (Exception $e) {
+            // Логируем ошибку, но не прерываем выполнение
+            error_log("Error enriching reports with migration_pages data: " . $e->getMessage());
+        }
+        
+        return $reports;
     }
 
     /**
@@ -46,7 +87,41 @@ class QualityAnalysisService
      */
     public function getReportBySlug(int $migrationId, string $pageSlug, bool $includeArchived = false): ?array
     {
-        return $this->qualityReport->getReportBySlug($migrationId, $pageSlug, $includeArchived);
+        $report = $this->qualityReport->getReportBySlug($migrationId, $pageSlug, $includeArchived);
+        
+        if (!$report) {
+            return null;
+        }
+        
+        // Обогащаем отчет данными из migration_pages
+        try {
+            $dbService = new \Dashboard\Services\DatabaseService();
+            $db = $dbService->getWriteConnection();
+            
+            // Получаем данные страницы из migration_pages
+            $migrationPage = $db->find(
+                'SELECT collection_items_id, brz_project_id 
+                 FROM migration_pages 
+                 WHERE brz_project_id = ? AND slug = ? 
+                 LIMIT 1',
+                [$migrationId, $pageSlug]
+            );
+            
+            if ($migrationPage) {
+                $report['collection_items_id'] = isset($migrationPage['collection_items_id']) ? (int)$migrationPage['collection_items_id'] : null;
+                $report['brz_project_id'] = isset($migrationPage['brz_project_id']) ? (int)$migrationPage['brz_project_id'] : $migrationId;
+            } else {
+                // Если страница не найдена в migration_pages, используем migrationId как brz_project_id
+                $report['brz_project_id'] = $migrationId;
+            }
+        } catch (Exception $e) {
+            // Логируем ошибку, но не прерываем выполнение
+            error_log("Error enriching report with migration_pages data: " . $e->getMessage());
+            // Устанавливаем migrationId как brz_project_id по умолчанию
+            $report['brz_project_id'] = $migrationId;
+        }
+        
+        return $report;
     }
 
     /**
@@ -74,17 +149,54 @@ class QualityAnalysisService
     /**
      * Получить список всех страниц миграции
      * 
-     * @param int $migrationId ID миграции
+     * @param int $migrationId ID миграции (brz_project_id)
      * @return array Массив страниц с основной информацией
      */
     public function getPagesList(int $migrationId): array
     {
         try {
+            $dbService = new \Dashboard\Services\DatabaseService();
+            $db = $dbService->getWriteConnection();
+            
+            // Получаем страницы из migration_pages
+            $migrationPages = $db->getAllRows(
+                'SELECT slug, collection_items_id, title, is_homepage, is_protected, created_at, updated_at 
+                 FROM migration_pages 
+                 WHERE brz_project_id = ? 
+                 ORDER BY created_at ASC',
+                [$migrationId]
+            );
+            
             // Получаем все отчеты для миграции
             $reports = $this->qualityReport->getReportsByMigration($migrationId);
             
             // Создаем массив уникальных страниц с основной информацией
             $pagesMap = [];
+            
+            // Сначала добавляем страницы из migration_pages
+            foreach ($migrationPages as $migrationPage) {
+                $pageSlug = $migrationPage['slug'] ?? '';
+                if (empty($pageSlug)) {
+                    continue;
+                }
+                
+                $pagesMap[$pageSlug] = [
+                    'page_slug' => $pageSlug,
+                    'collection_items_id' => isset($migrationPage['collection_items_id']) ? (int)$migrationPage['collection_items_id'] : null,
+                    'brz_project_id' => $migrationId,
+                    'title' => $migrationPage['title'] ?? null,
+                    'is_homepage' => isset($migrationPage['is_homepage']) ? (bool)$migrationPage['is_homepage'] : false,
+                    'is_protected' => isset($migrationPage['is_protected']) ? (bool)$migrationPage['is_protected'] : false,
+                    'quality_score' => null,
+                    'severity_level' => 'none',
+                    'analysis_status' => 'pending',
+                    'created_at' => $migrationPage['created_at'] ?? null,
+                    'updated_at' => $migrationPage['updated_at'] ?? null,
+                    'has_analysis' => false
+                ];
+            }
+            
+            // Обновляем информацию из отчетов анализа качества
             foreach ($reports as $report) {
                 $pageSlug = $report['page_slug'] ?? '';
                 if (empty($pageSlug)) {
@@ -92,11 +204,11 @@ class QualityAnalysisService
                 }
                 
                 // Если страница уже есть в карте, обновляем информацию более свежим отчетом
-                if (!isset($pagesMap[$pageSlug]) || 
-                    (isset($report['created_at']) && isset($pagesMap[$pageSlug]['created_at']) &&
-                     strtotime($report['created_at']) > strtotime($pagesMap[$pageSlug]['created_at']))) {
+                if (!isset($pagesMap[$pageSlug])) {
                     $pagesMap[$pageSlug] = [
                         'page_slug' => $pageSlug,
+                        'collection_items_id' => null,
+                        'brz_project_id' => $migrationId,
                         'source_url' => $report['source_url'] ?? null,
                         'migrated_url' => $report['migrated_url'] ?? null,
                         'quality_score' => $report['quality_score'] ?? null,
@@ -106,6 +218,17 @@ class QualityAnalysisService
                         'updated_at' => $report['updated_at'] ?? null,
                         'has_analysis' => true
                     ];
+                } else {
+                    // Обновляем информацию из отчета, если он новее
+                    if (isset($report['created_at']) && isset($pagesMap[$pageSlug]['created_at']) &&
+                        strtotime($report['created_at']) > strtotime($pagesMap[$pageSlug]['created_at'])) {
+                        $pagesMap[$pageSlug]['quality_score'] = $report['quality_score'] ?? $pagesMap[$pageSlug]['quality_score'];
+                        $pagesMap[$pageSlug]['severity_level'] = $report['severity_level'] ?? $pagesMap[$pageSlug]['severity_level'];
+                        $pagesMap[$pageSlug]['analysis_status'] = $report['analysis_status'] ?? $pagesMap[$pageSlug]['analysis_status'];
+                        $pagesMap[$pageSlug]['source_url'] = $report['source_url'] ?? $pagesMap[$pageSlug]['source_url'] ?? null;
+                        $pagesMap[$pageSlug]['migrated_url'] = $report['migrated_url'] ?? $pagesMap[$pageSlug]['migrated_url'] ?? null;
+                    }
+                    $pagesMap[$pageSlug]['has_analysis'] = true;
                 }
             }
             

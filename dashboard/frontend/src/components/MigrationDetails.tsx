@@ -1206,6 +1206,18 @@ export default function MigrationDetails() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {page.collection_items_id && page.brz_project_id && (
+                            <a
+                              href={`https://admin.brizy.io/projects/${page.brz_project_id}/editor/page/${page.collection_items_id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-sm btn-primary"
+                              style={{ textDecoration: 'none' }}
+                              title="Открыть страницу в редакторе Brizy"
+                            >
+                              Редактировать
+                            </a>
+                          )}
                           <button
                             onClick={async () => {
                               if (!confirm(`Пересобрать страницу "${page.page_slug}" без анализа?`)) {
@@ -1917,6 +1929,21 @@ function QualityAnalysisArchive({ migrationId }: { migrationId: number }) {
                 <span className="archived-badge">Архив</span>
               </div>
               <div className="page-card-body">
+                {report.collection_items_id && report.brz_project_id && (
+                  <div style={{ marginBottom: '0.75rem' }}>
+                    <a
+                      href={`https://admin.brizy.io/projects/${report.brz_project_id}/editor/page/${report.collection_items_id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-primary"
+                      style={{ textDecoration: 'none', display: 'inline-block' }}
+                      onClick={(e) => e.stopPropagation()}
+                      title="Открыть страницу в редакторе Brizy"
+                    >
+                      Редактировать
+                    </a>
+                  </div>
+                )}
                 {report.quality_score !== null && report.quality_score !== undefined && (
                   <div className="quality-score">
                     <span className="score-label">Рейтинг:</span>
