@@ -286,6 +286,35 @@ class ApplicationBootstrapper
         }
 
         try {
+            // Сохраняем параметры веб-хука если они переданы
+            $webhookUrl = $this->request->get('webhook_url');
+            $webhookMbProjectUuid = $this->request->get('webhook_mb_project_uuid');
+            $webhookBrzProjectId = $this->request->get('webhook_brz_project_id');
+            
+            if (!empty($webhookUrl) && !empty($webhookMbProjectUuid) && !empty($webhookBrzProjectId)) {
+                try {
+                    $statusService = new \MBMigration\Core\MigrationStatusService();
+                    $statusService->saveWebhookParams(
+                        $mb_project_uuid,
+                        (int)$brz_project_id,
+                        $webhookUrl,
+                        $webhookMbProjectUuid,
+                        (int)$webhookBrzProjectId
+                    );
+                    Logger::instance()->info('Webhook parameters saved', [
+                        'mb_project_uuid' => $mb_project_uuid,
+                        'brz_project_id' => $brz_project_id,
+                        'webhook_url' => $webhookUrl
+                    ]);
+                } catch (Exception $e) {
+                    Logger::instance()->warning('Failed to save webhook parameters', [
+                        'error' => $e->getMessage(),
+                        'mb_project_uuid' => $mb_project_uuid,
+                        'brz_project_id' => $brz_project_id
+                    ]);
+                }
+            }
+
             // Сохраняем PID процесса в lock-файл в формате JSON
             $pid = getmypid();
             $lockData = [
@@ -297,6 +326,14 @@ class ApplicationBootstrapper
                 'current_stage' => 'Инициализация миграции',
                 'stage_updated_at' => time()
             ];
+            
+            // Добавляем параметры веб-хука в lock-файл если они есть
+            if (!empty($webhookUrl) && !empty($webhookMbProjectUuid) && !empty($webhookBrzProjectId)) {
+                $lockData['webhook_url'] = $webhookUrl;
+                $lockData['webhook_mb_project_uuid'] = $webhookMbProjectUuid;
+                $lockData['webhook_brz_project_id'] = (int)$webhookBrzProjectId;
+            }
+            
             file_put_contents($lockFile, json_encode($lockData, JSON_PRETTY_PRINT));
             Logger::instance()->info('Creating lock file with PID', ['lock_file' => $lockFile, 'pid' => $pid]);
 
