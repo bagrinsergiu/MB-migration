@@ -2,17 +2,17 @@ import { Families, Family } from "../types/type";
 import { Literal, MValue } from "utils";
 
 /**
- * Улучшенная версия getFontFamily с более точным сопоставлением
- * 
- * Проблема оригинальной версии:
- * - "Oswald, 'Oswald Light', sans-serif" -> нормализуется в "oswald_oswald_light_sans_serif"
- * - Если не находит, берет только первую часть "oswald"
- * - Может найти неправильный шрифт (например, oswald_regular вместо oswald_light)
- * 
- * Улучшение:
- * - Сначала ищет полное совпадение
- * - Потом ищет по всем частям font-family (oswald, oswald_light)
- * - Только в конце использует первую часть как fallback
+ * Improved getFontFamily with more accurate matching.
+ *
+ * Issue with the original version:
+ * - "Oswald, 'Oswald Light', sans-serif" normalizes to "oswald_oswald_light_sans_serif"
+ * - If not found, it only uses the first part "oswald"
+ * - May resolve to the wrong font (e.g. oswald_regular instead of oswald_light)
+ *
+ * Improvement:
+ * - First tries an exact match
+ * - Then searches by each part of font-family (oswald, oswald_light)
+ * - Uses the first part as fallback only at the end
  */
 export const getFontFamily = (
   styles: Record<string, Literal>,
@@ -20,35 +20,45 @@ export const getFontFamily = (
 ): MValue<Family> => {
   const value = `${styles["font-family"]}`;
 
-  // Полная нормализация (как в оригинале)
+  // Full normalization (same as original)
   const fontFamily = value
     .replace(/['"\,]/g, "") // eslint-disable-line
     .replace(/\s/g, "_")
     .toLocaleLowerCase();
 
-  // 1. Сначала пытаемся найти полное совпадение
+  // 1. First try to find an exact match
   if (families[fontFamily]) {
     return families[fontFamily];
   }
 
-  // 2. Извлекаем все части font-family (без generic families)
-  const genericFamilies = ['sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
-  const parts = value.split(',').map(part => {
-    // Удаляем кавычки и пробелы, нормализуем
-    let normalized = part.trim()
-      .replace(/['"]/g, '')
-      .replace(/\s/g, '_')
-      .toLocaleLowerCase();
-    return normalized;
-  }).filter(part => {
-    // Фильтруем generic families
-    return part && !genericFamilies.includes(part);
-  });
+  // 2. Extract all parts of font-family (excluding generic families)
+  const genericFamilies = [
+    "sans-serif",
+    "serif",
+    "monospace",
+    "cursive",
+    "fantasy"
+  ];
+  const parts = value
+    .split(",")
+    .map((part) => {
+      // Strip quotes and spaces, normalize
+      const normalized = part
+        .trim()
+        .replace(/['"]/g, "")
+        .replace(/\s/g, "_")
+        .toLocaleLowerCase();
+      return normalized;
+    })
+    .filter((part) => {
+      // Filter out generic families
+      return part && !genericFamilies.includes(part);
+    });
 
-  // 3. Ищем по каждой части (начиная с более специфичных)
-  // Например, для "Oswald, 'Oswald Light', sans-serif":
-  // - Сначала ищем "oswald_light" (более специфичный)
-  // - Потом "oswald" (менее специфичный)
+  // 3. Search by each part (from most to least specific)
+  // E.g. for "Oswald, 'Oswald Light', sans-serif":
+  // - First try "oswald_light" (more specific)
+  // - Then "oswald" (less specific)
   for (let i = parts.length - 1; i >= 0; i--) {
     const partKey = parts[i];
     if (families[partKey]) {
@@ -56,7 +66,7 @@ export const getFontFamily = (
     }
   }
 
-  // 4. Fallback: используем первую часть (как в оригинале)
+  // 4. Fallback: use the first part (same as original)
   const [firstFontFamily] = fontFamily.split("_");
   return families[firstFontFamily];
 };
