@@ -128,9 +128,15 @@ class MigrationPlatform
         } catch (GuzzleException $e) {
             Logger::instance()->critical($e->getMessage(), $e->getTrace());
 
+            // Вызываем веб-хук при ошибке
+            $this->callWebhookOnCompletion('error', $e->getMessage());
+
             throw $e;
         } catch (Exception $e) {
             Logger::instance()->critical($e->getMessage(), $e->getTrace());
+
+            // Вызываем веб-хук при ошибке
+            $this->callWebhookOnCompletion('error', $e->getMessage());
 
             throw $e;
         }
@@ -487,6 +493,9 @@ class MigrationPlatform
             $this->brizyApi->setLabelManualMigration(true);
         }
 
+        // Вызываем веб-хук при успешном завершении
+        $this->callWebhookOnCompletion('completed');
+
         return true;
     }
 
@@ -751,6 +760,87 @@ class MigrationPlatform
     public function getProjectUUID(): string
     {
         return $this->projectUUID_MB;
+    }
+
+    /**
+     * Вызвать веб-хук при завершении миграции
+     * 
+     * @param string $status Статус: 'completed' или 'error'
+     * @param string|null $errorMessage Сообщение об ошибке (только для status='error')
+     * @return void
+     */
+    private function callWebhookOnCompletion(string $status, ?string $errorMessage = null): void
+    {
+        try {
+            if (empty($this->projectUUID_MB) || empty($this->projectID_Brizy)) {
+                Logger::instance()->warning("[Migration Platform] Cannot call webhook: missing project identifiers", [
+                    'project_uuid' => $this->projectUUID_MB ?? null,
+                    'project_id' => $this->projectID_Brizy ?? null
+                ]);
+                return;
+            }
+
+            // Получаем параметры веб-хука из MigrationStatusService
+            $statusService = new \MBMigration\Core\MigrationStatusService();
+            $migrationStatus = $statusService->getStatus($this->projectUUID_MB, $this->projectID_Brizy);
+
+            if (empty($migrationStatus) || empty($migrationStatus['webhook_url'] ?? null)) {
+                Logger::instance()->debug("[Migration Platform] No webhook URL configured, skipping webhook call", [
+                    'mb_project_uuid' => $this->projectUUID_MB,
+                    'brz_project_id' => $this->projectID_Brizy
+                ]);
+                return;
+            }
+
+            $webhookUrl = $migrationStatus['webhook_url'];
+            $webhookMbProjectUuid = $migrationStatus['webhook_mb_project_uuid'] ?? $this->projectUUID_MB;
+            $webhookBrzProjectId = $migrationStatus['webhook_brz_project_id'] ?? $this->projectID_Brizy;
+
+            // Получаем результат миграции
+            $migrationResult = $this->getLogs();
+            
+            // Обновляем статус в БД и lock-файле
+            $additionalData = [
+                'migration_id' => $migrationResult['migration_id'] ?? null,
+                'brizy_project_id' => $migrationResult['brizy_project_id'] ?? $this->projectID_Brizy,
+                'brizy_project_domain' => $migrationResult['brizy_project_domain'] ?? null,
+                'progress' => $migrationResult['progress'] ?? null
+            ];
+
+            if ($status === 'error' && $errorMessage !== null) {
+                $additionalData['error'] = $errorMessage;
+            }
+
+            $statusService->updateStatus($this->projectUUID_MB, $this->projectID_Brizy, $status, $additionalData);
+
+            // Формируем данные для веб-хука
+            $webhookService = new \MBMigration\Core\WebhookService();
+            $webhookData = $webhookService->formatWebhookData(
+                $migrationResult,
+                $webhookMbProjectUuid,
+                (int)$webhookBrzProjectId,
+                $status,
+                $errorMessage
+            );
+
+            // Вызываем веб-хук
+            Logger::instance()->info("[Migration Platform] Calling webhook", [
+                'webhook_url' => $webhookUrl,
+                'status' => $status,
+                'mb_project_uuid' => $webhookMbProjectUuid,
+                'brz_project_id' => $webhookBrzProjectId
+            ]);
+
+            $webhookService->callWebhook($webhookUrl, $webhookData);
+
+        } catch (Exception $e) {
+            Logger::instance()->error("[Migration Platform] Error calling webhook", [
+                'error' => $e->getMessage(),
+                'status' => $status,
+                'mb_project_uuid' => $this->projectUUID_MB ?? null,
+                'brz_project_id' => $this->projectID_Brizy ?? null
+            ]);
+        }
     }
 
     private static function countPagesWithCollection(array $pages): int

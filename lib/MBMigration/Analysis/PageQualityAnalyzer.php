@@ -4,6 +4,7 @@ namespace MBMigration\Analysis;
 
 use Exception;
 use MBMigration\Core\Logger;
+use MBMigration\Core\DashboardScreenshotUploader;
 
 /**
  * PageQualityAnalyzer
@@ -135,6 +136,9 @@ class PageQualityAnalyzer
                 'has_screenshot' => isset($migratedData['screenshot_path']),
                 'has_html' => !empty($migratedData['html'] ?? '')
             ]);
+
+            // Загружаем скриншоты на дашборд
+            $this->uploadScreenshotsToDashboard($sourceData, $migratedData, $mbProjectUuid, $pageSlug);
 
             // BREAKPOINT 9: Подготовка к AI анализу (ПРОВЕРКА ДАННЫХ ПЕРЕД ОТПРАВКОЙ В AI)
             Logger::instance()->info("[Quality Analysis] ===== BREAKPOINT 9: Preparing for AI analysis - DATA VALIDATION =====", [
@@ -328,5 +332,72 @@ class PageQualityAnalyzer
     public function getStatistics(int $brizyProjectId): array
     {
         return $this->reportService->getMigrationStatistics($brizyProjectId);
+    }
+
+    /**
+     * Загрузить скриншоты на дашборд миграции
+     * 
+     * @param array $sourceData Данные исходной страницы
+     * @param array $migratedData Данные мигрированной страницы
+     * @param string $mbProjectUuid UUID проекта MB
+     * @param string $pageSlug Slug страницы
+     * @return void
+     */
+    private function uploadScreenshotsToDashboard(
+        array $sourceData,
+        array $migratedData,
+        string $mbProjectUuid,
+        string $pageSlug
+    ): void {
+        try {
+            $uploader = new DashboardScreenshotUploader();
+            
+            if (!$uploader->isEnabled()) {
+                Logger::instance()->debug("[Quality Analysis] Dashboard screenshot upload is disabled", [
+                    'mb_uuid' => $mbProjectUuid,
+                    'page_slug' => $pageSlug
+                ]);
+                return;
+            }
+
+            Logger::instance()->info("[Quality Analysis] Uploading screenshots to dashboard", [
+                'mb_uuid' => $mbProjectUuid,
+                'page_slug' => $pageSlug,
+                'dashboard_url' => $uploader->getDashboardServerUrl()
+            ]);
+
+            // Загружаем скриншот исходной страницы
+            if (isset($sourceData['screenshot_path']) && file_exists($sourceData['screenshot_path'])) {
+                $uploader->uploadScreenshot(
+                    $sourceData['screenshot_path'],
+                    $mbProjectUuid,
+                    $pageSlug,
+                    'source'
+                );
+            }
+
+            // Загружаем скриншот мигрированной страницы
+            if (isset($migratedData['screenshot_path']) && file_exists($migratedData['screenshot_path'])) {
+                $uploader->uploadScreenshot(
+                    $migratedData['screenshot_path'],
+                    $mbProjectUuid,
+                    $pageSlug,
+                    'migrated'
+                );
+            }
+
+            Logger::instance()->info("[Quality Analysis] Screenshots upload to dashboard completed", [
+                'mb_uuid' => $mbProjectUuid,
+                'page_slug' => $pageSlug
+            ]);
+
+        } catch (Exception $e) {
+            // Не прерываем процесс анализа из-за ошибки загрузки скриншотов
+            Logger::instance()->warning("[Quality Analysis] Error uploading screenshots to dashboard", [
+                'mb_uuid' => $mbProjectUuid,
+                'page_slug' => $pageSlug,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 }
