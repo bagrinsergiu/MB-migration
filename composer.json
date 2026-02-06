@@ -19,17 +19,20 @@
     "symfony/dotenv": "^5.4",
     "symfony/runtime": "^5.4",
     "symfony/http-foundation": "^5.4",
+    "symfony/console": "^5.4",
+    "symfony/config": "^5.4",
+    "symfony/process": "^5.4",
+    "symfony/filesystem": "^5.4",
+    "symfony/string": "^5.4",
     "ext-gd": "*",
     "aws/aws-sdk-php": "^3.337",
     "robmorgan/phinx": "^0.14.0",
-    "vlucas/phpdotenv": "^5.6",
-    "google/apiclient": "^2.15"
+    "vlucas/phpdotenv": "^5.6"
   },
   "autoload": {
     "psr-0": {
       "MBMigration": "lib/",
-      "BRector": "rector/",
-      "Dashboard": "dashboard/"
+      "BRector": "rector/"
     }
   },
   "autoload-dev": {
@@ -50,6 +53,9 @@
   "config": {
     "allow-plugins": {
       "symfony/runtime": true
+    },
+    "platform": {
+      "php": "7.4.33"
     }
   }
 }

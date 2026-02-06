@@ -123,6 +123,30 @@ class MySQL
         }
     }
 
+    /**
+     * Execute SQL statement (INSERT/UPDATE/DELETE or any). Returns row count for write operations.
+     *
+     * @param string $sql
+     * @param array $params
+     * @return int|bool Row count or true/false
+     */
+    public function execute($sql, $params = [])
+    {
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->rowCount();
+        } catch (PDOException $e) {
+            if ($e->errorInfo[1] == 2006 || $e->errorInfo[1] == 2013 || strpos($e->getMessage(), 'server has gone away') !== false) {
+                $this->doConnect();
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute($params);
+                return $stmt->rowCount();
+            }
+            throw $e;
+        }
+    }
+
     public function find($sql, $params = [])
     {
         try {
