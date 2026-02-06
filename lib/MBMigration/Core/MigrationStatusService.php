@@ -88,6 +88,46 @@ class MigrationStatusService
     }
 
     /**
+     * Валидировать параметры веб-хука
+     * 
+     * @param string|null $webhookUrl URL веб-хука
+     * @param string|null $webhookMbProjectUuid UUID проекта для веб-хука
+     * @param int|null $webhookBrzProjectId ID проекта Brizy для веб-хука
+     * @return array ['valid' => bool, 'errors' => array]
+     */
+    public function validateWebhookParams(
+        ?string $webhookUrl = null,
+        ?string $webhookMbProjectUuid = null,
+        ?int $webhookBrzProjectId = null
+    ): array {
+        $errors = [];
+        
+        if (empty($webhookUrl)) {
+            $errors[] = 'webhook_url is required';
+        } elseif (!filter_var($webhookUrl, FILTER_VALIDATE_URL)) {
+            $errors[] = 'webhook_url is not a valid URL';
+        } else {
+            $scheme = parse_url($webhookUrl, PHP_URL_SCHEME);
+            if (!in_array($scheme, ['http', 'https'])) {
+                $errors[] = 'webhook_url must use http or https protocol';
+            }
+        }
+        
+        if (empty($webhookMbProjectUuid)) {
+            $errors[] = 'webhook_mb_project_uuid is required';
+        }
+        
+        if (empty($webhookBrzProjectId) || $webhookBrzProjectId <= 0) {
+            $errors[] = 'webhook_brz_project_id must be a positive integer';
+        }
+        
+        return [
+            'valid' => empty($errors),
+            'errors' => $errors
+        ];
+    }
+
+    /**
      * Сохранить параметры веб-хука и начать миграцию
      * 
      * @param string $mbProjectUuid UUID проекта MB
@@ -95,6 +135,7 @@ class MigrationStatusService
      * @param string|null $webhookUrl URL веб-хука
      * @param string|null $webhookMbProjectUuid UUID проекта для веб-хука
      * @param int|null $webhookBrzProjectId ID проекта Brizy для веб-хука
+     * @param string|null $waveId ID волны, если миграция запущена от имени wave
      * @return bool
      */
     public function saveWebhookParams(
@@ -102,8 +143,20 @@ class MigrationStatusService
         int $brzProjectId,
         ?string $webhookUrl = null,
         ?string $webhookMbProjectUuid = null,
-        ?int $webhookBrzProjectId = null
+        ?int $webhookBrzProjectId = null,
+        ?string $waveId = null
     ): bool {
+        // Валидация параметров
+        $validation = $this->validateWebhookParams($webhookUrl, $webhookMbProjectUuid, $webhookBrzProjectId);
+        if (!$validation['valid']) {
+            $this->log('error', "[Migration Status Service] Invalid webhook parameters", [
+                'mb_project_uuid' => $mbProjectUuid,
+                'brz_project_id' => $brzProjectId,
+                'errors' => $validation['errors']
+            ]);
+            return false;
+        }
+        
         try {
             $now = date('Y-m-d H:i:s');
             
@@ -151,13 +204,30 @@ class MigrationStatusService
             }
 
             // Сохраняем в lock-файл
-            $this->updateLockFile($mbProjectUuid, $brzProjectId, [
+            $lockData = [
                 'webhook_url' => $webhookUrl,
                 'webhook_mb_project_uuid' => $webhookMbProjectUuid,
                 'webhook_brz_project_id' => $webhookBrzProjectId,
                 'status' => 'in_progress',
                 'started_at' => $now
-            ]);
+            ];
+            
+            // Добавляем wave_id если миграция запущена от имени wave
+            if (!empty($waveId)) {
+                $lockData['wave_id'] = $waveId;
+                $this->log('info', "[Migration Status Service] Saving wave_id to lock file", [
+                    'mb_project_uuid' => $mbProjectUuid,
+                    'brz_project_id' => $brzProjectId,
+                    'wave_id' => $waveId
+                ]);
+            } else {
+                $this->log('debug', "[Migration Status Service] No wave_id provided", [
+                    'mb_project_uuid' => $mbProjectUuid,
+                    'brz_project_id' => $brzProjectId
+                ]);
+            }
+            
+            $this->updateLockFile($mbProjectUuid, $brzProjectId, $lockData);
 
             return true;
         } catch (Exception $e) {
@@ -185,6 +255,8 @@ class MigrationStatusService
         string $status,
         array $additionalData = []
     ): bool {
+        $startTime = microtime(true);
+        
         try {
             $now = date('Y-m-d H:i:s');
             $updateData = [
@@ -243,21 +315,51 @@ class MigrationStatusService
             }
 
             // Обновляем lock-файл
+            // Важно: сохраняем wave_id из существующего lock-файла, чтобы не потерять его
+            $lockFile = $this->getLockFilePath($mbProjectUuid, $brzProjectId);
+            $existingWaveId = null;
+            if (file_exists($lockFile)) {
+                $lockContent = @file_get_contents($lockFile);
+                if ($lockContent) {
+                    $existingData = json_decode($lockContent, true);
+                    if ($existingData && isset($existingData['wave_id'])) {
+                        $existingWaveId = $existingData['wave_id'];
+                    }
+                }
+            }
+            
             $lockData = array_merge(['status' => $status], $additionalData);
             if ($status === 'completed') {
                 $lockData['completed_at'] = $now;
             } elseif ($status === 'error') {
                 $lockData['failed_at'] = $now;
             }
+            
+            // Сохраняем wave_id если он был в существующем lock-файле
+            if ($existingWaveId !== null) {
+                $lockData['wave_id'] = $existingWaveId;
+            }
+            
             $this->updateLockFile($mbProjectUuid, $brzProjectId, $lockData);
 
-            return true;
-        } catch (Exception $e) {
-            $this->log('error', "[Migration Status Service] Failed to update status", [
-                'error' => $e->getMessage(),
+            $duration = microtime(true) - $startTime;
+            $this->log('info', "[Migration Status Service] Status updated", [
                 'mb_project_uuid' => $mbProjectUuid,
                 'brz_project_id' => $brzProjectId,
-                'status' => $status
+                'status' => $status,
+                'duration_ms' => round($duration * 1000, 2),
+                'has_additional_data' => !empty($additionalData)
+            ]);
+            
+            return true;
+        } catch (Exception $e) {
+            $duration = microtime(true) - $startTime;
+            $this->log('error', "[Migration Status Service] Failed to update status", [
+                'mb_project_uuid' => $mbProjectUuid,
+                'brz_project_id' => $brzProjectId,
+                'status' => $status,
+                'error' => $e->getMessage(),
+                'duration_ms' => round($duration * 1000, 2)
             ]);
             return false;
         }
@@ -275,6 +377,7 @@ class MigrationStatusService
         try {
             // Сначала пытаемся получить из lock-файла (более актуальные данные)
             $lockFile = $this->getLockFilePath($mbProjectUuid, $brzProjectId);
+            
             if (file_exists($lockFile)) {
                 $lockContent = @file_get_contents($lockFile);
                 if ($lockContent) {
@@ -479,6 +582,22 @@ class MigrationStatusService
         // Добавляем ошибку для статуса error
         if ($result['status'] === 'error' && isset($data['error'])) {
             $result['error'] = $data['error'];
+        }
+
+        // Добавляем параметры webhook если они есть
+        if (isset($data['webhook_url'])) {
+            $result['webhook_url'] = $data['webhook_url'];
+        }
+        if (isset($data['webhook_mb_project_uuid'])) {
+            $result['webhook_mb_project_uuid'] = $data['webhook_mb_project_uuid'];
+        }
+        if (isset($data['webhook_brz_project_id'])) {
+            $result['webhook_brz_project_id'] = $data['webhook_brz_project_id'];
+        }
+
+        // Добавляем wave_id если миграция запущена от имени wave
+        if (isset($data['wave_id'])) {
+            $result['wave_id'] = $data['wave_id'];
         }
 
         return $result;

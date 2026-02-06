@@ -771,11 +771,14 @@ class MigrationPlatform
      */
     private function callWebhookOnCompletion(string $status, ?string $errorMessage = null): void
     {
+        $startTime = microtime(true);
+        
         try {
             if (empty($this->projectUUID_MB) || empty($this->projectID_Brizy)) {
                 Logger::instance()->warning("[Migration Platform] Cannot call webhook: missing project identifiers", [
                     'project_uuid' => $this->projectUUID_MB ?? null,
-                    'project_id' => $this->projectID_Brizy ?? null
+                    'project_id' => $this->projectID_Brizy ?? null,
+                    'status' => $status
                 ]);
                 return;
             }
@@ -784,15 +787,53 @@ class MigrationPlatform
             $statusService = new \MBMigration\Core\MigrationStatusService();
             $migrationStatus = $statusService->getStatus($this->projectUUID_MB, $this->projectID_Brizy);
 
-            if (empty($migrationStatus) || empty($migrationStatus['webhook_url'] ?? null)) {
+            // Webhook отправляется только для миграций, запущенных от имени wave
+            if (empty($migrationStatus) || empty($migrationStatus['wave_id'] ?? null)) {
+                Logger::instance()->debug("[Migration Platform] Migration not started from wave, skipping webhook call", [
+                    'mb_project_uuid' => $this->projectUUID_MB,
+                    'brz_project_id' => $this->projectID_Brizy,
+                    'status' => $status,
+                    'note' => 'Webhook is only sent for migrations started from wave'
+                ]);
+                return;
+            }
+
+            if (empty($migrationStatus['webhook_url'] ?? null)) {
                 Logger::instance()->debug("[Migration Platform] No webhook URL configured, skipping webhook call", [
                     'mb_project_uuid' => $this->projectUUID_MB,
-                    'brz_project_id' => $this->projectID_Brizy
+                    'brz_project_id' => $this->projectID_Brizy,
+                    'status' => $status,
+                    'wave_id' => $migrationStatus['wave_id'] ?? null,
+                    'note' => 'This is normal if webhook was not configured'
                 ]);
                 return;
             }
 
             $webhookUrl = $migrationStatus['webhook_url'];
+            
+            // Валидация URL перед вызовом
+            if (!filter_var($webhookUrl, FILTER_VALIDATE_URL)) {
+                Logger::instance()->error("[Migration Platform] Invalid webhook URL, skipping call", [
+                    'webhook_url' => $webhookUrl,
+                    'mb_project_uuid' => $this->projectUUID_MB,
+                    'brz_project_id' => $this->projectID_Brizy,
+                    'status' => $status
+                ]);
+                return;
+            }
+            
+            // Проверка протокола
+            $scheme = parse_url($webhookUrl, PHP_URL_SCHEME);
+            if (!in_array($scheme, ['http', 'https'])) {
+                Logger::instance()->error("[Migration Platform] Invalid webhook URL scheme, skipping call", [
+                    'webhook_url' => $webhookUrl,
+                    'scheme' => $scheme,
+                    'mb_project_uuid' => $this->projectUUID_MB,
+                    'brz_project_id' => $this->projectID_Brizy,
+                    'status' => $status
+                ]);
+                return;
+            }
             $webhookMbProjectUuid = $migrationStatus['webhook_mb_project_uuid'] ?? $this->projectUUID_MB;
             $webhookBrzProjectId = $migrationStatus['webhook_brz_project_id'] ?? $this->projectID_Brizy;
 
@@ -832,13 +873,26 @@ class MigrationPlatform
             ]);
 
             $webhookService->callWebhook($webhookUrl, $webhookData);
+            
+            $duration = microtime(true) - $startTime;
+            Logger::instance()->info("[Migration Platform] Webhook called successfully", [
+                'status' => $status,
+                'mb_project_uuid' => $this->projectUUID_MB,
+                'brz_project_id' => $this->projectID_Brizy,
+                'webhook_url' => $webhookUrl,
+                'duration_ms' => round($duration * 1000, 2),
+                'success' => true
+            ]);
 
         } catch (Exception $e) {
-            Logger::instance()->error("[Migration Platform] Error calling webhook", [
+            $duration = microtime(true) - $startTime;
+            Logger::instance()->error("[Migration Platform] Critical error calling webhook", [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'status' => $status,
                 'mb_project_uuid' => $this->projectUUID_MB ?? null,
-                'brz_project_id' => $this->projectID_Brizy ?? null
+                'brz_project_id' => $this->projectID_Brizy ?? null,
+                'duration_ms' => round($duration * 1000, 2)
             ]);
         }
     }

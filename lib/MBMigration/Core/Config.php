@@ -79,6 +79,18 @@ class Config
     public static bool $mgrMode;
 
     /**
+     * URL дашборда для формирования веб-хуков при работе с волнами
+     * @var string
+     */
+    public static string $dashboardUrl = '';
+
+    /**
+     * Токен авторизации для веб-хуков дашборда (опционально)
+     * @var string
+     */
+    public static string $dashboardWebhookToken = '';
+
+    /**
      * @throws Exception
      */
     public function __construct(string $cloud_host, string $path, string $cachePath, string $token, array $settings)
@@ -176,6 +188,45 @@ class Config
         self::$designInDevelop = [
         ];
 
+        // Загружаем конфигурацию дашборда из переменных окружения
+        self::loadDashboardConfig();
+
+    }
+
+    /**
+     * Загрузить конфигурацию дашборда из переменных окружения
+     * 
+     * @return void
+     */
+    public static function loadDashboardConfig(): void
+    {
+        self::$dashboardUrl = $_ENV['DASHBOARD_URL'] ?? getenv('DASHBOARD_URL') ?: '';
+        self::$dashboardWebhookToken = $_ENV['DASHBOARD_WEBHOOK_TOKEN'] ?? getenv('DASHBOARD_WEBHOOK_TOKEN') ?: '';
+    }
+
+    /**
+     * Валидировать конфигурацию дашборда
+     * 
+     * @return bool true если конфигурация валидна, false в противном случае
+     */
+    public static function validateDashboardConfig(): bool
+    {
+        if (empty(self::$dashboardUrl)) {
+            return false;
+        }
+        
+        // Проверка формата URL
+        if (!filter_var(self::$dashboardUrl, FILTER_VALIDATE_URL)) {
+            return false;
+        }
+        
+        // Проверка протокола (должен быть http или https)
+        $scheme = parse_url(self::$dashboardUrl, PHP_URL_SCHEME);
+        if (!in_array($scheme, ['http', 'https'])) {
+            return false;
+        }
+        
+        return true;
     }
 
     public static function getDevOptions($optionsName = '')

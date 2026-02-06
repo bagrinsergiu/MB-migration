@@ -44,14 +44,23 @@ class WebhookService
      */
     public function callWebhook(string $webhookUrl, array $data): bool
     {
+        $startTime = microtime(true);
+        
         if (empty($webhookUrl)) {
-            Logger::instance()->warning("[Webhook Service] Webhook URL is empty, skipping webhook call");
+            Logger::instance()->warning("[Webhook Service] Webhook URL is empty, skipping webhook call", [
+                'data_keys' => array_keys($data)
+            ]);
             return false;
         }
 
         Logger::instance()->info("[Webhook Service] Starting webhook call", [
             'webhook_url' => $webhookUrl,
             'data_keys' => array_keys($data),
+            'data_summary' => [
+                'mb_project_uuid' => $data['mb_project_uuid'] ?? null,
+                'brz_project_id' => $data['brz_project_id'] ?? null,
+                'status' => $data['status'] ?? null
+            ],
             'max_retries' => $this->maxRetries
         ]);
 
@@ -65,14 +74,19 @@ class WebhookService
                     'attempt' => $attempt
                 ]);
 
+                $attemptStartTime = microtime(true);
                 $result = $this->executeWebhookCall($webhookUrl, $data);
+                $attemptDuration = microtime(true) - $attemptStartTime;
                 
                 if ($result['success']) {
+                    $totalDuration = microtime(true) - $startTime;
                     Logger::instance()->info("[Webhook Service] Webhook called successfully", [
                         'webhook_url' => $webhookUrl,
                         'attempt' => $attempt,
                         'http_code' => $result['http_code'],
-                        'response' => substr($result['response'] ?? '', 0, 500)
+                        'response' => substr($result['response'] ?? '', 0, 500),
+                        'attempt_duration_ms' => round($attemptDuration * 1000, 2),
+                        'total_duration_ms' => round($totalDuration * 1000, 2)
                     ]);
                     return true;
                 }
@@ -84,7 +98,8 @@ class WebhookService
                     'webhook_url' => $webhookUrl,
                     'attempt' => $attempt,
                     'http_code' => $lastHttpCode,
-                    'error' => $lastError
+                    'error' => $lastError,
+                    'attempt_duration_ms' => round($attemptDuration * 1000, 2)
                 ]);
 
                 // Если не последняя попытка, ждем перед повтором
@@ -116,11 +131,13 @@ class WebhookService
         }
 
         // Все попытки неудачны - логируем ошибку
+        $totalDuration = microtime(true) - $startTime;
         Logger::instance()->error("[Webhook Service] Failed to call webhook after {$this->maxRetries} attempts", [
             'webhook_url' => $webhookUrl,
             'last_error' => $lastError,
             'last_http_code' => $lastHttpCode,
-            'max_retries' => $this->maxRetries
+            'max_retries' => $this->maxRetries,
+            'total_duration_ms' => round($totalDuration * 1000, 2)
         ]);
 
         return false;
