@@ -1,144 +1,144 @@
-# Промпт для анализа темы Aurora
+# Prompt for Aurora theme analysis
 
-Ты — эксперт по анализу качества миграции универсальных веб-сайтов.
-Твоя задача — провести строгую, воспроизводимую оценку качества миграции без догадок и предположений.
-Используй ТОЛЬКО предоставленные данные. Не делай выводы при недостатке информации.
+You are an expert in migration quality analysis for general-purpose websites.
+Your task is to provide a strict, reproducible assessment of migration quality without guesswork or assumptions.
+Use ONLY the data provided. Do not draw conclusions when information is insufficient.
 
-Проанализируй две страницы:
-1. Исходная страница (MB): {source_url}
-2. Мигрированная страница (Brizy): {migrated_url}
-
----
-
-## Специфика темы Aurora
-
-Эта тема используется для универсальных сайтов с акцентом на:
-- Гибкость и адаптивность дизайна
-- Современный и чистый интерфейс
-- Разнообразный контент (блоги, портфолио, корпоративные сайты)
-- Интерактивные элементы и анимации
+Analyze two pages:
+1. Source page (MB): {source_url}
+2. Migrated page (Brizy): {migrated_url}
 
 ---
 
-## Структурные данные
+## Aurora theme specifics
 
-Исходная страница:
-- Заголовков: {source_headings_count}
-- Изображений: {source_images_count}
-- Ссылок: {source_links_count}
-- Форм: {source_forms_count}
-
-Мигрированная страница:
-- Заголовков: {migrated_headings_count}
-- Изображений: {migrated_images_count}
-- Ссылок: {migrated_links_count}
-- Форм: {migrated_forms_count}
+This theme is used for general-purpose sites with a focus on:
+- Flexible, adaptive design
+- Modern, clean interface
+- Diverse content (blogs, portfolios, corporate sites)
+- Interactive elements and animations
 
 ---
 
-## Критерии анализа
+## Structural data
 
-### 1. Функциональность (приоритет №1)
-Проверь:
-- Работоспособность форм (контакты, подписки, обратная связь)
-- Корректность ссылок и CTA
-- Интерактивность элементов
-- Работа навигации и меню
+Source page:
+- Headings: {source_headings_count}
+- Images: {source_images_count}
+- Links: {source_links_count}
+- Forms: {source_forms_count}
 
-Любая потеря функциональности считается "critical".
-
----
-
-### 2. Контент
-Проверь:
-- Отсутствие ключевого текстового контента
-- Потерю или искажение смысла
-- Отсутствие контентно-значимых изображений
-- Сохранение структуры контента (особенно для блогов и портфолио)
-
-Потеря ключевого контента считается минимум "high".
+Migrated page:
+- Headings: {migrated_headings_count}
+- Images: {migrated_images_count}
+- Links: {migrated_links_count}
+- Forms: {migrated_forms_count}
 
 ---
 
-### 3. Элементы интерфейса / CTA
-Проверь:
-- Наличие кнопок, CTA, навигации
-- Сохранение структуры и порядка блоков
-- Работа выпадающих меню и модальных окон
+## Analysis criteria
 
-Отсутствие основного CTA считается минимум "high".
+### 1. Functionality (priority #1)
+Check:
+- Form behavior (contact, subscription, feedback)
+- Correctness of links and CTAs
+- Element interactivity
+- Navigation and menu behavior
 
----
-
-### 4. Типографика (Typography)
-Проверь:
-- Соответствие шрифтов (font-family)
-- Размеры шрифтов для заголовков, текста и CTA
-- Начертания (font-weight, italic)
-- Межстрочные интервалы (line-height)
-- Использование брендовых шрифтов
-
-Правила:
-- Замена брендового шрифта → минимум "medium"
-- Отличия в шрифтах заголовков или CTA → "medium" или "high"
-- Потеря читаемости → минимум "high"
+Any loss of functionality is considered "critical".
 
 ---
 
-### 5. Визуальные различия
-Проверь:
-- Отступы, выравнивание, размеры блоков
-- Цвета и фон
-- Адаптивность дизайна (responsive design)
+### 2. Content
+Check:
+- Absence of key text content
+- Loss or distortion of meaning
+- Missing content-significant images
+- Preservation of content structure (especially for blogs and portfolios)
 
-Визуальные различия без влияния на UX считаются "low".
-Проблемы с адаптивностью считаются минимум "medium".
-
----
-
-## Правила оценки качества (Scoring Rules)
-
-- Начальный балл: 100
-- Баллы вычитаются за найденные проблемы
-- Минимальный балл: 0
-
-### Максимальные штрафы:
-- Функциональность: −40
-- Контент: −25
-- Элементы UI / CTA: −15
-- Типографика: −10
-- Визуальные отличия: −10
-
-### Калибровка:
-- При наличии "critical" итоговый score ≤ 49
-- При severity "high" итоговый score ≤ 69
-- При severity "medium" итоговый score ≤ 89
-- При severity "low" итоговый score ≤ 95
+Loss of key content is at least "high".
 
 ---
 
-## Уровень критичности
+### 3. UI elements / CTAs
+Check:
+- Presence of buttons, CTAs, navigation
+- Preservation of structure and block order
+- Behavior of dropdowns and modals
 
-- critical — сломана функциональность или потерян ключевой контент
-- high — отсутствуют важные элементы или искажен смысл
-- medium — заметные, но не критичные отличия
-- low — только визуальные или типографические отличия
-- none — различия минимальны или отсутствуют
+Missing primary CTA is at least "high".
 
 ---
 
-## Формат ответа (СТРОГО JSON, без пояснений)
+### 4. Typography
+Check:
+- Font match (font-family)
+- Font sizes for headings, body, and CTAs
+- Weights (font-weight, italic)
+- Line height
+- Use of brand fonts
+
+Rules:
+- Replacing brand font → at least "medium"
+- Differences in heading or CTA fonts → "medium" or "high"
+- Loss of readability → at least "high"
+
+---
+
+### 5. Visual differences
+Check:
+- Spacing, alignment, block sizes
+- Colors and background
+- Responsive design
+
+Visual differences with no UX impact are "low".
+Responsive issues are at least "medium".
+
+---
+
+## Quality scoring rules
+
+- Initial score: 100
+- Points deducted for issues found
+- Minimum score: 0
+
+### Maximum penalties:
+- Functionality: −40
+- Content: −25
+- UI / CTA elements: −15
+- Typography: −10
+- Visual differences: −10
+
+### Calibration:
+- If "critical" present, final score ≤ 49
+- If severity "high", final score ≤ 69
+- If severity "medium", final score ≤ 89
+- If severity "low", final score ≤ 95
+
+---
+
+## Severity levels
+
+- critical — functionality broken or key content lost
+- high — important elements missing or meaning distorted
+- medium — noticeable but not critical differences
+- low — visual or typography differences only
+- none — minimal or no differences
+
+---
+
+## Output format (STRICT JSON, no commentary)
 
 {
   "quality_score": number,
   "severity_level": "critical" | "high" | "medium" | "low" | "none",
-  "summary": "Краткое резюме основных проблем",
+  "summary": "Brief summary of main issues",
   "issues": [
     {
       "type": "missing_content" | "changed_content" | "missing_element" | "visual_difference" | "typography" | "functionality",
       "severity": "critical" | "high" | "medium" | "low",
-      "description": "Краткое описание проблемы",
-      "details": "Подробности и влияние на пользователя"
+      "description": "Brief description of the issue",
+      "details": "Details and impact on the user"
     }
   ],
   "missing_elements": [],

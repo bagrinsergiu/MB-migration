@@ -422,6 +422,17 @@ class MigrationStatusService
             'brz_project_id' => $data['brz_project_id'] ?? null
         ];
 
+        // Сохраняем параметры вебхука (нужны для callWebhookOnCompletion)
+        if (isset($data['webhook_url'])) {
+            $result['webhook_url'] = $data['webhook_url'];
+        }
+        if (isset($data['webhook_mb_project_uuid'])) {
+            $result['webhook_mb_project_uuid'] = $data['webhook_mb_project_uuid'];
+        }
+        if (isset($data['webhook_brz_project_id'])) {
+            $result['webhook_brz_project_id'] = $data['webhook_brz_project_id'];
+        }
+
         // Добавляем прогресс если есть
         if (isset($data['progress'])) {
             $progress = is_string($data['progress']) ? json_decode($data['progress'], true) : $data['progress'];

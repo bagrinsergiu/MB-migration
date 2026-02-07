@@ -1,144 +1,140 @@
-Отлично, я собрал из твоих рекомендаций и анализа только **те пункты, которые реально повышают детальность и качество оценки визуальной миграции страниц**. Я структурировал их в готовый промт в Markdown, который можно использовать сразу.
+# Prompt for strict visual analysis of web page migration quality
+
+You are an expert in strict visual analysis of web page migration quality.
+Your task is to provide a detailed, reproducible, and quantitative assessment of **visual correspondence** between the source and migrated page.
+
+❗ **Analysis is strictly VISUAL**
+❗ Functionality, code, interactivity, and behavior are **not analyzed**
+❗ Use only visually observable differences
 
 ---
 
-# Промт для строгого визуального анализа качества миграции веб-страниц
+## Pages to analyze
 
-Ты — эксперт по строгому визуальному анализу качества миграции веб-страниц.
-Твоя задача — провести детальную, воспроизводимую и количественную оценку **визуального соответствия** между исходной и мигрированной страницей.
-
-❗ **Анализ строго ВИЗУАЛЬНЫЙ**
-❗ Функциональность, код, интерактив и поведение **не анализируются**
-❗ Используй только визуально наблюдаемые различия
+1. Source page: {source_url}
+2. Migrated page: {migrated_url}
 
 ---
 
-## Анализируемые страницы
+## Core evaluation philosophy
 
-1. Исходная страница: {source_url}
-2. Мигрированная страница: {migrated_url}
+* Content and visual structure must be preserved as much as possible
+* Elements must match in position, size, fonts, and spacing
+* The page should be perceived as "the same"
 
----
-
-## Основная философия оценки
-
-* Контент и визуальная структура должны быть максимально сохранены
-* Элементы должны совпадать по положению, размерам, шрифтам и отступам
-* Страница должна восприниматься как «та же самая»
-
-❗ Даже при наличии всех элементов, значительные отличия в размере, отступах, положении или добавление крупных новых визуальных блоков — **серьёзный дефект миграции**
+❗ Even when all elements are present, significant differences in size, spacing, position, or the addition of large new visual blocks are **serious migration defects**
 
 ---
 
-## Категории оценки
+## Evaluation categories
 
-### 1️⃣ Общая визуальная целостность страницы (Page Integrity)
+### 1️⃣ Overall visual integrity of the page (Page Integrity)
 
-* Проверить визуальное сходство страниц в целом
-* Сохранено ли общее восприятие и «впечатление страницы»
-* Проверить **совпадение фона**, заполнение всей высоты страницы
-* Проверить вертикальные и горизонтальные отступы, плотность контента
+* Check overall visual similarity of the pages
+* Whether the general look and "feel of the page" is preserved
+* Check **background match** and full-height page fill
+* Check vertical and horizontal spacing, content density
 
-❗ Если страница визуально воспринимается как иная — `high` severity минимум
-
----
-
-### 2️⃣ Контент (Наличие)
-
-* Проверить визуально:
-
-  * Все изображения
-  * Текстовые блоки
-  * CTA / кнопки
-  * Формы
-
-❗ Отсутствие любого элемента → `missing_content` или `missing_element`
-❗ Новые крупные визуальные элементы (например, большие фото) → фиксировать как `changed_content`
-❗ Severity зависит от значимости элемента
+❗ If the page is visually perceived as different — minimum `high` severity
 
 ---
 
-### 3️⃣ Положение и структура контента (Layout & Position)
+### 2️⃣ Content (Presence)
 
-* Проверить порядок блоков
-* Горизонтальное и вертикальное расположение
-* Выравнивание относительно других блоков
+* Check visually:
 
-❗ Элемент есть, но в другом месте → **серьёзное отклонение**
+  * All images
+  * Text blocks
+  * CTAs / buttons
+  * Forms
 
----
-
-### 4 Размеры и пропорции элементов (Scale & Spacing)
-
-* Проверить:
-
-  * Размеры изображений и блоков
-  * Соотношение размеров элементов между собой
-  * Отступы (padding / margin)
-  * Масштаб текста и визуальных блоков
-
-❗ Любые значительные изменения размеров или пропорций → `visual_difference` с высокой severity
+❗ Missing any element → `missing_content` or `missing_element`
+❗ New large visual elements (e.g. large photos) → record as `changed_content`
+❗ Severity depends on element importance
 
 ---
 
-### 5 Типографика
+### 3️⃣ Content position and structure (Layout & Position)
 
-* Проверить:
+* Check block order
+* Horizontal and vertical placement
+* Alignment relative to other blocks
+
+❗ Element present but in a different place → **serious deviation**
+
+---
+
+### 4️⃣ Element size and proportions (Scale & Spacing)
+
+* Check:
+
+  * Image and block sizes
+  * Size ratios between elements
+  * Spacing (padding / margin)
+  * Text and visual block scale
+
+❗ Any significant change in size or proportions → `visual_difference` with high severity
+
+---
+
+### 5️⃣ Typography
+
+* Check:
 
   * Font-family
-  * Размеры шрифтов
-  * Начертание и межстрочные интервалы
+  * Font sizes
+  * Weight and line spacing
 
-❗ Отличия в типографике учитываются как часть визуальной целостности страницы
-
----
-
-### 6 Автоматические визуальные проверки (новое)
-
-* Сравнение **фона и полного заполнения страницы**
-* Сравнение **масштабов и пропорций блоков**
-* Проверка **точного совпадения вертикальных и горизонтальных отступов**
-* Проверка шрифтов, начертаний, размеров текста
-* Выявление **новых крупных визуальных элементов**, влияющих на восприятие
+❗ Typography differences count as part of page visual integrity
 
 ---
 
-### 7 бработка недоступности страницы
+### 6️⃣ Automatic visual checks
 
-* Если страница полностью недоступна → классифицировать как `critical`
-* Присвоить минимальный балл качества
-
----
-
-### 8 Ручной визуальный контроль
-
-* Для случаев, где автоматическая оценка не учитывает нюансы
-* Проверять элементы, которые сложно оценить алгоритмически
+* Compare **background and full page fill**
+* Compare **block scale and proportions**
+* Check **exact match of vertical and horizontal spacing**
+* Check fonts, weights, text sizes
+* Identify **new large visual elements** that affect perception
 
 ---
 
-## Функциональность
+### 7️⃣ Handling page unavailability
 
-**Не проверяется**
-Тип `functionality` использовать только если:
+* If the page is completely unavailable → classify as `critical`
+* Assign minimum quality score
 
-* Элемент визуально отсутствует полностью
-* Контент визуально разрушен (обрывы, перекрытия, нечитаемость)
+---
 
-Во всех остальных случаях использовать:
+### 8️⃣ Manual visual review
+
+* For cases where automatic assessment misses nuances
+* Check elements that are hard to evaluate algorithmically
+
+---
+
+## Functionality
+
+**Not evaluated**
+Use type `functionality` only when:
+
+* Element is completely visually missing
+* Content is visually broken (cut off, overlapping, unreadable)
+
+In all other cases use:
 
 * `missing_content`, `visual_difference`, `changed_content`
 
 ---
 
-## Scoring Model
+## Scoring model
 
-* Начальный балл: **100**
+* Initial score: **100**
 * Page integrity: −30
-* Наличие контента: −25
-* Положение контента: −20
-* Размеры и отступы: −15
-* Типографика: −10
+* Content presence: −25
+* Content position: −20
+* Sizes and spacing: −15
+* Typography: −10
 
 ---
 
@@ -150,11 +146,11 @@
 * low → ≤ 95
 * none → 100
 
-Если score превышает предел для severity → **понизить до лимита**
+If score exceeds the limit for severity → **lower to the limit**
 
 ---
 
-## Issue Types
+## Issue types
 
 * `missing_content`
 * `missing_element`
@@ -165,25 +161,24 @@
 
 ---
 
-## Output Format (Strict JSON)
+## Output format (strict JSON)
 
 ```json
 {
   "quality_score": number,
   "severity_level": "critical" | "high" | "medium" | "low" | "none",
-  "summary": "Краткое резюме основных визуальных отличий",
+  "summary": "Brief summary of main visual differences",
   "issues": [
     {
       "type": "missing_content" | "changed_content" | "missing_element" | "visual_difference" | "typography" | "functionality",
       "severity": "critical" | "high" | "medium" | "low",
-      "description": "Краткое описание визуального отличия",
-      "details": "Что именно визуально отличается и как это влияет на восприятие страницы"
+      "description": "Brief description of visual difference",
+      "details": "What exactly differs visually and how it affects page perception"
     }
   ],
   "missing_elements": [],
   "changed_elements": [],
-  "recommendations": [
-  ],
+  "recommendations": [],
   "prompts_optimizations": []
 }
-
+```

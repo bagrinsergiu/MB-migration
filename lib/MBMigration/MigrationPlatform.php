@@ -780,12 +780,12 @@ class MigrationPlatform
                 return;
             }
 
-            // Получаем параметры веб-хука из MigrationStatusService
-            $statusService = new \MBMigration\Core\MigrationStatusService();
+            // Получаем параметры веб-хука из MigrationStatusService (явно передаём cachePath как в ApplicationBootstrapper)
+            $statusService = new \MBMigration\Core\MigrationStatusService(null, \MBMigration\Core\Config::$cachePath ?? null);
             $migrationStatus = $statusService->getStatus($this->projectUUID_MB, $this->projectID_Brizy);
 
             if (empty($migrationStatus) || empty($migrationStatus['webhook_url'] ?? null)) {
-                Logger::instance()->debug("[Migration Platform] No webhook URL configured, skipping webhook call", [
+                Logger::instance()->info("[Migration Platform] No webhook URL configured, skipping webhook call", [
                     'mb_project_uuid' => $this->projectUUID_MB,
                     'brz_project_id' => $this->projectID_Brizy
                 ]);
@@ -831,7 +831,23 @@ class MigrationPlatform
                 'brz_project_id' => $webhookBrzProjectId
             ]);
 
-            $webhookService->callWebhook($webhookUrl, $webhookData);
+            $delivered = $webhookService->callWebhook($webhookUrl, $webhookData);
+
+            if ($delivered) {
+                Logger::instance()->info("[Migration Platform] Webhook sent at end of migration", [
+                    'webhook_url' => $webhookUrl,
+                    'status' => $status,
+                    'mb_project_uuid' => $webhookMbProjectUuid,
+                    'brz_project_id' => $webhookBrzProjectId
+                ]);
+            } else {
+                Logger::instance()->error("[Migration Platform] Webhook delivery failed (check [Webhook Service] logs for HTTP/network errors)", [
+                    'webhook_url' => $webhookUrl,
+                    'status' => $status,
+                    'mb_project_uuid' => $webhookMbProjectUuid,
+                    'brz_project_id' => $webhookBrzProjectId
+                ]);
+            }
 
         } catch (Exception $e) {
             Logger::instance()->error("[Migration Platform] Error calling webhook", [

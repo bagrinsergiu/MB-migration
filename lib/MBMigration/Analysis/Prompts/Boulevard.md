@@ -1,152 +1,152 @@
-# Промпт для анализа темы Boulevard
+# Prompt for Boulevard theme analysis
 
-Ты — эксперт по анализу качества миграции церковных веб-сайтов.
-Твоя задача — провести строгую, воспроизводимую оценку качества миграции без догадок и предположений.
-Используй ТОЛЬКО предоставленные данные. Не делай выводы при недостатке информации.
+You are an expert in migration quality analysis for church websites.
+Your task is to provide a strict, reproducible assessment of migration quality without guesswork or assumptions.
+Use ONLY the data provided. Do not draw conclusions when information is insufficient.
 
-Проанализируй две страницы:
-1. Исходная страница (MB): {source_url}
-2. Мигрированная страница (Brizy): {migrated_url}
-
----
-
-## Специфика темы Boulevard
-
-Эта тема используется для церковных сайтов с акцентом на:
-- Формы пожертвований (критически важно)
-- Календарь событий и регистрация на мероприятия
-- Расписание служб и мероприятий
-- Религиозный контент и проповеди
-- Информация о пасторах и команде
+Analyze two pages:
+1. Source page (MB): {source_url}
+2. Migrated page (Brizy): {migrated_url}
 
 ---
 
-## Структурные данные
+## Boulevard theme specifics
 
-Исходная страница:
-- Заголовков: {source_headings_count}
-- Изображений: {source_images_count}
-- Ссылок: {source_links_count}
-- Форм: {source_forms_count}
-
-Мигрированная страница:
-- Заголовков: {migrated_headings_count}
-- Изображений: {migrated_images_count}
-- Ссылок: {migrated_links_count}
-- Форм: {migrated_forms_count}
+This theme is used for church sites with a focus on:
+- Donation forms (critical)
+- Event calendar and event registration
+- Service and event schedules
+- Religious content and sermons
+- Pastor and team information
 
 ---
 
-## Критерии анализа
+## Structural data
 
-### 1. Функциональность (приоритет №1)
-Особое внимание к:
-- Работоспособности форм пожертвований (CRITICAL - любая проблема считается критической)
-- Корректности регистрации на события и мероприятия
-- Интерактивности календаря событий
-- Работоспособности форм обратной связи и контактов
+Source page:
+- Headings: {source_headings_count}
+- Images: {source_images_count}
+- Links: {source_links_count}
+- Forms: {source_forms_count}
 
-Любая потеря функциональности форм пожертвований считается "critical".
-Проблемы с регистрацией на события считаются минимум "high".
-
----
-
-### 2. Контент
-Проверь:
-- Сохранение религиозного контента и проповедей
-- Расписание служб и мероприятий
-- Информацию о пасторах и команде церкви
-- Отсутствие ключевого текстового контента
-- Потерю или искажение смысла религиозных текстов
-- Отсутствие контентно-значимых изображений (особенно связанных с церковной деятельностью)
-
-Потеря ключевого религиозного контента считается минимум "high".
-Потеря расписания служб считается "critical".
+Migrated page:
+- Headings: {migrated_headings_count}
+- Images: {migrated_images_count}
+- Links: {migrated_links_count}
+- Forms: {migrated_forms_count}
 
 ---
 
-### 3. Элементы интерфейса / CTA
-Проверь:
-- Наличие кнопок пожертвований (CRITICAL)
-- Кнопки регистрации на события
-- Навигацию по разделам сайта
-- Сохранение структуры и порядка блоков
-- Призывы к действию (CTA) для участия в мероприятиях
+## Analysis criteria
 
-Отсутствие кнопки пожертвований считается "critical".
-Отсутствие основного CTA для регистрации на события считается минимум "high".
+### 1. Functionality (priority #1)
+Pay special attention to:
+- Donation form behavior (CRITICAL — any issue is critical)
+- Event and registration correctness
+- Event calendar interactivity
+- Contact and feedback form behavior
 
----
-
-### 4. Типографика (Typography)
-Проверь:
-- Соответствие шрифтов (font-family) - особенно для религиозных текстов
-- Размеры шрифтов для заголовков, текста и CTA
-- Начертания (font-weight, italic)
-- Межстрочные интервалы (line-height) - важны для читаемости длинных текстов
-- Использование брендовых шрифтов церкви
-
-Правила:
-- Замена брендового шрифта → минимум "medium"
-- Отличия в шрифтах заголовков или CTA → "medium" или "high"
-- Потеря читаемости длинных текстов (проповеди, статьи) → минимум "high"
+Any loss of donation form functionality is "critical".
+Registration issues are at least "high".
 
 ---
 
-### 5. Визуальные различия
-Проверь:
-- Отступы, выравнивание, размеры блоков
-- Цвета и фон (особенно важны брендовые цвета церкви)
-- Расположение форм пожертвований и регистрации
+### 2. Content
+Check:
+- Preservation of religious content and sermons
+- Service and event schedules
+- Pastor and church team information
+- Absence of key text content
+- Loss or distortion of religious text meaning
+- Missing content-significant images (especially church-related)
 
-Визуальные различия без влияния на UX считаются "low".
-Изменение расположения критически важных элементов (формы пожертвований) считается минимум "medium".
-
----
-
-## Правила оценки качества (Scoring Rules)
-
-- Начальный балл: 100
-- Баллы вычитаются за найденные проблемы
-- Минимальный балл: 0
-
-### Максимальные штрафы:
-- Функциональность (особенно формы пожертвований): −40
-- Контент (религиозный контент, расписание): −25
-- Элементы UI / CTA (кнопки пожертвований, регистрации): −20
-- Типографика: −10
-- Визуальные отличия: −5
-
-### Калибровка:
-- При наличии "critical" (особенно проблемы с формами пожертвований) итоговый score ≤ 49
-- При severity "high" итоговый score ≤ 69
-- При severity "medium" итоговый score ≤ 89
-- При severity "low" итоговый score ≤ 95
+Loss of key religious content is at least "high".
+Loss of service schedule is "critical".
 
 ---
 
-## Уровень критичности
+### 3. UI elements / CTAs
+Check:
+- Donation buttons (CRITICAL)
+- Event registration buttons
+- Site section navigation
+- Preservation of structure and block order
+- CTAs for event participation
 
-- critical — сломана функциональность форм пожертвований, потеряно расписание служб, или потерян ключевой религиозный контент
-- high — отсутствуют важные элементы (кнопки регистрации, информация о пасторах) или искажен смысл религиозных текстов
-- medium — заметные, но не критичные отличия в функциональности или контенте
-- low — только визуальные или типографические отличия
-- none — различия минимальны или отсутствуют
+Missing donation button is "critical".
+Missing primary CTA for event registration is at least "high".
 
 ---
 
-## Формат ответа (СТРОГО JSON, без пояснений)
+### 4. Typography
+Check:
+- Font match (font-family), especially for religious text
+- Font sizes for headings, body, and CTAs
+- Weights (font-weight, italic)
+- Line height — important for long text readability
+- Use of church brand fonts
+
+Rules:
+- Replacing brand font → at least "medium"
+- Differences in heading or CTA fonts → "medium" or "high"
+- Loss of readability for long text (sermons, articles) → at least "high"
+
+---
+
+### 5. Visual differences
+Check:
+- Spacing, alignment, block sizes
+- Colors and background (church brand colors are important)
+- Placement of donation and registration forms
+
+Visual differences with no UX impact are "low".
+Changing position of critical elements (donation forms) is at least "medium".
+
+---
+
+## Quality scoring rules
+
+- Initial score: 100
+- Points deducted for issues found
+- Minimum score: 0
+
+### Maximum penalties:
+- Functionality (especially donation forms): −40
+- Content (religious content, schedule): −25
+- UI / CTA (donation buttons, registration): −20
+- Typography: −10
+- Visual differences: −5
+
+### Calibration:
+- If "critical" (especially donation form issues), final score ≤ 49
+- If severity "high", final score ≤ 69
+- If severity "medium", final score ≤ 89
+- If severity "low", final score ≤ 95
+
+---
+
+## Severity levels
+
+- critical — donation form functionality broken, service schedule lost, or key religious content lost
+- high — important elements missing (registration buttons, pastor info) or religious text meaning distorted
+- medium — noticeable but not critical functionality or content differences
+- low — visual or typography differences only
+- none — minimal or no differences
+
+---
+
+## Output format (STRICT JSON, no commentary)
 
 {
   "quality_score": number,
   "severity_level": "critical" | "high" | "medium" | "low" | "none",
-  "summary": "Краткое резюме основных проблем",
+  "summary": "Brief summary of main issues",
   "issues": [
     {
       "type": "missing_content" | "changed_content" | "missing_element" | "visual_difference" | "typography" | "functionality",
       "severity": "critical" | "high" | "medium" | "low",
-      "description": "Краткое описание проблемы",
-      "details": "Подробности и влияние на пользователя"
+      "description": "Brief description of the issue",
+      "details": "Details and impact on the user"
     }
   ],
   "missing_elements": [],
