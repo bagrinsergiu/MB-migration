@@ -139,23 +139,27 @@ class AIComparisonService
         try {
             $startTime = microtime(true);
 
-            // Читаем скриншоты и конвертируем в base64
+            // Read screenshots and encode to base64 (with correct MIME type for API)
             Logger::instance()->debug("[Quality Analysis] Encoding source screenshot to base64", [
                 'screenshot_path' => $sourceData['screenshot_path']
             ]);
-            $sourceScreenshot = $this->encodeImage($sourceData['screenshot_path']);
-            $sourceScreenshotSize = strlen($sourceScreenshot);
+            $sourceEncoded = $this->encodeImage($sourceData['screenshot_path']);
+            $sourceScreenshot = $sourceEncoded['base64'];
+            $sourceMime = $sourceEncoded['mime'];
             Logger::instance()->debug("[Quality Analysis] Source screenshot encoded", [
-                'base64_size_bytes' => $sourceScreenshotSize
+                'base64_size_bytes' => strlen($sourceScreenshot),
+                'mime' => $sourceMime
             ]);
 
             Logger::instance()->debug("[Quality Analysis] Encoding migrated screenshot to base64", [
                 'screenshot_path' => $migratedData['screenshot_path']
             ]);
-            $migratedScreenshot = $this->encodeImage($migratedData['screenshot_path']);
-            $migratedScreenshotSize = strlen($migratedScreenshot);
+            $migratedEncoded = $this->encodeImage($migratedData['screenshot_path']);
+            $migratedScreenshot = $migratedEncoded['base64'];
+            $migratedMime = $migratedEncoded['mime'];
             Logger::instance()->debug("[Quality Analysis] Migrated screenshot encoded", [
-                'base64_size_bytes' => $migratedScreenshotSize
+                'base64_size_bytes' => strlen($migratedScreenshot),
+                'mime' => $migratedMime
             ]);
 
             // Подготавливаем промпт для анализа используя PromptBuilder
@@ -189,7 +193,7 @@ class AIComparisonService
                 'max_tokens_requested' => 2000
             ]);
 
-            $response = $this->sendAnalysisRequest($sourceScreenshot, $migratedScreenshot, $prompt);
+            $response = $this->sendAnalysisRequest($sourceScreenshot, $migratedScreenshot, $prompt, $sourceMime, $migratedMime);
 
             // Извлекаем информацию о токенах из ответа
             $usage = $response['usage'] ?? null;
@@ -263,16 +267,51 @@ class AIComparisonService
     }
 
     /**
-     * Кодировать изображение в base64
+     * Encode image to base64 and detect MIME type for correct API upload.
+     * Browser screenshots are usually JPEG; files may have .png or .jpg extension.
+     *
+     * @param string $imagePath Path to screenshot file
+     * @return array{base64: string, mime: string}
      */
-    private function encodeImage(string $imagePath): string
+    private function encodeImage(string $imagePath): array
     {
         if (!file_exists($imagePath)) {
             throw new Exception("Screenshot file not found: {$imagePath}");
         }
 
+        $mime = $this->getImageMimeType($imagePath);
         $imageData = file_get_contents($imagePath);
-        return base64_encode($imageData);
+
+        return [
+            'base64' => base64_encode($imageData),
+            'mime' => $mime
+        ];
+    }
+
+    /**
+     * Detect image MIME type from file content (so API receives correct format).
+     * Browser screenshot() often returns JPEG even when path has .png.
+     *
+     * @param string $imagePath Path to image file
+     * @return string MIME type, e.g. image/jpeg or image/png
+     */
+    private function getImageMimeType(string $imagePath): string
+    {
+        if (!file_exists($imagePath) || !is_readable($imagePath)) {
+            return 'image/png';
+        }
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo !== false) {
+            $mime = finfo_file($finfo, $imagePath);
+            finfo_close($finfo);
+            if ($mime && in_array($mime, ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'], true)) {
+                return $mime === 'image/jpg' ? 'image/jpeg' : $mime;
+            }
+        }
+
+        $ext = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
+        return $ext === 'jpg' || $ext === 'jpeg' ? 'image/jpeg' : 'image/png';
     }
 
     /**
@@ -451,9 +490,15 @@ PROMPT;
     }
 
     /**
-     * Отправить запрос в OpenAI API
+     * Send request to OpenAI API with screenshots (correct MIME type for each image).
+     *
+     * @param string $sourceImage Base64-encoded source screenshot
+     * @param string $migratedImage Base64-encoded migrated screenshot
+     * @param string $prompt Analysis prompt text
+     * @param string $sourceMime MIME type of source image (e.g. image/jpeg, image/png)
+     * @param string $migratedMime MIME type of migrated image
      */
-    private function sendAnalysisRequest(string $sourceImage, string $migratedImage, string $prompt): array
+    private function sendAnalysisRequest(string $sourceImage, string $migratedImage, string $prompt, string $sourceMime = 'image/png', string $migratedMime = 'image/png'): array
     {
         $payload = [
             'model' => $this->model,
@@ -468,14 +513,14 @@ PROMPT;
                         [
                             'type' => 'image_url',
                             'image_url' => [
-                                'url' => 'data:image/png;base64,' . $sourceImage,
+                                'url' => 'data:' . $sourceMime . ';base64,' . $sourceImage,
                                 'detail' => 'high'
                             ]
                         ],
                         [
                             'type' => 'image_url',
                             'image_url' => [
-                                'url' => 'data:image/png;base64,' . $migratedImage,
+                                'url' => 'data:' . $migratedMime . ';base64,' . $migratedImage,
                                 'detail' => 'high'
                             ]
                         ]
@@ -483,7 +528,7 @@ PROMPT;
                 ]
             ],
             'max_tokens' => 2000,
-            'temperature' => 0.3 // Низкая температура для более детерминированных результатов
+            'temperature' => 0.3
         ];
 
         $response = $this->httpClient->post($this->apiUrl, [
@@ -515,13 +560,13 @@ PROMPT;
             }
         }
 
-        // Если не удалось распарсить JSON, возвращаем базовую структуру
+        // If JSON parsing failed, return base structure
         Logger::instance()->warning("Failed to parse JSON from AI response, using fallback");
 
         return [
             'quality_score' => 50,
             'severity_level' => 'medium',
-            'summary' => 'Не удалось автоматически проанализировать страницы',
+            'summary' => 'Could not automatically analyze the pages',
             'issues' => [],
             'raw_response' => $content
         ];

@@ -22,6 +22,8 @@ services:
       - ./:/project
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /dev/shm:/dev/shm
+    networks:
+      - migration_shared
 
 #  mg_mysql:
 #    platform: linux/amd64
@@ -57,3 +59,7 @@ services:
     command: install
     volumes:
       - ./:/project:delegated
+
+networks:
+  migration_shared:
+    external: true

@@ -14,6 +14,50 @@ return static function (array $context, Request $request): Response {
     switch ($pathInfo) {
         case '/health':
             return new JsonResponse(["status" => "success",], 200);
+        case '/dashboard-handshake':
+            // Эндпоинт взаимного рукопожатия: дашборд дергает нас, мы возвращаем идентичность и опционально дергаем дашборд
+            $payload = [
+                'success' => true,
+                'service' => 'migration-server',
+                'message' => 'Migration server is reachable',
+                'server_id' => gethostname() ?: 'unknown',
+                'timestamp' => date('c'),
+                'client_ip' => $request->getClientIp() ?: null,
+            ];
+            $dashboardCallbackUrl = $request->get('dashboard_callback_url');
+            // parse_url accepts Docker hostnames (e.g. mb_dashboard); FILTER_VALIDATE_URL rejects hostnames without TLD
+            $parsed = !empty($dashboardCallbackUrl) ? parse_url($dashboardCallbackUrl) : false;
+            $validCallbackUrl = $parsed !== false && isset($parsed['scheme'], $parsed['host'])
+                && in_array($parsed['scheme'], ['http', 'https'], true);
+            if ($validCallbackUrl && $dashboardCallbackUrl !== '') {
+                $callbackPayload = ['source' => 'migration_server', 'handshake' => true];
+                $ch = curl_init($dashboardCallbackUrl);
+                curl_setopt_array($ch, [
+                    CURLOPT_POST => true,
+                    CURLOPT_POSTFIELDS => json_encode($callbackPayload),
+                    CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Accept: application/json'],
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT => 10,
+                    CURLOPT_CONNECTTIMEOUT => 5,
+                ]);
+                $callbackResponse = curl_exec($ch);
+                $callbackCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $callbackError = curl_error($ch);
+                curl_close($ch);
+                if ($callbackError || $callbackCode < 200 || $callbackCode >= 300) {
+                    $payload['handshake_with_dashboard'] = 'fail';
+                    $payload['handshake_error'] = $callbackError ?: "HTTP {$callbackCode}";
+                } else {
+                    $decoded = is_string($callbackResponse) ? json_decode($callbackResponse, true) : [];
+                    $isDashboard = isset($decoded['dashboard']) && $decoded['dashboard'] === 'migration-dashboard'
+                        || isset($decoded['service']) && $decoded['service'] === 'migration-dashboard';
+                    $payload['handshake_with_dashboard'] = $isDashboard ? 'ok' : 'fail';
+                    if (!$isDashboard) {
+                        $payload['handshake_error'] = 'Dashboard did not identify itself in response';
+                    }
+                }
+            }
+            return new JsonResponse($payload, 200);
     }
 
     $app = new ApplicationBootstrapper($context, $request);

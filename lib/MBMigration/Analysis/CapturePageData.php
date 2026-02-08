@@ -133,7 +133,7 @@ class CapturePageData
             }
             
             // Получаем скриншот после того как HTML стал доступен
-            $screenshotPath = $this->baseScreenshotsPath . 'source_' . md5($pageSlug) . '.png';
+            $screenshotPath = $this->baseScreenshotsPath . 'source_' . md5($pageSlug) . '.jpg';
             Logger::instance()->debug("[Quality Analysis] Capturing screenshot", [
                 'screenshot_path' => $screenshotPath,
                 'url' => $url
@@ -237,7 +237,7 @@ class CapturePageData
             }
             
             // Получаем скриншот после того как HTML стал доступен (или после попыток)
-            $screenshotPath = $this->baseScreenshotsPath . 'migrated_' . md5($pageSlug) . '.png';
+            $screenshotPath = $this->baseScreenshotsPath . 'migrated_' . md5($pageSlug) . '.jpg';
             Logger::instance()->debug("[Quality Analysis] Capturing screenshot", [
                 'screenshot_path' => $screenshotPath,
                 'url' => $url
