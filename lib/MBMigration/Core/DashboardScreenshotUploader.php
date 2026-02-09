@@ -142,13 +142,49 @@ class DashboardScreenshotUploader
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $curlError = curl_error($ch);
+            $curlErrorCode = curl_errno($ch);
+            $effectiveUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
             curl_close($ch);
 
+            // Извлекаем хост и endpoint из URL
+            $parsedUrl = parse_url($webhookUrl);
+            $host = ($parsedUrl['scheme'] ?? 'http') . '://' . ($parsedUrl['host'] ?? 'unknown');
+            if (isset($parsedUrl['port'])) {
+                $host .= ':' . $parsedUrl['port'];
+            }
+            $endpoint = $parsedUrl['path'] ?? '/';
+
             if ($curlError) {
+                Logger::instance()->error("[Dashboard Screenshot Uploader] cURL error occurred", [
+                    'screenshot_path' => $screenshotPath,
+                    'mb_uuid' => $mbUuid,
+                    'page_slug' => $pageSlug,
+                    'type' => $type,
+                    'host' => $host,
+                    'endpoint' => $endpoint,
+                    'webhook_url' => $webhookUrl,
+                    'effective_url' => $effectiveUrl,
+                    'curl_error' => $curlError,
+                    'curl_error_code' => $curlErrorCode,
+                    'http_code' => $httpCode,
+                    'response' => $response !== false ? substr($response, 0, 500) : null
+                ]);
                 throw new Exception("cURL error: {$curlError}");
             }
 
             if ($httpCode !== 200) {
+                Logger::instance()->error("[Dashboard Screenshot Uploader] HTTP error occurred", [
+                    'screenshot_path' => $screenshotPath,
+                    'mb_uuid' => $mbUuid,
+                    'page_slug' => $pageSlug,
+                    'type' => $type,
+                    'host' => $host,
+                    'endpoint' => $endpoint,
+                    'webhook_url' => $webhookUrl,
+                    'effective_url' => $effectiveUrl,
+                    'http_code' => $httpCode,
+                    'response' => $response !== false ? substr($response, 0, 500) : null
+                ]);
                 $errorMessage = "HTTP error: {$httpCode}";
                 if ($response) {
                     $errorMessage .= " - " . $response;
@@ -158,11 +194,35 @@ class DashboardScreenshotUploader
 
             $responseData = json_decode($response, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
+                Logger::instance()->error("[Dashboard Screenshot Uploader] JSON decode error", [
+                    'screenshot_path' => $screenshotPath,
+                    'mb_uuid' => $mbUuid,
+                    'page_slug' => $pageSlug,
+                    'type' => $type,
+                    'host' => $host,
+                    'endpoint' => $endpoint,
+                    'webhook_url' => $webhookUrl,
+                    'http_code' => $httpCode,
+                    'response' => $response !== false ? substr($response, 0, 500) : null,
+                    'json_error' => json_last_error_msg()
+                ]);
                 throw new Exception("Failed to decode response: " . json_last_error_msg());
             }
 
             if (!isset($responseData['success']) || !$responseData['success']) {
                 $errorMessage = $responseData['error'] ?? 'Unknown error';
+                Logger::instance()->error("[Dashboard Screenshot Uploader] Upload failed (server response)", [
+                    'screenshot_path' => $screenshotPath,
+                    'mb_uuid' => $mbUuid,
+                    'page_slug' => $pageSlug,
+                    'type' => $type,
+                    'host' => $host,
+                    'endpoint' => $endpoint,
+                    'webhook_url' => $webhookUrl,
+                    'http_code' => $httpCode,
+                    'response' => $responseData,
+                    'error_message' => $errorMessage
+                ]);
                 throw new Exception("Upload failed: {$errorMessage}");
             }
 
@@ -176,11 +236,23 @@ class DashboardScreenshotUploader
             return $responseData;
 
         } catch (Exception $e) {
+            // Извлекаем хост и endpoint из URL для логирования
+            $webhookUrl = $this->dashboardServerUrl . '/api/webhooks/screenshots';
+            $parsedUrl = parse_url($webhookUrl);
+            $host = ($parsedUrl['scheme'] ?? 'http') . '://' . ($parsedUrl['host'] ?? 'unknown');
+            if (isset($parsedUrl['port'])) {
+                $host .= ':' . $parsedUrl['port'];
+            }
+            $endpoint = $parsedUrl['path'] ?? '/';
+
             Logger::instance()->error("[Dashboard Screenshot Uploader] Error uploading screenshot", [
                 'screenshot_path' => $screenshotPath,
                 'mb_uuid' => $mbUuid,
                 'page_slug' => $pageSlug,
                 'type' => $type,
+                'host' => $host,
+                'endpoint' => $endpoint,
+                'webhook_url' => $webhookUrl,
                 'error' => $e->getMessage(),
                 'error_code' => $e->getCode()
             ]);
