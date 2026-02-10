@@ -77,12 +77,69 @@ const extractInnerText = (
 
         container.append(_node.cloneNode(true));
         appendedItem = container;
+      } else {
+        applyChildFontStylesToAllowedWrapper(_node);
       }
 
       stack.append(appendedItem, { type: "text" });
     }
   }
 };
+
+interface LastDescendantFontStyles {
+  fontFamily: string | null;
+  fontWeight: string | null;
+}
+
+/**
+ * Returns the inline font-family and font-weight of the last descendant (in document order)
+ * that has font-family set.
+ */
+function getLastDescendantInlineFontStyles(
+  el: HTMLElement
+): LastDescendantFontStyles {
+  const result: LastDescendantFontStyles = {
+    fontFamily: null,
+    fontWeight: null
+  };
+
+  const walk = (node: HTMLElement) => {
+    if (node.style?.fontFamily) {
+      result.fontFamily = node.style.fontFamily;
+    }
+    if (node.style?.fontWeight) {
+      result.fontWeight = node.style.fontWeight;
+    }
+    for (const child of Array.from(node.children)) {
+      if (child instanceof HTMLElement) walk(child);
+    }
+  };
+
+  for (const child of Array.from(el.children)) {
+    if (child instanceof HTMLElement) walk(child);
+  }
+  return result;
+}
+
+/**
+ * If the wrapper is an allowed tag (P, H1–H6, etc.), sets its inline font-family and
+ * font-weight from the last descendant that has them in inline style.
+ */
+function applyChildFontStylesToAllowedWrapper(wrapper: Element): void {
+  if (
+    !allowedTags.includes(wrapper.nodeName) ||
+    !(wrapper instanceof HTMLElement)
+  ) {
+    return;
+  }
+  const { fontFamily, fontWeight } = getLastDescendantInlineFontStyles(wrapper);
+  if (fontFamily) {
+    wrapper.style.fontFamily = fontFamily;
+  }
+  if (fontWeight) {
+    wrapper.style.fontWeight = fontWeight;
+  }
+}
 
 function removeNestedDivs(node: HTMLElement) {
   const embeddedPasteExists = node.querySelectorAll(embedSelector).length > 0;
@@ -455,6 +512,9 @@ export const getContainerStackWithNodes = (element: Element): Container => {
                             newWrapper.appendChild(clonedWrapper);
                           }
 
+                          if (newWrapper instanceof Element) {
+                            applyChildFontStylesToAllowedWrapper(newWrapper);
+                          }
                           stack.append(newWrapper, { type: "text" });
                           appendedIcon = false;
                         }
@@ -478,7 +538,9 @@ export const getContainerStackWithNodes = (element: Element): Container => {
                           newWrapper = document.createElement("p");
                           newWrapper.appendChild(wrapper);
                         }
-
+                        if (newWrapper instanceof Element) {
+                          applyChildFontStylesToAllowedWrapper(newWrapper);
+                        }
                         stack.append(newWrapper, { type: "text" });
                         appendedIcon = false;
                         return;
@@ -577,8 +639,12 @@ export const getContainerStackWithNodes = (element: Element): Container => {
 
       if (appendNewText) {
         appendNewText = false;
+        if (_node instanceof Element)
+          applyChildFontStylesToAllowedWrapper(_node);
         stack.append(_node, { type: "text" });
       } else {
+        if (_node instanceof Element)
+          applyChildFontStylesToAllowedWrapper(_node);
         stack.set(_node, { type: "text" });
       }
     } else {
