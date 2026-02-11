@@ -1,6 +1,7 @@
 import { run as getAccordion } from "./Accordion";
 import { dom } from "./Dom";
 import { getMenuItem, getSubMenuDropdown, getSubMenuItem } from "./Menu";
+import { getSectionHeaderLineStyles } from "./SectionHeaderLineStyles";
 import {
   attributeRun as getAttributes,
   run as getStyles
@@ -12,6 +13,7 @@ window.brizy = {
   getMenuItem,
   getSubMenuItem,
   getSubMenuDropdown,
+  getSectionHeaderLineStyles,
   getStyles,
   getAttributes,
   getText,

@@ -50,6 +50,8 @@ class Head extends HeadElement
 
         $sectionItem = $this->getSectionItemComponent($section);
 
+        $this->setMainColumnBorderStyle($section);
+
         $logoImageComponent = $this->getLogoComponent($section);
         $menuTargetComponent = $this->getTargetMenuComponent($section);
 
@@ -368,5 +370,22 @@ class Head extends HeadElement
             "activeMenuBorderBottomWidth" => 2,
             "activeMenuBorderLeftWidth" => 0,
         ];
+    }
+
+    private function setMainColumnBorderStyle(BrizyComponent $brizySection)
+    {
+        $borderMenuItemStyles = $this->scrapeStyle('#main-navigation > ul > li',['border-bottom-color']);
+
+        $brizySection->getItemValueWithDepth(0,0,0)
+            ->set_borderStyle('solid')
+            ->set_borderColorHex(ColorConverter::convertColorRgbToHex($borderMenuItemStyles['border-bottom-color']))
+            ->set_borderColorOpacity(ColorConverter::normalizeOpacity($borderMenuItemStyles['border-bottom-opacity'] ?? 1))
+
+            ->set_borderWidthType('ungrouped')
+            ->set_borderWidth(4)
+            ->set_borderTopWidth(0)
+            ->set_borderLeftWidth(0)
+            ->set_borderRightWidth(1)
+            ->set_borderBottomWidth(0);
     }
 }

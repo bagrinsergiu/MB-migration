@@ -6,12 +6,13 @@ use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
 use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
-use MBMigration\Builder\Utils\ColorConverter;
+use MBMigration\Builder\Layout\Theme\Boulevard\Concern\HeaderLineFromSection;
 
 class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\ListLayoutElement
 {
     use LineAble;
     use ShadowAble;
+    use HeaderLineFromSection;
 
     protected function getSelectorSectionCustomCSS(): string
     {
@@ -61,22 +62,11 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         $mbSectionItem = $data->getMbSection();
         $showHeader = $this->canShowHeader($mbSectionItem);
 
-        if($showHeader) {
-            $titleMb = $this->getByType($mbSectionItem['head'], 'title');
-            $elementContext = $data->instanceWithBrizyComponentAndMBSection(
-                $mbSectionItem,
-                $brizySection
-            );
-
-            $this->handleLine(
-                $elementContext,
-                $this->browserPage,
-                $titleMb['id'],
-                null,
-                ['widthSuffix' => '%'],
-                1,
-                null
-            );
+        if ($showHeader) {
+            $sectionId = $mbSectionItem['sectionId'] ?? null;
+            if ($sectionId !== null) {
+                $this->addHeaderLineFromSection($brizySection, $sectionId);
+            }
         }
 
         $this->handleShadow($brizySection);

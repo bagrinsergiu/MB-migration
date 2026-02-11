@@ -10,6 +10,7 @@ use MBMigration\Builder\Layout\Common\Concern\ImageStylesAble;
 use MBMigration\Builder\Layout\Common\Concern\RichTextAble;
 use MBMigration\Builder\Layout\Common\Concern\SectionStylesAble;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Theme\Boulevard\Concern\HeaderLineFromSection;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text\GridLayoutElement
@@ -20,6 +21,7 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     use DonationsAble;
     use LineAble;
     use Button;
+    use HeaderLineFromSection;
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -43,20 +45,10 @@ class GridLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
         $this->handleRichTextHead($elementContext, $this->browserPage);
         $this->handleRichTextHeadFromItems($elementContext, $this->browserPage);
 
-        $titleMb = $this->getByType($mbSection['head'], 'title');
-        $this->handleLine(
-            $elementContext,
-            $this->browserPage,
-            $titleMb['id'],
-            null,
-            [
-                "borderWidth" => 1,
-                "width" => 100,
-                "widthSuffix" => "%"
-            ],
-            1,
-            ''
-        );
+        $sectionId = $mbSection['sectionId'] ?? null;
+        if ($sectionId !== null) {
+            $this->addHeaderLineFromSection($this->getHeaderComponent($brizySection), $sectionId);
+        }
 
         $rowJson = json_decode($this->brizyKit['row'], true);
         $itemJson = json_decode($this->brizyKit['item'], true);
