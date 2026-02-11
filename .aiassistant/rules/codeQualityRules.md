@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: on_demand
 ---
 
 # Code Quality Rules for MB-Migration Project

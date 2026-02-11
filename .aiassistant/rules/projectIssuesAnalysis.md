@@ -1,3 +1,7 @@
+---
+apply: on_demand
+---
+
 # MB-Migration Project Issues and Weak Points Analysis
 
 ## Executive Summary

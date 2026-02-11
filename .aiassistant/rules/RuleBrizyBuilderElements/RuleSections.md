@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: on_demand
 ---
 
 # Rules for Sections - Brizy Builder Elements

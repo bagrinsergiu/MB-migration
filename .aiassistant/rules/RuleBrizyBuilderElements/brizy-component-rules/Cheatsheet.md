@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: on_demand
 ---
 
 # BrizyComponent — Cheatsheet (Quick Reference)

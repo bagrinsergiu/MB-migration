@@ -8,6 +8,10 @@ use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
 use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\ElementContext;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
+use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
+use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Utils\ColorConverter;
 
 class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Events\EventLayoutElement
 {
@@ -183,5 +187,206 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             ->addPadding(0,0,0,0);
 
         return $brizyComponent;
+    }
+
+    protected function filterEventLayoutElementStyles($sectionProperties, ElementContextInterface $data): array
+    {
+        $mbSection = $data->getMbSection();
+        $sectionSelector = '[data-id="' . ($mbSection['sectionId'] ?? $mbSection['id']) . '"]';
+        $calendarCellSelector = $this->resolveCalendarCellSelector($sectionSelector);
+
+        try {
+            $sectionStyles = $this->getDomElementStyles(
+                $sectionSelector,
+                [
+                    'background-color',
+                    'color',
+                    'border-color',
+                    'border-bottom-color',
+                ],
+                $this->browserPage
+            );
+
+            $calendarCellStyles = $this->getDomElementStyles(
+                $calendarCellSelector,
+                [
+                    'border-color',
+                    'border-style',
+                    'border-width',
+                    'border-top-width',
+                    'border-right-width',
+                    'border-bottom-width',
+                    'border-left-width',
+                    'border-bottom-color',
+                    'border-bottom-style',
+                ],
+                $this->browserPage
+            );
+        } catch (Exception|ElementNotFound|BrowserScriptException|BadJsonProvided $exception) {
+            return $sectionProperties;
+        }
+
+        $backgroundColorHex = $this->normalizeDomColorToHex($sectionStyles['background-color'] ?? null);
+        $textColorHex = $this->normalizeDomColorToHex($sectionStyles['color'] ?? null);
+
+        $borderSourceStyles = !empty($calendarCellStyles) ? $calendarCellStyles : $sectionStyles;
+        $borderColorHex = $this->normalizeDomColorToHex(
+            $borderSourceStyles['border-bottom-color'] ?? $borderSourceStyles['border-color'] ?? null
+        );
+
+        if ($backgroundColorHex !== null) {
+            $sectionProperties['calendarDaysBgColorHex'] = $backgroundColorHex;
+        }
+
+        if ($textColorHex === null && $backgroundColorHex !== null) {
+            $textColorHex = ColorConverter::getContrastColor($backgroundColorHex);
+        }
+
+        if ($textColorHex !== null) {
+            $sectionProperties['calendarHeadingColorHex'] = $textColorHex;
+            $sectionProperties['calendarDaysColorHex'] = $textColorHex;
+        }
+
+        if ($borderColorHex !== null) {
+            $sectionProperties['calendarBorderColorHex'] = $borderColorHex;
+            $sectionProperties['calendarDaysBorderColorHex'] = $borderColorHex;
+        }
+
+        $borderOpacity = $this->extractOpacity($borderSourceStyles['border-bottom-color'] ?? $borderSourceStyles['border-color'] ?? null);
+        if ($borderOpacity !== null) {
+            $sectionProperties['calendarBorderColorOpacity'] = $borderOpacity;
+            $sectionProperties['calendarDaysBorderColorOpacity'] = $borderOpacity;
+        }
+
+        $borderStyle = $this->normalizeBorderStyle(
+            $borderSourceStyles['border-bottom-style'] ?? $borderSourceStyles['border-style'] ?? null
+        );
+        if ($borderStyle !== null) {
+            $sectionProperties['calendarBorderStyle'] = $borderStyle;
+            $sectionProperties['calendarDaysBorderStyle'] = $borderStyle;
+        }
+
+        $borderTopWidth = $this->normalizeBorderWidth($borderSourceStyles['border-top-width'] ?? null);
+        $borderRightWidth = $this->normalizeBorderWidth($borderSourceStyles['border-right-width'] ?? null);
+        $borderBottomWidth = $this->normalizeBorderWidth($borderSourceStyles['border-bottom-width'] ?? null);
+        $borderLeftWidth = $this->normalizeBorderWidth($borderSourceStyles['border-left-width'] ?? null);
+
+        if ($borderTopWidth !== null || $borderRightWidth !== null || $borderBottomWidth !== null || $borderLeftWidth !== null) {
+            $sectionProperties['calendarDaysBorderWidthType'] = 'grouped';
+            $sectionProperties['calendarBorderWidthType'] = 'grouped';
+
+            $top = $borderTopWidth ?? $sectionProperties['calendarDaysBorderTopWidth'] ?? $sectionProperties['calendarBorderWidth'] ?? 1;
+            $right = $borderRightWidth ?? $sectionProperties['calendarDaysBorderRightWidth'] ?? $sectionProperties['calendarBorderWidth'] ?? 1;
+            $bottom = $borderBottomWidth ?? $sectionProperties['calendarDaysBorderBottomWidth'] ?? $sectionProperties['calendarBorderWidth'] ?? 1;
+            $left = $borderLeftWidth ?? $sectionProperties['calendarDaysBorderLeftWidth'] ?? $sectionProperties['calendarBorderWidth'] ?? 1;
+
+            $sectionProperties['calendarDaysBorderTopWidth'] = $top;
+            $sectionProperties['calendarDaysBorderRightWidth'] = $right;
+            $sectionProperties['calendarDaysBorderBottomWidth'] = $bottom;
+            $sectionProperties['calendarDaysBorderLeftWidth'] = $left;
+
+            $groupedWidth = max($top, $right, $bottom, $left);
+            $sectionProperties['calendarDaysBorderWidth'] = $groupedWidth;
+            $sectionProperties['calendarBorderWidth'] = $groupedWidth;
+        } else {
+            $singleWidth = $this->normalizeBorderWidth($borderSourceStyles['border-width'] ?? null);
+            if ($singleWidth !== null) {
+                $sectionProperties['calendarDaysBorderWidthType'] = 'grouped';
+                $sectionProperties['calendarBorderWidthType'] = 'grouped';
+                $sectionProperties['calendarDaysBorderWidth'] = $singleWidth;
+                $sectionProperties['calendarDaysBorderTopWidth'] = $singleWidth;
+                $sectionProperties['calendarDaysBorderRightWidth'] = $singleWidth;
+                $sectionProperties['calendarDaysBorderBottomWidth'] = $singleWidth;
+                $sectionProperties['calendarDaysBorderLeftWidth'] = $singleWidth;
+                $sectionProperties['calendarBorderWidth'] = $singleWidth;
+            }
+        }
+
+        return $sectionProperties;
+    }
+
+    private function resolveCalendarCellSelector(string $sectionSelector): string
+    {
+        $selectors = [
+            $sectionSelector . ' td.fc-day.fc-widget-content',
+            $sectionSelector . ' td.fc-day',
+            $sectionSelector . ' .fc-day-grid td',
+            $sectionSelector . ' table td',
+        ];
+
+        foreach ($selectors as $selector) {
+            if ($this->hasNode($selector, $this->browserPage)) {
+                return $selector;
+            }
+        }
+
+        return $sectionSelector;
+    }
+
+    private function normalizeDomColorToHex(?string $color): ?string
+    {
+        if (empty($color)) {
+            return null;
+        }
+
+        $hexColor = ColorConverter::rgba2hex($color);
+
+        if (!is_string($hexColor) || !preg_match('/^#([a-fA-F0-9]{6})$/', $hexColor)) {
+            return null;
+        }
+
+        return $hexColor;
+    }
+
+    private function extractOpacity(?string $color): ?float
+    {
+        if (empty($color)) {
+            return null;
+        }
+
+        $opacity = (float) ColorConverter::rgba2opacity($color);
+
+        // Transparent/computed fallback colors (alpha=0) should not override
+        // the widget defaults, otherwise calendar borders disappear.
+        if ($opacity <= 0) {
+            return null;
+        }
+
+        return $opacity;
+    }
+
+    private function normalizeBorderStyle(?string $borderStyle): ?string
+    {
+        if (empty($borderStyle)) {
+            return null;
+        }
+
+        $normalized = strtolower(trim($borderStyle));
+        $allowedStyles = ['solid', 'dotted', 'dashed', 'double', 'none'];
+
+        if (!in_array($normalized, $allowedStyles, true)) {
+            return null;
+        }
+
+        return $normalized;
+    }
+
+    private function normalizeBorderWidth(?string $borderWidth): ?int
+    {
+        if (empty($borderWidth)) {
+            return null;
+        }
+
+        $normalized = str_ireplace('px', '', trim($borderWidth));
+        if (!is_numeric($normalized)) {
+            return null;
+        }
+
+        $value = (int) round((float) $normalized);
+        if ($value < 0) {
+            return 0;
+        }
+
+        return $value;
     }
 }

@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: on_demand
 ---
 
 Here’s the full content of your `Examples.md` translated into English while preserving structure and formatting:

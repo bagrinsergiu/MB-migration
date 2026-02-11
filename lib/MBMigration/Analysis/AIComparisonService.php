@@ -675,6 +675,19 @@ PROMPT;
             return null;
         }
 
+        // Позволяем явно переопределить тарифы через .env без изменений кода.
+        // Значения ожидаются в USD за 1M токенов.
+        $envInputPer1M = $_ENV['OPENAI_COST_INPUT_PER_1M'] ?? null;
+        $envOutputPer1M = $_ENV['OPENAI_COST_OUTPUT_PER_1M'] ?? null;
+
+        if (is_numeric($envInputPer1M) && is_numeric($envOutputPer1M)) {
+            $inputPricePerToken = ((float)$envInputPer1M) / 1000000;
+            $outputPricePerToken = ((float)$envOutputPer1M) / 1000000;
+
+            $cost = ($promptTokens * $inputPricePerToken) + ($completionTokens * $outputPricePerToken);
+            return round($cost, 6);
+        }
+
         // Примерные цены для разных моделей (на момент написания кода)
         // Цены могут отличаться, обновите при необходимости
         $pricing = [
@@ -682,6 +695,9 @@ PROMPT;
             'gpt-4-turbo' => ['input' => 0.01 / 1000, 'output' => 0.03 / 1000], // $10/$30 per 1M tokens
             'gpt-4-vision-preview' => ['input' => 0.01 / 1000, 'output' => 0.03 / 1000],
             'gpt-4.1' => ['input' => 0.01 / 1000, 'output' => 0.03 / 1000], // Azure OpenAI может иметь другие цены
+            // Эмпирическая оценка на основе фактических логов проекта (~$0.418 за 1M суммарных токенов).
+            // Для устойчивой оценки считаем одинаковую цену на input/output.
+            'gpt-5.3-codex' => ['input' => 0.418 / 1000000, 'output' => 0.418 / 1000000],
         ];
 
         $modelKey = strtolower($this->model);

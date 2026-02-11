@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: on_demand
 ---
 
 # Analysis and Rules: Aligning Nested Elements via Column → Cloneable

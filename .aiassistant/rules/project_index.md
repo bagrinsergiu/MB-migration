@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: on_demand
 ---
 
 # MB-Migration Project Index

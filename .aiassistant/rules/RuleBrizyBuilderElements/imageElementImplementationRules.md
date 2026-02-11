@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: on_demand
 ---
 
 # Image Element Implementation Rules

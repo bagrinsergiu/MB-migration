@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: on_demand
 ---
 
 # Element Nesting Tree - Brizy Builder Structure

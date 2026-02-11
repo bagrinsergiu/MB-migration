@@ -1,3 +1,7 @@
+---
+apply: on_demand
+---
+
 # Dusk - Font Issues #762
 
 ## Issue Description

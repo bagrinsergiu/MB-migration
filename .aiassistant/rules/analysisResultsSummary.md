@@ -1,3 +1,7 @@
+---
+apply: on_demand
+---
+
 # MB-Migration Project Analysis Results Summary
 
 ## Overview
