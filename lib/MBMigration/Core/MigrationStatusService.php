@@ -296,7 +296,7 @@ class MigrationStatusService
                         }
 
                         // Объединяем данные (lock-файл имеет приоритет для текущего статуса)
-                        $result = $this->mergeStatusData($lockData, $dbData);
+                        $result = $this->mergeStatusData($lockData, is_array($dbData) ? $dbData : null);
                         return $result;
                     }
                 }
