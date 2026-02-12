@@ -372,9 +372,66 @@ trait RichTextAble
         }
 
         // Check for button indicators: data-button="true" or class="sites-button"
-        return (stripos($content, 'data-button="true"') !== false) ||
-               (stripos($content, 'class="sites-button"') !== false) ||
-               (stripos($content, "class='sites-button'") !== false);
+        $hasButtonIndicator = (stripos($content, 'data-button="true"') !== false) ||
+            (stripos($content, "data-button='true'") !== false) ||
+            (stripos($content, 'class="sites-button"') !== false) ||
+            (stripos($content, "class='sites-button'") !== false);
+
+        if (!$hasButtonIndicator) {
+            return false;
+        }
+
+        // Social icon links in footer often carry sites-button/data-button markers.
+        // Treat these as icons to avoid applying button border/hover styles.
+        $hasSocialIconMarkup = (stripos($content, 'socialIconLink') !== false) ||
+            (stripos($content, 'data-socialicon') !== false);
+
+        if (!$hasSocialIconMarkup) {
+            return true;
+        }
+
+        return $this->hasNonSocialButtonMarkup($content);
+    }
+
+    private function hasNonSocialButtonMarkup(string $content): bool
+    {
+        if (!preg_match_all('/<(a|button)\b[^>]*>/i', $content, $tagMatches)) {
+            return false;
+        }
+
+        foreach ($tagMatches[0] as $tag) {
+            $tagLower = strtolower($tag);
+            $hasButtonFlag = (strpos($tagLower, 'sites-button') !== false) ||
+                (strpos($tagLower, 'data-button="true"') !== false) ||
+                (strpos($tagLower, "data-button='true'") !== false);
+
+            if (!$hasButtonFlag) {
+                continue;
+            }
+
+            $isSocialIconLink = strpos($tagLower, 'socialiconlink') !== false;
+            if (!$isSocialIconLink) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isSocialIconButtonItem(array $clonableItem, array $mbSectionItem): bool
+    {
+        $itemValue = $clonableItem['value'] ?? [];
+        $hasIcon = !empty($itemValue['iconName']) || !empty($itemValue['iconType']);
+        $text = trim((string)($itemValue['text'] ?? ''));
+
+        if (!$hasIcon || $text !== '') {
+            return false;
+        }
+
+        $content = strtolower((string)($mbSectionItem['content'] ?? ''));
+
+        return strpos($content, 'socialiconlink') !== false ||
+            strpos($content, 'data-socialicon') !== false;
     }
 
     /**
@@ -518,10 +575,10 @@ trait RichTextAble
             'timestamp' => time() * 1000
         ]) . "\n", FILE_APPEND);
         // #endregion
-        
+
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
         $richTextBrowserData = $this->extractTexts($selector ?? '[data-id="' . $sectionId . '"]', $browserPage, $families, $defaultFont, $urlMap);
-        
+
         // #region agent log
         file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
             'sessionId' => 'debug-session',
@@ -539,7 +596,7 @@ trait RichTextAble
             'timestamp' => time() * 1000
         ]) . "\n", FILE_APPEND);
         // #endregion
-        
+
         $styles = $this->getDomElementStyles(
             $selector ?? '[data-id="' . $sectionId . '"]',
             ['text-align', 'font-family'],
@@ -627,7 +684,7 @@ trait RichTextAble
                                     try {
                                         $filename = $clonableItem['value']['filename'] ?? null;
                                         $code = $clonableItem['value']['code'] ?? null;
-                                        
+
                                         if ($filename === null || $code === null) {
                                             Logger::instance()->warning('Missing filename or code for custom icon upload', [
                                                 'has_filename' => $filename !== null,
@@ -635,7 +692,7 @@ trait RichTextAble
                                             ]);
                                             continue 2; // Continue outer foreach loop, not switch
                                         }
-                                        
+
                                         $customIconUploadResult = $brizyAPI->uploadCustomIcon(
                                             $projectID,
                                             $filename,
@@ -654,8 +711,8 @@ trait RichTextAble
                                             $clonableItem['value']['hoverBgColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
                                             $clonableItem['value']['hoverBgColorPalette'] = '';
 
-                                            $clonableItem['value']['hoverBorderColorHex'] = $iconClikStyle['hover']['background-color-opacity'];
-                                            $clonableItem['value']['hoverBorderColorOpacity'] = $iconClikStyle['hover']['background-color-opacity'];
+                                            $clonableItem['value']['hoverBorderColorHex'] = $iconClikStyle['hover']['border-bottom-color'] ?? $iconClikStyle['hover']['background-color'];
+                                            $clonableItem['value']['hoverBorderColorOpacity'] = $iconClikStyle['hover']['border-bottom-color-opacity'] ?? $iconClikStyle['hover']['background-color-opacity'];
                                             $clonableItem['value']['hoverBorderColorPalette'] = '';
                                         }
 
@@ -667,7 +724,11 @@ trait RichTextAble
                                     }
                                     break;
                                 case 'Button':
-                                    if (!empty($buttonStyle['hover']) && !empty($buttonStyle['normal'])) {
+                                    if (
+                                        !empty($buttonStyle['hover']) &&
+                                        !empty($buttonStyle['normal']) &&
+                                        !$this->isSocialIconButtonItem($clonableItem, $mbSectionItem)
+                                    ) {
 
                                         $clonableItem['value']['colorHex'] = $buttonStyle['normal']['color'];
                                         $clonableItem['value']['colorOpacity'] = $buttonStyle['normal']['color-opacity'];
@@ -690,7 +751,7 @@ trait RichTextAble
                                         $clonableItem['value']['hoverBgColorOpacity'] = $buttonStyle['hover']['background-color-opacity'];
                                         $clonableItem['value']['hoverBgColorPalette'] = '';
 
-                                        $clonableItem['value']['hoverBorderColorHex'] = $buttonStyle['hover']['border-bottom-color-opacity'];
+                                        $clonableItem['value']['hoverBorderColorHex'] = $buttonStyle['hover']['border-bottom-color'];
                                         $clonableItem['value']['hoverBorderColorOpacity'] = $buttonStyle['hover']['border-bottom-color-opacity'];
                                         $clonableItem['value']['hoverBorderColorPalette'] = '';
                                     }
@@ -812,9 +873,9 @@ trait RichTextAble
                                 'timestamp' => time() * 1000
                             ]) . "\n", FILE_APPEND);
                             // #endregion
-                            
+
                             $brizySection->getValue()->add_items([$brzTextComponent]);
-                            
+
                             // #region agent log
                             file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
                                 'sessionId' => 'debug-session',
@@ -845,7 +906,7 @@ trait RichTextAble
                                 'timestamp' => time() * 1000
                             ]) . "\n", FILE_APPEND);
                             // #endregion
-                            
+
                             if ($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])) {
                                 // #region agent log
                                 file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
@@ -861,9 +922,9 @@ trait RichTextAble
                                     'timestamp' => time() * 1000
                                 ]) . "\n", FILE_APPEND);
                                 // #endregion
-                                
+
                                 $brizySection->getValue()->add_items([$brzTextComponent]);
-                                
+
                                 // #region agent log
                                 file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
                                     'sessionId' => 'debug-session',
@@ -972,15 +1033,15 @@ trait RichTextAble
 
     /**
      * Get default options for mobile images
-     * 
+     *
      * Delegates option retrieval to MobilePhotoOptionsConfig configuration class.
      * Supports three levels of customization (in priority order):
      * 1. For specific element (via $imageOptions in handlePhotoItem)
      * 2. For specific theme (via MobilePhotoOptionsConfig::getThemeSpecificOptions)
      * 3. Global default values for all themes (via MobilePhotoOptionsConfig::getGlobalDefaults)
-     * 
+     *
      * Themes can override methods in MobilePhotoOptionsConfig for customization
-     * 
+     *
      * @param ElementContextInterface|null $data Element context (optional, for theme detection)
      * @return array Array with default values
      */
@@ -1014,7 +1075,7 @@ trait RichTextAble
             $sizeUnit = 'px';
 
             // Set required Image element properties according to aiRules
-            $image->getValue()
+         $image->getValue()
                 ->set_imageFileName($mbSectionItem['imageFileName'])
                 ->set_imageSrc($mbSectionItem['content']);
 

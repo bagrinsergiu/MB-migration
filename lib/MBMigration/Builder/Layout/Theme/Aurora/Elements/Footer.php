@@ -54,7 +54,7 @@ class Footer extends FooterElement
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 50,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 0,
+            "mobilePaddingTop" => 50,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
