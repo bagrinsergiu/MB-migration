@@ -63,7 +63,7 @@ return static function (array $context, Request $request): Response {
     $app = new ApplicationBootstrapper($context, $request);
 
     try {
-        $config = $app->doInnitConfig();
+        $config = $app->doInitConfig();
     } catch (Exception $e) {
         if ($e->getCode() < 100) {
             return new JsonResponse(['error' => $e->getMessage()], 404);

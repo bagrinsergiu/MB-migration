@@ -35,7 +35,7 @@ class ApplicationBootstrapper
     /**
      * @throws Exception
      */
-    function doInnitConfig(): Config
+    function doInitConfig(): Config
     {
         $settings = [
             'devMode' => (bool)$this->context['DEV_MODE'] ?? false,
@@ -408,7 +408,7 @@ class ApplicationBootstrapper
         return $this->projectPagesList ?? [];
     }
 
-    public function getProjectUUDI(): string
+    public function getProjectUUID(): string
     {
         return $this->projectUUID ?? '';
     }

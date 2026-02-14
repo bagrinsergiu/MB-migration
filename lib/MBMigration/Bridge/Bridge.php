@@ -581,7 +581,7 @@ class Bridge
             );
 
             if (!empty($result['mMigration']) && $result['mMigration'] === true) {
-                $projectUUID = $this->app->getProjectUUDI();
+                $projectUUID = $this->app->getProjectUUID();
                 $pageList = $this->app->getPageList();
 
                 if ($this->checkPageChanges($projectUUID, $pageList)) {
