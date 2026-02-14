@@ -10,6 +10,7 @@ use MBMigration\Builder\Utils\ColorConverter;
 use MBMigration\Builder\Utils\NumberProcessor;
 use MBMigration\Builder\Media\MediaController;
 use MBMigration\Browser\BrowserPageInterface;
+use MBMigration\Core\Config;
 use MBMigration\Core\Logger;
 
 class FullTextBlurBox extends FullTextElement
@@ -288,15 +289,16 @@ class FullTextBlurBox extends FullTextElement
     {
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
 
-        // Пробуем разные селекторы для получения стилей внешнего Column
-        // Порядок важен - от более специфичных к общим
+        // Пробуем разные селекторы для получения стилей внешнего Column.
+        // Для full-text-blur-box цвет фона задаётся на секции [data-id="..."] или на .bg-opacity (> div > div).
+        // Селектор секции идёт первым, чтобы гарантировать корректный цвет (#587c82), а не дефолт шаблона (#9a4646).
         $outerColumnSelectors = [
+            '[data-id="' . $sectionId . '"]',
+            '[data-id="' . $sectionId . '"] > div > div',
             '[data-id="' . $sectionId . '"] .content-wrapper',
             '[data-id="' . $sectionId . '"] .row > .column:first-child',
-            '[data-id="' . $sectionId . '"] > div > div',
             '[data-id="' . $sectionId . '"] > div',
             '[data-id="' . $sectionId . '"] .row > .column',
-            '[data-id="' . $sectionId . '"]',
         ];
 
         $families = [];
@@ -323,7 +325,7 @@ class FullTextBlurBox extends FullTextElement
                 $resultStyles['padding-bottom'] = $styles['padding-bottom'];
             }
 
-            // Проверяем, что background-color валидный и не прозрачный
+            // Проверяем, что background-color валидный, не прозрачный и слой видим (opacity не 0)
             if (!empty($styles['background-color']) && !$foundBgColor) {
                 $bgColor = strtolower(trim($styles['background-color']));
                 $transparentValues = [
@@ -333,8 +335,11 @@ class FullTextBlurBox extends FullTextElement
                     'rgba(0,0,0,0)',
                     'rgba(255,255,255,0)',
                 ];
+                $opacityNumeric = isset($styles['opacity'])
+                    ? NumberProcessor::convertToNumeric($styles['opacity'])
+                    : 1.0;
 
-                if (!in_array($bgColor, $transparentValues)) {
+                if (!in_array($bgColor, $transparentValues) && $opacityNumeric >= 0.01) {
                     $resultStyles['background-color'] = $styles['background-color'];
                     if (isset($styles['opacity'])) {
                         $resultStyles['opacity'] = $styles['opacity'];
@@ -344,7 +349,28 @@ class FullTextBlurBox extends FullTextElement
             }
         }
 
+        // #region agent log
+        Logger::instance()->debug(
+            '[FullTextBlurBox] getOuterColumnStyles result: sectionId=' . $sectionId
+            . ', resultBgColor=' . ($resultStyles['background-color'] ?? 'null')
+            . ', resultKeys=' . implode(',', array_keys($resultStyles))
+        );
+        // #endregion
+
         return $resultStyles;
+    }
+
+    /**
+     * Внешний Column «рамки»: SectionItem -> Row(0) -> Column(0).
+     * В шаблоне у этого Column задан bgColorHex (#9a4646) — сюда ставим цвет с исходной страницы.
+     *
+     * @param BrizyComponent $sectionItem SectionItem (не Section)
+     * @return BrizyComponent|null Column или null, если по пути не Column (защита от смены структуры шаблона)
+     */
+    protected function getOuterFrameColumn(BrizyComponent $sectionItem): ?BrizyComponent
+    {
+        $outer = $sectionItem->getItemWithDepth(0, 0);
+        return ($outer && $outer->getType() === 'Column') ? $outer : null;
     }
 
     /**
@@ -365,39 +391,75 @@ class FullTextBlurBox extends FullTextElement
             return;
         }
 
+        // #region agent log
+        $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'] ?? '?';
+        $hasPhoto = isset($mbSectionItem['settings']['sections']['background']['photo'])
+            && $mbSectionItem['settings']['sections']['background']['photo'] !== '';
+        $hasFilename = isset($mbSectionItem['settings']['sections']['background']['filename'])
+            && isset($mbSectionItem['settings']['sections']['background']['photo']);
+        Logger::instance()->debug(
+            '[FullTextBlurBox] handleSectionBackground branch: sectionId=' . $sectionId
+            . ', hasBackgroundPhoto=' . ($hasPhoto ? '1' : '0')
+            . ', hasFilename=' . ($hasFilename ? '1' : '0')
+            . ', sectionStylesBg=' . ($sectionStyles['background-color'] ?? 'null')
+        );
+        // #endregion
+
         // Обрабатываем background-color для градиента на внешней секции
         if (isset($sectionStyles['background-color'])) {
             $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
                 $sectionStyles['opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'] ?? 'rgba(255,255,255,1)')
             );
+            if (Config::$devMode) {
+                $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'] ?? '';
+                Logger::instance()->debug('[FullTextBlurBox] Section background source: sectionStyles', ['sectionId' => $sectionId]);
+            }
         } else {
-            $selectorSectionStyles = 'body';
-
-            $styles = $this->getDomElementStyles(
-                $selectorSectionStyles,
-                ['background-color', 'opacity'],
-                $this->browserPage,
-                [],
-                []
-            );
-            $sectionStyles['background-color'] = ColorConverter::convertColorRgbToHex($styles['background-color'] ?? '#ffffff');
-            $sectionStyles['opacity'] = ColorConverter::normalizeOpacity($styles['opacity']);
+            // Цвет динамически с исходной страницы: приоритет — обёртка секции (getOuterColumnStyles), затем body.
+            // Фикс: не подставлять body, пока не попробованы стили секции (иначе «рамка» могла становиться красной вместо teal).
+            $outerColumnStyles = $this->getOuterColumnStyles($mbSectionItem, $sectionStyles);
+            if (!empty($outerColumnStyles['background-color'])) {
+                $sectionStyles['background-color'] = $outerColumnStyles['background-color'];
+                $sectionStyles['opacity'] = $outerColumnStyles['opacity'] ?? ColorConverter::rgba2opacity($outerColumnStyles['background-color']);
+                $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric(
+                    ColorConverter::rgba2opacity($sectionStyles['background-color'])
+                );
+                if (isset($outerColumnStyles['opacity'])) {
+                    $sectionStyles['background-opacity'] *= NumberProcessor::convertToNumeric($outerColumnStyles['opacity']);
+                }
+                if (Config::$devMode) {
+                    $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'] ?? '';
+                    Logger::instance()->debug('[FullTextBlurBox] Section background source: outerColumn', ['sectionId' => $sectionId]);
+                }
+            } else {
+                // Fallback: фон body (как раньше)
+                $styles = $this->getDomElementStyles(
+                    'body',
+                    ['background-color', 'opacity'],
+                    $this->browserPage,
+                    [],
+                    []
+                );
+                $sectionStyles['background-color'] = ColorConverter::convertColorRgbToHex($styles['background-color'] ?? '#ffffff');
+                $sectionStyles['opacity'] = ColorConverter::normalizeOpacity($styles['opacity']);
+                $sectionStyles['background-opacity'] = NumberProcessor::convertToNumeric($sectionStyles['opacity']);
+                if (Config::$devMode) {
+                    $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'] ?? '';
+                    Logger::instance()->debug('[FullTextBlurBox] Section background source: body (fallback)', ['sectionId' => $sectionId]);
+                }
+            }
         }
 
         // Применяем градиент/цвет к внешней секции (SectionItem) - без изображения
         $this->handleItemBackground($brizySection, $sectionStyles);
 
-        // Если есть изображение, применяем его к внешнему Column
-        // Относительно SectionItem: Row (0) -> Column (0,0) - это внешний Column
         if (isset($mbSectionItem['settings']['sections']['background']['photo']) &&
             $mbSectionItem['settings']['sections']['background']['photo'] != '') {
             $background = $mbSectionItem['settings']['sections']['background'];
             if (isset($background['filename']) && isset($background['photo'])) {
-                // Получаем внешний Column для установки изображения
-                // Относительно SectionItem: Row (0) -> Column (0,0)
-                $outerColumn = $brizySection->getItemWithDepth(0, 0);
+                $outerColumn = $this->getOuterFrameColumn($brizySection);
 
-                if ($outerColumn) {
+                if ($outerColumn !== null) {
                     // Получаем стили внешнего Column из исходного сайта
                     $outerColumnStyles = $this->getOuterColumnStyles($mbSectionItem, $sectionStyles);
 
@@ -512,8 +574,107 @@ class FullTextBlurBox extends FullTextElement
                         }
                     }
                 }
+            } else {
+                // Нет фонового изображения: внешний Column иначе остаётся с цветом из шаблона (#9a4646).
+                $outerColumn = $this->getOuterFrameColumn($brizySection);
+                // #region agent log
+                $sectionIdLog2 = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'] ?? '?';
+                Logger::instance()->debug(
+                    '[FullTextBlurBox] has_photo_no_filename_branch: sectionId=' . $sectionIdLog2
+                    . ', outerColumnNull=' . ($outerColumn === null ? '1' : '0')
+                );
+                // #endregion
+                if ($outerColumn !== null) {
+                    $outerColumnStyles = $this->getOuterColumnStyles($mbSectionItem, $sectionStyles);
+                    if (!empty($outerColumnStyles['background-color'])) {
+                        $bgColorHex = ColorConverter::rgba2hex($outerColumnStyles['background-color']);
+                        $bgColorOpacity = ColorConverter::rgba2opacity($outerColumnStyles['background-color']);
+                        if (isset($outerColumnStyles['opacity'])) {
+                            $bgColorOpacity *= NumberProcessor::convertToNumeric($outerColumnStyles['opacity']);
+                        }
+                    } elseif (!empty($sectionStyles['background-color'])) {
+                        // getOuterColumnStyles пустой (DOM/селекторы не дали цвета) — берём тот же цвет, что уже применили к SectionItem
+                        $bgColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
+                        $bgColorOpacity = NumberProcessor::convertToNumeric(
+                            $sectionStyles['background-opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'])
+                        );
+                    } else {
+                        $bgColorHex = null;
+                        $bgColorOpacity = null;
+                    }
+                    // #region agent log
+                    Logger::instance()->debug(
+                        '[FullTextBlurBox] has_photo_no_filename_bgColor: sectionId=' . $sectionIdLog2
+                        . ', bgColorHex=' . ($bgColorHex ?? 'null')
+                        . ', willSet=' . ($bgColorHex !== null ? '1' : '0')
+                    );
+                    // #endregion
+                    if ($bgColorHex !== null) {
+                        $outerColumn->getValue()
+                            ->set_bgColorType('solid')
+                            ->set_bgColorHex($bgColorHex)
+                            ->set_bgColorOpacity($bgColorOpacity)
+                            ->set_bgColorPalette('')
+                            ->set_mobileBgColorType('solid')
+                            ->set_mobileBgColorHex($bgColorHex)
+                            ->set_mobileBgColorOpacity($bgColorOpacity)
+                            ->set_mobileBgColorPalette('');
+                    }
+                }
+            }
+        } else {
+                // Секция без фонового фото: шаблон оставляет у внешнего Column #9a4646 — перезаписываем цветом с исходной страницы
+                $outerColumn = $this->getOuterFrameColumn($brizySection);
+                // #region agent log
+                $sectionIdLog = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'] ?? '?';
+                Logger::instance()->debug(
+                    '[FullTextBlurBox] no_photo_branch: sectionId=' . $sectionIdLog
+                    . ', outerColumnNull=' . ($outerColumn === null ? '1' : '0')
+                );
+                // #endregion
+                if ($outerColumn !== null) {
+                    $outerColumnStyles = $this->getOuterColumnStyles($mbSectionItem, $sectionStyles);
+                    if (!empty($outerColumnStyles['background-color'])) {
+                        $bgColorHex = ColorConverter::rgba2hex($outerColumnStyles['background-color']);
+                        $bgColorOpacity = ColorConverter::rgba2opacity($outerColumnStyles['background-color']);
+                        if (isset($outerColumnStyles['opacity'])) {
+                            $bgColorOpacity *= NumberProcessor::convertToNumeric($outerColumnStyles['opacity']);
+                        }
+                    } elseif (!empty($sectionStyles['background-color'])) {
+                        $bgColorHex = ColorConverter::rgba2hex($sectionStyles['background-color']);
+                        $bgColorOpacity = NumberProcessor::convertToNumeric(
+                            $sectionStyles['background-opacity'] ?? ColorConverter::rgba2opacity($sectionStyles['background-color'])
+                        );
+                    } else {
+                        $bgColorHex = null;
+                        $bgColorOpacity = null;
+                    }
+                    // #region agent log
+                    Logger::instance()->debug(
+                        '[FullTextBlurBox] no_photo_bgColor: sectionId=' . $sectionIdLog
+                        . ', bgColorHex=' . ($bgColorHex ?? 'null')
+                        . ', outerColumnStylesBg=' . ($outerColumnStyles['background-color'] ?? 'null')
+                        . ', sectionStylesBg=' . ($sectionStyles['background-color'] ?? 'null')
+                        . ', willSet=' . ($bgColorHex !== null ? '1' : '0')
+                    );
+                    // #endregion
+                    if ($bgColorHex !== null) {
+                        $outerColumn->getValue()
+                            ->set_bgColorType('solid')
+                            ->set_bgColorHex($bgColorHex)
+                            ->set_bgColorOpacity($bgColorOpacity)
+                            ->set_bgColorPalette('')
+                            ->set_mobileBgColorType('solid')
+                            ->set_mobileBgColorHex($bgColorHex)
+                            ->set_mobileBgColorOpacity($bgColorOpacity)
+                            ->set_mobileBgColorPalette('');
+                    }
+                }
+            }
 
-                // Настройка высоты секции
+            // Настройка высоты секции (только когда у секции задано фоновое фото)
+            if (isset($mbSectionItem['settings']['sections']['background']['photo']) &&
+                $mbSectionItem['settings']['sections']['background']['photo'] != '') {
                 if ($options['heightType'] == 'auto') {
                     $brizySection
                         ->getParent()
@@ -529,7 +690,6 @@ class FullTextBlurBox extends FullTextElement
                         ->set_fullHeight('custom');
                 }
             }
-        }
     }
 
     /**

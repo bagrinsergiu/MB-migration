@@ -23,10 +23,11 @@ class ApplicationBootstrapper
         $this->projectPagesList = [];
 
         $logFilePath = $this->context['LOG_FILE_PATH'] . '_ApplicationBootstrapper.log';
+        $logLevel = $this->resolveLogLevel();
 
         $logger = Logger::initialize(
             "ApplicationBootstrapper",
-            $this->context['LOG_LEVEL'],
+            $logLevel,
             $logFilePath
         );
     }
@@ -97,6 +98,20 @@ class ApplicationBootstrapper
     }
 
     /**
+     * Возвращает уровень логирования: в DEV_MODE принудительно debug, иначе из LOG_LEVEL.
+     *
+     * @return int|string Уровень для Monolog (например, 'debug', 'info' или \Monolog\Logger::DEBUG)
+     */
+    private function resolveLogLevel()
+    {
+        $devMode = $this->context['DEV_MODE'] ?? false;
+        if (!empty($devMode) && $devMode !== '0' && $devMode !== 'false') {
+            return \Monolog\Logger::DEBUG;
+        }
+        return $this->context['LOG_LEVEL'] ?? 'info';
+    }
+
+    /**
      * @throws Exception
      */
     function getMigrationLogs(): array
@@ -163,9 +178,10 @@ class ApplicationBootstrapper
             $logFilePath = $this->context['LOG_FILE_PATH'] . '_' . $brz_project_id . '.log';
         }
 
+        $logLevel = $this->resolveLogLevel();
         $logger = Logger::initialize(
             "brizy-$brz_project_id",
-            $this->context['LOG_LEVEL'],
+            $logLevel,
             $logFilePath
         );
 
