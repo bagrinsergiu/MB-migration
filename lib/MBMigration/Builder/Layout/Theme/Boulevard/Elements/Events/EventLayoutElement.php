@@ -302,6 +302,18 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             }
         }
 
+        // Boulevard: hover link colors — opacity 0.80
+        $hoverLinkOpacityParams = [
+            'hoverTitleColorOpacity',
+            'hoverListItemTitleColorOpacity',
+            'hoverEventsColorOpacity',
+        ];
+        foreach ($hoverLinkOpacityParams as $param) {
+            if (isset($sectionProperties[$param])) {
+                $sectionProperties[$param] = 0.80;
+            }
+        }
+
         return $sectionProperties;
     }
 
