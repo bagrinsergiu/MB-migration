@@ -94,7 +94,7 @@ abstract class GalleryLayoutElement extends AbstractElement
             ->set_mobileFullHeight('custom')
             ->set_mobileSectionHeight(250)
 
-            ->set_tabletSectionHeight(450)
+            ->set_tabletFullHeight('custom')
             ->set_tabletSectionHeight(450)
 
             ->set_sliderDots($markers ? "circle" : "none")
@@ -246,7 +246,7 @@ abstract class GalleryLayoutElement extends AbstractElement
         $brizyComponentValue
             ->set_mobileBgSizeType('custom')
             ->set_mobileBgSize('contain')
-            ->set_mobileHeightSuffix('px')
+            ->set_mobileHeight(250)
             ->set_mobileHeightSuffix('px');
 
         if (isset($mbItem['settings']['sections']['gallery']['max_width']) &&

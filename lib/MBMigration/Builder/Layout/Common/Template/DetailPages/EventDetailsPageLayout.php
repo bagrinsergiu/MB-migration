@@ -105,7 +105,7 @@ class EventDetailsPageLayout extends DetailsPage
             'colorPalette' => '',
 
             'titleColorHex' => $sectionPalette['text'],
-            'titleColorOpacity' => 3,
+            'titleColorOpacity' => 1,
             'titleColorPalette' => '',
 
             'previewColorHex' => $sectionPalette['text'],
@@ -116,8 +116,8 @@ class EventDetailsPageLayout extends DetailsPage
             'detailButtonColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
             'detailButtonColorPalette' => '',
 
-            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['background-color'],
-            'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ??  0.75,
+            'hoverDetailButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleHover['color'],
+            'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 0.75,
             'hoverDetailButtonColorPalette' => '',
 
             'detailButtonBgColorHex' => $sectionPalette['btn-bg'] ?? $basicButtonStyleNormal['background-color'],

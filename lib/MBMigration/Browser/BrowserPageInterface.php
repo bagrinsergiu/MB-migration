@@ -15,4 +15,6 @@ interface BrowserPageInterface
     public function getPageScreen($prefix = ''): void;
 
     public function getCurrentUrl(): string;
+
+    public function setViewportSize(int $width, int $height): void;
 }

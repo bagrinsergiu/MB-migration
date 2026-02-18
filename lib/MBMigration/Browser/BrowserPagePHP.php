@@ -292,4 +292,13 @@ class BrowserPagePHP implements BrowserPageInterface
         return $this->page->getCurrentUrl();
     }
 
+    public function setViewportSize(int $width, int $height): void
+    {
+        try {
+            $this->page->setViewport($width, $height)->await(5000);
+        } catch (\Exception $e) {
+            Logger::instance()->warning('setViewportSize failed: ' . $e->getMessage());
+        }
+    }
+
 }

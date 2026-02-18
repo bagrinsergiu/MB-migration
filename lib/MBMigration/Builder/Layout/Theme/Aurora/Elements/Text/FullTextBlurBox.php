@@ -72,6 +72,29 @@ class FullTextBlurBox extends FullTextElement
         // Объединяем стили
         $allStyles = array_merge($blurBoxStyles, $beforeStyles);
 
+        // Получаем мобильные padding стили (viewport 767px)
+        $mobilePaddingProperties = [
+            'padding-top',
+            'padding-bottom',
+            'padding-left',
+            'padding-right',
+        ];
+
+        $mobileStyles = $this->getDomElementStylesAtViewport(
+            $selector,
+            $mobilePaddingProperties,
+            $browserPage,
+            767,
+            1024,
+            $families,
+            $defaultFont
+        );
+
+        // Добавляем мобильные стили с префиксом mobile-
+        foreach ($mobileStyles as $prop => $value) {
+            $allStyles['mobile-' . $prop] = $value;
+        }
+
         return $allStyles;
     }
 
@@ -163,6 +186,20 @@ class FullTextBlurBox extends FullTextElement
             ? (int)str_replace('px', '', $rawStyles['padding-right'])
             : 0;
 
+        // Мобильные padding (из mobile-padding-* ключей, fallback на desktop значения)
+        $normalized['mobilePaddingTop'] = isset($rawStyles['mobile-padding-top'])
+            ? (int)str_replace('px', '', $rawStyles['mobile-padding-top'])
+            : $normalized['paddingTop'];
+        $normalized['mobilePaddingBottom'] = isset($rawStyles['mobile-padding-bottom'])
+            ? (int)str_replace('px', '', $rawStyles['mobile-padding-bottom'])
+            : $normalized['paddingBottom'];
+        $normalized['mobilePaddingLeft'] = isset($rawStyles['mobile-padding-left'])
+            ? (int)str_replace('px', '', $rawStyles['mobile-padding-left'])
+            : $normalized['paddingLeft'];
+        $normalized['mobilePaddingRight'] = isset($rawStyles['mobile-padding-right'])
+            ? (int)str_replace('px', '', $rawStyles['mobile-padding-right'])
+            : $normalized['paddingRight'];
+
         return $normalized;
     }
 
@@ -231,6 +268,41 @@ class FullTextBlurBox extends FullTextElement
                 ->set_paddingLeftSuffix('px')
                 ->set_paddingRight($blurBoxStyles['paddingRight'] ?? 0)
                 ->set_paddingRightSuffix('px');
+
+            $component->getValue()
+                ->set_mobilePaddingType('grouped')
+                ->set_mobilePadding(20)
+                ->set_mobilePaddingSuffix('px')
+                ->set_mobilePaddingTop(20)
+                ->set_mobilePaddingTopSuffix('px')
+                ->set_mobilePaddingBottom(20)
+                ->set_mobilePaddingBottomSuffix('px')
+                ->set_mobilePaddingLeft(20)
+                ->set_mobilePaddingLeftSuffix('px')
+                ->set_mobilePaddingRight(20)
+                ->set_mobilePaddingRightSuffix('px')
+                ->set_tempMobilePadding(0)
+                ->set_tempMobilePaddingTop(20)
+                ->set_tempMobilePaddingTopSuffix('px')
+                ->set_tempMobilePaddingRight(20)
+                ->set_tempMobilePaddingRightSuffix('px')
+                ->set_tempMobilePaddingBottom(20)
+                ->set_tempMobilePaddingBottomSuffix('px')
+                ->set_tempMobilePaddingLeft(20)
+                ->set_tempMobilePaddingLeftSuffix('px');
+
+            $component->getValue()
+                ->set_mobileMarginType('grouped')
+                ->set_mobileMargin(0)
+                ->set_mobileMarginSuffix('px')
+                ->set_mobileMarginTop(0)
+                ->set_mobileMarginTopSuffix('px')
+                ->set_mobileMarginRight(0)
+                ->set_mobileMarginRightSuffix('px')
+                ->set_mobileMarginBottom(0)
+                ->set_mobileMarginBottomSuffix('px')
+                ->set_mobileMarginLeft(0)
+                ->set_mobileMarginLeftSuffix('px');
 
         } catch (\Exception $e) {
             Logger::instance()->error('Error handling BlurBox styles: ' . $e->getMessage());
@@ -356,6 +428,28 @@ class FullTextBlurBox extends FullTextElement
             . ', resultKeys=' . implode(',', array_keys($resultStyles))
         );
         // #endregion
+
+        // Получаем мобильные padding для outerColumn (viewport 767px)
+        $mobileOuterPaddingProps = ['padding-top', 'padding-bottom', 'padding-left', 'padding-right'];
+        foreach ($outerColumnSelectors as $selector) {
+            $mobileStyles = $this->getDomElementStylesAtViewport(
+                $selector,
+                $mobileOuterPaddingProps,
+                $this->browserPage,
+                767,
+                1024,
+                $families,
+                $defaultFont
+            );
+            if (!empty($mobileStyles)) {
+                foreach ($mobileStyles as $prop => $value) {
+                    if (!isset($resultStyles['mobile-' . $prop])) {
+                        $resultStyles['mobile-' . $prop] = $value;
+                    }
+                }
+                break;
+            }
+        }
 
         return $resultStyles;
     }
@@ -547,7 +641,36 @@ class FullTextBlurBox extends FullTextElement
                         ->set_paddingTop($paddingTop)
                         ->set_paddingTopSuffix('px')
                         ->set_paddingBottom($paddingBottom)
-                        ->set_paddingBottomSuffix('px');
+                        ->set_paddingBottomSuffix('px')
+                        ->set_marginType('ungrouped')
+                        ->set_marginTop(-100)
+                        ->set_marginTopSuffix('px')
+                        ->set_marginBottom(-100)
+                        ->set_marginBottomSuffix('px')
+                        ->set_marginLeft(0)
+                        ->set_marginLeftSuffix('px')
+                        ->set_marginRight(0)
+                        ->set_marginRightSuffix('px')
+                        ->set_mobilePaddingType('ungrouped')
+                        ->set_mobilePaddingTop(20)
+                        ->set_mobilePaddingTopSuffix('px')
+                        ->set_mobilePaddingBottom(20)
+                        ->set_mobilePaddingBottomSuffix('px')
+                        ->set_mobilePaddingLeft(20)
+                        ->set_mobilePaddingLeftSuffix('px')
+                        ->set_mobilePaddingRight(20)
+                        ->set_mobilePaddingRightSuffix('px')
+                        ->set_mobileMarginType('grouped')
+                        ->set_mobileMargin(0)
+                        ->set_mobileMarginSuffix('px')
+                        ->set_mobileMarginTop(0)
+                        ->set_mobileMarginTopSuffix('px')
+                        ->set_mobileMarginRight(0)
+                        ->set_mobileMarginRightSuffix('px')
+                        ->set_mobileMarginBottom(0)
+                        ->set_mobileMarginBottomSuffix('px')
+                        ->set_mobileMarginLeft(0)
+                        ->set_mobileMarginLeftSuffix('px');
 
                     if ($bgImageWidth !== null) {
                         $outerColumn->getValue()->set_bgImageWidth((int)$bgImageWidth);
@@ -620,6 +743,27 @@ class FullTextBlurBox extends FullTextElement
                             ->set_mobileBgColorOpacity($bgColorOpacity)
                             ->set_mobileBgColorPalette('');
                     }
+                    $outerColumn->getValue()
+                        ->set_mobilePaddingType('ungrouped')
+                        ->set_mobilePaddingTop(20)
+                        ->set_mobilePaddingTopSuffix('px')
+                        ->set_mobilePaddingBottom(20)
+                        ->set_mobilePaddingBottomSuffix('px')
+                        ->set_mobilePaddingLeft(20)
+                        ->set_mobilePaddingLeftSuffix('px')
+                        ->set_mobilePaddingRight(20)
+                        ->set_mobilePaddingRightSuffix('px')
+                        ->set_mobileMarginType('grouped')
+                        ->set_mobileMargin(0)
+                        ->set_mobileMarginSuffix('px')
+                        ->set_mobileMarginTop(0)
+                        ->set_mobileMarginTopSuffix('px')
+                        ->set_mobileMarginRight(0)
+                        ->set_mobileMarginRightSuffix('px')
+                        ->set_mobileMarginBottom(0)
+                        ->set_mobileMarginBottomSuffix('px')
+                        ->set_mobileMarginLeft(0)
+                        ->set_mobileMarginLeftSuffix('px');
                 }
             }
         } else {
@@ -669,6 +813,27 @@ class FullTextBlurBox extends FullTextElement
                             ->set_mobileBgColorOpacity($bgColorOpacity)
                             ->set_mobileBgColorPalette('');
                     }
+                    $outerColumn->getValue()
+                        ->set_mobilePaddingType('ungrouped')
+                        ->set_mobilePaddingTop(20)
+                        ->set_mobilePaddingTopSuffix('px')
+                        ->set_mobilePaddingBottom(20)
+                        ->set_mobilePaddingBottomSuffix('px')
+                        ->set_mobilePaddingLeft(20)
+                        ->set_mobilePaddingLeftSuffix('px')
+                        ->set_mobilePaddingRight(20)
+                        ->set_mobilePaddingRightSuffix('px')
+                        ->set_mobileMarginType('grouped')
+                        ->set_mobileMargin(0)
+                        ->set_mobileMarginSuffix('px')
+                        ->set_mobileMarginTop(0)
+                        ->set_mobileMarginTopSuffix('px')
+                        ->set_mobileMarginRight(0)
+                        ->set_mobileMarginRightSuffix('px')
+                        ->set_mobileMarginBottom(0)
+                        ->set_mobileMarginBottomSuffix('px')
+                        ->set_mobileMarginLeft(0)
+                        ->set_mobileMarginLeftSuffix('px');
                 }
             }
 
@@ -731,8 +896,6 @@ class FullTextBlurBox extends FullTextElement
         $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles, $options);
 
         // НЕ устанавливаем паддинги на SectionItem - они должны быть только на внешнем Column
-        // Устанавливаем паддинги в 0, чтобы они не применялись
-        // Устанавливаем только margin и высоту (как в стандартном методе, но без паддингов)
         $brizySection->getValue()
             ->set_paddingType('ungrouped')
             ->set_paddingTop(0)
@@ -754,11 +917,11 @@ class FullTextBlurBox extends FullTextElement
             ->set_mobilePaddingSuffix('px')
             ->set_mobilePaddingTop(0)
             ->set_mobilePaddingTopSuffix('px')
-            ->set_mobilePaddingRight(0)
+            ->set_mobilePaddingRight(20)
             ->set_mobilePaddingRightSuffix('px')
             ->set_mobilePaddingBottom(0)
             ->set_mobilePaddingBottomSuffix('px')
-            ->set_mobilePaddingLeft(0)
+            ->set_mobilePaddingLeft(20)
             ->set_mobilePaddingLeftSuffix('px')
             ->set_mobileMarginType('ungrouped')
             ->set_mobileMargin((int)($sectionStyles['margin-bottom'] ?? 0))
@@ -834,5 +997,14 @@ class FullTextBlurBox extends FullTextElement
     protected function getTopPaddingOfTheFirstElement(): int
     {
         return 0;
+    }
+
+    /**
+     * Переопределяем метод, чтобы не применять хардкодные мобильные отступы (25/20) к SectionItem.
+     * Мобильные отступы секции берутся динамически из источника в handleSectionStyles().
+     */
+    protected function getPropertiesMainSection(): array
+    {
+        return [];
     }
 }

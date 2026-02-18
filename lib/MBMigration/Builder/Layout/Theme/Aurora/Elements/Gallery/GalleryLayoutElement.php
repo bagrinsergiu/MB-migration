@@ -9,15 +9,93 @@ use Throwable;
 
 class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Gallery\GalleryLayoutElement
 {
+    private const CONTAINER_WIDTH = 1170;
+    private const DEFAULT_SLIDE_HEIGHT = 650;
+
+    /**
+     * Slide template is now SectionItem → Row → Column → Wrapper → Image.
+     * Depth 0,0,0,0 navigates to the Image widget so imageSrc is set correctly.
+     */
     protected function getSlideImageComponent(BrizyComponent $brizySectionItem): BrizyComponent
     {
-        return $brizySectionItem->getItemWithDepth(0,0);
-        //return $brizySectionItem;
+        return $brizySectionItem->getItemWithDepth(0, 0, 0, 0);
     }
 
-    protected function getSlideVideoComponent(BrizyComponent $brizySectionItem): BrizyComponent
+    /**
+     * Return the Section itself so that slide SectionItems become its direct children,
+     * which is the structure Brizy's slider component requires.
+     */
+    protected function getSlideLocation(BrizyComponent $brizySection): BrizyComponent
     {
-        return $brizySectionItem->getItemWithDepth(0,0);
+        return $brizySection;
+    }
+
+    /**
+     * Aurora uses an Image widget (not a section background) so the image is
+     * constrained by the page container width instead of stretching full-screen.
+     * Height is computed proportionally for a ~1170 px container.
+     */
+    protected function setSlideImage(BrizyComponent $brizySectionItem, $mbItem, $properties = []): BrizyComponent
+    {
+        $brizyComponentValue = $brizySectionItem->getValue();
+
+        $brizyComponentValue
+            ->set_marginTop(0)
+            ->set_marginBottom(0)
+            ->set_imageSrc($mbItem['content'] ?? $mbItem['photo'] ?? '')
+            ->set_imageFileName($mbItem['imageFileName'] ?? $mbItem['filename'] ?? '')
+            ->set_sizeType('original')
+            ->set_width(100)
+            ->set_widthSuffix('%')
+            ->set_tabletWidth(100)
+            ->set_tabletWidthSuffix('%')
+            ->set_mobileWidth(100)
+            ->set_mobileWidthSuffix('%');
+
+        if (isset($mbItem['settings']['slide']['extension'])) {
+            $brizyComponentValue->set_imageExtension($mbItem['settings']['slide']['extension']);
+        }
+
+        // Compute proportional height for a ~1170px container
+        $imageWidth = $mbItem['settings']['slide']['slide_width']
+            ?? $mbItem['settings']['width']
+            ?? $mbItem['imageWidth']
+            ?? null;
+        $imageHeight = $mbItem['settings']['slide']['slide_height']
+            ?? $mbItem['settings']['height']
+            ?? $mbItem['imageHeight']
+            ?? null;
+
+        if ($imageWidth && $imageHeight && (int)$imageWidth > 0) {
+            $computedHeight = (int)round((int)$imageHeight * self::CONTAINER_WIDTH / (int)$imageWidth);
+        } else {
+            $computedHeight = self::DEFAULT_SLIDE_HEIGHT;
+        }
+
+        $brizyComponentValue
+            ->set_heightStyle('custom')
+            ->set_height($computedHeight)
+            ->set_heightSuffix('px')
+            ->set_tabletHeightStyle('custom')
+            ->set_tabletHeight(max(300, (int)round($computedHeight * 0.7)))
+            ->set_tabletHeightSuffix('px')
+            ->set_mobileHeightStyle('custom')
+            ->set_mobileHeight(250)
+            ->set_mobileHeightSuffix('px');
+
+        // Reset Wrapper (parent of Image) margins to override Brizy's default 10px top/bottom
+        $wrapper = $brizySectionItem->getParent();
+        if ($wrapper !== null) {
+            $wrapper->getValue()
+                ->set_marginTop(0)
+                ->set_marginBottom(0)
+                ->set_tabletMarginTop(0)
+                ->set_tabletMarginBottom(0)
+                ->set_mobileMarginTop(0)
+                ->set_mobileMarginBottom(0);
+        }
+
+        return $brizySectionItem;
     }
 
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
@@ -49,6 +127,16 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             "paddingBottomSuffix" => "px",
             "paddingLeft" => 0,
             "paddingLeftSuffix" => "px",
+
+            "marginTop" => 0,
+            "marginBottom" => 0,
+
+            "tabletPaddingTop" => 0,
+            "tabletPaddingTopSuffix" => "px",
+            "tabletPaddingBottom" => 0,
+            "tabletPaddingBottomSuffix" => "px",
+            "tabletMarginTop" => 0,
+            "tabletMarginBottom" => 0,
 
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
@@ -130,9 +218,11 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             'mobileHeightType' => $this->getMobileSectionHeightType()
         ];
 
-        $this->handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles, $options);
-
-        $this->handleSectionTexture($brizySection, $mbSectionItem, $sectionStyles, $options);
+        // Gallery sections use Image widgets for slides; handleSectionBackground is intentionally skipped.
+        // Texture is applied to the parent Section so it is not lost when set_items() replaces slide children.
+        $brizyParentSection = $brizySection->getParent();
+        $textureTarget = $brizyParentSection !== null ? $brizyParentSection : $brizySection;
+        $this->handleSectionTexture($textureTarget, $mbSectionItem, $sectionStyles, $options);
 
         // set the background color paddings and margins
         // Приоритет: сначала $additionalOptions (включая getPropertiesMainSection), затем $sectionStyles как fallback
@@ -152,8 +242,12 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             ->set_marginRight((int)($additionalOptions['marginRight'] ?? $sectionStyles['margin-right'] ?? 0))
             ->set_marginTop((int)($additionalOptions['marginTop'] ?? $sectionStyles['margin-top'] ?? 0))
             ->set_marginBottom((int)($additionalOptions['marginBottom'] ?? $sectionStyles['margin-bottom'] ?? 0))
-            ->set_fullHeight('custom')
-            ->set_sectionHeight((int)($sectionStyles['height'] ?? 0))
+            ->set_tabletPaddingTop((int)($additionalOptions['tabletPaddingTop'] ?? 0))
+            ->set_tabletPaddingTopSuffix($additionalOptions['tabletPaddingTopSuffix'] ?? 'px')
+            ->set_tabletPaddingBottom((int)($additionalOptions['tabletPaddingBottom'] ?? 0))
+            ->set_tabletPaddingBottomSuffix($additionalOptions['tabletPaddingBottomSuffix'] ?? 'px')
+            ->set_tabletMarginTop((int)($additionalOptions['tabletMarginTop'] ?? 0))
+            ->set_tabletMarginBottom((int)($additionalOptions['tabletMarginBottom'] ?? 0))
             ->set_mobileBgSize('cover')
             ->set_mobileBgSizeType('original')
             ->set_mobileBgRepeat('off')
@@ -169,13 +263,10 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             ->set_mobilePaddingLeft((int)($additionalOptions['mobilePaddingLeft'] ?? $sectionStyles['padding-left'] ?? 0))
             ->set_mobilePaddingLeftSuffix($additionalOptions['mobilePaddingLeftSuffix'] ?? 'px');
 
-        try {
-//            $brizySection->getParent()->getValue()
-//                ->set_fullHeight('custom')
-//                ->set_sectionHeightSuffix('px')
-//                ->set_sectionHeight((int)$sectionStyles['height']);
-        } catch (\Exception|Throwable $e) {
-
+        // fullHeight/sectionHeight are Section-level properties; set them on the parent Section.
+        if ($brizyParentSection !== null) {
+            $brizyParentSection->getValue()
+                ->set_fullHeight('auto');
         }
 
         // Список параметров, которые уже были установлены явно выше и не должны перезаписываться
@@ -183,11 +274,13 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             'paddingType', 'paddingTop', 'paddingBottom', 'paddingRight', 'paddingLeft',
             'paddingSuffix', 'paddingTopSuffix', 'paddingRightSuffix', 'paddingBottomSuffix', 'paddingLeftSuffix',
             'marginType', 'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
+            'tabletPaddingTop', 'tabletPaddingTopSuffix', 'tabletPaddingBottom', 'tabletPaddingBottomSuffix',
+            'tabletMarginTop', 'tabletMarginBottom',
             'mobilePaddingType', 'mobilePadding', 'mobilePaddingTop', 'mobilePaddingRight',
             'mobilePaddingBottom', 'mobilePaddingLeft',
             'mobilePaddingSuffix', 'mobilePaddingTopSuffix', 'mobilePaddingRightSuffix',
             'mobilePaddingBottomSuffix', 'mobilePaddingLeftSuffix',
-            'fullHeight', 'sectionHeight', 'mobileBgSize', 'mobileBgSizeType', 'mobileBgRepeat'
+            'mobileBgSize', 'mobileBgSizeType', 'mobileBgRepeat'
         ];
 
         // Применяем только те параметры из $additionalOptions, которые еще не были установлены
@@ -205,43 +298,12 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
     }
 
     /**
-     * Переопределение handleSectionBackground для обработки мобильной высоты
+     * Aurora gallery uses Image widgets as slides; section-level background is not needed
+     * because slides visually cover the full section area. The parent's type guard would also
+     * block application when the parent Section is passed, so this is intentionally a no-op.
      */
     protected function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom'])
     {
-        // Вызываем родительский метод для базовой обработки
-        parent::handleSectionBackground($brizySection, $mbSectionItem, $sectionStyles, $options);
-
-        // Обрабатываем мобильную высоту, если она указана в options
-        if (isset($options['mobileHeightType'])) {
-            $mobileHeightType = $options['mobileHeightType'];
-
-            // Определяем, на какой компонент устанавливать мобильную высоту
-            // Для Gallery секции используем сам $brizySection, для других - getParent()
-            $targetComponent = $brizySection;
-            if ($brizySection->getType() != 'Section' && $brizySection->getParent() !== null) {
-                $targetComponent = $brizySection->getParent();
-            }
-
-            if ($mobileHeightType == 'auto') {
-                $targetComponent
-                    ->getValue()
-                    ->set_mobileHeightStyle('auto');
-            } else if ($mobileHeightType == 'custom') {
-                // Используем значение из getPropertiesMainSection или дефолтное
-                $mobileHeight = isset($sectionStyles['height'])
-                    ? (int)str_replace('px', '', $sectionStyles['height'])
-                    : 300;
-                $targetComponent
-                    ->getValue()
-                    ->set_mobileHeight($mobileHeight)
-                    ->set_mobileHeightStyle('custom');
-            } else if ($mobileHeightType == 'full') {
-                $targetComponent
-                    ->getValue()
-                    ->set_mobileHeightStyle('full');
-            }
-        }
     }
 
 }

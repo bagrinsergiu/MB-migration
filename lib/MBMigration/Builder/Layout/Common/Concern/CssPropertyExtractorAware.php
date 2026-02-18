@@ -74,6 +74,32 @@ trait CssPropertyExtractorAware
         );
     }
 
+    protected function getDomElementStylesAtViewport(
+        $selectorSectionStyles,
+        $styles,
+        $browserPage,
+        int $viewportWidth,
+        int $viewportHeight,
+        $families = [],
+        $default_fonts = 'helvetica_neue_helveticaneue_helvetica_arial_sans',
+        $pseudoElement = null
+    ) {
+        if (!method_exists($browserPage, 'setViewportSize')) {
+            return $this->getDomElementStyles(
+                $selectorSectionStyles, $styles, $browserPage, $families, $default_fonts, $pseudoElement
+            );
+        }
+
+        $browserPage->setViewportSize($viewportWidth, $viewportHeight);
+        try {
+            return $this->getDomElementStyles(
+                $selectorSectionStyles, $styles, $browserPage, $families, $default_fonts, $pseudoElement
+            );
+        } finally {
+            $browserPage->setViewportSize(1920, 1480);
+        }
+    }
+
     protected function getAccordionElementStyles(
         $selectorSectionStyles,
         $browserPage,
