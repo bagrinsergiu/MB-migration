@@ -148,7 +148,7 @@ class FullTextBlurBox extends FullTextElement
                 ? (int)str_replace('px', '', $rawStyles['border-left-width'])
                 : $normalized['borderWidth'];
         }
-        
+
         // Padding стили для внутренних отступов вокруг текста
         $normalized['paddingTop'] = isset($rawStyles['padding-top'])
             ? (int)str_replace('px', '', $rawStyles['padding-top'])
@@ -219,7 +219,7 @@ class FullTextBlurBox extends FullTextElement
                 ->set_mobileBgColorHex($blurBoxStyles['bgColorHex'])
                 ->set_mobileBgColorOpacity($blurBoxStyles['bgColorOpacity'])
                 ->set_mobileBgColorPalette('');
-            
+
             // Применяем внутренние отступы вокруг текста
             $component->getValue()
                 ->set_paddingType('ungrouped')
@@ -796,6 +796,7 @@ class FullTextBlurBox extends FullTextElement
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
         $brizySection->getValue()->set_marginTop(0);
+        $mbS = $data->getMbSection();
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $textContainerComponent = $this->getTextContainerComponent($brizySection);
