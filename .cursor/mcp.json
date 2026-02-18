@@ -1,0 +1,38 @@
+{
+  "mcpServers": {
+    "serena": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "serena-modular-mcp@latest",
+        "/home/worker/projects/MB-migration/.serena/serena-config.json"
+      ],
+      "env": {}
+    },
+    "dbhub": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@bytebase/dbhub@latest",
+        "--demo"
+      ],
+      "env": {}
+    },
+    "markitdown": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "markitdown-mcp-npx@latest"
+      ],
+      "env": {}
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "env": {}
+    }
+  }
+}

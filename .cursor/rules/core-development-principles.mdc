@@ -1,0 +1,15 @@
+---
+description: 
+alwaysApply: true
+---
+
+# Core Development Principles
+
+- Reuse existing code.
+- Search the codebase before writing new code.
+- Follow existing patterns and conventions.
+- Choose the simplest solution that respects layers and module boundaries.
+- Keep changes minimal, safe, and focused.
+- Do not rewrite working code without explicit reason.
+- Modify existing code instead of duplicating it.
+- Use MCP tools first.
