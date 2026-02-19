@@ -39,7 +39,7 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
         $this->transformItem($insideElementContext, $textContainerComponent, $styleList);
 
         ['palette' => $sectionPalette] = $this->getSectionPaletteForContext($data);
-        $this->handleItemBackground($brizySection, ['background-color' => $sectionPalette['bg'] ?? '#ffffff']);
+        $this->handleItemBackground($insideItemComponent, ['background-color' => $sectionPalette['bg'] ?? '#ffffff']);
 
         return $brizySection;
     }

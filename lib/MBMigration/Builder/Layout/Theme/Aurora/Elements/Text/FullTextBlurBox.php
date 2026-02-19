@@ -72,6 +72,28 @@ class FullTextBlurBox extends FullTextElement
         // Объединяем стили
         $allStyles = array_merge($blurBoxStyles, $beforeStyles);
 
+        // Если blur-box сам не имеет top/bottom padding (Clover: padding живёт в .content-wrapper),
+        // пробуем извлечь только top/bottom из .content-wrapper внутри blur-box.
+        // Left/right не берём: внешний Column уже обеспечивает боковые отступы вокруг overlay-бокса.
+        $blurBoxHasTopBottomPadding = (!empty($allStyles['padding-top']) && (int)str_replace('px', '', $allStyles['padding-top']) > 0)
+            || (!empty($allStyles['padding-bottom']) && (int)str_replace('px', '', $allStyles['padding-bottom']) > 0);
+
+        if (!$blurBoxHasTopBottomPadding) {
+            $contentWrapperSelector = '[data-id="' . $sectionId . '"] .content-wrapper';
+            $contentWrapperStyles = $this->getDomElementStyles(
+                $contentWrapperSelector,
+                ['padding-top', 'padding-bottom'],
+                $browserPage,
+                $families,
+                $defaultFont
+            );
+            foreach (['padding-top', 'padding-bottom'] as $prop) {
+                if (!empty($contentWrapperStyles[$prop])) {
+                    $allStyles[$prop] = $contentWrapperStyles[$prop];
+                }
+            }
+        }
+
         // Получаем мобильные padding стили (viewport 767px)
         $mobilePaddingProperties = [
             'padding-top',
@@ -89,6 +111,35 @@ class FullTextBlurBox extends FullTextElement
             $families,
             $defaultFont
         );
+
+        // На мобильном: если blur-box не имеет padding, пробуем .content-wrapper.
+        // Top/bottom — из viewport 767px (стандартный брейкпоинт Brizy).
+        // Left/right — из viewport 390px (реальный мобильный размер), чтобы не получить
+        // слишком широкие отступы по бокам на маленьких экранах.
+        $blurBoxHasMobileTopBottomPadding = !empty($mobileStyles['padding-top'])
+            && (int)str_replace('px', '', $mobileStyles['padding-top']) > 0;
+
+        if (!$blurBoxHasMobileTopBottomPadding) {
+            $contentWrapperSelector = '[data-id="' . $sectionId . '"] .content-wrapper';
+            $mobileContentWrapperStyles = $this->getDomElementStylesAtViewport(
+                $contentWrapperSelector,
+                ['padding-top', 'padding-bottom'],
+                $browserPage,
+                767,
+                1024,
+                $families,
+                $defaultFont
+            );
+            foreach (['padding-top', 'padding-bottom'] as $prop) {
+                if (!empty($mobileContentWrapperStyles[$prop])) {
+                    $mobileStyles[$prop] = $mobileContentWrapperStyles[$prop];
+                }
+            }
+        }
+
+        // Left/right на мобильном фиксированы: 20px с каждой стороны внутри overlay-бокса.
+        $mobileStyles['padding-left'] = '20px';
+        $mobileStyles['padding-right'] = '20px';
 
         // Добавляем мобильные стили с префиксом mobile-
         foreach ($mobileStyles as $prop => $value) {
@@ -257,38 +308,49 @@ class FullTextBlurBox extends FullTextElement
                 ->set_mobileBgColorOpacity($blurBoxStyles['bgColorOpacity'])
                 ->set_mobileBgColorPalette('');
 
-            // Применяем внутренние отступы вокруг текста
+            // Применяем внутренние отступы вокруг текста (blur-box / overlay box).
+            // Значения берём из DOM (getBlurBoxStyles → .content-wrapper как fallback).
+            // Если DOM даёт 0 для top/bottom — используем 88px (эталон с исходного сайта).
+            $padTop = ($blurBoxStyles['paddingTop'] ?? 0) ?: 88;
+            $padBottom = ($blurBoxStyles['paddingBottom'] ?? 0) ?: 88;
+            $padLeft = $blurBoxStyles['paddingLeft'] ?? 0;
+            $padRight = $blurBoxStyles['paddingRight'] ?? 0;
             $component->getValue()
                 ->set_paddingType('ungrouped')
-                ->set_paddingTop($blurBoxStyles['paddingTop'] ?? 0)
+                ->set_paddingTop($padTop)
                 ->set_paddingTopSuffix('px')
-                ->set_paddingBottom($blurBoxStyles['paddingBottom'] ?? 0)
+                ->set_paddingBottom($padBottom)
                 ->set_paddingBottomSuffix('px')
-                ->set_paddingLeft($blurBoxStyles['paddingLeft'] ?? 0)
+                ->set_paddingLeft($padLeft)
                 ->set_paddingLeftSuffix('px')
-                ->set_paddingRight($blurBoxStyles['paddingRight'] ?? 0)
+                ->set_paddingRight($padRight)
                 ->set_paddingRightSuffix('px');
 
+            // Mobile padding — из DOM (getBlurBoxStyles при viewport 767px). Если null — берём desktop.
+            $mPadTop = $blurBoxStyles['mobilePaddingTop'] ?? $padTop;
+            $mPadBottom = $blurBoxStyles['mobilePaddingBottom'] ?? $padBottom;
+            $mPadLeft = $blurBoxStyles['mobilePaddingLeft'] ?? $padLeft;
+            $mPadRight = $blurBoxStyles['mobilePaddingRight'] ?? $padRight;
             $component->getValue()
-                ->set_mobilePaddingType('grouped')
-                ->set_mobilePadding(20)
+                ->set_mobilePaddingType('ungrouped')
+                ->set_mobilePadding($mPadTop)
                 ->set_mobilePaddingSuffix('px')
-                ->set_mobilePaddingTop(20)
+                ->set_mobilePaddingTop($mPadTop)
                 ->set_mobilePaddingTopSuffix('px')
-                ->set_mobilePaddingBottom(20)
+                ->set_mobilePaddingBottom($mPadBottom)
                 ->set_mobilePaddingBottomSuffix('px')
-                ->set_mobilePaddingLeft(20)
+                ->set_mobilePaddingLeft($mPadLeft)
                 ->set_mobilePaddingLeftSuffix('px')
-                ->set_mobilePaddingRight(20)
+                ->set_mobilePaddingRight($mPadRight)
                 ->set_mobilePaddingRightSuffix('px')
-                ->set_tempMobilePadding(0)
-                ->set_tempMobilePaddingTop(20)
+                ->set_tempMobilePadding($mPadTop)
+                ->set_tempMobilePaddingTop($mPadTop)
                 ->set_tempMobilePaddingTopSuffix('px')
-                ->set_tempMobilePaddingRight(20)
+                ->set_tempMobilePaddingRight($mPadRight)
                 ->set_tempMobilePaddingRightSuffix('px')
-                ->set_tempMobilePaddingBottom(20)
+                ->set_tempMobilePaddingBottom($mPadBottom)
                 ->set_tempMobilePaddingBottomSuffix('px')
-                ->set_tempMobilePaddingLeft(20)
+                ->set_tempMobilePaddingLeft($mPadLeft)
                 ->set_tempMobilePaddingLeftSuffix('px');
 
             $component->getValue()
@@ -364,10 +426,12 @@ class FullTextBlurBox extends FullTextElement
         // Пробуем разные селекторы для получения стилей внешнего Column.
         // Для full-text-blur-box цвет фона задаётся на секции [data-id="..."] или на .bg-opacity (> div > div).
         // Селектор секции идёт первым, чтобы гарантировать корректный цвет (#587c82), а не дефолт шаблона (#9a4646).
+        // ВАЖНО: .content-wrapper намеренно исключён из этого списка — его padding соответствует
+        // внутреннему overlay-блоку (blur-box), а не внешнему Column с background-image.
+        // .content-wrapper читается отдельно в getBlurBoxStyles.
         $outerColumnSelectors = [
             '[data-id="' . $sectionId . '"]',
             '[data-id="' . $sectionId . '"] > div > div',
-            '[data-id="' . $sectionId . '"] .content-wrapper',
             '[data-id="' . $sectionId . '"] .row > .column:first-child',
             '[data-id="' . $sectionId . '"] > div',
             '[data-id="' . $sectionId . '"] .row > .column',
@@ -380,21 +444,21 @@ class FullTextBlurBox extends FullTextElement
         $foundBgColor = false;
 
         // Пытаемся получить стили из разных селекторов
+        $paddingProps = ['padding-top', 'padding-bottom', 'padding-left', 'padding-right'];
         foreach ($outerColumnSelectors as $selector) {
             $styles = $this->getDomElementStyles(
                 $selector,
-                ['background-color', 'opacity', 'padding-top', 'padding-bottom'],
+                array_merge(['background-color', 'opacity'], $paddingProps),
                 $this->browserPage,
                 $families,
                 $defaultFont
             );
 
-            // Собираем padding-top и padding-bottom из всех селекторов
-            if (isset($styles['padding-top']) && !isset($resultStyles['padding-top'])) {
-                $resultStyles['padding-top'] = $styles['padding-top'];
-            }
-            if (isset($styles['padding-bottom']) && !isset($resultStyles['padding-bottom'])) {
-                $resultStyles['padding-bottom'] = $styles['padding-bottom'];
+            // Собираем padding из всех селекторов
+            foreach ($paddingProps as $prop) {
+                if (isset($styles[$prop]) && !isset($resultStyles[$prop])) {
+                    $resultStyles[$prop] = $styles[$prop];
+                }
             }
 
             // Проверяем, что background-color валидный, не прозрачный и слой видим (opacity не 0)
@@ -421,10 +485,49 @@ class FullTextBlurBox extends FullTextElement
             }
         }
 
+        // Overlay поверх изображения: полупрозрачный цвет из ::before (слой над картинкой)
+        $overlayBaseSelectors = [
+            '[data-id="' . $sectionId . '"] .brz-bg',
+            '[data-id="' . $sectionId . '"] .bg-helper',
+            '[data-id="' . $sectionId . '"] > div > div',
+            '[data-id="' . $sectionId . '"] .content-wrapper',
+            '[data-id="' . $sectionId . '"] .row > .column',
+        ];
+        $overlayProps = ['background-color', 'opacity'];
+        foreach ($overlayBaseSelectors as $sel) {
+            $overlayStyles = $this->getDomElementStyles(
+                $sel,
+                $overlayProps,
+                $this->browserPage,
+                $families,
+                $defaultFont,
+                '::before'
+            );
+            if (!empty($overlayStyles['background-color'])) {
+                $bg = strtolower(trim($overlayStyles['background-color']));
+                $transparent = in_array($bg, [
+                    'rgba(0, 0, 0, 0)', 'rgba(255, 255, 255, 0)',
+                    'transparent', 'rgba(0,0,0,0)', 'rgba(255,255,255,0)',
+                ], true);
+                $op = isset($overlayStyles['opacity'])
+                    ? NumberProcessor::convertToNumeric($overlayStyles['opacity'])
+                    : ColorConverter::rgba2opacity($overlayStyles['background-color']);
+                if (!$transparent && $op > 0.01 && $op < 1) {
+                    $resultStyles['overlay-background-color'] = $overlayStyles['background-color'];
+                    $resultStyles['overlay-opacity'] = $op;
+                    if (isset($overlayStyles['opacity'])) {
+                        $resultStyles['overlay-opacity'] = $op * NumberProcessor::convertToNumeric($overlayStyles['opacity']);
+                    }
+                    break;
+                }
+            }
+        }
+
         // #region agent log
         Logger::instance()->debug(
             '[FullTextBlurBox] getOuterColumnStyles result: sectionId=' . $sectionId
             . ', resultBgColor=' . ($resultStyles['background-color'] ?? 'null')
+            . ', overlayBg=' . ($resultStyles['overlay-background-color'] ?? 'null')
             . ', resultKeys=' . implode(',', array_keys($resultStyles))
         );
         // #endregion
@@ -594,33 +697,46 @@ class FullTextBlurBox extends FullTextElement
                         $bgImageHeight = $background['height'] ?? $background['imageHeight'] ?? null;
                     }
 
-                    // Получаем background-color и opacity для внешнего Column
-                    // Если не найден цвет из исходного сайта, используем прозрачный фон
-                    // чтобы не перекрывать изображение
+                    // Цвет overlay для Column с изображением — из DOM: overlay (::before, полупрозрачный)
+                    // или frame; opacity=1 (сплошной) не применяем — перекрывает картинку
                     $bgColorHex = '#ffffff';
                     $bgColorOpacity = 0;
-
-                    if (!empty($outerColumnStyles['background-color'])) {
-                        $bgColorHex = ColorConverter::rgba2hex($outerColumnStyles['background-color']);
-                        $bgColorOpacity = ColorConverter::rgba2opacity($outerColumnStyles['background-color']);
-
-                        // Если есть отдельное значение opacity, учитываем его
+                    if (!empty($outerColumnStyles['overlay-background-color'])) {
+                        $bgColorHex = ColorConverter::rgba2hex($outerColumnStyles['overlay-background-color']);
+                        $bgColorOpacity = (float)($outerColumnStyles['overlay-opacity'] ?? ColorConverter::rgba2opacity($outerColumnStyles['overlay-background-color']));
+                    } elseif (!empty($outerColumnStyles['background-color'])) {
+                        $op = ColorConverter::rgba2opacity($outerColumnStyles['background-color']);
                         if (isset($outerColumnStyles['opacity'])) {
-                            $opacity = NumberProcessor::convertToNumeric($outerColumnStyles['opacity']);
-                            $bgColorOpacity = $bgColorOpacity * $opacity;
+                            $op *= NumberProcessor::convertToNumeric($outerColumnStyles['opacity']);
+                        }
+                        if ($op < 1) {
+                            $bgColorHex = ColorConverter::rgba2hex($outerColumnStyles['background-color']);
+                            $bgColorOpacity = $op;
                         }
                     }
 
-                    // Получаем padding-top и padding-bottom для внешнего Column из исходного сайта
-                    $paddingTop = 0;
-                    $paddingBottom = 0;
+                    // Padding внешнего Column — только из исходного DOM (getOuterColumnStyles)
+                    $paddingTop = isset($outerColumnStyles['padding-top'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['padding-top'])
+                        : 0;
+                    $paddingBottom = isset($outerColumnStyles['padding-bottom'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['padding-bottom'])
+                        : 0;
+                    $paddingLeft = isset($outerColumnStyles['padding-left'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['padding-left'])
+                        : 0;
+                    $paddingRight = isset($outerColumnStyles['padding-right'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['padding-right'])
+                        : 0;
 
-                    if (isset($outerColumnStyles['padding-top'])) {
-                        $paddingTop = (int)str_replace('px', '', $outerColumnStyles['padding-top']);
-                    }
-                    if (isset($outerColumnStyles['padding-bottom'])) {
-                        $paddingBottom = (int)str_replace('px', '', $outerColumnStyles['padding-bottom']);
-                    }
+                    $mobilePaddingTop = isset($outerColumnStyles['mobile-padding-top'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['mobile-padding-top'])
+                        : 0;
+                    $mobilePaddingBottom = isset($outerColumnStyles['mobile-padding-bottom'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['mobile-padding-bottom'])
+                        : 0;
+                    $mobilePaddingLeft = 20;
+                    $mobilePaddingRight = 20;
 
                     $outerColumn->getValue()
                         ->set_bgImageSrc($bgImageSrc)
@@ -642,6 +758,10 @@ class FullTextBlurBox extends FullTextElement
                         ->set_paddingTopSuffix('px')
                         ->set_paddingBottom($paddingBottom)
                         ->set_paddingBottomSuffix('px')
+                        ->set_paddingLeft($paddingLeft)
+                        ->set_paddingLeftSuffix('px')
+                        ->set_paddingRight($paddingRight)
+                        ->set_paddingRightSuffix('px')
                         ->set_marginType('ungrouped')
                         ->set_marginTop(-100)
                         ->set_marginTopSuffix('px')
@@ -652,13 +772,13 @@ class FullTextBlurBox extends FullTextElement
                         ->set_marginRight(0)
                         ->set_marginRightSuffix('px')
                         ->set_mobilePaddingType('ungrouped')
-                        ->set_mobilePaddingTop(20)
+                        ->set_mobilePaddingTop($mobilePaddingTop)
                         ->set_mobilePaddingTopSuffix('px')
-                        ->set_mobilePaddingBottom(20)
+                        ->set_mobilePaddingBottom($mobilePaddingBottom)
                         ->set_mobilePaddingBottomSuffix('px')
-                        ->set_mobilePaddingLeft(20)
+                        ->set_mobilePaddingLeft($mobilePaddingLeft)
                         ->set_mobilePaddingLeftSuffix('px')
-                        ->set_mobilePaddingRight(20)
+                        ->set_mobilePaddingRight($mobilePaddingRight)
                         ->set_mobilePaddingRightSuffix('px')
                         ->set_mobileMarginType('grouped')
                         ->set_mobileMargin(0)
@@ -743,11 +863,15 @@ class FullTextBlurBox extends FullTextElement
                             ->set_mobileBgColorOpacity($bgColorOpacity)
                             ->set_mobileBgColorPalette('');
                     }
+                    $mPadT = isset($outerColumnStyles['mobile-padding-top'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['mobile-padding-top']) : 0;
+                    $mPadB = isset($outerColumnStyles['mobile-padding-bottom'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['mobile-padding-bottom']) : 0;
                     $outerColumn->getValue()
                         ->set_mobilePaddingType('ungrouped')
-                        ->set_mobilePaddingTop(20)
+                        ->set_mobilePaddingTop($mPadT)
                         ->set_mobilePaddingTopSuffix('px')
-                        ->set_mobilePaddingBottom(20)
+                        ->set_mobilePaddingBottom($mPadB)
                         ->set_mobilePaddingBottomSuffix('px')
                         ->set_mobilePaddingLeft(20)
                         ->set_mobilePaddingLeftSuffix('px')
@@ -813,11 +937,15 @@ class FullTextBlurBox extends FullTextElement
                             ->set_mobileBgColorOpacity($bgColorOpacity)
                             ->set_mobileBgColorPalette('');
                     }
+                    $mPadT2 = isset($outerColumnStyles['mobile-padding-top'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['mobile-padding-top']) : 0;
+                    $mPadB2 = isset($outerColumnStyles['mobile-padding-bottom'])
+                        ? (int)str_replace('px', '', $outerColumnStyles['mobile-padding-bottom']) : 0;
                     $outerColumn->getValue()
                         ->set_mobilePaddingType('ungrouped')
-                        ->set_mobilePaddingTop(20)
+                        ->set_mobilePaddingTop($mPadT2)
                         ->set_mobilePaddingTopSuffix('px')
-                        ->set_mobilePaddingBottom(20)
+                        ->set_mobilePaddingBottom($mPadB2)
                         ->set_mobilePaddingBottomSuffix('px')
                         ->set_mobilePaddingLeft(20)
                         ->set_mobilePaddingLeftSuffix('px')
@@ -913,7 +1041,7 @@ class FullTextBlurBox extends FullTextElement
             ->set_mobileBgSizeType('original')
             ->set_mobileBgRepeat('off')
             ->set_mobilePaddingType('ungrouped')
-            ->set_mobilePadding(0)
+            ->set_mobilePadding((int)($sectionStyles['padding-top'] ?? 0))
             ->set_mobilePaddingSuffix('px')
             ->set_mobilePaddingTop(0)
             ->set_mobilePaddingTopSuffix('px')
@@ -924,13 +1052,13 @@ class FullTextBlurBox extends FullTextElement
             ->set_mobilePaddingLeft(20)
             ->set_mobilePaddingLeftSuffix('px')
             ->set_mobileMarginType('ungrouped')
-            ->set_mobileMargin((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_mobileMargin($this->getMobileMarginForHeaderImage($mbSectionItem, $sectionStyles))
             ->set_mobileMarginSuffix('px')
-            ->set_mobileMarginTop((int)($sectionStyles['margin-top'] ?? 0))
+            ->set_mobileMarginTop($this->getMobileMarginTopForHeaderImage($mbSectionItem, $sectionStyles))
             ->set_mobileMarginTopSuffix('px')
             ->set_mobileMarginRight((int)($sectionStyles['margin-right'] ?? 0))
             ->set_mobileMarginRightSuffix('px')
-            ->set_mobileMarginBottom((int)($sectionStyles['margin-bottom'] ?? 0))
+            ->set_mobileMarginBottom($this->getMobileMarginBottomForHeaderImage($mbSectionItem, $sectionStyles))
             ->set_mobileMarginBottomSuffix('px')
             ->set_mobileMarginLeft((int)($sectionStyles['margin-left'] ?? 0))
             ->set_mobileMarginLeftSuffix('px');
@@ -946,6 +1074,36 @@ class FullTextBlurBox extends FullTextElement
         }
 
         return $brizySection;
+    }
+
+    /**
+     * Task 3: для секций с header image — убираем top margin на mobile (меньше отступ сверху)
+     */
+    protected function getMobileMarginTopForHeaderImage(array $mbSectionItem, array $sectionStyles): int
+    {
+        $hasPhoto = isset($mbSectionItem['settings']['sections']['background']['photo'])
+            && $mbSectionItem['settings']['sections']['background']['photo'] !== '';
+        return $hasPhoto ? 0 : (int)($sectionStyles['margin-top'] ?? 0);
+    }
+
+    /**
+     * Task 3: для секций с header image — убираем bottom margin на mobile (стыковка со следующим блоком)
+     */
+    protected function getMobileMarginBottomForHeaderImage(array $mbSectionItem, array $sectionStyles): int
+    {
+        $hasPhoto = isset($mbSectionItem['settings']['sections']['background']['photo'])
+            && $mbSectionItem['settings']['sections']['background']['photo'] !== '';
+        return $hasPhoto ? 0 : (int)($sectionStyles['margin-bottom'] ?? 0);
+    }
+
+    /**
+     * Task 3: для секций с header image — base margin 0 на mobile
+     */
+    protected function getMobileMarginForHeaderImage(array $mbSectionItem, array $sectionStyles): int
+    {
+        $hasPhoto = isset($mbSectionItem['settings']['sections']['background']['photo'])
+            && $mbSectionItem['settings']['sections']['background']['photo'] !== '';
+        return $hasPhoto ? 0 : (int)($sectionStyles['margin-bottom'] ?? 0);
     }
 
     /**
