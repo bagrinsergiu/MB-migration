@@ -32,6 +32,7 @@ class LeftHeaderText extends FullTextElement
 
         $sectionItemComponent = $this->getSectionItemComponent($brizySection);
         $textContainerComponent = $this->getTextContainerComponent($brizySection);
+        $textContainerComponent->addVerticalContentAlign('center');
         $elementContext = $data->instanceWithBrizyComponent($sectionItemComponent);
 
         $additionalOptions = array_merge($data->getThemeContext()->getPageDTO()->getPageStyleDetails(), $this->getPropertiesMainSection());

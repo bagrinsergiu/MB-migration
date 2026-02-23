@@ -325,6 +325,7 @@ trait RichTextAble
             $stylesNormal['background-color'] = ColorConverter::rgba2hex($stylesNormalD['background-color']);
             $stylesNormal['border-bottom-color'] = ColorConverter::rgba2hex($stylesNormalD['border-bottom-color']);
             $stylesNormal['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesNormalD['border-bottom-color']);
+            $stylesNormal['border-bottom-style'] = $stylesNormalD['border-bottom-style'] ?? 'none';
 
             if ($this->browserPage->triggerEvent('hover', $buttonSelector)) {
                 $this->browserPage->getPageScreen("hover_button");
@@ -348,6 +349,7 @@ trait RichTextAble
                 $stylesHover['background-color'] = ColorConverter::rgba2hex($stylesHoverD['background-color']);
                 $stylesHover['border-bottom-color'] = ColorConverter::rgba2hex($stylesHoverD['border-bottom-color']);
                 $stylesHover['border-bottom-color-opacity'] = ColorConverter::rgba2opacity($stylesHoverD['border-bottom-color']);
+                $stylesHover['border-bottom-style'] = $stylesHoverD['border-bottom-style'] ?? 'none';
             }
 
             return [
@@ -416,6 +418,50 @@ trait RichTextAble
         }
 
         return false;
+    }
+
+    /**
+     * Map CSS text-align value to a Brizy-compatible alignment string.
+     */
+    protected function normalizeCssTextAlign(string $cssValue): string
+    {
+        $map = [
+            '-webkit-center' => 'center',
+            '-moz-center'    => 'center',
+            'start'          => 'left',
+            'end'            => 'right',
+            'left'           => 'left',
+            'right'          => 'right',
+            'center'         => 'center',
+            'justify'        => 'left',
+        ];
+
+        return $map[strtolower(trim($cssValue))] ?? 'left';
+    }
+
+    /**
+     * Get the Brizy-mapped horizontal alignment for a pre-computed CSS selector at a specific viewport.
+     * The caller resolves the selector once via getButtonSelector() to avoid redundant DOM queries.
+     */
+    protected function getButtonAlignAtViewport(
+        string $selector,
+        int $viewportWidth,
+        int $viewportHeight,
+        BrowserPageInterface $browserPage
+    ): string {
+        try {
+            $styles = $this->getDomElementStylesAtViewport(
+                $selector,
+                ['text-align'],
+                $browserPage,
+                $viewportWidth,
+                $viewportHeight
+            );
+
+            return $this->normalizeCssTextAlign($styles['text-align'] ?? 'start');
+        } catch (Exception $e) {
+            return 'left';
+        }
     }
 
     private function isSocialIconButtonItem(array $clonableItem, array $mbSectionItem): bool
@@ -558,44 +604,8 @@ trait RichTextAble
         $customSettings = []
     ): BrizyComponent
     {
-        // #region agent log
-        file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
-            'sessionId' => 'debug-session',
-            'runId' => 'run1',
-            'hypothesisId' => 'C',
-            'location' => 'RichTextAble.php:488',
-            'message' => 'handleTextItem called',
-            'data' => [
-                'itemId' => $mbSectionItem['id'] ?? null,
-                'sectionId' => $mbSectionItem['sectionId'] ?? null,
-                'category' => $mbSectionItem['category'] ?? null,
-                'componentType' => $brizySection->getType(),
-                'selector' => $selector
-            ],
-            'timestamp' => time() * 1000
-        ]) . "\n", FILE_APPEND);
-        // #endregion
-
         $sectionId = $mbSectionItem['sectionId'] ?? $mbSectionItem['id'];
         $richTextBrowserData = $this->extractTexts($selector ?? '[data-id="' . $sectionId . '"]', $browserPage, $families, $defaultFont, $urlMap);
-
-        // #region agent log
-        file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
-            'sessionId' => 'debug-session',
-            'runId' => 'run1',
-            'hypothesisId' => 'C',
-            'location' => 'RichTextAble.php:505',
-            'message' => 'extractTexts result',
-            'data' => [
-                'itemId' => $mbSectionItem['id'] ?? null,
-                'textItemsCount' => count($richTextBrowserData),
-                'textItems' => array_map(function($item) {
-                    return ['type' => $item['type'] ?? null];
-                }, $richTextBrowserData)
-            ],
-            'timestamp' => time() * 1000
-        ]) . "\n", FILE_APPEND);
-        // #endregion
 
         $styles = $this->getDomElementStyles(
             $selector ?? '[data-id="' . $sectionId . '"]',
@@ -606,6 +616,16 @@ trait RichTextAble
         );
         $embeddedElements = $this->findEmbeddedElements($mbSectionItem['content'] ?? '');
         $embeddIndex = 0;
+
+        // Pre-compute mobile/tablet button alignment from the source DOM at those viewports.
+        // Only when the section actually contains a button to avoid unnecessary viewport switches.
+        $mobileButtonAlign = null;
+        $tabletButtonAlign = null;
+        if ($mbSectionItem['category'] === 'button' || $this->contentHasButton($mbSectionItem)) {
+            $buttonAlignSelector = $this->getButtonSelector($sectionId);
+            $mobileButtonAlign   = $this->getButtonAlignAtViewport($buttonAlignSelector, 375, 812, $browserPage);
+            $tabletButtonAlign   = $this->getButtonAlignAtViewport($buttonAlignSelector, 768, 1024, $browserPage);
+        }
 
         // Track which component types have been applied once (for 'implement' => 'one')
         $appliedOnce = [];
@@ -677,6 +697,7 @@ trait RichTextAble
                         $brizySection->getValue()->add_items([$brizyEmbedCodeComponent]);
                         break;
                     case 'Cloneable':
+                        $cloneableHasButton = false;
                         foreach ($textItem['value']['items'] as &$clonableItem) {
 //                            if (empty($clonableItem['value']['code'])) {
                             switch ($clonableItem['type']) {
@@ -724,6 +745,7 @@ trait RichTextAble
                                     }
                                     break;
                                 case 'Button':
+                                    $cloneableHasButton = true;
                                     if (
                                         !empty($buttonStyle['hover']) &&
                                         !empty($buttonStyle['normal']) &&
@@ -763,6 +785,11 @@ trait RichTextAble
                         $brzCloneableComponent = new BrizyComponent($textItem);
 
                         $brzCloneableComponent->addMargin(0, 0, 0, 0);
+
+                        if ($cloneableHasButton && $mobileButtonAlign !== null && $tabletButtonAlign !== null) {
+                            $brzCloneableComponent->getValue()->set_mobileHorizontalAlign($mobileButtonAlign);
+                            $brzCloneableComponent->getValue()->set_tabletHorizontalAlign($tabletButtonAlign);
+                        }
 
                         // Apply custom settings if available
                         if (!empty($customSettings)) {
@@ -858,87 +885,10 @@ trait RichTextAble
 //                        } else
 //
                             if(empty($settings['setEmptyText']) || $settings['setEmptyText'] === false){
-                            // #region agent log
-                            file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
-                                'sessionId' => 'debug-session',
-                                'runId' => 'run1',
-                                'hypothesisId' => 'C',
-                                'location' => 'RichTextAble.php:800',
-                                'message' => 'Adding RichText component (normal case)',
-                                'data' => [
-                                    'itemId' => $mbSectionItem['id'] ?? null,
-                                    'componentType' => $brzTextComponent->getType(),
-                                    'itemsBefore' => count($brizySection->getValue()->get_items() ?? [])
-                                ],
-                                'timestamp' => time() * 1000
-                            ]) . "\n", FILE_APPEND);
-                            // #endregion
-
                             $brizySection->getValue()->add_items([$brzTextComponent]);
-
-                            // #region agent log
-                            file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
-                                'sessionId' => 'debug-session',
-                                'runId' => 'run1',
-                                'hypothesisId' => 'C',
-                                'location' => 'RichTextAble.php:800',
-                                'message' => 'After adding RichText component',
-                                'data' => [
-                                    'itemId' => $mbSectionItem['id'] ?? null,
-                                    'itemsAfter' => count($brizySection->getValue()->get_items() ?? [])
-                                ],
-                                'timestamp' => time() * 1000
-                            ]) . "\n", FILE_APPEND);
-                            // #endregion
                         } elseif ($settings['setEmptyText'] === true) {
-                            // #region agent log
-                            file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
-                                'sessionId' => 'debug-session',
-                                'runId' => 'run1',
-                                'hypothesisId' => 'C',
-                                'location' => 'RichTextAble.php:802',
-                                'message' => 'Checking setEmptyText condition',
-                                'data' => [
-                                    'itemId' => $mbSectionItem['id'] ?? null,
-                                    'hasAnyTags' => $this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'] ?? ''),
-                                    'textPreview' => substr($textItem['value']['items'][0]['value']['text'] ?? '', 0, 50)
-                                ],
-                                'timestamp' => time() * 1000
-                            ]) . "\n", FILE_APPEND);
-                            // #endregion
-
                             if ($this->hasAnyTagsInsidePTag($textItem['value']['items'][0]['value']['text'])) {
-                                // #region agent log
-                                file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
-                                    'sessionId' => 'debug-session',
-                                    'runId' => 'run1',
-                                    'hypothesisId' => 'C',
-                                    'location' => 'RichTextAble.php:803',
-                                    'message' => 'Adding RichText component (setEmptyText case)',
-                                    'data' => [
-                                        'itemId' => $mbSectionItem['id'] ?? null,
-                                        'itemsBefore' => count($brizySection->getValue()->get_items() ?? [])
-                                    ],
-                                    'timestamp' => time() * 1000
-                                ]) . "\n", FILE_APPEND);
-                                // #endregion
-
                                 $brizySection->getValue()->add_items([$brzTextComponent]);
-
-                                // #region agent log
-                                file_put_contents('/home/sg/projects/MB-migration/.cursor/debug.log', json_encode([
-                                    'sessionId' => 'debug-session',
-                                    'runId' => 'run1',
-                                    'hypothesisId' => 'C',
-                                    'location' => 'RichTextAble.php:803',
-                                    'message' => 'After adding RichText component (setEmptyText)',
-                                    'data' => [
-                                        'itemId' => $mbSectionItem['id'] ?? null,
-                                        'itemsAfter' => count($brizySection->getValue()->get_items() ?? [])
-                                    ],
-                                    'timestamp' => time() * 1000
-                                ]) . "\n", FILE_APPEND);
-                                // #endregion
                             }
                         }
                         break;

@@ -1,5 +1,6 @@
 ---
 name: task-worker
+model: gpt-5.3-codex
 description: Task execution worker. Receives concrete tasks, implements them with minimal safe changes, and strictly follows main.mdc engineering rules. Use when a task is ready to be executed or when you need disciplined, rule-compliant implementation.
 ---
 
