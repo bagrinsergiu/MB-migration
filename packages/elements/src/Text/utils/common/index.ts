@@ -52,7 +52,7 @@ export const textAlign: Record<string, string> = {
   left: "left",
   right: "right",
   center: "center",
-  justify: "justify"
+  justify: "left"
 };
 
 export function shouldExtractElement(

@@ -44,6 +44,9 @@ class RightMediaElement extends FullMediaElement
         $brizyHeaderContainerComponent = $this->getHeaderContainerComponent($brizySection);
         $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyHeaderContainerComponent);
         $this->handleRichTextItems($elementTextContainerComponentContext, $this->browserPage, ['title']);
+        $brizyHeaderContainerComponent->getValue()
+            ->set_horizontalAlign('center')
+            ->set_mobileHorizontalAlign('center');
 
         $item = $this->getItemByType($mbSectionItem, 'title');
         $styles = Hope::getStyles(
@@ -55,12 +58,18 @@ class RightMediaElement extends FullMediaElement
 
         $topLine = new BrizyComponent(json_decode($this->brizyKit['line-left-top'], true));
         $topLine->getItemValueWithDepth(0)->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
+        $topLine->getValue()->set_showOnMobile('off');
 
         $bottomLine = new BrizyComponent(json_decode($this->brizyKit['line-left-bottom'], true));
         $bottomLine->getItemValueWithDepth(0)->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
+        $bottomLine->getValue()->set_mobileHorizontalAlign('center');
 
         $brizyHeaderContainerComponent->getValue()->add_items($topLine, 0);
         $brizyHeaderContainerComponent->getValue()->add_items($bottomLine, 2);
+        $brizyHeaderContainerComponent->getValue()
+            ->set_paddingType('ungrouped')
+            ->set_paddingBottom(0)
+            ->set_paddingBottomSuffix('px');
 
         $brizyTextContainerComponent = $this->getTextContainerComponent($brizySection);
         $elementTextContainerComponentContext = $data->instanceWithBrizyComponent($brizyTextContainerComponent);

@@ -54,6 +54,8 @@ class LeftMedia extends PhotoTextElement
             ->getValue()
             ->set_borderColorHex(ColorConverter::convertColorRgbToHex($styles['border-top-color']));
 
+        $wrapperLine->getValue()->set_mobileHorizontalAlign('center');
+
         $brizySection->getItemWithDepth(0, 0, 1)
             ->getValue()
             ->add_items([$wrapperLine], 1);

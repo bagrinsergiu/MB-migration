@@ -37,6 +37,7 @@ const getBorderWidth = mPipe(
   Str.read,
   parseInt
 );
+const getBorderStyle = mPipe(Obj.readKey("border-top-style"), Str.read);
 const getBorderColor = mPipe(
   Obj.readKey("border-top-color"),
   Str.read,
@@ -72,6 +73,7 @@ export const getStyleModel = (
   const bgColor = getBgColor(style);
   const opacity = +style.opacity;
   const borderWidth = getBorderWidth(style);
+  const borderStyle = getBorderStyle(style);
   const borderRadius = getBorderRadius(style);
   const borderColor = getBorderColor(style);
   const paddingTB = getPaddingTB(style);
@@ -125,7 +127,9 @@ export const getStyleModel = (
       hoverBgColorPalette: ""
     }),
     ...(borderRadius && { borderRadiusType: "custom", borderRadius }),
-    ...(borderWidth === undefined ? { borderStyle: "none" } : { borderWidth }),
+    ...(!borderWidth
+      ? { borderStyle: "none" }
+      : { borderWidth, ...(borderStyle && { borderStyle }) }),
     ...borderColorV,
     size: "custom",
     ...(typeof paddingTB === "number" &&
@@ -204,7 +208,7 @@ export const getModel = ({
       break;
     }
     case "lowercase": {
-      text = text.toUpperCase();
+      text = text.toLowerCase();
       break;
     }
   }
