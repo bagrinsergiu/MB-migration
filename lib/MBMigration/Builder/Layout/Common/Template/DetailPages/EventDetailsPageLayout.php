@@ -275,6 +275,12 @@ class EventDetailsPageLayout extends DetailsPage
             "typographyLowercase" => false
         ];
 
+        $domTypography = $this->getTypographyFromAdditionalOptions();
+        if (!empty($domTypography)) {
+            $sectionProperties1 = array_merge($sectionProperties1, $domTypography);
+            $sectionProperties2 = array_merge($sectionProperties2, $domTypography);
+        }
+
         foreach ($sectionStyle as $key => $value) {
             $properties = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0)
@@ -300,6 +306,7 @@ class EventDetailsPageLayout extends DetailsPage
             ->dataTypography()
             ->previewTypography()
             ->subscribeEventButtonTypography();
+        $this->applyDomTypographyToComponent($detailsSection->getItemWithDepth(0, 1, 0, 0, 0));
 
         $detailsSection
             ->getItemWithDepth(0, 1)
@@ -324,6 +331,7 @@ class EventDetailsPageLayout extends DetailsPage
             ->typography(['lineHeight' => 1.7])
             ->dataTypography(['lineHeight' => 1.7])
             ->previewTypography(['lineHeight' => 1.7]);
+        $this->applyDomTypographyToComponent($detailsSection->getItemWithDepth(0, 1, 1, 1, 0));
 
         $detailsSection->getItemWithDepth(0, 1, 1)->addPadding(10,15,5,15);
 
@@ -366,6 +374,46 @@ class EventDetailsPageLayout extends DetailsPage
             $method = 'set_'.$key;
             $detailsSection->getItemValueWithDepth(0)
                 ->$method($value);
+        }
+    }
+
+    private function getTypographyFromAdditionalOptions(): array
+    {
+        $typography = $this->additionalOptions['typography'] ?? [];
+        if (!is_array($typography)) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($typography as $key => $value) {
+            if (!is_string($key) || (!is_string($value) && !is_numeric($value))) {
+                continue;
+            }
+
+            $isFamily = substr($key, -strlen('TypographyFontFamily')) === 'TypographyFontFamily';
+            $isFamilyType = substr($key, -strlen('TypographyFontFamilyType')) === 'TypographyFontFamilyType';
+            if ($isFamily || $isFamilyType) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Apply DOM-extracted typography to a MinistryBrandsEventDetail component.
+     * Must be called AFTER titleTypography(), typography(), etc. so DOM fonts override defaults.
+     */
+    private function applyDomTypographyToComponent(BrizyComponent $component): void
+    {
+        $domTypography = $this->getTypographyFromAdditionalOptions();
+        if (empty($domTypography)) {
+            return;
+        }
+
+        $value = $component->getValue();
+        foreach ($domTypography as $key => $val) {
+            $value->set($key, $val);
         }
     }
 }
