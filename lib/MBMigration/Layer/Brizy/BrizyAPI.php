@@ -3,6 +3,7 @@
 namespace MBMigration\Layer\Brizy;
 
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Utils as Psr7Utils;
 use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Core\Logger;
 use MBMigration\Layer\Graph\QueryBuilder;
@@ -404,6 +405,9 @@ class BrizyAPI extends Utils
         return $fileHandle;
     }
 
+    /** Supported font formats for admin.brizy.io (priority order - TTF preferred) */
+    private const FONT_EXTENSIONS_ALLOWED = ['ttf', 'woff2', 'woff', 'eot'];
+
     /**
      * @throws Exception
      * @throws GuzzleException
@@ -418,39 +422,70 @@ class BrizyAPI extends Utils
                 $this->logFontPresenceIfExists($fontsName, $displayName);
                 $__presenceLogged = true;
             }
-            foreach ($pathToFonts as $pathToFont) {
-                $fileExtension = $this->getExtensionFromFileString($pathToFont);
-
-                $pathToFont = __DIR__ . '/../../Builder/Fonts/' . $pathToFont;
-
-                $fonts[] = [
-                    'name' => "files[$fontWeight][$fileExtension]",
-                    'contents' => fopen($pathToFont, 'r'),
-                ];
+            $pathToFont = $this->pickPreferredFontFile($pathToFonts, $fontsName);
+            if (!$pathToFont) {
+                continue;
             }
+            $fileExtension = strtolower($this->getExtensionFromFileString($pathToFont));
+            $fullPath = __DIR__ . '/../../Builder/Fonts/' . $pathToFont;
+            if (!file_exists($fullPath) || !is_readable($fullPath)) {
+                Logger::instance()->warning('createFonts: font file missing or unreadable', ['path' => $fullPath, 'fontsName' => $fontsName]);
+                continue;
+            }
+            $filename = basename($fullPath);
+            $mimeType = $this->getFontMimeType($fileExtension);
+
+            $fonts[] = [
+                'name' => "files[$fontWeight][$fileExtension]",
+                'contents' => fopen($fullPath, 'r'),
+                'filename' => $filename,
+                'headers' => ['Content-Type' => $mimeType],
+            ];
         }
 
-        $options['multipart'] = array_merge_recursive($fonts, [
-            [
-                'name' => 'family',
-                'contents' => $displayName,
-            ],
-            [
-                'name' => 'uid',
-                'contents' => self::generateCharID(36),
-            ],
-            [
-                'name' => 'container',
-                'contents' => $projectID,
-            ],
+        if (empty($fonts)) {
+            Logger::instance()->error('createFonts: no valid font files to upload', ['fontsName' => $fontsName]);
+            throw new Exception('No supported font files (ttf/woff/woff2/eot) found for ' . $fontsName);
+        }
+
+        $uid = self::generateCharID(36);
+        $options['multipart'] = array_merge([
+            ['name' => 'family', 'contents' => $displayName],
+            ['name' => 'uid', 'contents' => $uid],
+            ['name' => 'container', 'contents' => (string) $projectID],
+        ], $fonts);
+
+        $fontsApiUrl = $this->createPrivateUrlAPI('fonts');
+        Logger::instance()->info('createFonts: POST /api/fonts request', [
+            'fontsName' => $fontsName,
+            'family' => $displayName,
+            'projectID' => $projectID,
+            'familyEmpty' => ('' === (string) $displayName),
+            'fontWeightsCount' => count($KitFonts),
         ]);
 
         try {
-            $res = $this->request('POST', $this->createPrivateUrlAPI('fonts'), $options);
+            $res = $this->request('POST', $fontsApiUrl, $options);
             sleep(1);
-            $decoded = json_decode($res->getBody()->getContents(), true);
+            if (!$res) {
+                Logger::instance()->error('createFonts: request failed (null response after retries)', ['fontsName' => $fontsName]);
+                throw new Exception('Fonts API request failed after retries');
+            }
+            $statusCode = $res->getStatusCode();
+            $body = $res->getBody()->getContents();
+
+            if ($statusCode >= 400) {
+                Logger::instance()->error('createFonts: API returned error', [
+                    'fontsName' => $fontsName,
+                    'family' => $displayName,
+                    'statusCode' => $statusCode,
+                    'responseBody' => $body,
+                ]);
+            }
+
+            $decoded = json_decode($body, true);
             if (!is_array($decoded)) {
-                Logger::instance()->warning('createFonts: unexpected response payload', ['fontsName' => $fontsName]);
+                Logger::instance()->warning('createFonts: unexpected response payload', ['fontsName' => $fontsName, 'bodyPreview' => substr($body, 0, 500)]);
             } else {
                 Logger::instance()->info('createFonts: API responded', ['fontsName' => $fontsName, 'uid' => $decoded['uid'] ?? null, 'family' => $decoded['family'] ?? null]);
             }
@@ -709,6 +744,35 @@ class BrizyAPI extends Utils
         $filename = end($parts);
 
         return pathinfo($filename, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * Pick one font file per weight (preferred: ttf > woff2 > woff > eot). Skips svg.
+     */
+    private function pickPreferredFontFile(array $pathToFonts, string $fontsName): ?string
+    {
+        foreach (self::FONT_EXTENSIONS_ALLOWED as $ext) {
+            foreach ($pathToFonts as $path) {
+                if (strtolower(pathinfo($path, PATHINFO_EXTENSION)) === $ext) {
+                    return $path;
+                }
+            }
+        }
+        Logger::instance()->warning('createFonts: no supported font format found for weight', ['fontsName' => $fontsName, 'paths' => $pathToFonts]);
+
+        return null;
+    }
+
+    private function getFontMimeType(string $extension): string
+    {
+        $map = [
+            'ttf' => 'font/ttf',
+            'otf' => 'font/otf',
+            'woff' => 'font/woff',
+            'woff2' => 'font/woff2',
+            'eot' => 'application/vnd.ms-fontobject',
+        ];
+        return $map[strtolower($extension)] ?? 'application/octet-stream';
     }
 
     /**
@@ -1352,9 +1416,15 @@ class BrizyAPI extends Utils
             } catch (RequestException $e) {
                 $response = $e->getResponse();
                 $statusCode = $response ? $response->getStatusCode() : 'N/A';
-                Logger::instance()->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage());
+                $body = $response ? $response->getBody()->getContents() : '';
+                Logger::instance()->error("Request error ({$attempt}/{$retryAttempts}): HTTP $statusCode - " . $e->getMessage(), [
+                    'method' => $method,
+                    'uri' => $uri,
+                    'responseBody' => $body ?: null,
+                ]);
 
                 if ($response && $statusCode >= 400 && $statusCode < 500) {
+                    $response = $response->withBody(Psr7Utils::streamFor($body));
                     return $response;
                 }
             }
