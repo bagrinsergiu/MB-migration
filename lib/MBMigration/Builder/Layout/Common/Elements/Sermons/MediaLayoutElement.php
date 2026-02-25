@@ -196,6 +196,8 @@ abstract class MediaLayoutElement extends AbstractElement
                 ->previewTypography()
                 ->subscribeEventButtonTypography();
 
+            $this->applyTypographyToFeaturedDescription($brizySectionFeaturedDescription->getItemWithDepth(0), $data);
+
             $brizySectionFeaturedDescription->addMobileMargin([0, -5, 0, -5]);
 
             $brizySection->getItemValueWithDepth(0)
@@ -220,6 +222,8 @@ abstract class MediaLayoutElement extends AbstractElement
                     "opacity" => ColorConverter::normalizeOpacity($mediaPlayerBodyStyles['opacity'] ?? 1)
                 ];
             }
+
+            $additionalOptionsForDetailPage = $this->getAdditionalOptionsForDetailPage($data, $additionalOptionsForDetailPage);
 
             $DetailsPageLayout = new SermonDetailsPageLayout($this->brizyKit['GridMediaLayout']['detail'],
                 $this->getTopPaddingOfTheFirstElement() + $this->getAdditionalTopPaddingOfDetailPage(),
@@ -374,6 +378,11 @@ abstract class MediaLayoutElement extends AbstractElement
                 "itemPaddingLeft" => 0,
                 "itemPaddingLeftSuffix" => "px",
             ];
+
+            $sectionProperties = array_merge(
+                $sectionProperties,
+                $this->getTypographyForGridSection($data)
+            );
 
             foreach ($sectionProperties as $key => $value) {
                 $properties = 'set_' . $key;
@@ -719,6 +728,46 @@ abstract class MediaLayoutElement extends AbstractElement
     protected function getItemColorBgBox($opacity1): int
     {
         return 0; // Always return 0 to remove background boxes behind sermon items
+    }
+
+    /**
+     * Allows child classes (e.g. Boulevard) to add typography or other options for the detail page.
+     *
+     * @param \MBMigration\Builder\Layout\Common\ElementContextInterface $data
+     * @param array<string, mixed> $baseOptions
+     * @return array<string, mixed>
+     */
+    protected function getAdditionalOptionsForDetailPage(
+        \MBMigration\Builder\Layout\Common\ElementContextInterface $data,
+        array $baseOptions
+    ): array {
+        return $baseOptions;
+    }
+
+    /**
+     * Allows child classes to apply DOM-extracted typography to the featured description component.
+     * Called after default typography methods so DOM fonts override.
+     *
+     * @param BrizyComponent $component
+     * @param \MBMigration\Builder\Layout\Common\ElementContextInterface $data
+     */
+    protected function applyTypographyToFeaturedDescription(
+        BrizyComponent $component,
+        \MBMigration\Builder\Layout\Common\ElementContextInterface $data
+    ): void {
+    }
+
+    /**
+     * Allows child classes to provide layout typography for the grid section.
+     * Merged into sectionProperties before applying.
+     *
+     * @param \MBMigration\Builder\Layout\Common\ElementContextInterface $data
+     * @return array<string, mixed>
+     */
+    protected function getTypographyForGridSection(
+        \MBMigration\Builder\Layout\Common\ElementContextInterface $data
+    ): array {
+        return [];
     }
 
     /**
