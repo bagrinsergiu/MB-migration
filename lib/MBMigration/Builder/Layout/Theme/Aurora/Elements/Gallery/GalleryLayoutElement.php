@@ -93,6 +93,12 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
                 ->set_tabletMarginBottom(0)
                 ->set_mobileMarginTop(0)
                 ->set_mobileMarginBottom(0);
+
+            // Column (parent of Wrapper): mobile margin 0 on all sides for mobile (no gap between slides)
+            $column = $wrapper->getParent();
+            if ($column !== null) {
+                $column->addMobileMargin([0, 0, 0, 0]);
+            }
         }
 
         return $brizySectionItem;
@@ -149,6 +155,12 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
+
+            "mobileMarginType" => "ungrouped",
+            "mobileMarginTop" => 0,
+            "mobileMarginBottom" => 0,
+            "mobileMarginTopSuffix" => "px",
+            "mobileMarginBottomSuffix" => "px",
         ];
     }
 
@@ -304,6 +316,35 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
      */
     protected function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom'])
     {
+    }
+
+    /**
+     * Mobile: negative top/bottom margins on Section to reduce spacing;
+     * first slide gets padding 20 L/R, other slides get 0.
+     */
+    protected function customizationSection(BrizyComponent $brizySection): BrizyComponent
+    {
+        $brizySection->getValue()
+            ->set_mobileMarginType('ungrouped')
+            ->set_mobileMarginTop(-20)
+            ->set_mobileMarginTopSuffix('px')
+            ->set_mobileMarginBottom(-21)
+            ->set_mobileMarginBottomSuffix('px');
+
+        $items = $brizySection->getValue()->get('items') ?? [];
+        foreach ($items as $index => $sectionItem) {
+            if (!$sectionItem instanceof BrizyComponent) {
+                continue;
+            }
+            $value = $sectionItem->getValue();
+            if ($index === 0) {
+                $sectionItem->addMobilePadding([0, 20, 0, 20]);
+            } else {
+                $sectionItem->addMobilePadding([0, 0, 0, 0]);
+            }
+        }
+
+        return $brizySection;
     }
 
 }
