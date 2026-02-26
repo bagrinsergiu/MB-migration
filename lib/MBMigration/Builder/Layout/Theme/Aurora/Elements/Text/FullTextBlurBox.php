@@ -1063,6 +1063,12 @@ class FullTextBlurBox extends FullTextElement
             ->set_mobileMarginLeft((int)($sectionStyles['margin-left'] ?? 0))
             ->set_mobileMarginLeftSuffix('px');
 
+        // mobileFullHeight на Section: высота секции на мобильном = auto
+        $section = $brizySection->getParent();
+        if ($section !== null) {
+            $section->getValue()->set_mobileFullHeight('off');
+        }
+
         foreach ($additionalOptions as $key => $value) {
             if (is_array($value)) {
                 continue;
