@@ -92,6 +92,7 @@ abstract class MediaLayoutElement extends AbstractElement
                 ->set_mobileBgColorOpacity($opacity);
         }
 
+        sleep(2);
         if ($this->hasNode($dataIdSelector . ' .media-grid-container', $this->browserPage)) {
             $mbSection['mediaGridContainer'] = true;
         } elseif ($this->hasNode($dataIdSelector . ' .media-list-container', $this->browserPage)) {
