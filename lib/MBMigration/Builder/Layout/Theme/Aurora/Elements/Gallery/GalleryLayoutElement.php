@@ -83,8 +83,14 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             ->set_mobileHeight(250)
             ->set_mobileHeightSuffix('px');
 
-        // Reset Wrapper (parent of Image) margins to override Brizy's default 10px top/bottom
         $wrapper = $brizySectionItem->getParent();
+        $column = $wrapper ? $wrapper->getParent() : null;
+        $row = $column ? $column->getParent() : null;
+        $sectionItem = $row ? $row->getParent() : null;
+        
+        if ($sectionItem !== null) {
+            $this->applySlideSpacing($sectionItem);
+
         if ($wrapper !== null) {
             $wrapper->getValue()
                 ->set_marginTop(0)
@@ -99,6 +105,7 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             if ($column !== null) {
                 $column->addMobileMargin([0, 0, 0, 0]);
             }
+
         }
 
         return $brizySectionItem;
@@ -107,6 +114,90 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
     protected function getSectionItemComponent(BrizyComponent $brizySection): BrizyComponent
     {
         return $brizySection->getItemWithDepth(0);
+    }
+
+    protected function getPropertiesSlideSectionItem(): array
+    {
+        return [
+            'paddingType' => 'ungrouped',
+            'padding' => 0,
+            'paddingSuffix' => 'px',
+            'paddingTop' => 0,
+            'paddingTopSuffix' => 'px',
+            'paddingRight' => 0,
+            'paddingRightSuffix' => 'px',
+            'paddingBottom' => 0,
+            'paddingBottomSuffix' => 'px',
+            'paddingLeft' => 0,
+            'paddingLeftSuffix' => 'px',
+            'mobilePaddingType' => 'ungrouped',
+            'mobilePadding' => 25,
+            'mobilePaddingSuffix' => 'px',
+            'mobilePaddingTop' => 25,
+            'mobilePaddingTopSuffix' => 'px',
+            'mobilePaddingRight' => 20,
+            'mobilePaddingRightSuffix' => 'px',
+            'mobilePaddingBottom' => 25,
+            'mobilePaddingBottomSuffix' => 'px',
+            'mobilePaddingLeft' => 20,
+            'mobilePaddingLeftSuffix' => 'px',
+        ];
+    }
+
+    protected function getPropertiesSlideColumnMargins(): array
+    {
+        return [
+            'mobileMarginType' => 'ungrouped',
+            'mobileMargin' => 10,
+            'mobileMarginSuffix' => 'px',
+            'mobileMarginTop' => 0,
+            'mobileMarginRight' => 0,
+            'mobileMarginBottom' => 0,
+            'mobileMarginLeft' => 0,
+        ];
+    }
+
+    protected function getPropertiesSlideWrapperMargins(): array
+    {
+        return [
+            'marginTop' => 0,
+            'marginBottom' => 0,
+            'marginSuffix' => 'px',
+            'tabletMarginTop' => 0,
+            'tabletMarginBottom' => 0,
+            'tabletMarginSuffix' => 'px',
+            'mobileMarginTop' => 0,
+            'mobileMarginBottom' => 0,
+            'mobileMarginSuffix' => 'px',
+        ];
+    }
+
+    protected function applySlideSpacing(BrizyComponent $brizySectionItem): void
+    {
+        // Slide spacing props are applied across SectionItem, Column, and Wrapper levels.
+        $sectionItemValue = $brizySectionItem->getValue();
+        foreach ($this->getPropertiesSlideSectionItem() as $key => $value) {
+            $method = 'set_' . $key;
+            $sectionItemValue->$method($value);
+        }
+
+        $column = $brizySectionItem->getItemWithDepth(0, 0);
+        if ($column !== null) {
+            $columnValue = $column->getValue();
+            foreach ($this->getPropertiesSlideColumnMargins() as $key => $value) {
+                $method = 'set_' . $key;
+                $columnValue->$method($value);
+            }
+        }
+
+        $wrapper = $brizySectionItem->getItemWithDepth(0, 0, 0);
+        if ($wrapper !== null) {
+            $wrapperValue = $wrapper->getValue();
+            foreach ($this->getPropertiesSlideWrapperMargins() as $key => $value) {
+                $method = 'set_' . $key;
+                $wrapperValue->$method($value);
+            }
+        }
     }
 
     protected function getTopPaddingOfTheFirstElement(): int
@@ -134,8 +225,13 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             "paddingLeft" => 0,
             "paddingLeftSuffix" => "px",
 
-            "marginTop" => 0,
-            "marginBottom" => 0,
+            "marginType"=> "ungrouped",
+            "marginTop" => -15,
+            "marginRight" => 0,
+            "marginBottom" => -15,
+            "marginLeft" => 0,
+            "margin" => 0,
+            "marginSuffix" => "px",
 
             "tabletPaddingTop" => 0,
             "tabletPaddingTopSuffix" => "px",
@@ -144,6 +240,19 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             "tabletMarginTop" => 0,
             "tabletMarginBottom" => 0,
 
+            "mobileMarginType" => "ungrouped",
+            "mobileMarginTop" => 0,
+            "mobileMarginRight" => 0,
+            "mobileMarginBottom" => -25,
+            "mobileMarginLeft" => 0,
+            "mobileMarginSuffix" => "px",
+
+            "fullHeight" => "auto",
+            "mobileFullHeight" => "custom",
+            "mobileSectionHeight" => 250,
+            "tabletFullHeight" => "custom",
+            "tabletSectionHeight" => 450,
+          
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
@@ -155,12 +264,6 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
-
-            "mobileMarginType" => "ungrouped",
-            "mobileMarginTop" => 0,
-            "mobileMarginBottom" => 0,
-            "mobileMarginTopSuffix" => "px",
-            "mobileMarginBottomSuffix" => "px",
         ];
     }
 
@@ -189,7 +292,7 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
      */
     protected function getMobileSectionHeightType(): string
     {
-        // По умолчанию используем 'custom', можно переопределить в дочерних классах
+        // По умолчанию используем 'auto', можно переопределить в дочерних классах
         return 'auto';
     }
 
@@ -240,7 +343,9 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
         // Приоритет: сначала $additionalOptions (включая getPropertiesMainSection), затем $sectionStyles как fallback
         $brizySection->getValue()
             ->set_paddingType($additionalOptions['paddingType'] ?? 'ungrouped')
-            ->set_marginType('ungrouped')
+            ->set_marginType($additionalOptions['marginType'] ?? 'ungrouped')
+            ->set_margin((int)($additionalOptions['margin'] ?? 0))
+            ->set_marginSuffix($additionalOptions['marginSuffix'] ?? 'px')
             ->set_paddingTop((int)($additionalOptions['paddingTop'] ?? $sectionStyles['padding-top'] ?? 0))
             ->set_paddingBottom((int)($additionalOptions['paddingBottom'] ?? $sectionStyles['padding-bottom'] ?? 0))
             ->set_paddingRight((int)($additionalOptions['paddingRight'] ?? $sectionStyles['padding-right'] ?? 0))
@@ -273,25 +378,57 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             ->set_mobilePaddingBottom((int)($additionalOptions['mobilePaddingBottom'] ?? $sectionStyles['padding-bottom'] ?? 0))
             ->set_mobilePaddingBottomSuffix($additionalOptions['mobilePaddingBottomSuffix'] ?? 'px')
             ->set_mobilePaddingLeft((int)($additionalOptions['mobilePaddingLeft'] ?? $sectionStyles['padding-left'] ?? 0))
-            ->set_mobilePaddingLeftSuffix($additionalOptions['mobilePaddingLeftSuffix'] ?? 'px');
+            ->set_mobilePaddingLeftSuffix($additionalOptions['mobilePaddingLeftSuffix'] ?? 'px')
+            ->set_mobileMarginType($additionalOptions['mobileMarginType'] ?? 'ungrouped')
+            ->set_mobileMargin((int)($additionalOptions['mobileMargin'] ?? 0))
+            ->set_mobileMarginSuffix($additionalOptions['mobileMarginSuffix'] ?? 'px')
+            ->set_mobileMarginTop((int)($additionalOptions['mobileMarginTop'] ?? 0))
+            ->set_mobileMarginRight((int)($additionalOptions['mobileMarginRight'] ?? 0))
+            ->set_mobileMarginBottom((int)($additionalOptions['mobileMarginBottom'] ?? 0))
+            ->set_mobileMarginLeft((int)($additionalOptions['mobileMarginLeft'] ?? 0));
 
         // fullHeight/sectionHeight are Section-level properties; set them on the parent Section.
         if ($brizyParentSection !== null) {
             $brizyParentSection->getValue()
-                ->set_fullHeight('auto');
+                ->set_marginType($additionalOptions['marginType'] ?? 'grouped')
+                ->set_margin((int)($additionalOptions['margin'] ?? 0))
+                ->set_marginTop((int)($additionalOptions['marginTop'] ?? 0))
+                ->set_marginRight((int)($additionalOptions['marginRight'] ?? 0))
+                ->set_marginBottom((int)($additionalOptions['marginBottom'] ?? 0))
+                ->set_marginLeft((int)($additionalOptions['marginLeft'] ?? 0))
+                ->set_marginSuffix($additionalOptions['marginSuffix'] ?? 'px')
+                ->set_mobileMarginType($additionalOptions['mobileMarginType'] ?? 'ungrouped')
+                ->set_mobileMarginTop((int)($additionalOptions['mobileMarginTop'] ?? 0))
+                ->set_mobileMarginRight((int)($additionalOptions['mobileMarginRight'] ?? 0))
+                ->set_mobileMarginBottom((int)($additionalOptions['mobileMarginBottom'] ?? 0))
+                ->set_mobileMarginLeft((int)($additionalOptions['mobileMarginLeft'] ?? 0))
+                ->set_mobileMarginSuffix($additionalOptions['mobileMarginSuffix'] ?? 'px')
+                ->set_mobilePaddingType($additionalOptions['mobilePaddingType'] ?? 'ungrouped')
+                ->set_mobilePaddingLeft((int)($additionalOptions['mobilePaddingLeft'] ?? 0))
+                ->set_mobilePaddingRight((int)($additionalOptions['mobilePaddingRight'] ?? 0))
+                ->set_mobilePaddingLeftSuffix($additionalOptions['mobilePaddingLeftSuffix'] ?? 'px')
+                ->set_mobilePaddingRightSuffix($additionalOptions['mobilePaddingRightSuffix'] ?? 'px')
+                ->set_fullHeight($additionalOptions['fullHeight'] ?? 'auto')
+                ->set_mobileFullHeight($additionalOptions['mobileFullHeight'] ?? 'custom')
+                ->set_mobileSectionHeight((int)($additionalOptions['mobileSectionHeight'] ?? 250))
+                ->set_tabletFullHeight($additionalOptions['tabletFullHeight'] ?? 'custom')
+                ->set_tabletSectionHeight((int)($additionalOptions['tabletSectionHeight'] ?? 450));
         }
 
         // Список параметров, которые уже были установлены явно выше и не должны перезаписываться
         $alreadySetProperties = [
             'paddingType', 'paddingTop', 'paddingBottom', 'paddingRight', 'paddingLeft',
             'paddingSuffix', 'paddingTopSuffix', 'paddingRightSuffix', 'paddingBottomSuffix', 'paddingLeftSuffix',
-            'marginType', 'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
+            'marginType', 'margin', 'marginSuffix', 'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
             'tabletPaddingTop', 'tabletPaddingTopSuffix', 'tabletPaddingBottom', 'tabletPaddingBottomSuffix',
             'tabletMarginTop', 'tabletMarginBottom',
             'mobilePaddingType', 'mobilePadding', 'mobilePaddingTop', 'mobilePaddingRight',
             'mobilePaddingBottom', 'mobilePaddingLeft',
             'mobilePaddingSuffix', 'mobilePaddingTopSuffix', 'mobilePaddingRightSuffix',
             'mobilePaddingBottomSuffix', 'mobilePaddingLeftSuffix',
+            'mobileMarginType', 'mobileMargin', 'mobileMarginTop', 'mobileMarginRight',
+            'mobileMarginBottom', 'mobileMarginLeft', 'mobileMarginSuffix',
+            'fullHeight', 'mobileFullHeight', 'mobileSectionHeight', 'tabletFullHeight', 'tabletSectionHeight',
             'mobileBgSize', 'mobileBgSizeType', 'mobileBgRepeat'
         ];
 
