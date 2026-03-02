@@ -47,7 +47,7 @@ abstract class EventLayoutElement extends AbstractElement
             $this->getMobileTopPaddingOfTheFirstElement(),
             $this->pageTDO,
             $data,
-            $sectionSubPalette ?? $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
+            $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1'
         );
     }
 
@@ -151,7 +151,8 @@ abstract class EventLayoutElement extends AbstractElement
             'eventsTypographyLineHeight' => 1.8,
 
             'dateTypographyFontStyle' => '',
-            'dateTypographyFontFamily' => 1.8,
+            'dateTypographyFontFamily' => $fonts,
+            'dateTypographyFontFamilyType' => 'upload',
 
             'previewColorHex' => '#f8f8f8',
             'previewColorOpacity' => 1,
@@ -165,7 +166,8 @@ abstract class EventLayoutElement extends AbstractElement
             'resultsHeadingColorOpacity' => 1,
             'resultsHeadingColorPalette' => '',
 
-            'resultsHeadingTypographyFontFamilyType' => $fonts,
+            'resultsHeadingTypographyFontFamily' => $fonts,
+            'resultsHeadingTypographyFontFamilyType' => 'upload',
             'resultsHeadingTypographyFontStyle' => '',
 
             'listPaginationArrowsColorHex' => $sectionPalette['text'],

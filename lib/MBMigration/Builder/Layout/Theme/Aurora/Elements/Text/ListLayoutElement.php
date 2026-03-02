@@ -55,9 +55,10 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
 
     protected function handleRowListItem(BrizyComponent $brizySection, $position = 'left'): void
     {
-        $brizySection
-            ->getItemWithDepth(0)
-            ->addPadding(55, 50, 55, 50);
+        $innerColumn = $brizySection->getItemWithDepth(0);
+        $innerColumn->addPadding(55, 50, 55, 50);
+        $innerColumn->addMobilePadding([0, 35, 0, 35]); // top, right, bottom, left - no top/bottom on mobile
+        $innerColumn->addMobileMargin([0, 0, 0, 0]); // top, right, bottom, left - no margin on mobile
     }
 
     protected function getPropertiesMainSection(): array
@@ -66,11 +67,11 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
             "mobilePaddingType"=> "ungrouped",
             "mobilePadding" => 0,
             "mobilePaddingSuffix" => "px",
-            "mobilePaddingTop" => 50,
+            "mobilePaddingTop" => 0,
             "mobilePaddingTopSuffix" => "px",
             "mobilePaddingRight" => 20,
             "mobilePaddingRightSuffix" => "px",
-            "mobilePaddingBottom" => 50,
+            "mobilePaddingBottom" => 0,
             "mobilePaddingBottomSuffix" => "px",
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",

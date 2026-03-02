@@ -87,8 +87,25 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
         $column = $wrapper ? $wrapper->getParent() : null;
         $row = $column ? $column->getParent() : null;
         $sectionItem = $row ? $row->getParent() : null;
+        
         if ($sectionItem !== null) {
             $this->applySlideSpacing($sectionItem);
+
+        if ($wrapper !== null) {
+            $wrapper->getValue()
+                ->set_marginTop(0)
+                ->set_marginBottom(0)
+                ->set_tabletMarginTop(0)
+                ->set_tabletMarginBottom(0)
+                ->set_mobileMarginTop(0)
+                ->set_mobileMarginBottom(0);
+
+            // Column (parent of Wrapper): mobile margin 0 on all sides for mobile (no gap between slides)
+            $column = $wrapper->getParent();
+            if ($column !== null) {
+                $column->addMobileMargin([0, 0, 0, 0]);
+            }
+
         }
 
         return $brizySectionItem;
@@ -235,6 +252,18 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
             "mobileSectionHeight" => 250,
             "tabletFullHeight" => "custom",
             "tabletSectionHeight" => 450,
+          
+            "mobilePaddingType"=> "ungrouped",
+            "mobilePadding" => 0,
+            "mobilePaddingSuffix" => "px",
+            "mobilePaddingTop" => 0,
+            "mobilePaddingTopSuffix" => "px",
+            "mobilePaddingRight" => 20,
+            "mobilePaddingRightSuffix" => "px",
+            "mobilePaddingBottom" => 0,
+            "mobilePaddingBottomSuffix" => "px",
+            "mobilePaddingLeft" => 20,
+            "mobilePaddingLeftSuffix" => "px",
         ];
     }
 
@@ -424,6 +453,35 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
      */
     protected function handleSectionBackground(BrizyComponent $brizySection, $mbSectionItem, $sectionStyles, $options = ['heightType' => 'custom'])
     {
+    }
+
+    /**
+     * Mobile: negative top/bottom margins on Section to reduce spacing;
+     * first slide gets padding 20 L/R, other slides get 0.
+     */
+    protected function customizationSection(BrizyComponent $brizySection): BrizyComponent
+    {
+        $brizySection->getValue()
+            ->set_mobileMarginType('ungrouped')
+            ->set_mobileMarginTop(-20)
+            ->set_mobileMarginTopSuffix('px')
+            ->set_mobileMarginBottom(-21)
+            ->set_mobileMarginBottomSuffix('px');
+
+        $items = $brizySection->getValue()->get('items') ?? [];
+        foreach ($items as $index => $sectionItem) {
+            if (!$sectionItem instanceof BrizyComponent) {
+                continue;
+            }
+            $value = $sectionItem->getValue();
+            if ($index === 0) {
+                $sectionItem->addMobilePadding([0, 20, 0, 20]);
+            } else {
+                $sectionItem->addMobilePadding([0, 0, 0, 0]);
+            }
+        }
+
+        return $brizySection;
     }
 
 }

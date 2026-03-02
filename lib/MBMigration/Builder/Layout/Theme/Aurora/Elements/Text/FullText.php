@@ -108,6 +108,12 @@ class FullText extends FullTextElement
             "mobilePaddingLeft" => 20,
             "mobilePaddingLeftSuffix" => "px",
 
+            "mobileMarginType" => "ungrouped",
+            "mobileMarginTop" => 0,
+            "mobileMarginBottom" => 0,
+            "mobileMarginTopSuffix" => "px",
+            "mobileMarginBottomSuffix" => "px",
+
             "paddingType"=> "ungrouped",
             "padding" => 0,
             "paddingSuffix" => "px",
