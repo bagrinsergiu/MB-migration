@@ -61,6 +61,8 @@ class ApplicationBootstrapper
             ],
 //            'previewBaseHost' => 'staging.cloversites.com',
             'previewBaseHost' => $this->context['MB_PREVIEW_HOST'],
+            'pageOverrides' => $this->parsePageOverrides($_ENV['MB_PAGE_OVERRIDES'] ?? ''),
+            'duplicateSlugStrategy' => $_ENV['MB_DUPLICATE_SLUG_STRATEGY'] ?? 'prefer_oldest',
         ];
         $mb_site_id = $this->request->get('mb_site_id') ?? '';
         $mb_secret = $this->request->get('mb_secret') ?? '';
@@ -112,6 +114,40 @@ class ApplicationBootstrapper
     }
 
     /**
+     * Parse MB_PAGE_OVERRIDES env into [siteUuid => [slug => pageId]] map.
+     */
+    private function parsePageOverrides(string $json): array
+    {
+        if (trim($json) === '') {
+            return [];
+        }
+
+        $decoded = json_decode($json, true);
+        if (!is_array($decoded)) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($decoded as $siteUuid => $slugMap) {
+            if (!is_array($slugMap)) {
+                continue;
+            }
+
+            foreach ($slugMap as $slug => $pageId) {
+                if (!is_string($slug) || $slug === '') {
+                    continue;
+                }
+
+                if (is_numeric($pageId)) {
+                    $result[(string) $siteUuid][$slug] = (int) $pageId;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @throws Exception
      */
     function getMigrationLogs(): array
@@ -147,7 +183,8 @@ class ApplicationBootstrapper
         $qualityAnalysis = false,
         $mb_element_name = '',
         $skip_media_upload = false,
-        $skip_cache = false
+        $skip_cache = false,
+        $mb_page_id = null
     ): array
     {
         $s3Uploader = new S3Uploader(
@@ -363,7 +400,8 @@ class ApplicationBootstrapper
                 $qualityAnalysis,
                 $mb_element_name,
                 $skip_media_upload,
-                $skip_cache
+                $skip_cache,
+                $mb_page_id
             );
             $migrationPlatform->start($mb_project_uuid, $brz_project_id);
 

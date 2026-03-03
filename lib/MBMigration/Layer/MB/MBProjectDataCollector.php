@@ -658,6 +658,48 @@ class MBProjectDataCollector
 
     }
 
+    /**
+     * Recursively collect pages from tree to flat list.
+     *
+     * @param array|null $pages
+     * @return array<int, array<string, mixed>>
+     * @throws Exception
+     */
+    public function getFlatPagesList(array $pages = null): array
+    {
+        if ($pages === null) {
+            $pages = $this->cache->get('ParentPages');
+
+            if (!is_array($pages) || empty($pages)) {
+                $pages = $this->getPages();
+            }
+        }
+
+        $flatPages = [];
+        foreach ($pages as $page) {
+            if (!is_array($page)) {
+                continue;
+            }
+
+            $children = $page['child'] ?? [];
+
+            $flatPage = $page;
+            unset($flatPage['child']);
+
+            if (!array_key_exists('created_at', $flatPage)) {
+                $flatPage['created_at'] = null;
+            }
+
+            $flatPages[] = $flatPage;
+
+            if (is_array($children) && !empty($children)) {
+                $flatPages = array_merge($flatPages, $this->getFlatPagesList($children));
+            }
+        }
+
+        return $flatPages;
+    }
+
     private function getPagesByParent($parent, $allpages): array
     {
         $pages = array_filter($allpages, function ($page) use ($parent) {
