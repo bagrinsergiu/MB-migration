@@ -5,6 +5,8 @@ sample/*
 .turbo
 /mbaaa
 *.local
+.env.mb-postgres
+dbhub.toml
 *.http
 bin/.ssh/*.key
 .phpunit.result.cache
