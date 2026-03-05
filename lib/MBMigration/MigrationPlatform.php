@@ -24,6 +24,7 @@ use MBMigration\Layer\Brizy\BrizyAPI;
 use MBMigration\Layer\Graph\QueryBuilder;
 use MBMigration\Layer\MB\MBProjectDataCollector;
 use MBMigration\Layer\MB\MonkcmsAPI;
+use MBMigration\Service\DuplicateSlugResolver;
 use Psr\Log\LoggerInterface;
 
 class MigrationPlatform
@@ -40,6 +41,7 @@ class MigrationPlatform
     private ErrorDump $errorDump;
     private array $finalSuccess;
     private string $buildPage;
+    private ?int $mbPageId = null;
     private PageController $pageController;
     private LoggerInterface $logger;
     private array $pageMapping;
@@ -80,7 +82,8 @@ class MigrationPlatform
         bool            $qualityAnalysis = false,
         string          $mb_element_name = '',
         bool            $skip_media_upload = false,
-        bool            $skip_cache = false
+        bool            $skip_cache = false,
+        $mb_page_id = null
     )
     {
         $this->cache = VariableCache::getInstance(Config::$cachePath);
@@ -102,6 +105,13 @@ class MigrationPlatform
         $this->projectPagesList = [];
 
         $this->buildPage = $buildPage;
+        $this->mbPageId = ($mb_page_id !== null && $mb_page_id !== '') ? (int) $mb_page_id : null;
+        if ($this->mbPageId !== null && $this->buildPage === '') {
+            Logger::instance()->warning('mb_page_id is ignored because mb_page_slug is not set', [
+                'mb_page_id' => $this->mbPageId
+            ]);
+            $this->mbPageId = null;
+        }
         $this->workspacesId = $workspacesId;
 
         $this->config = $config;
@@ -348,6 +358,18 @@ class MigrationPlatform
         }
 
         $parentPages = $this->parser->getPages();
+        $flatPages = $this->parser->getFlatPagesList($parentPages);
+        $resolver = new DuplicateSlugResolver();
+        $duplicates = $resolver->findDuplicateSlugs($flatPages);
+        if (!empty($duplicates)) {
+            $resolver->logDuplicateWarnings($duplicates, $projectUUID_MB);
+            $resolver->filterDuplicatePages(
+                $parentPages,
+                $projectUUID_MB,
+                $this->mbPageId ?? null,
+                $this->buildPage ?: null
+            );
+        }
 
         if (empty($parentPages)) {
             Logger::instance()->info(
