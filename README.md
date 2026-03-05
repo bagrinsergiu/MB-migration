@@ -38,6 +38,24 @@ for development there is an additional parameter that allows you to build only o
 
 `mb_page_slug` - point to the slug of the page you want to build
 
+Optional for duplicate slugs:
+
+`http://localhost/?mb_project_uuid=3020176d-edf2-4459-b0dc-1e5caecb0c5f&brz_project_id=4474615&mb_page_slug=prayer-request&mb_page_id=12229`<br>
+
+`mb_page_id` - explicitly selects the page ID for the provided `mb_page_slug` (used only in single-page mode)
+
+### Duplicate slug env configuration
+
+Add these variables to your environment when a site has duplicate page slugs:
+
+```dotenv
+MB_PAGE_OVERRIDES={"5ee6bea4-5155-4f80-bbaf-171e02be966d":{"prayer-request":12229,"faq":456}}
+MB_DUPLICATE_SLUG_STRATEGY=prefer_oldest
+```
+
+- `MB_PAGE_OVERRIDES`: explicit mapping `{ "site_uuid": { "slug": page_id } }`.
+- `MB_DUPLICATE_SLUG_STRATEGY`: fallback strategy when override is absent (default: `prefer_oldest`; options: `prefer_visible`, `prefer_hidden`, `prefer_newest`, `prefer_first_position`).
+
 ### Response 
 
 you should get a response when the migration completes successfully<br>

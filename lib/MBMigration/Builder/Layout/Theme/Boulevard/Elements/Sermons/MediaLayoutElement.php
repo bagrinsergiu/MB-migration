@@ -2,11 +2,14 @@
 namespace MBMigration\Builder\Layout\Theme\Boulevard\Elements\Sermons;
 
 use Exception;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
 use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
 use MBMigration\Builder\Layout\Common\ElementContext;
 use MBMigration\Builder\Layout\Common\ElementContextInterface;
+use MBMigration\Builder\Utils\FontUtils;
+use MBMigration\Core\Logger;
 
 class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Sermons\MediaLayoutElement
 {
@@ -18,6 +21,9 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
      * @var \MBMigration\Builder\Layout\Common\ThemeInterface|null
      */
     private $currentThemeInstance = null;
+
+    /** @var array<string, array{layout: array, detail: array}> */
+    private $cachedTypographyBySection = [];
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -174,5 +180,250 @@ class MediaLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Ser
             ->addPadding(0,0,0,0);
 
         return $brizyComponent;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getAdditionalOptionsForDetailPage(
+        \MBMigration\Builder\Layout\Common\ElementContextInterface $data,
+        array $baseOptions
+    ): array {
+        try {
+            $typographyData = $this->extractTypographyFromDom($data);
+            $detailTypography = $typographyData['detail'] ?? [];
+            if (!empty($detailTypography)) {
+                $baseOptions['typography'] = $detailTypography;
+            }
+        } catch (\Throwable $e) {
+            Logger::instance()->warning(
+                'Media typography extraction failed: ' . $e->getMessage(),
+                ['Boulevard MediaLayoutElement', 'getAdditionalOptionsForDetailPage']
+            );
+        }
+
+        return $baseOptions;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function applyTypographyToFeaturedDescription(
+        BrizyComponent $component,
+        \MBMigration\Builder\Layout\Common\ElementContextInterface $data
+    ): void {
+        try {
+            $typographyData = $this->extractTypographyFromDom($data);
+            $detailTypography = $typographyData['detail'] ?? [];
+            if (!empty($detailTypography)) {
+                $value = $component->getValue();
+                foreach ($detailTypography as $key => $val) {
+                    $value->set($key, $val);
+                }
+            }
+        } catch (\Throwable $e) {
+            Logger::instance()->warning(
+                'Media featured typography failed: ' . $e->getMessage(),
+                ['Boulevard MediaLayoutElement', 'applyTypographyToFeaturedDescription']
+            );
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTypographyForGridSection(
+        \MBMigration\Builder\Layout\Common\ElementContextInterface $data
+    ): array {
+        try {
+            $typographyData = $this->extractTypographyFromDom($data);
+
+            return $typographyData['layout'] ?? [];
+        } catch (\Throwable $e) {
+            Logger::instance()->warning(
+                'Media grid typography failed: ' . $e->getMessage(),
+                ['Boulevard MediaLayoutElement', 'getTypographyForGridSection']
+            );
+
+            return [];
+        }
+    }
+
+    private function extractTypographyFromDom(ElementContextInterface $data): array
+    {
+        $mbSection = $data->getMbSection();
+        $sectionId = $mbSection['sectionId'] ?? $mbSection['id'];
+
+        if (isset($this->cachedTypographyBySection[$sectionId])) {
+            return $this->cachedTypographyBySection[$sectionId];
+        }
+
+        $sectionSelector = '[data-id="' . $sectionId . '"]';
+        $families = $data->getFontFamilies();
+        $defaultFamily = $data->getDefaultFontFamily();
+
+        $titleFont = $this->resolveFontBySelectors(
+            [
+                $sectionSelector . ' .text-content.title-text',
+                $sectionSelector . ' .media-video-title',
+                $sectionSelector . ' .item-title',
+            ],
+            $families,
+            $defaultFamily,
+            $data
+        );
+
+        $textFont = $this->resolveFontBySelectors(
+            [
+                $sectionSelector . ' .text-content.text-1',
+                $sectionSelector . ' .media-description',
+                $sectionSelector . ' .media-speaker',
+            ],
+            $families,
+            $defaultFamily,
+            $data
+        );
+
+        $buttonFont = $this->resolveFontBySelectors(
+            [
+                $sectionSelector . ' a.btn',
+                $sectionSelector . ' .subscribe-btn',
+                $sectionSelector . ' .media-item',
+            ],
+            $families,
+            $defaultFamily,
+            $data
+        );
+
+        $buttonFont = $buttonFont ?? $textFont;
+        $textFont = $textFont ?? $titleFont;
+        $titleFont = $titleFont ?? $textFont;
+
+        $layoutTypography = [];
+        if (!empty($titleFont)) {
+            $layoutTypography['titleTypographyFontFamily'] = $titleFont['family'];
+            $layoutTypography['titleTypographyFontFamilyType'] = $titleFont['type'];
+            $layoutTypography['resultsHeadingTypographyFontFamily'] = $titleFont['family'];
+            $layoutTypography['resultsHeadingTypographyFontFamilyType'] = $titleFont['type'];
+        }
+        if (!empty($textFont)) {
+            $layoutTypography['typographyFontFamily'] = $textFont['family'];
+            $layoutTypography['typographyFontFamilyType'] = $textFont['type'];
+        }
+        if (!empty($buttonFont)) {
+            $layoutTypography['detailButtonTypographyFontFamily'] = $buttonFont['family'];
+            $layoutTypography['detailButtonTypographyFontFamilyType'] = $buttonFont['type'];
+        }
+
+        $detailTypography = [];
+        if (!empty($titleFont)) {
+            $detailTypography['titleTypographyFontFamily'] = $titleFont['family'];
+            $detailTypography['titleTypographyFontFamilyType'] = $titleFont['type'];
+        }
+        if (!empty($textFont)) {
+            $detailTypography['typographyFontFamily'] = $textFont['family'];
+            $detailTypography['typographyFontFamilyType'] = $textFont['type'];
+            $detailTypography['previewTypographyFontFamily'] = $textFont['family'];
+            $detailTypography['previewTypographyFontFamilyType'] = $textFont['type'];
+            $detailTypography['dateTypographyFontFamily'] = $textFont['family'];
+            $detailTypography['dateTypographyFontFamilyType'] = $textFont['type'];
+        }
+        if (!empty($buttonFont)) {
+            $detailTypography['detailButtonTypographyFontFamily'] = $buttonFont['family'];
+            $detailTypography['detailButtonTypographyFontFamilyType'] = $buttonFont['type'];
+            $detailTypography['subscribeEventButtonTypographyFontFamily'] = $buttonFont['family'];
+            $detailTypography['subscribeEventButtonTypographyFontFamilyType'] = $buttonFont['type'];
+        }
+
+        $result = [
+            'layout' => $layoutTypography,
+            'detail' => $detailTypography,
+        ];
+        $this->cachedTypographyBySection[$sectionId] = $result;
+
+        return $result;
+    }
+
+    private function resolveFontBySelectors(
+        array $selectors,
+        array &$families,
+        string $defaultFamily,
+        ElementContextInterface $data
+    ): ?array {
+        foreach ($selectors as $selector) {
+            $styles = $this->getDomElementStyles(
+                $selector,
+                ['font-family'],
+                $this->browserPage,
+                $families,
+                $defaultFamily
+            );
+
+            $resolvedFont = $this->resolveDomFont($styles['font-family'] ?? null, $families, $data);
+            if ($resolvedFont !== null) {
+                return $resolvedFont;
+            }
+        }
+
+        return null;
+    }
+
+    private function resolveDomFont(?string $domFontFamily, array &$families, ElementContextInterface $data): ?array
+    {
+        if (empty($domFontFamily)) {
+            return null;
+        }
+
+        $keysToTry = [
+            FontUtils::transliterateFontFamily($domFontFamily),
+            FontUtils::normalizeFontFamilyFull($domFontFamily),
+            FontUtils::normalizeFontFamilyFirst($domFontFamily),
+        ];
+        foreach (FontUtils::extractFontFamilyParts($domFontFamily) as $part) {
+            $keysToTry[] = $part;
+        }
+        $keysToTry = array_filter(array_unique($keysToTry));
+
+        $fontKey = null;
+        foreach ($keysToTry as $key) {
+            if (!empty($key) && isset($families[$key])) {
+                $fontKey = $key;
+                break;
+            }
+        }
+
+        if ($fontKey === null) {
+            $primaryKey = FontUtils::transliterateFontFamily($domFontFamily);
+            if (!empty($primaryKey)) {
+                try {
+                    $data->getThemeContext()
+                        ->getFontsController()
+                        ->upLoadFont($domFontFamily, $primaryKey, '[Boulevard MediaLayoutElement] extractTypographyFromDom');
+                    $families = FontsController::getFontsFamily()['kit'];
+                    $data->getThemeContext()->setFamilies($families);
+                    if (isset($families[$primaryKey])) {
+                        $fontKey = $primaryKey;
+                    }
+                } catch (\Throwable $exception) {
+                    return null;
+                }
+            }
+        }
+
+        if ($fontKey === null || !isset($families[$fontKey])) {
+            return null;
+        }
+
+        $font = $families[$fontKey];
+        $fontFamily = $font['name'] ?? $font['fontname'] ?? null;
+        $fontType = $font['type'] ?? 'upload';
+        if (empty($fontFamily) || empty($fontType)) {
+            return null;
+        }
+
+        return [
+            'family' => $fontFamily,
+            'type' => $fontType,
+        ];
     }
 }

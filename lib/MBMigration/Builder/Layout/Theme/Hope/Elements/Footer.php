@@ -14,6 +14,11 @@ class Footer extends FooterElement
         return $brizySection;
     }
 
+    protected function getFooterColumnElement(BrizyComponent $brizySection, $index): BrizyComponent
+    {
+        return $brizySection->getItemWithDepth(0, 0);
+    }
+
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
         $brizySection = new BrizyComponent(json_decode($this->brizyKit['main'], true));
@@ -22,7 +27,7 @@ class Footer extends FooterElement
 
         $sortItems = $this->sortItems($mbSection['items']);
         foreach ($sortItems as $i => $item) {
-            $column = $this->getFooterColumnElement($brizySectionItemComponent, 0);
+            $column = $this->getFooterColumnElement($brizySectionItemComponent, $item['category'] == 'photo' ? 0 : $i);
             $elementContext = $data->instanceWithBrizyComponentAndMBSection($item, $column);
             $this->handleItemMbSection($item, $elementContext);
         }

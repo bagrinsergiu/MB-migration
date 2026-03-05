@@ -1,5 +1,18 @@
 {
   "mcpServers": {
+    "postgres-mb": {
+      "command": "/home/worker/projects/MB-migration/bin/mcp-postgres-mb.sh",
+      "args": [],
+      "env": {}
+    },
+    "mysql-local": {
+      "command": "bash",
+      "args": [
+        "-c",
+        "source /home/worker/projects/MB-migration/.env.local 2>/dev/null; export MYSQL_HOST=\"${LOCAL_MYSQL_HOST:-127.0.0.1}\" MYSQL_PORT=\"${LOCAL_MYSQL_PORT:-3306}\" MYSQL_USER=\"${LOCAL_MYSQL_USER:-root}\" MYSQL_PASS=\"${LOCAL_MYSQL_PASS}\" MYSQL_DB=\"${LOCAL_MYSQL_DB}\"; exec npx -y mcp-server-mysql@latest"
+      ],
+      "env": {}
+    },
     "serena": {
       "command": "npx",
       "args": [
@@ -9,20 +22,11 @@
       ],
       "env": {}
     },
-    "dbhub": {
-      "command": "npx",
+    "mysql-readonly": {
+      "command": "bash",
       "args": [
-        "-y",
-        "@bytebase/dbhub@latest",
-        "--demo"
-      ],
-      "env": {}
-    },
-    "markitdown": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "markitdown-mcp-npx@latest"
+        "-c",
+        "source /home/worker/projects/MB-migration/.env.prod.local 2>/dev/null; export MYSQL_HOST=\"$MB_DB_HOST\" MYSQL_PORT=\"$MB_DB_PORT\" MYSQL_USER=\"$MB_DB_USER\" MYSQL_PASS=\"$MB_DB_PASSWORD\" MYSQL_DB=\"$MB_DB_NAME\"; exec npx -y mcp-server-mysql@latest"
       ],
       "env": {}
     },

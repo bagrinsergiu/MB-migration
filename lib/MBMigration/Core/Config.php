@@ -77,6 +77,8 @@ class Config
      */
     public static $MB_MONKCMS_API;
     public static bool $mgrMode;
+    public static array $pageOverrides = [];
+    public static string $duplicateSlugStrategy = 'prefer_oldest';
 
     /**
      * @throws Exception
@@ -109,6 +111,12 @@ class Config
         self::$debugMode = (bool)$this->checkSettings('debugMode');
         self::$devMode = (bool)$this->checkSettings('devMode');
         self::$mgrMode = (bool)$this->checkSettings('mgrMode');
+        $pageOverrides = $this->checkSettings('pageOverrides');
+        self::$pageOverrides = is_array($pageOverrides) ? $pageOverrides : [];
+        $duplicateSlugStrategy = $this->checkSettings('duplicateSlugStrategy');
+        self::$duplicateSlugStrategy = (is_string($duplicateSlugStrategy) && $duplicateSlugStrategy !== '')
+            ? $duplicateSlugStrategy
+            : 'prefer_oldest';
 
         self::$metaData = $this->checkMetaData();
 

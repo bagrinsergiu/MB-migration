@@ -169,7 +169,8 @@ class Head extends HeadElement
             'bg-opacity' => ColorConverter::rgba2opacity($bgSectionStyles['data']['opacity']),
         ];
 
-        $brizySection->getItemWithDepth(0)
+        $sectionItem = $brizySection->getItemWithDepth(0);
+        $sectionItem
             ->getValue()
             ->set_bgColorHex($headStyle['bg-color'])
             ->set_bgColorOpacity(0)
@@ -177,6 +178,12 @@ class Head extends HeadElement
             ->set_mobileBgColorHex($headStyle['bg-color'])
             ->set_mobileBgColorPalette('')
             ->set_mobileBgColorOpacity(0);
+        $bgColor = ($bgSectionStyles['data'] ?? [])['background-color'] ?? '';
+        $sectionItem->addCustomCSS(
+            'body, .brz.brz-mm-wrapper{background-color:' .
+            ColorConverter::rgba2hex($bgColor ?: 'rgb(255,255,255)') .
+            ' !important;}'
+        );
 
         $imageLogoOptions = [
             'sizeType' => 'custom',

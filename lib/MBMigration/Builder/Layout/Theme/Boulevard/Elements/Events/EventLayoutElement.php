@@ -3,6 +3,7 @@
 namespace MBMigration\Builder\Layout\Theme\Boulevard\Elements\Events;
 
 use Exception;
+use MBMigration\Builder\Fonts\FontsController;
 use MBMigration\Builder\BrizyComponent\BrizyComponent;
 use MBMigration\Builder\Layout\Common\Concern\Component\LineAble;
 use MBMigration\Builder\Layout\Common\Concern\Effects\ShadowAble;
@@ -11,6 +12,8 @@ use MBMigration\Builder\Layout\Common\ElementContextInterface;
 use MBMigration\Builder\Layout\Common\Exception\BadJsonProvided;
 use MBMigration\Builder\Layout\Common\Exception\BrowserScriptException;
 use MBMigration\Builder\Layout\Common\Exception\ElementNotFound;
+use MBMigration\Builder\Layout\Common\Template\DetailPages\EventDetailsPageLayout as CommonEventDetailsPageLayout;
+use MBMigration\Builder\Utils\FontUtils;
 use MBMigration\Builder\Utils\ColorConverter;
 
 class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Events\EventLayoutElement
@@ -22,6 +25,7 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
      * @var \MBMigration\Builder\Layout\Common\ThemeInterface|null
      */
     private $currentThemeInstance = null;
+    private $cachedTypographyBySection = [];
 
     protected function internalTransformToItem(ElementContextInterface $data): BrizyComponent
     {
@@ -55,6 +59,29 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
     protected function getSelectorSectionCustomCSS(): string
     {
         return 'element';
+    }
+
+    protected function getDetailsPageLayoutInstance(ElementContextInterface $data)
+    {
+        $mbSection = $data->getMbSection();
+        $sectionId = $mbSection['sectionId'] ?? $mbSection['id'];
+        $sectionSelector = '[data-id="' . $sectionId . '"]';
+        $sectionSubPalette = $this->getNodeSubPalette($sectionSelector, $this->browserPage);
+        if ($sectionSubPalette === false) {
+            $sectionSubPalette = $mbSection['settings']['sections']['color']['subpalette'] ?? 'subpalette1';
+        }
+
+        $typographyData = $this->extractTypographyFromDom($data);
+
+        return new CommonEventDetailsPageLayout(
+            $this->brizyKit['EventLayoutElement']['detail'],
+            $this->getTopPaddingOfTheFirstElement(),
+            $this->getMobileTopPaddingOfTheFirstElement(),
+            $this->pageTDO,
+            $data,
+            $sectionSubPalette,
+            ['typography' => $typographyData['detail'] ?? []]
+        );
     }
 
     protected function getPropertiesMainSection(): array
@@ -302,6 +329,15 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
             }
         }
 
+        try {
+            $typographyData = $this->extractTypographyFromDom($data);
+            if (!empty($typographyData['layout']) && is_array($typographyData['layout'])) {
+                $sectionProperties = array_merge($sectionProperties, $typographyData['layout']);
+            }
+        } catch (Exception|ElementNotFound|BrowserScriptException|BadJsonProvided $e) {
+            // Fallback: keep sectionProperties without DOM typography
+        }
+
         // Boulevard: hover link colors — opacity 0.80
         $hoverLinkOpacityParams = [
             'hoverTitleColorOpacity',
@@ -315,6 +351,180 @@ class EventLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Eve
         }
 
         return $sectionProperties;
+    }
+
+    private function extractTypographyFromDom(ElementContextInterface $data): array
+    {
+        $mbSection = $data->getMbSection();
+        $sectionId = $mbSection['sectionId'] ?? $mbSection['id'];
+
+        if (isset($this->cachedTypographyBySection[$sectionId])) {
+            return $this->cachedTypographyBySection[$sectionId];
+        }
+
+        $sectionSelector = '[data-id="' . $sectionId . '"]';
+        $families = $data->getFontFamilies();
+        $defaultFamily = $data->getDefaultFontFamily();
+
+        $buttonFont = $this->resolveFontBySelectors(
+            [
+                $sectionSelector . ' a[href*="webcal"]',
+                $sectionSelector . ' button',
+            ],
+            $families,
+            $defaultFamily,
+            $data
+        );
+
+        $textFont = $this->resolveFontBySelectors(
+            [
+                $sectionSelector . ' .fc-toolbar',
+                $sectionSelector . ' th.fc-day-header',
+                $sectionSelector . ' td.fc-day',
+                $sectionSelector . ' .fc-event',
+            ],
+            $families,
+            $defaultFamily,
+            $data
+        );
+
+        $buttonFont = $buttonFont ?? $textFont;
+        $textFont = $textFont ?? $buttonFont;
+
+        $layoutTypography = [];
+        if (!empty($buttonFont)) {
+            $layoutTypography['detailButtonTypographyFontFamily'] = $buttonFont['family'];
+            $layoutTypography['detailButtonTypographyFontFamilyType'] = $buttonFont['type'];
+        }
+
+        if (!empty($textFont)) {
+            $textTypographyPrefixes = [
+                'groupingDateTypography',
+                'dateTypography',
+                'titleTypography',
+                'listItemMetaTypography',
+                'resultsHeadingTypography',
+                'layoutViewTypography',
+                'eventsTypography',
+                'calendarDaysTypography',
+                'calendarHeadingTypography',
+                'listPaginationTypography',
+            ];
+
+            foreach ($textTypographyPrefixes as $prefix) {
+                $layoutTypography[$prefix . 'FontFamily'] = $textFont['family'];
+                $layoutTypography[$prefix . 'FontFamilyType'] = $textFont['type'];
+            }
+        }
+
+        $detailTypography = [];
+        if (!empty($textFont)) {
+            $detailTextPrefixes = [
+                'titleTypography',
+                'dateTypography',
+                'typography',
+                'previewTypography',
+                'metaLinksTypography',
+            ];
+            foreach ($detailTextPrefixes as $prefix) {
+                $detailTypography[$prefix . 'FontFamily'] = $textFont['family'];
+                $detailTypography[$prefix . 'FontFamilyType'] = $textFont['type'];
+            }
+        }
+
+        if (!empty($buttonFont)) {
+            $detailTypography['detailButtonTypographyFontFamily'] = $buttonFont['family'];
+            $detailTypography['detailButtonTypographyFontFamilyType'] = $buttonFont['type'];
+            $detailTypography['subscribeEventButtonTypographyFontFamily'] = $buttonFont['family'];
+            $detailTypography['subscribeEventButtonTypographyFontFamilyType'] = $buttonFont['type'];
+        }
+
+        $result = [
+            'layout' => $layoutTypography,
+            'detail' => $detailTypography,
+        ];
+        $this->cachedTypographyBySection[$sectionId] = $result;
+
+        return $result;
+    }
+
+    private function resolveFontBySelectors(array $selectors, array &$families, string $defaultFamily, ElementContextInterface $data): ?array
+    {
+        foreach ($selectors as $selector) {
+            $styles = $this->getDomElementStyles(
+                $selector,
+                ['font-family'],
+                $this->browserPage,
+                $families,
+                $defaultFamily
+            );
+
+            $resolvedFont = $this->resolveDomFont($styles['font-family'] ?? null, $families, $data);
+            if ($resolvedFont !== null) {
+                return $resolvedFont;
+            }
+        }
+
+        return null;
+    }
+
+    private function resolveDomFont(?string $domFontFamily, array &$families, ElementContextInterface $data): ?array
+    {
+        if (empty($domFontFamily)) {
+            return null;
+        }
+
+        $keysToTry = [
+            FontUtils::transliterateFontFamily($domFontFamily),
+            FontUtils::normalizeFontFamilyFull($domFontFamily),
+            FontUtils::normalizeFontFamilyFirst($domFontFamily),
+        ];
+        foreach (FontUtils::extractFontFamilyParts($domFontFamily) as $part) {
+            $keysToTry[] = $part;
+        }
+        $keysToTry = array_filter(array_unique($keysToTry));
+
+        $fontKey = null;
+        foreach ($keysToTry as $key) {
+            if (!empty($key) && isset($families[$key])) {
+                $fontKey = $key;
+                break;
+            }
+        }
+
+        if ($fontKey === null) {
+            $primaryKey = FontUtils::transliterateFontFamily($domFontFamily);
+            if (!empty($primaryKey)) {
+                try {
+                    $data->getThemeContext()
+                        ->getFontsController()
+                        ->upLoadFont($domFontFamily, $primaryKey, '[Boulevard EventLayoutElement] extractTypographyFromDom');
+                    $families = FontsController::getFontsFamily()['kit'];
+                    $data->getThemeContext()->setFamilies($families);
+                    if (isset($families[$primaryKey])) {
+                        $fontKey = $primaryKey;
+                    }
+                } catch (\Throwable $exception) {
+                    return null;
+                }
+            }
+        }
+
+        if ($fontKey === null || !isset($families[$fontKey])) {
+            return null;
+        }
+
+        $font = $families[$fontKey];
+        $fontFamily = $font['name'] ?? $font['fontname'] ?? null;
+        $fontType = $font['type'] ?? 'upload';
+        if (empty($fontFamily) || empty($fontType)) {
+            return null;
+        }
+
+        return [
+            'family' => $fontFamily,
+            'type' => $fontType,
+        ];
     }
 
     private function resolveCalendarCellSelector(string $sectionSelector): string
