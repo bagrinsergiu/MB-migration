@@ -91,21 +91,21 @@ class GalleryLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\G
         if ($sectionItem !== null) {
             $this->applySlideSpacing($sectionItem);
 
-        if ($wrapper !== null) {
-            $wrapper->getValue()
-                ->set_marginTop(0)
-                ->set_marginBottom(0)
-                ->set_tabletMarginTop(0)
-                ->set_tabletMarginBottom(0)
-                ->set_mobileMarginTop(0)
-                ->set_mobileMarginBottom(0);
+            if ($wrapper !== null) {
+                $wrapper->getValue()
+                    ->set_marginTop(0)
+                    ->set_marginBottom(0)
+                    ->set_tabletMarginTop(0)
+                    ->set_tabletMarginBottom(0)
+                    ->set_mobileMarginTop(0)
+                    ->set_mobileMarginBottom(0);
 
-            // Column (parent of Wrapper): mobile margin 0 on all sides for mobile (no gap between slides)
-            $column = $wrapper->getParent();
-            if ($column !== null) {
-                $column->addMobileMargin([0, 0, 0, 0]);
+                // Column (parent of Wrapper): mobile margin 0 on all sides for mobile (no gap between slides)
+                $column = $wrapper->getParent();
+                if ($column !== null) {
+                    $column->addMobileMargin([0, 0, 0, 0]);
+                }
             }
-
         }
 
         return $brizySectionItem;
