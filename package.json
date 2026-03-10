@@ -30,7 +30,8 @@
     "build": "turbo build",
     "build:prod": "turbo build -- --production",
     "build:force": "turbo build -- --force",
-    "mcp:playwright": "npx -y @playwright/mcp"
+    "mcp:playwright": "npx -y @playwright/mcp",
+    "mb-push": "./bin/mb-push.sh"
   },
   "dependencies": {
     "lodash": "^4.17.21"

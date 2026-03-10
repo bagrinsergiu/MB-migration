@@ -128,6 +128,17 @@ class EventDetailsPageLayout extends DetailsPage
             'hoverDetailButtonBgColorOpacity' => $basicButtonStyleHover['background-color-opacity'] ?? 1,
             'hoverDetailButtonBgColorPalette' => '',
 
+            'detailButtonBorderStyle' => 'solid',
+            'detailButtonBorderColorHex' => $sectionPalette['link'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonBorderColorOpacity' => 1,
+            'detailButtonBorderColorPalette' => '',
+            "detailButtonBorderWidthType" => "grouped",
+            "detailButtonBorderWidth" => 2,
+            "detailButtonBorderTopWidth" => 2,
+            "detailButtonBorderRightWidth" => 2,
+            "detailButtonBorderBottomWidth" => 2,
+            "detailButtonBorderLeftWidth" => 2,
+
             'metaLinksColorHex' => $sectionPalette['link'],
             'metaLinksColorOpacity' => 1,
             'metaLinksColorPalette' => '',
@@ -231,17 +242,16 @@ class EventDetailsPageLayout extends DetailsPage
             'hoverDetailButtonColorOpacity' => $basicButtonStyleHover['color-opacity'] ?? 0.75,
             'hoverDetailButtonColorPalette' => '',
 
-//            'detailButtonBorderStyle' => 'solid',
-//            'detailButtonBorderColorHex' => $basicButtonStyleHover['border-top-color'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
-//            'detailButtonBorderColorOpacity' => $basicButtonStyleHover['border-top-color-opacity'] ?? 1,
-//            'detailButtonBorderColorPalette' => '',
-//
-//            "detailButtonBorderWidthType" => "grouped",
-//            "detailButtonBorderWidth" => 1,
-//            "detailButtonBorderTopWidth" => 1,
-//            "detailButtonBorderRightWidth" => 1,
-//            "detailButtonBorderBottomWidth" => 1,
-//            "detailButtonBorderLeftWidth" => 1,
+            'detailButtonBorderStyle' => 'solid',
+            'detailButtonBorderColorHex' => $sectionPalette['link'] ?? $sectionPalette['btn-text'] ?? $sectionPalette['text'],
+            'detailButtonBorderColorOpacity' => 1,
+            'detailButtonBorderColorPalette' => '',
+            "detailButtonBorderWidthType" => "grouped",
+            "detailButtonBorderWidth" => 2,
+            "detailButtonBorderTopWidth" => 2,
+            "detailButtonBorderRightWidth" => 2,
+            "detailButtonBorderBottomWidth" => 2,
+            "detailButtonBorderLeftWidth" => 2,
 
             'subscribeEventButtonColorHex' => $sectionPalette['btn-text'] ?? $basicButtonStyleNormal['color'] ,
             'subscribeEventButtonColorOpacity' => $basicButtonStyleNormal['color-opacity'] ?? 1,
@@ -362,6 +372,7 @@ class EventDetailsPageLayout extends DetailsPage
     }
 
     private function sectionPadding(BrizyComponent $detailsSection){
+        $options = [];
         if($this->topPaddingOfTheFirstElement !== 0) {
             $options['paddingTop'] = $this->topPaddingOfTheFirstElement + 40;
         }

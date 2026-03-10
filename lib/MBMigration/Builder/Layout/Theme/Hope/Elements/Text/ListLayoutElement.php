@@ -80,4 +80,30 @@ class ListLayoutElement extends \MBMigration\Builder\Layout\Common\Elements\Text
     {
         return 200;
     }
+
+    /**
+     * Опции размера изображения для фото в пунктах списка (Brizy Image API).
+     * Ключи: sizeType, size, sizeSuffix; mobileSizeType, mobileSize, mobileSizeSuffix.
+     * См. doc/brizy-pagedata/elements/image.md. Переопределяется в подклассах для кастомизации.
+     *
+     * @return array<string, mixed>
+     */
+    protected function getListImageOptions(): array
+    {
+        return [
+            'sizeType' => 'original',
+            'size' => 100,
+            'sizeSuffix' => '%',
+            'mobileSizeType' => 'original',
+            'mobileSize' => 50,
+            'mobileSizeSuffix' => '%',
+        ];
+    }
+
+    protected function handleMbPhotoItem(ElementContextInterface $data, $brizySectionItem, $photoPosition, $mbItem)
+    {
+        $imageComponent = $this->getItemImageComponent($brizySectionItem, $photoPosition);
+        $elementContext = $data->instanceWithBrizyComponentAndMBSection($mbItem, $imageComponent);
+        $this->handleRichTextItem($elementContext, $this->browserPage, null, [], $this->getListImageOptions());
+    }
 }
